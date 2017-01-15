@@ -1,78 +1,81 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 18:16:14 +0000
-Subject: [PATCH 6/9] KVM: Return an error code only as a constant in kvm_get_dirty_log_protect()
-Message-Id: <2f83abd2-cf68-4294-6603-cfab2991e731@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:02:30 +0000
+Subject: [PATCH 05/46] selinux: Adjust four checks for null pointers
+Message-Id: <44727e74-99ac-b0bd-2d7b-e5928d77ea75@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
-In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 17:30:16 +0100
+Date: Sat, 14 Jan 2017 12:36:59 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-* Return an error code without storing it in an intermediate variable.
+The script "checkpatch.pl" pointed information out like the following.
 
-* Delete the local variable "r" and the jump label "out" which became
-  unnecessary with this refactoring.
+Comparison to NULL could be written !=E2=80=A6
+
+Thus fix affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- virt/kvm/kvm_main.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ security/selinux/ss/hashtab.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 6a74a3796b3f..a651a137ef21 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1156,24 +1156,22 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
--	int r, i, as_id, id;
-+	int i, as_id, id;
- 	unsigned long n;
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
- 
--	r = -EINVAL;
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
--		goto out;
-+		return -EINVAL;
- 
- 	slots = __kvm_memslots(kvm, as_id);
- 	memslot = id_to_memslot(slots, id);
- 
- 	dirty_bitmap = memslot->dirty_bitmap;
--	r = -ENOENT;
- 	if (!dirty_bitmap)
--		goto out;
-+		return -ENOENT;
- 
- 	n = kvm_dirty_bitmap_bytes(memslot);
- 
-@@ -1202,14 +1200,9 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
+diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
+index dc99fff64ecb..3858706a29fb 100644
+--- a/security/selinux/ss/hashtab.c
++++ b/security/selinux/ss/hashtab.c
+@@ -17,7 +17,7 @@ struct hashtab *hashtab_create(u32 (*hash_value)(struct h=
+ashtab *h, const void *
+ 	u32 i;
+=20
+ 	p =3D kzalloc(sizeof(*p), GFP_KERNEL);
+-	if (p =3D NULL)
++	if (!p)
+ 		return p;
+=20
+ 	p->size =3D size;
+@@ -25,7 +25,7 @@ struct hashtab *hashtab_create(u32 (*hash_value)(struct h=
+ashtab *h, const void *
+ 	p->hash_value =3D hash_value;
+ 	p->keycmp =3D keycmp;
+ 	p->htable =3D kmalloc_array(size, sizeof(*p->htable), GFP_KERNEL);
+-	if (p->htable =3D NULL) {
++	if (!p->htable) {
+ 		kfree(p);
+ 		return NULL;
  	}
- 
- 	spin_unlock(&kvm->mmu_lock);
--
--	r = -EFAULT;
- 	if (copy_to_user(log->dirty_bitmap, dirty_bitmap_buffer, n))
--		goto out;
--
--	r = 0;
--out:
--	return r;
-+		return -EFAULT;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(kvm_get_dirty_log_protect);
- #endif
--- 
+@@ -58,7 +58,7 @@ int hashtab_insert(struct hashtab *h, void *key, void *da=
+tum)
+ 		return -EEXIST;
+=20
+ 	newnode =3D kzalloc(sizeof(*newnode), GFP_KERNEL);
+-	if (newnode =3D NULL)
++	if (!newnode)
+ 		return -ENOMEM;
+ 	newnode->key =3D key;
+ 	newnode->datum =3D datum;
+@@ -87,7 +87,7 @@ void *hashtab_search(struct hashtab *h, const void *key)
+ 	while (cur && h->keycmp(h, key, cur->key) > 0)
+ 		cur =3D cur->next;
+=20
+-	if (cur =3D NULL || (h->keycmp(h, key, cur->key) !=3D 0))
++	if (!cur || (h->keycmp(h, key, cur->key) !=3D 0))
+ 		return NULL;
+=20
+ 	return cur->datum;
+--=20
 2.11.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
