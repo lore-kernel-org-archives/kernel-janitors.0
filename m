@@ -1,76 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 18:17:22 +0000
-Subject: [PATCH 7/9] KVM: Return an error code only as a constant in kvm_get_dirty_log()
-Message-Id: <f3477328-b978-e777-d3fc-913b22aaa05a@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:34:03 +0000
+Subject: [PATCH 34/46] selinux: Return directly after a failed kzalloc() in common_read()
+Message-Id: <caec05bb-b2ae-eda6-f052-32ed1d7c8c47@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
-In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 17:41:07 +0100
+Date: Sun, 15 Jan 2017 11:15:19 +0100
 
-* Return an error code without storing it in an intermediate variable.
-
-* Delete the local variable "r" and the jump label "out" which became
-  unnecessary with this refactoring.
+Return directly after a call of the function "kzalloc" failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- virt/kvm/kvm_main.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ security/selinux/ss/policydb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index a651a137ef21..ca88f3620ee3 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1094,37 +1094,31 @@ int kvm_get_dirty_log(struct kvm *kvm,
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
--	int r, i, as_id, id;
-+	int i, as_id, id;
- 	unsigned long n;
- 	unsigned long any = 0;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 9035e5329ceb..551685283399 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1150,10 +1150,9 @@ static int common_read(struct policydb *p, struct hashtab *h, void *fp)
+ 	u32 len, nel;
+ 	int i, rc;
  
--	r = -EINVAL;
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
--		goto out;
-+		return -EINVAL;
+-	rc = -ENOMEM;
+ 	comdatum = kzalloc(sizeof(*comdatum), GFP_KERNEL);
+ 	if (!comdatum)
+-		goto bad;
++		return -ENOMEM;
  
- 	slots = __kvm_memslots(kvm, as_id);
- 	memslot = id_to_memslot(slots, id);
--	r = -ENOENT;
- 	if (!memslot->dirty_bitmap)
--		goto out;
-+		return -ENOENT;
- 
- 	n = kvm_dirty_bitmap_bytes(memslot);
- 
- 	for (i = 0; !any && i < n/sizeof(long); ++i)
- 		any = memslot->dirty_bitmap[i];
- 
--	r = -EFAULT;
- 	if (copy_to_user(log->dirty_bitmap, memslot->dirty_bitmap, n))
--		goto out;
-+		return -EFAULT;
- 
- 	if (any)
- 		*is_dirty = 1;
--
--	r = 0;
--out:
--	return r;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(kvm_get_dirty_log);
- 
+ 	rc = next_entry(buf, fp, sizeof buf);
+ 	if (rc)
 -- 
 2.11.0
 
