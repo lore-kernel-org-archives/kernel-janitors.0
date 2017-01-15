@@ -1,31 +1,41 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 27 Jan 2017 00:40:36 +0000
-Subject: Re: powerpc/sstep: Return directly after a failed address_ok() in emulate_step()
-Message-Id: <3v8g1c5k46z9tjx@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:26:04 +0000
+Subject: [PATCH 26/46] selinux: Improve another size determination in sens_read()
+Message-Id: <6aec69ea-27e6-da3f-8a54-e1f12c78cc2e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <bc39d538-80f2-e810-0d58-39522605e067@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Lennart Sorensen <lsorense@csclub.uwaterloo.ca>, Nicholas Piggin <npiggin@gmail.com>, Oliver O'Halloran <oohall@gmail.com>, Paul Mackerras <paulus@samba.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2017-01-21 at 14:45:19 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Jan 2017 15:30:15 +0100
-> 
-> * Return directly after a call of the function "address_ok" failed
->   in a case block.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Delete two error code assignments which became unnecessary with
->   this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 21:52:55 +0100
 
-Applied to powerpc next, thanks.
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-https://git.kernel.org/powerpc/c/3c4b66a6d0d2b9f2418f9a09d528e4
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/policydb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-cheers
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 5caa1fa5ea80..edfcfd3bbc60 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1609,7 +1609,7 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
+ 		goto bad;
+ 
+ 	rc = -ENOMEM;
+-	levdatum->level = kmalloc(sizeof(struct mls_level), GFP_ATOMIC);
++	levdatum->level = kmalloc(sizeof(*levdatum->level), GFP_ATOMIC);
+ 	if (!levdatum->level)
+ 		goto bad;
+ 
+-- 
+2.11.0
+
