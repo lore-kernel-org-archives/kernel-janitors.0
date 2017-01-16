@@ -1,55 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Jan 2017 21:56:15 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 16 Jan 2017 22:00:12 +0000
 Subject: Re: [patch net-next] stmmac: indent an if statement
-Message-Id: <20170116215615.GG4104@mwanda>
+Message-Id: <20170116.170012.547874320348560448.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170112184631.GA12157@mwanda>
- <20170115.221438.1956356112755181222.davem@davemloft.net>
- <20170116091924.GA4104@mwanda>
- <20170116093954.GB4104@mwanda>
- <alpine.DEB.2.20.1701162240100.2031@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1701162240100.2031@hadrien>
+References: <20170116093954.GB4104@mwanda>
+        <alpine.DEB.2.20.1701162240100.2031@hadrien>
+        <20170116215615.GG4104@mwanda>
+In-Reply-To: <20170116215615.GG4104@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: David Miller <davem@davemloft.net>, peppe.cavallaro@st.com, Joao.Pinto@synopsys.com, alexandre.torgue@st.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: julia.lawall@lip6.fr, peppe.cavallaro@st.com, Joao.Pinto@synopsys.com, alexandre.torgue@st.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 16, 2017 at 10:46:22PM +0100, Julia Lawall wrote:
-> 
-> 
-> On Mon, 16 Jan 2017, Dan Carpenter wrote:
-> 
-> > On Mon, Jan 16, 2017 at 12:19:24PM +0300, Dan Carpenter wrote:
-> > > On Sun, Jan 15, 2017 at 10:14:38PM -0500, David Miller wrote:
-> > > > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > Date: Thu, 12 Jan 2017 21:46:32 +0300
-> > > >
-> > > > > The break statement should be indented one more tab.
-> > > > >
-> > > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > >
-> > > > Applied, but like Julia I think we might have a missing of_node_put()
-> > > > here.
-> > >
-> > > Of course, sorry for dropping the ball on this.  I'll send a patch for
-> > > that.
-> > >
-> >
-> > Actually, I've looked at it some more and I think this function is OK.
-> > We're supposed to do an of_node_put() later...  I can't find where that
-> > happens, but presumably that's because I don't know stmmac well.  This
-> > code here, though, is fine.
-> 
-> Why do you think it is fine?  Does anyone in the calling context know
-> which child would have caused the break?
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Jan 2017 00:56:15 +0300
 
-Yeah.  It's saved in plat->mdio_node and we expect to be holding on
-either path through the function.
+> (It would be better if one of the stmmac people were responding here
+> insead of a random fix the indenting weenie like myself.)
 
-(It would be better if one of the stmmac people were responding here
-insead of a random fix the indenting weenie like myself.)
-
-regards,
-dan caprenter
-
+They are all too busy trying to rename the driver, because that's so
+much more important.
