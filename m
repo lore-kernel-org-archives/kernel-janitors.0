@@ -1,54 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:22:50 +0000
-Subject: [PATCH 04/11] KVM: PPC: Book3S HV: Use common error handling code in kvmppc_clr_passthru_irq()
-Message-Id: <68158b48-c85b-4da8-1ef7-c996de1db5da@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:45:51 +0000
+Subject: Applied "spi/topcliff-pch: Delete an unnecessary return statement in two functions" to the spi tree
+Message-Id: <E1cTYlT-0000Ka-Qs@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
-In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+References: <64b7bf49-57fc-32a9-17e4-1b26b99bff13@users.sourceforge.net>
+In-Reply-To: <64b7bf49-57fc-32a9-17e4-1b26b99bff13@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
+The patch
+
+   spi/topcliff-pch: Delete an unnecessary return statement in two functions
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6ceb3b27b1edd1112f1879cc1f149d39a3da2dc2 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 11:00:08 +0100
+Date: Fri, 13 Jan 2017 15:57:03 +0100
+Subject: [PATCH] spi/topcliff-pch: Delete an unnecessary return statement in
+ two functions
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: void function return statements are not generally useful
+
+Thus remove such statements here.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/spi/spi-topcliff-pch.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index a93e1c4445da..cfc7699d05df 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -3509,11 +3509,9 @@ static int kvmppc_clr_passthru_irq(struct kvm *kvm, int host_irq, int guest_gsi)
- 		return -EIO;
- 
- 	mutex_lock(&kvm->lock);
-+	if (!kvm->arch.pimap)
-+		goto unlock;
- 
--	if (kvm->arch.pimap = NULL) {
--		mutex_unlock(&kvm->lock);
--		return 0;
--	}
- 	pimap = kvm->arch.pimap;
- 
- 	for (i = 0; i < pimap->n_mapped; i++) {
-@@ -3535,7 +3533,7 @@ static int kvmppc_clr_passthru_irq(struct kvm *kvm, int host_irq, int guest_gsi)
- 	 * We don't free this structure even when the count goes to
- 	 * zero. The structure is freed when we destroy the VM.
- 	 */
--
-+unlock:
- 	mutex_unlock(&kvm->lock);
- 	return 0;
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index fcb991034c3d..250452a6eead 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -915,7 +915,6 @@ static void pch_spi_release_dma(struct pch_spi_data *data)
+ 		dma_release_channel(dma->chan_rx);
+ 		dma->chan_rx = NULL;
+ 	}
+-	return;
  }
+ 
+ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+@@ -1292,7 +1291,6 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
+ 	if (dma->rx_buf_dma)
+ 		dma_free_coherent(&board_dat->pdev->dev, PCH_BUF_SIZE,
+ 				  dma->rx_buf_virt, dma->rx_buf_dma);
+-	return;
+ }
+ 
+ static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
 -- 
 2.11.0
 
