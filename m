@@ -1,70 +1,90 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 17:00:38 +0000
-Subject: [PATCH 6/8] powerpc/nvram: Delete three error messages for a failed memory allocation
-Message-Id: <00845261-8528-d011-d3b8-e9355a231d3a@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:46:06 +0000
+Subject: Applied "spi: fsl: Combine substrings for two messages" to the spi tree
+Message-Id: <E1cTYli-0000PH-O0@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+References: <0ff54345-a877-fe39-0aa2-a3db617fba38@users.sourceforge.net>
+In-Reply-To: <0ff54345-a877-fe39-0aa2-a3db617fba38@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
+The patch
+
+   spi: fsl: Combine substrings for two messages
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 31ae779421098e9a58a3f10e1e09b2c63f4514fa Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:56:46 +0100
+Date: Fri, 13 Jan 2017 13:50:21 +0100
+Subject: [PATCH] spi: fsl: Combine substrings for two messages
 
 The script "checkpatch.pl" pointed information out like the following.
 
-WARNING: Possible unnecessary 'out of memory' message
+WARNING: quoted string split across lines
 
-Thus fix affected source code places.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/kernel/nvram_64.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/spi/spi-fsl-spi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 68b970bcf2fc..7af1baaaf01b 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -1040,10 +1040,8 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	
- 	/* Create our OS partition */
- 	new_part = kmalloc(sizeof(*new_part), GFP_KERNEL);
--	if (!new_part) {
--		pr_err("%s: kmalloc failed\n", __func__);
-+	if (!new_part)
- 		return -ENOMEM;
--	}
- 
- 	new_part->index = free_part->index;
- 	new_part->header.signature = sig;
-@@ -1145,10 +1143,8 @@ int __init nvram_scan_partitions(void)
- 	total_size = ppc_md.nvram_size();
- 	
- 	header = kmalloc(NVRAM_HEADER_LEN, GFP_KERNEL);
--	if (!header) {
--		printk(KERN_ERR "nvram_scan_partitions: Failed kmalloc\n");
-+	if (!header)
- 		return -ENOMEM;
--	}
- 
- 	while (cur_index < total_size) {
- 
-@@ -1181,10 +1177,8 @@ int __init nvram_scan_partitions(void)
+diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
+index cdee556037f9..0fc3452652ae 100644
+--- a/drivers/spi/spi-fsl-spi.c
++++ b/drivers/spi/spi-fsl-spi.c
+@@ -267,10 +267,9 @@ static int fsl_spi_setup_transfer(struct spi_device *spi,
+ 	if ((mpc8xxx_spi->spibrg / hz) > 64) {
+ 		cs->hw_mode |= SPMODE_DIV16;
+ 		pm = (mpc8xxx_spi->spibrg - 1) / (hz * 64) + 1;
+-
+-		WARN_ONCE(pm > 16, "%s: Requested speed is too low: %d Hz. "
+-			  "Will use %d Hz instead.\n", dev_name(&spi->dev),
+-			  hz, mpc8xxx_spi->spibrg / 1024);
++		WARN_ONCE(pm > 16,
++			  "%s: Requested speed is too low: %d Hz. Will use %d Hz instead.\n",
++			  dev_name(&spi->dev), hz, mpc8xxx_spi->spibrg / 1024);
+ 		if (pm > 16)
+ 			pm = 16;
+ 	} else {
+@@ -763,8 +762,9 @@ static int of_fsl_spi_get_chipselects(struct device *dev)
+ 		ret = gpio_direction_output(pinfo->gpios[i],
+ 					    pinfo->alow_flags[i]);
+ 		if (ret) {
+-			dev_err(dev, "can't set output direction for gpio "
+-				"#%d: %d\n", i, ret);
++			dev_err(dev,
++				"can't set output direction for gpio #%d: %d\n",
++				i, ret);
+ 			goto err_loop;
  		}
- 		tmp_part = kmalloc(sizeof(struct nvram_partition), GFP_KERNEL);
- 		err = -ENOMEM;
--		if (!tmp_part) {
--			printk(KERN_ERR "nvram_scan_partitions: kmalloc failed\n");
-+		if (!tmp_part)
- 			goto out;
--		}
- 		
- 		memcpy(&tmp_part->header, &phead, NVRAM_HEADER_LEN);
- 		tmp_part->index = cur_index;
+ 	}
 -- 
 2.11.0
 
