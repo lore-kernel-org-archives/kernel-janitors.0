@@ -1,83 +1,39 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Tue, 31 Jan 2017 09:55:07 +0000
-Subject: Re: [PATCH 2/8] [media] v4l2-async: Delete an error message for a failed memory allocation in v4l2_a
-Message-Id: <20170131075507.45721c17@vento.lan>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 17 Jan 2017 11:23:21 +0000
+Subject: [PATCH] stmmac: add missing of_node_put
+Message-Id: <1484652201-20048-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
-        <a00be613-169b-4992-dc29-c4b9e82d5501@users.sourceforge.net>
-In-Reply-To: <a00be613-169b-4992-dc29-c4b9e82d5501@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: kernel-janitors@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em Mon, 26 Dec 2016 21:45:50 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
+The function stmmac_dt_phy provides several possibilities for initializing
+plat->mdio_node, all of which have the effect of increasing the reference
+count of the assigned value.  This field is not updated elsewhere, so the
+value is live until the end of the lifetime of plat (devm_allocated), just
+after the end of stmmac_remove_config_dt.  Thus, add an of_node_put on
+plat->mdio_node in stmmac_remove_config_dt.  It is possible that the field
+mdio_node is never initialized, but of_node_put is NULL-safe, so it is also
+safe to call of_node_put in that case.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 26 Dec 2016 19:19:49 +0100
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus fix the affected source code place.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/v4l2-core/v4l2-async.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 277183f2d514..812d0b2a2f73 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -203,11 +203,6 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  		return;
->  
->  	dev = kmalloc_array(n_subdev, sizeof(*dev), GFP_KERNEL);
-> -	if (!dev) {
-> -		dev_err(notifier->v4l2_dev->dev,
-> -			"Failed to allocate device cache!\n");
-> -	}
-> -
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-In this specific case, we should keep it, as the message means that
-the unregister logic won't work properly, as this loop won't run:
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-        /*
-         * Call device_attach() to reprobe devices
-         *
-         * NOTE: If dev allocation fails, i is 0, and the whole loop won't be
-         * executed.
-         */
-	while (i--) {
-                struct device *d = dev[i];
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 4daa8a3..460f94f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -409,6 +409,7 @@ void stmmac_remove_config_dt(struct platform_device *pdev,
+ 	if (of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ 	of_node_put(plat->phy_node);
++	of_node_put(plat->mdio_node);
+ }
+ #else
+ struct plat_stmmacenet_data *
 
-                if (d && device_attach(d) < 0) {
-                        const char *name = "(none)";
-                        int lock = device_trylock(d);
-
-                        if (lock && d->driver)
-                                name = d->driver->name;
-                        dev_err(d, "Failed to re-probe to %s\n", name);
-                        if (lock)
-                                device_unlock(d);
-                }
-                put_device(d);
-        }
-
-So, IMHO, the proper patch would be to change the message to
-be more comprehensive, describing the consequences of not being
-able to allocate the dev cache.
-
-
->  	mutex_lock(&list_lock);
->  
->  	list_del(&notifier->list);
-
-
-
-Thanks,
-Mauro
