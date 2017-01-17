@@ -1,79 +1,29 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Wed, 11 Jan 2017 19:15:19 +0000
-Subject: Re: [patch 1/3] vfio-mdev: return -EFAULT if copy_to_user() fails
-Message-Id: <20170111141519.7c6ad2a8@t450s.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Jan 2017 13:36:23 +0000
+Subject: [patch] ACPI/IORT: fix an error code
+Message-Id: <20170117121910.GA29263@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170107062749.GA26959@elgon.mountain>
-        <c6c454ab-0df8-d76f-90d7-0585fe80f2d3@nvidia.com>
-In-Reply-To: <c6c454ab-0df8-d76f-90d7-0585fe80f2d3@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kirti Wankhede <kwankhede@nvidia.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Hanjun Guo <hanjun.guo@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 10 Jan 2017 00:07:23 +0530
-Kirti Wankhede <kwankhede@nvidia.com> wrote:
+We accidentally return success if platform_device_alloc() fails.
 
-> CC+= Alex to pull this change.
-> 
-> Reviewed by: Kirti Wankhede <kwankhede@nvidia.com>
+Fixes: 846f0e9e74a0 ("ACPI/IORT: Add support for ARM SMMU platform devices creation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks Dan.  Applied all three to for-linus for v4.10 with Kirti's R-b.
-Thanks,
-
-Alex
-
-> On 1/7/2017 11:57 AM, Dan Carpenter wrote:
-> > The copy_to_user() function returns the number of bytes which it wasn't
-> > able to copy but we want to return a negative error code.
-> > 
-> > Fixes: 9d1a546c53b4 ("docs: Sample driver to demonstrate how to use Mediated device framework.")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> > index 919c10d5b12e..d2656ff569c1 100644
-> > --- a/samples/vfio-mdev/mtty.c
-> > +++ b/samples/vfio-mdev/mtty.c
-> > @@ -1180,7 +1180,10 @@ static long mtty_ioctl(struct mdev_device *mdev, unsigned int cmd,
-> >  
-> >  		memcpy(&mdev_state->dev_info, &info, sizeof(info));
-> >  
-> > -		return copy_to_user((void __user *)arg, &info, minsz);
-> > +		if (copy_to_user((void __user *)arg, &info, minsz))
-> > +			return -EFAULT;
-> > +
-> > +		return 0;
-> >  	}
-> >  	case VFIO_DEVICE_GET_REGION_INFO:
-> >  	{
-> > @@ -1201,7 +1204,10 @@ static long mtty_ioctl(struct mdev_device *mdev, unsigned int cmd,
-> >  		if (ret)
-> >  			return ret;
-> >  
-> > -		return copy_to_user((void __user *)arg, &info, minsz);
-> > +		if (copy_to_user((void __user *)arg, &info, minsz))
-> > +			return -EFAULT;
-> > +
-> > +		return 0;
-> >  	}
-> >  
-> >  	case VFIO_DEVICE_GET_IRQ_INFO:
-> > @@ -1224,7 +1230,10 @@ static long mtty_ioctl(struct mdev_device *mdev, unsigned int cmd,
-> >  		if (info.count = -1)
-> >  			return -EINVAL;
-> >  
-> > -		return copy_to_user((void __user *)arg, &info, minsz);
-> > +		if (copy_to_user((void __user *)arg, &info, minsz))
-> > +			return -EFAULT;
-> > +
-> > +		return 0;
-> >  	}
-> >  	case VFIO_DEVICE_SET_IRQS:
-> >  	{
-> >   
-> --
-> To unsubscribe from this list: send the line "unsubscribe kvm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index e0d2e6e..655407a 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -828,7 +828,7 @@ static int __init iort_add_smmu_platform_device(struct acpi_iort_node *node)
+ 
+ 	pdev = platform_device_alloc(ops->name, PLATFORM_DEVID_AUTO);
+ 	if (!pdev)
+-		return PTR_ERR(pdev);
++		return -ENOMEM;
+ 
+ 	count = ops->iommu_count_resources(node);
+ 
