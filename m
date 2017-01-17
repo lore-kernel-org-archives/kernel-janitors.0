@@ -1,69 +1,87 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 13:50:05 +0000
-Subject: [PATCH 3/3] AVR32: Return an error code only as a constant in sys_cacheflush()
-Message-Id: <fec80877-6556-876c-72ca-f6ccb85e0700@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:46:25 +0000
+Subject: Applied "spi: s3c64xx: potential oops on probe error" to the spi tree
+Message-Id: <E1cTYm1-0000XD-FR@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
-In-Reply-To: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
+References: <20170113074253.GA30524@mwanda>
+In-Reply-To: <20170113074253.GA30524@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>Andi Shyti <andi.shyti@samsung.com>Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 14:30:11 +0100
+The patch
 
-* Return an error code without storing it in an intermediate variable.
+   spi: s3c64xx: potential oops on probe error
 
-* Delete the local variable "ret" which became unnecessary with
-  this refactoring.
+has been applied to the spi tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 72bc7ae0633e2b580217d254114ac6650380b7f6 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jan 2017 10:42:53 +0300
+Subject: [PATCH] spi: s3c64xx: potential oops on probe error
+
+We accidentally mixed up freeing the rx and tx channels which would a
+leak and an oops.
+
+Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/avr32/mm/cache.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/avr32/mm/cache.c b/arch/avr32/mm/cache.c
-index 85d635cd7b28..c893e5944390 100644
---- a/arch/avr32/mm/cache.c
-+++ b/arch/avr32/mm/cache.c
-@@ -126,30 +126,19 @@ void flush_icache_page(struct vm_area_struct *vma, struct page *page)
- 
- asmlinkage int sys_cacheflush(int operation, void __user *addr, size_t len)
- {
--	int ret;
--
--	if (len > CACHEFLUSH_MAX_LEN) {
--		ret = -EPERM;
--		if (!capable(CAP_SYS_ADMIN))
--			goto out;
--	}
--
--	ret = -EFAULT;
-+	if (len > CACHEFLUSH_MAX_LEN && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
- 	if (!access_ok(VERIFY_WRITE, addr, len))
--		goto out;
-+		return -EFAULT;
- 
- 	switch (operation) {
- 	case CACHE_IFLUSH:
- 		flush_icache_range((unsigned long)addr,
- 				   (unsigned long)addr + len);
--		ret = 0;
--		break;
-+		return 0;
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 849ee82483e4..b8cd356d8d10 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		if (IS_ERR(sdd->tx_dma.ch)) {
+ 			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
+ 			ret = PTR_ERR(sdd->tx_dma.ch);
+-			goto err_release_tx_dma;
++			goto err_release_rx_dma;
+ 		}
  	}
--
--out:
--	return ret;
- }
  
- void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
+@@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+ 	if (!is_polling(sdd))
+-		dma_release_channel(sdd->rx_dma.ch);
+-err_release_tx_dma:
+-	if (!is_polling(sdd))
+ 		dma_release_channel(sdd->tx_dma.ch);
++err_release_rx_dma:
++	if (!is_polling(sdd))
++		dma_release_channel(sdd->rx_dma.ch);
+ err_disable_io_clk:
+ 	clk_disable_unprepare(sdd->ioclk);
+ err_disable_src_clk:
 -- 
 2.11.0
 
