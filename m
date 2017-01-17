@@ -1,29 +1,85 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 27 Jan 2017 00:40:36 +0000
-Subject: Re: powerpc/powernv/pci: Use kmalloc_array() in two functions
-Message-Id: <3v8g1d0rqgz9tk0@ozlabs.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:46:00 +0000
+Subject: Applied "spi/mpc52xx: Combine substrings for two messages" to the spi tree
+Message-Id: <E1cTYlc-0000NO-NT@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <817567b2-cdf6-7f7b-6041-9a026ea10a0f@users.sourceforge.net>
+References: <5c12cdac-8887-e5d0-ce80-ca4795354956@users.sourceforge.net>
+In-Reply-To: <5c12cdac-8887-e5d0-ce80-ca4795354956@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>, Paul Mackerras <paulus@samba.org>, Wei Yang <weiyang@linux.vnet.ibm.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
-On Wed, 2016-08-24 at 20:36:54 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Aug 2016 22:26:37 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus reuse the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The patch
 
-Applied to powerpc next, thanks.
+   spi/mpc52xx: Combine substrings for two messages
 
-https://git.kernel.org/powerpc/c/fb37e12896c1ba0407012fe8cdc0b0
+has been applied to the spi tree at
 
-cheers
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9c4f0440ba8f3ad57bebb46cfa29a18333fe4860 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 14:14:45 +0100
+Subject: [PATCH] spi/mpc52xx: Combine substrings for two messages
+
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: quoted string split across lines
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-mpc52xx.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
+index 8cc129efe7ba..e8b59ce4dc3a 100644
+--- a/drivers/spi/spi-mpc52xx.c
++++ b/drivers/spi/spi-mpc52xx.c
+@@ -449,8 +449,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
+ 			gpio_cs = of_get_gpio(op->dev.of_node, i);
+ 			if (gpio_cs < 0) {
+ 				dev_err(&op->dev,
+-					"could not parse the gpio field "
+-					"in oftree\n");
++					"could not parse the gpio field in oftree\n");
+ 				rc = -ENODEV;
+ 				goto err_gpio;
+ 			}
+@@ -458,8 +457,8 @@ static int mpc52xx_spi_probe(struct platform_device *op)
+ 			rc = gpio_request(gpio_cs, dev_name(&op->dev));
+ 			if (rc) {
+ 				dev_err(&op->dev,
+-					"can't request spi cs gpio #%d "
+-					"on gpio line %d\n", i, gpio_cs);
++					"can't request spi cs gpio #%d on gpio line %d\n",
++					i, gpio_cs);
+ 				goto err_gpio;
+ 			}
+ 
+-- 
+2.11.0
+
