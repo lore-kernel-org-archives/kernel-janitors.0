@@ -1,49 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 14:56:59 +0000
-Subject: [PATCH 01/46] selinux: Use kmalloc_array() in cond_init_bool_indexes()
-Message-Id: <68a423a9-2f89-55f9-fb4c-97dd4df4bb1d@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:45:36 +0000
+Subject: Applied "spi/topcliff-pch: Delete an error message for a failed memory allocation in pch_spi_set_tx(
+Message-Id: <E1cTYlE-0000G7-IW@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <b72c78dc-32b2-0f8f-8d3d-575ce4bff02f@users.sourceforge.net>
+In-Reply-To: <b72c78dc-32b2-0f8f-8d3d-575ce4bff02f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>linux-spi@vger.kernel.org
 
+The patch
+
+   spi/topcliff-pch: Delete an error message for a failed memory allocation in pch_spi_set_tx()
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 45e861a1c12cfd717b8e47103f1aaf2e34cc6688 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 10:48:28 +0100
+Date: Fri, 13 Jan 2017 17:00:08 +0100
+Subject: [PATCH] spi/topcliff-pch: Delete an error message for a failed memory
+ allocation in pch_spi_set_tx()
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Omit an extra message for a memory allocation failure in this function.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- security/selinux/ss/conditional.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/spi/spi-topcliff-pch.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-index 34afeadd9e73..fcfab2635c11 100644
---- a/security/selinux/ss/conditional.c
-+++ b/security/selinux/ss/conditional.c
-@@ -176,8 +176,9 @@ void cond_policydb_destroy(struct policydb *p)
- int cond_init_bool_indexes(struct policydb *p)
- {
- 	kfree(p->bool_val_to_struct);
--	p->bool_val_to_struct -		kmalloc(p->p_bools.nprim * sizeof(struct cond_bool_datum *), GFP_KERNEL);
-+	p->bool_val_to_struct = kmalloc_array(p->p_bools.nprim,
-+					      sizeof(*p->bool_val_to_struct),
-+					      GFP_KERNEL);
- 	if (!p->bool_val_to_struct)
- 		return -ENOMEM;
- 	return 0;
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 2b9405819075..97d137591b18 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -591,7 +591,6 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
+ 
+ 	if (!data->pkt_rx_buff) {
+ 		/* flush queue and set status of all transfers to -ENOMEM */
+-		dev_err(&data->master->dev, "%s :kzalloc failed\n", __func__);
+ 		list_for_each_entry_safe(pmsg, tmp, data->queue.next, queue) {
+ 			pmsg->status = -ENOMEM;
+ 
 -- 
 2.11.0
 
