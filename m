@@ -1,49 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:28:55 +0000
-Subject: [PATCH 10/11] KVM: PPC: e500: Use kcalloc() in e500_mmu_host_init()
-Message-Id: <f532b32f-49b2-d72d-207a-f05bbaa8eb39@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 17 Jan 2017 18:45:57 +0000
+Subject: Applied "spi/ppc4xx: Combine substrings for a message in spi_ppc4xx_of_probe()" to the spi tree
+Message-Id: <E1cTYlZ-0000MR-P0@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
-In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+References: <e5ef99cc-fa83-8001-aeba-5d2f7852bd40@users.sourceforge.net>
+In-Reply-To: <e5ef99cc-fa83-8001-aeba-5d2f7852bd40@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
+The patch
+
+   spi/ppc4xx: Combine substrings for a message in spi_ppc4xx_of_probe()
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ffcaef5ac27b62b480b94036615b3ae4f1b725fe Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 16:30:18 +0100
+Date: Fri, 13 Jan 2017 14:43:06 +0100
+Subject: [PATCH] spi/ppc4xx: Combine substrings for a message in
+ spi_ppc4xx_of_probe()
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+WARNING: quoted string split across lines
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/kvm/e500_mmu_host.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/spi/spi-ppc4xx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
-index b0333cc737dd..a1af2f445988 100644
---- a/arch/powerpc/kvm/e500_mmu_host.c
-+++ b/arch/powerpc/kvm/e500_mmu_host.c
-@@ -797,9 +797,8 @@ int e500_mmu_host_init(struct kvmppc_vcpu_e500 *vcpu_e500)
- 	host_tlb_params[0].sets  		host_tlb_params[0].entries / host_tlb_params[0].ways;
- 	host_tlb_params[1].sets = 1;
--
--	vcpu_e500->h2g_tlb1_rmap = kzalloc(sizeof(unsigned int) *
--					   host_tlb_params[1].entries,
-+	vcpu_e500->h2g_tlb1_rmap = kcalloc(host_tlb_params[1].entries,
-+					   sizeof(*vcpu_e500->h2g_tlb1_rmap),
- 					   GFP_KERNEL);
- 	if (!vcpu_e500->h2g_tlb1_rmap)
- 		return -EINVAL;
+diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
+index dd3d0a218d8b..b2df63c66494 100644
+--- a/drivers/spi/spi-ppc4xx.c
++++ b/drivers/spi/spi-ppc4xx.c
+@@ -428,8 +428,9 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
+ 				/* Real CS - set the initial state. */
+ 				ret = gpio_request(gpio, np->name);
+ 				if (ret < 0) {
+-					dev_err(dev, "can't request gpio "
+-							"#%d: %d\n", i, ret);
++					dev_err(dev,
++						"can't request gpio #%d: %d\n",
++						i, ret);
+ 					goto free_gpios;
+ 				}
+ 
 -- 
 2.11.0
 
