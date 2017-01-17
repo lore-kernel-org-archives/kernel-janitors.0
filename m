@@ -1,38 +1,71 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 23 Jan 2017 21:16:56 +0000
-Subject: [PATCH] [media] exynos4-is: Add missing 'of_node_put'
-Message-Id: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Jan 2017 22:57:03 +0000
+Subject: [bug report] net/sched: cls_flower: Set the filter Hardware device for all use-cases
+Message-Id: <20170117225703.GA21380@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-It is likely that a "of_node_put(ep)" is missing here.
-There is one in the previous error handling code, and one a few lines
-below in the normal case as well.
+Hello Hadar Hen Zion,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The patch a6e169312971: "net/sched: cls_flower: Set the filter
+Hardware device for all use-cases" from Dec 4, 2016, leads to the
+following static checker warning:
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index e3a8709138fa..da5b76c1df98 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -402,8 +402,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 		return ret;
- 	}
- 
--	if (WARN_ON(endpoint.base.port = 0) || index >= FIMC_MAX_SENSORS)
-+	if (WARN_ON(endpoint.base.port = 0) || index >= FIMC_MAX_SENSORS) {
-+		of_node_put(ep);
- 		return -EINVAL;
-+	}
- 
- 	pd->mux_id = (endpoint.base.port - 1) & 0x1;
- 
--- 
-2.9.3
+	net/sched/cls_flower.c:272 fl_hw_replace_filter()
+	error: we previously assumed 'dev' could be null (see line 256)
 
+net/sched/cls_flower.c
+   240  static int fl_hw_replace_filter(struct tcf_proto *tp,
+   241                                  struct flow_dissector *dissector,
+   242                                  struct fl_flow_key *mask,
+   243                                  struct cls_fl_filter *f)
+   244  {
+   245          struct net_device *dev = tp->q->dev_queue->dev;
+   246          struct tc_cls_flower_offload offload = {0};
+   247          struct tc_to_netdev *tc = &f->tc;
+   248          int err;
+   249  
+   250          if (!tc_can_offload(dev, tp)) {
+   251                  if (tcf_exts_get_dev(dev, &f->exts, &f->hw_dev) ||
+   252                      (f->hw_dev && !tc_can_offload(f->hw_dev, tp))) {
+                             ^^^^^^^^^
+Let's say this is NULL.
+
+   253                          f->hw_dev = dev;
+   254                          return tc_skip_sw(f->flags) ? -EINVAL : 0;
+   255                  }
+   256                  dev = f->hw_dev;
+
+That means "dev" is NULL.
+
+   257                  tc->egress_dev = true;
+   258          } else {
+   259                  f->hw_dev = dev;
+   260          }
+   261  
+   262          offload.command = TC_CLSFLOWER_REPLACE;
+   263          offload.cookie = (unsigned long)f;
+   264          offload.dissector = dissector;
+   265          offload.mask = mask;
+   266          offload.key = &f->mkey;
+   267          offload.exts = &f->exts;
+   268  
+   269          tc->type = TC_SETUP_CLSFLOWER;
+   270          tc->cls_flower = &offload;
+   271  
+   272          err = dev->netdev_ops->ndo_setup_tc(dev, tp->q->handle, tp->protocol,
+
+So we oops here.
+
+   273                                              tc);
+   274  
+   275          if (tc_skip_sw(f->flags))
+   276                  return err;
+   277          return 0;
+   278  }
+
+regards,
+dan carpenter
