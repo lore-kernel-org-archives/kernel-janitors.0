@@ -1,56 +1,34 @@
-From: Andi Shyti <andi.shyti@samsung.com>
-Date: Fri, 13 Jan 2017 11:12:30 +0000
-Subject: Re: [patch] spi: s3c64xx: potential oops on probe error
-Message-Id: <20170113111230.ybhmch7fcnng4oml@gangnam.samsung>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Jan 2017 18:48:26 +0000
+Subject: Re: spi/ppc4xx: Adjust checks for null pointers in two functions
+Message-Id: <20ac3577-3b0e-e7d3-d5de-8e511a6e9fd2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170113074318epcas5p29fb2fd41d46553b64a4423f37663fd44@epcas5p2.samsung.com>
- <20170113074253.GA30524@mwanda>
-In-Reply-To: <20170113074253.GA30524@mwanda>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+ <d9bd24b0-d4d5-233c-756d-71aaed63c5ef@users.sourceforge.net>
+ <20170117183411.7isqrvu3o55ydjcb@sirena.org.uk>
+In-Reply-To: <20170117183411.7isqrvu3o55ydjcb@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 13, 2017 at 10:42:53AM +0300, Dan Carpenter wrote:
-> We accidentally mixed up freeing the rx and tx channels which would a
-> leak and an oops.
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Fri, 13 Jan 2017 14:56:10 +0100
+>> MIME-Version: 1.0
+>> Content-Type: text/plain; charset=UTF-8
+>> Content-Transfer-Encoding: 8bit
 > 
-> Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This is also corrupted.
 
-Thanks, Dan.
+Would you like to explain this information a bit more?
 
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
 
-Andi
+The published patch looks reasonable in principle by other interfaces,
+doesn't it?
+https://lkml.org/lkml/2017/1/13/609
+https://patchwork.kernel.org/patch/9516059/
+https://lkml.kernel.org/r/<d9bd24b0-d4d5-233c-756d-71aaed63c5ef@users.sourceforge.net>
 
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 849ee82..b8cd356 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  		if (IS_ERR(sdd->tx_dma.ch)) {
->  			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
->  			ret = PTR_ERR(sdd->tx_dma.ch);
-> -			goto err_release_tx_dma;
-> +			goto err_release_rx_dma;
->  		}
->  	}
->  
-> @@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	pm_runtime_set_suspended(&pdev->dev);
->  
->  	if (!is_polling(sdd))
-> -		dma_release_channel(sdd->rx_dma.ch);
-> -err_release_tx_dma:
-> -	if (!is_polling(sdd))
->  		dma_release_channel(sdd->tx_dma.ch);
-> +err_release_rx_dma:
-> +	if (!is_polling(sdd))
-> +		dma_release_channel(sdd->rx_dma.ch);
->  err_disable_io_clk:
->  	clk_disable_unprepare(sdd->ioclk);
->  err_disable_src_clk:
-> 
+Regards,
+Markus
