@@ -1,33 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 10:19:23 +0000
-Subject: [PATCH 0/7] ALSA: Fine-tuning for several function implementations
-Message-Id: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 13:48:12 +0000
+Subject: [PATCH 2/3] AVR32: Delete an unnecessary variable initialisation in setup_rt_frame()
+Message-Id: <e5f590b7-b7bf-740b-62b6-8fc7d7def05c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
+In-Reply-To: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 11:02:34 +0100
+Date: Wed, 18 Jan 2017 14:03:10 +0100
 
-Some update suggestions were taken into account
-from static source code analysis.
+The local variable "err" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (7):
-  seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
-  seq: Delete unnecessary checks in snd_seq_ioctl_get_subscription()
-  seq: Delete unnecessary checks in snd_seq_ioctl_unsubscribe_port()
-  seq: Delete unnecessary checks in snd_seq_ioctl_subscribe_port()
-  seq: Adjust 16 function calls together with a variable assignment
-  dmasound_core: Move two assignments for the variable "ret" in state_open()
-  dmasound_core: Adjust six function calls together with a variable assignment
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/avr32/kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- sound/core/seq/seq_clientmgr.c     | 163 ++++++++++++++++++++-----------------
- sound/oss/dmasound/dmasound_core.c |  33 +++++---
- 2 files changed, 109 insertions(+), 87 deletions(-)
-
+diff --git a/arch/avr32/kernel/signal.c b/arch/avr32/kernel/signal.c
+index 13c31a7b9ae4..0c46d3618694 100644
+--- a/arch/avr32/kernel/signal.c
++++ b/arch/avr32/kernel/signal.c
+@@ -138,7 +138,7 @@ static int
+ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
+ {
+ 	struct rt_sigframe __user *frame;
+-	int err = 0;
++	int err;
+ 
+ 	frame = get_sigframe(ksig, regs, sizeof(*frame));
+ 	if (!access_ok(VERIFY_WRITE, frame, sizeof (*frame)))
 -- 
 2.11.0
 
