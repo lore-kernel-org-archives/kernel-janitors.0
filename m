@@ -1,64 +1,71 @@
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date: Fri, 20 Jan 2017 00:10:35 +0000
-Subject: Re: [PATCH] powerpc/rtas_flash: Move an assignment for the variable "rc" in manage_flash_write()
-Message-Id: <8b00c266-f043-6f15-6b26-1927ea073da9@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 21:57:30 +0000
+Subject: [PATCH 2/5] um: port: Delete three error messages for a failed memory allocation
+Message-Id: <651ecf90-9c68-aec1-58d7-d11e7671ed4c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <026724c5-0907-d342-1fb3-f7af0bd1c765@users.sourceforge.net>
-In-Reply-To: <026724c5-0907-d342-1fb3-f7af0bd1c765@users.sourceforge.net>
+References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On 01/19/2017 12:33 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 19 Jan 2017 21:20:09 +0100
-> 
-> A local variable was set to an error code before a concrete error situation
-> was detected. Thus move the corresponding assignment into an if branch
-> to indicate a software failure there.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/kernel/rtas_flash.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/rtas_flash.c b/arch/powerpc/kernel/rtas_flash.c
-> index db2b482af658..663904beff67 100644
-> --- a/arch/powerpc/kernel/rtas_flash.c
-> +++ b/arch/powerpc/kernel/rtas_flash.c
-> @@ -419,9 +419,10 @@ static ssize_t manage_flash_write(struct file *file, const char __user *buf,
->  	op = -1;
->  	if (buf) {
->  		if (count > 9) count = 9;
-> -		rc = -EFAULT;
-> -		if (copy_from_user (stkbuf, buf, count))
-> +		if (copy_from_user(stkbuf, buf, count)) {
-> +			rc = -EFAULT;
->  			goto error;
-> +		}
->  		if (strncmp(stkbuf, reject_str, strlen(reject_str)) = 0) 
->  			op = RTAS_REJECT_TMP_IMG;
->  		else if (strncmp(stkbuf, commit_str, strlen(commit_str)) = 0) 
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 22:00:14 +0100
 
-Taking a closer look at the function in question I see that branching to
-the "error" tag on a goto results in the rtas_manage_flash_mutex being
-unlocked and the value of rc being returned to the caller.
+The script "checkpatch.pl" pointed information out like the following.
 
-error:
-        mutex_unlock(&rtas_manage_flash_mutex);
-        return rc;
-}
+WARNING: Possible unnecessary 'out of memory' message
 
-There are only 2 places in this function that branch to the "error" tag,
-and I wonder if it would be cleaner just to get rid of the "rc" variable
-altogether and instead unlock the mutex and return the proper -EBADTHING
-value at those two branch sites?
+Thus fix the affected source code places.
 
--Tyrel
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/um/drivers/port_kern.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
+diff --git a/arch/um/drivers/port_kern.c b/arch/um/drivers/port_kern.c
+index b2bbda21c5f3..c96741e920f5 100644
+--- a/arch/um/drivers/port_kern.c
++++ b/arch/um/drivers/port_kern.c
+@@ -87,11 +87,8 @@ static int port_accept(struct port_list *port)
+ 	}
+ 
+ 	conn = kmalloc(sizeof(*conn), GFP_ATOMIC);
+-	if (conn = NULL) {
+-		printk(KERN_ERR "port_accept : failed to allocate "
+-		       "connection\n");
++	if (!conn)
+ 		goto out_close;
+-	}
+ 	*conn = ((struct connection)
+ 		{ .list 	= LIST_HEAD_INIT(conn->list),
+ 		  .fd 		= fd,
+@@ -170,10 +167,8 @@ void *port_data(int port_num)
+ 			goto found;
+ 	}
+ 	port = kmalloc(sizeof(struct port_list), GFP_KERNEL);
+-	if (port = NULL) {
+-		printk(KERN_ERR "Allocation of port list failed\n");
++	if (!port)
+ 		goto out;
+-	}
+ 
+ 	fd = port_listen_fd(port_num);
+ 	if (fd < 0) {
+@@ -202,10 +197,8 @@ void *port_data(int port_num)
+ 
+  found:
+ 	dev = kmalloc(sizeof(struct port_dev), GFP_KERNEL);
+-	if (dev = NULL) {
+-		printk(KERN_ERR "Allocation of port device entry failed\n");
++	if (!dev)
+ 		goto out;
+-	}
+ 
+ 	*dev = ((struct port_dev) { .port  		= port,
+ 				    .helper_pid  	= -1,
+-- 
+2.11.0
 
