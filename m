@@ -1,41 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:20:50 +0000
-Subject: [PATCH 02/11] KVM: PPC: Book3S HV: Improve a size determination in kvmppc_alloc_hpt()
-Message-Id: <755544bd-b29c-f240-d526-8a8aec6d620a@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 11:45:13 +0000
+Subject: [PATCH 1/4] alpha: Return an error code only as a constant in osf_sigstack()
+Message-Id: <95ac67c7-6a80-6d58-a8c2-43701e76ecdc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
-In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+References: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
+In-Reply-To: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linux-alpha@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Richard Cochran <richardcochran@gmail.com>, Richard Henderson <rth@twiddle.net>, Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 10:00:13 +0100
+Date: Wed, 18 Jan 2017 10:40:51 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* Return an error code without storing it in an intermediate variable.
+
+* Delete the local variable "error" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/book3s_64_mmu_hv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/alpha/kernel/osf_sys.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-index dc34729e4ad0..4655f27e0518 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -91,7 +91,7 @@ long kvmppc_alloc_hpt(struct kvm *kvm, u32 *htab_orderp)
- 	atomic64_set(&kvm->arch.mmio_update, 0);
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index 56e427c7aa3c..41174156a676 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -691,20 +691,17 @@ SYSCALL_DEFINE2(osf_sigstack, struct sigstack __user *, uss,
+ 	unsigned long usp = rdusp();
+ 	unsigned long oss_sp = current->sas_ss_sp + current->sas_ss_size;
+ 	unsigned long oss_os = on_sig_stack(usp);
+-	int error;
  
- 	/* Allocate reverse map array */
--	rev = vmalloc(sizeof(struct revmap_entry) * kvm->arch.hpt_npte);
-+	rev = vmalloc(sizeof(*rev) * kvm->arch.hpt_npte);
- 	if (!rev) {
- 		pr_err("kvmppc_alloc_hpt: Couldn't alloc reverse map array\n");
- 		goto out_freehpt;
+ 	if (uss) {
+ 		void __user *ss_sp;
+ 
+-		error = -EFAULT;
+ 		if (get_user(ss_sp, &uss->ss_sp))
+-			goto out;
++			return -EFAULT;
+ 
+ 		/* If the current stack was set with sigaltstack, don't
+ 		   swap stacks while we are on it.  */
+-		error = -EPERM;
+ 		if (current->sas_ss_sp && on_sig_stack(usp))
+-			goto out;
++			return -EPERM;
+ 
+ 		/* Since we don't know the extent of the stack, and we don't
+ 		   track onstack-ness, but rather calculate it, we must 
+@@ -714,16 +711,12 @@ SYSCALL_DEFINE2(osf_sigstack, struct sigstack __user *, uss,
+ 	}
+ 
+ 	if (uoss) {
+-		error = -EFAULT;
+ 		if (! access_ok(VERIFY_WRITE, uoss, sizeof(*uoss))
+ 		    || __put_user(oss_sp, &uoss->ss_sp)
+ 		    || __put_user(oss_os, &uoss->ss_onstack))
+-			goto out;
++			return -EFAULT;
+ 	}
+-
+-	error = 0;
+- out:
+-	return error;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE3(osf_sysinfo, int, command, char __user *, buf, long, count)
 -- 
 2.11.0
 
