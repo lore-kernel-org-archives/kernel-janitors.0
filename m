@@ -1,44 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Jan 2017 20:04:54 +0000
-Subject: [PATCH 9/9] memstick: Delete an unnecessary check in msb_update_block()
-Message-Id: <44ade3ec-9c63-d08b-4544-b0a48ac13594@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 21:59:23 +0000
+Subject: [PATCH 4/5] um: ubd: Move two assignments for the variable "err" in ubd_remove()
+Message-Id: <be4864d2-53be-f8b9-52a0-17a3e0837910@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
-In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Jan 2017 20:21:02 +0100
+Date: Wed, 18 Jan 2017 22:23:18 +0100
 
-Further exception handling will only be performed after an error code
-was set. Thus remove a redundant check for a local variable at the end.
+A local variable was set to an error code in two cases before a concrete
+error situation was detected. Thus move the corresponding assignments into
+if branches to indicate a software failure there.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/memstick/core/ms_block.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/um/drivers/ubd_kern.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index 861f6a76136d..013f317d566b 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -1154,10 +1154,8 @@ static int msb_update_block(struct msb_data *msb, u16 lba,
- 		return 0;
- 	}
- out:
--	if (error) {
--		pr_err("block update error after %d tries,  switching to r/o mode", try);
--		msb->read_only = true;
--	}
-+	pr_err("block update error after %d tries, switching to r/o mode", try);
-+	msb->read_only = true;
- 	return error;
- }
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index 85410279beab..6d686f735538 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -1049,19 +1049,21 @@ static int ubd_remove(int n, char **error_out)
+ {
+ 	struct gendisk *disk = ubd_gendisk[n];
+ 	struct ubd *ubd_dev;
+-	int err = -ENODEV;
++	int err;
  
+ 	mutex_lock(&ubd_lock);
+ 
+ 	ubd_dev = &ubd_devs[n];
+-
+-	if(ubd_dev->file = NULL)
++	if (!ubd_dev->file) {
++		err = -ENODEV;
+ 		goto out;
++	}
+ 
+ 	/* you cannot remove a open disk */
+-	err = -EBUSY;
+-	if(ubd_dev->count > 0)
++	if (ubd_dev->count > 0) {
++		err = -EBUSY;
+ 		goto out;
++	}
+ 
+ 	ubd_gendisk[n] = NULL;
+ 	if(disk != NULL){
 -- 
 2.11.0
 
