@@ -1,45 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Jan 2017 05:04:45 +0000
-Subject: [patch] orangefs: silence harmless integer overflow warning
-Message-Id: <20170121050445.GG15269@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 16:47:33 +0000
+Subject: [PATCH 1/3] m68k: Return directly after a failed capable() in sys_cacheflush()
+Message-Id: <71513091-bc01-ce70-893f-3f376062d833@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net>
+In-Reply-To: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-m68k@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The issue here is that in orangefs_bufmap_alloc() we do:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 16:30:36 +0100
 
-	bufmap->buffer_index_array 		kzalloc(DIV_ROUND_UP(bufmap->desc_count, BITS_PER_LONG), GFP_KERNEL);
+Return directly after a call of the function "capable" failed
+at the beginning.
 
-If we choose a bufmap->desc_count like -31 then it means the
-DIV_ROUND_UP ends up having an integer overflow.   The result is that
-kzalloc() returns the ZERO_SIZE_PTR and there is a static checker
-warning.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/m68k/kernel/sys_m68k.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-But this bug is harmless because on the next lines we use ->desc_count
-to do a kcalloc().  That has integer overflow checking built in so the
-kcalloc() fails and we return an error code.
-
-Anyway, it doesn't make sense to talk about negative sizes and blocking
-them silences the static checker warning.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-index 75375e9..6333cbb 100644
---- a/fs/orangefs/orangefs-bufmap.c
-+++ b/fs/orangefs/orangefs-bufmap.c
-@@ -344,6 +344,11 @@ int orangefs_bufmap_initialize(struct ORANGEFS_dev_map_desc *user_desc)
- 		     user_desc->size,
- 		     user_desc->count);
+diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
+index 9aa01adb407f..62bfeb3716a7 100644
+--- a/arch/m68k/kernel/sys_m68k.c
++++ b/arch/m68k/kernel/sys_m68k.c
+@@ -384,9 +384,8 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
  
-+	if (user_desc->total_size < 0 ||
-+	    user_desc->size < 0 ||
-+	    user_desc->count < 0)
-+		goto out;
-+
- 	/*
- 	 * sanity check alignment and size of buffer that caller wants to
- 	 * work with
+ 	if (scope = FLUSH_SCOPE_ALL) {
+ 		/* Only the superuser may explicitly flush the whole cache. */
+-		ret = -EPERM;
+ 		if (!capable(CAP_SYS_ADMIN))
+-			goto out;
++			return -EPERM;
+ 	} else {
+ 		struct vm_area_struct *vma;
+ 
+-- 
+2.11.0
+
