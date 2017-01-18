@@ -1,45 +1,40 @@
-From: Hanjun Guo <hanjun.guo@linaro.org>
-Date: Tue, 24 Jan 2017 01:26:37 +0000
-Subject: Re: [PATCH] ACPI/IORT: Fix error handling
-Message-Id: <09887257-491f-8f9c-58bb-ae6a361f856f@linaro.org>
+From: Shiraz Saleem <shiraz.saleem@intel.com>
+Date: Wed, 18 Jan 2017 17:48:29 +0000
+Subject: [PATCH] i40iw: Set maj_err and min_err in i40iw_sc_cqp_create
+Message-Id: <1484761709-6072-1-git-send-email-shiraz.saleem@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170123205008.10065-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170123205008.10065-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lorenzo.pieralisi@arm.com, sudeep.holla@arm.com
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-Hi Christophe,
+Set maj_err and min_err in i40iw_sc_cqp_create so that it
+returns correct values for all return cases. This also
+addresses an uninitialized variable warning for maj_err and
+min_err in i40iw_create_cqp.
 
-On 2017/1/24 4:50, Christophe JAILLET wrote:
-> If 'platform_device_alloc()' returns NULL, the current code returns
-> 0, which means success. Return -ENOMEM instead.
->
-> Fixes: 846f0e9e74a0 ("ACPI/IORT: Add support for ARM SMMU platform devices creation")
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/acpi/arm64/iort.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index e0d2e6e6e40c..655407ad112e 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -828,7 +828,7 @@ static int __init iort_add_smmu_platform_device(struct acpi_iort_node *node)
->
->  	pdev = platform_device_alloc(ops->name, PLATFORM_DEVID_AUTO);
->  	if (!pdev)
-> -		return PTR_ERR(pdev);
-> +		return -ENOMEM;
->
->  	count = ops->iommu_count_resources(node);
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+---
+ drivers/infiniband/hw/i40iw/i40iw_ctrl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks for the fix, but Dan beats you to this fix [1] :)
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
+index 2c4b4d0..47a2529 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
+@@ -315,6 +315,9 @@ static enum i40iw_status_code i40iw_sc_cqp_create(struct i40iw_sc_cqp *cqp,
+ 	u32 cnt = 0, p1, p2, val = 0, err_code;
+ 	enum i40iw_status_code ret_code;
+ 
++	*maj_err = 0;
++	*min_err = 0;
++
+ 	ret_code = i40iw_allocate_dma_mem(cqp->dev->hw,
+ 					  &cqp->sdbuf,
+ 					  128,
+-- 
+2.8.0
 
-[1]: http://www.spinics.net/lists/linux-acpi/msg71383.html
-
-Thanks
-Hanjun
