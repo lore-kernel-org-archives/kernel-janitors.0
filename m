@@ -1,61 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 21:59:23 +0000
-Subject: [PATCH 4/5] um: ubd: Move two assignments for the variable "err" in ubd_remove()
-Message-Id: <be4864d2-53be-f8b9-52a0-17a3e0837910@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 18:56:48 +0000
+Subject: [PATCH 3/3] MIPS-syscall: Return directly in mips_mmap()
+Message-Id: <65e23f25-f12e-9b94-9038-fd901dae92db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
-In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+References: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
+In-Reply-To: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
+To: linux-mips@linux-mips.org, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 22:23:18 +0100
+Date: Wed, 18 Jan 2017 19:30:47 +0100
 
-A local variable was set to an error code in two cases before a concrete
-error situation was detected. Thus move the corresponding assignments into
-if branches to indicate a software failure there.
+* Return an error code without storing it in an intermediate variable.
 
-This issue was detected by using the Coccinelle software.
+* Delete the local variable "result" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/um/drivers/ubd_kern.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/mips/kernel/syscall.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 85410279beab..6d686f735538 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -1049,19 +1049,21 @@ static int ubd_remove(int n, char **error_out)
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index 53a7ef9a8f32..e4e99888799d 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -60,16 +60,9 @@ SYSCALL_DEFINE6(mips_mmap, unsigned long, addr, unsigned long, len,
+ 	unsigned long, prot, unsigned long, flags, unsigned long,
+ 	fd, off_t, offset)
  {
- 	struct gendisk *disk = ubd_gendisk[n];
- 	struct ubd *ubd_dev;
--	int err = -ENODEV;
-+	int err;
- 
- 	mutex_lock(&ubd_lock);
- 
- 	ubd_dev = &ubd_devs[n];
+-	unsigned long result;
 -
--	if(ubd_dev->file = NULL)
-+	if (!ubd_dev->file) {
-+		err = -ENODEV;
- 		goto out;
-+	}
+-	result = -EINVAL;
+ 	if (offset & ~PAGE_MASK)
+-		goto out;
+-
+-	result = sys_mmap_pgoff(addr, len, prot, flags, fd, offset >> PAGE_SHIFT);
+-
+-out:
+-	return result;
++		return -EINVAL;
++	return sys_mmap_pgoff(addr, len, prot, flags, fd, offset >> PAGE_SHIFT);
+ }
  
- 	/* you cannot remove a open disk */
--	err = -EBUSY;
--	if(ubd_dev->count > 0)
-+	if (ubd_dev->count > 0) {
-+		err = -EBUSY;
- 		goto out;
-+	}
- 
- 	ubd_gendisk[n] = NULL;
- 	if(disk != NULL){
+ SYSCALL_DEFINE6(mips_mmap2, unsigned long, addr, unsigned long, len,
 -- 
 2.11.0
 
