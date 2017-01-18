@@ -1,75 +1,186 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Dec 2016 17:00:52 +0000
-Subject: [PATCH 1/2] ARM: mmp: Check return values from ioremap() and kstrdup() in sram_probe()
-Message-Id: <e593f626-3bbd-177a-0774-33536064965e@users.sourceforge.net>
+From: Jinbum Park <jinb.park7@gmail.com>
+Date: Wed, 18 Jan 2017 13:53:10 +0000
+Subject: [PATCH] ARM: mm: add testcases for RODATA
+Message-Id: <20170118135310.GA4733@pjb1027-Latitude-E5410>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b687577b-e664-6aa1-a85c-438e96216171@users.sourceforge.net>
-In-Reply-To: <b687577b-e664-6aa1-a85c-438e96216171@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux@armlinux.org.uk
+Cc: will.deacon@arm.com, mingo@kernel.org, andy.gross@linaro.org, keescook@chromium.org, vladimir.murzin@arm.com, f.fainelli@gmail.com, pawel.moll@arm.com, jonathan.austin@arm.com, mark.rutland@arm.com, ard.biesheuvel@linaro.org, labbott@redhat.com, arjan@linux.intel.com, paul.gortmaker@windriver.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Dec 2016 17:26:32 +0100
+This patch adds testcases for the CONFIG_DEBUG_RODATA option.
+It's similar to x86's testcases.
+It tests read-only mapped data and page-size aligned rodata section.
 
-Two return values were not checked before their further use so far.
-This issue was detected by using the Coccinelle software.
-
-* Add a bit of exception handling.
-
-* Adjust tump targets.
-
-Fixes: 3c7241bd36e2a618fe20c91f6c69cc20f2d981f2 ("ARM: mmp: add sram allocator")
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
 ---
- arch/arm/mach-mmp/sram.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ arch/arm/Kconfig.debug            |  5 +++
+ arch/arm/include/asm/cacheflush.h | 10 +++++
+ arch/arm/mm/Makefile              |  1 +
+ arch/arm/mm/init.c                |  6 +++
+ arch/arm/mm/test_rodata.c         | 80 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 102 insertions(+)
+ create mode 100644 arch/arm/mm/test_rodata.c
 
-diff --git a/arch/arm/mach-mmp/sram.c b/arch/arm/mach-mmp/sram.c
-index bf5e64906e65..0fbfc2a42ab3 100644
---- a/arch/arm/mach-mmp/sram.c
-+++ b/arch/arm/mach-mmp/sram.c
-@@ -88,14 +88,24 @@ static int sram_probe(struct platform_device *pdev)
- 	info->sram_phys   = (phys_addr_t)res->start;
- 	info->sram_size   = resource_size(res);
- 	info->sram_virt   = ioremap(info->sram_phys, info->sram_size);
-+	if (!info->sram_virt) {
-+		ret = -ENOMEM;
-+		goto out;
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index d83f7c3..511e5e1 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1749,6 +1749,11 @@ config DEBUG_SET_MODULE_RONX
+ 	  against certain classes of kernel exploits.
+ 	  If in doubt, say "N".
+ 
++config DEBUG_RODATA_TEST
++	bool "Testcase for the marking rodata read-only"
++	---help---
++	  This option enables a testcase for the setting rodata read-only.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+ 
+ endmenu
+diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
+index bdd283b..741e2e8 100644
+--- a/arch/arm/include/asm/cacheflush.h
++++ b/arch/arm/include/asm/cacheflush.h
+@@ -498,6 +498,16 @@ static inline void set_kernel_text_rw(void) { }
+ static inline void set_kernel_text_ro(void) { }
+ #endif
+ 
++#ifdef CONFIG_DEBUG_RODATA_TEST
++extern const int rodata_test_data;
++int rodata_test(void);
++#else
++static inline int rodata_test(void)
++{
++	return 0;
++}
++#endif
++
+ void flush_uprobe_xol_access(struct page *page, unsigned long uaddr,
+ 			     void *kaddr, unsigned long len);
+ 
+diff --git a/arch/arm/mm/Makefile b/arch/arm/mm/Makefile
+index b3dea80..dbb76ff 100644
+--- a/arch/arm/mm/Makefile
++++ b/arch/arm/mm/Makefile
+@@ -15,6 +15,7 @@ endif
+ obj-$(CONFIG_ARM_PTDUMP)	+= dump.o
+ obj-$(CONFIG_MODULES)		+= proc-syms.o
+ obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
++obj-$(CONFIG_DEBUG_RODATA_TEST)	+= test_rodata.o
+ 
+ obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
+ obj-$(CONFIG_HIGHMEM)		+= highmem.o
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 4127f57..3c15f3b 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -716,6 +716,7 @@ void fix_kernmem_perms(void)
+ int __mark_rodata_ro(void *unused)
+ {
+ 	update_sections_early(ro_perms, ARRAY_SIZE(ro_perms));
++	rodata_test();
+ 	return 0;
+ }
+ 
+@@ -740,6 +741,11 @@ void set_kernel_text_ro(void)
+ static inline void fix_kernmem_perms(void) { }
+ #endif /* CONFIG_DEBUG_RODATA */
+ 
++#ifdef CONFIG_DEBUG_RODATA_TEST
++const int rodata_test_data = 0xC3;
++EXPORT_SYMBOL_GPL(rodata_test_data);
++#endif
++
+ void free_tcmmem(void)
+ {
+ #ifdef CONFIG_HAVE_TCM
+diff --git a/arch/arm/mm/test_rodata.c b/arch/arm/mm/test_rodata.c
+new file mode 100644
+index 0000000..133d092
+--- /dev/null
++++ b/arch/arm/mm/test_rodata.c
+@@ -0,0 +1,79 @@
++/*
++ * test_rodata.c: functional test for mark_rodata_ro function
++ *
++ * (C) Copyright 2017 Jinbum Park <jinb.park7@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++#include <asm/cacheflush.h>
++#include <asm/sections.h>
++
++int rodata_test(void)
++{
++	unsigned long result;
++	unsigned long start, end;
++
++	/* test 1: read the value */
++	/* If this test fails, some previous testrun has clobbered the state */
++
++	if (!rodata_test_data) {
++		pr_err("rodata_test: test 1 fails (start data)\n");
++		return -ENODEV;
 +	}
 +
- 	info->pool_name	  = kstrdup(pdata->pool_name, GFP_KERNEL);
-+	if (!info->pool_name) {
-+		ret = -ENOMEM;
-+		goto unmap_io;
++	/* test 2: write to the variable; this should fault */
++	/*
++	 * If this test fails, we managed to overwrite the data
++	 *
++	 * This is written in assembly to be able to catch the
++	 * exception that is supposed to happen in the correct
++	 * case
++	*/
++
++	result = 1;
++	asm volatile(
++		"0:	str %[zero], [%[rodata_test]]\n"
++		"	mov %[rslt], %[zero]\n"
++		"1:\n"
++		".pushsection .text.fixup,\"ax\"\n"
++		".align 2\n"
++		"2:\n"
++		"b 1b\n"
++		".popsection\n"
++		".pushsection __ex_table,\"a\"\n"
++		".align 3\n"
++		".long 0b, 2b\n"
++		".popsection\n"
++		: [rslt] "=r" (result)
++		: [zero] "r" (0UL), [rodata_test] "r" (&rodata_test_data)
++	);
++
++	if (!result) {
++		pr_err("rodata_test: test data was not read only\n");
++		return -ENODEV;
 +	}
 +
- 	info->granularity = pdata->granularity;
- 
- 	info->gpool = gen_pool_create(ilog2(info->granularity), -1);
- 	if (!info->gpool) {
- 		dev_err(&pdev->dev, "create pool failed\n");
- 		ret = -ENOMEM;
--		goto create_pool_err;
-+		goto free_name;
- 	}
- 
- 	ret = gen_pool_add_virt(info->gpool, (unsigned long)info->sram_virt,
-@@ -117,9 +127,10 @@ static int sram_probe(struct platform_device *pdev)
- 
- add_chunk_err:
- 	gen_pool_destroy(info->gpool);
--create_pool_err:
--	iounmap(info->sram_virt);
-+free_name:
- 	kfree(info->pool_name);
-+unmap_io:
-+	iounmap(info->sram_virt);
- out:
- 	kfree(info);
- 	return ret;
++	/* test 3: check the value hasn't changed */
++	/* If this test fails, we managed to overwrite the data */
++	if (!rodata_test_data) {
++		pr_err("rodata_test: Test 3 fails (end data)\n");
++		return -ENODEV;
++	}
++
++	/* test 4: check if the rodata section is 4Kb aligned */
++	start = (unsigned long)__start_rodata;
++	end = (unsigned long)__end_rodata;
++	if (start & (PAGE_SIZE - 1)) {
++		pr_err("rodata_test: .rodata is not 4k aligned\n");
++		return -ENODEV;
++	}
++	if (end & (PAGE_SIZE - 1)) {
++		pr_err("rodata_test: .rodata end is not 4k aligned\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
 -- 
-2.11.0
+1.9.1
 
