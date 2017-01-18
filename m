@@ -1,7 +1,7 @@
 From: Hadar Hen Zion <hadarh@mellanox.com>
-Date: Wed, 18 Jan 2017 08:35:38 +0000
+Date: Wed, 18 Jan 2017 14:01:05 +0000
 Subject: Re: [bug report] net/sched: cls_flower: Set the filter Hardware device for all use-cases
-Message-Id: <0ddc0947-449e-899e-bf3c-008b89cc8481@mellanox.com>
+Message-Id: <fa0b6036-17f0-e6be-5896-b29e219d075e@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170117225703.GA21380@mwanda>
 In-Reply-To: <20170117225703.GA21380@mwanda>
@@ -45,6 +45,19 @@ On 1/18/2017 12:57 AM, Dan Carpenter wrote:
 >     256                  dev = f->hw_dev;
 >
 > That means "dev" is NULL.
+
+After re-checking the code, it's a not a real bug.
+If  'f->hw_dev' is NULL we would never get here.
+tcf_exts_get_dev() function above returns an error in case 'f->hw_dev' 
+is NULL, so we'll go into the 'if' and return from the function.
+
+The above 'f->hw_dev' check you marked above is redundant, that's why we 
+got the static checker warning.
+I'll send a patch that remove it.
+
+Thanks,
+Hadar
+
 >
 >     257                  tc->egress_dev = true;
 >     258          } else {
@@ -64,11 +77,7 @@ On 1/18/2017 12:57 AM, Dan Carpenter wrote:
 >     272          err = dev->netdev_ops->ndo_setup_tc(dev, tp->q->handle, tp->protocol,
 >
 > So we oops here.
-I'll send a fix ASAP.
-
-Thanks,
-Hadar
-
+>
 >     273                                              tc);
 >     274
 >     275          if (tc_skip_sw(f->flags))
