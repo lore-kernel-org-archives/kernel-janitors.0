@@ -1,54 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Jan 2017 18:11:15 +0000
-Subject: [PATCH 2/5] s390/pci: Return directly after a failed clp_alloc_block() in clp_normal_command()
-Message-Id: <c002c597-f52c-8fd5-e8d4-2f01a085ddd2@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 22:00:08 +0000
+Subject: [PATCH 5/5] um: ubd: Improve size determinations in do_ubd_request()
+Message-Id: <8a539d85-ff17-296c-75be-913731c2febc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
-In-Reply-To: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
+References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Gerald_Sch=c3=a4fer?= <gerald.schaefer@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>
+To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Jan 2017 17:56:40 +0100
+Date: Wed, 18 Jan 2017 22:38:04 +0100
 
-* Return directly after a call of the function "clp_alloc_block"
-  failed here.
-
-* Delete the jump label "out" which became unnecessary with
-  this refactoring.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/pci/pci_clp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/um/drivers/ubd_kern.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
-index 4f5a1bf3b14b..28e13fa7a79c 100644
---- a/arch/s390/pci/pci_clp.c
-+++ b/arch/s390/pci/pci_clp.c
-@@ -517,10 +517,9 @@ static int clp_normal_command(struct clp_req *req)
- 	if (req->lps != 0 && req->lps != 2)
- 		return -EINVAL;
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index 6d686f735538..50327d5a9a01 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -1386,8 +1386,7 @@ static void do_ubd_request(struct request_queue *q)
+ 		req = dev->request;
  
--	rc = -ENOMEM;
- 	lpcb = clp_alloc_block(GFP_KERNEL);
- 	if (!lpcb)
--		goto out;
-+		return -ENOMEM;
+ 		if (req_op(req) = REQ_OP_FLUSH) {
+-			io_req = kmalloc(sizeof(struct io_thread_req),
+-					 GFP_ATOMIC);
++			io_req = kmalloc(sizeof(*io_req), GFP_ATOMIC);
+ 			if (io_req = NULL) {
+ 				if (list_empty(&dev->restart))
+ 					list_add(&dev->restart, &restart);
+@@ -1401,8 +1400,7 @@ static void do_ubd_request(struct request_queue *q)
+ 		while(dev->start_sg < dev->end_sg){
+ 			struct scatterlist *sg = &dev->sg[dev->start_sg];
  
- 	rc = -EFAULT;
- 	uptr = (void __force __user *)(unsigned long) req->data_p;
-@@ -550,7 +549,6 @@ static int clp_normal_command(struct clp_req *req)
- 
- out_free:
- 	clp_free_block(lpcb);
--out:
- 	return rc;
- }
- 
+-			io_req = kmalloc(sizeof(struct io_thread_req),
+-					 GFP_ATOMIC);
++			io_req = kmalloc(sizeof(*io_req), GFP_ATOMIC);
+ 			if(io_req = NULL){
+ 				if(list_empty(&dev->restart))
+ 					list_add(&dev->restart, &restart);
 -- 
 2.11.0
 
