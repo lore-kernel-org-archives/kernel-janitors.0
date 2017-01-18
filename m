@@ -1,50 +1,29 @@
-From: Jeff Dike <jdike@addtoit.com>
-Date: Thu, 19 Jan 2017 00:03:30 +0000
-Subject: Re: [PATCH 1/5] um: port: Move an assignment for the variable "fd" in port_wait()
-Message-Id: <20170119000330.GA12052@parts.user-mode-linux.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 13:45:07 +0000
+Subject: [PATCH 0/3] AVR32: Fine-tuning for two function implementations
+Message-Id: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
- <4940ae24-c7ae-66ce-4c2a-5283607a5549@users.sourceforge.net>
-In-Reply-To: <4940ae24-c7ae-66ce-4c2a-5283607a5549@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 18, 2017 at 10:56:17PM +0100, SF Markus Elfring wrote:
-> diff --git a/arch/um/drivers/port_kern.c b/arch/um/drivers/port_kern.c
-> index 40ca5cc275e9..b2bbda21c5f3 100644
-> --- a/arch/um/drivers/port_kern.c
-> +++ b/arch/um/drivers/port_kern.c
-> @@ -230,10 +230,10 @@ int port_wait(void *data)
->  
->  	atomic_inc(&port->wait_count);
->  	while (1) {
-> -		fd = -ERESTARTSYS;
-> -		if (wait_for_completion_interruptible(&port->done))
-> +		if (wait_for_completion_interruptible(&port->done)) {
-> +			fd = -ERESTARTSYS;
->  			goto out;
-> -
-> +		}
->  		spin_lock(&port->lock);
->  
->  		conn = list_entry(port->connections.next, struct connection,
-> -- 
-> 2.11.0
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 14:40:04 +0100
 
-The current code is pretty standard kernel coding style.  The inline
-    fd = -ERESTARTSYS;
-is likely free, or close to it, and I believe that having anything
-besides a goto inside the if could make it significantly more
-expensive.
+A few update suggestions were taken into account
+from static source code analysis.
 
-				Jeff
+Markus Elfring (3):
+  Return directly after a failed access_ok() in setup_rt_frame()
+  Delete an unnecessary variable initialisation in setup_rt_frame()
+  Return an error code only as a constant in sys_cacheflush()
+
+ arch/avr32/kernel/signal.c |  5 ++---
+ arch/avr32/mm/cache.c      | 21 +++++----------------
+ 2 files changed, 7 insertions(+), 19 deletions(-)
 
 -- 
-Jeff Dike
-AddToIt
-978-254-0789 (o)
-978-394-8986 (c)
+2.11.0
+
