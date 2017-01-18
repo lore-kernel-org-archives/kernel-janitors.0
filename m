@@ -1,56 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:20:52 +0000
-Subject: [PATCH 11/17] spi/topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
-Message-Id: <5c46b68f-192e-2982-6a0e-2017da26f83d@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 16:50:40 +0000
+Subject: [PATCH 3/3] m68k: Add some spaces for better code readability in sys_cacheflush()
+Message-Id: <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
-In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net>
+In-Reply-To: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: linux-m68k@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 15:25:22 +0100
+Date: Wed, 18 Jan 2017 17:34:29 +0100
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by pointer dereferences
-  to make the corresponding size determination a bit safer according to
+* Use space characters at some source code places according to
   the Linux coding style convention.
+
+* Adjust indentation a bit.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/m68k/kernel/sys_m68k.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index fcb991034c3d..0488b7c7cc19 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1008,7 +1008,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	spin_unlock_irqrestore(&data->lock, flags);
- 
- 	/* RX */
--	dma->sg_rx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
-+	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1068,7 +1068,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 		head = 0;
- 	}
- 
--	dma->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
-+	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
+diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
+index 9870d00d2215..5b351f7a6c11 100644
+--- a/arch/m68k/kernel/sys_m68k.c
++++ b/arch/m68k/kernel/sys_m68k.c
+@@ -436,11 +436,10 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
+ 	     * 040 or 060: don't blindly trust 'scope', someone could
+ 	     * try to flush a few megs of memory.
+ 	     */
+-
+-	    if (len>=3*PAGE_SIZE && scope<FLUSH_SCOPE_PAGE)
+-	        scope=FLUSH_SCOPE_PAGE;
+-	    if (len>*PAGE_SIZE && scope<FLUSH_SCOPE_ALL)
+-	        scope=FLUSH_SCOPE_ALL;
++		if (len >= 3 * PAGE_SIZE && scope < FLUSH_SCOPE_PAGE)
++			scope = FLUSH_SCOPE_PAGE;
++		if (len >= 10 * PAGE_SIZE && scope < FLUSH_SCOPE_ALL)
++			scope = FLUSH_SCOPE_ALL;
+ 	    if (CPU_IS_040) {
+ 		ret = cache_flush_040 (addr, scope, cache, len);
+ 	    } else if (CPU_IS_060) {
 -- 
 2.11.0
 
