@@ -1,36 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 31 Jan 2017 16:36:02 +0000
-Subject: Re: [bug report] lib: update LZ4 compressor module
-Message-Id: <20170131155217.GE6970@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 11:50:17 +0000
+Subject: [PATCH 4/4] alpha: Move two assignments for the variable "res" in srm_env_proc_write()
+Message-Id: <986573fa-e636-f864-14dc-5e65a31b454e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170131104104.GA27172@mwanda>
-In-Reply-To: <20170131104104.GA27172@mwanda>
+References: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
+In-Reply-To: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-alpha@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Richard Cochran <richardcochran@gmail.com>, Richard Henderson <rth@twiddle.net>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 31, 2017 at 01:09:23PM +0100, Sven Schmidt (4sschmid) wrote:
-> Am 31. Januar 2017 11:43:28 MEZ schrieb Dan Carpenter <dan.carpenter@oracle.com>:
-> >Same thing for lz4hc_compress() as well.
-> >
-> >    lib/lz4/lz4hc_compress.c:622 lz4hc_compress()
-> >    warn: variable dereferenced before check 'dst_len' (see line 612)
-> >
-> >regards,
-> >dan carpenter
-> 
-> Hi Dan, 
-> 
-> I did not receive any previous E-Mails, so this one is a bit out of context for me. I checked the kernel-janitors archive though and found the E-Mail you may reference to. 
-> 
-> I will fix it.
-> 
-> Is there a way to automatically receive any following messages?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 12:08:44 +0100
 
-It's a Smatch warning.
+A local variable was set to an error code in two cases before a concrete
+error situation was detected. Thus move the corresponding assignment into
+an if branch to indicate a software failure there.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/alpha/kernel/srm_env.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/alpha/kernel/srm_env.c b/arch/alpha/kernel/srm_env.c
+index ffe996a54fad..a5f182780578 100644
+--- a/arch/alpha/kernel/srm_env.c
++++ b/arch/alpha/kernel/srm_env.c
+@@ -113,13 +113,15 @@ static ssize_t srm_env_proc_write(struct file *file, const char __user *buffer,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	res = -EINVAL;
+-	if (count >= PAGE_SIZE)
++	if (count >= PAGE_SIZE) {
++		res = -EINVAL;
+ 		goto out;
++	}
+ 
+-	res = -EFAULT;
+-	if (copy_from_user(buf, buffer, count))
++	if (copy_from_user(buf, buffer, count)) {
++		res = -EFAULT;
+ 		goto out;
++	}
+ 	buf[count] = '\0';
+ 
+ 	ret1 = callback_setenv(id, buf, count);
+-- 
+2.11.0
 
