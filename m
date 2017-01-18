@@ -1,43 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:34:11 +0000
-Subject: Re: [PATCH 10/17] spi/ppc4xx: Adjust checks for null pointers in two functions
-Message-Id: <20170117183411.7isqrvu3o55ydjcb@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nj6op3dmb64mvdn6"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 21:56:17 +0000
+Subject: [PATCH 1/5] um: port: Move an assignment for the variable "fd" in port_wait()
+Message-Id: <4940ae24-c7ae-66ce-4c2a-5283607a5549@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
- <d9bd24b0-d4d5-233c-756d-71aaed63c5ef@users.sourceforge.net>
-In-Reply-To: <d9bd24b0-d4d5-233c-756d-71aaed63c5ef@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 21:40:29 +0100
 
---nj6op3dmb64mvdn6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A local variable was set to an error code in one case before a concrete
+error situation was detected. Thus move the corresponding assignment into
+an if branch to indicate a software failure there.
 
-On Fri, Jan 13, 2017 at 06:19:35PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 13 Jan 2017 14:56:10 +0100
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
+This issue was detected by using the Coccinelle software.
 
-This is also corrupted.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/um/drivers/port_kern.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---nj6op3dmb64mvdn6
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/um/drivers/port_kern.c b/arch/um/drivers/port_kern.c
+index 40ca5cc275e9..b2bbda21c5f3 100644
+--- a/arch/um/drivers/port_kern.c
++++ b/arch/um/drivers/port_kern.c
+@@ -230,10 +230,10 @@ int port_wait(void *data)
+ 
+ 	atomic_inc(&port->wait_count);
+ 	while (1) {
+-		fd = -ERESTARTSYS;
+-		if (wait_for_completion_interruptible(&port->done))
++		if (wait_for_completion_interruptible(&port->done)) {
++			fd = -ERESTARTSYS;
+ 			goto out;
+-
++		}
+ 		spin_lock(&port->lock);
+ 
+ 		conn = list_entry(port->connections.next, struct connection,
+-- 
+2.11.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlh+Y6IACgkQJNaLcl1U
-h9Cedwf8Ds/YPSS+lXtg7sa18baKxomGT7qsygc1NOTK8QqjHh+InHY2M+fLQ7af
-dUSsxHJrg5XR9qSUu2mSjqz411cwg54k6AS5vSR6MgH5SC2r3cbqToKs4rRU4jSr
-RKC5kWwtbSShqd/sHui7EwcM1yz3NtdIAJQp47B7BH45H46Vg9BL7yQlGVmOFyii
-widLm2Jvyb+5R4IGSuuBBSUtcbUeFh4xdN9EPZHT2B8AXjW+84awNi4TKmziYb0e
-dp+6hymvEA/fQBFWfzWf3Q+aPFYA3OZQ/oEEvN3/wbazW+LpQjWBZDz7I2l9u7F+
-g1VunWs4K+7wxFBp0M2GUfOnzPeZow==
-=Dqby
------END PGP SIGNATURE-----
-
---nj6op3dmb64mvdn6--
