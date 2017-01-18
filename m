@@ -1,77 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:20:03 +0000
-Subject: [PATCH 20/46] selinux: Move four assignments for the variable "rc" in range_read()
-Message-Id: <196aacb8-6aab-841b-3301-71da75628954@users.sourceforge.net>
+Date: Wed, 18 Jan 2017 21:58:30 +0000
+Subject: [PATCH 3/5] um: port: Improve size determinations in port_data()
+Message-Id: <ad89ddc2-217f-b58b-0fdc-3a592c0970fa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 19:55:00 +0100
+Date: Wed, 18 Jan 2017 22:20:14 +0100
 
-One local variable was set to an error code in four cases before
-a concrete error situation was detected. Thus move the corresponding
-assignments into if branches to indicate a software failure there.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/um/drivers/port_kern.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index a696876fc327..4cd96ce51322 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1854,10 +1854,11 @@ static int range_read(struct policydb *p, void *fp)
+diff --git a/arch/um/drivers/port_kern.c b/arch/um/drivers/port_kern.c
+index c96741e920f5..60c1b43a8381 100644
+--- a/arch/um/drivers/port_kern.c
++++ b/arch/um/drivers/port_kern.c
+@@ -166,7 +166,7 @@ void *port_data(int port_num)
+ 		if (port->port = port_num)
+ 			goto found;
+ 	}
+-	port = kmalloc(sizeof(struct port_list), GFP_KERNEL);
++	port = kmalloc(sizeof(*port), GFP_KERNEL);
+ 	if (!port)
+ 		goto out;
  
- 	nel = le32_to_cpu(buf[0]);
- 	for (i = 0; i < nel; i++) {
--		rc = -ENOMEM;
- 		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
--		if (!rt)
-+		if (!rt) {
-+			rc = -ENOMEM;
- 			goto out;
-+		}
+@@ -196,7 +196,7 @@ void *port_data(int port_num)
+ 	list_add(&port->list, &ports);
  
- 		rc = next_entry(buf, fp, (sizeof(u32) * 2));
- 		if (rc)
-@@ -1873,24 +1874,26 @@ static int range_read(struct policydb *p, void *fp)
- 		} else
- 			rt->target_class = p->process_class;
- 
--		rc = -EINVAL;
- 		if (!policydb_type_isvalid(p, rt->source_type) ||
- 		    !policydb_type_isvalid(p, rt->target_type) ||
--		    !policydb_class_isvalid(p, rt->target_class))
-+		    !policydb_class_isvalid(p, rt->target_class)) {
-+			rc = -EINVAL;
- 			goto out;
-+		}
- 
--		rc = -ENOMEM;
- 		r = kzalloc(sizeof(*r), GFP_KERNEL);
--		if (!r)
-+		if (!r) {
-+			rc = -ENOMEM;
- 			goto out;
-+		}
- 
- 		rc = mls_read_range_helper(r, fp);
- 		if (rc)
- 			goto out;
- 
--		rc = -EINVAL;
- 		if (!mls_range_isvalid(p, r)) {
- 			printk(KERN_WARNING "SELinux:  rangetrans:  invalid range\n");
-+			rc = -EINVAL;
- 			goto out;
- 		}
+  found:
+-	dev = kmalloc(sizeof(struct port_dev), GFP_KERNEL);
++	dev = kmalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+ 		goto out;
  
 -- 
 2.11.0
