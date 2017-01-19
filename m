@@ -1,40 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 14:58:16 +0000
-Subject: [PATCH 02/46] selinux: Delete an unnecessary return statement in cond_compute_av()
-Message-Id: <86979267-24ac-ce16-a150-43677ac78a0b@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 17:03:54 +0000
+Subject: [PATCH 7/8] powerpc/nvram: Improve size determinations in three functions
+Message-Id: <ccc156b4-26ff-02b2-c50a-91d9502d0db3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 11:00:23 +0100
+Date: Thu, 19 Jan 2017 17:15:30 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+Replace the specification of data structures by references for local
+variables as the parameter for the operator "sizeof" to make
+the corresponding size determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/conditional.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/kernel/nvram_64.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-index fcfab2635c11..4a3bf29f7565 100644
---- a/security/selinux/ss/conditional.c
-+++ b/security/selinux/ss/conditional.c
-@@ -664,5 +664,4 @@ void cond_compute_av(struct avtab *ctab, struct avtab_key *key,
- 				(node->key.specified & AVTAB_XPERMS))
- 			services_compute_xperms_drivers(xperms, node);
- 	}
--	return;
- }
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index 7af1baaaf01b..ed54147e3c60 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -207,8 +207,7 @@ int nvram_write_os_partition(struct nvram_os_partition *part,
+ 
+ 	tmp_index = part->index;
+ 
+-	rc = ppc_md.nvram_write((char *)&info, sizeof(struct err_log_info),
+-				&tmp_index);
++	rc = ppc_md.nvram_write((char *)&info, sizeof(info), &tmp_index);
+ 	if (rc <= 0) {
+ 		pr_err("%s: Failed nvram_write (%d)\n", __func__, rc);
+ 		return rc;
+@@ -244,9 +243,7 @@ int nvram_read_partition(struct nvram_os_partition *part, char *buff,
+ 	tmp_index = part->index;
+ 
+ 	if (part->os_partition) {
+-		rc = ppc_md.nvram_read((char *)&info,
+-					sizeof(struct err_log_info),
+-					&tmp_index);
++		rc = ppc_md.nvram_read((char *)&info, sizeof(info), &tmp_index);
+ 		if (rc <= 0) {
+ 			pr_err("%s: Failed nvram_read (%d)\n", __func__, rc);
+ 			return rc;
+@@ -1175,7 +1172,7 @@ int __init nvram_scan_partitions(void)
+ 			       "detected: 0-length partition\n");
+ 			goto out;
+ 		}
+-		tmp_part = kmalloc(sizeof(struct nvram_partition), GFP_KERNEL);
++		tmp_part = kmalloc(sizeof(*tmp_part), GFP_KERNEL);
+ 		err = -ENOMEM;
+ 		if (!tmp_part)
+ 			goto out;
 -- 
 2.11.0
 
