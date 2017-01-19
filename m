@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:17:03 +0000
-Subject: [PATCH 17/46] selinux: Delete an unnecessary variable assignment in filename_trans_read()
-Message-Id: <71120ef7-6463-6497-f915-fcaf9e54239d@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 16:55:32 +0000
+Subject: [PATCH 2/8] powerpc/nvram: Return directly after a failed kmalloc() in dev_nvram_write()
+Message-Id: <b2f7db46-1203-11b5-d749-4482ba697308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 19:02:42 +0100
+Date: Thu, 19 Jan 2017 15:44:03 +0100
 
-The local variable "ft" was set to a null pointer despite of an
-immediate reassignment.
-Thus remove this statement from the beginning of a loop.
+Return directly after a call of the function "kmalloc" failed here.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/kernel/nvram_64.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 106a1da1d68a..2be5b18eb149 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1927,7 +1927,6 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 	nel = le32_to_cpu(buf[0]);
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index 37d08b95c3f0..cf839adf3aa7 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -802,11 +802,9 @@ static ssize_t dev_nvram_write(struct file *file, const char __user *buf,
  
- 	for (i = 0; i < nel; i++) {
--		ft = NULL;
- 		otype = NULL;
- 		name = NULL;
- 		ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+ 	count = min_t(size_t, count, size - *ppos);
+ 	count = min(count, PAGE_SIZE);
+-
+-	ret = -ENOMEM;
+ 	tmp = kmalloc(count, GFP_KERNEL);
+ 	if (!tmp)
+-		goto out;
++		return -ENOMEM;
+ 
+ 	ret = -EFAULT;
+ 	if (copy_from_user(tmp, buf, count))
 -- 
 2.11.0
 
