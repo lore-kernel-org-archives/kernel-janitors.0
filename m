@@ -1,102 +1,343 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 23 Jan 2017 14:13:12 +0000
-Subject: Re: [PATCH 03/11] KVM: PPC: Book3S HV: Move error code assignments in two functions
-Message-Id: <04f75012-7453-e1b2-b004-857fde1b253e@redhat.com>
+From: Jinbum Park <jinb.park7@gmail.com>
+Date: Thu, 19 Jan 2017 14:51:14 +0000
+Subject: [PATCH] mm: add arch-independent testcases for RODATA
+Message-Id: <20170119145114.GA19772@pjb1027-Latitude-E5410>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
- <eb77a721-b771-65c0-83e6-a3e7120fa4ce@users.sourceforge.net>
-In-Reply-To: <eb77a721-b771-65c0-83e6-a3e7120fa4ce@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: tglx@linutronix.de
+Cc: mingo@redhat.com, hpa@zytor.com, x86@kernel.org, keescook@chromium.org, arjan@linux.intel.com, akpm@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, labbott@redhat.com, kernel-hardening@lists.openwall.com, mark.rutland@arm.com, kernel-janitors@vger.kernel.org, linux@armlinux.org.uk
 
+This patch adds arch-independent testcases for RODATA.
+Both x86 and x86_64 already have testcases for RODATA,
+But they are arch-specific because using inline assembly directly.
 
+and cacheflush.h is not suitable location for rodata-test related things.
+Since they were in cacheflush.h,
+If someone change the state of CONFIG_DEBUG_RODATA_TEST,
+It cause overhead of kernel build.
 
-On 20/01/2017 19:21, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Jan 2017 10:30:26 +0100
-> 
-> A local variable was set to an error code in a few cases before a concrete
-> error situation was detected. Thus move the corresponding assignments into
-> if branches to indicate a software failure there.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/kvm/book3s_hv.c | 25 +++++++++++++++----------
->  1 file changed, 15 insertions(+), 10 deletions(-)
+To solve above issue,
+write arch-independent testcases and move it to shared location. (main.c)
 
-NACK, current code uses consistent style.
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+---
+ arch/x86/Kconfig.debug            |  8 -----
+ arch/x86/include/asm/cacheflush.h | 10 ------
+ arch/x86/kernel/Makefile          |  1 -
+ arch/x86/kernel/test_rodata.c     | 75 ---------------------------------------
+ arch/x86/mm/init_32.c             |  4 ---
+ arch/x86/mm/init_64.c             |  5 ---
+ init/main.c                       | 10 +++++-
+ mm/Kconfig.debug                  |  6 ++++
+ mm/Makefile                       |  1 +
+ mm/rodata_test.c                  | 63 ++++++++++++++++++++++++++++++++
+ 10 files changed, 79 insertions(+), 104 deletions(-)
+ delete mode 100644 arch/x86/kernel/test_rodata.c
+ create mode 100644 mm/rodata_test.c
 
-Paolo
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index 67eec55..5df54a8 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -74,14 +74,6 @@ config EFI_PGT_DUMP
+ 	  issues with the mapping of the EFI runtime regions into that
+ 	  table.
+ 
+-config DEBUG_RODATA_TEST
+-	bool "Testcase for the marking rodata read-only"
+-	default y
+-	---help---
+-	  This option enables a testcase for the setting rodata read-only
+-	  as well as for the change_page_attr() infrastructure.
+-	  If in doubt, say "N"
+-
+ config DEBUG_WX
+ 	bool "Warn on W+X mappings at boot"
+ 	select X86_PTDUMP_CORE
+diff --git a/arch/x86/include/asm/cacheflush.h b/arch/x86/include/asm/cacheflush.h
+index 872877d..e7e1942e 100644
+--- a/arch/x86/include/asm/cacheflush.h
++++ b/arch/x86/include/asm/cacheflush.h
+@@ -90,18 +90,8 @@
+ 
+ #define mmio_flush_range(addr, size) clflush_cache_range(addr, size)
+ 
+-extern const int rodata_test_data;
+ extern int kernel_set_to_readonly;
+ void set_kernel_text_rw(void);
+ void set_kernel_text_ro(void);
+ 
+-#ifdef CONFIG_DEBUG_RODATA_TEST
+-int rodata_test(void);
+-#else
+-static inline int rodata_test(void)
+-{
+-	return 0;
+-}
+-#endif
+-
+ #endif /* _ASM_X86_CACHEFLUSH_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 581386c..f6caf82 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -100,7 +100,6 @@ obj-$(CONFIG_HPET_TIMER) 	+= hpet.o
+ obj-$(CONFIG_APB_TIMER)		+= apb_timer.o
+ 
+ obj-$(CONFIG_AMD_NB)		+= amd_nb.o
+-obj-$(CONFIG_DEBUG_RODATA_TEST)	+= test_rodata.o
+ obj-$(CONFIG_DEBUG_NX_TEST)	+= test_nx.o
+ obj-$(CONFIG_DEBUG_NMI_SELFTEST) += nmi_selftest.o
+ 
+diff --git a/arch/x86/kernel/test_rodata.c b/arch/x86/kernel/test_rodata.c
+deleted file mode 100644
+index 222e84e..0000000
+--- a/arch/x86/kernel/test_rodata.c
++++ /dev/null
+@@ -1,75 +0,0 @@
+-/*
+- * test_rodata.c: functional test for mark_rodata_ro function
+- *
+- * (C) Copyright 2008 Intel Corporation
+- * Author: Arjan van de Ven <arjan@linux.intel.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
+-#include <asm/cacheflush.h>
+-#include <asm/sections.h>
+-#include <asm/asm.h>
+-
+-int rodata_test(void)
+-{
+-	unsigned long result;
+-	unsigned long start, end;
+-
+-	/* test 1: read the value */
+-	/* If this test fails, some previous testrun has clobbered the state */
+-	if (!rodata_test_data) {
+-		printk(KERN_ERR "rodata_test: test 1 fails (start data)\n");
+-		return -ENODEV;
+-	}
+-
+-	/* test 2: write to the variable; this should fault */
+-	/*
+-	 * If this test fails, we managed to overwrite the data
+-	 *
+-	 * This is written in assembly to be able to catch the
+-	 * exception that is supposed to happen in the correct
+-	 * case
+-	 */
+-
+-	result = 1;
+-	asm volatile(
+-		"0:	mov %[zero],(%[rodata_test])\n"
+-		"	mov %[zero], %[rslt]\n"
+-		"1:\n"
+-		".section .fixup,\"ax\"\n"
+-		"2:	jmp 1b\n"
+-		".previous\n"
+-		_ASM_EXTABLE(0b,2b)
+-		: [rslt] "=r" (result)
+-		: [rodata_test] "r" (&rodata_test_data), [zero] "r" (0UL)
+-	);
+-
+-
+-	if (!result) {
+-		printk(KERN_ERR "rodata_test: test data was not read only\n");
+-		return -ENODEV;
+-	}
+-
+-	/* test 3: check the value hasn't changed */
+-	/* If this test fails, we managed to overwrite the data */
+-	if (!rodata_test_data) {
+-		printk(KERN_ERR "rodata_test: Test 3 fails (end data)\n");
+-		return -ENODEV;
+-	}
+-	/* test 4: check if the rodata section is 4Kb aligned */
+-	start = (unsigned long)__start_rodata;
+-	end = (unsigned long)__end_rodata;
+-	if (start & (PAGE_SIZE - 1)) {
+-		printk(KERN_ERR "rodata_test: .rodata is not 4k aligned\n");
+-		return -ENODEV;
+-	}
+-	if (end & (PAGE_SIZE - 1)) {
+-		printk(KERN_ERR "rodata_test: .rodata end is not 4k aligned\n");
+-		return -ENODEV;
+-	}
+-
+-	return 0;
+-}
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 928d657..2b4b53e 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -864,9 +864,6 @@ static noinline int do_test_wp_bit(void)
+ 	return flag;
+ }
+ 
+-const int rodata_test_data = 0xC3;
+-EXPORT_SYMBOL_GPL(rodata_test_data);
+-
+ int kernel_set_to_readonly __read_mostly;
+ 
+ void set_kernel_text_rw(void)
+@@ -939,7 +936,6 @@ void mark_rodata_ro(void)
+ 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+ 	printk(KERN_INFO "Write protecting the kernel read-only data: %luk\n",
+ 		size >> 10);
+-	rodata_test();
+ 
+ #ifdef CONFIG_CPA_DEBUG
+ 	printk(KERN_INFO "Testing CPA: undo %lx-%lx\n", start, start + size);
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 97346f9..15173d3 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1000,9 +1000,6 @@ void __init mem_init(void)
+ 	mem_init_print_info(NULL);
+ }
+ 
+-const int rodata_test_data = 0xC3;
+-EXPORT_SYMBOL_GPL(rodata_test_data);
+-
+ int kernel_set_to_readonly;
+ 
+ void set_kernel_text_rw(void)
+@@ -1071,8 +1068,6 @@ void mark_rodata_ro(void)
+ 	all_end = roundup((unsigned long)_brk_end, PMD_SIZE);
+ 	set_memory_nx(text_end, (all_end - text_end) >> PAGE_SHIFT);
+ 
+-	rodata_test();
+-
+ #ifdef CONFIG_CPA_DEBUG
+ 	printk(KERN_INFO "Testing CPA: undo %lx-%lx\n", start, end);
+ 	set_memory_rw(start, (end-start) >> PAGE_SHIFT);
+diff --git a/init/main.c b/init/main.c
+index e47373d..15b42bf 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -932,11 +932,19 @@ static int __init set_debug_rodata(char *str)
+ __setup("rodata=", set_debug_rodata);
+ #endif
+ 
++#ifdef CONFIG_DEBUG_RODATA_TEST
++void rodata_test(void);
++#else
++static inline void rodata_test(void) {}
++#endif
++
+ #ifdef CONFIG_DEBUG_RODATA
+ static void mark_readonly(void)
+ {
+-	if (rodata_enabled)
++	if (rodata_enabled) {
+ 		mark_rodata_ro();
++		rodata_test();
++	}
+ 	else
+ 		pr_info("Kernel memory protection disabled.\n");
+ }
+diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+index afcc550..e4f22ce 100644
+--- a/mm/Kconfig.debug
++++ b/mm/Kconfig.debug
+@@ -90,3 +90,9 @@ config DEBUG_PAGE_REF
+ 	  careful when enabling this feature because it adds about 30 KB to the
+ 	  kernel code.  However the runtime performance overhead is virtually
+ 	  nil until the tracepoints are actually enabled.
++
++config DEBUG_RODATA_TEST
++	bool "Testcase for the marking rodata read-only"
++	depends on DEBUG_RODATA
++	---help---
++	  This option enables a testcase for the setting rodata read-only.
+\ No newline at end of file
+diff --git a/mm/Makefile b/mm/Makefile
+index 433eaf9..d6199d4 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -83,6 +83,7 @@ obj-$(CONFIG_MEMORY_FAILURE) += memory-failure.o
+ obj-$(CONFIG_HWPOISON_INJECT) += hwpoison-inject.o
+ obj-$(CONFIG_DEBUG_KMEMLEAK) += kmemleak.o
+ obj-$(CONFIG_DEBUG_KMEMLEAK_TEST) += kmemleak-test.o
++obj-$(CONFIG_DEBUG_RODATA_TEST) += rodata_test.o
+ obj-$(CONFIG_PAGE_OWNER) += page_owner.o
+ obj-$(CONFIG_CLEANCACHE) += cleancache.o
+ obj-$(CONFIG_MEMORY_ISOLATION) += page_isolation.o
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+new file mode 100644
+index 0000000..d5b0504
+--- /dev/null
++++ b/mm/rodata_test.c
+@@ -0,0 +1,63 @@
++/*
++ * rodata_test.c: functional test for mark_rodata_ro function
++ *
++ * (C) Copyright 2017 Jinbum Park <jinb.park7@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++#include <asm/uaccess.h>
++#include <asm/sections.h>
++
++const int rodata_test_data = 0xC3;
++EXPORT_SYMBOL_GPL(rodata_test_data);
++
++void rodata_test(void)
++{
++	unsigned long start, end, rodata_addr;
++	int zero = 0;
++
++	/* prepare test */
++	rodata_addr = ((unsigned long)&rodata_test_data);
++
++	/* test 1: read the value */
++	/* If this test fails, some previous testrun has clobbered the state */
++	if (!rodata_test_data) {
++		pr_err("rodata_test: test 1 fails (start data)\n");
++		return;
++	}
++
++	/* test 2: write to the variable; this should fault */
++	/*
++	 * This must be written in assembly to be able to catch the
++	 * exception that is supposed to happen in the correct case.
++	 *
++	 * So that put_user macro is used to write arch-independent assembly.
++	 */
++	if (!put_user(zero, (int *)rodata_addr)) {
++		pr_err("rodata_test: test data was not read only\n");
++		return;
++	}
++
++	/* test 3: check the value hasn't changed */
++	if (rodata_test_data = zero) {
++		pr_err("rodata_test: test data was changed\n");
++		return;
++	}
++
++	/* test 4: check if the rodata section is PAGE_SIZE aligned */
++	start = (unsigned long)__start_rodata;
++	end = (unsigned long)__end_rodata;
++	if (start & (PAGE_SIZE - 1)) {
++		pr_err("rodata_test: start of .rodata is not page size aligned\n");
++		return;
++	}
++	if (end & (PAGE_SIZE - 1)) {
++		pr_err("rodata_test: end of .rodata is not page size aligned\n");
++		return;
++	}
++
++	pr_info("rodata_test: all tests were successful\n");
++}
+-- 
+1.9.1
 
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 8dcbe37a4dac..a93e1c4445da 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -2967,15 +2967,17 @@ static int kvm_vm_ioctl_get_dirty_log_hv(struct kvm *kvm,
->  
->  	mutex_lock(&kvm->slots_lock);
->  
-> -	r = -EINVAL;
-> -	if (log->slot >= KVM_USER_MEM_SLOTS)
-> +	if (log->slot >= KVM_USER_MEM_SLOTS) {
-> +		r = -EINVAL;
->  		goto out;
-> +	}
->  
->  	slots = kvm_memslots(kvm);
->  	memslot = id_to_memslot(slots, log->slot);
-> -	r = -ENOENT;
-> -	if (!memslot->dirty_bitmap)
-> +	if (!memslot->dirty_bitmap) {
-> +		r = -ENOENT;
->  		goto out;
-> +	}
->  
->  	n = kvm_dirty_bitmap_bytes(memslot);
->  	memset(memslot->dirty_bitmap, 0, n);
-> @@ -2984,9 +2986,10 @@ static int kvm_vm_ioctl_get_dirty_log_hv(struct kvm *kvm,
->  	if (r)
->  		goto out;
->  
-> -	r = -EFAULT;
-> -	if (copy_to_user(log->dirty_bitmap, memslot->dirty_bitmap, n))
-> +	if (copy_to_user(log->dirty_bitmap, memslot->dirty_bitmap, n)) {
-> +		r = -EFAULT;
->  		goto out;
-> +	}
->  
->  	r = 0;
->  out:
-> @@ -3127,9 +3130,10 @@ static int kvmppc_hv_setup_htab_rma(struct kvm_vcpu *vcpu)
->  	memslot = gfn_to_memslot(kvm, 0);
->  
->  	/* We must have some memory at 0 by now */
-> -	err = -EINVAL;
-> -	if (!memslot || (memslot->flags & KVM_MEMSLOT_INVALID))
-> +	if (!memslot || (memslot->flags & KVM_MEMSLOT_INVALID)) {
-> +		err = -EINVAL;
->  		goto out_srcu;
-> +	}
->  
->  	/* Look up the VMA for the start of this memory slot */
->  	hva = memslot->userspace_addr;
-> @@ -3144,10 +3148,11 @@ static int kvmppc_hv_setup_htab_rma(struct kvm_vcpu *vcpu)
->  	up_read(&current->mm->mmap_sem);
->  
->  	/* We can handle 4k, 64k or 16M pages in the VRMA */
-> -	err = -EINVAL;
->  	if (!(psize = 0x1000 || psize = 0x10000 ||
-> -	      psize = 0x1000000))
-> +	      psize = 0x1000000)) {
-> +		err = -EINVAL;
->  		goto out_srcu;
-> +	}
->  
->  	senc = slb_pgsize_encoding(psize);
->  	kvm->arch.vrma_slb_v = senc | SLB_VSID_B_1T |
-> 
