@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:18:04 +0000
-Subject: [PATCH 00/11] PowerPC-KVM: Fine-tuning for some function implementations
-Message-Id: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 16:59:00 +0000
+Subject: [PATCH 5/8] powerpc/nvram: Return directly after a failed kmalloc() in dev_nvram_read()
+Message-Id: <60b730d9-c683-a6ee-42fb-1c874ad86205@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 19:07:21 +0100
+Date: Thu, 19 Jan 2017 16:50:31 +0100
 
-Some update suggestions were taken into account
-from static source code analysis.
+Return directly after a call of the function "kmalloc" failed here.
 
-Markus Elfring (11):
-  Move assignments for the variable "err" in kvm_htab_write()
-  Improve a size determination in kvmppc_alloc_hpt()
-  Move error code assignments in two functions
-  Use common error handling code in kvmppc_clr_passthru_irq()
-  Adjust nine checks for null pointers
-  Use kcalloc() in kvmppc_alloc_host_rm_ops()
-  Improve size determinations in five functions
-  Use seq_puts() in xics_debug_show()
-  Improve a size determination in two functions
-  Use kcalloc() in e500_mmu_host_init()
-  Return directly after a failed copy_from_user() in two functions
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/kernel/nvram_64.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- arch/powerpc/kvm/book3s_64_mmu_hv.c | 26 +++++++------
- arch/powerpc/kvm/book3s_hv.c        | 73 +++++++++++++++++++------------------
- arch/powerpc/kvm/book3s_xics.c      |  7 ++--
- arch/powerpc/kvm/e500_mmu_host.c    |  5 +--
- arch/powerpc/kvm/powerpc.c          | 48 ++++++++++--------------
- 5 files changed, 75 insertions(+), 84 deletions(-)
-
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index 463551589b97..68b970bcf2fc 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -762,10 +762,8 @@ static ssize_t dev_nvram_read(struct file *file, char __user *buf,
+ 	count = min(count, PAGE_SIZE);
+ 
+ 	tmp = kmalloc(count, GFP_KERNEL);
+-	if (!tmp) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!tmp)
++		return -ENOMEM;
+ 
+ 	ret = ppc_md.nvram_read(tmp, count, ppos);
+ 	if (ret <= 0)
 -- 
 2.11.0
 
