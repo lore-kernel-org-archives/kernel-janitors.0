@@ -1,47 +1,70 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 13 Jan 2017 03:12:08 +0000
-Subject: Re: [patch] vhost/scsi: silence uninitialized variable warning
-Message-Id: <a25058f8-80c7-1174-29fe-b80adb64b0bf@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 10:20:40 +0000
+Subject: [PATCH v2] MIPS: KVM: Return directly after a failed copy_from_user() in kvm_arch_vcpu_ioctl()
+Message-Id: <7a6b5858-9137-9d20-78fe-6b466081920f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170112184504.GA12088@mwanda>
-In-Reply-To: <20170112184504.GA12088@mwanda>
+References: <87aac8b8-4f30-2edd-4688-42d32d815cd1@users.sourceforge.net>
+ <88b008c5-552b-7314-94d8-02214f38a456@redhat.com>
+In-Reply-To: <88b008c5-552b-7314-94d8-02214f38a456@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kvm@vger.kernel.org, linux-mips@linux-mips.org, James Hogan <james.hogan@imgtec.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 11:10:26 +0100
 
+* Return directly after a call of the function "copy_from_user" failed
+  in a case block.
 
-On 2017年01月13日 02:45, Dan Carpenter wrote:
-> This is to silence an uninitialized variable warning in debug output.
-> The problem is this line:
->
-> 	pr_debug("vhost_get_vq_desc: head: %d, out: %u in: %u\n",
-> 		 head, out, in);
->
-> If "head = vq->num" is true on the first iteration then "out" and "in"
-> aren't initialized.  We handle that a few lines after the printk.  I was
-> tempted to just delete the pr_debug() but I decided to just initialize
-> them to zero instead.
->
-> Also checkpatch.pl complains if variables are declared as just
-> "unsigned" without the "int".
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-> index 253310c..b98dac1 100644
-> --- a/drivers/vhost/scsi.c
-> +++ b/drivers/vhost/scsi.c
-> @@ -843,7 +843,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
->   	struct iov_iter out_iter, in_iter, prot_iter, data_iter;
->   	u64 tag;
->   	u32 exp_data_len, data_direction;
-> -	unsigned out, in;
-> +	unsigned int out = 0, in = 0;
->   	int head, ret, prot_bytes;
->   	size_t req_size, rsp_size = sizeof(struct virtio_scsi_cmd_resp);
->   	size_t out_size, in_size;
+* Delete the jump label "out" which became unnecessary with
+  this refactoring.
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+V2:
+A label was also removed at the end.
+
+ arch/mips/kvm/mips.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
+index 06a60b19acfb..3534a0b9efed 100644
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -1152,10 +1152,8 @@ long kvm_arch_vcpu_ioctl(struct file *filp, unsigned int ioctl,
+ 		{
+ 			struct kvm_mips_interrupt irq;
+ 
+-			r = -EFAULT;
+ 			if (copy_from_user(&irq, argp, sizeof(irq)))
+-				goto out;
+-
++				return -EFAULT;
+ 			kvm_debug("[%d] %s: irq: %d\n", vcpu->vcpu_id, __func__,
+ 				  irq.irq);
+ 
+@@ -1165,17 +1163,14 @@ long kvm_arch_vcpu_ioctl(struct file *filp, unsigned int ioctl,
+ 	case KVM_ENABLE_CAP: {
+ 		struct kvm_enable_cap cap;
+ 
+-		r = -EFAULT;
+ 		if (copy_from_user(&cap, argp, sizeof(cap)))
+-			goto out;
++			return -EFAULT;
+ 		r = kvm_vcpu_ioctl_enable_cap(vcpu, &cap);
+ 		break;
+ 	}
+ 	default:
+ 		r = -ENOIOCTLCMD;
+ 	}
+-
+-out:
+ 	return r;
+ }
+ 
+-- 
+2.11.0
+
