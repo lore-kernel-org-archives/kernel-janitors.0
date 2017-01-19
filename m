@@ -1,49 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:23:08 +0000
-Subject: [PATCH 23/46] selinux: Move an assignment for a pointer in range_read()
-Message-Id: <668d71a5-d55c-449e-9de8-b5d70d7e11c9@users.sourceforge.net>
+Date: Thu, 19 Jan 2017 16:53:57 +0000
+Subject: [PATCH 1/8] powerpc/nvram: Return directly after a failed parameter validation in dev_nvram_write()
+Message-Id: <5a23fa96-5227-3bcd-414d-65b2ae1f2f52@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 21:00:45 +0100
+Date: Thu, 19 Jan 2017 15:22:56 +0100
 
-Move the assignment for the local variable "r" behind a call of the
-function "next_entry" at the beginning so that it will only be set
-after a successful call.
+* Return directly after an inappropriate input parameter was detected.
+
+* Delete an initialisation for the variable "tmp" at the beginning
+  and an assignment for the variable "ret" which became unnecessary
+  with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/nvram_64.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 6121a26ada64..5101592ae172 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1840,7 +1840,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
- static int range_read(struct policydb *p, void *fp)
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index 34d2c595de23..37d08b95c3f0 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -790,17 +790,15 @@ static ssize_t dev_nvram_write(struct file *file, const char __user *buf,
+ 			  size_t count, loff_t *ppos)
  {
- 	struct range_trans *rt;
--	struct mls_range *r = NULL;
-+	struct mls_range *r;
- 	int i, rc;
- 	__le32 buf[2];
- 	u32 nel;
-@@ -1852,6 +1852,7 @@ static int range_read(struct policydb *p, void *fp)
- 	if (rc)
- 		return rc;
+ 	ssize_t ret;
+-	char *tmp = NULL;
++	char *tmp;
+ 	ssize_t size;
  
-+	r = NULL;
- 	nel = le32_to_cpu(buf[0]);
- 	for (i = 0; i < nel; i++) {
- 		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+-	ret = -ENODEV;
+ 	if (!ppc_md.nvram_size)
+-		goto out;
++		return -ENODEV;
+ 
+-	ret = 0;
+ 	size = ppc_md.nvram_size();
+ 	if (*ppos >= size || size < 0)
+-		goto out;
++		return 0;
+ 
+ 	count = min_t(size_t, count, size - *ppos);
+ 	count = min(count, PAGE_SIZE);
 -- 
 2.11.0
 
