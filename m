@@ -1,77 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:45:54 +0000
-Subject: Applied "spi/ppc4xx: Use kcalloc() in spi_ppc4xx_of_probe()" to the spi tree
-Message-Id: <E1cTYlW-0000LX-PS@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 18:18:04 +0000
+Subject: [PATCH 00/11] PowerPC-KVM: Fine-tuning for some function implementations
+Message-Id: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <777d3bd9-4817-d688-d496-b871edbbc937@users.sourceforge.net>
-In-Reply-To: <777d3bd9-4817-d688-d496-b871edbbc937@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi/ppc4xx: Use kcalloc() in spi_ppc4xx_of_probe()
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 797236f10a095a1742373bca5f284c5ec8afb446 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 14:30:43 +0100
-Subject: [PATCH] spi/ppc4xx: Use kcalloc() in spi_ppc4xx_of_probe()
+Date: Fri, 20 Jan 2017 19:07:21 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kcalloc".
+Some update suggestions were taken into account
+from static source code analysis.
 
-  This issue was detected by using the Coccinelle software.
+Markus Elfring (11):
+  Move assignments for the variable "err" in kvm_htab_write()
+  Improve a size determination in kvmppc_alloc_hpt()
+  Move error code assignments in two functions
+  Use common error handling code in kvmppc_clr_passthru_irq()
+  Adjust nine checks for null pointers
+  Use kcalloc() in kvmppc_alloc_host_rm_ops()
+  Improve size determinations in five functions
+  Use seq_puts() in xics_debug_show()
+  Improve a size determination in two functions
+  Use kcalloc() in e500_mmu_host_init()
+  Return directly after a failed copy_from_user() in two functions
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 26 +++++++------
+ arch/powerpc/kvm/book3s_hv.c        | 73 +++++++++++++++++++------------------
+ arch/powerpc/kvm/book3s_xics.c      |  7 ++--
+ arch/powerpc/kvm/e500_mmu_host.c    |  5 +--
+ arch/powerpc/kvm/powerpc.c          | 48 ++++++++++--------------
+ 5 files changed, 75 insertions(+), 84 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-ppc4xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
-index b2df63c66494..967d94844b30 100644
---- a/drivers/spi/spi-ppc4xx.c
-+++ b/drivers/spi/spi-ppc4xx.c
-@@ -411,7 +411,7 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
- 	if (num_gpios > 0) {
- 		int i;
- 
--		hw->gpios = kzalloc(sizeof(int) * num_gpios, GFP_KERNEL);
-+		hw->gpios = kcalloc(num_gpios, sizeof(*hw->gpios), GFP_KERNEL);
- 		if (!hw->gpios) {
- 			ret = -ENOMEM;
- 			goto free_master;
 -- 
 2.11.0
 
