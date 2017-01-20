@@ -1,82 +1,36 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Tue, 17 Jan 2017 18:02:40 +0000
-Subject: Re: [PATCH 45/46] selinux: Use common error handling code in sidtab_insert()
-Message-Id: <923ce5f2-48ce-9d90-db19-7c94b7c43794@schaufler-ca.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 07:08:55 +0000
+Subject: Re: powerpc/nvram: Move an assignment for the variable "ret" in dev_nvram_write()
+Message-Id: <b0958392-8325-4f56-cded-0ff6691893cf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
- <36f95c73-4ae1-efbf-393c-6f4239a91478@users.sourceforge.net>
-In-Reply-To: <36f95c73-4ae1-efbf-393c-6f4239a91478@users.sourceforge.net>
+References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+ <dcaccc31-99ac-ef90-cbef-79dbf72f0a4d@users.sourceforge.net>
+ <52f46c9b-e049-7288-2c53-9c2525cd84c6@linux.vnet.ibm.com>
+In-Reply-To: <52f46c9b-e049-7288-2c53-9c2525cd84c6@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 1/15/2017 7:45 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 13:45:45 +0100
->
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/sidtab.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
->
-> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-> index f6915f257486..4130f882808c 100644
-> --- a/security/selinux/ss/sidtab.c
-> +++ b/security/selinux/ss/sidtab.c
-> @@ -35,10 +35,8 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->  	int hvalue, rc = 0;
->  	struct sidtab_node *prev, *cur, *newnode;
->  
-> -	if (!s) {
-> -		rc = -ENOMEM;
-> -		goto out;
-> -	}
-> +	if (!s)
-> +		goto failure_indication;
->  
->  	hvalue = SIDTAB_HASH(sid);
->  	prev = NULL;
-> @@ -54,15 +52,12 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->  	}
->  
->  	newnode = kmalloc(sizeof(*newnode), GFP_ATOMIC);
-> -	if (!newnode) {
-> -		rc = -ENOMEM;
-> -		goto out;
+> I think you really could have squashed patches 1-3 into a single patch
+> that returns directly after any failure.
 
-Why not "return -ENOMEM;" ?
+Thanks for your constructive feedback.
 
-> -	}
-> +	if (!newnode)
-> +		goto failure_indication;
->  	newnode->sid = sid;
->  	if (context_cpy(&newnode->context, context)) {
->  		kfree(newnode);
-> -		rc = -ENOMEM;
-> -		goto out;
-> +		goto failure_indication;
+I have got software development concerns around such patch squashing.
 
-Again, "return -ENOMEM:"
 
->  	}
->  
->  	if (prev) {
-> @@ -80,6 +75,9 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->  		s->next_sid = sid + 1;
->  out:
->  	return rc;
-> +failure_indication:
-> +	rc = -ENOMEM;
-> +	goto out;
+> At this point you might as well remove that label and move the kfree(tmp) call up
+> and return directly after the failure and at the nvram_write() call site
+> doing away completely with the "ret" variable.
 
-Backward gotos are horrible. Don't do this.
+Your idea might look nice at first glance. But I would interpret the previous
+implementation of the discussed function in the way that the memory which was
+dynamically allocated here should always (not only in the failure case) be released
+before returning here.
 
->  }
->  
->  static struct context *sidtab_search_core(struct sidtab *s, u32 sid, int force)
+Would you really like to change the life time for this “temporary” data item?
 
+Regards,
+Markus
