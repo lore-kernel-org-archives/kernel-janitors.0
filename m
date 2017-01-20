@@ -1,94 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 10:27:19 +0000
-Subject: [PATCH 7/7] dmasound_core: Adjust six function calls together with a variable assignment
-Message-Id: <43a0c4d3-d054-4be2-eab7-7ee37b62fca6@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 18:22:50 +0000
+Subject: [PATCH 04/11] KVM: PPC: Book3S HV: Use common error handling code in kvmppc_clr_passthru_irq()
+Message-Id: <68158b48-c85b-4da8-1ef7-c996de1db5da@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
-In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 10:34:47 +0100
+Date: Fri, 20 Jan 2017 11:00:08 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: do not use assignment in if condition
-
-Thus fix affected source code places.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/oss/dmasound/dmasound_core.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ arch/powerpc/kvm/book3s_hv.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/sound/oss/dmasound/dmasound_core.c b/sound/oss/dmasound/dmasound_core.c
-index 2bdd1d619a7f..a20bf3b94329 100644
---- a/sound/oss/dmasound/dmasound_core.c
-+++ b/sound/oss/dmasound/dmasound_core.c
-@@ -576,7 +576,9 @@ static ssize_t sq_write(struct file *file, const char __user *src, size_t uLeft,
- 	*/
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index a93e1c4445da..cfc7699d05df 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -3509,11 +3509,9 @@ static int kvmppc_clr_passthru_irq(struct kvm *kvm, int host_irq, int guest_gsi)
+ 		return -EIO;
  
- 	if (write_sq.locked = 0) {
--		if ((uWritten = sq_setup(&write_sq)) < 0) return uWritten ;
-+		uWritten = sq_setup(&write_sq);
-+		if (uWritten < 0)
-+			return uWritten;
- 		uWritten = 0 ;
- 	}
+ 	mutex_lock(&kvm->lock);
++	if (!kvm->arch.pimap)
++		goto unlock;
  
-@@ -675,7 +677,8 @@ static unsigned int sq_poll(struct file *file, struct poll_table_struct *wait)
- 	int retVal;
- 	
- 	if (write_sq.locked = 0) {
--		if ((retVal = sq_setup(&write_sq)) < 0)
-+		retVal = sq_setup(&write_sq);
-+		if (retVal < 0)
- 			return retVal;
- 		return 0;
- 	}
-@@ -736,7 +739,8 @@ static int sq_open2(struct sound_queue *sq, struct file *file, fmode_t mode,
- 		   can't be changed at the moment - but _could_ be perhaps
- 		   in the setfragments ioctl.
- 		*/
--		if (( rc = sq_allocate_buffers(sq, numbufs, bufsize))) {
-+		rc = sq_allocate_buffers(sq, numbufs, bufsize);
-+		if (rc) {
- #if 0 /* blocking open() */
- 			sq_wake_up(sq, file, mode);
- #else
-@@ -1407,12 +1411,14 @@ int dmasound_init(void)
- 	/* Set up sound queue, /dev/audio and /dev/dsp. */
+-	if (kvm->arch.pimap = NULL) {
+-		mutex_unlock(&kvm->lock);
+-		return 0;
+-	}
+ 	pimap = kvm->arch.pimap;
  
- 	/* Set default settings. */
--	if ((res = sq_init()) < 0)
--		return res ;
-+	res = sq_init();
-+	if (res < 0)
-+		return res;
- 
- 	/* Set up /dev/sndstat. */
--	if ((res = state_init()) < 0)
--		return res ;
-+	res = state_init();
-+	if (res < 0)
-+		return res;
- 
- 	/* Set up /dev/mixer. */
- 	mixer_init();
-@@ -1485,7 +1491,8 @@ static int dmasound_setup(char *str)
- 			numWriteBufs = ints[1];
- 		/* fall through */
- 	case 1:
--		if ((size = ints[2]) < 256) /* check for small buffer specs */
-+		size = ints[2];
-+		if (size < 256) /* check for small buffer specs */
- 			size <<= 10 ;
-                 if (size < MIN_BUFSIZE || size > MAX_BUFSIZE)
-                         printk("dmasound_setup: invalid write buffer size, using default = %d\n", writeBufSize);
+ 	for (i = 0; i < pimap->n_mapped; i++) {
+@@ -3535,7 +3533,7 @@ static int kvmppc_clr_passthru_irq(struct kvm *kvm, int host_irq, int guest_gsi)
+ 	 * We don't free this structure even when the count goes to
+ 	 * zero. The structure is freed when we destroy the VM.
+ 	 */
+-
++unlock:
+ 	mutex_unlock(&kvm->lock);
+ 	return 0;
+ }
 -- 
 2.11.0
 
