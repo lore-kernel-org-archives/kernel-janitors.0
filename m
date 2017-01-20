@@ -1,88 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:13:06 +0000
-Subject: [PATCH 13/46] selinux: Move four assignments for the variable "rc" in genfs_read()
-Message-Id: <99ebe15e-c30f-d129-82a0-a809769aa5dc@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 18:26:58 +0000
+Subject: [PATCH 08/11] KVM: PPC: Book3S: Use seq_puts() in xics_debug_show()
+Message-Id: <10e0dc46-5eec-bafc-e191-98df6a724b98@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 17:21:59 +0100
+Date: Fri, 20 Jan 2017 16:26:51 +0100
 
-One local variable was set to an error code in four cases before
-a concrete error situation was detected. Thus move the corresponding
-assignments into if branches to indicate a software failure there.
+A string which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/powerpc/kvm/book3s_xics.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 7544e374dec9..a12d9166f0e4 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -2012,11 +2012,11 @@ static int genfs_read(struct policydb *p, void *fp)
- 		if (rc)
- 			goto out;
- 		len = le32_to_cpu(buf[0]);
+diff --git a/arch/powerpc/kvm/book3s_xics.c b/arch/powerpc/kvm/book3s_xics.c
+index 3bdc639157c1..3740f9efcf06 100644
+--- a/arch/powerpc/kvm/book3s_xics.c
++++ b/arch/powerpc/kvm/book3s_xics.c
+@@ -934,8 +934,7 @@ static int xics_debug_show(struct seq_file *m, void *private)
+ 	t_reject = 0;
+ 
+ 	xics_debugfs_irqmap(m, kvm->arch.pimap);
 -
--		rc = -ENOMEM;
- 		newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
--		if (!newgenfs)
-+		if (!newgenfs) {
-+			rc = -ENOMEM;
- 			goto out;
-+		}
+-	seq_printf(m, "=====\nICP state\n=====\n");
++	seq_puts(m, "=====\nICP state\n=====\n");
  
- 		rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
- 		if (rc)
-@@ -2024,10 +2024,10 @@ static int genfs_read(struct policydb *p, void *fp)
- 
- 		for (genfs_p = NULL, genfs = p->genfs; genfs;
- 		     genfs_p = genfs, genfs = genfs->next) {
--			rc = -EINVAL;
- 			if (strcmp(newgenfs->fstype, genfs->fstype) = 0) {
- 				printk(KERN_ERR "SELinux:  dup genfs fstype %s\n",
- 				       newgenfs->fstype);
-+				rc = -EINVAL;
- 				goto out;
- 			}
- 			if (strcmp(newgenfs->fstype, genfs->fstype) < 0)
-@@ -2051,11 +2051,11 @@ static int genfs_read(struct policydb *p, void *fp)
- 			if (rc)
- 				goto out;
- 			len = le32_to_cpu(buf[0]);
--
--			rc = -ENOMEM;
- 			newc = kzalloc(sizeof(*newc), GFP_KERNEL);
--			if (!newc)
-+			if (!newc) {
-+				rc = -ENOMEM;
- 				goto out;
-+			}
- 
- 			rc = str_read(&newc->u.name, GFP_KERNEL, fp, len);
- 			if (rc)
-@@ -2072,12 +2072,12 @@ static int genfs_read(struct policydb *p, void *fp)
- 
- 			for (l = NULL, c = genfs->head; c;
- 			     l = c, c = c->next) {
--				rc = -EINVAL;
- 				if (!strcmp(newc->u.name, c->u.name) &&
- 				    (!c->v.sclass || !newc->v.sclass ||
- 				     newc->v.sclass = c->v.sclass)) {
- 					printk(KERN_ERR "SELinux:  dup genfs entry (%s,%s)\n",
- 					       genfs->fstype, c->u.name);
-+					rc = -EINVAL;
- 					goto out;
- 				}
- 				len = strlen(newc->u.name);
+ 	kvm_for_each_vcpu(i, vcpu, kvm) {
+ 		struct kvmppc_icp *icp = vcpu->arch.icp;
 -- 
 2.11.0
 
