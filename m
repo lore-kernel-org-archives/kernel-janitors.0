@@ -1,52 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 25 Jan 2017 14:26:50 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: header should be defining _SMU7_CLOCK_POWER_GATING_H_
-Message-Id: <CADnq5_OGEHWv63poYszvz+BryRbtQpmh1iivRYMODpktbhWcVA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 18:27:54 +0000
+Subject: [PATCH 09/11] KVM: PPC: Book3S: Improve a size determination in two functions
+Message-Id: <f2b94132-efd8-df81-35b3-a4990dceb05f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170125120732.25126-1-colin.king@canonical.com>
-In-Reply-To: <20170125120732.25126-1-colin.king@canonical.com>
+References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@amd.com>, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Ken Wang <Qingqing.Wang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 25, 2017 at 7:07 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> _SMU7_CLOCK_POWER_GATING_H_ is being used as a header guard, followed by
-> a #define of a different macro.  Define _SMU7_CLOCK_POWER_GATING_H_ instead
-> to fix this.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 16:28:43 +0100
 
-Thanks for the patch.  Nicolas beat you to it:
-https://lists.freedesktop.org/archives/dri-devel/2017-January/130477.html
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/kvm/book3s_xics.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alex
+diff --git a/arch/powerpc/kvm/book3s_xics.c b/arch/powerpc/kvm/book3s_xics.c
+index 3740f9efcf06..d45c1b59b70a 100644
+--- a/arch/powerpc/kvm/book3s_xics.c
++++ b/arch/powerpc/kvm/book3s_xics.c
+@@ -1032,7 +1032,7 @@ static struct kvmppc_ics *kvmppc_xics_create_ics(struct kvm *kvm,
+ 		goto out;
+ 
+ 	/* Create the ICS */
+-	ics = kzalloc(sizeof(struct kvmppc_ics), GFP_KERNEL);
++	ics = kzalloc(*ics), GFP_KERNEL);
+ 	if (!ics)
+ 		goto out;
+ 
+@@ -1064,7 +1064,7 @@ int kvmppc_xics_create_icp(struct kvm_vcpu *vcpu, unsigned long server_num)
+ 	if (kvmppc_xics_find_server(vcpu->kvm, server_num))
+ 		return -EEXIST;
+ 
+-	icp = kzalloc(sizeof(struct kvmppc_icp), GFP_KERNEL);
++	icp = kzalloc(sizeof(*icp), GFP_KERNEL);
+ 	if (!icp)
+ 		return -ENOMEM;
+ 
+-- 
+2.11.0
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.h b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.h
-> index d52a28c..c96ed9e 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.h
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.h
-> @@ -22,7 +22,7 @@
->   */
->
->  #ifndef _SMU7_CLOCK_POWER_GATING_H_
-> -#define _SMU7_CLOCK__POWER_GATING_H_
-> +#define _SMU7_CLOCK_POWER_GATING_H_
->
->  #include "smu7_hwmgr.h"
->  #include "pp_asicblocks.h"
-> --
-> 2.10.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
