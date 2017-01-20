@@ -1,40 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:48:18 +0000
-Subject: [PATCH 13/18] mtd-cfi_cmdset_0002: Delete an unnecessary variable initialisation in do_write_oneword
-Message-Id: <badee3bc-5755-1e12-87dd-47ac23f918a1@users.sourceforge.net>
+Date: Fri, 20 Jan 2017 18:20:50 +0000
+Subject: [PATCH 02/11] KVM: PPC: Book3S HV: Improve a size determination in kvmppc_alloc_hpt()
+Message-Id: <755544bd-b29c-f240-d526-8a8aec6d620a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 19:00:30 +0100
+Date: Fri, 20 Jan 2017 10:00:13 +0100
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 2 +-
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 7d4d4a144631..05d740e8eb51 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1569,7 +1569,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
- 	 * timeout of 0 jiffies if HZ is smaller than 1000.
- 	 */
- 	unsigned long uWriteTimeout = ( HZ / 1000 ) + 1;
--	int ret = 0;
-+	int ret;
- 	map_word oldd;
- 	int retry_cnt = 0;
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+index dc34729e4ad0..4655f27e0518 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -91,7 +91,7 @@ long kvmppc_alloc_hpt(struct kvm *kvm, u32 *htab_orderp)
+ 	atomic64_set(&kvm->arch.mmio_update, 0);
  
+ 	/* Allocate reverse map array */
+-	rev = vmalloc(sizeof(struct revmap_entry) * kvm->arch.hpt_npte);
++	rev = vmalloc(sizeof(*rev) * kvm->arch.hpt_npte);
+ 	if (!rev) {
+ 		pr_err("kvmppc_alloc_hpt: Couldn't alloc reverse map array\n");
+ 		goto out_freehpt;
 -- 
 2.11.0
 
