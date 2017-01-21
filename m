@@ -1,46 +1,104 @@
-From: Kirti Wankhede <kwankhede@nvidia.com>
-Date: Mon, 09 Jan 2017 18:54:32 +0000
-Subject: Re: [patch 3/3] vfio-mdev: remove some dead code
-Message-Id: <b4067b37-f9af-78a6-a9a3-84a9834cf21d@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Jan 2017 04:55:58 +0000
+Subject: [patch] iio: trigger: clean up viio_trigger_alloc()
+Message-Id: <20170121045557.GE15269@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170107063008.GC26959@elgon.mountain>
-In-Reply-To: <20170107063008.GC26959@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+1) Reverse the test for kmalloc() failure so we can pull everything
+   back one tab.
+2) Use gotos for unwinding.
+3) Some of the extra line breaks for the 80 character limit are no
+   longer needed so we can remove them.
 
-CC += Alex.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I think I wrote some code and then removed it, but forgot to remove this
-code. Thanks for cleaning up.
-
-Reviewed by: Kirti Wankhede <kwankhede@nvidia.com>
-
-Thanks,
-Kirti
-
-On 1/7/2017 12:00 PM, Dan Carpenter wrote:
-> We set info.count to 1 in mtty_get_irq_info() so static checkers
-> complain that, "Why do we have impossible conditions?"  The answer is
-> that it seems to be left over dead code that can be safely removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index 353666d68207..d6ddc31fa729 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -1230,9 +1230,6 @@ static long mtty_ioctl(struct mdev_device *mdev, unsigned int cmd,
->  		if (ret)
->  			return ret;
->  
-> -		if (info.count = -1)
-> -			return -EINVAL;
-> -
->  		if (copy_to_user((void __user *)arg, &info, minsz))
->  			return -EFAULT;
->  
-> 
+diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+index 978729f..372faef 100644
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@ -513,46 +513,45 @@ static void iio_trig_subirqunmask(struct irq_data *d)
+ static struct iio_trigger *viio_trigger_alloc(const char *fmt, va_list vargs)
+ {
+ 	struct iio_trigger *trig;
++	int i;
++
+ 	trig = kzalloc(sizeof *trig, GFP_KERNEL);
+-	if (trig) {
+-		int i;
+-		trig->dev.type = &iio_trig_type;
+-		trig->dev.bus = &iio_bus_type;
+-		device_initialize(&trig->dev);
+-
+-		mutex_init(&trig->pool_lock);
+-		trig->subirq_base
+-			= irq_alloc_descs(-1, 0,
+-					  CONFIG_IIO_CONSUMERS_PER_TRIGGER,
+-					  0);
+-		if (trig->subirq_base < 0) {
+-			kfree(trig);
+-			return NULL;
+-		}
++	if (!trig)
++		return NULL;
+ 
+-		trig->name = kvasprintf(GFP_KERNEL, fmt, vargs);
+-		if (trig->name = NULL) {
+-			irq_free_descs(trig->subirq_base,
+-				       CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+-			kfree(trig);
+-			return NULL;
+-		}
+-		trig->subirq_chip.name = trig->name;
+-		trig->subirq_chip.irq_mask = &iio_trig_subirqmask;
+-		trig->subirq_chip.irq_unmask = &iio_trig_subirqunmask;
+-		for (i = 0; i < CONFIG_IIO_CONSUMERS_PER_TRIGGER; i++) {
+-			irq_set_chip(trig->subirq_base + i,
+-				     &trig->subirq_chip);
+-			irq_set_handler(trig->subirq_base + i,
+-					&handle_simple_irq);
+-			irq_modify_status(trig->subirq_base + i,
+-					  IRQ_NOREQUEST | IRQ_NOAUTOEN,
+-					  IRQ_NOPROBE);
+-		}
+-		get_device(&trig->dev);
++	trig->dev.type = &iio_trig_type;
++	trig->dev.bus = &iio_bus_type;
++	device_initialize(&trig->dev);
++
++	mutex_init(&trig->pool_lock);
++	trig->subirq_base = irq_alloc_descs(-1, 0,
++					    CONFIG_IIO_CONSUMERS_PER_TRIGGER,
++					    0);
++	if (trig->subirq_base < 0)
++		goto free_trig;
++
++	trig->name = kvasprintf(GFP_KERNEL, fmt, vargs);
++	if (trig->name = NULL)
++		goto free_descs;
++
++	trig->subirq_chip.name = trig->name;
++	trig->subirq_chip.irq_mask = &iio_trig_subirqmask;
++	trig->subirq_chip.irq_unmask = &iio_trig_subirqunmask;
++	for (i = 0; i < CONFIG_IIO_CONSUMERS_PER_TRIGGER; i++) {
++		irq_set_chip(trig->subirq_base + i, &trig->subirq_chip);
++		irq_set_handler(trig->subirq_base + i, &handle_simple_irq);
++		irq_modify_status(trig->subirq_base + i,
++				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
+ 	}
++	get_device(&trig->dev);
+ 
+ 	return trig;
++
++free_descs:
++	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
++free_trig:
++	kfree(trig);
++	return NULL;
+ }
+ 
+ struct iio_trigger *iio_trigger_alloc(const char *fmt, ...)
