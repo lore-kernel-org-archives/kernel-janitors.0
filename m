@@ -1,46 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:21:55 +0000
-Subject: [PATCH 12/17] spi/topcliff-pch: Improve size determinations in pch_spi_probe()
-Message-Id: <d2471abf-1eca-037f-3d10-ba03d8e987af@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Jan 2017 04:48:19 +0000
+Subject: [patch] fs/affs: affs_bread() doesn't return ERR_PTRs
+Message-Id: <20170121044819.GA15269@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
-In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Fabian Frederick <fabf@skynet.be>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boaz Harrosh <ooo@electrozaur.com>, Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 15:46:35 +0100
+We're checking IS_ERR() here, but we should be checking for NULL.
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+Fixes: e393e82a7d09 ("fs/affs: make export work with cold dcache")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 0488b7c7cc19..4bba39e70c7b 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1541,11 +1541,11 @@ static int pch_spi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	int i;
- 	struct pch_pd_dev_save *pd_dev_save;
+diff --git a/fs/affs/namei.c b/fs/affs/namei.c
+index a3df8a6..706dd06 100644
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -453,8 +453,8 @@ static struct dentry *affs_get_parent(struct dentry *child)
+ 	struct buffer_head *bh;
  
--	pd_dev_save = kzalloc(sizeof(struct pch_pd_dev_save), GFP_KERNEL);
-+	pd_dev_save = kzalloc(sizeof(*pd_dev_save), GFP_KERNEL);
- 	if (!pd_dev_save)
- 		return -ENOMEM;
+ 	bh = affs_bread(child->d_sb, d_inode(child)->i_ino);
+-	if (IS_ERR(bh))
+-		return ERR_CAST(bh);
++	if (bh)
++		return ERR_PTR(-EIO);
  
--	board_dat = kzalloc(sizeof(struct pch_spi_board_data), GFP_KERNEL);
-+	board_dat = kzalloc(sizeof(*board_dat), GFP_KERNEL);
- 	if (!board_dat) {
- 		retval = -ENOMEM;
- 		goto err_no_mem;
--- 
-2.11.0
-
+ 	parent = affs_iget(child->d_sb,
+ 			   be32_to_cpu(AFFS_TAIL(child->d_sb, bh)->parent));
