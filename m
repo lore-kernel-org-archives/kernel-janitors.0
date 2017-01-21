@@ -1,54 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Jan 2017 19:56:33 +0000
-Subject: [PATCH 4/9] memstick: Improve two size determinations in msb_resume()
-Message-Id: <9375faf8-986d-e642-df14-1dd2b97d7025@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 18:11:15 +0000
+Subject: [PATCH 2/5] s390/pci: Return directly after a failed clp_alloc_block() in clp_normal_command()
+Message-Id: <c002c597-f52c-8fd5-e8d4-2f01a085ddd2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
-In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+References: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
+In-Reply-To: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org, =?UTF-8?Q?Gerald_Sch=c3=a4fer?= <gerald.schaefer@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Jan 2017 19:17:07 +0100
+Date: Sat, 21 Jan 2017 17:56:40 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* Return directly after a call of the function "clp_alloc_block"
+  failed here.
+
+* Delete the jump label "out" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/memstick/core/ms_block.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/s390/pci/pci_clp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index 526e671a3435..fd3d9f78bcba 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -2261,8 +2261,7 @@ static int msb_resume(struct memstick_dev *card)
- 	return 0;
- #endif
- 	mutex_lock(&card->host->lock);
--
--	new_msb = kzalloc(sizeof(struct msb_data), GFP_KERNEL);
-+	new_msb = kzalloc(sizeof(*new_msb), GFP_KERNEL);
- 	if (!new_msb)
- 		goto out;
+diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
+index 4f5a1bf3b14b..28e13fa7a79c 100644
+--- a/arch/s390/pci/pci_clp.c
++++ b/arch/s390/pci/pci_clp.c
+@@ -517,10 +517,9 @@ static int clp_normal_command(struct clp_req *req)
+ 	if (req->lps != 0 && req->lps != 2)
+ 		return -EINVAL;
  
-@@ -2277,8 +2276,9 @@ static int msb_resume(struct memstick_dev *card)
- 	if (msb->block_size != new_msb->block_size)
- 		goto out;
+-	rc = -ENOMEM;
+ 	lpcb = clp_alloc_block(GFP_KERNEL);
+ 	if (!lpcb)
+-		goto out;
++		return -ENOMEM;
  
--	if (memcmp(msb->boot_page, new_msb->boot_page,
--					sizeof(struct ms_boot_page)))
-+	if (memcmp(msb->boot_page,
-+		   new_msb->boot_page,
-+		   sizeof(*msb->boot_page)))
- 		goto out;
+ 	rc = -EFAULT;
+ 	uptr = (void __force __user *)(unsigned long) req->data_p;
+@@ -550,7 +549,6 @@ static int clp_normal_command(struct clp_req *req)
  
- 	if (msb->logical_block_count != new_msb->logical_block_count ||
+ out_free:
+ 	clp_free_block(lpcb);
+-out:
+ 	return rc;
+ }
+ 
 -- 
 2.11.0
 
