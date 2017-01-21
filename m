@@ -1,151 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 10:25:14 +0000
-Subject: [PATCH 5/7] ALSA: seq: Adjust 16 function calls together with a variable assignment
-Message-Id: <c3f73d40-c9dc-2682-0b94-f997763aaf7b@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 15:24:58 +0000
+Subject: [PATCH] powerpc/mm: Return directly after a failed __copy_from_user() in sys_subpage_prot()
+Message-Id: <5f910c33-c811-2197-0adb-c55f7722c5a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
-In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 09:44:22 +0100
+Date: Sat, 21 Jan 2017 16:10:50 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+* Return directly after a call of the function "__copy_from_user"
+  failed here.
 
-ERROR: do not use assignment in if condition
+  This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code places.
+* Delete the jump label "out2" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/core/seq/seq_clientmgr.c | 52 ++++++++++++++++++++++++++++--------------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+ arch/powerpc/mm/subpage-prot.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
-index b9518e7cb623..519968841ccc 100644
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -400,7 +400,11 @@ static ssize_t snd_seq_read(struct file *file, char __user *buf, size_t count,
- 	if (snd_BUG_ON(!client))
- 		return -ENXIO;
+diff --git a/arch/powerpc/mm/subpage-prot.c b/arch/powerpc/mm/subpage-prot.c
+index d5543514c1df..40309edd7cb7 100644
+--- a/arch/powerpc/mm/subpage-prot.c
++++ b/arch/powerpc/mm/subpage-prot.c
+@@ -248,9 +248,8 @@ long sys_subpage_prot(unsigned long addr, unsigned long len, u32 __user *map)
+ 			nw = (next - addr) >> PAGE_SHIFT;
  
--	if (!client->accept_input || (fifo = client->data.user.fifo) = NULL)
-+	if (!client->accept_input)
-+		return -ENXIO;
-+
-+	fifo = client->data.user.fifo;
-+	if (!fifo)
- 		return -ENXIO;
+ 		up_write(&mm->mmap_sem);
+-		err = -EFAULT;
+ 		if (__copy_from_user(spp, map, nw * sizeof(u32)))
+-			goto out2;
++			return -EFAULT;
+ 		map += nw;
+ 		down_write(&mm->mmap_sem);
  
- 	if (atomic_read(&fifo->overflow) > 0) {
-@@ -419,9 +423,9 @@ static ssize_t snd_seq_read(struct file *file, char __user *buf, size_t count,
- 		int nonblock;
- 
- 		nonblock = (file->f_flags & O_NONBLOCK) || result > 0;
--		if ((err = snd_seq_fifo_cell_out(fifo, &cell, nonblock)) < 0) {
-+		err = snd_seq_fifo_cell_out(fifo, &cell, nonblock);
-+		if (err < 0)
- 			break;
--		}
- 		if (snd_seq_ev_is_variable(&cell->event)) {
- 			struct snd_seq_event tmpev;
- 			tmpev = cell->event;
-@@ -948,7 +952,8 @@ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
- 		return err;
- 
- 	/* we got a cell. enqueue it. */
--	if ((err = snd_seq_enqueue_event(cell, atomic, hop)) < 0) {
-+	err = snd_seq_enqueue_event(cell, atomic, hop);
-+	if (err < 0) {
- 		snd_seq_cell_free(cell);
- 		return err;
- 	}
-@@ -1273,7 +1278,8 @@ static int snd_seq_ioctl_create_port(struct snd_seq_client *client, void *arg)
- 		return -EINVAL;
- 	}
- 	if (client->type = KERNEL_CLIENT) {
--		if ((callback = info->kernel) != NULL) {
-+		callback = info->kernel;
-+		if (callback) {
- 			if (callback->owner)
- 				port->owner = callback->owner;
- 			port->private_data = callback->private_data;
-@@ -1426,13 +1432,17 @@ static int snd_seq_ioctl_subscribe_port(struct snd_seq_client *client,
- 	struct snd_seq_client *receiver, *sender;
- 	struct snd_seq_client_port *sport, *dport;
- 
--	if ((receiver = snd_seq_client_use_ptr(subs->dest.client)) = NULL)
-+	receiver = snd_seq_client_use_ptr(subs->dest.client);
-+	if (!receiver)
- 		goto exit;
--	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
-+	sender = snd_seq_client_use_ptr(subs->sender.client);
-+	if (!sender)
- 		goto unlock_receiver;
--	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
-+	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
-+	if (!sport)
- 		goto unlock_sender;
--	if ((dport = snd_seq_port_use_ptr(receiver, subs->dest.port)) = NULL)
-+	dport = snd_seq_port_use_ptr(receiver, subs->dest.port);
-+	if (!dport)
- 		goto unlock_sport;
- 
- 	result = check_subscription_permission(client, sport, dport, subs);
-@@ -1468,13 +1478,17 @@ static int snd_seq_ioctl_unsubscribe_port(struct snd_seq_client *client,
- 	struct snd_seq_client *receiver, *sender;
- 	struct snd_seq_client_port *sport, *dport;
- 
--	if ((receiver = snd_seq_client_use_ptr(subs->dest.client)) = NULL)
-+	receiver = snd_seq_client_use_ptr(subs->dest.client);
-+	if (!receiver)
- 		goto exit;
--	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
-+	sender = snd_seq_client_use_ptr(subs->sender.client);
-+	if (!sender)
- 		goto unlock_receiver;
--	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
-+	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
-+	if (!sport)
- 		goto unlock_sender;
--	if ((dport = snd_seq_port_use_ptr(receiver, subs->dest.port)) = NULL)
-+	dport = snd_seq_port_use_ptr(receiver, subs->dest.port);
-+	if (!dport)
- 		goto unlock_sport;
- 
- 	result = check_subscription_permission(client, sport, dport, subs);
-@@ -1896,9 +1910,11 @@ static int snd_seq_ioctl_get_subscription(struct snd_seq_client *client,
- 	struct snd_seq_client_port *sport;
- 	struct snd_seq_subscribers *p;
- 
--	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
-+	sender = snd_seq_client_use_ptr(subs->sender.client);
-+	if (!sender)
- 		goto exit;
--	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
-+	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
-+	if (!sport)
- 		goto unlock_client;
- 	p = snd_seq_port_get_subscription(&sport->c_src, &subs->dest);
- 	if (p) {
-@@ -1928,9 +1944,11 @@ static int snd_seq_ioctl_query_subs(struct snd_seq_client *client, void *arg)
- 	struct list_head *p;
- 	int i;
- 
--	if ((cptr = snd_seq_client_use_ptr(subs->root.client)) = NULL)
-+	cptr = snd_seq_client_use_ptr(subs->root.client);
-+	if (!cptr)
- 		goto exit;
--	if ((port = snd_seq_port_use_ptr(cptr, subs->root.port)) = NULL)
-+	port = snd_seq_port_use_ptr(cptr, subs->root.port);
-+	if (!port)
- 		goto unlock_client;
- 
- 	switch (subs->type) {
+@@ -262,6 +261,5 @@ long sys_subpage_prot(unsigned long addr, unsigned long len, u32 __user *map)
+ 	err = 0;
+  out:
+ 	up_write(&mm->mmap_sem);
+- out2:
+ 	return err;
+ }
 -- 
 2.11.0
 
