@@ -1,52 +1,29 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Tue, 17 Jan 2017 16:35:23 +0000
-Subject: Re: [PATCH 21/46] selinux: Two function calls less in range_read() after error detection
-Message-Id: <e3fcbcbb-a1fb-ef39-268f-2e79532739b1@schaufler-ca.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Jan 2017 04:51:43 +0000
+Subject: [patch] samples/bpf: silence shift wrapping warning
+Message-Id: <20170121045143.GC15269@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
- <1e37fe86-2e83-c1f0-f43b-69ed2fb5c7aa@users.sourceforge.net>
-In-Reply-To: <1e37fe86-2e83-c1f0-f43b-69ed2fb5c7aa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnaldo Carvalho de Melo <acme@redhat.com>, Thomas Graf <tgraf@suug.ch>
+Cc: Alexei Starovoitov <ast@kernel.org>, Joe Stringer <joe@ovn.org>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 1/15/2017 7:21 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 20:20:15 +0100
->
-> Adjust a jump target to avoid two calls of the function "kfree" at the end
-> after a memory allocation failed for the local variable "rt".
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 4cd96ce51322..0d2f64558c0a 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1857,7 +1857,7 @@ static int range_read(struct policydb *p, void *fp)
->  		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
->  		if (!rt) {
->  			rc = -ENOMEM;
-> -			goto out;
-> +			goto exit;
+max_key is a value in the 0-63 range, so on 32 bit systems the shift
+could wrap.
 
-Why not "return rc;"?
-goto to a return is wrong.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->  		}
->  
->  		rc = next_entry(buf, fp, (sizeof(u32) * 2));
-> @@ -1909,6 +1909,7 @@ static int range_read(struct policydb *p, void *fp)
->  out:
->  	kfree(rt);
->  	kfree(r);
-> +exit:
->  	return rc;
->  }
->  
-
+diff --git a/samples/bpf/lwt_len_hist_user.c b/samples/bpf/lwt_len_hist_user.c
+index ec8f3bb..bd06eef 100644
+--- a/samples/bpf/lwt_len_hist_user.c
++++ b/samples/bpf/lwt_len_hist_user.c
+@@ -68,7 +68,7 @@ int main(int argc, char **argv)
+ 	for (i = 1; i <= max_key + 1; i++) {
+ 		stars(starstr, data[i - 1], max_value, MAX_STARS);
+ 		printf("%8ld -> %-8ld : %-8ld |%-*s|\n",
+-		       (1l << i) >> 1, (1l << i) - 1, data[i - 1],
++		       (1ULL << i) >> 1, (1ULL << i) - 1, data[i - 1],
+ 		       MAX_STARS, starstr);
+ 	}
+ 
