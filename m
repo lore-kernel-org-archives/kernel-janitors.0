@@ -1,58 +1,39 @@
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-Date: Mon, 16 Jan 2017 22:34:54 +0000
-Subject: Re: [patch] hfs: fix hfs_readdir()
-Message-Id: <1484606094.27533.35.camel@dubeyko.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Jan 2017 04:49:49 +0000
+Subject: [patch] PCI: xgene: double free on init error
+Message-Id: <20170121044949.GB15269@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160126092611.GD15717@mwanda>
-         <1453832336.2633.10.camel@slavad-ubuntu-14.04>
-         <20160126191835.GD5273@mwanda>
-         <1453845246.2633.17.camel@slavad-ubuntu-14.04>
-         <20170116142211.GF4104@mwanda>
-In-Reply-To: <20170116142211.GF4104@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chengyu Song <csong84@gatech.edu>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tanmay Inamdar <tinamdar@apm.com>, Duc Dang <dhdang@apm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2017-01-16 at 17:22 +0300, Dan Carpenter wrote:
-> I was reviewing old warnings and I stumbled across this one again.
-> Although I wrote that &fd.key->cat and "fd.key" are equivalent, I
-> feel
-> that actually we should be doing the former.  fd.key is a union but
-> we
-> want the ->cat member of the union.
-> 
-> On Tue, Jan 26, 2016 at 01:54:06PM -0800, Viacheslav Dubeyko wrote:
-> > 
-> > On Tue, 2016-01-26 at 22:18 +0300, Dan Carpenter wrote:
-> > > 
-> > > Hm, I completely didn't see that it was a union instead of a
-> > > struct.  I
-> > > still think my fix is actually correct though.  Now that you
-> > > point out
-> > > the union, I see that my change is equivalent to just removing
-> > > the '&'
-> > > char.
-> > > 
-> > > -	memcpy(&rd->key, &fd.key, sizeof(struct hfs_cat_key));
-> > > +	memcpy(&rd->key, fd.key, sizeof(struct hfs_cat_key));
-> > > 
-> > Yeahh, it looks correct right now. The rd is the pointer that
-> > includes
-> > struct hfs_cat_key object. So, we need to use &rd->key. But on
-> > another
-> > side we have struct hfs_find_data object on the stack. And this
-> > object
-> > includes the pointer on union btree_key. We want to copy struct
-> > hfs_cat_key object and we should use sizeof(struct hfs_cat_key).
-> I've read this paragraph several times now and I think you are saying
-> that the patch is correct.
-> 
+The "port" variable was allocated with devm_kzalloc() so if we free it
+with kfree() it will be freed twice.  Also I changed it to propogate the
+error from devm_ioremap_resource() instead of returning -ENOMEM.
 
-Yes, I've said that patch looks good. I think it's better to resend the
-patch again.
+Fixes: c5d460396100 ("PCI: Add MCFG quirks for X-Gene host controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Vyacheslav Dubeyko.
-
+diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
+index 7c3b54b..142a166 100644
+--- a/drivers/pci/host/pci-xgene.c
++++ b/drivers/pci/host/pci-xgene.c
+@@ -246,14 +246,11 @@ static int xgene_pcie_ecam_init(struct pci_config_window *cfg, u32 ipversion)
+ 	ret = xgene_get_csr_resource(adev, &csr);
+ 	if (ret) {
+ 		dev_err(dev, "can't get CSR resource\n");
+-		kfree(port);
+ 		return ret;
+ 	}
+ 	port->csr_base = devm_ioremap_resource(dev, &csr);
+-	if (IS_ERR(port->csr_base)) {
+-		kfree(port);
+-		return -ENOMEM;
+-	}
++	if (IS_ERR(port->csr_base))
++		return PTR_ERR(port->csr_base);
+ 
+ 	port->cfg_base = cfg->win;
+ 	port->version = ipversion;
