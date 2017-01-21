@@ -1,48 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:18:06 +0000
-Subject: [PATCH 18/46] selinux: One function call less in filename_trans_read() after error detection
-Message-Id: <358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 14:45:19 +0000
+Subject: [PATCH] powerpc/sstep: Return directly after a failed address_ok() in emulate_step()
+Message-Id: <bc39d538-80f2-e810-0d58-39522605e067@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Lennart Sorensen <lsorense@csclub.uwaterloo.ca>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Oliver O'Halloran <oohall@gmail.com>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 19:19:42 +0100
+Date: Sat, 21 Jan 2017 15:30:15 +0100
 
-Adjust a jump target to avoid a function call at the end after a memory
-allocation failed for the local variable "ft".
+* Return directly after a call of the function "address_ok" failed
+  in a case block.
+
+  This issue was detected by using the Coccinelle software.
+
+* Delete two error code assignments which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/lib/sstep.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 2be5b18eb149..5f122e846332 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1932,7 +1932,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 		ft = kzalloc(sizeof(*ft), GFP_KERNEL);
- 		if (!ft) {
- 			rc = -ENOMEM;
--			goto out;
-+			goto free_name;
- 		}
- 
- 		otype = kmalloc(sizeof(*otype), GFP_KERNEL);
-@@ -1986,6 +1986,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 	return 0;
- out:
- 	kfree(ft);
-+free_name:
- 	kfree(name);
- 	kfree(otype);
- 
+diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
+index 9c78a9c102c3..c33519c25b47 100644
+--- a/arch/powerpc/lib/sstep.c
++++ b/arch/powerpc/lib/sstep.c
+@@ -1803,9 +1803,8 @@ int __kprobes emulate_step(struct pt_regs *regs, unsigned int instr)
+ 			return 0;
+ 		if (op.ea & (size - 1))
+ 			break;		/* can't handle misaligned */
+-		err = -EFAULT;
+ 		if (!address_ok(regs, op.ea, size))
+-			goto ldst_done;
++			return 0;
+ 		err = 0;
+ 		switch (size) {
+ 		case 4:
+@@ -1828,9 +1827,8 @@ int __kprobes emulate_step(struct pt_regs *regs, unsigned int instr)
+ 			return 0;
+ 		if (op.ea & (size - 1))
+ 			break;		/* can't handle misaligned */
+-		err = -EFAULT;
+ 		if (!address_ok(regs, op.ea, size))
+-			goto ldst_done;
++			return 0;
+ 		err = 0;
+ 		switch (size) {
+ 		case 4:
 -- 
 2.11.0
 
