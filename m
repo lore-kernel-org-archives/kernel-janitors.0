@@ -1,31 +1,54 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 27 Jan 2017 00:40:36 +0000
-Subject: Re: powerpc/mm: Return directly after a failed __copy_from_user() in sys_subpage_prot()
-Message-Id: <3v8g1c1qNZz9tT8@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 18:14:37 +0000
+Subject: [PATCH 5/5] s390/pci: Move two assignments for the variable "ret" in get_pfn()
+Message-Id: <99fa9b19-143b-1d11-755a-a1de606b6953@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <5f910c33-c811-2197-0adb-c55f7722c5a7@users.sourceforge.net>
+References: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
+In-Reply-To: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org, =?UTF-8?Q?Gerald_Sch=c3=a4fer?= <gerald.schaefer@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2017-01-21 at 15:24:58 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Jan 2017 16:10:50 +0100
-> 
-> * Return directly after a call of the function "__copy_from_user"
->   failed here.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Delete the jump label "out2" which became unnecessary with
->   this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 18:48:45 +0100
 
-Applied to powerpc next, thanks.
+A local variable was set to an error code in two cases before a concrete
+error situation was detected. Thus move the corresponding assignments into
+if branches to indicate a software failure there.
 
-https://git.kernel.org/powerpc/c/a967f161abc7c4a6936ceb15737f75
+This issue was detected by using the Coccinelle software.
 
-cheers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/pci/pci_mmio.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+index f125858a77e9..400af13ef275 100644
+--- a/arch/s390/pci/pci_mmio.c
++++ b/arch/s390/pci/pci_mmio.c
+@@ -18,13 +18,15 @@ static long get_pfn(unsigned long user_addr, unsigned long access,
+ 	long ret;
+ 
+ 	down_read(&current->mm->mmap_sem);
+-	ret = -EINVAL;
+ 	vma = find_vma(current->mm, user_addr);
+-	if (!vma)
++	if (!vma) {
++		ret = -EINVAL;
+ 		goto out;
+-	ret = -EACCES;
+-	if (!(vma->vm_flags & access))
++	}
++	if (!(vma->vm_flags & access)) {
++		ret = -EACCES;
+ 		goto out;
++	}
+ 	ret = follow_pfn(vma, user_addr, pfn);
+ out:
+ 	up_read(&current->mm->mmap_sem);
+-- 
+2.11.0
+
