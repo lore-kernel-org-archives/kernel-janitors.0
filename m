@@ -1,67 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 01 Jan 2017 16:33:51 +0000
-Subject: [PATCH 1/5] staging/lustre/llite: Use seq_puts() in three functions
-Message-Id: <6980a3a8-be35-e9a3-fc89-8394d503b80f@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 18:17:22 +0000
+Subject: [PATCH 7/9] KVM: Return an error code only as a constant in kvm_get_dirty_log()
+Message-Id: <f3477328-b978-e777-d3fc-913b22aaa05a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
-In-Reply-To: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
+References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 1 Jan 2017 15:30:45 +0100
+Date: Sun, 22 Jan 2017 17:41:07 +0100
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts"
-so that the data output will be a bit more efficient in these functions.
+* Return an error code without storing it in an intermediate variable.
 
-This issue was detected by using the Coccinelle software.
+* Delete the local variable "r" and the jump label "out" which became
+  unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/llite/lproc_llite.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ virt/kvm/kvm_main.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/lproc_llite.c b/drivers/staging/lustre/lustre/llite/lproc_llite.c
-index 03682c10fc9e..b195b7eb2883 100644
---- a/drivers/staging/lustre/lustre/llite/lproc_llite.c
-+++ b/drivers/staging/lustre/lustre/llite/lproc_llite.c
-@@ -1325,8 +1325,8 @@ static int ll_rw_extents_stats_pp_seq_show(struct seq_file *seq, void *v)
- 	ktime_get_real_ts64(&now);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index a651a137ef21..ca88f3620ee3 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1094,37 +1094,31 @@ int kvm_get_dirty_log(struct kvm *kvm,
+ {
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
+-	int r, i, as_id, id;
++	int i, as_id, id;
+ 	unsigned long n;
+ 	unsigned long any = 0;
  
- 	if (!sbi->ll_rw_stats_on) {
--		seq_printf(seq, "disabled\n"
--			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
-+		seq_puts(seq, "disabled\n"
-+			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
- 		return 0;
- 	}
- 	seq_printf(seq, "snapshot_time:	 %llu.%09lu (secs.usecs)\n",
-@@ -1403,8 +1403,8 @@ static int ll_rw_extents_stats_seq_show(struct seq_file *seq, void *v)
- 	ktime_get_real_ts64(&now);
+-	r = -EINVAL;
+ 	as_id = log->slot >> 16;
+ 	id = (u16)log->slot;
+ 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
+-		goto out;
++		return -EINVAL;
  
- 	if (!sbi->ll_rw_stats_on) {
--		seq_printf(seq, "disabled\n"
--			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
-+		seq_puts(seq, "disabled\n"
-+			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
- 		return 0;
- 	}
- 	seq_printf(seq, "snapshot_time:	 %llu.%09lu (secs.usecs)\n",
-@@ -1583,8 +1583,8 @@ static int ll_rw_offset_stats_seq_show(struct seq_file *seq, void *v)
- 	ktime_get_real_ts64(&now);
+ 	slots = __kvm_memslots(kvm, as_id);
+ 	memslot = id_to_memslot(slots, id);
+-	r = -ENOENT;
+ 	if (!memslot->dirty_bitmap)
+-		goto out;
++		return -ENOENT;
  
- 	if (!sbi->ll_rw_stats_on) {
--		seq_printf(seq, "disabled\n"
--			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
-+		seq_puts(seq, "disabled\n"
-+			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
- 		return 0;
- 	}
- 	spin_lock(&sbi->ll_process_lock);
+ 	n = kvm_dirty_bitmap_bytes(memslot);
+ 
+ 	for (i = 0; !any && i < n/sizeof(long); ++i)
+ 		any = memslot->dirty_bitmap[i];
+ 
+-	r = -EFAULT;
+ 	if (copy_to_user(log->dirty_bitmap, memslot->dirty_bitmap, n))
+-		goto out;
++		return -EFAULT;
+ 
+ 	if (any)
+ 		*is_dirty = 1;
+-
+-	r = 0;
+-out:
+-	return r;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(kvm_get_dirty_log);
+ 
 -- 
 2.11.0
 
