@@ -1,56 +1,70 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Wed, 25 Jan 2017 13:53:39 +0000
-Subject: [PATCH 12/23] perf probe: Delete an unnecessary check in try_to_find_absolute_address()
-Message-Id: <20170125135350.22983-13-acme@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 18:13:30 +0000
+Subject: [PATCH 3/9] KVM: Move error code settings in kvm_vcpu_compat_ioctl()
+Message-Id: <0fa315b6-2fc7-3833-32eb-4e58671ac776@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170125135350.22983-1-acme@kernel.org>
-In-Reply-To: <20170125135350.22983-1-acme@kernel.org>
+References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 13:57:40 +0100
 
-Remove a condition check which is unnecessary at the end
-because this source code place should usually only be reached
-with a non-zero pointer.
+* A local variable was set to an error code before a concrete error
+  situation was detected. Thus move the corresponding settings
+  into if branches to indicate a software failure there.
+
+  This issue was detected by using the Coccinelle software.
+
+* Return directly after a call of the function "copy_from_user"
+  (or an other check) failed in a case block.
+
+* Delete the jump label "out" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: He Kuang <hekuang@huawei.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Milian Wolff <milian.wolff@kdab.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/a3f2473b-6383-a326-bce0-b826423608b8@users.sourceforge.net
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/probe-event.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ virt/kvm/kvm_main.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 4a57c8a60bd9..cdfc468d4d5f 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -3004,10 +3004,8 @@ static int try_to_find_absolute_address(struct perf_probe_event *pev,
- 	return 1;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2773e5012948..62f24d8eaaa2 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2743,17 +2743,14 @@ static long kvm_vcpu_compat_ioctl(struct file *filp,
+ 		sigset_t sigset;
  
- errout:
--	if (*tevs) {
--		clear_probe_trace_events(*tevs, 1);
--		*tevs = NULL;
--	}
-+	clear_probe_trace_events(*tevs, 1);
-+	*tevs = NULL;
- 	return err;
+ 		if (argp) {
+-			r = -EFAULT;
+ 			if (copy_from_user(&kvm_sigmask, argp,
+ 					   sizeof(kvm_sigmask)))
+-				goto out;
+-			r = -EINVAL;
++				return -EFAULT;
+ 			if (kvm_sigmask.len != sizeof(csigset))
+-				goto out;
+-			r = -EFAULT;
++				return -EINVAL;
+ 			if (copy_from_user(&csigset, sigmask_arg->sigset,
+ 					   sizeof(csigset)))
+-				goto out;
++				return -EFAULT;
+ 			sigset_from_compat(&sigset, &csigset);
+ 			r = kvm_vcpu_ioctl_set_sigmask(vcpu, &sigset);
+ 		} else
+@@ -2763,8 +2760,6 @@ static long kvm_vcpu_compat_ioctl(struct file *filp,
+ 	default:
+ 		r = kvm_vcpu_ioctl(filp, ioctl, arg);
+ 	}
+-
+-out:
+ 	return r;
  }
- 
+ #endif
 -- 
-2.9.3
+2.11.0
 
