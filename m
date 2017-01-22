@@ -1,43 +1,49 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Wed, 25 Jan 2017 11:08:51 +0000
-Subject: RE: [patch] samples/bpf: silence shift wrapping warning
-Message-Id: <063D6719AE5E284EB5DD2968C1650D6DB026DD27@AcuExch.aculab.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:33:08 +0000
+Subject: [PATCH 3/5] blk-throttle: Adjust two function calls together with a variable assignment
+Message-Id: <7d68f93d-c14c-60aa-2b02-5005a0a62cad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170121045143.GC15269@mwanda>
- <20170122225123.GA73160@ast-mbp.thefacebook.com>
-In-Reply-To: <20170122225123.GA73160@ast-mbp.thefacebook.com>
+References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Alexei Starovoitov' <alexei.starovoitov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Thomas Graf <tgraf@suug.ch>, Alexei Starovoitov <ast@kernel.org>, Joe Stringer <joe@ovn.org>, "David S. Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Alexei Starovoitov
-> Sent: 22 January 2017 22:51
-> On Sat, Jan 21, 2017 at 07:51:43AM +0300, Dan Carpenter wrote:
-> > max_key is a value in the 0-63 range, so on 32 bit systems the shift
-> > could wrap.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Looks fine. I think 'net-next' is ok.
-> 
-> Acked-by: Alexei Starovoitov <ast@kernel.org>
-> 
-> > diff --git a/samples/bpf/lwt_len_hist_user.c b/samples/bpf/lwt_len_hist_user.c
-> > index ec8f3bb..bd06eef 100644
-> > --- a/samples/bpf/lwt_len_hist_user.c
-> > +++ b/samples/bpf/lwt_len_hist_user.c
-> > @@ -68,7 +68,7 @@ int main(int argc, char **argv)
-> >  	for (i = 1; i <= max_key + 1; i++) {
-> >  		stars(starstr, data[i - 1], max_value, MAX_STARS);
-> >  		printf("%8ld -> %-8ld : %-8ld |%-*s|\n",
-> > -		       (1l << i) >> 1, (1l << i) - 1, data[i - 1],
-> > +		       (1ULL << i) >> 1, (1ULL << i) - 1, data[i - 1],
-> >  		       MAX_STARS, starstr);
-> >  	}
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 22:15:33 +0100
 
-The format effectors are wrong on 32bit systems.
+The script "checkpatch.pl" pointed information out like the following.
 
-	David
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/blk-throttle.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index b392b48310ba..3cf7472fbba2 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -866,10 +866,12 @@ static void tg_update_disptime(struct throtl_grp *tg)
+ 	unsigned long read_wait = -1, write_wait = -1, min_wait = -1, disptime;
+ 	struct bio *bio;
+ 
+-	if ((bio = throtl_peek_queued(&sq->queued[READ])))
++	bio = throtl_peek_queued(&sq->queued[READ]);
++	if (bio)
+ 		tg_may_dispatch(tg, bio, &read_wait);
+ 
+-	if ((bio = throtl_peek_queued(&sq->queued[WRITE])))
++	bio = throtl_peek_queued(&sq->queued[WRITE]);
++	if (bio)
+ 		tg_may_dispatch(tg, bio, &write_wait);
+ 
+ 	min_wait = min(read_wait, write_wait);
+-- 
+2.11.0
 
