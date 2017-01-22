@@ -1,41 +1,48 @@
-From: Adit Ranadive <aditr@vmware.com>
-Date: Wed, 04 Jan 2017 17:40:59 +0000
-Subject: Re: [patch] IB: vmw_pvrdma: info leak in pvrdma_alloc_ucontext()
-Message-Id: <ba4d19a7-a5c0-8cf6-30d3-23df3cdb002d@vmware.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:35:13 +0000
+Subject: [PATCH 5/5] cfq-iosched: Adjust one function call together with a variable assignment
+Message-Id: <f28c7ce0-ae89-4eb5-8270-4ab300caa98b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170104064110.GA8957@elgon.mountain>
-In-Reply-To: <20170104064110.GA8957-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
+References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: VMware PV-Drivers <pv-drivers-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 04, 2017 at 09:41:11AM +0300, Dan Carpenter wrote:
-> We need to clear out the ->reserved member so we don't disclose
-> uninitialized stack information.
-> 
-> Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> There are a bunch of ways to fix this...  I just the most mindless one
-> because I can never guess what IB prefers.  Feel free to fix it however
-> you feel is appropriate and give me a Reported-by tag.
-> 
-> diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> index 54891370d18a..c00c27f48f46 100644
-> --- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> +++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> @@ -339,6 +339,7 @@ struct ib_ucontext *pvrdma_alloc_ucontext(struct ib_device *ibdev,
->  	context->ctx_handle = resp->ctx_handle;
->  
->  	/* copy back to user */
-> +	memset(&uresp, 0, sizeof(uresp));
->  	uresp.qp_tab_size = vdev->dsr->caps.max_qp;
->  	ret = ib_copy_to_udata(udata, &uresp, sizeof(uresp));
->  	if (ret) {
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 22:44:07 +0100
 
-Thanks Dan! I'll add this to the other fixes to be sent out.
+The script "checkpatch.pl" pointed information out like the following.
 
-- Adit
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/cfq-iosched.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index 454297fe8fd6..8c405eaa2806 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -2750,9 +2750,11 @@ static struct cfq_queue *cfq_get_next_queue_forced(struct cfq_data *cfqd)
+ 	if (!cfqg)
+ 		return NULL;
+ 
+-	for_each_cfqg_st(cfqg, i, j, st)
+-		if ((cfqq = cfq_rb_first(st)) != NULL)
++	for_each_cfqg_st(cfqg, i, j, st) {
++		cfqq = cfq_rb_first(st);
++		if (cfqq)
+ 			return cfqq;
++	}
+ 	return NULL;
+ }
+ 
+-- 
+2.11.0
+
