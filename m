@@ -1,47 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:46:14 +0000
-Subject: [PATCH 11/18] mtd-cfi_cmdset_0002: Rename a jump label in cfi_amdstd_setup()
-Message-Id: <cc726e7b-7453-cd36-3207-93769c38f5fb@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:34:03 +0000
+Subject: [PATCH 4/5] cfq-iosched: Move an assignment for the variable "ret" in __cfqg_set_weight_device()
+Message-Id: <66f510a1-432a-260b-2785-6274a3e263b5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 18:34:03 +0100
+Date: Sat, 21 Jan 2017 22:26:38 +0100
 
-Adjust a jump label according to the Linux coding style convention.
+A local variable was set to an error code before a concrete error situation
+was detected. Thus move the corresponding assignment into an if branch
+to indicate a software failure there.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ block/cfq-iosched.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 25d485f6d2ff..dc02d99bd7dc 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -712,14 +712,13 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
- 	if (offset != devsize) {
- 		/* Argh */
- 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
--		goto setup_err;
-+		goto free_regions;
- 	}
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index c73a6fcaeb9d..454297fe8fd6 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1788,9 +1788,10 @@ static ssize_t __cfqg_set_weight_device(struct kernfs_open_file *of,
  
- 	__module_get(THIS_MODULE);
- 	register_reboot_notifier(&mtd->reboot_notifier);
- 	return mtd;
--
-- setup_err:
-+free_regions:
- 	kfree(mtd->eraseregions);
- free_priv:
- 	kfree(cfi->cmdset_priv);
+ 	if (sscanf(ctx.body, "%llu", &v) = 1) {
+ 		/* require "default" on dfl */
+-		ret = -ERANGE;
+-		if (!v && on_dfl)
++		if (!v && on_dfl) {
++			ret = -ERANGE;
+ 			goto out_finish;
++		}
+ 	} else if (!strcmp(strim(ctx.body), "default")) {
+ 		v = 0;
+ 	} else {
 -- 
 2.11.0
 
