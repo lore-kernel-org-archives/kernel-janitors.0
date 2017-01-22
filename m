@@ -1,24 +1,73 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 29 Jan 2017 23:24:21 +0000
-Subject: Re: [PATCH][net-next] net: ethernet: aquantia: remove another redundant err check
-Message-Id: <20170129.182421.2254139449919836161.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:31:29 +0000
+Subject: [PATCH 1/5] blk-throttle: Move three assignments for the variable "ret" in tg_set_max()
+Message-Id: <75495d45-cfc4-9740-39e4-bd4c3e71232b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170127150025.18886-1-colin.king@canonical.com>
-In-Reply-To: <20170127150025.18886-1-colin.king@canonical.com>
+References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Pavel.Belous@aquantia.com, Alexander.Loktionov@aquantia.com, Dmitry.Bezrukov@aquantia.com, vomlehn@texas.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Jan 2017 15:00:25 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 21:23:06 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check on err < 0 is redundant and can be removed. Detected
-> by CoverityScan, CID#1398318 ("Logically Dead Code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+A local variable was set to an error code before a concrete error situation
+was detected. Thus move the corresponding assignments into if branches
+to indicate a software failure there.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/blk-throttle.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 6f4c96e5f86b..51d112deb02e 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1327,27 +1327,30 @@ static ssize_t tg_set_max(struct kernfs_open_file *of,
+ 			break;
+ 		ctx.body += len;
+ 
+-		ret = -EINVAL;
+ 		p = tok;
+ 		strsep(&p, "=");
+-		if (!p || (sscanf(p, "%llu", &val) != 1 && strcmp(p, "max")))
++		if (!p || (sscanf(p, "%llu", &val) != 1 && strcmp(p, "max"))) {
++			ret = -EINVAL;
+ 			goto out_finish;
++		}
+ 
+-		ret = -ERANGE;
+-		if (!val)
++		if (!val) {
++			ret = -ERANGE;
+ 			goto out_finish;
++		}
+ 
+-		ret = -EINVAL;
+-		if (!strcmp(tok, "rbps"))
++		if (!strcmp(tok, "rbps")) {
+ 			v[0] = val;
+-		else if (!strcmp(tok, "wbps"))
++		} else if (!strcmp(tok, "wbps")) {
+ 			v[1] = val;
+-		else if (!strcmp(tok, "riops"))
++		} else if (!strcmp(tok, "riops")) {
+ 			v[2] = min_t(u64, val, UINT_MAX);
+-		else if (!strcmp(tok, "wiops"))
++		} else if (!strcmp(tok, "wiops")) {
+ 			v[3] = min_t(u64, val, UINT_MAX);
+-		else
++		} else {
++			ret = -EINVAL;
+ 			goto out_finish;
++		}
+ 	}
+ 
+ 	tg->bps[READ] = v[0];
+-- 
+2.11.0
+
