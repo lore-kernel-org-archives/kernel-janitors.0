@@ -1,64 +1,78 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:43:41 +0000
-Subject: [PATCH 08/18] mtd-cfi_cmdset_0001: Rename a jump label in cfi_intelext_setup()
-Message-Id: <6550d4b3-b024-247f-9954-c2bb67e3352a@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 18:16:14 +0000
+Subject: [PATCH 6/9] KVM: Return an error code only as a constant in kvm_get_dirty_log_protect()
+Message-Id: <2f83abd2-cf68-4294-6603-cfab2991e731@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 17:49:05 +0100
+Date: Sun, 22 Jan 2017 17:30:16 +0100
 
-Adjust a jump label according to the Linux coding style convention.
+* Return an error code without storing it in an intermediate variable.
+
+* Delete the local variable "r" and the jump label "out" which became
+  unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ virt/kvm/kvm_main.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
-index 7f6ed7293e40..97329484555d 100644
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -620,7 +620,7 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
- 			mtd->eraseregions[x].numblocks = ernum;
- 			mtd->eraseregions[x].lockmap = kmalloc(ernum / 8 + 1, GFP_KERNEL);
- 			if (!mtd->eraseregions[x].lockmap)
--				goto setup_err;
-+				goto free_regions;
- 		}
- 		offset += (ersize * ernum);
- 	}
-@@ -628,7 +628,7 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
- 	if (offset != devsize) {
- 		/* Argh */
- 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
--		goto setup_err;
-+		goto free_regions;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6a74a3796b3f..a651a137ef21 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1156,24 +1156,22 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
+ {
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
+-	int r, i, as_id, id;
++	int i, as_id, id;
+ 	unsigned long n;
+ 	unsigned long *dirty_bitmap;
+ 	unsigned long *dirty_bitmap_buffer;
+ 
+-	r = -EINVAL;
+ 	as_id = log->slot >> 16;
+ 	id = (u16)log->slot;
+ 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
+-		goto out;
++		return -EINVAL;
+ 
+ 	slots = __kvm_memslots(kvm, as_id);
+ 	memslot = id_to_memslot(slots, id);
+ 
+ 	dirty_bitmap = memslot->dirty_bitmap;
+-	r = -ENOENT;
+ 	if (!dirty_bitmap)
+-		goto out;
++		return -ENOENT;
+ 
+ 	n = kvm_dirty_bitmap_bytes(memslot);
+ 
+@@ -1202,14 +1200,9 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
  	}
  
- 	for (i = 0; i < mtd->numeraseregions; i++) {
-@@ -650,13 +650,12 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
- 	/* This function has the potential to distort the reality
- 	   a bit and therefore should be called last. */
- 	if (cfi_intelext_partition_fixup(mtd, &cfi) != 0)
--		goto setup_err;
-+		goto free_regions;
- 
- 	__module_get(THIS_MODULE);
- 	register_reboot_notifier(&mtd->reboot_notifier);
- 	return mtd;
+ 	spin_unlock(&kvm->mmu_lock);
 -
-- setup_err:
-+free_regions:
- 	for (i = 0; i < cfi->cfiq->NumEraseRegions; i++)
- 		for (j = 0; j < cfi->numchips; j++)
- 			kfree(mtd->eraseregions[j * cfi->cfiq->NumEraseRegions
+-	r = -EFAULT;
+ 	if (copy_to_user(log->dirty_bitmap, dirty_bitmap_buffer, n))
+-		goto out;
+-
+-	r = 0;
+-out:
+-	return r;
++		return -EFAULT;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(kvm_get_dirty_log_protect);
+ #endif
 -- 
 2.11.0
 
