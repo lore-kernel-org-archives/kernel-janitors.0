@@ -1,43 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:43:09 +0000
-Subject: [PATCH 43/46] selinux: Use kmalloc_array() in sidtab_init()
-Message-Id: <9ce64f74-f424-b9c5-605b-a54982888e1a@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:30:09 +0000
+Subject: [PATCH 0/5] block: Fine-tuning for five function implementations
+Message-Id: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 13:13:19 +0100
+Date: Sat, 21 Jan 2017 23:00:00 +0100
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (5):
+  Move three assignments for the variable "ret" in tg_set_max()
+  Move an assignment for the variable "ret" in tg_set_conf()
+  Adjust two function calls together with a variable assignment
+  Move an assignment for the variable "ret" in __cfqg_set_weight_device()
+  Adjust one function call together with a variable assignment
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/selinux/ss/sidtab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-throttle.c | 34 ++++++++++++++++++++--------------
+ block/cfq-iosched.c  | 11 +++++++----
+ 2 files changed, 27 insertions(+), 18 deletions(-)
 
-diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-index 5840a35155fc..c9533b21942b 100644
---- a/security/selinux/ss/sidtab.c
-+++ b/security/selinux/ss/sidtab.c
-@@ -18,7 +18,7 @@ int sidtab_init(struct sidtab *s)
- {
- 	int i;
- 
--	s->htable = kmalloc(sizeof(*(s->htable)) * SIDTAB_SIZE, GFP_ATOMIC);
-+	s->htable = kmalloc_array(SIDTAB_SIZE, sizeof(*s->htable), GFP_ATOMIC);
- 	if (!s->htable)
- 		return -ENOMEM;
- 	for (i = 0; i < SIDTAB_SIZE; i++)
 -- 
 2.11.0
 
