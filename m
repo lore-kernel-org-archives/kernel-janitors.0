@@ -1,69 +1,47 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 30 Jan 2017 12:01:45 +0000
-Subject: Re: [PATCH] acpi: nfit: use %u format string specifier for unsigned ints
-Message-Id: <8a5f5edd-a28d-892c-8d37-54ef2a1ea141@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 08:32:19 +0000
+Subject: [PATCH 2/5] blk-throttle: Move an assignment for the variable "ret" in tg_set_conf()
+Message-Id: <d20da6bc-b84a-3b2c-614c-68ace67db7e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170130112502.24426-1-colin.king@canonical.com>
- <588F2A7F.8020501@bfs.de>
-In-Reply-To: <588F2A7F.8020501@bfs.de>
+References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, joeyli.kernel@gmail.com, Toshi Kani <toshi.kani@hpe.com>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 30/01/17 11:58, walter harms wrote:
-> 
-> 
-> Am 30.01.2017 12:25, schrieb Colin King:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> scrub_mode and scrub_count are both unsigned ints, however, the %d
->> format string specifier is being used instead of %u. Trivial fix,
->> use %u.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/acpi/nfit/core.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
->> index 2f82b8e..093b768 100644
->> --- a/drivers/acpi/nfit/core.c
->> +++ b/drivers/acpi/nfit/core.c
->> @@ -906,7 +906,7 @@ static ssize_t hw_error_scrub_show(struct device *dev,
->>  	struct nvdimm_bus_descriptor *nd_desc = to_nd_desc(nvdimm_bus);
->>  	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
->>  
->> -	return sprintf(buf, "%d\n", acpi_desc->scrub_mode);
->> +	return sprintf(buf, "%u\n", acpi_desc->scrub_mode);
->>  }
->>  
->>  /*
->> @@ -967,7 +967,7 @@ static ssize_t scrub_show(struct device *dev,
->>  	if (nd_desc) {
->>  		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
->>  
->> -		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
->> +		rc = sprintf(buf, "%u%s", acpi_desc->scrub_count,
->>  				(work_busy(&acpi_desc->work)) ? "+\n" : "\n");
->>  	}
->>  	device_unlock(dev);
-> 
-> looks ok,
-> would it be an option to move the "\n" into the format string ?
-> this is much more common (see sprintf() above).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Jan 2017 21:40:38 +0100
 
+A local variable was set to an error code before a concrete error situation
+was detected. Thus move the corresponding assignment into an if branch
+to indicate a software failure there.
 
-yep, "%u%s\n" - I'll resend
-> 
-> re,
->  wh
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/blk-throttle.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 51d112deb02e..b392b48310ba 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1191,9 +1191,10 @@ static ssize_t tg_set_conf(struct kernfs_open_file *of,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = -EINVAL;
+-	if (sscanf(ctx.body, "%llu", &v) != 1)
++	if (sscanf(ctx.body, "%llu", &v) != 1) {
++		ret = -EINVAL;
+ 		goto out_finish;
++	}
+ 	if (!v)
+ 		v = -1;
+ 
+-- 
+2.11.0
 
