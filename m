@@ -1,41 +1,34 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 12 Jan 2017 12:01:13 +0000
-Subject: Re: [PATCH 0/8] MMC-core: Fine-tuning for some function implementations
-Message-Id: <CAPDyKFpTGon_ejUVWQPMHvR5vS7Zg7WGAESgZ9QnCULAMokXvg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 18:09:58 +0000
+Subject: [PATCH 0/9] KVM: Fine-tuning for several function implementations
+Message-Id: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
-In-Reply-To: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 8 January 2017 at 22:38, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 8 Jan 2017 22:30:03 +0100
->
-> Some update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (8):
->   Use kmalloc_array() in mmc_test_area_init()
->   Fix a typo in a comment line
->   Use seq_puts() in mtf_testlist_show()
->   mmc_test: Add some spaces for better code readability
->   mmc_test: Combine substrings for 5 messages
->   mmc_test: Improve a size determination in five functions
->   Use kcalloc() in mmc_test_alloc_mem()
->   Use kmalloc_array() in mmc_alloc_sg()
->
->  drivers/mmc/core/mmc_test.c | 77 +++++++++++++++++++++------------------------
->  drivers/mmc/core/queue.c    |  2 +-
->  2 files changed, 36 insertions(+), 43 deletions(-)
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Jan 2017 19:06:54 +0100
 
-Thanks applied for next, with some changes to the prefix of the commit
-message headers.
+Several update suggestions were taken into account
+from static source code analysis.
 
-Kind regards
-Uffe
+Markus Elfring (9):
+  Return directly after a failed copy_from_user() in kvm_vm_compat_ioctl()
+  Move error code settings in kvm_vm_ioctl()
+  Move error code settings in kvm_vcpu_compat_ioctl()
+  Move error code settings in kvm_vcpu_ioctl()
+  Improve size determinations in kvm_vcpu_ioctl()
+  Return an error code only as a constant in kvm_get_dirty_log_protect()
+  Return an error code only as a constant in kvm_get_dirty_log()
+  Adjust seven checks for null pointers
+  Improve another size determination in kvm_create_vm()
+
+ virt/kvm/kvm_main.c | 278 +++++++++++++++++++++++-----------------------------
+ 1 file changed, 120 insertions(+), 158 deletions(-)
+
+-- 
+2.11.0
+
