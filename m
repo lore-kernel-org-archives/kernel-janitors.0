@@ -1,54 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:41:25 +0000
-Subject: [PATCH 41/46] selinux: Move two assignments for the variable "rc" in roles_init()
-Message-Id: <aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
+Date: Mon, 23 Jan 2017 15:20:42 +0000
+Subject: [PATCH 0/4] perf: Fine-tuning for three function implementations
+Message-Id: <c8eebdee-ad45-c2a8-9a4d-e1032ec9a17f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, He Kuang <hekuang@huawei.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 12:40:35 +0100
+Date: Mon, 23 Jan 2017 16:08:21 +0100
 
-One local variable was set to an error code in two cases before
-a concrete error situation was detected. Thus move the corresponding
-assignments into if branches to indicate a software failure there.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/selinux/ss/policydb.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Markus Elfring (4):
+  Delete an unnecessary check in try_to_find_absolute_address()
+  Delete an unnecessary assignment in try_to_find_absolute_address()
+  Move an error code assignment in __perf_session__set_tracepoints_handlers()
+  Move an error code assignment in strlist__parse_list_entry()
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index ccc146bfd4c2..be445abf047b 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -182,15 +182,17 @@ static int roles_init(struct policydb *p)
- 	if (!role)
- 		return -ENOMEM;
- 
--	rc = -EINVAL;
- 	role->value = ++p->p_roles.nprim;
--	if (role->value != OBJECT_R_VAL)
-+	if (role->value != OBJECT_R_VAL) {
-+		rc = -EINVAL;
- 		goto out;
-+	}
- 
--	rc = -ENOMEM;
- 	key = kstrdup(OBJECT_R, GFP_KERNEL);
--	if (!key)
-+	if (!key) {
-+		rc = -ENOMEM;
- 		goto out;
-+	}
- 
- 	rc = hashtab_insert(p->p_roles.table, key, role);
- 	if (rc)
+ tools/perf/util/probe-event.c | 11 ++++-------
+ tools/perf/util/session.c     |  6 +++---
+ tools/perf/util/strlist.c     |  5 +++--
+ 3 files changed, 10 insertions(+), 12 deletions(-)
+
 -- 
 2.11.0
 
