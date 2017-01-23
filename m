@@ -1,53 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:21:00 +0000
-Subject: Re: [PATCH 02/17] spi: Adjust checks for null pointers in two functions
-Message-Id: <20170117182100.nysd3ghalaie5uyb@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7congqv7gvs42ik2"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Jan 2017 15:25:23 +0000
+Subject: [PATCH 3/4] perf session: Move an error code assignment in __perf_session__set_tracepoints_handlers(
+Message-Id: <b9ccdf98-e7a9-e4a2-67d7-24617d4b87a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
- <1e19b52a-119a-d52c-3a54-0a533ac5b6db@users.sourceforge.net>
-In-Reply-To: <1e19b52a-119a-d52c-3a54-0a533ac5b6db@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <c8eebdee-ad45-c2a8-9a4d-e1032ec9a17f@users.sourceforge.net>
+In-Reply-To: <c8eebdee-ad45-c2a8-9a4d-e1032ec9a17f@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, He Kuang <hekuang@huawei.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Jan 2017 15:43:13 +0100
 
---7congqv7gvs42ik2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A local variable was set to an error code before a concrete error situation
+was detected. Thus move the corresponding assignment into an if branch
+to indicate a software failure there.
 
-On Fri, Jan 13, 2017 at 06:09:52PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 13 Jan 2017 13:23:32 +0100
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
+This issue was detected by using the Coccinelle software.
 
-Something's messed up with your setup for sending out patches here...
-can you check please?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ tools/perf/util/session.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> The script "checkpatch.pl" pointed information out like the following.
->=20
-> Comparison to NULL could be written !=E2=80=A6
->=20
-> Thus fix the affected source code places.
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index f268201048a0..98605ad4affd 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -2050,10 +2050,10 @@ int __perf_session__set_tracepoints_handlers(struct perf_session *session,
+ 		evsel = perf_evlist__find_tracepoint_by_name(session->evlist, assocs[i].name);
+ 		if (evsel = NULL)
+ 			continue;
+-
+-		err = -EEXIST;
+-		if (evsel->handler != NULL)
++		if (evsel->handler) {
++			err = -EEXIST;
+ 			goto out;
++		}
+ 		evsel->handler = assocs[i].handler;
+ 	}
+ 
+-- 
+2.11.0
 
-This isn't a fix, it's a stylistic choice.
-
---7congqv7gvs42ik2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlh+YIsACgkQJNaLcl1U
-h9A1CAgAgFGeH1ZWw+oKejDpU3NfQbIss0JaA8bwxr5SgFjBIVXvFRnUOjGH+ZkY
-Izx53F97ZPysS5YycPWmYI7mM7QV6js+dKZc5T8nY4s+O+iF9T1rrlZBrzJn2b9m
-pQpI5DAkzeps/UElISEJFG83IXzCXSKf3EyMpHjf+vskg+YwkhyQ8Rjl4MAcy64H
-FknrQ4F/PHZk5nLpal75ZGksbgBJCVHw1Y+bEFIOL4BGesukJCNZ47A0y3BDp7Lm
-9h2UM3SdRmiXX5HkTKEJzbUd1MIffl1qYk+4XyGnIjEQc5HTHTNBLelQWiRyrGcj
-mnfVrCHFaQujC8PNWVGuocxUl3bjWw==
-=7Cpk
------END PGP SIGNATURE-----
-
---7congqv7gvs42ik2--
