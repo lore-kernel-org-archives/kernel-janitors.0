@@ -1,43 +1,38 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Mon, 09 Jan 2017 00:11:44 +0000
-Subject: Re: [PATCH] spi: spi-axi: Free resources on error path
-Message-Id: <5a377f44-f548-2167-51bf-4fb46890fae3@metafoo.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 23 Jan 2017 21:16:56 +0000
+Subject: [PATCH] [media] exynos4-is: Add missing 'of_node_put'
+Message-Id: <20170123211656.11185-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, broonie@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 01/09/2017 01:02 AM, Christophe JAILLET wrote:
-> We should go to 'err_put_master' here instead of returning directly.
-> Otherwise a call to 'spi_master_put' is missing.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+It is likely that a "of_node_put(ep)" is missing here.
+There is one in the previous error handling code, and one a few lines
+below in the normal case as well.
 
-Thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-
-> ---
->  drivers/spi/spi-axi-spi-engine.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-> index 319225d7e761..6ab4c7700228 100644
-> --- a/drivers/spi/spi-axi-spi-engine.c
-> +++ b/drivers/spi/spi-axi-spi-engine.c
-> @@ -494,7 +494,8 @@ static int spi_engine_probe(struct platform_device *pdev)
->  			SPI_ENGINE_VERSION_MAJOR(version),
->  			SPI_ENGINE_VERSION_MINOR(version),
->  			SPI_ENGINE_VERSION_PATCH(version));
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto err_put_master;
->  	}
->  
->  	spi_engine->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
-> 
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index e3a8709138fa..da5b76c1df98 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -402,8 +402,10 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+ 		return ret;
+ 	}
+ 
+-	if (WARN_ON(endpoint.base.port = 0) || index >= FIMC_MAX_SENSORS)
++	if (WARN_ON(endpoint.base.port = 0) || index >= FIMC_MAX_SENSORS) {
++		of_node_put(ep);
+ 		return -EINVAL;
++	}
+ 
+ 	pd->mux_id = (endpoint.base.port - 1) & 0x1;
+ 
+-- 
+2.9.3
 
