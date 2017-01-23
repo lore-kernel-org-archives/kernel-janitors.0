@@ -1,31 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jan 2017 09:19:26 +0000
-Subject: Re: [PATCH 03/18] mtd-cfi_cmdset_0001: Add some spaces for better code readability
-Message-Id: <20170112091926.GA15314@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Jan 2017 15:22:22 +0000
+Subject: [PATCH 1/4] perf probe: Delete an unnecessary check in try_to_find_absolute_address()
+Message-Id: <a3f2473b-6383-a326-bce0-b826423608b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
- <a6f28358-3f8d-180e-9a59-b5ee276cb7d9@users.sourceforge.net>
-In-Reply-To: <a6f28358-3f8d-180e-9a59-b5ee276cb7d9@users.sourceforge.net>
+References: <c8eebdee-ad45-c2a8-9a4d-e1032ec9a17f@users.sourceforge.net>
+In-Reply-To: <c8eebdee-ad45-c2a8-9a4d-e1032ec9a17f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, He Kuang <hekuang@huawei.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 11, 2017 at 09:38:18PM +0100, SF Markus Elfring wrote:
-> -		for (i=0; i<cfi->cfiq->NumEraseRegions; i++)
-> -			for (j=0; j<cfi->numchips; j++)
-> -				kfree(mtd->eraseregions[(j*cfi->cfiq->NumEraseRegions)+i].lockmap);
-> +		for (i = 0; i < cfi->cfiq->NumEraseRegions; i++)
-> +			for (j = 0; j < cfi->numchips; j++)
-> +				kfree(mtd->eraseregions[j
-> +							* cfi->cfiq
-> +							  ->NumEraseRegions
-> +							+ i].lockmap);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Jan 2017 14:54:26 +0100
 
-No.
+Remove a condition check which is unnecessary at the end
+because this source code place should usually only be reached
+with a non-zero pointer.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ tools/perf/util/probe-event.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index d281ae2b54e8..6c7508337fe8 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2966,10 +2966,8 @@ static int try_to_find_absolute_address(struct perf_probe_event *pev,
+ 	return 1;
+ 
+ errout:
+-	if (*tevs) {
+-		clear_probe_trace_events(*tevs, 1);
+-		*tevs = NULL;
+-	}
++	clear_probe_trace_events(*tevs, 1);
++	*tevs = NULL;
+ 	return err;
+ }
+ 
+-- 
+2.11.0
 
