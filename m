@@ -1,47 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 08:34:03 +0000
-Subject: [PATCH 4/5] cfq-iosched: Move an assignment for the variable "ret" in __cfqg_set_weight_device()
-Message-Id: <66f510a1-432a-260b-2785-6274a3e263b5@users.sourceforge.net>
+From: Joyes Dadi <"YD."@biscuit.ocn.ne.jp>
+Date: Mon, 23 Jan 2017 14:05:43 +0000
+Subject: Urgent Please,,
+Message-Id: <335786851.25784013.1485180343554.JavaMail.root@biscuit.ocn.ne.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
-In-Reply-To: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Jan 2017 22:26:38 +0100
+Good Day Dear,
 
-A local variable was set to an error code before a concrete error situation
-was detected. Thus move the corresponding assignment into an if branch
-to indicate a software failure there.
+My name is Ms. Joyes Dadi, I am glad you are reading this letter and I hope
+we will start our communication and I know that this message will look strange,
+surprising and probably unbelievable to you, but it is the reality. I want to
+make a donation of money to you.
 
-This issue was detected by using the Coccinelle software.
+I contact you by the will of God. I am a firm German woman specialized in
+mining gold and diamonds in Africa. But now, I'm very sick of a cancer. My
+husband died in an accident two years ago with our two children and now I have
+cancer of the esophagus that damaged almost all the cells in my system/agencies
+and I'll die soon according to my doctor.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- block/cfq-iosched.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+My most concern now is, we grew up in the orphanage and were married in
+orphanage. If I die this deposited fund will soon be left alone in the hand of
+the bank, and I do want to it that  way. Please, if you can be reliable and
+sincere to accept my humble proposal; I have (10.5Millions Euro) in a fixed
+deposit account; I will order the Bank to transfer the money into your account
+in your country immediately, and then you will take the fund to  your country
+and invest it to the orphanage homes Please, answer as quickly as possible.
 
-diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index c73a6fcaeb9d..454297fe8fd6 100644
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -1788,9 +1788,10 @@ static ssize_t __cfqg_set_weight_device(struct kernfs_open_file *of,
- 
- 	if (sscanf(ctx.body, "%llu", &v) = 1) {
- 		/* require "default" on dfl */
--		ret = -ERANGE;
--		if (!v && on_dfl)
-+		if (!v && on_dfl) {
-+			ret = -ERANGE;
- 			goto out_finish;
-+		}
- 	} else if (!strcmp(strim(ctx.body), "default")) {
- 		v = 0;
- 	} else {
--- 
-2.11.0
-
+God bless you.
+Ms. Joyes Dadi
+Email: joyesdadi767@citromail.hu
