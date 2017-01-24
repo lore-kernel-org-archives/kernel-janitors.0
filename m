@@ -1,63 +1,88 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Jan 2017 19:55:23 +0000
-Subject: [PATCH 3/9] memstick: Delete unwanted spaces behind three function parameters
-Message-Id: <3e11edb7-519f-4cde-f22f-3c6bbdda536c@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 10:24:08 +0000
+Subject: [PATCH 4/7] ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_subscribe_port()
+Message-Id: <eeeeb8a9-70a2-8d44-674c-9a5aa6de78b2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
-In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Jan 2017 18:54:25 +0100
+Date: Tue, 24 Jan 2017 09:06:38 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Four checks were repeated by the snd_seq_ioctl_subscribe_port() function
+despite of pointer determinations for the used variables at the beginning.
 
-ERROR: space prohibited before that ',' (ctx:WxW)
+* Adjust jump targets according to the Linux coding style convention.
 
-Thus fix the affected source code places.
+* Delete extra variable initialisations and the repeated checks
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/memstick/core/ms_block.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/core/seq/seq_clientmgr.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index ec17885a5956..526e671a3435 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -194,7 +194,8 @@ static void msb_mark_block_unused(struct msb_data *msb, int pba)
- 	int zone = msb_get_zone_from_pba(pba);
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index ba26d622cb71..b9518e7cb623 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1423,36 +1423,36 @@ static int snd_seq_ioctl_subscribe_port(struct snd_seq_client *client,
+ {
+ 	struct snd_seq_port_subscribe *subs = arg;
+ 	int result = -EINVAL;
+-	struct snd_seq_client *receiver = NULL, *sender = NULL;
+-	struct snd_seq_client_port *sport = NULL, *dport = NULL;
++	struct snd_seq_client *receiver, *sender;
++	struct snd_seq_client_port *sport, *dport;
  
- 	if (!test_bit(pba, msb->used_blocks_bitmap)) {
--		pr_err("BUG: attempt to mark already unused pba %d as unused" , pba);
-+		pr_err("BUG: attempt to mark already unused pba %d as unused",
-+		       pba);
- 		msb->read_only = true;
- 		return;
- 	}
-@@ -1551,7 +1552,7 @@ static int msb_cache_flush(struct msb_data *msb)
- 	dbg_verbose("Flushing the write cache of pba %d (LBA %d)",
- 						pba, msb->cache_block_lba);
+ 	if ((receiver = snd_seq_client_use_ptr(subs->dest.client)) = NULL)
+-		goto __end;
++		goto exit;
+ 	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
+-		goto __end;
++		goto unlock_receiver;
+ 	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
+-		goto __end;
++		goto unlock_sender;
+ 	if ((dport = snd_seq_port_use_ptr(receiver, subs->dest.port)) = NULL)
+-		goto __end;
++		goto unlock_sport;
  
--	sg_init_one(&sg, msb->cache , msb->block_size);
-+	sg_init_one(&sg, msb->cache, msb->block_size);
+ 	result = check_subscription_permission(client, sport, dport, subs);
+ 	if (result < 0)
+-		goto __end;
++		goto unlock_dport;
  
- 	/* Read all missing pages in cache */
- 	for (page = 0; page < msb->pages_in_block; page++) {
-@@ -1597,7 +1598,9 @@ static int msb_cache_flush(struct msb_data *msb)
- 			dbg("marking page %d as containing damaged data",
- 				page);
- 			msb_set_overwrite_flag(msb,
--				pba , page, 0xFF & ~MEMSTICK_OV_PG_NORMAL);
-+					       pba,
-+					       page,
-+					       0xFF & ~MEMSTICK_OV_PG_NORMAL);
- 		}
- 	}
+ 	/* connect them */
+ 	result = snd_seq_port_connect(client, sender, sport, receiver, dport, subs);
+ 	if (! result) /* broadcast announce */
+ 		snd_seq_client_notify_subscription(SNDRV_SEQ_ADDRESS_SUBSCRIBERS, 0,
+ 						   subs, SNDRV_SEQ_EVENT_PORT_SUBSCRIBED);
+-      __end:
+-      	if (sport)
+-		snd_seq_port_unlock(sport);
+-	if (dport)
+-		snd_seq_port_unlock(dport);
+-	if (sender)
+-		snd_seq_client_unlock(sender);
+-	if (receiver)
+-		snd_seq_client_unlock(receiver);
++unlock_dport:
++	snd_seq_port_unlock(dport);
++unlock_sport:
++	snd_seq_port_unlock(sport);
++unlock_sender:
++	snd_seq_client_unlock(sender);
++unlock_receiver:
++	snd_seq_client_unlock(receiver);
++exit:
+ 	return result;
+ }
  
 -- 
 2.11.0
