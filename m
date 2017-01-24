@@ -1,52 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:40:26 +0000
-Subject: [PATCH 05/18] mtd-cfi_cmdset_0001: Use common error handling code in do_write_oneword()
-Message-Id: <98176d77-b469-d0e3-9364-4035b0254b11@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 18:44:45 +0000
+Subject: [PATCH] evm: Move two error code assignments in evm_set_key()
+Message-Id: <a9edf310-0edb-0dc7-f623-164ee9c7f102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-ima-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, James Morris <james.l.morris@oracle.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 16:40:47 +0100
+Date: Tue, 24 Jan 2017 19:37:20 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+A local variable was set to an error code in two cases before a concrete
+error situation was detected. Thus move the corresponding assignments into
+if branches to indicate a software failure there.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ security/integrity/evm/evm_crypto.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
-index 0c0fa918c9ff..4b134e8beb93 100644
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -1552,10 +1552,8 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index d7f282d75cc1..71bc204e2ee8 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -53,12 +53,14 @@ int evm_set_key(void *key, size_t keylen)
+ {
+ 	int rc;
  
- 	mutex_lock(&chip->mutex);
- 	ret = get_chip(map, chip, adr, mode);
--	if (ret) {
--		mutex_unlock(&chip->mutex);
--		return ret;
--	}
-+	if (ret)
-+		goto unlock;
- 
- 	XIP_INVAL_CACHED_RANGE(map, adr, map_bankwidth(map));
- 	ENABLE_VPP(map);
-@@ -1600,6 +1598,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
- 	xip_enable(map, chip, adr);
-  out:	DISABLE_VPP(map);
- 	put_chip(map, chip, adr);
-+unlock:
- 	mutex_unlock(&chip->mutex);
- 	return ret;
- }
+-	rc = -EBUSY;
+-	if (test_and_set_bit(EVM_SET_KEY_BUSY, &evm_set_key_flags))
++	if (test_and_set_bit(EVM_SET_KEY_BUSY, &evm_set_key_flags)) {
++		rc = -EBUSY;
+ 		goto busy;
+-	rc = -EINVAL;
+-	if (keylen > MAX_KEY_SIZE)
++	}
++	if (keylen > MAX_KEY_SIZE) {
++		rc = -EINVAL;
+ 		goto inval;
++	}
+ 	memcpy(evmkey, key, keylen);
+ 	evm_initialized |= EVM_INIT_HMAC;
+ 	pr_info("key initialized\n");
 -- 
 2.11.0
 
