@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 12:31:39 +0000
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Tue, 24 Jan 2017 12:38:52 +0000
 Subject: Re: KVM: s390: Move two error code assignments in kvm_vm_ioctl_get_dirty_log()
-Message-Id: <bfd4c8a3-4246-b8c5-ca3d-429d6f1f13f7@users.sourceforge.net>
+Message-Id: <d9f8f874-9c90-12cd-bf21-1270890041b4@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <70f41e59-d8a4-de42-6064-80ecf6acc065@users.sourceforge.net>
  <35411200-2bd6-1c65-7d7f-21a6353875ea@de.ibm.com>
@@ -9,26 +9,31 @@ References: <70f41e59-d8a4-de42-6064-80ecf6acc065@users.sourceforge.net>
  <50ae2ba4-572d-8524-fc31-acc1a8d1ad99@de.ibm.com>
  <75c6315c-8947-2816-64da-947f6a29ac57@users.sourceforge.net>
  <64b94d75-6bad-1ebc-c35e-c036202bab01@redhat.com>
-In-Reply-To: <64b94d75-6bad-1ebc-c35e-c036202bab01@redhat.com>
+ <bfd4c8a3-4246-b8c5-ca3d-429d6f1f13f7@users.sourceforge.net>
+In-Reply-To: <bfd4c8a3-4246-b8c5-ca3d-429d6f1f13f7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Cornelia Huck <cornelia.huck@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> It's just not possible to discuss things with you.
+On 01/24/2017 01:31 PM, SF Markus Elfring wrote:
+>> It's just not possible to discuss things with you.
+> 
+> I wonder about your conclusion. We have got just different software
+> development opinions on some details.
+> 
+> I assume that a few additional dialogue techniques could help a bit more
+> in our communication difficulties.
 
-I wonder about your conclusion. We have got just different software
-development opinions on some details.
+I will also start to ignore all mails from you.
+> 
+> 
+>> If other people want to merge your patches to KVM, they are free to do so.
+> 
+> I am curious if other update suggestions will be picked up
+> in a constructive way.
 
-I assume that a few additional dialogue techniques could help a bit more
-in our communication difficulties.
+There is only one person on this list that is not constructive, and that
+person is you.
 
- 
-> If other people want to merge your patches to KVM, they are free to do so.
-
-I am curious if other update suggestions will be picked up
-in a constructive way.
-
-Regards,
-Markus
