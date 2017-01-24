@@ -1,40 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 24 Jan 2017 14:16:29 +0000
-Subject: [PATCH] bpf: don't kfree an uninitialized im_node
-Message-Id: <20170124141629.9200-1-colin.king@canonical.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 24 Jan 2017 17:53:34 +0000
+Subject: Re: [PATCH] bpf: don't kfree an uninitialized im_node
+Message-Id: <CAADnVQLZ-uAcDehoWb5ev9pHhkDy9XoEOyKQPg0qSUXw=dzOYw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170124141629.9200-1-colin.king@canonical.com>
+In-Reply-To: <20170124141629.9200-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>
+Cc: Alexei Starovoitov <ast@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jan 24, 2017 at 6:16 AM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are some error exit paths to the label 'out' that end up
+> kfree'ing an uninitialized im_node.  Fix this by inititializing
+> im_node to NULL to avoid kfree'ing a garbage address.
 
-There are some error exit paths to the label 'out' that end up
-kfree'ing an uninitialized im_node.  Fix this by inititializing
-im_node to NULL to avoid kfree'ing a garbage address.
+this fix already landed. See:
+commit d140199af510 ("bpf, lpm: fix kfree of im_node in trie_update_elem")
 
-Issue found by CoverityScan, CID#1398022 ("Uninitialized pointer read")
+> Issue found by CoverityScan, CID#1398022 ("Uninitialized pointer read")
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/bpf/lpm_trie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index ba19241d..144e976 100644
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -262,7 +262,7 @@ static int trie_update_elem(struct bpf_map *map,
- 			    void *_key, void *value, u64 flags)
- {
- 	struct lpm_trie *trie = container_of(map, struct lpm_trie, map);
--	struct lpm_trie_node *node, *im_node, *new_node = NULL;
-+	struct lpm_trie_node *node, *im_node = NULL, *new_node = NULL;
- 	struct lpm_trie_node __rcu **slot;
- 	struct bpf_lpm_trie_key *key = _key;
- 	unsigned long irq_flags;
--- 
-2.10.2
-
+Nice. Good to know that static analysis can do such checks.
