@@ -1,52 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 18:56:48 +0000
-Subject: [PATCH 3/3] MIPS-syscall: Return directly in mips_mmap()
-Message-Id: <65e23f25-f12e-9b94-9038-fd901dae92db@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 10:19:23 +0000
+Subject: [PATCH 0/7] ALSA: Fine-tuning for several function implementations
+Message-Id: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
-In-Reply-To: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mips@linux-mips.org, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 19:30:47 +0100
+Date: Tue, 24 Jan 2017 11:02:34 +0100
 
-* Return an error code without storing it in an intermediate variable.
+Some update suggestions were taken into account
+from static source code analysis.
 
-* Delete the local variable "result" which became unnecessary with
-  this refactoring.
+Markus Elfring (7):
+  seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
+  seq: Delete unnecessary checks in snd_seq_ioctl_get_subscription()
+  seq: Delete unnecessary checks in snd_seq_ioctl_unsubscribe_port()
+  seq: Delete unnecessary checks in snd_seq_ioctl_subscribe_port()
+  seq: Adjust 16 function calls together with a variable assignment
+  dmasound_core: Move two assignments for the variable "ret" in state_open()
+  dmasound_core: Adjust six function calls together with a variable assignment
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/mips/kernel/syscall.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ sound/core/seq/seq_clientmgr.c     | 163 ++++++++++++++++++++-----------------
+ sound/oss/dmasound/dmasound_core.c |  33 +++++---
+ 2 files changed, 109 insertions(+), 87 deletions(-)
 
-diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
-index 53a7ef9a8f32..e4e99888799d 100644
---- a/arch/mips/kernel/syscall.c
-+++ b/arch/mips/kernel/syscall.c
-@@ -60,16 +60,9 @@ SYSCALL_DEFINE6(mips_mmap, unsigned long, addr, unsigned long, len,
- 	unsigned long, prot, unsigned long, flags, unsigned long,
- 	fd, off_t, offset)
- {
--	unsigned long result;
--
--	result = -EINVAL;
- 	if (offset & ~PAGE_MASK)
--		goto out;
--
--	result = sys_mmap_pgoff(addr, len, prot, flags, fd, offset >> PAGE_SHIFT);
--
--out:
--	return result;
-+		return -EINVAL;
-+	return sys_mmap_pgoff(addr, len, prot, flags, fd, offset >> PAGE_SHIFT);
- }
- 
- SYSCALL_DEFINE6(mips_mmap2, unsigned long, addr, unsigned long, len,
 -- 
 2.11.0
 
