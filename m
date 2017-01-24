@@ -1,49 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:44:32 +0000
-Subject: [PATCH 09/18] mtd-cfi_cmdset_0002: Use kmalloc_array() in cfi_amdstd_setup()
-Message-Id: <d821b061-db6b-aa10-8754-734b6c68ec03@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 10:22:11 +0000
+Subject: [PATCH 2/7] ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_get_subscription()
+Message-Id: <0f4cc184-1a9a-70ec-fba5-4c2224805e34@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 17:56:42 +0100
+Date: Tue, 24 Jan 2017 08:54:36 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Two checks were repeated by the snd_seq_ioctl_get_subscription() function
+despite of pointer determinations for the used variables at the beginning.
 
-  This issue was detected by using the Coccinelle software.
+* Adjust jump targets according to the Linux coding style convention.
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+* Convert an assignment for the variable "result" to a direct initialisation.
+
+* Delete extra variable initialisations and the repeated checks
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/core/seq/seq_clientmgr.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 9dca881bb378..3bed67e35692 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -688,8 +688,9 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
- 	mtd->size = devsize * cfi->numchips;
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index 594c341a193e..8e804ff784ed 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1891,16 +1891,15 @@ static int snd_seq_ioctl_get_subscription(struct snd_seq_client *client,
+ 					  void *arg)
+ {
+ 	struct snd_seq_port_subscribe *subs = arg;
+-	int result;
+-	struct snd_seq_client *sender = NULL;
+-	struct snd_seq_client_port *sport = NULL;
++	int result = -EINVAL;
++	struct snd_seq_client *sender;
++	struct snd_seq_client_port *sport;
+ 	struct snd_seq_subscribers *p;
  
- 	mtd->numeraseregions = cfi->cfiq->NumEraseRegions * cfi->numchips;
--	mtd->eraseregions = kmalloc(sizeof(struct mtd_erase_region_info)
--				    * mtd->numeraseregions, GFP_KERNEL);
-+	mtd->eraseregions = kmalloc_array(mtd->numeraseregions,
-+					  sizeof(*mtd->eraseregions),
-+					  GFP_KERNEL);
- 	if (!mtd->eraseregions)
- 		goto setup_err;
+-	result = -EINVAL;
+ 	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
+-		goto __end;
++		goto exit;
+ 	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
+-		goto __end;
++		goto unlock_client;
+ 	p = snd_seq_port_get_subscription(&sport->c_src, &subs->dest);
+ 	if (p) {
+ 		result = 0;
+@@ -1908,12 +1907,10 @@ static int snd_seq_ioctl_get_subscription(struct snd_seq_client *client,
+ 	} else
+ 		result = -ENOENT;
+ 
+-      __end:
+-      	if (sport)
+-		snd_seq_port_unlock(sport);
+-	if (sender)
+-		snd_seq_client_unlock(sender);
+-
++	snd_seq_port_unlock(sport);
++unlock_client:
++	snd_seq_client_unlock(sender);
++exit:
+ 	return result;
+ }
  
 -- 
 2.11.0
