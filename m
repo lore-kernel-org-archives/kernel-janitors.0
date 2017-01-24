@@ -1,43 +1,151 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:25:01 +0000
-Subject: [PATCH 25/46] selinux: Return directly after a failed kzalloc() in sens_read()
-Message-Id: <8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 10:25:14 +0000
+Subject: [PATCH 5/7] ALSA: seq: Adjust 16 function calls together with a variable assignment
+Message-Id: <c3f73d40-c9dc-2682-0b94-f997763aaf7b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 21:42:02 +0100
+Date: Tue, 24 Jan 2017 09:44:22 +0100
 
-Return directly after a call of the function "kzalloc" failed
-at the beginning.
+The script "checkpatch.pl" pointed information out like the following.
+
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/core/seq/seq_clientmgr.c | 52 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index eb898dcbe502..5caa1fa5ea80 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1593,10 +1593,9 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
- 	__le32 buf[2];
- 	u32 len;
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index b9518e7cb623..519968841ccc 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -400,7 +400,11 @@ static ssize_t snd_seq_read(struct file *file, char __user *buf, size_t count,
+ 	if (snd_BUG_ON(!client))
+ 		return -ENXIO;
  
--	rc = -ENOMEM;
- 	levdatum = kzalloc(sizeof(*levdatum), GFP_ATOMIC);
- 	if (!levdatum)
--		goto bad;
-+		return -ENOMEM;
+-	if (!client->accept_input || (fifo = client->data.user.fifo) = NULL)
++	if (!client->accept_input)
++		return -ENXIO;
++
++	fifo = client->data.user.fifo;
++	if (!fifo)
+ 		return -ENXIO;
  
- 	rc = next_entry(buf, fp, sizeof buf);
- 	if (rc)
+ 	if (atomic_read(&fifo->overflow) > 0) {
+@@ -419,9 +423,9 @@ static ssize_t snd_seq_read(struct file *file, char __user *buf, size_t count,
+ 		int nonblock;
+ 
+ 		nonblock = (file->f_flags & O_NONBLOCK) || result > 0;
+-		if ((err = snd_seq_fifo_cell_out(fifo, &cell, nonblock)) < 0) {
++		err = snd_seq_fifo_cell_out(fifo, &cell, nonblock);
++		if (err < 0)
+ 			break;
+-		}
+ 		if (snd_seq_ev_is_variable(&cell->event)) {
+ 			struct snd_seq_event tmpev;
+ 			tmpev = cell->event;
+@@ -948,7 +952,8 @@ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
+ 		return err;
+ 
+ 	/* we got a cell. enqueue it. */
+-	if ((err = snd_seq_enqueue_event(cell, atomic, hop)) < 0) {
++	err = snd_seq_enqueue_event(cell, atomic, hop);
++	if (err < 0) {
+ 		snd_seq_cell_free(cell);
+ 		return err;
+ 	}
+@@ -1273,7 +1278,8 @@ static int snd_seq_ioctl_create_port(struct snd_seq_client *client, void *arg)
+ 		return -EINVAL;
+ 	}
+ 	if (client->type = KERNEL_CLIENT) {
+-		if ((callback = info->kernel) != NULL) {
++		callback = info->kernel;
++		if (callback) {
+ 			if (callback->owner)
+ 				port->owner = callback->owner;
+ 			port->private_data = callback->private_data;
+@@ -1426,13 +1432,17 @@ static int snd_seq_ioctl_subscribe_port(struct snd_seq_client *client,
+ 	struct snd_seq_client *receiver, *sender;
+ 	struct snd_seq_client_port *sport, *dport;
+ 
+-	if ((receiver = snd_seq_client_use_ptr(subs->dest.client)) = NULL)
++	receiver = snd_seq_client_use_ptr(subs->dest.client);
++	if (!receiver)
+ 		goto exit;
+-	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
++	sender = snd_seq_client_use_ptr(subs->sender.client);
++	if (!sender)
+ 		goto unlock_receiver;
+-	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
++	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
++	if (!sport)
+ 		goto unlock_sender;
+-	if ((dport = snd_seq_port_use_ptr(receiver, subs->dest.port)) = NULL)
++	dport = snd_seq_port_use_ptr(receiver, subs->dest.port);
++	if (!dport)
+ 		goto unlock_sport;
+ 
+ 	result = check_subscription_permission(client, sport, dport, subs);
+@@ -1468,13 +1478,17 @@ static int snd_seq_ioctl_unsubscribe_port(struct snd_seq_client *client,
+ 	struct snd_seq_client *receiver, *sender;
+ 	struct snd_seq_client_port *sport, *dport;
+ 
+-	if ((receiver = snd_seq_client_use_ptr(subs->dest.client)) = NULL)
++	receiver = snd_seq_client_use_ptr(subs->dest.client);
++	if (!receiver)
+ 		goto exit;
+-	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
++	sender = snd_seq_client_use_ptr(subs->sender.client);
++	if (!sender)
+ 		goto unlock_receiver;
+-	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
++	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
++	if (!sport)
+ 		goto unlock_sender;
+-	if ((dport = snd_seq_port_use_ptr(receiver, subs->dest.port)) = NULL)
++	dport = snd_seq_port_use_ptr(receiver, subs->dest.port);
++	if (!dport)
+ 		goto unlock_sport;
+ 
+ 	result = check_subscription_permission(client, sport, dport, subs);
+@@ -1896,9 +1910,11 @@ static int snd_seq_ioctl_get_subscription(struct snd_seq_client *client,
+ 	struct snd_seq_client_port *sport;
+ 	struct snd_seq_subscribers *p;
+ 
+-	if ((sender = snd_seq_client_use_ptr(subs->sender.client)) = NULL)
++	sender = snd_seq_client_use_ptr(subs->sender.client);
++	if (!sender)
+ 		goto exit;
+-	if ((sport = snd_seq_port_use_ptr(sender, subs->sender.port)) = NULL)
++	sport = snd_seq_port_use_ptr(sender, subs->sender.port);
++	if (!sport)
+ 		goto unlock_client;
+ 	p = snd_seq_port_get_subscription(&sport->c_src, &subs->dest);
+ 	if (p) {
+@@ -1928,9 +1944,11 @@ static int snd_seq_ioctl_query_subs(struct snd_seq_client *client, void *arg)
+ 	struct list_head *p;
+ 	int i;
+ 
+-	if ((cptr = snd_seq_client_use_ptr(subs->root.client)) = NULL)
++	cptr = snd_seq_client_use_ptr(subs->root.client);
++	if (!cptr)
+ 		goto exit;
+-	if ((port = snd_seq_port_use_ptr(cptr, subs->root.port)) = NULL)
++	port = snd_seq_port_use_ptr(cptr, subs->root.port);
++	if (!port)
+ 		goto unlock_client;
+ 
+ 	switch (subs->type) {
 -- 
 2.11.0
 
