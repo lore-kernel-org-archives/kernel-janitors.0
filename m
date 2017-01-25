@@ -1,85 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 10:21:13 +0000
-Subject: [PATCH 1/7] ALSA: seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
-Message-Id: <39bc00c0-ffe7-851c-f329-e7d499f561be@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 25 Jan 2017 13:53:40 +0000
+Subject: [PATCH 13/23] perf probe: Delete an unnecessary assignment in try_to_find_absolute_address()
+Message-Id: <20170125135350.22983-14-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
-In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+References: <20170125135350.22983-1-acme@kernel.org>
+In-Reply-To: <20170125135350.22983-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 08:00:34 +0100
 
-Two checks were repeated by the snd_seq_ioctl_query_subs() function
-despite of pointer determinations for the used variables at the beginning.
-
-* Adjust jump targets according to the Linux coding style convention.
-
-* Delete extra variable initialisations and the repeated checks
-  which became unnecessary with this refactoring.
+Remove an error code assignment which is redundant in an if branch for
+the handling of a memory allocation failure because the same value was
+set for the local variable "err" before.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/0ede09ec-79b6-c8bd-5b20-02c63ed98aab@users.sourceforge.net
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/core/seq/seq_clientmgr.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ tools/perf/util/probe-event.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
-index 4c935202ce23..594c341a193e 100644
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1925,16 +1925,16 @@ static int snd_seq_ioctl_query_subs(struct snd_seq_client *client, void *arg)
- {
- 	struct snd_seq_query_subs *subs = arg;
- 	int result = -ENXIO;
--	struct snd_seq_client *cptr = NULL;
--	struct snd_seq_client_port *port = NULL;
-+	struct snd_seq_client *cptr;
-+	struct snd_seq_client_port *port;
- 	struct snd_seq_port_subs_info *group;
- 	struct list_head *p;
- 	int i;
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index cdfc468d4d5f..ded1e7d88874 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2994,10 +2994,9 @@ static int try_to_find_absolute_address(struct perf_probe_event *pev,
  
- 	if ((cptr = snd_seq_client_use_ptr(subs->root.client)) = NULL)
--		goto __end;
-+		goto exit;
- 	if ((port = snd_seq_port_use_ptr(cptr, subs->root.port)) = NULL)
--		goto __end;
-+		goto unlock_client;
- 
- 	switch (subs->type) {
- 	case SNDRV_SEQ_QUERY_SUBS_READ:
-@@ -1944,7 +1944,7 @@ static int snd_seq_ioctl_query_subs(struct snd_seq_client *client, void *arg)
- 		group = &port->c_dest;
- 		break;
- 	default:
--		goto __end;
-+		goto unlock_port;
- 	}
- 
- 	down_read(&group->list_mutex);
-@@ -1970,13 +1970,11 @@ static int snd_seq_ioctl_query_subs(struct snd_seq_client *client, void *arg)
- 		}
- 	}
- 	up_read(&group->list_mutex);
--
--      __end:
--   	if (port)
--		snd_seq_port_unlock(port);
--	if (cptr)
--		snd_seq_client_unlock(cptr);
--
-+unlock_port:
-+	snd_seq_port_unlock(port);
-+unlock_client:
-+	snd_seq_client_unlock(cptr);
-+exit:
- 	return result;
- }
+ 	tev->nargs = pev->nargs;
+ 	tev->args = zalloc(sizeof(struct probe_trace_arg) * tev->nargs);
+-	if (!tev->args) {
+-		err = -ENOMEM;
++	if (!tev->args)
+ 		goto errout;
+-	}
++
+ 	for (i = 0; i < tev->nargs; i++)
+ 		copy_to_probe_trace_arg(&tev->args[i], &pev->args[i]);
  
 -- 
-2.11.0
+2.9.3
 
