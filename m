@@ -1,57 +1,43 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Tue, 24 Jan 2017 16:02:51 +0000
-Subject: Re: [patch] samples/bpf: silence shift wrapping warning
-Message-Id: <20170124160251.GD10340@kernel.org>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Wed, 25 Jan 2017 11:08:51 +0000
+Subject: RE: [patch] samples/bpf: silence shift wrapping warning
+Message-Id: <063D6719AE5E284EB5DD2968C1650D6DB026DD27@AcuExch.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAADnVQLF6PWEjic6aSRBnRqtO25eEw7YLE+Gb95+f5_pvq3ZMA@mail.gmail.com>
-In-Reply-To: <CAADnVQLF6PWEjic6aSRBnRqtO25eEw7YLE+Gb95+f5_pvq3ZMA@mail.gmail.com>
+References: <20170121045143.GC15269@mwanda>
+ <20170122225123.GA73160@ast-mbp.thefacebook.com>
+In-Reply-To: <20170122225123.GA73160@ast-mbp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Graf <tgraf@suug.ch>, Alexei Starovoitov <ast@kernel.org>, Joe Stringer <joe@ovn.org>, "David S. Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: 'Alexei Starovoitov' <alexei.starovoitov@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Thomas Graf <tgraf@suug.ch>, Alexei Starovoitov <ast@kernel.org>, Joe Stringer <joe@ovn.org>, "David S. Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-Em Mon, Jan 23, 2017 at 10:44:34PM -0800, Alexei Starovoitov escreveu:
-> On Mon, Jan 23, 2017 at 5:27 AM, Arnaldo Carvalho de Melo
-> <arnaldo.melo@gmail.com> wrote:
-> > Em Sun, Jan 22, 2017 at 02:51:25PM -0800, Alexei Starovoitov escreveu:
-> >> On Sat, Jan 21, 2017 at 07:51:43AM +0300, Dan Carpenter wrote:
-> >> > max_key is a value in the 0-63 range, so on 32 bit systems the shift
-> >> > could wrap.
-> >> >
-> >> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >>
-> >> Looks fine. I think 'net-next' is ok.
+From: Alexei Starovoitov
+> Sent: 22 January 2017 22:51
+> On Sat, Jan 21, 2017 at 07:51:43AM +0300, Dan Carpenter wrote:
+> > max_key is a value in the 0-63 range, so on 32 bit systems the shift
+> > could wrap.
 > >
-> > I could process these patches, if that would help,
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Thanks for the offer.
-> I don't think there will be conflicts with all the work happening in net-next,
-> but it's best to avoid even possibility of it when we can.
-
-Okay sir, I'll let you know when/if the tests I perform building
-samples/bpf/ in my containers catch something,
-
-- Arnaldo
-
-> Dan,
-> can you please resend the patch cc-ing Dave and netdev ?
-> please mention [PATCH net-next] in the subject.
+> Looks fine. I think 'net-next' is ok.
 > 
-> > - Arnaldo
-> >
-> >> Acked-by: Alexei Starovoitov <ast@kernel.org>
-> >
-> >> > diff --git a/samples/bpf/lwt_len_hist_user.c b/samples/bpf/lwt_len_hist_user.c
-> >> > index ec8f3bb..bd06eef 100644
-> >> > --- a/samples/bpf/lwt_len_hist_user.c
-> >> > +++ b/samples/bpf/lwt_len_hist_user.c
-> >> > @@ -68,7 +68,7 @@ int main(int argc, char **argv)
-> >> >     for (i = 1; i <= max_key + 1; i++) {
-> >> >             stars(starstr, data[i - 1], max_value, MAX_STARS);
-> >> >             printf("%8ld -> %-8ld : %-8ld |%-*s|\n",
-> >> > -                  (1l << i) >> 1, (1l << i) - 1, data[i - 1],
-> >> > +                  (1ULL << i) >> 1, (1ULL << i) - 1, data[i - 1],
-> >> >                    MAX_STARS, starstr);
-> >> >     }
-> >> >
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
+> 
+> > diff --git a/samples/bpf/lwt_len_hist_user.c b/samples/bpf/lwt_len_hist_user.c
+> > index ec8f3bb..bd06eef 100644
+> > --- a/samples/bpf/lwt_len_hist_user.c
+> > +++ b/samples/bpf/lwt_len_hist_user.c
+> > @@ -68,7 +68,7 @@ int main(int argc, char **argv)
+> >  	for (i = 1; i <= max_key + 1; i++) {
+> >  		stars(starstr, data[i - 1], max_value, MAX_STARS);
+> >  		printf("%8ld -> %-8ld : %-8ld |%-*s|\n",
+> > -		       (1l << i) >> 1, (1l << i) - 1, data[i - 1],
+> > +		       (1ULL << i) >> 1, (1ULL << i) - 1, data[i - 1],
+> >  		       MAX_STARS, starstr);
+> >  	}
+
+The format effectors are wrong on 32bit systems.
+
+	David
+
