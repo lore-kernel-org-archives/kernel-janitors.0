@@ -1,81 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:38:12 +0000
-Subject: [PATCH 38/46] selinux: One function call less in five functions after null pointer detection
-Message-Id: <b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 25 Jan 2017 13:53:39 +0000
+Subject: [PATCH 12/23] perf probe: Delete an unnecessary check in try_to_find_absolute_address()
+Message-Id: <20170125135350.22983-13-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <20170125135350.22983-1-acme@kernel.org>
+In-Reply-To: <20170125135350.22983-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 11:28:02 +0100
 
-Call the function "kfree" at the end only after it was determined
-that the passed parameter contained a non-null pointer.
+Remove a condition check which is unnecessary at the end
+because this source code place should usually only be reached
+with a non-zero pointer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/a3f2473b-6383-a326-bce0-b826423608b8@users.sourceforge.net
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- security/selinux/ss/policydb.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ tools/perf/util/probe-event.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index faa6ecc2450d..88730b372277 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -620,8 +620,8 @@ static int common_destroy(void *key, void *datum, void *p)
- 		comdatum = datum;
- 		hashtab_map(comdatum->permissions.table, perm_destroy, NULL);
- 		hashtab_destroy(comdatum->permissions.table);
-+		kfree(datum);
- 	}
--	kfree(datum);
- 	return 0;
- }
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 4a57c8a60bd9..cdfc468d4d5f 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -3004,10 +3004,8 @@ static int try_to_find_absolute_address(struct perf_probe_event *pev,
+ 	return 1;
  
-@@ -675,8 +675,8 @@ static int cls_destroy(void *key, void *datum, void *p)
- 			kfree(ctemp);
- 		}
- 		kfree(cladatum->comkey);
-+		kfree(datum);
- 	}
--	kfree(datum);
- 	return 0;
- }
- 
-@@ -689,8 +689,8 @@ static int role_destroy(void *key, void *datum, void *p)
- 		role = datum;
- 		ebitmap_destroy(&role->dominates);
- 		ebitmap_destroy(&role->types);
-+		kfree(datum);
- 	}
--	kfree(datum);
- 	return 0;
- }
- 
-@@ -712,8 +712,8 @@ static int user_destroy(void *key, void *datum, void *p)
- 		ebitmap_destroy(&usrdatum->range.level[0].cat);
- 		ebitmap_destroy(&usrdatum->range.level[1].cat);
- 		ebitmap_destroy(&usrdatum->dfltlevel.cat);
-+		kfree(datum);
- 	}
--	kfree(datum);
- 	return 0;
- }
- 
-@@ -726,8 +726,8 @@ static int sens_destroy(void *key, void *datum, void *p)
- 		levdatum = datum;
- 		ebitmap_destroy(&levdatum->level->cat);
- 		kfree(levdatum->level);
-+		kfree(datum);
- 	}
--	kfree(datum);
- 	return 0;
+ errout:
+-	if (*tevs) {
+-		clear_probe_trace_events(*tevs, 1);
+-		*tevs = NULL;
+-	}
++	clear_probe_trace_events(*tevs, 1);
++	*tevs = NULL;
+ 	return err;
  }
  
 -- 
-2.11.0
+2.9.3
 
