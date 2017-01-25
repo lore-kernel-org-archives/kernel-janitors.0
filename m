@@ -1,30 +1,37 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Fri, 06 Jan 2017 10:36:28 +0000
-Subject: Re: error: ubi_io_read: error -74 (ECC error)
-Message-Id: <04e73e49-fb0f-d58c-e300-5e1b80e0a6a6@nod.at>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 25 Jan 2017 14:48:49 +0000
+Subject: [PATCH] IB/cxgb3: header should be defining CXGB3_ABI_USER_H
+Message-Id: <20170125144849.10894-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b23632bb474f4ba793086a9a139b3083@SGPMBX1023.APAC.bosch.com>
-In-Reply-To: <b23632bb474f4ba793086a9a139b3083@SGPMBX1023.APAC.bosch.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Anurag Raghavan (RBEI/ETW11)" <Raghavan.Anurag@in.bosch.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Gstir <david@sigma-star.at>
-Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Raghavan Anurag,
+From: Colin Ian King <colin.king@canonical.com>
 
-Am 06.01.2017 um 06:15 schrieb Anurag Raghavan (RBEI/ETW11):
-> Hi Richard,
-> 
-> I am using the kernel version-30.3.5
-> 
-> Is there any patches available to fix this issue...???
+Fix typo in header guard macro, is currently CXBG3_ABI_USER_H and
+should be CXGB3_ABI_USER_H (B and G are swapped).
 
-Depends. Your kernel is very old, please consider an upgrade.
-gpmi-nand saw some fixes lately. See commit bd2e778c9ee361c23ccb2b10591712e129d97893.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ include/uapi/rdma/cxgb3-abi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just in case, removing the check from UBIFS is not the right fix.
-I saw such "fixes" more than once on customer kernels.
+diff --git a/include/uapi/rdma/cxgb3-abi.h b/include/uapi/rdma/cxgb3-abi.h
+index 48a19bd..d24eee1 100644
+--- a/include/uapi/rdma/cxgb3-abi.h
++++ b/include/uapi/rdma/cxgb3-abi.h
+@@ -30,7 +30,7 @@
+  * SOFTWARE.
+  */
+ #ifndef CXGB3_ABI_USER_H
+-#define CXBG3_ABI_USER_H
++#define CXGB3_ABI_USER_H
+ 
+ #include <linux/types.h>
+ 
+-- 
+2.10.2
 
-Thanks,
-//richard
