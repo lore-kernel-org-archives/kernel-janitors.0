@@ -1,72 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Jan 2017 14:50:00 +0000
-Subject: Re: [bug report] net/sched: cls_flower: Set the filter Hardware device for all use-cases
-Message-Id: <20170118145000.GA4398@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Jan 2017 09:31:43 +0000
+Subject: [PATCH 1/3] ima_fs: One check less in ima_write_policy() after error detection
+Message-Id: <28a6918c-5714-cec8-2df7-85bcc37e4d75@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170117225703.GA21380@mwanda>
-In-Reply-To: <20170117225703.GA21380@mwanda>
+References: <e06d5392-5262-2d88-aa6b-79e53a20fc8b@users.sourceforge.net>
+In-Reply-To: <e06d5392-5262-2d88-aa6b-79e53a20fc8b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-ima-devel@lists.sourceforge.net, linux-ima-user@lists.sourceforge.net, linux-security-module@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <james.l.morris@oracle.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 18, 2017 at 04:01:05PM +0200, Hadar Hen Zion wrote:
-> 
-> 
-> On 1/18/2017 12:57 AM, Dan Carpenter wrote:
-> >Hello Hadar Hen Zion,
-> >
-> >The patch a6e169312971: "net/sched: cls_flower: Set the filter
-> >Hardware device for all use-cases" from Dec 4, 2016, leads to the
-> >following static checker warning:
-> >
-> >	net/sched/cls_flower.c:272 fl_hw_replace_filter()
-> >	error: we previously assumed 'dev' could be null (see line 256)
-> >
-> >net/sched/cls_flower.c
-> >    240  static int fl_hw_replace_filter(struct tcf_proto *tp,
-> >    241                                  struct flow_dissector *dissector,
-> >    242                                  struct fl_flow_key *mask,
-> >    243                                  struct cls_fl_filter *f)
-> >    244  {
-> >    245          struct net_device *dev = tp->q->dev_queue->dev;
-> >    246          struct tc_cls_flower_offload offload = {0};
-> >    247          struct tc_to_netdev *tc = &f->tc;
-> >    248          int err;
-> >    249
-> >    250          if (!tc_can_offload(dev, tp)) {
-> >    251                  if (tcf_exts_get_dev(dev, &f->exts, &f->hw_dev) ||
-> >    252                      (f->hw_dev && !tc_can_offload(f->hw_dev, tp))) {
-> >                              ^^^^^^^^^
-> >Let's say this is NULL.
-> >
-> >    253                          f->hw_dev = dev;
-> >    254                          return tc_skip_sw(f->flags) ? -EINVAL : 0;
-> >    255                  }
-> >    256                  dev = f->hw_dev;
-> >
-> >That means "dev" is NULL.
-> 
-> After re-checking the code, it's a not a real bug.
-> If  'f->hw_dev' is NULL we would never get here.
-> tcf_exts_get_dev() function above returns an error in case
-> 'f->hw_dev' is NULL, so we'll go into the 'if' and return from the
-> function.
-> 
-> The above 'f->hw_dev' check you marked above is redundant, that's
-> why we got the static checker warning.
-> I'll send a patch that remove it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Jan 2017 20:30:55 +0100
 
-Yeah.  Removing the check is the right thing.
+Move the jump label directly before the desired assignment for the
+variable "valid_policy" at the end so that the variable "result" will not
+be checked once more after it was determined that a received input
+parameter was not zero or a memory allocation failed.
+Use the identifier "reset_validity" instead of the label "out".
 
-Oddly enough, this Smatch test is supposed to ignore NULL checks when we
-can tell that they non-NULL.  The only reason this warning was printed
-was because I had a bug where it said that f->exts.nr_actions was always
-zero here.  That's fixed today apparently so it no longer generates the
-warning.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/integrity/ima/ima_fs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Two steps forward, one step back.
-
-regards,
-dan carpenter
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ca303e5d2b94..c1c8d34d111d 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -321,12 +321,12 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	/* No partial writes. */
+ 	result = -EINVAL;
+ 	if (*ppos != 0)
+-		goto out;
++		goto reset_validity;
+ 
+ 	result = -ENOMEM;
+ 	data = kmalloc(datalen + 1, GFP_KERNEL);
+ 	if (!data)
+-		goto out;
++		goto reset_validity;
+ 
+ 	*(data + datalen) = '\0';
+ 
+@@ -353,8 +353,8 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	mutex_unlock(&ima_write_mutex);
+ out_free:
+ 	kfree(data);
+-out:
+ 	if (result < 0)
++reset_validity:
+ 		valid_policy = 0;
+ 
+ 	return result;
+-- 
+2.11.0
 
