@@ -1,44 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 09:49:30 +0000
-Subject: [PATCH 2/3] sh/intc: Combine substrings for a message in register_intc_controller()
-Message-Id: <3a14a1b0-bf12-8e88-935c-732d21fa1189@users.sourceforge.net>
+Date: Thu, 26 Jan 2017 21:46:57 +0000
+Subject: [PATCH 2/3] virtio_pci: Use kmalloc_array() in vp_request_msix_vectors()
+Message-Id: <02a6f5e2-d20b-3e71-5eaa-344331bec7f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
-In-Reply-To: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
+References: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
+In-Reply-To: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org, Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+To: virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 10:16:40 +0100
+Date: Thu, 26 Jan 2017 22:20:30 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kmalloc_array".
 
-WARNING: quoted string split across lines
-
-Thus fix the affected source code place.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/sh/intc/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/virtio/virtio_pci_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
-index 27817a8466f1..95fb29d69ab7 100644
---- a/drivers/sh/intc/core.c
-+++ b/drivers/sh/intc/core.c
-@@ -353,8 +353,7 @@ int __init register_intc_controller(struct intc_desc *desc)
- 					res = irq_domain_associate(d->domain,
- 								   irq2, irq2);
- 					if (unlikely(res)) {
--						pr_err("domain association "
--						       "failure\n");
-+						pr_err("domain association failure\n");
- 						continue;
- 					}
- 				} else {
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 559a2b706093..623a8cea1441 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -111,9 +111,9 @@ static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,
+ 	int err = -ENOMEM;
+ 
+ 	vp_dev->msix_vectors = nvectors;
+-
+-	vp_dev->msix_names = kmalloc(nvectors * sizeof *vp_dev->msix_names,
+-				     GFP_KERNEL);
++	vp_dev->msix_names = kmalloc_array(nvectors,
++					   sizeof(*vp_dev->msix_names),
++					   GFP_KERNEL);
+ 	if (!vp_dev->msix_names)
+ 		goto error;
+ 	vp_dev->msix_affinity_masks
 -- 
 2.11.0
 
