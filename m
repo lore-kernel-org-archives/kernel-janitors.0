@@ -1,41 +1,66 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Jan 2017 10:38:06 +0000
-Subject: [PATCH 3/3] mtd/ftl: Improve another size determination in ftl_add_mtd()
-Message-Id: <24ba7545-98a6-7afa-b85c-7d6a41500627@users.sourceforge.net>
+Date: Thu, 26 Jan 2017 10:20:28 +0000
+Subject: [PATCH 4/5] gtp: Rename jump labels in gtp_encap_enable()
+Message-Id: <78c09980-bc36-f474-8a26-541f90ca55c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
-In-Reply-To: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
+References: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
+In-Reply-To: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Harald Welte <laforge@gnumonks.org>, Johannes Berg <johannes.berg@intel.com>, Pablo Neira <pablo@netfilter.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Jan 2017 11:18:59 +0100
+Date: Thu, 26 Jan 2017 10:48:40 +0100
 
-Replace the specification of a data type by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust jump labels according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/ftl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/gtp.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
-index 7af23110be6e..70d583aa44ad 100644
---- a/drivers/mtd/ftl.c
-+++ b/drivers/mtd/ftl.c
-@@ -1041,7 +1041,7 @@ static void ftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
- {
- 	partition_t *partition;
+diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
+index 7e38786361d8..2d4ddc000919 100644
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -840,20 +840,20 @@ static int gtp_encap_enable(struct net_device *dev, struct gtp_dev *gtp,
+ 	if (sock0->sk->sk_protocol != IPPROTO_UDP) {
+ 		netdev_dbg(dev, "socket fd=%d not UDP\n", fd_gtp0);
+ 		err = -EINVAL;
+-		goto err1;
++		goto put_socket;
+ 	}
  
--	partition = kzalloc(sizeof(partition_t), GFP_KERNEL);
-+	partition = kzalloc(sizeof(*partition), GFP_KERNEL);
- 	if (!partition)
- 		return;
+ 	sock1u = sockfd_lookup(fd_gtp1, &err);
+ 	if (!sock1u) {
+ 		netdev_dbg(dev, "socket fd=%d not found (gtp1u)\n", fd_gtp1);
+ 		err = -ENOENT;
+-		goto err1;
++		goto put_socket;
+ 	}
  
+ 	if (sock1u->sk->sk_protocol != IPPROTO_UDP) {
+ 		netdev_dbg(dev, "socket fd=%d not UDP\n", fd_gtp1);
+ 		err = -EINVAL;
+-		goto err2;
++		goto put_socket_u;
+ 	}
+ 
+ 	netdev_dbg(dev, "enable gtp on %p, %p\n", sock0, sock1u);
+@@ -873,9 +873,9 @@ static int gtp_encap_enable(struct net_device *dev, struct gtp_dev *gtp,
+ 	setup_udp_tunnel_sock(sock_net(gtp->sock1u->sk), gtp->sock1u, &tuncfg);
+ 
+ 	err = 0;
+-err2:
++put_socket_u:
+ 	sockfd_put(sock1u);
+-err1:
++put_socket:
+ 	sockfd_put(sock0);
+ 	return err;
+ }
 -- 
 2.11.0
 
