@@ -1,28 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Jan 2017 19:10:54 +0000
-Subject: Re: [PATCH] stmmac: add missing of_node_put
-Message-Id: <20170117.141054.244353366907267226.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Jan 2017 09:01:46 +0000
+Subject: [patch] eeprom/idt_89hpesx: freeing devm_ pointer with kfree()
+Message-Id: <20170126090145.GA942@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1484652201-20048-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1484652201-20048-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: peppe.cavallaro@st.com, kernel-janitors@vger.kernel.org, alexandre.torgue@st.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Serge Semin <fancer.lancer@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 17 Jan 2017 12:23:21 +0100
+"pdev->ee_file" was allocated with devm_kmalloc() so freeing it with
+kfree() is a double free.  In fact, we don't need to free it at all.
 
-> The function stmmac_dt_phy provides several possibilities for initializing
-> plat->mdio_node, all of which have the effect of increasing the reference
-> count of the assigned value.  This field is not updated elsewhere, so the
-> value is live until the end of the lifetime of plat (devm_allocated), just
-> after the end of stmmac_remove_config_dt.  Thus, add an of_node_put on
-> plat->mdio_node in stmmac_remove_config_dt.  It is possible that the field
-> mdio_node is never initialized, but of_node_put is NULL-safe, so it is also
-> safe to call of_node_put in that case.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: cfad6425382e ("eeprom: Add IDT 89HPESx EEPROM/CSR driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Julia.
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 25d47d09e1cb..f5f2c5a8d9b0 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -1359,7 +1359,6 @@ static int idt_create_sysfs_files(struct idt_89hpesx_dev *pdev)
+ 	pdev->ee_file->size = pdev->eesize;
+ 	ret = sysfs_create_bin_file(&dev->kobj, pdev->ee_file);
+ 	if (ret != 0) {
+-		kfree(pdev->ee_file);
+ 		dev_err(dev, "Failed to create EEPROM sysfs-node");
+ 		return ret;
+ 	}
+@@ -1381,9 +1380,6 @@ static void idt_remove_sysfs_files(struct idt_89hpesx_dev *pdev)
+ 
+ 	/* Remove EEPROM sysfs file */
+ 	sysfs_remove_bin_file(&dev->kobj, pdev->ee_file);
+-
+-	/* Free memory allocated for bin_attribute structure */
+-	kfree(pdev->ee_file);
+ }
+ 
+ /*
