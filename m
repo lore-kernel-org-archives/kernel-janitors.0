@@ -1,31 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 08:30:09 +0000
-Subject: [PATCH 0/5] block: Fine-tuning for five function implementations
-Message-Id: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
+Date: Thu, 26 Jan 2017 21:46:00 +0000
+Subject: [PATCH 1/3] virtio_pci: Use kcalloc() in vp_request_msix_vectors()
+Message-Id: <57a18132-3b9d-0e5b-5372-efe525f83100@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
+In-Reply-To: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+To: virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Jan 2017 23:00:00 +0100
+Date: Thu, 26 Jan 2017 22:10:18 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kcalloc".
 
-Markus Elfring (5):
-  Move three assignments for the variable "ret" in tg_set_max()
-  Move an assignment for the variable "ret" in tg_set_conf()
-  Adjust two function calls together with a variable assignment
-  Move an assignment for the variable "ret" in __cfqg_set_weight_device()
-  Adjust one function call together with a variable assignment
+This issue was detected by using the Coccinelle software.
 
- block/blk-throttle.c | 34 ++++++++++++++++++++--------------
- block/cfq-iosched.c  | 11 +++++++----
- 2 files changed, 27 insertions(+), 18 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/virtio/virtio_pci_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 186cbab327b8..559a2b706093 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -117,7 +117,7 @@ static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,
+ 	if (!vp_dev->msix_names)
+ 		goto error;
+ 	vp_dev->msix_affinity_masks
+-		= kzalloc(nvectors * sizeof *vp_dev->msix_affinity_masks,
++		= kcalloc(nvectors, sizeof(*vp_dev->msix_affinity_masks),
+ 			  GFP_KERNEL);
+ 	if (!vp_dev->msix_affinity_masks)
+ 		goto error;
 -- 
 2.11.0
 
