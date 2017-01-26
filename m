@@ -1,31 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 17 Jan 2017 14:55:38 +0000
-Subject: Re: [PATCH 3/5] pinctrl: mvebu: Delete an unnecessary return statement in mvebu_pinconf_group_dbg_sh
-Message-Id: <CACRpkdZuiYrboTg+aF=y=+t2-jZ=D4sc9Fbe3Pwqfw8Mx9U2TQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Jan 2017 10:18:09 +0000
+Subject: [PATCH 2/5] gtp: Improve another size determination in ipv4_pdp_add()
+Message-Id: <91f31650-3052-507c-8006-96874107f981@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net> <18e9e48c-6200-22bb-16dc-90ec5b7e459b@users.sourceforge.net>
-In-Reply-To: <18e9e48c-6200-22bb-16dc-90ec5b7e459b@users.sourceforge.net>
+References: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
+In-Reply-To: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Harald Welte <laforge@gnumonks.org>, Johannes Berg <johannes.berg@intel.com>, Pablo Neira <pablo@netfilter.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 5:34 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Jan 2017 22:24:08 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 12 Jan 2017 16:30:24 +0100
->
-> The script "checkpatch.pl" pointed information out like the following.
->
-> WARNING: void function return statements are not generally useful
->
-> Thus remove such a statement in the affected function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Patch applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/gtp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
+index 5d0d520ae40f..f0c123101aa9 100644
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -956,7 +956,7 @@ static int ipv4_pdp_add(struct net_device *dev, struct genl_info *info)
+ 
+ 	}
+ 
+-	pctx = kmalloc(sizeof(struct pdp_ctx), GFP_KERNEL);
++	pctx = kmalloc(sizeof(*pctx), GFP_KERNEL);
+ 	if (pctx = NULL)
+ 		return -ENOMEM;
+ 
+-- 
+2.11.0
+
