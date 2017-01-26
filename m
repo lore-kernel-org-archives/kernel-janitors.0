@@ -1,46 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:05:20 +0000
-Subject: [PATCH 00/17] SPI: Fine-tuning for several function implementations
-Message-Id: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+Date: Thu, 26 Jan 2017 19:00:08 +0000
+Subject: [PATCH] macvtap: Use kmalloc_array() in macvtap_queue_resize()
+Message-Id: <ca646e0a-9f04-149e-999a-df828b363861@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Francesco Ruggeri <fruggeri@arista.com>, Gao Feng <fgao@48lvckh6395k16k5.yundunddos.com>, Jason Wang <jasowang@redhat.com>, Marc Angel <marc@arista.com>, "Michael S. Tsirkin" <mst@redhat.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Willem de Bruijn <willemb@google.com>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:50:23 +0100
+Date: Thu, 26 Jan 2017 19:47:38 +0100
 
-Several update suggestions were taken into account
-from static source code analysis.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Markus Elfring (17):
-  Use kcalloc() in spi_register_board_info()
-  Adjust checks for null pointers in two functions
-  fsl: Use kcalloc() in of_fsl_spi_get_chipselects()
-  fsl: Use kmalloc_array() in of_fsl_spi_get_chipselects()
-  fsl: Combine substrings for two messages
-  mpc52xx: Use kmalloc_array() in mpc52xx_spi_probe()
-  mpc52xx: Combine substrings for two messages
-  ppc4xx: Use kcalloc() in spi_ppc4xx_of_probe()
-  ppc4xx: Combine substrings for a message in spi_ppc4xx_of_probe()
-  ppc4xx: Adjust checks for null pointers in two functions
-  topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
-  topcliff-pch: Improve size determinations in pch_spi_probe()
-  topcliff-pch: Delete an unnecessary return statement in two functions
-  topcliff-pch: Adjust six checks for null pointers
-  topcliff-pch: Combine substrings for four messages
-  topcliff-pch: Delete an error message for a failed memory allocation in pch_spi_set_tx()
-  topcliff-pch: One check less in pch_spi_set_tx()
+This issue was detected by using the Coccinelle software.
 
- drivers/spi/spi-fsl-spi.c      | 17 +++++-----
- drivers/spi/spi-mpc52xx.c      | 12 +++----
- drivers/spi/spi-ppc4xx.c       | 15 ++++-----
- drivers/spi/spi-topcliff-pch.c | 71 +++++++++++++++++++++---------------------
- drivers/spi/spi.c              | 10 +++---
- 5 files changed, 63 insertions(+), 62 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/macvtap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/macvtap.c b/drivers/net/macvtap.c
+index 5c26653eceb5..1796d8f1ef47 100644
+--- a/drivers/net/macvtap.c
++++ b/drivers/net/macvtap.c
+@@ -1243,7 +1243,7 @@ static int macvtap_queue_resize(struct macvlan_dev *vlan)
+ 	int n = vlan->numqueues;
+ 	int ret, i = 0;
+ 
+-	arrays = kmalloc(sizeof *arrays * n, GFP_KERNEL);
++	arrays = kmalloc_array(n, sizeof(*arrays), GFP_KERNEL);
+ 	if (!arrays)
+ 		return -ENOMEM;
+ 
 -- 
 2.11.0
 
