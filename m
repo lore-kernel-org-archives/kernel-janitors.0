@@ -1,48 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:27:11 +0000
-Subject: Re: [PATCH 04/17] spi: fsl: Use kmalloc_array() in of_fsl_spi_get_chipselects()
-Message-Id: <20170117182711.l2xsej37mfubn5og@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="dufszgkxeyt3hkkf"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 27 Jan 2017 11:56:42 +0000
+Subject: [PATCH] gpiolib: Fix a WARN_ON that can never trigger
+Message-Id: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
- <2abbbc08-f5bf-28de-e513-5f1074996189@users.sourceforge.net>
-In-Reply-To: <2abbbc08-f5bf-28de-e513-5f1074996189@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+"if (!x) WARN_ON(x)" can never trigger.
 
---dufszgkxeyt3hkkf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpio/gpiolib.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Fri, Jan 13, 2017 at 06:12:23PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 13 Jan 2017 13:37:25 +0100
->=20
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 59d3d960ccd4..1e8bda36b73e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1422,8 +1422,7 @@ void devm_gpiochip_remove(struct device *dev, struct gpio_chip *chip)
+ 
+ 	ret = devres_release(dev, devm_gpio_chip_release,
+ 			     devm_gpio_chip_match, chip);
+-	if (!ret)
+-		WARN_ON(ret);
++	WARN_ON(ret);
+ }
+ EXPORT_SYMBOL_GPL(devm_gpiochip_remove);
+ 
+-- 
+2.9.3
 
-The previous patch changed a similar call site to use kcalloc() with a
-similar explanation, the choice of function to translate to seems
-entirely random since the changelogs don't address the zeroing that
-kzalloc() and kcalloc() do but kmalloc() and kmalloc_array() don't.
-
---dufszgkxeyt3hkkf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlh+Yf4ACgkQJNaLcl1U
-h9DDOggAghIzczMhZtty31u3JR+Y5qrl/903L8JLeTboFPTqDlBXNXkR58XQwUUn
-9UHWLeKfxIzNS8OtG9YC6rKptovgnQVw4Ubzqc4xaaYfzQMPPAMRVBECFF3sDy5R
-4PZgvYnjtXUi2/hB5kh1IcHUU+ubN0BVk8uGMxpixc03B00W9cI2xJReav8rtA/M
-QHFsZXfS19WnMAOuN3gc0culYhdrts/ZadOx9JdKhJ7Akau8q8M6Lnj2zpmIaBSh
-mFMKoB388Wu8rRBZnOJkvi8jNID4D5PILom+iohgCLNOQSByjd9i+PutSsihvZHT
-s2DOoyK1T04gHGFoffrZKkmLDZeJxw==
-=Dd3y
------END PGP SIGNATURE-----
-
---dufszgkxeyt3hkkf--
