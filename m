@@ -1,53 +1,35 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Date: Wed, 11 Jan 2017 21:58:27 +0000
-Subject: Re: [PATCH 00/18] MTD-CFI: Fine-tuning for several function implementations
-Message-Id: <f256de56-1815-2959-917d-7051319a65ac@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 27 Jan 2017 13:15:35 +0000
+Subject: [PATCH] IB/cma: Fix reversed test
+Message-Id: <20170127131535.19918-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Richard Weinberger <richard@nod.at>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 01/11/2017 09:34 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 11 Jan 2017 21:21:12 +0100
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
+This test looks reverted.
+We should log an error message only if 'ib_attach_mcast()' fails.
 
-The patch listing doesn't seem to match the content of the patchset ?
-The $subject are different ...
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/core/cma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Markus Elfring (18):
->   Use kmalloc_array() in cfi_intelext_partition_fixup()
->   Improve another size determination in cfi_intelext_partition_fixup()
->   cfi_cmdset_0001: Add some spaces for better code readability
->   cfi_cmdset_0001: Delete an unnecessary variable initialisation in do_write_oneword()
->   cfi_cmdset_0001: Use common error handling code in do_write_oneword()
->   Use kcalloc() in cfi_intelext_setup()
->   One function call and an unnecessary check less in cfi_intelext_setup()
->   Rename a jump label in cfi_intelext_setup()
->   Use kmalloc_array() in cfi_amdstd_setup()
->   One function call less in cfi_amdstd_setup() after error detection
->   Rename a jump label in cfi_amdstd_setup()
->   cfi_cmdset_0002: Add some spaces for better code readability
->   cfi_cmdset_0002: Delete an unnecessary variable initialisation in do_write_oneword()
->   cfi_cmdset_0002: Use common error handling code in do_write_oneword()
->   Use kcalloc() in cfi_ppb_unlock()
->   Use kmalloc_array() in cfi_staa_setup()
->   Use common error handling code in cfi_staa_setup()
->   cfi_cmdset_0020: Add some spaces for better code readability
-> 
->  drivers/mtd/chips/cfi_cmdset_0001.c | 165 +++++++++++++++++++-----------------
->  drivers/mtd/chips/cfi_cmdset_0002.c | 110 +++++++++++++-----------
->  drivers/mtd/chips/cfi_cmdset_0020.c | 127 ++++++++++++++-------------
->  3 files changed, 214 insertions(+), 188 deletions(-)
-> 
-
-
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index cfefb941d729..175f62e5841e 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -3838,7 +3838,7 @@ static int cma_ib_mc_handler(int status, struct ib_sa_multicast *multicast)
+ 	if (!status && id_priv->id.qp) {
+ 		status = ib_attach_mcast(id_priv->id.qp, &multicast->rec.mgid,
+ 					 be16_to_cpu(multicast->rec.mlid));
+-		if (!status)
++		if (status)
+ 			pr_debug_ratelimited("RDMA CM: MULTICAST_ERROR: failed to attach QP. status %d\n",
+ 					     status);
+ 	}
 -- 
-Best regards,
-Marek Vasut
+2.9.3
+
