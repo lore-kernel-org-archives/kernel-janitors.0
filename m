@@ -1,57 +1,43 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 27 Jan 2017 19:24:58 +0000
+From: Bart Van Assche <Bart.VanAssche@sandisk.com>
+Date: Fri, 27 Jan 2017 21:31:55 +0000
 Subject: Re: [PATCH] IB/cma: Fix reversed test
-Message-Id: <1485545098.2432.9.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-jcGVzXBXU2GVz3KCyQYQ"
+Message-Id: <1485552696.13218.0.camel@sandisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170127131535.19918-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170127131535.19918-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, sean.hefty@intel.com, hal.rosenstock@gmail.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-jcGVzXBXU2GVz3KCyQYQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, "hal.rosenstock@gmail.com" <hal.rosenstock@gmail.com>, "dledford@redhat.com" <dledford@redhat.com>, "sean.hefty@intel.com" <sean.hefty@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
 On Fri, 2017-01-27 at 14:15 +0100, Christophe JAILLET wrote:
 > This test looks reverted.
 > We should log an error message only if 'ib_attach_mcast()' fails.
->=20
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->=C2=A0
+> ---
+>  drivers/infiniband/core/cma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+> index cfefb941d729..175f62e5841e 100644
+> --- a/drivers/infiniband/core/cma.c
+> +++ b/drivers/infiniband/core/cma.c
+> @@ -3838,7 +3838,7 @@ static int cma_ib_mc_handler(int status, struct ib_sa_multicast *multicast)
+>  	if (!status && id_priv->id.qp) {
+>  		status = ib_attach_mcast(id_priv->id.qp, &multicast->rec.mgid,
+>  					 be16_to_cpu(multicast->rec.mlid));
+> -		if (!status)
+> +		if (status)
+>  			pr_debug_ratelimited("RDMA CM: MULTICAST_ERROR: failed to attach QP. status %d\n",
+>  					     status);
+>  	}
 
-You are right, thanks, applied.
+Hello Christophe,
 
---=20
-Doug Ledford <dledford@redhat.com>
-=C2=A0 =C2=A0 GPG KeyID: B826A3330E572FDD
-=C2=A0 =C2=A0
-Key fingerprint =3D AE6B 1BDA 122B 23B4 265B =C2=A01274 B826 A333 0E57 2FDD
+Do you think this patch needs "Fixes:" and "Cc: stable" tags?
 
---=-jcGVzXBXU2GVz3KCyQYQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJYi56KAAoJELgmozMOVy/dU9cQAMIsCef+cum/kHX6l07dOkSo
-zbWqKisw3n9quMqsIPtg06a/Dv5iwhgDJo7tiApGguoeVln9HsG6TUuKGCGh4+U0
-93WlC1W8ifxTe8PY2ISZq4S0sDxzUKU1oe7ZB9Jwpjchtw5MtQ4jRYiCyJMYBhDn
-e+V5lEaXB16sZwJJQHGi8F2y3VrSPuvpVfG/wTv6sd2gkgch50DgvZxMObCKL6K9
-Uxq8t6eG+jJTDl1s+RHj5nhNzR+Y8pbbym2L3v5rLba3N6v0jw/oF6sDR60DiBPz
-4jzzH75HCbiVtMfB9e9A7/vqXlQpagB3UQZ0uZm3W4BML9NlfWY3g5qvJeRcYArv
-KH/j4f1i92nv5HffpmIHQFdHDKTdshyJzGpM7HQLpIpjbTb0phpha4LvCHwr7n2b
-dnTjLADLxDA7sC8xAXPhLj/yf+/ZTDJcoWaT0m5u3lhf5SZIs9SB3BCf+oC62Ex4
-WdgnvHtLHJdCOtnUllB+9FvLwHXvrz7nGuVU8Mopd9v+HqD0DrRAoyBWSl+46X0x
-Gj7pIOEVBcVfNgxLHnO4dvPvPJDTv8gei4BZtJJNrB9yPAGj2v4esu5PYJDfBCQc
-ycPQbXhv93o1CQwHCXIhRuya9rvS6XQwVjSwdXbWYGVwIGauEkthgarIzHTw2agE
-SqUipNvdY73YTnc6mceb
-=QtvV
------END PGP SIGNATURE-----
-
---=-jcGVzXBXU2GVz3KCyQYQ--
-
+Bart.
