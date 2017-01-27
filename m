@@ -1,43 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:28:03 +0000
-Subject: [PATCH 28/46] selinux: Return directly after a failed kzalloc() in user_read()
-Message-Id: <3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 27 Jan 2017 00:40:36 +0000
+Subject: Re: powerpc/sstep: Return directly after a failed address_ok() in emulate_step()
+Message-Id: <3v8g1c5k46z9tjx@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <bc39d538-80f2-e810-0d58-39522605e067@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Lennart Sorensen <lsorense@csclub.uwaterloo.ca>, Nicholas Piggin <npiggin@gmail.com>, Oliver O'Halloran <oohall@gmail.com>, Paul Mackerras <paulus@samba.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 22:08:22 +0100
+On Sat, 2017-01-21 at 14:45:19 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 21 Jan 2017 15:30:15 +0100
+> 
+> * Return directly after a call of the function "address_ok" failed
+>   in a case block.
+> 
+>   This issue was detected by using the Coccinelle software.
+> 
+> * Delete two error code assignments which became unnecessary with
+>   this refactoring.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Return directly after a call of the function "kzalloc" failed
-at the beginning.
+Applied to powerpc next, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/selinux/ss/policydb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+https://git.kernel.org/powerpc/c/3c4b66a6d0d2b9f2418f9a09d528e4
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 3e43556e67b8..1c046d39e2a7 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1542,10 +1542,9 @@ static int user_read(struct policydb *p, struct hashtab *h, void *fp)
- 	__le32 buf[3];
- 	u32 len;
- 
--	rc = -ENOMEM;
- 	usrdatum = kzalloc(sizeof(*usrdatum), GFP_KERNEL);
- 	if (!usrdatum)
--		goto bad;
-+		return -ENOMEM;
- 
- 	if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
- 		to_read = 3;
--- 
-2.11.0
-
+cheers
