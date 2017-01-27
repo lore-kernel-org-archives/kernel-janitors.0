@@ -1,28 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Jan 2017 10:33:19 +0000
-Subject: [PATCH 0/3] MTD-FTL: Fine-tuning for two function implementations
-Message-Id: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 27 Jan 2017 15:14:53 +0000
+Subject: [PATCH] PCI/MSI: Return error code if memory allocation fails
+Message-Id: <20170127151453.27571-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Jan 2017 11:24:12 +0100
+If 'alloc_msi_entry()' fails, a few lines above, we free resources and set
+'ret = -ENOMEM'.
 
-A few update suggestions were taken into account
-from static source code analysis.
+However, the function returns 0, inconditionaly.
+Returns the error code instead.
 
-Markus Elfring (3):
-  Use kmalloc_array() in build_maps()
-  Delete an error message for a failed memory allocation in ftl_add_mtd()
-  Improve another size determination in ftl_add_mtd()
+Fixes: e75eafb9b039 ("genirq/msi: Switch to new irq spreading infrastructure")
 
- drivers/mtd/ftl.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index b6785c8be44d..0f77b38f03dd 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -731,7 +731,7 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
+ 	ret = 0;
+ out:
+ 	kfree(masks);
+-	return 0;
++	return ret;
+ }
+ 
+ static void msix_program_entries(struct pci_dev *dev,
 -- 
-2.11.0
+2.9.3
 
