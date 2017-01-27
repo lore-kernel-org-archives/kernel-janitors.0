@@ -1,57 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:45:21 +0000
-Subject: [PATCH 10/18] mtd-cfi_cmdset_0002: One function call less in cfi_amdstd_setup() after error detectio
-Message-Id: <46aa5810-8f5d-b35e-17a5-137228cb9720@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 27 Jan 2017 00:40:36 +0000
+Subject: Re: powerpc/powernv/pci: Use kmalloc_array() in two functions
+Message-Id: <3v8g1d0rqgz9tk0@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <817567b2-cdf6-7f7b-6041-9a026ea10a0f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>, Paul Mackerras <paulus@samba.org>, Wei Yang <weiyang@linux.vnet.ibm.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 18:32:06 +0100
+On Wed, 2016-08-24 at 20:36:54 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 24 Aug 2016 22:26:37 +0200
+> 
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus reuse the corresponding function "kmalloc_array".
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The kfree() function was called in one case by the cfi_amdstd_setup()
-function during error handling even if the passed data structure member
-contained a null pointer.
+Applied to powerpc next, thanks.
 
-Adjust a jump target according to the Linux coding style convention
-so that memory will be also released for members of a data structure
-before the container "mtd" in the error handling case.
+https://git.kernel.org/powerpc/c/fb37e12896c1ba0407012fe8cdc0b0
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mtd/chips/cfi_cmdset_0002.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 3bed67e35692..25d485f6d2ff 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -692,7 +692,7 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
- 					  sizeof(*mtd->eraseregions),
- 					  GFP_KERNEL);
- 	if (!mtd->eraseregions)
--		goto setup_err;
-+		goto free_priv;
- 
- 	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
- 		unsigned long ernum, ersize;
-@@ -721,9 +721,10 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
- 
-  setup_err:
- 	kfree(mtd->eraseregions);
--	kfree(mtd);
-+free_priv:
- 	kfree(cfi->cmdset_priv);
- 	kfree(cfi->cfiq);
-+	kfree(mtd);
- 	return NULL;
- }
- 
--- 
-2.11.0
-
+cheers
