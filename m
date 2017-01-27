@@ -1,26 +1,38 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Date: Fri, 20 Jan 2017 11:17:47 +0000
-Subject: Re: [PATCH] mm: add arch-independent testcases for RODATA
-Message-Id: <20170120111747.GB18576@leverpostej>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Jan 2017 08:06:22 +0000
+Subject: [patch] [media] mantis_dvb: fix some error codes in mantis_dvb_init()
+Message-Id: <20170127080622.GA4153@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170119145114.GA19772@pjb1027-Latitude-E5410>
- <20170119155701.GA24654@leverpostej>
- <CAErMHp-L-B_9pWVRpqRSpH8LL4VEmHHrFDUbkvNZbXC=uWCzng@mail.gmail.com>
-In-Reply-To: <CAErMHp-L-B_9pWVRpqRSpH8LL4VEmHHrFDUbkvNZbXC=uWCzng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: park jinbum <jinb.park7@gmail.com>
-Cc: hpa@zytor.com, x86@kernel.org, akpm@linuxfoundation.org, keescook@chromium.org, linux-mm@kvack.org, arjan@linux.intel.com, mingo@redhat.com, tglx@linutronix.de, linux@armlinux.org.uk, kernel-janitors@vger.kernel.org, kernel-hardening@lists.openwall.com, labbott@redhat.com, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 20, 2017 at 03:49:46PM +0900, park jinbum wrote:
-> Where is the best place for common test file in general??
-> 
->  kernel/rodata_test.c
->  include/rodata_test.h => Is it fine??
+We should be returning negative error codes here or it leads to a crash.
+This also silences a static checker warning.
 
-I had assumed you would use mm/rodata_test.c, as you do in this patch
-(i.e. a *new* common file). That seems fine to me.
+	drivers/media/pci/mantis/mantis_cards.c:250 mantis_pci_probe()
+	warn: 'mantis->dmxdev.dvbdev->fops' double freed
 
-Thanks,
-Mark.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/media/pci/mantis/mantis_dvb.c b/drivers/media/pci/mantis/mantis_dvb.c
+index 5a71e1791cf5..0db4de3a2285 100644
+--- a/drivers/media/pci/mantis/mantis_dvb.c
++++ b/drivers/media/pci/mantis/mantis_dvb.c
+@@ -226,11 +226,12 @@ int mantis_dvb_init(struct mantis_pci *mantis)
+ 			goto err5;
+ 		} else {
+ 			if (mantis->fe = NULL) {
++				result = -ENOMEM;
+ 				dprintk(MANTIS_ERROR, 1, "FE <NULL>");
+ 				goto err5;
+ 			}
+-
+-			if (dvb_register_frontend(&mantis->dvb_adapter, mantis->fe)) {
++			result = dvb_register_frontend(&mantis->dvb_adapter, mantis->fe);
++			if (result) {
+ 				dprintk(MANTIS_ERROR, 1, "ERROR: Frontend registration failed");
+ 
+ 				if (mantis->fe->ops.release)
