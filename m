@@ -1,44 +1,56 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 27 Jan 2017 12:11:15 +0000
-Subject: [PATCH] Input: synaptics-rmi4 - Fix reversed tests
-Message-Id: <20170127121115.19427-1-christophe.jaillet@wanadoo.fr>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Fri, 27 Jan 2017 17:18:27 +0000
+Subject: Re: [PATCH] Input: synaptics-rmi4 - Fix reversed tests
+Message-Id: <20170127171827.GE13244@mail.corp.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170127121115.19427-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170127121115.19427-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitry.torokhov@gmail.com, benjamin.tissoires@redhat.com, aduggan@synaptics.com, nick@shmanahar.org, yamada.masahiro@socionext.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dmitry.torokhov@gmail.com, aduggan@synaptics.com, nick@shmanahar.org, yamada.masahiro@socionext.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These tests looks reversed.
-A warning should be displayed if an error is returned, not on success.
+On Jan 27 2017 or thereabouts, Christophe JAILLET wrote:
+> These tests looks reversed.
+> A warning should be displayed if an error is returned, not on success.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/input/rmi4/rmi_driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Good catch!
 
-diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index 11447ab1055c..bf5c36e229ba 100644
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -901,7 +901,7 @@ void rmi_enable_irq(struct rmi_device *rmi_dev, bool clear_wake)
- 	data->enabled = true;
- 	if (clear_wake && device_may_wakeup(rmi_dev->xport->dev)) {
- 		retval = disable_irq_wake(irq);
--		if (!retval)
-+		if (retval)
- 			dev_warn(&rmi_dev->dev,
- 				 "Failed to disable irq for wake: %d\n",
- 				 retval);
-@@ -936,7 +936,7 @@ void rmi_disable_irq(struct rmi_device *rmi_dev, bool enable_wake)
- 	disable_irq(irq);
- 	if (enable_wake && device_may_wakeup(rmi_dev->xport->dev)) {
- 		retval = enable_irq_wake(irq);
--		if (!retval)
-+		if (retval)
- 			dev_warn(&rmi_dev->dev,
- 				 "Failed to enable irq for wake: %d\n",
- 				 retval);
--- 
-2.9.3
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
+Cheers,
+Benjamin
+
+
+>  drivers/input/rmi4/rmi_driver.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
+> index 11447ab1055c..bf5c36e229ba 100644
+> --- a/drivers/input/rmi4/rmi_driver.c
+> +++ b/drivers/input/rmi4/rmi_driver.c
+> @@ -901,7 +901,7 @@ void rmi_enable_irq(struct rmi_device *rmi_dev, bool clear_wake)
+>  	data->enabled = true;
+>  	if (clear_wake && device_may_wakeup(rmi_dev->xport->dev)) {
+>  		retval = disable_irq_wake(irq);
+> -		if (!retval)
+> +		if (retval)
+>  			dev_warn(&rmi_dev->dev,
+>  				 "Failed to disable irq for wake: %d\n",
+>  				 retval);
+> @@ -936,7 +936,7 @@ void rmi_disable_irq(struct rmi_device *rmi_dev, bool enable_wake)
+>  	disable_irq(irq);
+>  	if (enable_wake && device_may_wakeup(rmi_dev->xport->dev)) {
+>  		retval = enable_irq_wake(irq);
+> -		if (!retval)
+> +		if (retval)
+>  			dev_warn(&rmi_dev->dev,
+>  				 "Failed to enable irq for wake: %d\n",
+>  				 retval);
+> -- 
+> 2.9.3
+> 
