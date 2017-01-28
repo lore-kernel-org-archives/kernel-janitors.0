@@ -1,90 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:46:06 +0000
-Subject: Applied "spi: fsl: Combine substrings for two messages" to the spi tree
-Message-Id: <E1cTYli-0000PH-O0@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Jan 2017 09:33:44 +0000
+Subject: [PATCH 1/4] dcbnl: Use kmalloc_array() in dcbnl_build_peer_app()
+Message-Id: <ee60540c-0e30-4abf-2bf0-00ab5fe2aab8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ff54345-a877-fe39-0aa2-a3db617fba38@users.sourceforge.net>
-In-Reply-To: <0ff54345-a877-fe39-0aa2-a3db617fba38@users.sourceforge.net>
+References: <ab981a3f-e73e-9bef-09c5-9c6d077aef00@users.sourceforge.net>
+In-Reply-To: <ab981a3f-e73e-9bef-09c5-9c6d077aef00@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Pan Bian <bianpan2016@163.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi: fsl: Combine substrings for two messages
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 31ae779421098e9a58a3f10e1e09b2c63f4514fa Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 13:50:21 +0100
-Subject: [PATCH] spi: fsl: Combine substrings for two messages
+Date: Fri, 27 Jan 2017 22:30:09 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-WARNING: quoted string split across lines
+  This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code places.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-fsl-spi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ net/dcb/dcbnl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
-index cdee556037f9..0fc3452652ae 100644
---- a/drivers/spi/spi-fsl-spi.c
-+++ b/drivers/spi/spi-fsl-spi.c
-@@ -267,10 +267,9 @@ static int fsl_spi_setup_transfer(struct spi_device *spi,
- 	if ((mpc8xxx_spi->spibrg / hz) > 64) {
- 		cs->hw_mode |= SPMODE_DIV16;
- 		pm = (mpc8xxx_spi->spibrg - 1) / (hz * 64) + 1;
--
--		WARN_ONCE(pm > 16, "%s: Requested speed is too low: %d Hz. "
--			  "Will use %d Hz instead.\n", dev_name(&spi->dev),
--			  hz, mpc8xxx_spi->spibrg / 1024);
-+		WARN_ONCE(pm > 16,
-+			  "%s: Requested speed is too low: %d Hz. Will use %d Hz instead.\n",
-+			  dev_name(&spi->dev), hz, mpc8xxx_spi->spibrg / 1024);
- 		if (pm > 16)
- 			pm = 16;
- 	} else {
-@@ -763,8 +762,9 @@ static int of_fsl_spi_get_chipselects(struct device *dev)
- 		ret = gpio_direction_output(pinfo->gpios[i],
- 					    pinfo->alow_flags[i]);
- 		if (ret) {
--			dev_err(dev, "can't set output direction for gpio "
--				"#%d: %d\n", i, ret);
-+			dev_err(dev,
-+				"can't set output direction for gpio #%d: %d\n",
-+				i, ret);
- 			goto err_loop;
- 		}
- 	}
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index 3202d75329b5..76fd727e2eb4 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -990,7 +990,7 @@ static int dcbnl_build_peer_app(struct net_device *netdev, struct sk_buff* skb,
+ 	 */
+ 	err = ops->peer_getappinfo(netdev, &info, &app_count);
+ 	if (!err && app_count) {
+-		table = kmalloc(sizeof(struct dcb_app) * app_count, GFP_KERNEL);
++		table = kmalloc_array(app_count, sizeof(*table), GFP_KERNEL);
+ 		if (!table)
+ 			return -ENOMEM;
+ 
 -- 
 2.11.0
 
