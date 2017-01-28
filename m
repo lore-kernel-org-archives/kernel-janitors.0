@@ -1,85 +1,85 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:46:00 +0000
-Subject: Applied "spi/mpc52xx: Combine substrings for two messages" to the spi tree
-Message-Id: <E1cTYlc-0000NO-NT@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Jan 2017 09:37:39 +0000
+Subject: [PATCH 4/4] dcbnl: Add some spaces for better code readability
+Message-Id: <37fec5d3-4697-f3b9-b780-d11585a0f494@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c12cdac-8887-e5d0-ce80-ca4795354956@users.sourceforge.net>
-In-Reply-To: <5c12cdac-8887-e5d0-ce80-ca4795354956@users.sourceforge.net>
+References: <ab981a3f-e73e-9bef-09c5-9c6d077aef00@users.sourceforge.net>
+In-Reply-To: <ab981a3f-e73e-9bef-09c5-9c6d077aef00@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Pan Bian <bianpan2016@163.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi/mpc52xx: Combine substrings for two messages
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9c4f0440ba8f3ad57bebb46cfa29a18333fe4860 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 14:14:45 +0100
-Subject: [PATCH] spi/mpc52xx: Combine substrings for two messages
+Date: Sat, 28 Jan 2017 10:15:59 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: quoted string split across lines
-
-Thus fix the affected source code places.
+Use space characters at some source code places according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-mpc52xx.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ net/dcb/dcbnl.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
-index 8cc129efe7ba..e8b59ce4dc3a 100644
---- a/drivers/spi/spi-mpc52xx.c
-+++ b/drivers/spi/spi-mpc52xx.c
-@@ -449,8 +449,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
- 			gpio_cs = of_get_gpio(op->dev.of_node, i);
- 			if (gpio_cs < 0) {
- 				dev_err(&op->dev,
--					"could not parse the gpio field "
--					"in oftree\n");
-+					"could not parse the gpio field in oftree\n");
- 				rc = -ENODEV;
- 				goto err_gpio;
- 			}
-@@ -458,8 +457,8 @@ static int mpc52xx_spi_probe(struct platform_device *op)
- 			rc = gpio_request(gpio_cs, dev_name(&op->dev));
- 			if (rc) {
- 				dev_err(&op->dev,
--					"can't request spi cs gpio #%d "
--					"on gpio line %d\n", i, gpio_cs);
-+					"can't request spi cs gpio #%d on gpio line %d\n",
-+					i, gpio_cs);
- 				goto err_gpio;
- 			}
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index 0903081a1212..0150de92c8ba 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -315,7 +315,7 @@ static int dcbnl_getcap(struct net_device *netdev, struct nlmsghdr *nlh,
+ 	if (data[DCB_CAP_ATTR_ALL])
+ 		getall = 1;
  
+-	for (i = DCB_CAP_ATTR_ALL+1; i <= DCB_CAP_ATTR_MAX; i++) {
++	for (i = DCB_CAP_ATTR_ALL + 1; i <= DCB_CAP_ATTR_MAX; i++) {
+ 		if (!getall && !data[i])
+ 			continue;
+ 
+@@ -359,7 +359,7 @@ static int dcbnl_getnumtcs(struct net_device *netdev, struct nlmsghdr *nlh,
+ 	if (data[DCB_NUMTCS_ATTR_ALL])
+ 		getall = 1;
+ 
+-	for (i = DCB_NUMTCS_ATTR_ALL+1; i <= DCB_NUMTCS_ATTR_MAX; i++) {
++	for (i = DCB_NUMTCS_ATTR_ALL + 1; i <= DCB_NUMTCS_ATTR_MAX; i++) {
+ 		if (!getall && !data[i])
+ 			continue;
+ 
+@@ -397,7 +397,7 @@ static int dcbnl_setnumtcs(struct net_device *netdev, struct nlmsghdr *nlh,
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = DCB_NUMTCS_ATTR_ALL+1; i <= DCB_NUMTCS_ATTR_MAX; i++) {
++	for (i = DCB_NUMTCS_ATTR_ALL + 1; i <= DCB_NUMTCS_ATTR_MAX; i++) {
+ 		if (!data[i])
+ 			continue;
+ 
+@@ -1593,7 +1593,7 @@ static int dcbnl_getfeatcfg(struct net_device *netdev, struct nlmsghdr *nlh,
+ 	if (data[DCB_FEATCFG_ATTR_ALL])
+ 		getall = 1;
+ 
+-	for (i = DCB_FEATCFG_ATTR_ALL+1; i <= DCB_FEATCFG_ATTR_MAX; i++) {
++	for (i = DCB_FEATCFG_ATTR_ALL + 1; i <= DCB_FEATCFG_ATTR_MAX; i++) {
+ 		if (!getall && !data[i])
+ 			continue;
+ 
+@@ -1631,7 +1631,7 @@ static int dcbnl_setfeatcfg(struct net_device *netdev, struct nlmsghdr *nlh,
+ 	if (ret)
+ 		goto err;
+ 
+-	for (i = DCB_FEATCFG_ATTR_ALL+1; i <= DCB_FEATCFG_ATTR_MAX; i++) {
++	for (i = DCB_FEATCFG_ATTR_ALL + 1; i <= DCB_FEATCFG_ATTR_MAX; i++) {
+ 		if (!data[i])
+ 			continue;
+ 
+@@ -1669,7 +1669,7 @@ struct reply_func {
+ 		    struct nlattr **, struct sk_buff *);
+ };
+ 
+-static const struct reply_func reply_funcs[DCB_CMD_MAX+1] = {
++static const struct reply_func reply_funcs[DCB_CMD_MAX + 1] = {
+ 	[DCB_CMD_GSTATE]	= { RTM_GETDCB, dcbnl_getstate },
+ 	[DCB_CMD_SSTATE]	= { RTM_SETDCB, dcbnl_setstate },
+ 	[DCB_CMD_PFC_GCFG]	= { RTM_GETDCB, dcbnl_getpfccfg },
 -- 
 2.11.0
 
