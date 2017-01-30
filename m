@@ -1,37 +1,47 @@
-From: Shiraz Saleem <shiraz.saleem@intel.com>
-Date: Mon, 09 Jan 2017 19:41:27 +0000
-Subject: Re: [patch] i40iw: fix some indenting in i40iw_sc_vsi_init()
-Message-Id: <20170109194127.GA42156@ssaleem-MOBL4.amr.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 30 Jan 2017 11:25:02 +0000
+Subject: [PATCH] acpi: nfit: use %u format string specifier for unsigned ints
+Message-Id: <20170130112502.24426-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170107063042.GD26959@elgon.mountain>
-In-Reply-To: <20170107063042.GD26959-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, joeyli.kernel@gmail.com, Toshi Kani <toshi.kani@hpe.com>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jan 07, 2017 at 09:30:42AM +0300, Dan Carpenter wrote:
-> The debug printk was indented more than it should have been and we
-> can remove an unnecessary line break.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-> index 98923a8cf86d..b9dc2c540946 100644
-> --- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-> +++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-> @@ -4498,9 +4498,9 @@ void i40iw_sc_vsi_init(struct i40iw_sc_vsi *vsi, struct i40iw_vsi_init_info *inf
->  	i40iw_fill_qos_list(info->params->qs_handle_list);
->  
->  	for (i = 0; i < I40IW_MAX_USER_PRIORITY; i++) {
-> -		vsi->qos[i].qs_handle > -			info->params->qs_handle_list[i];
-> -			i40iw_debug(vsi->dev, I40IW_DEBUG_DCB, "qset[%d]: %d\n", i, vsi->qos[i].qs_handle);
-> +		vsi->qos[i].qs_handle =	info->params->qs_handle_list[i];
-It appears there is a tab char after the =. Rather than a space.
-   
-> +		i40iw_debug(vsi->dev, I40IW_DEBUG_DCB, "qset[%d]: %d\n", i,
-> +			    vsi->qos[i].qs_handle);
->  		spin_lock_init(&vsi->qos[i].lock);
->  		INIT_LIST_HEAD(&vsi->qos[i].qplist);
->  	}
+From: Colin Ian King <colin.king@canonical.com>
+
+scrub_mode and scrub_count are both unsigned ints, however, the %d
+format string specifier is being used instead of %u. Trivial fix,
+use %u.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/nfit/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 2f82b8e..093b768 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -906,7 +906,7 @@ static ssize_t hw_error_scrub_show(struct device *dev,
+ 	struct nvdimm_bus_descriptor *nd_desc = to_nd_desc(nvdimm_bus);
+ 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+ 
+-	return sprintf(buf, "%d\n", acpi_desc->scrub_mode);
++	return sprintf(buf, "%u\n", acpi_desc->scrub_mode);
+ }
+ 
+ /*
+@@ -967,7 +967,7 @@ static ssize_t scrub_show(struct device *dev,
+ 	if (nd_desc) {
+ 		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+ 
+-		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
++		rc = sprintf(buf, "%u%s", acpi_desc->scrub_count,
+ 				(work_busy(&acpi_desc->work)) ? "+\n" : "\n");
+ 	}
+ 	device_unlock(dev);
+-- 
+2.10.2
+
