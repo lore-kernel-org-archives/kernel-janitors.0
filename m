@@ -1,23 +1,47 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Jan 2017 09:30:26 +0000
-Subject: Re: [PATCH 8/9] KVM: Adjust seven checks for null pointers
-Message-Id: <20170123093026.GM4454@mwanda>
+Date: Tue, 31 Jan 2017 11:12:56 +0000
+Subject: [bug report] ipv6: fix ip6_tnl_parse_tlv_enc_lim()
+Message-Id: <20170131111256.GA31319@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
- <d6a66841-b6f4-f888-51e8-f1ad124874ab@users.sourceforge.net>
-In-Reply-To: <d6a66841-b6f4-f888-51e8-f1ad124874ab@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hm...  GCC complains about "if (array)" but not about
-"if (array != NULL) ".  I view this as a bug in GCC...
+Hello Eric Dumazet,
 
-But you should still be seeing these compile warnings.  This is
-something like the 6th warning that kbuild has had to send you.
+The patch fbfa743a9d2a: "ipv6: fix ip6_tnl_parse_tlv_enc_lim()" from
+Jan 23, 2017, leads to the following static checker warning:
+
+	net/ipv6/ip6_tunnel.c:444 ip6_tnl_parse_tlv_enc_lim()
+	warn: potential pointer math issue ('skb->data' is a 24 bit pointer)
+
+net/ipv6/ip6_tunnel.c
+   437                          while (1) {
+   438                                  struct ipv6_tlv_tnl_enc_lim *tel;
+   439  
+   440                                  /* No more room for encapsulation limit */
+   441                                  if (i + sizeof(*tel) > optlen)
+   442                                          break;
+   443  
+   444                                  tel = (struct ipv6_tlv_tnl_enc_lim *) skb->data + off + i;
+
+This should be:
+					tel = (struct ipv6_tlv_tnl_enc_lim *)(skb->data + off + i);
+
+
+Someone probably already reported this?
+
+   445                                  /* return index of option if found and valid */
+   446                                  if (tel->type = IPV6_TLV_TNL_ENCAP_LIMIT &&
+   447                                      tel->length = 1)
+   448                                          return i + off - nhoff;
+   449                                  /* else jump to next option */
+   450                                  if (tel->type)
+   451                                          i += tel->length + 2;
+   452                                  else
+   453                                          i++;
+   454                          }
 
 regards,
 dan carpenter
-
