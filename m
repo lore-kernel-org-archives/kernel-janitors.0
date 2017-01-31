@@ -1,35 +1,26 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 27 Jan 2017 11:56:42 +0000
-Subject: [PATCH] gpiolib: Fix a WARN_ON that can never trigger
-Message-Id: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 31 Jan 2017 14:44:43 +0000
+Subject: Re: [PATCH] gpiolib: Fix a WARN_ON that can never trigger
+Message-Id: <CACRpkdY+ng2YvWpd_WxDVtKcN6H3nU8BZ0isUeCvhfKw+mjKpw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-"if (!x) WARN_ON(x)" can never trigger.
+On Fri, Jan 27, 2017 at 12:56 PM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpio/gpiolib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> "if (!x) WARN_ON(x)" can never trigger.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59d3d960ccd4..1e8bda36b73e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1422,8 +1422,7 @@ void devm_gpiochip_remove(struct device *dev, struct gpio_chip *chip)
- 
- 	ret = devres_release(dev, devm_gpio_chip_release,
- 			     devm_gpio_chip_match, chip);
--	if (!ret)
--		WARN_ON(ret);
-+	WARN_ON(ret);
- }
- EXPORT_SYMBOL_GPL(devm_gpiochip_remove);
- 
--- 
-2.9.3
+Good catch.
 
+Patch applied.
+
+Yours,
+Linus Walleij
