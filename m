@@ -1,26 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 06 Feb 2017 09:32:04 +0000
-Subject: Re: [PATCH] IB/cma: Fix reversed test
-Message-Id: <20170206093204.GB11103@mwanda>
+Date: Wed, 01 Feb 2017 08:52:15 +0000
+Subject: [patch net-next] ethernet: aquantia: fix dma_mapping_error test
+Message-Id: <20170201085215.GB31514@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170127131535.19918-1-christophe.jaillet@wanadoo.fr>
- <1485552696.13218.0.camel@sandisk.com>
- <1485561952.2432.31.camel@redhat.com>
- <20170128065927.GP4149@mwanda>
- <2fde1e87-a345-4697-e205-051a3973e624@redhat.com>
-In-Reply-To: <2fde1e87-a345-4697-e205-051a3973e624-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Bart Van Assche <Bart.VanAssche-XdAiOPVOjttBDgjK7y7TUQ@public.gmane.org>, "christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org" <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, "hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "David S. Miller" <davem@davemloft.net>, David VomLehn <vomlehn@texas.net>
+Cc: Dmitry Bezrukov <Dmitry.Bezrukov@aquantia.com>, Pavel Belous <Pavel.Belous@aquantia.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Right.  The stable tag isn't needed.  But the fixes tag is a different
-thing.  Greg doesn't automatically pull patches which have a fixes tag.
+dma_mapping_error() returns 1 if there is an error and 0 if not.
 
-Fixes is also useful for collecting metrics about how long it takes to
-fix bugs.  It's just really useful on it's own.
+Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+index 817c145520c8..dea9e9bbb8e7 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+@@ -298,9 +298,10 @@ int aq_ring_rx_fill(struct aq_ring_s *self)
+ 					buff->page, 0,
+ 					AQ_CFG_RX_FRAME_MAX, DMA_FROM_DEVICE);
+ 
+-		err = dma_mapping_error(aq_nic_get_dev(self->aq_nic), buff->pa);
+-		if (err < 0)
++		if (dma_mapping_error(aq_nic_get_dev(self->aq_nic), buff->pa)) {
++			err = -ENOMEM;
+ 			goto err_exit;
++		}
+ 
+ 		buff = NULL;
+ 	}
