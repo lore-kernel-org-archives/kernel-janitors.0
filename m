@@ -1,22 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Feb 2017 03:12:34 +0000
-Subject: Re: [PATCH 1/2] net: fs_enet: Fix an error handling path
-Message-Id: <20170213.221234.1010801525970370907.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Feb 2017 13:19:10 +0000
+Subject: [PATCH] usb: storage: fix infinite wait loop by incrementing loop counter
+Message-Id: <20170202131910.31001-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170210201706.16588-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170210201706.16588-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: pantelis.antoniou@gmail.com, vbordug@ru.mvista.com, linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 10 Feb 2017 21:17:06 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> 'of_node_put(fpi->phy_node)' should also be called if we branch to
-> 'out_deregister_fixed_link' error handling path.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If jumpshot_get_status continues to return a failed result then the
+wait loop will spin forever because the waitcount counter is never
+being incremented and we don't ever timeout.  Fix this by incrementing
+waitcount.
 
-Applied.
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/storage/jumpshot.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/storage/jumpshot.c b/drivers/usb/storage/jumpshot.c
+index 011e527..81d82ce 100644
+--- a/drivers/usb/storage/jumpshot.c
++++ b/drivers/usb/storage/jumpshot.c
+@@ -311,6 +311,7 @@ static int jumpshot_write_data(struct us_data *us,
+ 			if (result != USB_STOR_TRANSPORT_GOOD) {
+ 				// I have not experimented to find the smallest value.
+ 				//
++				waitcount++;
+ 				msleep(50); 
+ 			}
+ 		} while ((result != USB_STOR_TRANSPORT_GOOD) && (waitcount < 10));
+-- 
+2.10.2
+
