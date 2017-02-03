@@ -1,54 +1,32 @@
-From: Majd Dibbiny <majd@mellanox.com>
-Date: Sun, 19 Feb 2017 17:06:21 +0000
-Subject: Re: [PATCH 05/29] IB/mlx4: Fix a typo in a comment line
-Message-Id: <6C24ABDC-BDDC-4F07-95EC-FAA831706C11@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Feb 2017 10:30:40 +0000
+Subject: [patch] tpm: silence an array overflow warning
+Message-Id: <20170203103040.GA5467@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>,<b2be5d37-e334-5b97-7088-ee4a4c824824@users.sourceforge.net>
-In-Reply-To: <b2be5d37-e334-5b97-7088-ee4a4c824824@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Peter Huewe <peterhuewe@gmx.de>, Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
+We should check that we're within bounds first before checking that
+"chip->active_banks[i] != TPM2_ALG_ERROR" so I've re-ordered the two
+checks.
 
-> On Feb 18, 2017, at 10:53 PM, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 17 Feb 2017 20:48:59 +0100
-> 
-> Add a missing character in this description and adjust
-> the comment formatting.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/infiniband/hw/mlx4/mad.c | 6 ++++--
-> 1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-> index ea4892b0f39e..d8c27e3ed69a 100644
-> --- a/drivers/infiniband/hw/mlx4/mad.c
-> +++ b/drivers/infiniband/hw/mlx4/mad.c
-> @@ -1559,8 +1559,10 @@ static void mlx4_ib_multiplex_mad(struct mlx4_ib_demux_pv_ctx *ctx, struct ib_wc
->        }
->    }
-> 
-> -    /* We are using standard ib_core services to send the mad, so generate a
-> -     * stadard address handle by decoding the tunnelled mlx4_ah fields */
-> +    /*
-> +     * We are using standard ib_core services to send the mad, so generate
-> +     * a standard address handle by decoding the tunnelled mlx4_ah fields.
-> +     */
->    memcpy(&ah.av, &tunnel->hdr.av, sizeof (struct mlx4_av));
->    ah.ibah.device = ctx->ib_dev;
-> 
-> -- 
-> 2.11.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Thanks,
-Reviewed-by: Majd Dibbiny
-<majd@mellanox.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 423938e8570f..087748b8264f 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -800,8 +800,8 @@ int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash)
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		memset(digest_list, 0, sizeof(digest_list));
+ 
+-		for (i = 0; chip->active_banks[i] != TPM2_ALG_ERROR &&
+-		     i < ARRAY_SIZE(chip->active_banks); i++) {
++		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
++			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+ 			digest_list[i].alg_id = chip->active_banks[i];
+ 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+ 			count++;
