@@ -1,45 +1,39 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 07 Feb 2017 11:37:43 +0000
-Subject: Re: [PATCH] scsi: aacraid: rcode is unsigned, so can never be less than zero
-Message-Id: <ebdf99a4-667a-8d83-f927-2a0dabf273ca@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Feb 2017 20:23:42 +0000
+Subject: [PATCH] drm/amdgpu/virt: fix double kfree on bo_va
+Message-Id: <20170203202342.13128-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207112738.18486-1-colin.king@canonical.com>
- <20170207113717.GB11154@mwanda>
-In-Reply-To: <20170207113717.GB11154@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Xiangliang Yu <Xiangliang.Yu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/02/17 11:37, Dan Carpenter wrote:
-> On Tue, Feb 07, 2017 at 11:27:38AM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The check on rcode >= 0 is always true because rcode is unsigned
->> and can never be less than zero.  Remove the redundant check.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/scsi/aacraid/aachba.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
->> index 3b5ddf4..ddfd726 100644
->> --- a/drivers/scsi/aacraid/aachba.c
->> +++ b/drivers/scsi/aacraid/aachba.c
->> @@ -1848,7 +1848,7 @@ int aac_report_phys_luns(struct aac_dev *dev, struct fib *fibptr, int rescan)
->>  			FsaNormal, 1, 1, NULL, NULL);
->>  
->>  	/* analyse data */
->> -	if (rcode >= 0 && phys_luns->resp_flag = 2) {
-> 
-> The original code is buggy.  rcode should be an int.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for spotting that. Oops.
+bo_va is being kfree'd twice, once in the call to amdgpu_vm_bo_rmv
+and then a short while later. Fix this double free by removing
+the 2nd kfree.
 
-> 
-> regards,
-> dan carpenter
-> 
+Detected by CoverityScan, CID#1399524 ("Double Free")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+index 3fd951c..dcfb7df 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+@@ -83,7 +83,6 @@ int amdgpu_map_static_csa(struct amdgpu_device *adev, struct amdgpu_vm *vm)
+ 		DRM_ERROR("failed to do bo_map on static CSA, err=%d\n", r);
+ 		amdgpu_vm_bo_rmv(adev, bo_va);
+ 		ttm_eu_backoff_reservation(&ticket, &list);
+-		kfree(bo_va);
+ 		return r;
+ 	}
+ 
+-- 
+2.10.2
 
