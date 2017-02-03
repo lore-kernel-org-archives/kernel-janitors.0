@@ -1,44 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Feb 2017 11:57:11 +0000
-Subject: [PATCH] staging: bcm2835-audio: use | instead of || otherwise result is just boolean 1
-Message-Id: <20170201115711.17360-1-colin.king@canonical.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 03 Feb 2017 02:57:29 +0000
+Subject: Re: [PATCH 0/3] Virtio: Fine-tuning for two function implementations
+Message-Id: <02d56f89-263e-3bda-9543-90e4c82df75b@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
+In-Reply-To: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The incorrect or operator is being used resulting in cookies being
-set to 1 (true) rather than the intended hex value.  Fix this by
-using | instead of ||.
 
-Issue found with static analysis with cppcheck
+On 2017年01月27日 05:44, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Jan 2017 22:40:02 +0100
+>
+> A few update suggestions were taken into account
+> from static source code analysis.
+>
+> Markus Elfring (3):
+>    virtio_pci: Use kcalloc() in vp_request_msix_vectors()
+>    virtio_pci: Use kmalloc_array() in vp_request_msix_vectors()
+>    virtio_ring: Use kmalloc_array() in alloc_indirect()
+>
+>   drivers/virtio/virtio_pci_common.c | 8 ++++----
+>   drivers/virtio/virtio_ring.c       | 3 +--
+>   2 files changed, 5 insertions(+), 6 deletions(-)
+>
 
-Fixes: 0cec463e391e05b807a ("staging: bcm2835-audio: Simplify callback structure for write data")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/bcm2835-audio/bcm2835-vchiq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-index e8fd9c7..280028d 100644
---- a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-@@ -100,9 +100,9 @@ bcm2835_vchi_msg_queue(VCHI_SERVICE_HANDLE_T handle,
- 			      size);
- }
- 
--static const u32 BCM2835_AUDIO_WRITE_COOKIE1 = ('B' << 24 | 'C' << 16 ||
-+static const u32 BCM2835_AUDIO_WRITE_COOKIE1 = ('B' << 24 | 'C' << 16 |
- 						'M' << 8  | 'A');
--static const u32 BCM2835_AUDIO_WRITE_COOKIE2 = ('D' << 24 | 'A' << 16 ||
-+static const u32 BCM2835_AUDIO_WRITE_COOKIE2 = ('D' << 24 | 'A' << 16 |
- 						'T' << 8  | 'A');
- 
- struct bcm2835_audio_work {
--- 
-2.10.2
-
+Acked-by: Jason Wang <jasowang@redhat.com>
