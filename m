@@ -1,50 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:19:08 +0000
-Subject: [PATCH 29/29] IB/mlx5: Use kmalloc_array() in create_srq_kernel()
-Message-Id: <8dfa1135-5691-caf7-84e9-b30419c69187@users.sourceforge.net>
+From: POISSONNIER Emmanuel <poissonnier@amadeuss.fr>
+Date: Sat, 04 Feb 2017 10:29:50 +0000
+Subject: TRADING  ACCOUNT
+Message-Id: <3a2392e8fbcb3e2591367a24c00374ba@amadeuss.xyz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: poissonnier@amadeuss.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:18:15 +0100
+  Hello ,
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+We, Amadeus, want to extend our list of suppliers in the purchase of 
+computer hardware and electronics ( IT computer ) and are specialized in 
+the resale and distribution of computer and electronic equipment. We are 
+interested to buy the products you sell and want to place an order With 
+you in big quantities
 
-  This issue was detected by using the Coccinelle software.
+Is it posible for you to give us payment facilities ( 14 , 30 or 60 days 
+payment terms ) ?
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+What do you want for opening our account and credit line request ?.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mlx5/srq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Best regards
 
-diff --git a/drivers/infiniband/hw/mlx5/srq.c b/drivers/infiniband/hw/mlx5/srq.c
-index 7cb145f9a6db..8ba1953177af 100644
---- a/drivers/infiniband/hw/mlx5/srq.c
-+++ b/drivers/infiniband/hw/mlx5/srq.c
-@@ -195,8 +195,9 @@ static int create_srq_kernel(struct mlx5_ib_dev *dev, struct mlx5_ib_srq *srq,
- 		goto err_buf;
- 	}
- 	mlx5_fill_page_array(&srq->buf, in->pas);
--
--	srq->wrid = kmalloc(srq->msrq.max * sizeof(u64), GFP_KERNEL);
-+	srq->wrid = kmalloc_array(srq->msrq.max,
-+				  sizeof(*srq->wrid),
-+				  GFP_KERNEL);
- 	if (!srq->wrid) {
- 		err = -ENOMEM;
- 		goto err_in;
--- 
-2.11.1
+POISSONNIER Emmanuel
 
+AMADEUS
+485 ROUTE DU PIN MONTARD
+SOPHIA ANTIPOLIS 06410
+BIOT- France
+REG N° 344496252
+VAT N° FR37344496252
+TEL +33427865001
+FAX +33426078315
+www.amadeuss.com
+poissonnier@amadeuss.fr
