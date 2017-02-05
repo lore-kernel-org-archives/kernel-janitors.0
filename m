@@ -1,26 +1,41 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 16 Feb 2017 02:38:09 +0000
-Subject: Re: [patch] scsi: megaraid_sas: array overflow in megasas_dump_frame()
-Message-Id: <yq1lgt6c12m.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Feb 2017 21:39:37 +0000
+Subject: [PATCH] tpm xen: drop unneeded chip variable
+Message-Id: <1486330777-11341-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170214163855.GA1687@mwanda>
-In-Reply-To: <20170214163855.GA1687@mwanda> (Dan Carpenter's message of "Tue,
-        14 Feb 2017 19:38:55 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kashyap Desai <kashyap.desai@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+The call that used chip was dropped in 1f0f30e404b3.  Drop the
+leftover declaration and initialization.
 
-Dan> The "sz" variable is in terms of bytes, but we're treating the
-Dan> buffer as an array of __le32 so we have to divide by 4.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Dan> Fixes: def0eab3af86 ("scsi: megaraid_sas: enhance debug logs in OCR
-Dan> context") Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/char/tpm/xen-tpmfront.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-Applied to 4.11/scsi-queue.
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 5aaa268..656e8af 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -289,7 +289,6 @@ static int tpmfront_probe(struct xenbus_device *dev,
+ 		const struct xenbus_device_id *id)
+ {
+ 	struct tpm_private *priv;
+-	struct tpm_chip *chip;
+ 	int rv;
+ 
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+@@ -306,7 +305,6 @@ static int tpmfront_probe(struct xenbus_device *dev,
+ 
+ 	rv = setup_ring(dev, priv);
+ 	if (rv) {
+-		chip = dev_get_drvdata(&dev->dev);
+ 		ring_free(priv);
+ 		return rv;
+ 	}
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
