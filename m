@@ -1,50 +1,45 @@
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-Date: Thu, 09 Feb 2017 01:40:03 +0000
-Subject: Re: [Intel-gfx] [patch v2] drm/i915/gvt/kvmgt: remove some dead code
-Message-Id: <20170209014003.zachdfn4vemnpgy7@zhen-hp.sh.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vvlqrofhslhnzlag"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Feb 2017 21:36:16 +0000
+Subject: [PATCH] powerpc/pseries: Fix missing of_node_put
+Message-Id: <20170206213616.3661-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207145307.GA28648@mwanda>
- <1486558162.3142.44.camel@linux.intel.com>
-In-Reply-To: <1486558162.3142.44.camel@linux.intel.com>
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Jike Song <jike.song@intel.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, intel-gvt-dev@lists.freedesktop.org, Dan Carpenter <dan.carpenter@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, nfont@linux.vnet.ibm.com, jallen@linux.vnet.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If 'dlpar_configure_connector()' fails, 'parent_dn' should be released as
+already done in the normal case.
 
---vvlqrofhslhnzlag
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/powerpc/platforms/pseries/mobility.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On 2017.02.08 14:49:22 +0200, Joonas Lahtinen wrote:
-> On ti, 2017-02-07 at 17:53 +0300, Dan Carpenter wrote:
-> > "caps.buf" is always NULL here and "caps.size" is always zero.=A0=A0The=
- code
-> > is a no-op and can be removed.
-> >=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
->=20
-> I assume Zhenyu will merge this through their tree.
->=20
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index 5a0c7ba429ce..b8060c182ae2 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -226,13 +226,16 @@ static int add_dt_node(__be32 parent_phandle, __be32 drc_index)
+ 		return -ENOENT;
+ 
+ 	dn = dlpar_configure_connector(drc_index, parent_dn);
+-	if (!dn)
+-		return -ENOENT;
++	if (!dn) {
++		rc = -ENOENT;
++		goto out;
++	}
+ 
+ 	rc = dlpar_attach_node(dn);
+ 	if (rc)
+ 		dlpar_free_cc_nodes(dn);
+ 
++out:
+ 	of_node_put(parent_dn);
+ 	return rc;
+ }
+-- 
+2.9.3
 
-yeah, already put in queue. Thanks!
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---vvlqrofhslhnzlag
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iEYEARECAAYFAlibyHIACgkQsQQaM014GCeKygCeKuN44VPFEFNouj761ANuKtL3
-LygAnilTlsBKEyfZK6GWZqiSrcy3h9OS
-=Y9up
------END PGP SIGNATURE-----
-
---vvlqrofhslhnzlag--
