@@ -1,56 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Feb 2017 21:21:38 +0000
-Subject: [PATCH 11/14] RDMA/cxgb4: Use kcalloc() in create_qp()
-Message-Id: <671e21d7-5962-7d2a-c359-42571a7811ba@users.sourceforge.net>
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Feb 2017 20:24:35 +0000
+Subject: [RFC] mips: ath79: clock:- Unmap region obtained by of_iomap
+Message-Id: <5fac1423-00e9-e5b2-161d-5ddc2f47bfc9@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
-In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Steve Wise <swise@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: antonynpavlov@gmail.comantonynpavlov@gmail.com, albeu@free.fr, hackpascal@gmail.com, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-mips@linux-mips.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kernel Janitors <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Feb 2017 20:27:51 +0100
+Hi,
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "kcalloc".
+I had a patch similar to:
 
-This issue was detected by using the Coccinelle software.
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/arc=
+h/mips/ath79/clock.c?id=B3d91db3f71d5f70ea60d900425a3f96aeb3d065
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/cxgb4/qp.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+in my own tree.
 
-diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-index d4fd2f5c8326..373d66a511a8 100644
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -216,15 +216,17 @@ static int create_qp(struct c4iw_rdev *rdev, struct t4_wq *wq,
- 	}
- 
- 	if (!user) {
--		wq->sq.sw_sq = kzalloc(wq->sq.size * sizeof *wq->sq.sw_sq,
--				 GFP_KERNEL);
-+		wq->sq.sw_sq = kcalloc(wq->sq.size,
-+				       sizeof(*wq->sq.sw_sq),
-+				       GFP_KERNEL);
- 		if (!wq->sq.sw_sq) {
- 			ret = -ENOMEM;
- 			goto free_rq_qid;
- 		}
- 
--		wq->rq.sw_rq = kzalloc(wq->rq.size * sizeof *wq->rq.sw_rq,
--				 GFP_KERNEL);
-+		wq->rq.sw_rq = kcalloc(wq->rq.size,
-+				       sizeof(*wq->rq.sw_rq),
-+				       GFP_KERNEL);
- 		if (!wq->rq.sw_rq) {
- 			ret = -ENOMEM;
- 			goto free_sw_sq;
--- 
-2.11.1
+However, mine was slightly different and was also freeing the memory=20
+mapping in the normal case, when 'pll_base' seems to be no more useful.
 
+Best regards,
+
+CJ
+
+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D=
++=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+
+
+diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
+index c1102cffe37d..b5d81acb2d7a 100644
+--- a/arch/mips/ath79/clock.c
++++ b/arch/mips/ath79/clock.c
+@@ -508,9 +508,11 @@ static void __init ath79_clocks_init_dt_ng(struct=20
+device_node *np)
+          ar9330_clk_init(ref_clk, pll_base);
+      else {
+          pr_err("%s: could not find any appropriate clk_init()\n", dnfn);
+-        goto err_clk;
++        goto err_unmap;
+      }
+
++    iounmap(pll_base);
++
+      if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data)) {
+          pr_err("%s: could not register clk provider\n", dnfn);
+          goto err_clk;
+@@ -518,6 +520,8 @@ static void __init ath79_clocks_init_dt_ng(struct=20
+device_node *np)
+
+      return;
+
++err_unmap:
++    iounmap(pll_base);
+  err_clk:
+      clk_put(ref_clk);
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
