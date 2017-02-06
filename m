@@ -1,39 +1,22 @@
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-Date: Sun, 05 Feb 2017 08:26:54 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 06 Feb 2017 17:01:14 +0000
 Subject: Re: [patch net-next] net/mlx4_en: fix a condition
-Message-Id: <86df2437-317f-aaa3-fd33-406b3db30da3@gmail.com>
+Message-Id: <20170206.120114.1158013558292422641.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170203095459.GA5704@mwanda>
 In-Reply-To: <20170203095459.GA5704@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Yishai Hadas <yishaih@mellanox.com>, Shaker Daibes <shakerd@mellanox.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: yishaih@mellanox.com, shakerd@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 3 Feb 2017 12:54:59 +0300
 
-On 03/02/2017 11:54 AM, Dan Carpenter wrote:
 > There is a "||" vs "|" typo here so we test 0x1 instead of 0x6.
->
+> 
 > Fixes: 1f8176f7352a ("net/mlx4_en: Check the enabling pptx/pprx flags in SET_PORT wrapper flow")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/port.c b/drivers/net/ethernet/mellanox/mlx4/port.c
-> index 5053c949148f..4e36e287d605 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/port.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/port.c
-> @@ -1395,7 +1395,7 @@ static int mlx4_common_set_port(struct mlx4_dev *dev, int slave, u32 in_mod,
->   							  gen_context);
->   
->   			if (gen_context->flags &
-> -			    (MLX4_FLAG_V_PPRX_MASK || MLX4_FLAG_V_PPTX_MASK))
-> +			    (MLX4_FLAG_V_PPRX_MASK | MLX4_FLAG_V_PPTX_MASK))
->   				mlx4_en_set_port_global_pause(dev, slave,
->   							      gen_context);
->   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Thanks Dan.
+
+Applied.
