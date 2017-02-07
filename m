@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Feb 2017 13:16:31 +0000
-Subject: [patch] drm/i915/gvt/kvmgt: remove some dead code
-Message-Id: <20170207131630.GA28207@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 20:00:08 +0000
+Subject: [PATCH 17/18] HID-debug: Delete an unnecessary variable initialisation in hid_resolv_usage()
+Message-Id: <87289011-09d8-d544-f4f7-46ca739ccbf5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Jike Song <jike.song@intel.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, intel-gvt-dev@lists.freedesktop.org, Zhi Wang <zhi.a.wang@intel.com>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If "caps.buf" is already NULL then it doesn't need to be freed or set to
-NULL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 20:12:09 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The local variable "buf" will be set to an appropriate pointer
+by the following statement. Thus omit the explicit initialisation
+at the beginning.
 
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-index 3f656e3a6e5a..de2a55178a37 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -965,11 +965,8 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 			sparse->areas[0].offset  					PAGE_ALIGN(vgpu_aperture_offset(vgpu));
- 			sparse->areas[0].size = vgpu_aperture_sz(vgpu);
--			if (!caps.buf) {
--				kfree(caps.buf);
--				caps.buf = NULL;
-+			if (!caps.buf)
- 				caps.size = 0;
--			}
- 			break;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 044b12e32240..0d33bf0d47d1 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -481,7 +481,7 @@ static char *resolv_usage_page(unsigned page, struct seq_file *f) {
  
- 		case VFIO_PCI_BAR3_REGION_INDEX ... VFIO_PCI_BAR5_REGION_INDEX:
+ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
+ 	const struct hid_usage_entry *p;
+-	char *buf = NULL;
++	char *buf;
+ 	int len = 0;
+ 
+ 	buf = resolv_usage_page(usage >> 16, f);
+-- 
+2.11.1
+
