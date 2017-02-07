@@ -1,45 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Feb 2017 11:51:48 +0000
-Subject: [PATCH] usb: misc: adutux: remove redundant error check on copy_to_user return code
-Message-Id: <20170202115148.29149-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:51:37 +0000
+Subject: [PATCH 09/18] HID: Return an error code only as a constant in hid_allocate_device()
+Message-Id: <58187414-2ced-17cb-cb6a-0fe87d0e5fac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 19:17:36 +0100
 
-The 2nd check for a non-zero return from copy_to_user is redundant as
-it is has already been made a few lines earlier.  This check was made
-redundant because of previous fix to the copy_to_user error return
-check.
+* Return an error code without storing it in an intermediate variable.
 
-Detected by CoverityScan, CID#114347 ("Logically Dead Code")
+* Delete the local variable "ret" which became unnecessary with
+  this refactoring.
 
-Fixes: 1865a9c382ede ("USB: adutux: fix misuse of return value of copy_to_user()")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/misc/adutux.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/hid/hid-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
-index 43a677f..c5fa584 100644
---- a/drivers/usb/misc/adutux.c
-+++ b/drivers/usb/misc/adutux.c
-@@ -389,10 +389,6 @@ static ssize_t adu_read(struct file *file, __user char *buffer, size_t count,
- 			dev->secondary_head += (amount - i);
- 			bytes_read += (amount - i);
- 			bytes_to_read -= (amount - i);
--			if (i) {
--				retval = bytes_read ? bytes_read : -EFAULT;
--				goto exit;
--			}
- 		} else {
- 			/* we check the primary buffer */
- 			spin_lock_irqsave (&dev->buflock, flags);
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index f4ea3590954c..a5db000ed1c4 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2716,11 +2716,10 @@ EXPORT_SYMBOL_GPL(hid_add_device);
+ struct hid_device *hid_allocate_device(void)
+ {
+ 	struct hid_device *hdev;
+-	int ret = -ENOMEM;
+ 
+ 	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
+ 	if (!hdev)
+-		return ERR_PTR(ret);
++		return ERR_PTR(-ENOMEM);
+ 
+ 	device_initialize(&hdev->dev);
+ 	hdev->dev.release = hid_device_release;
 -- 
-2.10.2
+2.11.1
 
