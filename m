@@ -1,47 +1,56 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Mon, 20 Feb 2017 20:58:39 +0000
-Subject: Re: [PATCH] iio: adc: xilinx: Fix error handling
-Message-Id: <83cb9e79-bf21-0c15-2086-4da4da484b18@metafoo.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 13:15:27 +0000
+Subject: [patch net-next] net: dsa: bcm_sf2: cleanup bcm_sf2_cfp_rule_get() a little
+Message-Id: <20170207131527.GB31552@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219202928.20296-1-christophe.jaillet@wanadoo.fr>
- <63f3a01d-4b78-f069-5aa1-c7f703b4e78e@wanadoo.fr>
-In-Reply-To: <63f3a01d-4b78-f069-5aa1-c7f703b4e78e@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/20/2017 09:25 PM, Christophe JAILLET wrote:
-> Le 20/02/2017 =E0 09:35, Lars-Peter Clausen a =E9crit :
->> On 02/19/2017 09:29 PM, Christophe JAILLET wrote:
->>> Reorder error handling labels in order to match the way resources have
->>> been allocated.
->>>
->>> Signed-off-by: Christophe JAILLET
->>> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
->> Thanks, looks good.
->>
->> Acked-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.o=
-rg>
->>
->> I think there is one more issue
->>
->>      ret =3D xadc->ops->setup(pdev, indio_dev, irq);
->>      if (ret)
->>          goto err_free_samplerate_trigger;
->>
->> should be
->>
->>     goto err_clk_disable_unprepare;
->>
-> I agree.
->=20
-> Would you like me to send a V2 with both fixes or a sepparate patch?
+This patch doesn't affect how the code works.
 
-Up to you.
+My static checker complains that the mask and shift doesn't make sense
+because 0xffffff << 16 goes beyond the end of 32 bits.  It should be
+0xffff instead but the existing code won't cause runtime bugs.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Also the casting here is not needed and not consistent with the rest of
+the code.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
+index c71be3e0dc2d..346dd9a1232d 100644
+--- a/drivers/net/dsa/bcm_sf2_cfp.c
++++ b/drivers/net/dsa/bcm_sf2_cfp.c
+@@ -441,17 +441,17 @@ static int bcm_sf2_cfp_rule_get(struct bcm_sf2_priv *priv, int port,
+ 	nfc->fs.m_u.tcp_ip4_spec.psrc = cpu_to_be16(~0);
+ 
+ 	/* IPv4 dst [15:8] */
+-	ipv4 = (u16)(reg & 0xff) << 8;
++	ipv4 = (reg & 0xff) << 8;
+ 	reg = core_readl(priv, CORE_CFP_DATA_PORT(1));
+ 	/* IPv4 dst [31:16] */
+-	ipv4 |= (u32)((reg >> 8) & 0xffffff) << 16;
++	ipv4 |= ((reg >> 8) & 0xffff) << 16;
+ 	/* IPv4 dst [7:0] */
+ 	ipv4 |= (reg >> 24) & 0xff;
+ 	v4_spec->ip4dst = cpu_to_be32(ipv4);
+ 	nfc->fs.m_u.tcp_ip4_spec.ip4dst = cpu_to_be32(~0);
+ 
+ 	/* IPv4 src [15:8] */
+-	ipv4 = (u16)(reg & 0xff) << 8;
++	ipv4 = (reg & 0xff) << 8;
+ 	reg = core_readl(priv, CORE_CFP_DATA_PORT(0));
+ 
+ 	if (!(reg & SLICE_VALID))
+@@ -460,7 +460,7 @@ static int bcm_sf2_cfp_rule_get(struct bcm_sf2_priv *priv, int port,
+ 	/* IPv4 src [7:0] */
+ 	ipv4 |= (reg >> 24) & 0xff;
+ 	/* IPv4 src [31:16] */
+-	ipv4 |= ((reg >> 8) & 0xffffff) << 16;
++	ipv4 |= ((reg >> 8) & 0xffff) << 16;
+ 	v4_spec->ip4src = cpu_to_be32(ipv4);
+ 	nfc->fs.m_u.tcp_ip4_spec.ip4src = cpu_to_be32(~0);
+ 
