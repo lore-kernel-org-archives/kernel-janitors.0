@@ -1,46 +1,29 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Fri, 10 Feb 2017 20:16:39 +0000
-Subject: Re: [PATCH] PCI/MSI: Return error code if memory allocation fails
-Message-Id: <20170210201639.GH29169@bhelgaas-glaptop.roam.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 15:00:00 +0000
+Subject: [patch] aacraid: information leak in aac_send_raw_srb()
+Message-Id: <20170207150000.GA1757@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170127151453.27571-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170127151453.27571-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 27, 2017 at 04:14:53PM +0100, Christophe JAILLET wrote:
-> If 'alloc_msi_entry()' fails, a few lines above, we free resources and set
-> 'ret = -ENOMEM'.
-> 
-> However, the function returns 0, inconditionaly.
-> Returns the error code instead.
-> 
-> Fixes: e75eafb9b039 ("genirq/msi: Switch to new irq spreading infrastructure")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The aac_srb_reply struct ends in a 2 byte hole so we end up leaking a
+bit of information to user space.
 
-Applied to pci/msi for v4.11, thanks!
+Fixes: 423400e64d37 ("scsi: aacraid: Include HBA direct interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/pci/msi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index b6785c8be44d..0f77b38f03dd 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -731,7 +731,7 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
->  	ret = 0;
->  out:
->  	kfree(masks);
-> -	return 0;
-> +	return ret;
->  }
->  
->  static void msix_program_entries(struct pci_dev *dev,
-> -- 
-> 2.9.3
-> 
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index 614842a9eb07..12dc867b7c74 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -948,6 +948,7 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 			&((struct aac_native_hba *)srbfib->hw_fib_va)->resp.err;
+ 		struct aac_srb_reply reply;
+ 
++		memset(&reply, 0, sizeof(reply));
+ 		reply.status = ST_OK;
+ 		if (srbfib->flags & FIB_CONTEXT_FLAG_FASTRESP) {
+ 			/* fast response */
