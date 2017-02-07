@@ -1,51 +1,70 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 19 Feb 2017 13:19:40 +0000
-Subject: Re: [PATCH] tools/vm: Fix possible resource leak in page_owner_sort.c
-Message-Id: <58A99B6C.8000606@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 07:18:06 +0000
+Subject: [bug report] mlxsw: core: Introduce flexible actions support
+Message-Id: <20170207071805.GA15533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219054949.GA2754@localhost.localdomain>
-In-Reply-To: <20170219054949.GA2754@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hello Jiri Pirko,
 
+The patch 4cda7d8d7098: "mlxsw: core: Introduce flexible actions
+support" from Feb 3, 2017, leads to the following static checker
+warning:
 
-Am 19.02.2017 06:49, schrieb Saurabh Badhwar:
-> Fix possible resource leak in tools/vm/page_owner_sort.c
-> Signed-off-by: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
-> ---
->  tools/vm/page_owner_sort.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/vm/page_owner_sort.c b/tools/vm/page_owner_sort.c
-> index f1c055f..8346261 100644
-> --- a/tools/vm/page_owner_sort.c
-> +++ b/tools/vm/page_owner_sort.c
-> @@ -110,6 +110,8 @@ int main(int argc, char **argv)
->  	buf = malloc(BUF_SIZE);
->  	if (!list || !buf) {
->  		printf("Out of memory\n");
-> +		fclose(fin);
-> +		fclose(fout);
->  		exit(1);
->  	}
+	drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c:387 mlxsw_afa_block_commit()
+	error: dereferencing freed memory 'set'
 
-the is no resource leak as file pointer get closed on exit
-ntl it is ok the close them
-but error messages should go to stderr an be more verbose.
+drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c
+   355  int mlxsw_afa_block_commit(struct mlxsw_afa_block *block)
+   356  {
+   357          struct mlxsw_afa_set *set = block->cur_set;
+   358          struct mlxsw_afa_set *prev_set;
+   359          int err;
+   360  
+   361          block->cur_set = NULL;
+   362  
+   363          /* Go over all linked sets starting from last
+   364           * and try to find existing set in the hash table.
+   365           * In case it is not there, assign a KVD linear index
+   366           * and insert it.
+   367           */
+   368          do {
+   369                  prev_set = set->prev;
+   370                  set = mlxsw_afa_set_get(block->afa, set);
+   371                  if (IS_ERR(set)) {
+   372                          err = PTR_ERR(set);
+   373                          goto rollback;
+   374                  }
+   375                  if (prev_set) {
+   376                          prev_set->next = set;
+   377                          mlxsw_afa_set_next_set(prev_set, set->kvdl_index);
+   378                          set = prev_set;
+   379                  }
+   380          } while (prev_set);
+   381  
+   382          block->first_set = set;
+   383          block->finished = true;
+   384          return 0;
+   385  
+   386  rollback:
+   387          while ((set = set->next))
+   388                  mlxsw_afa_set_put(block->afa, set);
 
-just my 2 cents,
- wh
->  
-> @@ -144,6 +146,7 @@ int main(int argc, char **argv)
->  
->  	for (i = 0; i < count; i++)
->  		fprintf(fout, "%d times:\n%s\n", list2[i].num, list2[i].txt);
-> -
-> +		
-> +	fclose(fout);
->  	return 0;
->  }
+"set" is refcounted.  The heuristic I'm using assumes that if it's
+refcounted with an atomic type then ignore the possibility that
+mlxsw_afa_set_put() will free "set".  This works very well generally
+and this is only the second time I've seen it fail because we're using
+regular types for refcounting.
+
+It's possible that we know that we're holding multiple references to
+"set" so it will never be freed, but I normally don't feel bad sending
+false positive warnings if the code is very recent so here we are.  :)
+
+   389          return err;
+   390  }
+
+regards,
+dan carpenter
