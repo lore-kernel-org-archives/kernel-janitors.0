@@ -1,25 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Feb 2017 17:44:33 +0000
-Subject: Re: [patch net-next] sfc: a couple off by one bugs
-Message-Id: <20170201.124433.584968147490170553.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 13:17:34 +0000
+Subject: [patch] Staging: bcm2835-audio: fix an uninitialized return value
+Message-Id: <20170207131734.GC27416@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170201085040.GA31514@mwanda>
-In-Reply-To: <20170201085040.GA31514@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 1 Feb 2017 11:50:40 +0300
+"ret" isn't necessarily initialized on the success path.
 
-> These checks are off by one.  These are just sanity checks and we don't
-> ever pass invalid values for "encap_type" so it's harmless.
-> 
-> Fixes: 9b4108012517 ("sfc: insert catch-all filters for encapsulated traffic")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please respin against net-next and Colin's fix.
-
-Thanks.
+diff --git a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
+index 9ac1f72a178e..b7922be4909c 100644
+--- a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
+@@ -432,6 +432,7 @@ static int bcm2835_audio_open_connection(struct bcm2835_alsa_stream *alsa_stream
+ 	alsa_stream->instance = instance;
+ 
+ 	LOG_DBG(" success !\n");
++	ret = 0;
+ err_free_mem:
+ 	LOG_DBG(" .. OUT\n");
+ 
