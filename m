@@ -1,22 +1,29 @@
-From: "Koul, Vinod" <vinod.koul@intel.com>
-Date: Tue, 21 Feb 2017 18:38:34 +0000
-Subject: Re: [PATCH] ASoC: Intel: Atom: ix spelling mistake: "allocationf" -> "allocation"
-Message-Id: <1487702287.3343.0.camel@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 13:19:06 +0000
+Subject: [patch] cpufreq: s3c2416: double free on driver init error path
+Message-Id: <20170207131906.GD27416@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221165004.25316-1-colin.king@canonical.com>
-In-Reply-To: <20170221165004.25316-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "colin.king@canonical.com" <colin.king@canonical.com>, "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>, "perex@perex.cz" <perex@perex.cz>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2017-02-21 at 16:50 +-0000, Colin King wrote:
-+AD4- From: Colin Ian King +ADw-colin.king+AEA-canonical.com+AD4-
-+AD4- 
-+AD4- Trivial fix to spelling mistake in dev+AF8-err message.
+The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
+so this is a double free.
 
-Acked-by: Vinod Koul +ADw-vinod.koul+AEA-intel.com+AD4-
+Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-+AH4-Vinod
+diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+index d6d425773fa4..5b2db3c6568f 100644
+--- a/drivers/cpufreq/s3c2416-cpufreq.c
++++ b/drivers/cpufreq/s3c2416-cpufreq.c
+@@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
+ 	rate = clk_get_rate(s3c_freq->hclk);
+ 	if (rate < 133 * 1000 * 1000) {
+ 		pr_err("cpufreq: HCLK not at 133MHz\n");
+-		clk_put(s3c_freq->hclk);
+ 		ret = -EINVAL;
+ 		goto err_armclk;
+ 	}
