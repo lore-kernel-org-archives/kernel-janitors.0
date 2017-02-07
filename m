@@ -1,80 +1,38 @@
-From: Majd Dibbiny <majd@mellanox.com>
-Date: Sun, 19 Feb 2017 17:21:57 +0000
-Subject: Re: [PATCH 11/29] IB/mlx4: Use kmalloc_array() in three functions
-Message-Id: <69F665D3-8CA0-4229-999B-DE2020ECA09E@mellanox.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Feb 2017 13:55:13 +0000
+Subject: [PATCH] scsi: aacraid: fix information leak on hbainfo.driver_name
+Message-Id: <20170207135513.21392-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <3002f281-292a-c53e-0b37-d23a3be0d5d7@users.sourceforge.net>
-In-Reply-To: <3002f281-292a-c53e-0b37-d23a3be0d5d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Feb 18, 2017, at 11:07 PM, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 18 Feb 2017 10:32:32 +0100
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/infiniband/hw/mlx4/main.c | 14 +++++++++-----
-> 1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-> index ba6af84cc236..350c9148340e 100644
-> --- a/drivers/infiniband/hw/mlx4/main.c
-> +++ b/drivers/infiniband/hw/mlx4/main.c
-> @@ -304,7 +304,9 @@ static int mlx4_ib_add_gid(struct ib_device *device,
->        ctx->refcount++;
->    }
->    if (!ret && hw_update) {
-> -        gids = kmalloc(sizeof(*gids) * MLX4_MAX_PORT_GIDS, GFP_ATOMIC);
-> +        gids = kmalloc_array(MLX4_MAX_PORT_GIDS,
-> +                     sizeof(*gids),
-> +                     GFP_ATOMIC);
->        if (!gids) {
->            ret = -ENOMEM;
->        } else {
-> @@ -359,7 +361,9 @@ static int mlx4_ib_del_gid(struct ib_device *device,
->    if (!ret && hw_update) {
->        int i;
-> 
-> -        gids = kmalloc(sizeof(*gids) * MLX4_MAX_PORT_GIDS, GFP_ATOMIC);
-> +        gids = kmalloc_array(MLX4_MAX_PORT_GIDS,
-> +                     sizeof(*gids),
-> +                     GFP_ATOMIC);
->        if (!gids) {
->            ret = -ENOMEM;
->        } else {
-> @@ -2828,9 +2832,9 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
->            goto err_counter;
-> 
->        ibdev->ib_uc_qpns_bitmap =
-> -            kmalloc(BITS_TO_LONGS(ibdev->steer_qpn_count) *
-> -                sizeof(long),
-> -                GFP_KERNEL);
-> +            kmalloc_array(BITS_TO_LONGS(ibdev->steer_qpn_count),
-> +                      sizeof(long),
-> +                      GFP_KERNEL);
->        if (!ibdev->ib_uc_qpns_bitmap)
->            goto err_steer_qp_release;
-> 
-> -- 
-> 2.11.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Thanks,
-Reviewed-by: Majd Dibbiny
-<majd@mellanox.com>
+The driver_name field is not initialized and hence information
+on the stack is being leaked to userspace on the copy_to_user.
+Fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/commctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index 614842a..eb48d0a 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -1015,7 +1015,7 @@ static int aac_get_pci_info(struct aac_dev* dev, void __user *arg)
+ 
+ static int aac_get_hba_info(struct aac_dev *dev, void __user *arg)
+ {
+-	struct aac_hba_info hbainfo;
++	struct aac_hba_info hbainfo = { 0 };
+ 
+ 	hbainfo.adapter_number		= (u8) dev->id;
+ 	hbainfo.system_io_bus_number	= dev->pdev->bus->number;
+-- 
+2.10.2
+
