@@ -1,40 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 27 Feb 2017 23:40:19 +0000
-Subject: [PATCH] wireless: ipw2200: remove redundant check of rc < 0
-Message-Id: <20170227234019.19081-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 13:17:57 +0000
+Subject: [patch] Staging: bcm2835-audio: remove unneeded NULL check
+Message-Id: <20170207131757.GC28207@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We just dereferenced "instance" on the line before so checking it here
+is pointless.  Anyway, it can't be NULL here so let's remove the check.
 
-The check for rc < 0 is always false so the check is redundant
-and can be removed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected with CoverityScan, CID#101143 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 5ef3c5c..bbc579b 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -3539,9 +3539,6 @@ static int ipw_load(struct ipw_priv *priv)
- 	fw_img = &fw->data[le32_to_cpu(fw->boot_size) +
- 			   le32_to_cpu(fw->ucode_size)];
+diff --git a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
+index b7922be4909c..6578246b0f08 100644
+--- a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
+@@ -775,10 +775,9 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
+ 	mutex_unlock(&instance->vchi_mutex);
  
--	if (rc < 0)
--		goto error;
--
- 	if (!priv->rxq)
- 		priv->rxq = ipw_rx_queue_alloc(priv);
- 	else
--- 
-2.10.2
-
+ 	/* Stop the audio service */
+-	if (instance) {
+-		vc_vchi_audio_deinit(instance);
+-		alsa_stream->instance = NULL;
+-	}
++	vc_vchi_audio_deinit(instance);
++	alsa_stream->instance = NULL;
++
+ 	LOG_DBG(" .. OUT\n");
+ 	return ret;
+ }
