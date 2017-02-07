@@ -1,86 +1,49 @@
-From: Joao Pinto <Joao.Pinto@synopsys.com>
-Date: Wed, 22 Feb 2017 23:08:07 +0000
-Subject: Re: [patch] PCI: dwc: uninitialized variable in dw_handle_msi_irq()
-Message-Id: <933041dd-288f-4cde-c10f-5b0b3ab49f15@synopsys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 11:01:26 +0000
+Subject: [bug report] mlxsw: spectrum: Introduce ACL core with simple TCAM implementation
+Message-Id: <20170207110126.GA18959@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170217232618.GC26717@mwanda>
-In-Reply-To: <20170217232618.GC26717@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Hello Jiri Pirko,
 
-=C0s 3:26 PM de 2/17/2017, Dan Carpenter escreveu:
-> The bug is that "val" is unsigned long but we only initialize 32 bits
-> of it.  Then we test "if (val)" and that might be true not because we
-> set the bits but because some were never initialized.
->=20
-> Fixes: f342d940ee0e ("PCI: exynos: Add support for MSI")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analysis.  Not tested.
+The patch 22a677661f56: "mlxsw: spectrum: Introduce ACL core with
+simple TCAM implementation" from Feb 3, 2017, leads to the following
+static checker warning:
 
-What you are statiting makes perfect sense, since the register is indeed 32=
- bits
-and can have undesirable behavior in 64-bit systems for example.
-We have more examples like this for MSI related operations in pcie-designwa=
-re.
-Could you please change them as well just?
+	drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c:819 mlxsw_sp_acl_tcam_chunk_create()
+	warn: impossible condition '(priority = (-1)) => (0-u32max = u64max)'
 
-For example, the irq variable declaration is also not consistent as you can=
- see
-in these examples:
+drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
+   810  static struct mlxsw_sp_acl_tcam_chunk *
+   811  mlxsw_sp_acl_tcam_chunk_create(struct mlxsw_sp *mlxsw_sp,
+   812                                 struct mlxsw_sp_acl_tcam_group *group,
+   813                                 unsigned int priority,
+                                       ^^^^^^^^^^^^^^^^^^^^^
 
- static void dw_msi_setup_msg(struct pcie_port *pp, unsigned int irq, u32 p=
-os)
+This should probably be changed to unsigned long?
 
- static int dw_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
-                           irq_hw_number_t hwirq)
+   814                                 struct mlxsw_afk_element_usage *elusage)
+   815  {
+   816          struct mlxsw_sp_acl_tcam_chunk *chunk;
+   817          int err;
+   818  
+   819          if (priority = MLXSW_SP_ACL_TCAM_CATCHALL_PRIO)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UINT_MAX != ULONG_MAX on 64 bit systems.
 
- static void dw_pcie_msi_clear_irq(struct pcie_port *pp, int irq)
+   820                  return ERR_PTR(-EINVAL);
+   821  
+   822          chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
+   823          if (!chunk)
+   824                  return ERR_PTR(-ENOMEM);
+   825          chunk->priority = priority;
+   826          chunk->group = group;
+   827          chunk->ref_count = 1;
+   828  
 
- static void dw_pcie_msi_set_irq(struct pcie_port *pp, int irq)
-
- etc.
-
-Thanks
-Joao
-
->=20
-> diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-des=
-ignware.c
-> index af8f6e92e885..5bfc377b83e4 100644
-> --- a/drivers/pci/dwc/pcie-designware.c
-> +++ b/drivers/pci/dwc/pcie-designware.c
-> @@ -257,17 +257,18 @@ static struct irq_chip dw_msi_irq_chip =3D {
->  /* MSI int handler */
->  irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
->  {
-> -	unsigned long val;
-> +	u32 val;
->  	int i, pos, irq;
->  	irqreturn_t ret =3D IRQ_NONE;
-> =20
->  	for (i =3D 0; i < MAX_MSI_CTRLS; i++) {
->  		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
-> -				(u32 *)&val);
-> +				    &val);
->  		if (val) {
->  			ret =3D IRQ_HANDLED;
->  			pos =3D 0;
-> -			while ((pos =3D find_next_bit(&val, 32, pos)) !=3D 32) {
-> +			while ((pos =3D find_next_bit((unsigned long *)&val, 32,
-> +						    pos)) !=3D 32) {
->  				irq =3D irq_find_mapping(pp->irq_domain,
->  						i * 32 + pos);
->  				dw_pcie_wr_own_conf(pp,
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
