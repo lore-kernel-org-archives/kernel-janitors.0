@@ -1,69 +1,43 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Sun, 19 Feb 2017 13:59:39 +0000
-Subject: Re: [PATCH] RDMA/qedr: Fix some error handling
-Message-Id: <1487512779.86943.118.camel@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-UGgB60q0HiriAfa1gEH3"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 10:50:00 +0000
+Subject: [bug report] net: phy: Fix lack of reference count on PHY driver
+Message-Id: <20170207105000.GA30406@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170218112815.9329-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170218112815.9329-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ram.Amrani-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, Michal.Kalderon-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, rajesh.borundia-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-
---=-UGgB60q0HiriAfa1gEH3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, 2017-02-18 at 12:28 +0100, Christophe JAILLET wrote:
-> 'qedr_alloc_pbl_tbl()' can not return NULL.
->=20
-> In qedr_init_user_queue():
-> =C2=A0- simplify the test for the return value, no need to test for NULL
-> =C2=A0- propagate the error pointer if needed, otherwise 0 (success) is
-> returned.
-> =C2=A0=C2=A0 This is spurious.
->=20
-> In init_mr_info():
-> =C2=A0- test the return value with IS_ERR
-> =C2=A0- propagate the error pointer if needed instead of an exlictit
-> -ENOMEM.
-> =C2=A0=C2=A0 This is a no-op as the only error pointer that we can have h=
-ere is
-> =C2=A0=C2=A0 already -ENOMEM
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thanks, applied.
-
---=20
-Doug Ledford <dledford@redhat.com>
-=C2=A0 =C2=A0 GPG KeyID: B826A3330E572FDD
-=C2=A0 =C2=A0
-Key fingerprint =3D AE6B 1BDA 122B 23B4 265B =C2=A01274 B826 A333 0E57 2FDD
-
---=-UGgB60q0HiriAfa1gEH3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Hello Mao Wenan,
 
-iQIcBAABCAAGBQJYqaTLAAoJELgmozMOVy/diFEP/10sPSLolkFQ6Q2W5EdSufFD
-tRxIx7e3h3/F0kCA1Nxk+Q/nC1p8OQ9cukK1yAtQvWOTy0rylor+jmF22rYqrB/Z
-IfEX9pOCYNrPmy1TkuEonT9n3ILaHHXp0kqY2OgAjBV/pSMUl+7FRCM/gObuyXQP
-Jr6PlgS2HAqlo5mDSLomrR7a/Nn0JmWa5ETFF9I6UZGKFil+9JS44UV68V1DnrcM
-IXd3G5CySlMQP5Mqxq1nEEhvUD2tgDKSg4hgMSuq7ozI0RSNxgfpiM0IYut6nqdq
-1CI8nEtswUsTkOIHCtTaKKjjhepUzye/FqwZKcgNqh5mE3CfGc7t2bnQGVT3viaF
-f4Y1XicezHDJJ+NM25n0/Bnl5kNtBRWa+pTczQGkW+anFQGAj70XIxNLq9JYoqkT
-m73uWIHm5/S72RfeQgOyiRRuxddnphB0J3qWhp43r1GxPPJIc/syBXSNdx2QCs03
-Xdl1JmTNI96VUjJeyZekNGzNZxB88j7wSy4h2uSJPOPyxsayMPO++8JZwXdwB8Bv
-jUSHeMzB0qkgDNVazQl4oAUZiTDE1SSM84NyHjWYyj9BeJRkJSS7SO8TKyBZPy34
-dnH49UYiqxhIVqWK/lny9qkZ/rm27a8ndWmkISD5JVIvImc5tibRXIqQtvp2CYf4
-XerV7qyQkJQXKba/zfff
-=+CHP
------END PGP SIGNATURE-----
+This is a semi-automatic email about new static checker warnings.
 
---=-UGgB60q0HiriAfa1gEH3--
+The patch cafe8df8b9bc: "net: phy: Fix lack of reference count on PHY 
+driver" from Jan 31, 2017, leads to the following Smatch complaint:
 
+drivers/net/phy/phy_device.c:933 phy_attach_direct()
+	 warn: variable dereferenced before check 'd->driver' (see line 923)
+
+drivers/net/phy/phy_device.c
+   922	
+   923		if (!try_module_get(d->driver->owner)) {
+                                    ^^^^^^^^^^^
+Patch introduces a new dereference.
+
+   924			dev_err(&dev->dev, "failed to get the device driver module\n");
+   925			return -EIO;
+   926		}
+   927	
+   928		get_device(d);
+   929	
+   930		/* Assume that if there is no driver, that it doesn't
+   931		 * exist, and we should use the genphy driver.
+   932		 */
+   933		if (!d->driver) {
+                     ^^^^^^^^^
+Existing code assumed d->driver could be NULL.
+
+   934			if (phydev->is_c45)
+   935				d->driver 
+regards,
+dan carpenter
