@@ -1,46 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Feb 2017 12:12:01 +0000
-Subject: [PATCH 1/2] staging: rts5208: remove redundant retval status check
-Message-Id: <20170202121202.29659-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:48:06 +0000
+Subject: [PATCH 06/18] HID: Improve another size determination in hid_scan_report()
+Message-Id: <9e4f4fea-3608-5a11-8f7d-56f0242c46a4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wayne Porter <wporter82@gmail.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Quentin Lambert <lambert.quentin@gmail.com>, Dilek Uzulmez <dilekuzulmez@gmail.com>, Jonas Rickert <jrickertkc@gmail.com>, MingChia Chung <quexint@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 19:10:53 +0100
 
-The retval status checks in the proceeding do loop return out
-of function ms_read_attritbute_info if there is an error
-condition,  thus we never reach the end of the loop with
-retval failed status.  Therefore, the retval status check
-at end of the do loop is redundant and can be removed.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected with CoverityScan, CID#143000 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rts5208/ms.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/hid/hid-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index 28d56c5..806c121 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -1108,12 +1108,6 @@ static int ms_read_attribute_info(struct rtsx_chip *chip)
- 		i++;
- 	} while (i < 1024);
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 16c73bf49d55..b943b2ebadc1 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -787,7 +787,7 @@ static int hid_scan_report(struct hid_device *hid)
+ 		hid_parser_reserved
+ 	};
  
--	if (retval != STATUS_SUCCESS) {
--		kfree(buf);
--		rtsx_trace(chip);
--		return STATUS_FAIL;
--	}
--
- 	if ((buf[0] != 0xa5) && (buf[1] != 0xc3)) {
- 		/* Signature code is wrong */
- 		kfree(buf);
+-	parser = vzalloc(sizeof(struct hid_parser));
++	parser = vzalloc(sizeof(*parser));
+ 	if (!parser)
+ 		return -ENOMEM;
+ 
 -- 
-2.10.2
+2.11.1
 
