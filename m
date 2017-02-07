@@ -1,36 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Feb 2017 18:50:05 +0000
-Subject: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
-Message-Id: <20170221185005.27973-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:43:30 +0000
+Subject: [PATCH 04/18] HID: Improve another size determination in open_collection()
+Message-Id: <19c977dd-521b-c284-adc5-ee4050f3297b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Vinod Koul <vinod.koul@intel.com>, Dharageswari R <dharageswari.r@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 6 Feb 2017 19:19:22 +0100
 
-Trivial fix to spelling mistake in dev_err message.
+Replace the specification of a data structure by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index e12520e..635cbb1 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1165,7 +1165,7 @@ static int skl_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 						snd_dma_pci_data(skl->pci),
- 						size, MAX_PREALLOC_SIZE);
- 		if (retval) {
--			dev_err(dai->dev, "dma buffer allocationf fail\n");
-+			dev_err(dai->dev, "dma buffer allocation fail\n");
- 			return retval;
- 		}
- 	}
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 51f3547ca44f..404eccd0d670 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -138,11 +138,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+ 			return -ENOMEM;
+ 
+ 		memcpy(collection, parser->device->collection,
+-			sizeof(struct hid_collection) *
+-			parser->device->collection_size);
++		       sizeof(*collection) * parser->device->collection_size);
+ 		memset(collection + parser->device->collection_size, 0,
+-			sizeof(struct hid_collection) *
+-			parser->device->collection_size);
++		       sizeof(*collection) * parser->device->collection_size);
+ 		kfree(parser->device->collection);
+ 		parser->device->collection = collection;
+ 		parser->device->collection_size *= 2;
 -- 
-2.10.2
+2.11.1
 
