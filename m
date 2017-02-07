@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:49:32 +0000
-Subject: [PATCH 07/18] HID: Improve another size determination in hid_register_report()
-Message-Id: <de8a2dfa-1154-2f27-aeb2-a7af405c7d61@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:54:05 +0000
+Subject: [PATCH 11/18] HID-debug: Delete an unnecessary seq_printf() call in hid_dump_device()
+Message-Id: <aaec2476-9564-9768-0b0f-b2d48094e761@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
@@ -12,30 +12,30 @@ To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.c
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 19:12:56 +0100
+Date: Tue, 7 Feb 2017 19:23:03 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+An information should be put into a sequence together with a line break.
+Pass the desired data in a single function call instead.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-debug.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index b943b2ebadc1..1f75c1c022f0 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -67,7 +67,7 @@ struct hid_report *hid_register_report(struct hid_device *device, unsigned type,
- 	if (report_enum->report_id_hash[id])
- 		return report_enum->report_id_hash[id];
- 
--	report = kzalloc(sizeof(struct hid_report), GFP_KERNEL);
-+	report = kzalloc(sizeof(*report), GFP_KERNEL);
- 	if (!report)
- 		return NULL;
- 
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 383a4a838351..8d019d0db4f3 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -645,8 +645,7 @@ void hid_dump_device(struct hid_device *device, struct seq_file *f)
+ 			seq_printf(f, "%s", table[i]);
+ 			if (report->id)
+ 				seq_printf(f, "(%d)", report->id);
+-			seq_printf(f, "[%s]", table[report->type]);
+-			seq_printf(f, "\n");
++			seq_printf(f, "[%s]\n", table[report->type]);
+ 			for (k = 0; k < report->maxfield; k++) {
+ 				tab(4, f);
+ 				seq_printf(f, "Field(%d)\n", k);
 -- 
 2.11.1
 
