@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:43:30 +0000
-Subject: [PATCH 04/18] HID: Improve another size determination in open_collection()
-Message-Id: <19c977dd-521b-c284-adc5-ee4050f3297b@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:59:21 +0000
+Subject: [PATCH 16/18] HID-debug: Add some spaces for better code readability
+Message-Id: <68441f8a-c654-8fe2-a302-fc67e5485464@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
@@ -12,35 +12,91 @@ To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.c
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Feb 2017 19:19:22 +0100
+Date: Tue, 7 Feb 2017 20:10:40 +0100
 
-Replace the specification of a data structure by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Use space characters at some source code places according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/hid/hid-debug.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 51f3547ca44f..404eccd0d670 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -138,11 +138,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
- 			return -ENOMEM;
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 60984e2906a7..044b12e32240 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -493,7 +493,7 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
  
- 		memcpy(collection, parser->device->collection,
--			sizeof(struct hid_collection) *
--			parser->device->collection_size);
-+		       sizeof(*collection) * parser->device->collection_size);
- 		memset(collection + parser->device->collection_size, 0,
--			sizeof(struct hid_collection) *
--			parser->device->collection_size);
-+		       sizeof(*collection) * parser->device->collection_size);
- 		kfree(parser->device->collection);
- 		parser->device->collection = collection;
- 		parser->device->collection_size *= 2;
+ 	if (!f) {
+ 		len = strlen(buf);
+-		snprintf(buf+len, max(0, HID_DEBUG_BUFSIZE - len), ".");
++		snprintf(buf + len, max(0, HID_DEBUG_BUFSIZE - len), ".");
+ 		len++;
+ 	}
+ 	else {
+@@ -501,12 +501,14 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
+ 	}
+ 	for (p = hid_usage_table; p->description; p++)
+ 		if (p->page = (usage >> 16)) {
+-			for(++p; p->description && p->usage != 0; p++)
++			for (++p; p->description && p->usage != 0; p++)
+ 				if (p->usage = (usage & 0xffff)) {
+ 					if (!f)
+ 						snprintf(buf + len,
+-							max(0,HID_DEBUG_BUFSIZE - len - 1),
+-							"%s", p->description);
++							 max(0,
++							     HID_DEBUG_BUFSIZE
++							     - len - 1),
++							 "%s", p->description);
+ 					else
+ 						seq_puts(f, p->description);
+ 					return buf;
+@@ -582,7 +584,7 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
+ 		sys = data & 0xf;
+ 		data >>= 4;
+ 
+-		if(sys > 4) {
++		if (sys > 4) {
+ 			tab(n, f);
+ 			seq_puts(f, "Unit(Invalid)\n");
+ 		}
+@@ -591,19 +593,19 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
+ 
+ 			tab(n, f); seq_printf(f, "Unit(%s : ", systems[sys]);
+ 
+-			for (i=1 ; i<sizeof(__u32)*2 ; i++) {
++			for (i = 1; i < sizeof(__u32) * 2; i++) {
+ 				char nibble = data & 0xf;
+ 				data >>= 4;
+ 				if (nibble != 0) {
+-					if(earlier_unit++ > 0)
++					if (earlier_unit++ > 0)
+ 						seq_putc(f, '*');
+ 					seq_puts(f, units[sys][i]);
+-					if(nibble != 1) {
++					if (nibble != 1) {
+ 						/* This is a _signed_ nibble(!) */
+-
+ 						int val = nibble & 0x7;
+-						if(nibble & 0x08)
+-							val = -((0x7 & ~val) +1);
++
++						if (nibble & 0x08)
++							val = -((0x7 & ~val) + 1);
+ 						seq_printf(f, "^%d", val);
+ 					}
+ 				}
+@@ -634,7 +636,7 @@ void hid_dump_device(struct hid_device *device, struct seq_file *f)
+ 	struct hid_report_enum *report_enum;
+ 	struct hid_report *report;
+ 	struct list_head *list;
+-	unsigned i,k;
++	unsigned int i, k;
+ 	static const char *table[] = {"INPUT", "OUTPUT", "FEATURE"};
+ 
+ 	for (i = 0; i < HID_REPORT_TYPES; i++) {
 -- 
 2.11.1
 
