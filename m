@@ -1,38 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Feb 2017 13:01:04 +0000
-Subject: [patch] scsi: qedi: silence sprintf() overflow warning
-Message-Id: <20170207130103.GA31552@mwanda>
+From: walter harms <wharms@bfs.de>
+Date: Tue, 07 Feb 2017 13:27:09 +0000
+Subject: Re: [patch] scsi: qedi: silence sprintf() overflow warning
+Message-Id: <5899CB2D.4050809@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170207130103.GA31552@mwanda>
+In-Reply-To: <20170207130103.GA31552@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, Thomas Gleixner <tglx@linutronix.de>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: QLogic-Storage-Upstream@cavium.com, Thomas Gleixner <tglx@linutronix.de>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The problem here is this:
 
-	sprintf(host_buf, "qedi_ofld%d", qedi->shost->host_no);
 
-host_buf is 16 character so we only have 6 characters left for
-->host_no.  But ->host_no is set in scsi_host_alloc():
+Am 07.02.2017 14:01, schrieb Dan Carpenter:
+> The problem here is this:
+> 
+> 	sprintf(host_buf, "qedi_ofld%d", qedi->shost->host_no);
+> 
+> host_buf is 16 character so we only have 6 characters left for
+> ->host_no.  But ->host_no is set in scsi_host_alloc():
+> 
+> 	index = ida_simple_get(&host_index_ida, 0, 0, GFP_KERNEL);
+> 
+> It could theoretically go up to 0x8000000 so we need space for 10
+> digits.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+> index 5eda21d903e9..0dcf3b08230c 100644
+> --- a/drivers/scsi/qedi/qedi_main.c
+> +++ b/drivers/scsi/qedi/qedi_main.c
+> @@ -1735,7 +1735,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
+>  	u32 dp_module = 0;
+>  	u8 dp_level = 0;
+>  	bool is_vf = false;
+> -	char host_buf[16];
+> +	char host_buf[20];
+>  	struct qed_link_params link_params;
+>  	struct qed_slowpath_params sp_params;
+>  	struct qed_probe_params qed_params;
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-	index = ida_simple_get(&host_index_ida, 0, 0, GFP_KERNEL);
+any chance to use snprintf here ?
+ sprintf(host_buf, "qedi_ofld%d", qedi->shost->host_no);
 
-It could theoretically go up to 0x8000000 so we need space for 10
-digits.
+or something like asprint() :)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+if ever anyone change the type to very_long_type in the future it would simply break
+but not hurt.
 
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index 5eda21d903e9..0dcf3b08230c 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -1735,7 +1735,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
- 	u32 dp_module = 0;
- 	u8 dp_level = 0;
- 	bool is_vf = false;
--	char host_buf[16];
-+	char host_buf[20];
- 	struct qed_link_params link_params;
- 	struct qed_slowpath_params sp_params;
- 	struct qed_probe_params qed_params;
+re,
+ wh
