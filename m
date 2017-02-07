@@ -1,31 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Feb 2017 13:17:07 +0000
-Subject: [patch] staging: bcm2835-audio: off by one in snd_bcm2835_playback_open_generic()
-Message-Id: <20170207131707.GB28207@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:42:04 +0000
+Subject: [PATCH 03/18] HID: Use kmalloc_array() in open_collection()
+Message-Id: <2db59cee-8bb5-9b53-993b-c03fe5c58225@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The > should be >= otherwise we write beyond the end of the array when
-we do:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 6 Feb 2017 19:09:42 +0100
 
-	chip->alsa_stream[idx] = alsa_stream;
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-Fixes: 23b028c871e1 ("staging: bcm2835-audio: initial staging submission")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-diff --git a/drivers/staging/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/bcm2835-audio/bcm2835-pcm.c
-index d2d9f9b6a09b..014bf7ab69f4 100644
---- a/drivers/staging/bcm2835-audio/bcm2835-pcm.c
-+++ b/drivers/staging/bcm2835-audio/bcm2835-pcm.c
-@@ -130,7 +130,7 @@ static int snd_bcm2835_playback_open_generic(
- 		err = -EBUSY;
- 		goto out;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index ffb7e5d4ee19..51f3547ca44f 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -131,8 +131,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
  	}
--	if (idx > MAX_SUBSTREAMS) {
-+	if (idx >= MAX_SUBSTREAMS) {
- 		audio_error
- 			("substream(%d) device doesn't exist max(%d) substreams allowed\n",
- 			idx, MAX_SUBSTREAMS);
+ 
+ 	if (parser->device->maxcollection = parser->device->collection_size) {
+-		collection = kmalloc(sizeof(struct hid_collection) *
+-				parser->device->collection_size * 2, GFP_KERNEL);
++		collection = kmalloc_array(parser->device->collection_size * 2,
++					   sizeof(*collection),
++					   GFP_KERNEL);
+ 		if (!collection)
+ 			return -ENOMEM;
+ 
+-- 
+2.11.1
+
