@@ -1,71 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Feb 2017 16:27:11 +0000
-Subject: [PATCH] scsi: BusLogic: fix incorrect spelling of adatper_reset_req
-Message-Id: <20170221162711.24694-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:49:32 +0000
+Subject: [PATCH 07/18] HID: Improve another size determination in hid_register_report()
+Message-Id: <de8a2dfa-1154-2f27-aeb2-a7af405c7d61@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Khalid Aziz <khalid@gonehiking.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 19:12:56 +0100
 
-trivial fix to spelling mistake, adatper_reset_req should
-be adapter_reset_req.  Also break up very long seq_printf statement
-into multiple lines.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/BusLogic.c | 14 +++++++++++---
- drivers/scsi/BusLogic.h |  2 +-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ drivers/hid/hid-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index c7be7bb..35380a5 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -3009,7 +3009,7 @@ static int blogic_hostreset(struct scsi_cmnd *SCpnt)
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index b943b2ebadc1..1f75c1c022f0 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -67,7 +67,7 @@ struct hid_report *hid_register_report(struct hid_device *device, unsigned type,
+ 	if (report_enum->report_id_hash[id])
+ 		return report_enum->report_id_hash[id];
  
- 	spin_lock_irq(SCpnt->device->host->host_lock);
+-	report = kzalloc(sizeof(struct hid_report), GFP_KERNEL);
++	report = kzalloc(sizeof(*report), GFP_KERNEL);
+ 	if (!report)
+ 		return NULL;
  
--	blogic_inc_count(&stats->adatper_reset_req);
-+	blogic_inc_count(&stats->adapter_reset_req);
- 
- 	rc = blogic_resetadapter(adapter, false);
- 	spin_unlock_irq(SCpnt->device->host->host_lock);
-@@ -3560,8 +3560,16 @@ Target	Requested Completed  Requested Completed  Requested Completed\n\
- 		struct blogic_tgt_flags *tgt_flags = &adapter->tgt_flags[tgt];
- 		if (!tgt_flags->tgt_exists)
- 			continue;
--		seq_printf(m, "\
--  %2d	 %5d %5d %5d    %5d %5d %5d	   %5d %5d %5d\n", tgt, tgt_stats[tgt].aborts_request, tgt_stats[tgt].aborts_tried, tgt_stats[tgt].aborts_done, tgt_stats[tgt].bdr_request, tgt_stats[tgt].bdr_tried, tgt_stats[tgt].bdr_done, tgt_stats[tgt].adatper_reset_req, tgt_stats[tgt].adapter_reset_attempt, tgt_stats[tgt].adapter_reset_done);
-+		seq_printf(m, "  %2d	 %5d %5d %5d    %5d %5d %5d	   %5d %5d %5d\n",
-+			   tgt, tgt_stats[tgt].aborts_request,
-+			   tgt_stats[tgt].aborts_tried,
-+			   tgt_stats[tgt].aborts_done,
-+			   tgt_stats[tgt].bdr_request,
-+			   tgt_stats[tgt].bdr_tried,
-+			   tgt_stats[tgt].bdr_done,
-+			   tgt_stats[tgt].adapter_reset_req,
-+			   tgt_stats[tgt].adapter_reset_attempt,
-+			   tgt_stats[tgt].adapter_reset_done);
- 	}
- 	seq_printf(m, "\nExternal Host Adapter Resets: %d\n", adapter->ext_resets);
- 	seq_printf(m, "Host Adapter Internal Errors: %d\n", adapter->adapter_intern_errors);
-diff --git a/drivers/scsi/BusLogic.h b/drivers/scsi/BusLogic.h
-index b53ec2f..8d47e2c 100644
---- a/drivers/scsi/BusLogic.h
-+++ b/drivers/scsi/BusLogic.h
-@@ -935,7 +935,7 @@ struct blogic_tgt_stats {
- 	unsigned short bdr_request;
- 	unsigned short bdr_tried;
- 	unsigned short bdr_done;
--	unsigned short adatper_reset_req;
-+	unsigned short adapter_reset_req;
- 	unsigned short adapter_reset_attempt;
- 	unsigned short adapter_reset_done;
- };
 -- 
-2.10.2
+2.11.1
 
