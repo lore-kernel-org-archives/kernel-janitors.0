@@ -1,49 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:15:03 +0000
-Subject: [PATCH 25/29] IB/mlx4: Add spaces for better code readability
-Message-Id: <92a1836f-8244-7b52-1e45-f791dc3ceec4@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:40:48 +0000
+Subject: [PATCH 02/18] HID: Delete an error message for a failed memory allocation in open_collection()
+Message-Id: <d119e689-ee52-d492-ac83-108876015646@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 18:52:11 +0100
+Date: Mon, 6 Feb 2017 18:42:26 +0100
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: Possible unnecessary 'out of memory' message
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/mlx4/qp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-index 47a647c1d94f..16164ff09a86 100644
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -1063,7 +1063,7 @@ static void destroy_qp_common(struct mlx4_ib_dev *dev, struct mlx4_ib_qp *qp,
- 	list_del(&qp->cq_recv_list);
- 	if (!is_user) {
- 		__mlx4_ib_cq_clean(recv_cq, qp->mqp.qpn,
--				 qp->ibqp.srq ? to_msrq(qp->ibqp.srq): NULL);
-+				   qp->ibqp.srq ? to_msrq(qp->ibqp.srq) : NULL);
- 		if (send_cq != recv_cq)
- 			__mlx4_ib_cq_clean(send_cq, qp->mqp.qpn, NULL);
- 	}
-@@ -2585,7 +2585,7 @@ static int build_mlx_header(struct mlx4_ib_sqp *sqp, struct ib_ud_wr *wr,
- 		u16 ether_type;
- 		u16 pcp = (be32_to_cpu(ah->av.ib.sl_tclass_flowlabel) >> 29) << 13;
- 
--		ether_type = (!is_udp) ? ETH_P_IBOE:
-+		ether_type = (!is_udp) ? ETH_P_IBOE :
- 			(ip_version = 4 ? ETH_P_IP : ETH_P_IPV6);
- 
- 		mlx->sched_prio = cpu_to_be16(pcp);
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 9b0a97bbde96..ffb7e5d4ee19 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -133,10 +133,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+ 	if (parser->device->maxcollection = parser->device->collection_size) {
+ 		collection = kmalloc(sizeof(struct hid_collection) *
+ 				parser->device->collection_size * 2, GFP_KERNEL);
+-		if (collection = NULL) {
+-			hid_err(parser->device, "failed to reallocate collection array\n");
++		if (!collection)
+ 			return -ENOMEM;
+-		}
++
+ 		memcpy(collection, parser->device->collection,
+ 			sizeof(struct hid_collection) *
+ 			parser->device->collection_size);
 -- 
 2.11.1
 
