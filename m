@@ -1,68 +1,43 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Feb 2017 10:33:36 +0000
-Subject: [PATCH v2] soc: ti: knav_dma: Fix some error handling
-Message-Id: <20170218103336.7173-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:39:22 +0000
+Subject: [PATCH 01/18] HID: Use kmalloc_array() in hid_input_field()
+Message-Id: <540faed6-c664-def3-fbf9-767b40444165@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-'pktdma_get_regs()' never returns NULL. It returns an error pointer or a
-valid pointer.
-So test its return value with IS_ERR.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 6 Feb 2017 18:18:41 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-After checking with IS_ERR, it could be better to propagate the error code
-instead of returning -ENODEV uncondionnaly
+ drivers/hid/hid-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: fix typo leading to an undeclared identifier build error
-(thx kbuild test robot for spotting it)
----
- drivers/soc/ti/knav_dma.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index ecebe2eecc3a..3272b379bfcd 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -649,7 +649,7 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
- 	}
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 538ff697a4cf..9b0a97bbde96 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1272,7 +1272,7 @@ static void hid_input_field(struct hid_device *hid, struct hid_field *field,
+ 	__s32 max = field->logical_maximum;
+ 	__s32 *value;
  
- 	dma->reg_global	 = pktdma_get_regs(dma, node, 0, &size);
--	if (!dma->reg_global)
-+	if (IS_ERR(dma->reg_global))
- 		return -ENODEV;
- 	if (size < sizeof(struct reg_global)) {
- 		dev_err(kdev->dev, "bad size %pa for global regs\n", &size);
-@@ -657,22 +657,22 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
- 	}
+-	value = kmalloc(sizeof(__s32) * count, GFP_ATOMIC);
++	value = kmalloc_array(count, sizeof(__s32), GFP_ATOMIC);
+ 	if (!value)
+ 		return;
  
- 	dma->reg_tx_chan = pktdma_get_regs(dma, node, 1, &size);
--	if (!dma->reg_tx_chan)
-+	if (IS_ERR(dma->reg_tx_chan))
- 		return -ENODEV;
- 
- 	max_tx_chan = size / sizeof(struct reg_chan);
- 	dma->reg_rx_chan = pktdma_get_regs(dma, node, 2, &size);
--	if (!dma->reg_rx_chan)
-+	if (IS_ERR(dma->reg_rx_chan))
- 		return -ENODEV;
- 
- 	max_rx_chan = size / sizeof(struct reg_chan);
- 	dma->reg_tx_sched = pktdma_get_regs(dma, node, 3, &size);
--	if (!dma->reg_tx_sched)
-+	if (IS_ERR(dma->reg_tx_sched))
- 		return -ENODEV;
- 
- 	max_tx_sched = size / sizeof(struct reg_tx_sched);
- 	dma->reg_rx_flow = pktdma_get_regs(dma, node, 4, &size);
--	if (!dma->reg_rx_flow)
-+	if (IS_ERR(dma->reg_rx_flow))
- 		return -ENODEV;
- 
- 	max_rx_flow = size / sizeof(struct reg_rx_flow);
 -- 
-2.9.3
+2.11.1
 
