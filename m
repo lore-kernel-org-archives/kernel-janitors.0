@@ -1,8 +1,10 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:36:52 +0000
-Subject: [PATCH 00/18] HID: Fine-tuning for several function implementations
-Message-Id: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 20:01:18 +0000
+Subject: [PATCH 18/18] HID-picoLCD: Use seq_puts() in picolcd_debug_reset_show()
+Message-Id: <7f443463-bbdd-8f7b-581e-d0c7da352ae8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,36 +12,35 @@ To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.c
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:26:54 +0100
+Date: Tue, 7 Feb 2017 20:14:16 +0100
 
-Several update suggestions were taken into account
-from static source code analysis.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Markus Elfring (18):
-  Use kmalloc_array() in hid_input_field()
-  Delete an error message for a failed memory allocation in open_collection()
-  Use kmalloc_array() in open_collection()
-  Improve another size determination in open_collection()
-  Improve two size determinations in hid_open_report()
-  Improve another size determination in hid_scan_report()
-  Improve another size determination in hid_register_report()
-  Adjust five checks for null pointers
-  Return an error code only as a constant in hid_allocate_device()
-  debug: Replace five seq_printf() calls by seq_putc()
-  debug: Delete an unnecessary seq_printf() call in hid_dump_device()
-  debug: Replace 12 seq_printf() calls by seq_puts()
-  debug: Combine 11 seq_printf() calls into one call in hid_dump_field()
-  debug: Adjust two function calls together with a variable assignment
-  debug: Return an error code only as a constant in hid_debug_events_open()
-  debug: Add some spaces for better code readability
-  debug: Delete an unnecessary variable initialisation in hid_resolv_usage()
-  Use seq_puts() in picolcd_debug_reset_show()
+This issue was detected by using the Coccinelle software.
 
- drivers/hid/hid-core.c            |  39 ++++++-------
- drivers/hid/hid-debug.c           | 115 +++++++++++++++++++-------------------
- drivers/hid/hid-picolcd_debugfs.c |   6 +-
- 3 files changed, 78 insertions(+), 82 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-picolcd_debugfs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolcd_debugfs.c
+index 3c13af684410..ddad570b4d9e 100644
+--- a/drivers/hid/hid-picolcd_debugfs.c
++++ b/drivers/hid/hid-picolcd_debugfs.c
+@@ -32,10 +32,8 @@
+ 
+ static int picolcd_debug_reset_show(struct seq_file *f, void *p)
+ {
+-	if (picolcd_fbinfo((struct picolcd_data *)f->private))
+-		seq_printf(f, "all fb\n");
+-	else
+-		seq_printf(f, "all\n");
++	seq_puts(f, picolcd_fbinfo((struct picolcd_data *)f->private)
++		    ? "all fb\n" : "all\n");
+ 	return 0;
+ }
+ 
 -- 
 2.11.1
 
