@@ -1,62 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:17:03 +0000
-Subject: [PATCH 27/29] IB/mlx5: Use kmalloc_array() in create_kernel_qp()
-Message-Id: <afd15d0b-cc4f-4d59-14ab-bd59f3536c39@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:36:52 +0000
+Subject: [PATCH 00/18] HID: Fine-tuning for several function implementations
+Message-Id: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 20:12:44 +0100
+Date: Tue, 7 Feb 2017 20:26:54 +0100
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "kmalloc_array".
+Several update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (18):
+  Use kmalloc_array() in hid_input_field()
+  Delete an error message for a failed memory allocation in open_collection()
+  Use kmalloc_array() in open_collection()
+  Improve another size determination in open_collection()
+  Improve two size determinations in hid_open_report()
+  Improve another size determination in hid_scan_report()
+  Improve another size determination in hid_register_report()
+  Adjust five checks for null pointers
+  Return an error code only as a constant in hid_allocate_device()
+  debug: Replace five seq_printf() calls by seq_putc()
+  debug: Delete an unnecessary seq_printf() call in hid_dump_device()
+  debug: Replace 12 seq_printf() calls by seq_puts()
+  debug: Combine 11 seq_printf() calls into one call in hid_dump_field()
+  debug: Adjust two function calls together with a variable assignment
+  debug: Return an error code only as a constant in hid_debug_events_open()
+  debug: Add some spaces for better code readability
+  debug: Delete an unnecessary variable initialisation in hid_resolv_usage()
+  Use seq_puts() in picolcd_debug_reset_show()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mlx5/qp.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/hid/hid-core.c            |  39 ++++++-------
+ drivers/hid/hid-debug.c           | 115 +++++++++++++++++++-------------------
+ drivers/hid/hid-picolcd_debugfs.c |   6 +-
+ 3 files changed, 78 insertions(+), 82 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index 5ed5208d0ddd..e6e9b468b206 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -955,12 +955,21 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
- 		goto err_free;
- 	}
- 
--	qp->sq.wrid = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wrid), GFP_KERNEL);
--	qp->sq.wr_data = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wr_data), GFP_KERNEL);
--	qp->rq.wrid = kmalloc(qp->rq.wqe_cnt * sizeof(*qp->rq.wrid), GFP_KERNEL);
--	qp->sq.w_list = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.w_list), GFP_KERNEL);
--	qp->sq.wqe_head = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wqe_head), GFP_KERNEL);
--
-+	qp->sq.wrid = kmalloc_array(qp->sq.wqe_cnt,
-+				    sizeof(*qp->sq.wrid),
-+				    GFP_KERNEL);
-+	qp->sq.wr_data = kmalloc_array(qp->sq.wqe_cnt,
-+				       sizeof(*qp->sq.wr_data),
-+				       GFP_KERNEL);
-+	qp->rq.wrid = kmalloc_array(qp->rq.wqe_cnt,
-+				    sizeof(*qp->rq.wrid),
-+				    GFP_KERNEL);
-+	qp->sq.w_list = kmalloc_array(qp->sq.wqe_cnt,
-+				      sizeof(*qp->sq.w_list),
-+				      GFP_KERNEL);
-+	qp->sq.wqe_head = kmalloc_array(qp->sq.wqe_cnt,
-+					sizeof(*qp->sq.wqe_head),
-+					GFP_KERNEL);
- 	if (!qp->sq.wrid || !qp->sq.wr_data || !qp->rq.wrid ||
- 	    !qp->sq.w_list || !qp->sq.wqe_head) {
- 		err = -ENOMEM;
 -- 
 2.11.1
 
