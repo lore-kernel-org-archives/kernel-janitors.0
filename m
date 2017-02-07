@@ -1,78 +1,35 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 25 Feb 2017 16:41:07 +0000
-Subject: Re: [PATCH v2] iio: adc: xilinx: Fix error handling
-Message-Id: <902ad8ee-c7f8-582c-fd58-3a69605fc0e0@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 23:46:01 +0000
+Subject: [patch] drm/atomic: fix an error code in mode_fixup()
+Message-Id: <20170207234601.GA23981@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221063400.2984-1-christophe.jaillet@wanadoo.fr>
- <2c05b3bd-b5b4-e322-5d92-cd1c65d84ff5@metafoo.de>
-In-Reply-To: <2c05b3bd-b5b4-e322-5d92-cd1c65d84ff5@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 21/02/17 11:55, Lars-Peter Clausen wrote:
-> On 02/21/2017 07:34 AM, Christophe JAILLET wrote:
->> Reorder error handling labels in order to match the way resources have
->> been allocated.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Thanks.
-> 
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Applied to the fixes-togreg-post-rc1 branch of iio.git.
+Having "ret" be a bool type works for everything except
+ret = funcs->atomic_check().  The other functions all return zero on
+error but ->atomic_check() returns negative error codes.  We want to
+propagate the error code but instead we return 1.
 
-Thanks,
+I found this bug with static analysis and I don't know if it affects
+run time.
 
-Jonathan
-> 
->> ---
->> v2: update goto label if 'xadc->ops->setup()' fails
->> ---
->>  drivers/iio/adc/xilinx-xadc-core.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
->> index 0a6beb3d99cb..515b91963db5 100644
->> --- a/drivers/iio/adc/xilinx-xadc-core.c
->> +++ b/drivers/iio/adc/xilinx-xadc-core.c
->> @@ -1206,11 +1206,11 @@ static int xadc_probe(struct platform_device *pdev)
->>  	}
->>  	clk_prepare_enable(xadc->clk);
->>  
->>  	ret = xadc->ops->setup(pdev, indio_dev, irq);
->>  	if (ret)
->> -		goto err_free_samplerate_trigger;
->> +		goto err_clk_disable_unprepare;
->>  
->>  	ret = request_irq(irq, xadc->ops->interrupt_handler, 0,
->>  			dev_name(&pdev->dev), indio_dev);
->>  	if (ret)
->>  		goto err_clk_disable_unprepare;
->> @@ -1268,6 +1268,8 @@ static int xadc_probe(struct platform_device *pdev)
->>  
->>  err_free_irq:
->>  	free_irq(irq, indio_dev);
->> +err_clk_disable_unprepare:
->> +	clk_disable_unprepare(xadc->clk);
->>  err_free_samplerate_trigger:
->>  	if (xadc->ops->flags & XADC_FLAGS_BUFFERED)
->>  		iio_trigger_free(xadc->samplerate_trigger);
->> @@ -1277,8 +1279,6 @@ static int xadc_probe(struct platform_device *pdev)
->>  err_triggered_buffer_cleanup:
->>  	if (xadc->ops->flags & XADC_FLAGS_BUFFERED)
->>  		iio_triggered_buffer_cleanup(indio_dev);
->> -err_clk_disable_unprepare:
->> -	clk_disable_unprepare(xadc->clk);
->>  err_device_free:
->>  	kfree(indio_dev->channels);
->>  
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Fixes: 4cd4df8080a3 ("drm/atomic: Add ->atomic_check() to encoder helpers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 9a08445a7a7a..01d936b7be43 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -369,7 +369,7 @@ mode_fixup(struct drm_atomic_state *state)
+ 	struct drm_connector *connector;
+ 	struct drm_connector_state *conn_state;
+ 	int i;
+-	bool ret;
++	int ret;
+ 
+ 	for_each_crtc_in_state(state, crtc, crtc_state, i) {
+ 		if (!crtc_state->mode_changed &&
