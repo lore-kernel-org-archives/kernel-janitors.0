@@ -1,38 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Feb 2017 13:45:23 +0000
-Subject: [PATCH] scsi: lpfc: remove redundant assignment of sgel
-Message-Id: <20170224134523.5385-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:57:31 +0000
+Subject: [PATCH 14/18] HID-debug: Adjust two function calls together with a variable assignment
+Message-Id: <79f4cfa3-b21b-946c-e108-654400f3f62c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 20:06:31 +0100
 
-In the NVMET_FCOP_RSP case, sgel is assigned but never used and
-hence is redundant and can be removed.
+* The script "checkpatch.pl" pointed information out like the following.
 
-Detected by CoverityScan, CID#1411658 ("Unused value")
+  ERROR: do not use assignment in if condition
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  Thus fix the affected source code places.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/lpfc/lpfc_nvmet.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/hid/hid-debug.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index c421e17..e59a0a8 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -1445,7 +1445,6 @@ lpfc_nvmet_prep_fcp_wqe(struct lpfc_hba *phba,
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index aafa963e8a04..444c63f0e4be 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -1083,12 +1083,15 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
+ 	struct hid_debug_list *list;
+ 	unsigned long flags;
  
- 	case NVMET_FCOP_RSP:
- 		/* Words 0 - 2 */
--		sgel = &rsp->sg[0];
- 		physaddr = rsp->rspdma;
- 		wqe->fcp_trsp.bde.tus.f.bdeFlags = BUFF_TYPE_BDE_64;
- 		wqe->fcp_trsp.bde.tus.f.bdeSize = rsp->rsplen;
+-	if (!(list = kzalloc(sizeof(struct hid_debug_list), GFP_KERNEL))) {
++	list = kzalloc(sizeof(*list), GFP_KERNEL);
++	if (!list) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
++	list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE,
++				      GFP_KERNEL);
++	if (!list->hid_debug_buf) {
+ 		err = -ENOMEM;
+ 		kfree(list);
+ 		goto out;
 -- 
-2.10.2
+2.11.1
 
