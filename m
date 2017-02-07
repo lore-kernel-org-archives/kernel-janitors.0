@@ -1,42 +1,50 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 19 Feb 2017 19:27:12 +0000
-Subject: [PATCH] sd: Fix error handling
-Message-Id: <20170219192712.19807-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:46:47 +0000
+Subject: [PATCH 05/18] HID: Improve two size determinations in hid_open_report()
+Message-Id: <08ff35e1-d9f4-2296-c641-d6a28e951594@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, hch@lst.de, dan.j.williams@intel.com, axboe@fb.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Reorder 'out_free' and 'out_free_devt' error handling labels in order to
-match the way resources have been allocated.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 6 Feb 2017 22:00:07 +0100
 
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Fixes: 0dba1314d4f8 ("scsi, block: fix duplicate bdi name registration crashes")
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/sd.c | 4 ++--
+ drivers/hid/hid-core.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index cb6e68dd6df0..99e12061a6fb 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3213,10 +3213,10 @@ static int sd_probe(struct device *dev)
- 	sd_devt = NULL;
-  out_put:
- 	put_disk(gd);
-- out_free:
--	kfree(sdkp);
-  out_free_devt:
- 	kfree(sd_devt);
-+ out_free:
-+	kfree(sdkp);
-  out:
- 	scsi_autopm_put_device(sdp);
- 	return error;
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 404eccd0d670..16c73bf49d55 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -975,7 +975,7 @@ int hid_open_report(struct hid_device *device)
+ 	device->rdesc = start;
+ 	device->rsize = size;
+ 
+-	parser = vzalloc(sizeof(struct hid_parser));
++	parser = vzalloc(sizeof(*parser));
+ 	if (!parser) {
+ 		ret = -ENOMEM;
+ 		goto err;
+@@ -986,7 +986,7 @@ int hid_open_report(struct hid_device *device)
+ 	end = start + size;
+ 
+ 	device->collection = kcalloc(HID_DEFAULT_NUM_COLLECTIONS,
+-				     sizeof(struct hid_collection), GFP_KERNEL);
++				     sizeof(*device->collection), GFP_KERNEL);
+ 	if (!device->collection) {
+ 		ret = -ENOMEM;
+ 		goto err;
 -- 
-2.9.3
+2.11.1
 
