@@ -1,27 +1,62 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 28 Feb 2017 03:20:32 +0000
-Subject: Re: [PATCH] scsi: aacraid: remove redundant zero check on ret
-Message-Id: <yq1shmzvw5b.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Feb 2017 19:56:24 +0000
+Subject: [PATCH 13/18] HID-debug: Combine 11 seq_printf() calls into one call in hid_dump_field()
+Message-Id: <99abe158-ba41-99eb-95e1-e9aed7bafb53@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170224144330.6707-1-colin.king@canonical.com>
-In-Reply-To: <20170224144330.6707-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 24 Feb 2017 14:43:30 +0000")
+References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>>>> "Colin" = Colin King <colin.king@canonical.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Feb 2017 20:04:28 +0100
 
-Colin,
+Some data were printed into a sequence by eleven separate function calls.
+Print the same data by a single function call instead.
 
-Colin> The check for ret being zero is redundant as a few statements
-Colin> earlier we break out of the while loop if ret is non-zero.  Thus
-Colin> we can remove the zero check and also the dead-code non-zero case
-Colin> too.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-debug.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-Applied to 4.11/scsi-fixes.
-
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 2ce809eb4c97..aafa963e8a04 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -614,19 +614,18 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
+ 	tab(n, f); seq_printf(f, "Report Size(%u)\n", field->report_size);
+ 	tab(n, f); seq_printf(f, "Report Count(%u)\n", field->report_count);
+ 	tab(n, f); seq_printf(f, "Report Offset(%u)\n", field->report_offset);
+-
+-	tab(n, f); seq_printf(f, "Flags( ");
++	tab(n, f);
+ 	j = field->flags;
+-	seq_printf(f, "%s", HID_MAIN_ITEM_CONSTANT & j ? "Constant " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_VARIABLE & j ? "Variable " : "Array ");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_RELATIVE & j ? "Relative " : "Absolute ");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_WRAP & j ? "Wrap " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_NONLINEAR & j ? "NonLinear " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_NO_PREFERRED & j ? "NoPreferredState " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_NULL_STATE & j ? "NullState " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_VOLATILE & j ? "Volatile " : "");
+-	seq_printf(f, "%s", HID_MAIN_ITEM_BUFFERED_BYTE & j ? "BufferedByte " : "");
+-	seq_printf(f, ")\n");
++	seq_printf(f, "Flags( %s%s%s%s%s%s%s%s%s)\n",
++		   HID_MAIN_ITEM_CONSTANT & j ? "Constant " : "",
++		   HID_MAIN_ITEM_VARIABLE & j ? "Variable " : "Array ",
++		   HID_MAIN_ITEM_RELATIVE & j ? "Relative " : "Absolute ",
++		   HID_MAIN_ITEM_WRAP & j ? "Wrap " : "",
++		   HID_MAIN_ITEM_NONLINEAR & j ? "NonLinear " : "",
++		   HID_MAIN_ITEM_NO_PREFERRED & j ? "NoPreferredState " : "",
++		   HID_MAIN_ITEM_NULL_STATE & j ? "NullState " : "",
++		   HID_MAIN_ITEM_VOLATILE & j ? "Volatile " : "",
++		   HID_MAIN_ITEM_BUFFERED_BYTE & j ? "BufferedByte " : "");
+ }
+ EXPORT_SYMBOL_GPL(hid_dump_field);
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.1
+
