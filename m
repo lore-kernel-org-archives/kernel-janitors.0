@@ -1,45 +1,29 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 00:55:27 +0000
-Subject: TODO list errata
-Message-Id: <20170222005527.GA4702@eros>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2017 13:16:51 +0000
+Subject: [patch] drm/amdgpu/virt: double free in amdgpu_map_static_csa()
+Message-Id: <20170207131651.GB27416@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Monk Liu <Monk.Liu@amd.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Xiangliang Yu <Xiangliang.Yu@amd.com>, amd-gfx@lists.freedesktop.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-The last task on the TODO list seems to be mixing up definition and declaration
+The amdgpu_vm_bo_rmv() function frees "bo_va" so we shouldn't free it
+a second time.
 
-https://kernelnewbies.org/KernelJanitors/Todo
+Fixes: 4e4bbe7343a6 ("drm/amdgpu:add new file for SRIOV")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----- from above link
-Some function prototypes (in both .h and .c files) specify attributes like __init and __exit in the prototype. gcc (at least at 3.3.3) uses the last such attribute that is actually specified, without issuing a warning. So we can have:
-
-* Prototype declarations that use one attribute and a function body that uses another attribute.
-
-* Functions that from the .c code appear to be normal text but the .h file is silently setting a special attribute.
-
-    Both are potential sources of programmer confusion or bugs.
-
-Identify: * all places where attributes in prototype and function definition don't match (choose the correct one, move it to declaration), * all places where prototype contains attribute but definition doesn't (move it to declaration).
-
-    The same task should not be done for extern data declarations because of FRV.
-
-Once that is done, remove #include <linux/init.h> from all .h files. Only .[cS] files should specify which section the data and text are stored in, .h files should only define the C language information. 
-----
-
-Should this be
-
-(choose the correct one, move it to definition)
-
-and
-
-(move it to definition)
-
-As an aside note, is this list of TODO's still current
-
-last edited 2009-04-20 14:59:47 by HenrikKretzschmar
-
-
-thanks,
-Tobin.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+index 3fd951c71d1b..dcfb7df3caf4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+@@ -83,7 +83,6 @@ int amdgpu_map_static_csa(struct amdgpu_device *adev, struct amdgpu_vm *vm)
+ 		DRM_ERROR("failed to do bo_map on static CSA, err=%d\n", r);
+ 		amdgpu_vm_bo_rmv(adev, bo_va);
+ 		ttm_eu_backoff_reservation(&ticket, &list);
+-		kfree(bo_va);
+ 		return r;
+ 	}
+ 
