@@ -1,17 +1,17 @@
-From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-Date: Tue, 07 Feb 2017 15:33:21 +0000
+From: Pavel Shilovsky <piastryyy@gmail.com>
+Date: Wed, 08 Feb 2017 01:00:17 +0000
 Subject: Re: [patch] CIFS: set *resp_buf_type to NO_BUFFER on error
-Message-Id: <mpsmvdyhv7i.fsf@aaptelpc.suse.de>
+Message-Id: <CAKywueSLJJWNK2su4ux4ouz0Rz=fw9eY5vHN+iYFAO5Ek1s+=w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170207131841.GC31552@mwanda>
 In-Reply-To: <20170207131841.GC31552@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Steve French <sfrench@samba.org>, Pavel Shilovsky <pshilov@microsoft.com>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Steve French <sfrench@samba.org>, linux-cifs <linux-cifs@vger.kernel.org>, kernel-janitors@vger.kernel.org, samba-technical <samba-technical@lists.samba.org>, Pavel Shilovsky <pshilov@microsoft.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+2017-02-07 5:18 GMT-08:00 Dan Carpenter <dan.carpenter@oracle.com>:
 > We recently shuffled this code around and introduced a new error path
 > before *resp_buf_type gets initialized.  It creates uninitialized
 > variable bugs in the callers.
@@ -27,30 +27,23 @@ Dan Carpenter <dan.carpenter@oracle.com> writes:
 > --- a/fs/cifs/transport.c
 > +++ b/fs/cifs/transport.c
 > @@ -807,6 +807,8 @@ SendReceive2(const unsigned int xid, struct cifs_ses *ses,
->  	struct kvec *new_iov;
->  	int rc;
->  
-> +	*resp_buf_type = CIFS_NO_BUFFER; /* no response buf yet */
+>         struct kvec *new_iov;
+>         int rc;
+>
+> +       *resp_buf_type = CIFS_NO_BUFFER; /* no response buf yet */
 > +
->  	new_iov = kmalloc(sizeof(struct kvec) * (n_vec + 1), GFP_KERNEL);
->  	if (!new_iov)
->  		return -ENOMEM;
+>         new_iov = kmalloc(sizeof(struct kvec) * (n_vec + 1), GFP_KERNEL);
+>         if (!new_iov)
+>                 return -ENOMEM;
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
 
-LGTM. To be a bit more explicit:
+Good catch, thanks!
 
-resp_buf_type is an output parameter of the SendReceive2 function and in
-case the kmalloc failed the function could return to the caller with
-this parameter left uninitialized.
-
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 
 -- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+Best regards,
+Pavel Shilovsky
