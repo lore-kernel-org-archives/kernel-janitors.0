@@ -1,88 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:50:24 +0000
-Subject: [PATCH 08/18] HID: Adjust five checks for null pointers
-Message-Id: <8dbffcc9-34e2-5e1d-e4f5-342786f91c53@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:15:17 +0000
+Subject: [PATCH 05/14] RDMA/cxgb4: Return an error code only as a constant in ep_open()
+Message-Id: <ddc093e4-c3ea-4cbd-a6f2-4bf3f4a63ea2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 19:15:21 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 8 Feb 2017 16:36:31 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+* Return an error code without storing it in an intermediate variable.
 
-Comparison to NULL could be written !=E2=80=A6
+* Adjust jump targets according to the Linux coding style convention.
 
-Thus fix affected source code places.
+* Delete the local variable "ret" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/cxgb4/device.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 1f75c1c022f0..f4ea3590954c 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -959,7 +959,7 @@ int hid_open_report(struct hid_device *device)
- 	size =3D device->dev_rsize;
-=20
- 	buf =3D kmemdup(start, size, GFP_KERNEL);
--	if (buf =3D NULL)
-+	if (!buf)
- 		return -ENOMEM;
-=20
- 	if (device->driver->report_fixup)
-@@ -969,7 +969,7 @@ int hid_open_report(struct hid_device *device)
-=20
- 	start =3D kmemdup(start, size, GFP_KERNEL);
- 	kfree(buf);
--	if (start =3D NULL)
-+	if (!start)
- 		return -ENOMEM;
-=20
- 	device->rdesc =3D start;
-@@ -1414,7 +1414,7 @@ static struct hid_report *hid_get_report(struct hid_r=
-eport_enum *report_enum,
- 		n =3D *data;
-=20
- 	report =3D report_enum->report_id_hash[n];
--	if (report =3D NULL)
-+	if (!report)
- 		dbg_hid("undefined report_id %u received\n", n);
-=20
- 	return report;
-@@ -2222,7 +2222,7 @@ static int hid_device_probe(struct device *dev)
-=20
- 	if (!hdev->driver) {
- 		id =3D hid_match_device(hdev, hdrv);
--		if (id =3D NULL) {
-+		if (!id) {
- 			ret =3D -ENODEV;
- 			goto unlock;
- 		}
-@@ -2719,7 +2719,7 @@ struct hid_device *hid_allocate_device(void)
- 	int ret =3D -ENOMEM;
-=20
- 	hdev =3D kzalloc(sizeof(*hdev), GFP_KERNEL);
--	if (hdev =3D NULL)
-+	if (!hdev)
- 		return ERR_PTR(ret);
-=20
- 	device_initialize(&hdev->dev);
---=20
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index 46410c4a9afb..51801a7d4fb3 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -679,14 +679,12 @@ static int ep_release(struct inode *inode, struct file *file)
+ static int ep_open(struct inode *inode, struct file *file)
+ {
+ 	struct c4iw_debugfs_data *epd;
+-	int ret = 0;
+ 	int count = 1;
+ 
+ 	epd = kmalloc(sizeof(*epd), GFP_KERNEL);
+-	if (!epd) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!epd)
++		goto failure_indication;
++
+ 	epd->devp = inode->i_private;
+ 	epd->pos = 0;
+ 
+@@ -698,10 +696,8 @@ static int ep_open(struct inode *inode, struct file *file)
+ 
+ 	epd->bufsize = count * 240;
+ 	epd->buf = vmalloc(epd->bufsize);
+-	if (!epd->buf) {
+-		ret = -ENOMEM;
+-		goto err1;
+-	}
++	if (!epd->buf)
++		goto free_epd;
+ 
+ 	spin_lock_irq(&epd->devp->lock);
+ 	idr_for_each(&epd->devp->hwtid_idr, dump_ep, epd);
+@@ -710,11 +706,11 @@ static int ep_open(struct inode *inode, struct file *file)
+ 	spin_unlock_irq(&epd->devp->lock);
+ 
+ 	file->private_data = epd;
+-	goto out;
+-err1:
++	return 0;
++free_epd:
+ 	kfree(epd);
+-out:
+-	return ret;
++failure_indication:
++	return -ENOMEM;
+ }
+ 
+ static const struct file_operations ep_debugfs_fops = {
+-- 
 2.11.1
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
