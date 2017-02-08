@@ -1,50 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:46:47 +0000
-Subject: [PATCH 05/18] HID: Improve two size determinations in hid_open_report()
-Message-Id: <08ff35e1-d9f4-2296-c641-d6a28e951594@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:24:15 +0000
+Subject: [PATCH 14/14] RDMA/cxgb4: Rename jump labels in rdma_init()
+Message-Id: <b439de0f-197b-a2cb-39e8-711451cbf48f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Feb 2017 22:00:07 +0100
+Date: Wed, 8 Feb 2017 21:21:47 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust a jump label according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-core.c | 4 ++--
+ drivers/infiniband/hw/cxgb4/qp.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 404eccd0d670..16c73bf49d55 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -975,7 +975,7 @@ int hid_open_report(struct hid_device *device)
- 	device->rdesc = start;
- 	device->rsize = size;
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index c278b1d968b0..29b63eb110a6 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -1467,13 +1467,13 @@ static int rdma_init(struct c4iw_dev *rhp, struct c4iw_qp *qhp)
  
--	parser = vzalloc(sizeof(struct hid_parser));
-+	parser = vzalloc(sizeof(*parser));
- 	if (!parser) {
- 		ret = -ENOMEM;
- 		goto err;
-@@ -986,7 +986,7 @@ int hid_open_report(struct hid_device *device)
- 	end = start + size;
+ 	ret = c4iw_ofld_send(&rhp->rdev, skb);
+ 	if (ret)
+-		goto err1;
++		goto free_ird;
  
- 	device->collection = kcalloc(HID_DEFAULT_NUM_COLLECTIONS,
--				     sizeof(struct hid_collection), GFP_KERNEL);
-+				     sizeof(*device->collection), GFP_KERNEL);
- 	if (!device->collection) {
- 		ret = -ENOMEM;
- 		goto err;
+ 	ret = c4iw_wait_for_reply(&rhp->rdev, &qhp->ep->com.wr_wait,
+ 				  qhp->ep->hwtid, qhp->wq.sq.qid, __func__);
+ 	if (!ret)
+ 		goto out;
+-err1:
++free_ird:
+ 	free_ird(rhp, qhp->attr.max_ird);
+ out:
+ 	PDBG("%s ret %d\n", __func__, ret);
 -- 
 2.11.1
 
