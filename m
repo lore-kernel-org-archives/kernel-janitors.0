@@ -1,45 +1,50 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Date: Thu, 09 Feb 2017 12:44:11 +0000
-Subject: Re: [patch] cpufreq: s3c2416: double free on driver init error path
-Message-Id: <4549666.o9M1oGfALz@diego>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:19:41 +0000
+Subject: [PATCH 09/14] RDMA/cxgb4: Use common error handling code in recover_lost_dbs()
+Message-Id: <3da7cff6-9f94-2ae8-a173-7ad6efdb524b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207131906.GD27416@mwanda>
-In-Reply-To: <20170207131906.GD27416@mwanda>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Steve Wise <swise@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Feb 2017 18:08:08 +0100
 
-Am Dienstag, 7. Februar 2017, 16:19:06 CET schrieb Dan Carpenter:
-> The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
-> so this is a double free.
-> 
-> Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a jump target so that a bit of exception handling can be better reused
+from an in branch in this function.
 
-Interesting, you found a mistake I made 5 years ago.
-It always amazes me how much time I already spent in kernel-land :-) .
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/cxgb4/device.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-Thanks for finding and fixing this
-Heiko
-
-> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c
-> b/drivers/cpufreq/s3c2416-cpufreq.c index d6d425773fa4..5b2db3c6568f 100644
-> --- a/drivers/cpufreq/s3c2416-cpufreq.c
-> +++ b/drivers/cpufreq/s3c2416-cpufreq.c
-> @@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct
-> cpufreq_policy *policy) rate = clk_get_rate(s3c_freq->hclk);
->  	if (rate < 133 * 1000 * 1000) {
->  		pr_err("cpufreq: HCLK not at 133MHz\n");
-> -		clk_put(s3c_freq->hclk);
->  		ret = -EINVAL;
->  		goto err_armclk;
->  	}
-
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index 2931920d7c4c..86cf7026619f 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -1402,9 +1402,7 @@ static void recover_lost_dbs(struct uld_ctx *ctx, struct qp_list *qp_list)
+ 			       pci_name(ctx->lldi.pdev),
+ 			       ": Fatal error - DB overflow recovery failed - error syncing ",
+ 			       qp->wq.sq.qid);
+-			spin_unlock(&qp->lock);
+-			spin_unlock_irq(&qp->rhp->lock);
+-			return;
++			goto unlock;
+ 		}
+ 		qp->wq.sq.wq_pidx_inc = 0;
+ 
+@@ -1418,6 +1416,7 @@ static void recover_lost_dbs(struct uld_ctx *ctx, struct qp_list *qp_list)
+ 			       pci_name(ctx->lldi.pdev),
+ 			       ": Fatal error - DB overflow recovery failed - error syncing ",
+ 			       qp->wq.rq.qid);
++unlock:
+ 			spin_unlock(&qp->lock);
+ 			spin_unlock_irq(&qp->rhp->lock);
+ 			return;
+-- 
+2.11.1
 
