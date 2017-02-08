@@ -1,56 +1,64 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Feb 2017 12:12:02 +0000
-Subject: [PATCH 2/2] staging: rts5208: remove unncessary result set and check, just return SUCCESS
-Message-Id: <20170202121202.29659-2-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:18:43 +0000
+Subject: [PATCH 08/14] RDMA/cxgb4: Adjust construction of two error messages in recover_lost_dbs()
+Message-Id: <ad58d9b8-ce55-3150-e219-1a94f9ca50c9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170202121202.29659-1-colin.king@canonical.com>
-In-Reply-To: <20170202121202.29659-1-colin.king@canonical.com>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wayne Porter <wporter82@gmail.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Quentin Lambert <lambert.quentin@gmail.com>, Dilek Uzulmez <dilekuzulmez@gmail.com>, Jonas Rickert <jrickertkc@gmail.com>, MingChia Chung <quexint@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Feb 2017 17:48:04 +0100
 
-Minor clean up, there is no need to assign result to zero, then
-check if it is less than zero. Just return SUCCESS.
+The script "checkpatch.pl" pointed information out like the following.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+WARNING: quoted string split across lines
+
+Thus adjust the error message constructions in this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rts5208/rtsx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/cxgb4/device.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
-index 68d75d0..b8177f5 100644
---- a/drivers/staging/rts5208/rtsx.c
-+++ b/drivers/staging/rts5208/rtsx.c
-@@ -198,23 +198,21 @@ static int command_abort(struct scsi_cmnd *srb)
-  */
- static int device_reset(struct scsi_cmnd *srb)
- {
--	int result = 0;
- 	struct rtsx_dev *dev = host_to_rtsx(srb->device->host);
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index 7f30bfd71eb2..2931920d7c4c 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -1398,10 +1398,10 @@ static void recover_lost_dbs(struct uld_ctx *ctx, struct qp_list *qp_list)
+ 					  t4_sq_host_wq_pidx(&qp->wq),
+ 					  t4_sq_wq_size(&qp->wq));
+ 		if (ret) {
+-			pr_err(MOD "%s: Fatal error - "
+-			       "DB overflow recovery failed - "
+-			       "error syncing SQ qid %u\n",
+-			       pci_name(ctx->lldi.pdev), qp->wq.sq.qid);
++			pr_err(MOD "%s%sSQ qid %u\n",
++			       pci_name(ctx->lldi.pdev),
++			       ": Fatal error - DB overflow recovery failed - error syncing ",
++			       qp->wq.sq.qid);
+ 			spin_unlock(&qp->lock);
+ 			spin_unlock_irq(&qp->rhp->lock);
+ 			return;
+@@ -1414,10 +1414,10 @@ static void recover_lost_dbs(struct uld_ctx *ctx, struct qp_list *qp_list)
+ 					  t4_rq_wq_size(&qp->wq));
  
- 	dev_info(&dev->pci->dev, "%s called\n", __func__);
- 
--	return result < 0 ? FAILED : SUCCESS;
-+	return SUCCESS;
- }
- 
- /* Simulate a SCSI bus reset by resetting the device's USB port. */
- static int bus_reset(struct scsi_cmnd *srb)
- {
--	int result = 0;
- 	struct rtsx_dev *dev = host_to_rtsx(srb->device->host);
- 
- 	dev_info(&dev->pci->dev, "%s called\n", __func__);
- 
--	return result < 0 ? FAILED : SUCCESS;
-+	return SUCCESS;
- }
- 
- /*
+ 		if (ret) {
+-			pr_err(MOD "%s: Fatal error - "
+-			       "DB overflow recovery failed - "
+-			       "error syncing RQ qid %u\n",
+-			       pci_name(ctx->lldi.pdev), qp->wq.rq.qid);
++			pr_err(MOD "%s%sRQ qid %u\n",
++			       pci_name(ctx->lldi.pdev),
++			       ": Fatal error - DB overflow recovery failed - error syncing ",
++			       qp->wq.rq.qid);
+ 			spin_unlock(&qp->lock);
+ 			spin_unlock_irq(&qp->rhp->lock);
+ 			return;
 -- 
-2.10.2
+2.11.1
 
