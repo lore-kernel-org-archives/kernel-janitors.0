@@ -1,37 +1,56 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 06:27:07 +0000
-Subject: [PATCH] ncpfs: Remove cast from memory allocation
-Message-Id: <1487744827-20312-1-git-send-email-me@tobin.cc>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:11:40 +0000
+Subject: [PATCH 01/14] RDMA/cxgb3: Use kcalloc() in cxio_create_qp()
+Message-Id: <e432045a-5b36-9444-3b4a-adeffa6287db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Petr Vandrovec <petr@vandrovec.name>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Steve Wise <swise@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Coccinelle emits WARNING: casting value returned by memory allocation
-function to (struct ncp_inode_info *) is useless.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Feb 2017 11:37:13 +0100
 
-Remove unnecessary cast.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ncpfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/cxgb3/cxio_hal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
-index 7eb89c2..a1b8e7a 100644
---- a/fs/ncpfs/inode.c
-+++ b/fs/ncpfs/inode.c
-@@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
- static struct inode *ncp_alloc_inode(struct super_block *sb)
- {
- 	struct ncp_inode_info *ei;
--	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
-+	ei = lkmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	return &ei->vfs_inode;
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+index ada2e5009c86..aeb1dfa8bfe5 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+@@ -281,7 +281,7 @@ int cxio_create_qp(struct cxio_rdev *rdev_p, u32 kernel_domain,
+ 	if (!wq->qpid)
+ 		return -ENOMEM;
+ 
+-	wq->rq = kzalloc(depth * sizeof(struct t3_swrq), GFP_KERNEL);
++	wq->rq = kcalloc(depth, sizeof(*wq->rq), GFP_KERNEL);
+ 	if (!wq->rq)
+ 		goto err1;
+ 
+@@ -289,7 +289,7 @@ int cxio_create_qp(struct cxio_rdev *rdev_p, u32 kernel_domain,
+ 	if (!wq->rq_addr)
+ 		goto err2;
+ 
+-	wq->sq = kzalloc(depth * sizeof(struct t3_swsq), GFP_KERNEL);
++	wq->sq = kcalloc(depth, sizeof(*wq->sq), GFP_KERNEL);
+ 	if (!wq->sq)
+ 		goto err3;
+ 
 -- 
-2.7.4
+2.11.1
 
