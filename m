@@ -1,76 +1,74 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Thu, 09 Feb 2017 09:02:23 +0000
-Subject: Re: [PATCH 12/14] RDMA/cxgb4: Delete an unnecessary variable initialisation in create_qp()
-Message-Id: <20170209090223.GM6005@mtr-leonro.local>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mUkVHLrPAbedpyr7"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:12:44 +0000
+Subject: [PATCH 02/14] RDMA/cxgb3: Rename jump labels in cxio_create_qp()
+Message-Id: <79fb817a-bc53-8d18-9b09-c78f0ed99142@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
- <b319a50e-9e2a-61c0-5707-b4549b077d6a@users.sourceforge.net>
-In-Reply-To: <b319a50e-9e2a-61c0-5707-b4549b077d6a-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Steve Wise <swise@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Feb 2017 14:28:25 +0100
 
---mUkVHLrPAbedpyr7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Adjust jump labels according to the Linux coding style convention.
 
-On Wed, Feb 08, 2017 at 10:22:28PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Feb 2017 21:07:07 +0100
->
-> The local variable "ret" will be set to an appropriate value a bit later.
-> Thus omit the explicit initialisation at the beginning in this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/cxgb4/qp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-> index 373d66a511a8..ac63b1f70731 100644
-> --- a/drivers/infiniband/hw/cxgb4/qp.c
-> +++ b/drivers/infiniband/hw/cxgb4/qp.c
-> @@ -202,7 +202,7 @@ static int create_qp(struct c4iw_rdev *rdev, struct t4_wq *wq,
->  	int wr_len;
->  	struct c4iw_wr_wait wr_wait;
->  	struct sk_buff *skb;
-> -	int ret = 0;
-> +	int ret;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/cxgb3/cxio_hal.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-The more clean approach will be to initialize this variable to -ENOMEM
-and remove rest "ret = -ENOMEM" from the function.
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+index aeb1dfa8bfe5..113f614b07d4 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+@@ -283,21 +283,21 @@ int cxio_create_qp(struct cxio_rdev *rdev_p, u32 kernel_domain,
+ 
+ 	wq->rq = kcalloc(depth, sizeof(*wq->rq), GFP_KERNEL);
+ 	if (!wq->rq)
+-		goto err1;
++		goto put_pid;
+ 
+ 	wq->rq_addr = cxio_hal_rqtpool_alloc(rdev_p, rqsize);
+ 	if (!wq->rq_addr)
+-		goto err2;
++		goto free_rq;
+ 
+ 	wq->sq = kcalloc(depth, sizeof(*wq->sq), GFP_KERNEL);
+ 	if (!wq->sq)
+-		goto err3;
++		goto free_pool;
+ 
+ 	wq->queue = dma_alloc_coherent(&(rdev_p->rnic_info.pdev->dev),
+ 					     depth * sizeof(union t3_wr),
+ 					     &(wq->dma_addr), GFP_KERNEL);
+ 	if (!wq->queue)
+-		goto err4;
++		goto free_sq;
+ 
+ 	memset(wq->queue, 0, depth * sizeof(union t3_wr));
+ 	dma_unmap_addr_set(wq, mapping, wq->dma_addr);
+@@ -309,13 +309,13 @@ int cxio_create_qp(struct cxio_rdev *rdev_p, u32 kernel_domain,
+ 	PDBG("%s qpid 0x%x doorbell 0x%p udb 0x%llx\n", __func__,
+ 	     wq->qpid, wq->doorbell, (unsigned long long) wq->udb);
+ 	return 0;
+-err4:
++free_sq:
+ 	kfree(wq->sq);
+-err3:
++free_pool:
+ 	cxio_hal_rqtpool_free(rdev_p, wq->rq_addr, rqsize);
+-err2:
++free_rq:
+ 	kfree(wq->rq);
+-err1:
++put_pid:
+ 	put_qpid(rdev_p, wq->qpid, uctx);
+ 	return -ENOMEM;
+ }
+-- 
+2.11.1
 
->  	int eqsize;
->
->  	wq->sq.qid = c4iw_get_qpid(rdev, uctx);
-> --
-> 2.11.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---mUkVHLrPAbedpyr7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlicMB0ACgkQ5GN7iDZy
-WKdC2w//TkD7Y7i9Zwj31zNfkyBr6PUPd61P2/QTaXGzPtIyIP/VplgjUqQ0yX2s
-g2hZkQt5aJL0Sm4hM7DPXjg0I3srbRpJVAKQLW3UFIoGNbv/cchGr42as6iJTTWa
-386URqZqDiybHJI+vFFEPjiDmdpTX8LIsV7qauuNulHCHep5zC2AsoEbQkhb1NBy
-/a1M9IjSZXbOMLgZsyd2dwwcrL+UMb3gcSa0Zns35hMWnH6MsVJbGsp1nDrQdqQQ
-m4spCVqvZMaCQzT04eOAk67G8phdLL3C0XB7LPE7Do6Sacr/bHRyMbHjw8iD1GC0
-7eIYRBqUm5r3gLxpBTCdQFF010ivYRU8rZmynW5mm3yC++HLw81LCjja0tF4Z3Mn
-s9lwuEVIGe3IjL4aq0KQ5A3AN9hCg5F2+V/OCW6JleO1DXo0XWk2KX7xM4LJ2nIe
-yiYBCOkwm6stIg/zLR9MEXoS5YwuojlwIhDd4hCF5bvIf2Ou/ONBKvRvn2dnz6pq
-cVPPyBLT6QLP7wWj43F2MAfnP3zIHPag4NuU28JxrTeko87NZ/NaimDAFehhCFt5
-TLvVjNRv71DytejOqsnn8OURHzZ0qjz313L0VpJ5a6tJB+ZzJbgpYgrGpHCPGn5z
-65kBk+/aPZ2eqxuabwWLMPxW7dkfB+q4jhfx/muTUuO+d9zKe/Q=
-=cArn
------END PGP SIGNATURE-----
-
---mUkVHLrPAbedpyr7--
