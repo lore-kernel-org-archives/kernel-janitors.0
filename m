@@ -1,7 +1,7 @@
 From: maowenan <maowenan@huawei.com>
-Date: Wed, 08 Feb 2017 01:28:34 +0000
+Date: Wed, 08 Feb 2017 01:55:41 +0000
 Subject: RE: [bug report] net: phy: Fix lack of reference count on PHY driver
-Message-Id: <F95AC9340317A84688A5F0DF0246F3F201ED9B48@szxemi502-mbx.china.huawei.com>
+Message-Id: <F95AC9340317A84688A5F0DF0246F3F201ED9BAB@szxemi502-mbx.china.huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170207105000.GA30406@mwanda>
 In-Reply-To: <20170207105000.GA30406@mwanda>
@@ -10,47 +10,65 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thank you very much , there should be pointer checked before dereference.
-
-
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Tuesday, February 07, 2017 6:50 PM
-> To: maowenan
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: [bug report] net: phy: Fix lack of reference count on PHY driver
-> 
-> Hello Mao Wenan,
-> 
-> This is a semi-automatic email about new static checker warnings.
-> 
-> The patch cafe8df8b9bc: "net: phy: Fix lack of reference count on PHY driver"
-> from Jan 31, 2017, leads to the following Smatch complaint:
-> 
-> drivers/net/phy/phy_device.c:933 phy_attach_direct()
-> 	 warn: variable dereferenced before check 'd->driver' (see line 923)
-> 
-> drivers/net/phy/phy_device.c
->    922
->    923		if (!try_module_get(d->driver->owner)) {
->                                     ^^^^^^^^^^^ Patch introduces a
-> new dereference.
-> 
->    924			dev_err(&dev->dev, "failed to get the device driver
-> module\n");
->    925			return -EIO;
->    926		}
->    927
->    928		get_device(d);
->    929
->    930		/* Assume that if there is no driver, that it doesn't
->    931		 * exist, and we should use the genphy driver.
->    932		 */
->    933		if (!d->driver) {
->                      ^^^^^^^^^
-> Existing code assumed d->driver could be NULL.
-> 
->    934			if (phydev->is_c45)
->    935				d->driver > 
-> regards,
-> dan carpenter
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbWFvd2VuYW4NCj4gU2Vu
+dDogV2VkbmVzZGF5LCBGZWJydWFyeSAwOCwgMjAxNyA5OjI4IEFNDQo+IFRvOiAnRGFuIENhcnBl
+bnRlcicNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
+UkU6IFtidWcgcmVwb3J0XSBuZXQ6IHBoeTogRml4IGxhY2sgb2YgcmVmZXJlbmNlIGNvdW50IG9u
+IFBIWSBkcml2ZXINCj4gDQo+IFRoYW5rIHlvdSB2ZXJ5IG11Y2ggLCB0aGVyZSBzaG91bGQgYmUg
+cG9pbnRlciBjaGVja2VkIGJlZm9yZSBkZXJlZmVyZW5jZS4NCj4gDQo+IA0KPiA+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogRGFuIENhcnBlbnRlciBbbWFpbHRvOmRhbi5j
+YXJwZW50ZXJAb3JhY2xlLmNvbV0NCj4gPiBTZW50OiBUdWVzZGF5LCBGZWJydWFyeSAwNywgMjAx
+NyA2OjUwIFBNDQo+ID4gVG86IG1hb3dlbmFuDQo+ID4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2Vy
+Lmtlcm5lbC5vcmcNCj4gPiBTdWJqZWN0OiBbYnVnIHJlcG9ydF0gbmV0OiBwaHk6IEZpeCBsYWNr
+IG9mIHJlZmVyZW5jZSBjb3VudCBvbiBQSFkNCj4gPiBkcml2ZXINCj4gPg0KPiA+IEhlbGxvIE1h
+byBXZW5hbiwNCj4gPg0KPiA+IFRoaXMgaXMgYSBzZW1pLWF1dG9tYXRpYyBlbWFpbCBhYm91dCBu
+ZXcgc3RhdGljIGNoZWNrZXIgd2FybmluZ3MuDQo+ID4NCj4gPiBUaGUgcGF0Y2ggY2FmZThkZjhi
+OWJjOiAibmV0OiBwaHk6IEZpeCBsYWNrIG9mIHJlZmVyZW5jZSBjb3VudCBvbiBQSFkgZHJpdmVy
+Ig0KPiA+IGZyb20gSmFuIDMxLCAyMDE3LCBsZWFkcyB0byB0aGUgZm9sbG93aW5nIFNtYXRjaCBj
+b21wbGFpbnQ6DQo+ID4NCj4gPiBkcml2ZXJzL25ldC9waHkvcGh5X2RldmljZS5jOjkzMyBwaHlf
+YXR0YWNoX2RpcmVjdCgpDQo+ID4gCSB3YXJuOiB2YXJpYWJsZSBkZXJlZmVyZW5jZWQgYmVmb3Jl
+IGNoZWNrICdkLT5kcml2ZXInIChzZWUgbGluZSA5MjMpDQo+ID4NCj4gPiBkcml2ZXJzL25ldC9w
+aHkvcGh5X2RldmljZS5jDQo+ID4gICAgOTIyDQo+ID4gICAgOTIzCQlpZiAoIXRyeV9tb2R1bGVf
+Z2V0KGQtPmRyaXZlci0+b3duZXIpKSB7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgXl5eXl5eXl5eXl4gUGF0Y2ggaW50cm9kdWNlcw0KPiBhIG5ldw0KPiA+IGRlcmVm
+ZXJlbmNlLg0KPiA+DQo+ID4gICAgOTI0CQkJZGV2X2VycigmZGV2LT5kZXYsICJmYWlsZWQgdG8g
+Z2V0IHRoZSBkZXZpY2UgZHJpdmVyDQo+ID4gbW9kdWxlXG4iKTsNCj4gPiAgICA5MjUJCQlyZXR1
+cm4gLUVJTzsNCj4gPiAgICA5MjYJCX0NCj4gPiAgICA5MjcNCj4gPiAgICA5MjgJCWdldF9kZXZp
+Y2UoZCk7DQo+ID4gICAgOTI5DQo+ID4gICAgOTMwCQkvKiBBc3N1bWUgdGhhdCBpZiB0aGVyZSBp
+cyBubyBkcml2ZXIsIHRoYXQgaXQgZG9lc24ndA0KPiA+ICAgIDkzMQkJICogZXhpc3QsIGFuZCB3
+ZSBzaG91bGQgdXNlIHRoZSBnZW5waHkgZHJpdmVyLg0KPiA+ICAgIDkzMgkJICovDQo+ID4gICAg
+OTMzCQlpZiAoIWQtPmRyaXZlcikgew0KPiA+ICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5e
+Xg0KPiA+IEV4aXN0aW5nIGNvZGUgYXNzdW1lZCBkLT5kcml2ZXIgY291bGQgYmUgTlVMTC4NCj4g
+Pg0KPiA+ICAgIDkzNAkJCWlmIChwaHlkZXYtPmlzX2M0NSkNCj4gPiAgICA5MzUJCQkJZC0+ZHJp
+dmVyID0NCj4gPg0KPiA+IHJlZ2FyZHMsDQo+ID4gZGFuIGNhcnBlbnRlcg0KDQpIaSBkYW4sDQoN
+CklzIGl0IE9LIGlmIEkgcHV0IGJlbG93IGp1ZGdtZW50IGFmdGVyIGlmICghZC0+ZHJpdmVyKSB7
+Li4uLi4ufSAgPw0KDQoJaWYgKCF0cnlfbW9kdWxlX2dldChkLT5kcml2ZXItPm93bmVyKSkgew0K
+CQlkZXZfZXJyKCZkZXYtPmRldiwgImZhaWxlZCB0byBnZXQgdGhlIGRldmljZSBkcml2ZXIgbW9k
+dWxlXG4iKTsNCgkJcmV0dXJuIC1FSU87DQoJfQ0KPT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09DQogICAgaWYgKG5kZXZfb3duZXIgIT0gYnVzLT5vd25lciAm
+JiAhdHJ5X21vZHVsZV9nZXQoYnVzLT5vd25lcikpIHsNCgkJZGV2X2VycigmZGV2LT5kZXYsICJm
+YWlsZWQgdG8gZ2V0IHRoZSBidXMgbW9kdWxlXG4iKTsNCgkJcmV0dXJuIC1FSU87DQoJfQ0KDQoJ
+aWYgKCF0cnlfbW9kdWxlX2dldChkLT5kcml2ZXItPm93bmVyKSkgew0KCQlkZXZfZXJyKCZkZXYt
+PmRldiwgImZhaWxlZCB0byBnZXQgdGhlIGRldmljZSBkcml2ZXIgbW9kdWxlXG4iKTsNCgkJcmV0
+dXJuIC1FSU87DQoJfQ0KDQoJZ2V0X2RldmljZShkKTsNCg0KCS8qIEFzc3VtZSB0aGF0IGlmIHRo
+ZXJlIGlzIG5vIGRyaXZlciwgdGhhdCBpdCBkb2Vzbid0DQoJICogZXhpc3QsIGFuZCB3ZSBzaG91
+bGQgdXNlIHRoZSBnZW5waHkgZHJpdmVyLg0KCSAqLw0KCWlmICghZC0+ZHJpdmVyKSB7DQoJCWlm
+IChwaHlkZXYtPmlzX2M0NSkNCgkJCWQtPmRyaXZlciA9DQoJCQkJJmdlbnBoeV9kcml2ZXJbR0VO
+UEhZX0RSVl8xMEddLm1kaW9kcnYuZHJpdmVyOw0KCQllbHNlDQoJCQlkLT5kcml2ZXIgPQ0KCQkJ
+CSZnZW5waHlfZHJpdmVyW0dFTlBIWV9EUlZfMUddLm1kaW9kcnYuZHJpdmVyOw0KDQoJCWVyciA9
+IGQtPmRyaXZlci0+cHJvYmUoZCk7DQoJCWlmIChlcnIgPj0gMCkNCgkJCWVyciA9IGRldmljZV9i
+aW5kX2RyaXZlcihkKTsNCg0KCQlpZiAoZXJyKQ0KCQkJZ290byBlcnJvcjsNCgl9DQoNCj09PT09
+PT09PT09PT09PT09PT09PT2ht6G3obeht6G3obeht6G3obeht6G3obeht6G3obeht6G3obeht6G3
+obeht6G3obeht6G3obeht6G3obeht6G3obehtw0KCWlmIChuZGV2X293bmVyICE9IGJ1cy0+b3du
+ZXIgJiYgIXRyeV9tb2R1bGVfZ2V0KGJ1cy0+b3duZXIpKSB7DQoJCWRldl9lcnIoJmRldi0+ZGV2
+LCAiZmFpbGVkIHRvIGdldCB0aGUgYnVzIG1vZHVsZVxuIik7DQoJCXJldHVybiAtRUlPOw0KCX0N
+Cg0KCWdldF9kZXZpY2UoZCk7DQoNCgkvKiBBc3N1bWUgdGhhdCBpZiB0aGVyZSBpcyBubyBkcml2
+ZXIsIHRoYXQgaXQgZG9lc24ndA0KCSAqIGV4aXN0LCBhbmQgd2Ugc2hvdWxkIHVzZSB0aGUgZ2Vu
+cGh5IGRyaXZlci4NCgkgKi8NCglpZiAoIWQtPmRyaXZlcikgew0KCQlpZiAocGh5ZGV2LT5pc19j
+NDUpDQoJCQlkLT5kcml2ZXIgPQ0KCQkJCSZnZW5waHlfZHJpdmVyW0dFTlBIWV9EUlZfMTBHXS5t
+ZGlvZHJ2LmRyaXZlcjsNCgkJZWxzZQ0KCQkJZC0+ZHJpdmVyID0NCgkJCQkmZ2VucGh5X2RyaXZl
+cltHRU5QSFlfRFJWXzFHXS5tZGlvZHJ2LmRyaXZlcjsNCg0KCQllcnIgPSBkLT5kcml2ZXItPnBy
+b2JlKGQpOw0KCQlpZiAoZXJyID49IDApDQoJCQllcnIgPSBkZXZpY2VfYmluZF9kcml2ZXIoZCk7
+DQoNCgkJaWYgKGVycikNCgkJCWdvdG8gZXJyb3I7DQoJfQ0KDQoJaWYgKCF0cnlfbW9kdWxlX2dl
+dChkLT5kcml2ZXItPm93bmVyKSkgew0KCQlkZXZfZXJyKCZkZXYtPmRldiwgImZhaWxlZCB0byBn
+ZXQgdGhlIGRldmljZSBkcml2ZXIgbW9kdWxlXG4iKTsNCgkJcmV0dXJuIC1FSU87DQoJfQ0KDQo
