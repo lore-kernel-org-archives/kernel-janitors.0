@@ -1,29 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Feb 2017 07:23:10 +0000
-Subject: [patch] pinctrl: samsung: checking for IS_ERR() instead of NULL
-Message-Id: <20170208072310.GA12877@mwanda>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 08 Feb 2017 08:41:09 +0000
+Subject: Re: [patch] pinctrl: samsung: checking for IS_ERR() instead of NULL
+Message-Id: <CAJKOXPcHYMGCGiq3X2vkpT9VtXe6hBBROjeZdJSvL2MMooYTPQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170208072310.GA12877@mwanda>
+In-Reply-To: <20170208072310.GA12877@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-devm_ioremap() returns NULL on error.  It doesn't return error pointers.
+On Wed, Feb 8, 2017 at 9:23 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> devm_ioremap() returns NULL on error.  It doesn't return error pointers.
+>
+> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fix already sent by Wei:
+https://www.spinics.net/lists/arm-kernel/msg560747.html
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index d79eadad6c5f..35b9d400d5c6 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -990,7 +990,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
- 						resource_size(res));
--		if (IS_ERR(virt_base[i]))
-+		if (!virt_base[i])
- 			return ERR_PTR(-EIO);
- 	}
- 
+Best regards,
+Krzysztof
