@@ -1,55 +1,121 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 19 Feb 2017 09:58:47 +0000
-Subject: [PATCH] NFC: st21nfca: Fix potential memory leak
-Message-Id: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Feb 2017 21:23:22 +0000
+Subject: [PATCH 13/14] RDMA/cxgb4: Rename jump labels in c4iw_create_qp()
+Message-Id: <8f233488-a0fd-7f64-012d-d0281f02624a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
+In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, sameo@linux.intel.com, christophe.ricard@gmail.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-If all bits of 'dev_mask' are already set, there is a memory leak because
-'info' should be freed before returning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Feb 2017 21:12:26 +0100
 
-While fixing it, 'return -ENOMEM' directly if the first kzalloc fails.
-This makes the code more readable.
+Adjust jump labels according to the Linux coding style convention.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/nfc/st21nfca/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/cxgb4/qp.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/nfc/st21nfca/core.c b/drivers/nfc/st21nfca/core.c
-index dacb9166081b..50be3b788f1c 100644
---- a/drivers/nfc/st21nfca/core.c
-+++ b/drivers/nfc/st21nfca/core.c
-@@ -959,10 +959,8 @@ int st21nfca_hci_probe(void *phy_id, struct nfc_phy_ops *phy_ops,
- 	unsigned long quirks = 0;
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index ac63b1f70731..c278b1d968b0 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -1817,7 +1817,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 	ret = create_qp(&rhp->rdev, &qhp->wq, &schp->cq, &rchp->cq,
+ 			ucontext ? &ucontext->uctx : &rhp->rdev.uctx);
+ 	if (ret)
+-		goto err1;
++		goto free_qhp;
  
- 	info = kzalloc(sizeof(struct st21nfca_hci_info), GFP_KERNEL);
--	if (!info) {
--		r = -ENOMEM;
--		goto err_alloc_hdev;
--	}
-+	if (!info)
-+		return -ENOMEM;
+ 	attrs->cap.max_recv_wr = rqsize - 1;
+ 	attrs->cap.max_send_wr = sqsize - 1;
+@@ -1848,35 +1848,35 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
  
- 	info->phy_ops = phy_ops;
- 	info->phy_id = phy_id;
-@@ -978,8 +976,10 @@ int st21nfca_hci_probe(void *phy_id, struct nfc_phy_ops *phy_ops,
- 	 * persistent info to discriminate 2 identical chips
- 	 */
- 	dev_num = find_first_zero_bit(dev_mask, ST21NFCA_NUM_DEVICES);
--	if (dev_num >= ST21NFCA_NUM_DEVICES)
--		return -ENODEV;
-+	if (dev_num >= ST21NFCA_NUM_DEVICES) {
-+		r = -ENODEV;
-+		goto err_alloc_hdev;
-+	}
+ 	ret = insert_handle(rhp, &rhp->qpidr, qhp, qhp->wq.sq.qid);
+ 	if (ret)
+-		goto err2;
++		goto destroy_qp;
  
- 	set_bit(dev_num, dev_mask);
- 
+ 	if (udata) {
+ 		sq_key_mm = kmalloc(sizeof(*sq_key_mm), GFP_KERNEL);
+ 		if (!sq_key_mm) {
+ 			ret = -ENOMEM;
+-			goto err3;
++			goto remove_handle;
+ 		}
+ 		rq_key_mm = kmalloc(sizeof(*rq_key_mm), GFP_KERNEL);
+ 		if (!rq_key_mm) {
+ 			ret = -ENOMEM;
+-			goto err4;
++			goto free_sq_key;
+ 		}
+ 		sq_db_key_mm = kmalloc(sizeof(*sq_db_key_mm), GFP_KERNEL);
+ 		if (!sq_db_key_mm) {
+ 			ret = -ENOMEM;
+-			goto err5;
++			goto free_rq_key;
+ 		}
+ 		rq_db_key_mm = kmalloc(sizeof(*rq_db_key_mm), GFP_KERNEL);
+ 		if (!rq_db_key_mm) {
+ 			ret = -ENOMEM;
+-			goto err6;
++			goto free_sq_db_key;
+ 		}
+ 		if (t4_sq_onchip(&qhp->wq.sq)) {
+ 			ma_sync_key_mm = kmalloc(sizeof(*ma_sync_key_mm),
+ 						 GFP_KERNEL);
+ 			if (!ma_sync_key_mm) {
+ 				ret = -ENOMEM;
+-				goto err7;
++				goto free_rq_db_key;
+ 			}
+ 			uresp.flags = C4IW_QPF_ONCHIP;
+ 		} else
+@@ -1906,7 +1906,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 		spin_unlock(&ucontext->mmap_lock);
+ 		ret = ib_copy_to_udata(udata, &uresp, sizeof uresp);
+ 		if (ret)
+-			goto err8;
++			goto free_ma_sync_key;
+ 		sq_key_mm->key = uresp.sq_key;
+ 		sq_key_mm->addr = qhp->wq.sq.phys_addr;
+ 		sq_key_mm->len = PAGE_ALIGN(qhp->wq.sq.memsize);
+@@ -1944,22 +1944,22 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 	     attrs->cap.max_send_wr, qhp->wq.rq.qid, qhp->wq.rq.size,
+ 	     qhp->wq.rq.memsize, attrs->cap.max_recv_wr);
+ 	return &qhp->ibqp;
+-err8:
++free_ma_sync_key:
+ 	kfree(ma_sync_key_mm);
+-err7:
++free_rq_db_key:
+ 	kfree(rq_db_key_mm);
+-err6:
++free_sq_db_key:
+ 	kfree(sq_db_key_mm);
+-err5:
++free_rq_key:
+ 	kfree(rq_key_mm);
+-err4:
++free_sq_key:
+ 	kfree(sq_key_mm);
+-err3:
++remove_handle:
+ 	remove_handle(rhp, &rhp->qpidr, qhp->wq.sq.qid);
+-err2:
++destroy_qp:
+ 	destroy_qp(&rhp->rdev, &qhp->wq,
+ 		   ucontext ? &ucontext->uctx : &rhp->rdev.uctx);
+-err1:
++free_qhp:
+ 	kfree(qhp);
+ 	return ERR_PTR(ret);
+ }
 -- 
-2.9.3
+2.11.1
 
