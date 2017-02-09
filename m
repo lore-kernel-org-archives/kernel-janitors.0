@@ -1,45 +1,28 @@
-From: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
-Date: Mon, 20 Feb 2017 10:58:36 +0000
-Subject: [PATCH v2] tools/vm: Fix possible resource leak in page_owner_sort.c
-Message-Id: <20170220104636.GA4607@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 09 Feb 2017 13:05:16 +0000
+Subject: Re: m68k: Add some spaces for better code readability in sys_cacheflush()
+Message-Id: <4dc3f722-fb73-b852-aa22-b21179b79f0a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net>
+ <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
+ <CAMuHMdVwcDbOQrhkk-vGQjzVNLmWQmqrSJTKJo_bCVEUAYHbsQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVwcDbOQrhkk-vGQjzVNLmWQmqrSJTKJo_bCVEUAYHbsQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch addresses explicit closing of file pointers on exit
-and redirects the errors to the stderr
-Signed-off-by: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
----
- tools/vm/page_owner_sort.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> What prevented you from correcting the indentation of the comments before,
+> and the statements after?
 
-diff --git a/tools/vm/page_owner_sort.c b/tools/vm/page_owner_sort.c
-index 8346261..b3c3efa 100644
---- a/tools/vm/page_owner_sort.c
-+++ b/tools/vm/page_owner_sort.c
-@@ -109,7 +109,7 @@ int main(int argc, char **argv)
- 	list = malloc(max_size * sizeof(*list));
- 	buf = malloc(BUF_SIZE);
- 	if (!list || !buf) {
--		printf("Out of memory\n");
-+		perror("Unable to allocate memory: ");
- 		fclose(fin);
- 		fclose(fout);
- 		exit(1);
-@@ -145,8 +145,8 @@ int main(int argc, char **argv)
- 	qsort(list2, count, sizeof(list[0]), compare_num);
- 
- 	for (i = 0; i < count; i++)
--		fprintf(fout, "%d times:\n%s\n", list2[i].num, list2[i].txt);
--		
-+		fprintf(fout, "%d times:\n%s\n", list2[i].num, list2[i].txt);	
-+	
- 	fclose(fout);
- 	return 0;
- }
--- 
-2.9.3
+I left this implementation detail over for further improvements by other
+software developers.
 
+
+> Now the lines in the else branch are no longer aligned at all!
+
+Would you like to pick any related update candidates up?
+
+Regards,
+Markus
