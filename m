@@ -1,7 +1,7 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 08 Feb 2017 03:36:21 +0000
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Date: Thu, 09 Feb 2017 12:44:11 +0000
 Subject: Re: [patch] cpufreq: s3c2416: double free on driver init error path
-Message-Id: <20170208032421.GC14503@vireshk-i7>
+Message-Id: <4549666.o9M1oGfALz@diego>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170207131906.GD27416@mwanda>
 In-Reply-To: <20170207131906.GD27416@mwanda>
@@ -9,21 +9,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07-02-17, 16:19, Dan Carpenter wrote:
+Hi Dan,
+
+Am Dienstag, 7. Februar 2017, 16:19:06 CET schrieb Dan Carpenter:
 > The "goto err_armclk;" error path already does a clk_put(s3c_freq->hclk);
 > so this is a double free.
 > 
 > Fixes: 34ee55075265 ("[CPUFREQ] Add S3C2416/S3C2450 cpufreq driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-> index d6d425773fa4..5b2db3c6568f 100644
+
+Interesting, you found a mistake I made 5 years ago.
+It always amazes me how much time I already spent in kernel-land :-) .
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Thanks for finding and fixing this
+Heiko
+
+> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c
+> b/drivers/cpufreq/s3c2416-cpufreq.c index d6d425773fa4..5b2db3c6568f 100644
 > --- a/drivers/cpufreq/s3c2416-cpufreq.c
 > +++ b/drivers/cpufreq/s3c2416-cpufreq.c
-> @@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
->  	rate = clk_get_rate(s3c_freq->hclk);
+> @@ -400,7 +400,6 @@ static int s3c2416_cpufreq_driver_init(struct
+> cpufreq_policy *policy) rate = clk_get_rate(s3c_freq->hclk);
 >  	if (rate < 133 * 1000 * 1000) {
 >  		pr_err("cpufreq: HCLK not at 133MHz\n");
 > -		clk_put(s3c_freq->hclk);
@@ -31,7 +42,4 @@ On 07-02-17, 16:19, Dan Carpenter wrote:
 >  		goto err_armclk;
 >  	}
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
--- 
-viresh
