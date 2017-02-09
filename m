@@ -1,46 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 20:01:18 +0000
-Subject: [PATCH 18/18] HID-picoLCD: Use seq_puts() in picolcd_debug_reset_show()
-Message-Id: <7f443463-bbdd-8f7b-581e-d0c7da352ae8@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 09 Feb 2017 13:23:40 +0000
+Subject: Re: [PATCH 2/3] m68k: Delete an unnecessary variable assignment in sys_cacheflush()
+Message-Id: <CAMuHMdW8CGX9jgJS-_D030v-70fNH6J11Y0jAeYfwFB__ye=aQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net> <f33b64d8-5572-c8e5-f06d-bb84cfc4b8b5@users.sourceforge.net>
+In-Reply-To: <f33b64d8-5572-c8e5-f06d-bb84cfc4b8b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:14:16 +0100
+On Wed, Jan 18, 2017 at 5:49 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Jan 2017 17:07:52 +0100
+>
+> Delete an assignment for the local variable "ret" in an if branch
+> because it was initialised by the same value.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Thanks, applied and queued for v4.11.
 
-This issue was detected by using the Coccinelle software.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-picolcd_debugfs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+                        Geert
 
-diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolcd_debugfs.c
-index 3c13af684410..ddad570b4d9e 100644
---- a/drivers/hid/hid-picolcd_debugfs.c
-+++ b/drivers/hid/hid-picolcd_debugfs.c
-@@ -32,10 +32,8 @@
- 
- static int picolcd_debug_reset_show(struct seq_file *f, void *p)
- {
--	if (picolcd_fbinfo((struct picolcd_data *)f->private))
--		seq_printf(f, "all fb\n");
--	else
--		seq_printf(f, "all\n");
-+	seq_puts(f, picolcd_fbinfo((struct picolcd_data *)f->private)
-+		    ? "all fb\n" : "all\n");
- 	return 0;
- }
- 
--- 
-2.11.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
