@@ -1,69 +1,65 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 09 Feb 2017 11:37:54 +0000
-Subject: [PATCH] Staging: rtl8192e: remove redundant null check on array alg
-Message-Id: <20170209113754.26584-1-colin.king@canonical.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 09 Feb 2017 11:12:27 +0000
+Subject: Re: [PATCH 3/3] m68k: Add some spaces for better code readability in sys_cacheflush()
+Message-Id: <CAMuHMdVwcDbOQrhkk-vGQjzVNLmWQmqrSJTKJo_bCVEUAYHbsQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net> <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
+In-Reply-To: <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Binoy Jayan <binoy.jayan@linaro.org>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Florian Westphal <fw@strlen.de>, Tejun Heo <tj@kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Markus,
 
-u.crypt.alg is an array of u8 integers and hence the null check on
-this array is redundant and can be removed.
+On Wed, Jan 18, 2017 at 5:50 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Jan 2017 17:34:29 +0100
+>
+> * Use space characters at some source code places according to
+>   the Linux coding style convention.
+>
+> * Adjust indentation a bit.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  arch/m68k/kernel/sys_m68k.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
+> index 9870d00d2215..5b351f7a6c11 100644
+> --- a/arch/m68k/kernel/sys_m68k.c
+> +++ b/arch/m68k/kernel/sys_m68k.c
+> @@ -436,11 +436,10 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
+>              * 040 or 060: don't blindly trust 'scope', someone could
+>              * try to flush a few megs of memory.
+>              */
+> -
+> -           if (len>=3*PAGE_SIZE && scope<FLUSH_SCOPE_PAGE)
+> -               scope=FLUSH_SCOPE_PAGE;
+> -           if (len>*PAGE_SIZE && scope<FLUSH_SCOPE_ALL)
+> -               scope=FLUSH_SCOPE_ALL;
+> +               if (len >= 3 * PAGE_SIZE && scope < FLUSH_SCOPE_PAGE)
+> +                       scope = FLUSH_SCOPE_PAGE;
+> +               if (len >= 10 * PAGE_SIZE && scope < FLUSH_SCOPE_ALL)
+> +                       scope = FLUSH_SCOPE_ALL;
+>             if (CPU_IS_040) {
+>                 ret = cache_flush_040 (addr, scope, cache, len);
+>             } else if (CPU_IS_060) {
 
-Detected with CoverityScan, CID#146583 ("Array compared against 0")
+What prevented you from correcting the indentation of the comments before,
+and the statements after?
+Now the lines in the else branch are no longer aligned at all!
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8192e/rtllib_softmac.c | 32 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
-index 1430ba2..eeda17d 100644
---- a/drivers/staging/rtl8192e/rtllib_softmac.c
-+++ b/drivers/staging/rtl8192e/rtllib_softmac.c
-@@ -3365,23 +3365,21 @@ static int rtllib_wpa_set_encryption(struct rtllib_device *ieee,
- 	} else
- 		sec.flags &= ~SEC_ACTIVE_KEY;
- 
--	if (param->u.crypt.alg != NULL) {
--		memcpy(sec.keys[param->u.crypt.idx],
--		       param->u.crypt.key,
--		       param->u.crypt.key_len);
--		sec.key_sizes[param->u.crypt.idx] = param->u.crypt.key_len;
--		sec.flags |= (1 << param->u.crypt.idx);
--
--		if (strcmp(param->u.crypt.alg, "R-WEP") = 0) {
--			sec.flags |= SEC_LEVEL;
--			sec.level = SEC_LEVEL_1;
--		} else if (strcmp(param->u.crypt.alg, "R-TKIP") = 0) {
--			sec.flags |= SEC_LEVEL;
--			sec.level = SEC_LEVEL_2;
--		} else if (strcmp(param->u.crypt.alg, "R-CCMP") = 0) {
--			sec.flags |= SEC_LEVEL;
--			sec.level = SEC_LEVEL_3;
--		}
-+	memcpy(sec.keys[param->u.crypt.idx],
-+	       param->u.crypt.key,
-+	       param->u.crypt.key_len);
-+	sec.key_sizes[param->u.crypt.idx] = param->u.crypt.key_len;
-+	sec.flags |= (1 << param->u.crypt.idx);
-+
-+	if (strcmp(param->u.crypt.alg, "R-WEP") = 0) {
-+		sec.flags |= SEC_LEVEL;
-+		sec.level = SEC_LEVEL_1;
-+	} else if (strcmp(param->u.crypt.alg, "R-TKIP") = 0) {
-+		sec.flags |= SEC_LEVEL;
-+		sec.level = SEC_LEVEL_2;
-+	} else if (strcmp(param->u.crypt.alg, "R-CCMP") = 0) {
-+		sec.flags |= SEC_LEVEL;
-+		sec.level = SEC_LEVEL_3;
- 	}
-  done:
- 	if (ieee->set_security)
--- 
-2.10.2
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
