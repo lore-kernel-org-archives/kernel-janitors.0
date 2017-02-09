@@ -1,59 +1,65 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 07 Feb 2017 13:27:09 +0000
-Subject: Re: [patch] scsi: qedi: silence sprintf() overflow warning
-Message-Id: <5899CB2D.4050809@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Feb 2017 17:11:27 +0000
+Subject: [PATCH][V2] Smack: fix a dereference before null check on sock->sk
+Message-Id: <20170209171127.5029-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207130103.GA31552@mwanda>
-In-Reply-To: <20170207130103.GA31552@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QLogic-Storage-Upstream@cavium.com, Thomas Gleixner <tglx@linutronix.de>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Casey Schaufler <casey@schaufler-ca.com>, James Morris <james.l.morris@oracle.com>, "Serge E . Hally" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The initialisation of pointer ssp is from a dereference on sock->sk
+before sock-sk is null checked, hence there is a potential for a
+null pointer deference.  Fix this by moving the assignment of ssp
+to just before it is used in the call to smk_ipv6_check.
 
-Am 07.02.2017 14:01, schrieb Dan Carpenter:
-> The problem here is this:
-> 
-> 	sprintf(host_buf, "qedi_ofld%d", qedi->shost->host_no);
-> 
-> host_buf is 16 character so we only have 6 characters left for
-> ->host_no.  But ->host_no is set in scsi_host_alloc():
-> 
-> 	index = ida_simple_get(&host_index_ida, 0, 0, GFP_KERNEL);
-> 
-> It could theoretically go up to 0x8000000 so we need space for 10
-> digits.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-> index 5eda21d903e9..0dcf3b08230c 100644
-> --- a/drivers/scsi/qedi/qedi_main.c
-> +++ b/drivers/scsi/qedi/qedi_main.c
-> @@ -1735,7 +1735,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
->  	u32 dp_module = 0;
->  	u8 dp_level = 0;
->  	bool is_vf = false;
-> -	char host_buf[16];
-> +	char host_buf[20];
->  	struct qed_link_params link_params;
->  	struct qed_slowpath_params sp_params;
->  	struct qed_probe_params qed_params;
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Also minor clean up of code to reduce #ifdef noise.
+Detected with CoverityScan, CID#1324196 ("Dereference before null check")
 
-any chance to use snprintf here ?
- sprintf(host_buf, "qedi_ofld%d", qedi->shost->host_no);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/smack/smack_lsm.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-or something like asprint() :)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index fc8fb31..0c5656d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2897,10 +2897,6 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	struct sockaddr_in6 *sip = (struct sockaddr_in6 *)sap;
+ #endif
+-#ifdef SMACK_IPV6_SECMARK_LABELING
+-	struct smack_known *rsp;
+-	struct socket_smack *ssp = sock->sk->sk_security;
+-#endif
+ 
+ 	if (sock->sk = NULL)
+ 		return 0;
+@@ -2915,10 +2911,17 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
+ 		if (addrlen < sizeof(struct sockaddr_in6))
+ 			return -EINVAL;
+ #ifdef SMACK_IPV6_SECMARK_LABELING
+-		rsp = smack_ipv6host_label(sip);
+-		if (rsp != NULL)
+-			rc = smk_ipv6_check(ssp->smk_out, rsp, sip,
+-						SMK_CONNECTING);
++		{
++			struct smack_known *rsp = smack_ipv6host_label(sip);
++
++			if (rsp != NULL) {
++				struct socket_smack *ssp +					sock->sk->sk_security;
++
++				rc = smk_ipv6_check(ssp->smk_out, rsp, sip,
++						    SMK_CONNECTING);
++			}
++		}
+ #endif
+ #ifdef SMACK_IPV6_PORT_LABELING
+ 		rc = smk_ipv6_port_check(sock->sk, sip, SMK_CONNECTING);
+-- 
+2.10.2
 
-if ever anyone change the type to very_long_type in the future it would simply break
-but not hurt.
-
-re,
- wh
