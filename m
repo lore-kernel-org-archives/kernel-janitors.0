@@ -1,68 +1,69 @@
-From: Majd Dibbiny <majd@mellanox.com>
-Date: Sun, 19 Feb 2017 17:06:22 +0000
-Subject: Re: [PATCH 06/29] IB/mlx4: Delete three unnecessary return statements
-Message-Id: <85584EE0-57D5-4229-8FD1-0DBF6E296F7D@mellanox.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:04:38 +0000
+Subject: [PATCH 4/5] IB/hfi1: Use memdup_user() rather than duplicating its implementation in hfi1_user_sdma_
+Message-Id: <b19e44b3-601f-c642-b8d3-12c000511ce2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>,<7edfe4d6-156d-23c9-acef-a6606680a5eb@users.sourceforge.net>
-In-Reply-To: <7edfe4d6-156d-23c9-acef-a6606680a5eb@users.sourceforge.net>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:01:55 +0100
 
-> On Feb 18, 2017, at 10:54 PM, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 17 Feb 2017 21:34:27 +0100
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: void function return statements are not generally useful
-> 
-> Thus remove such a statement in the affected functions.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/infiniband/hw/mlx4/mad.c | 3 ---
-> 1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-> index d8c27e3ed69a..cf33efce69d2 100644
-> --- a/drivers/infiniband/hw/mlx4/mad.c
-> +++ b/drivers/infiniband/hw/mlx4/mad.c
-> @@ -1173,7 +1173,6 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
-> out:
->    kfree(in_mad);
->    kfree(out_mad);
-> -    return;
-> }
-> 
-> void handle_port_mgmt_change_event(struct work_struct *work)
-> @@ -2140,7 +2139,6 @@ void mlx4_ib_tunnels_update_work(struct work_struct *work)
->    mlx4_ib_tunnels_update(dmxw->dev, dmxw->slave, (int) dmxw->port,
->                   dmxw->do_init);
->    kfree(dmxw);
-> -    return;
-> }
-> 
-> static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
-> @@ -2268,7 +2266,6 @@ static void mlx4_ib_master_tunnels(struct mlx4_ib_dev *dev, int do_init)
->    /* initialize or tear down tunnel QPs for the master */
->    for (i = 0; i < dev->dev->caps.num_ports; i++)
->        mlx4_ib_tunnels_update(dev, mlx4_master_func_num(dev->dev), i + 1, do_init);
-> -    return;
-> }
-> 
-> int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
-> -- 
-> 2.11.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Thanks,
-Reviewed-by: Majd Dibbiny
-<majd@mellanox.com>
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/hfi1/user_sdma.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
+index 991e7f3d8e18..5a73d738f2ba 100644
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -731,23 +731,18 @@ int hfi1_user_sdma_process_request(struct file *fp, struct iovec *iovec,
+ 			ret = -EINVAL;
+ 			goto free_req;
+ 		}
+-		req->tids = kcalloc(ntids, sizeof(*req->tids), GFP_KERNEL);
+-		if (!req->tids) {
+-			ret = -ENOMEM;
+-			goto free_req;
+-		}
+ 		/*
+ 		 * We have to copy all of the tids because they may vary
+ 		 * in size and, therefore, the TID count might not be
+ 		 * equal to the pkt count. However, there is no way to
+ 		 * tell at this point.
+ 		 */
+-		ret = copy_from_user(req->tids, iovec[idx].iov_base,
+-				     ntids * sizeof(*req->tids));
+-		if (ret) {
++		req->tids = memdup_user(iovec[idx].iov_base,
++					sizeof(*req->tids) * ntids);
++		if (IS_ERR(req->tids)) {
++			ret = PTR_ERR(req->tids);
+ 			SDMA_DBG(req, "Failed to copy %d TIDs (%d)",
+ 				 ntids, ret);
+-			ret = -EFAULT;
+ 			goto free_req;
+ 		}
+ 		req->n_tids = ntids;
+@@ -1606,7 +1601,8 @@ static void user_sdma_free_request(struct user_sdma_request *req, bool unpin)
+ 				atomic_dec(&node->refcount);
+ 		}
+ 	}
+-	kfree(req->tids);
++	if (!IS_ERR(req->tids))
++		kfree(req->tids);
+ 	clear_bit(req->info.comp_idx, req->pq->req_in_use);
+ }
+ 
+-- 
+2.11.1
+
