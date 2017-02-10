@@ -1,100 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Feb 2017 12:11:51 +0000
-Subject: [PATCH] crypto: atmel-sha: use %zu for size_t print format specifier
-Message-Id: <20170207121151.19326-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:01:21 +0000
+Subject: [PATCH 1/5] IB/hfi1: Use kcalloc() in hfi1_user_exp_rcv_init()
+Message-Id: <89f8b926-e272-71f2-f15e-3c322251da7b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 9 Feb 2017 15:30:53 +0100
 
-The size_t types should be using %zu as a format specifier rather
-than %d and %u.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/atmel-sha.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-index 22d0c0c..b081e78 100644
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -568,7 +568,7 @@ static int atmel_sha_xmit_cpu(struct atmel_sha_dev *dd, const u8 *buf,
- 	int count, len32;
- 	const u32 *buffer = (const u32 *)buf;
+diff --git a/drivers/infiniband/hw/hfi1/user_exp_rcv.c b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+index 64d26525435a..8ae0d26a34c6 100644
+--- a/drivers/infiniband/hw/hfi1/user_exp_rcv.c
++++ b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+@@ -199,8 +199,9 @@ int hfi1_user_exp_rcv_init(struct file *fp)
  
--	dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length, final);
- 
- 	atmel_sha_write_ctrl(dd, 0);
-@@ -597,7 +597,7 @@ static int atmel_sha_xmit_pdc(struct atmel_sha_dev *dd, dma_addr_t dma_addr1,
- 	struct atmel_sha_reqctx *ctx = ahash_request_ctx(dd->req);
- 	int len32;
- 
--	dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length1, final);
- 
- 	len32 = DIV_ROUND_UP(length1, sizeof(u32));
-@@ -644,7 +644,7 @@ static int atmel_sha_xmit_dma(struct atmel_sha_dev *dd, dma_addr_t dma_addr1,
- 	struct dma_async_tx_descriptor	*in_desc;
- 	struct scatterlist sg[2];
- 
--	dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length1, final);
- 
- 	dd->dma_lch_in.dma_conf.src_maxburst = 16;
-@@ -723,7 +723,7 @@ static int atmel_sha_xmit_dma_map(struct atmel_sha_dev *dd,
- 	ctx->dma_addr = dma_map_single(dd->dev, ctx->buffer,
- 				ctx->buflen + ctx->block_size, DMA_TO_DEVICE);
- 	if (dma_mapping_error(dd->dev, ctx->dma_addr)) {
--		dev_err(dd->dev, "dma %u bytes error\n", ctx->buflen +
-+		dev_err(dd->dev, "dma %zu bytes error\n", ctx->buflen +
- 				ctx->block_size);
- 		atmel_sha_complete(dd, -EINVAL);
- 	}
-@@ -744,7 +744,7 @@ static int atmel_sha_update_dma_slow(struct atmel_sha_dev *dd)
- 
- 	final = (ctx->flags & SHA_FLAGS_FINUP) && !ctx->total;
- 
--	dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
-+	dev_dbg(dd->dev, "slow: bufcnt: %zu, digcnt: 0x%llx 0x%llx, final: %d\n",
- 		 ctx->bufcnt, ctx->digcnt[1], ctx->digcnt[0], final);
- 
- 	if (final)
-@@ -772,7 +772,7 @@ static int atmel_sha_update_dma_start(struct atmel_sha_dev *dd)
- 	if (ctx->bufcnt || ctx->offset)
- 		return atmel_sha_update_dma_slow(dd);
- 
--	dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
-+	dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %zu, total: %u\n",
- 		ctx->digcnt[1], ctx->digcnt[0], ctx->bufcnt, ctx->total);
- 
- 	sg = ctx->sg;
-@@ -814,7 +814,7 @@ static int atmel_sha_update_dma_start(struct atmel_sha_dev *dd)
- 		ctx->dma_addr = dma_map_single(dd->dev, ctx->buffer,
- 			ctx->buflen + ctx->block_size, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dd->dev, ctx->dma_addr)) {
--			dev_err(dd->dev, "dma %u bytes error\n",
-+			dev_err(dd->dev, "dma %zu bytes error\n",
- 				ctx->buflen + ctx->block_size);
- 			atmel_sha_complete(dd, -EINVAL);
- 		}
-@@ -994,7 +994,7 @@ static int atmel_sha_finish(struct ahash_request *req)
- 	if (ctx->digcnt[0] || ctx->digcnt[1])
- 		atmel_sha_copy_ready_hash(req);
- 
--	dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
-+	dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %zu\n", ctx->digcnt[1],
- 		ctx->digcnt[0], ctx->bufcnt);
- 
- 	return 0;
+ 	if (!HFI1_CAP_UGET_MASK(uctxt->flags, TID_UNMAP)) {
+ 		fd->invalid_tid_idx = 0;
+-		fd->invalid_tids = kzalloc(uctxt->expected_count *
+-					   sizeof(u32), GFP_KERNEL);
++		fd->invalid_tids = kcalloc(uctxt->expected_count,
++					   sizeof(*fd->invalid_tids),
++					   GFP_KERNEL);
+ 		if (!fd->invalid_tids) {
+ 			ret = -ENOMEM;
+ 			goto done;
 -- 
-2.10.2
+2.11.1
 
