@@ -1,65 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 09 Feb 2017 11:12:27 +0000
-Subject: Re: [PATCH 3/3] m68k: Add some spaces for better code readability in sys_cacheflush()
-Message-Id: <CAMuHMdVwcDbOQrhkk-vGQjzVNLmWQmqrSJTKJo_bCVEUAYHbsQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:05:40 +0000
+Subject: [PATCH 5/5] IB/hfi1: Improve another size determination in hfi1_user_sdma_process_request()
+Message-Id: <ee953516-99a1-133c-9c6b-45838698a235@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <558ff501-7440-a97f-4494-f48591644092@users.sourceforge.net> <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
-In-Reply-To: <bbebee4e-b726-348e-66f9-dc4657c4f8df@users.sourceforge.net>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:45:38 +0100
 
-On Wed, Jan 18, 2017 at 5:50 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Jan 2017 17:34:29 +0100
->
-> * Use space characters at some source code places according to
->   the Linux coding style convention.
->
-> * Adjust indentation a bit.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/m68k/kernel/sys_m68k.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
-> index 9870d00d2215..5b351f7a6c11 100644
-> --- a/arch/m68k/kernel/sys_m68k.c
-> +++ b/arch/m68k/kernel/sys_m68k.c
-> @@ -436,11 +436,10 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
->              * 040 or 060: don't blindly trust 'scope', someone could
->              * try to flush a few megs of memory.
->              */
-> -
-> -           if (len>=3*PAGE_SIZE && scope<FLUSH_SCOPE_PAGE)
-> -               scope=FLUSH_SCOPE_PAGE;
-> -           if (len>*PAGE_SIZE && scope<FLUSH_SCOPE_ALL)
-> -               scope=FLUSH_SCOPE_ALL;
-> +               if (len >= 3 * PAGE_SIZE && scope < FLUSH_SCOPE_PAGE)
-> +                       scope = FLUSH_SCOPE_PAGE;
-> +               if (len >= 10 * PAGE_SIZE && scope < FLUSH_SCOPE_ALL)
-> +                       scope = FLUSH_SCOPE_ALL;
->             if (CPU_IS_040) {
->                 ret = cache_flush_040 (addr, scope, cache, len);
->             } else if (CPU_IS_060) {
+Replace the specification of a data structure by a reference to
+the desired member as the parameter for the operator "sizeof" to make
+the corresponding size determination a bit safer according to
+the Linux coding style convention.
 
-What prevented you from correcting the indentation of the comments before,
-and the statements after?
-Now the lines in the else branch are no longer aligned at all!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/hfi1/user_sdma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
+index 5a73d738f2ba..da131a530b88 100644
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -704,7 +704,9 @@ int hfi1_user_sdma_process_request(struct file *fp, struct iovec *iovec,
+ 	/* Save all the IO vector structures */
+ 	for (i = 0; i < req->data_iovs; i++) {
+ 		INIT_LIST_HEAD(&req->iovs[i].list);
+-		memcpy(&req->iovs[i].iov, iovec + idx++, sizeof(struct iovec));
++		memcpy(&req->iovs[i].iov,
++		       iovec + idx++,
++		       sizeof(req->iovs[i].iov));
+ 		ret = pin_vector_pages(req, &req->iovs[i]);
+ 		if (ret) {
+ 			req->status = ret;
+-- 
+2.11.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
