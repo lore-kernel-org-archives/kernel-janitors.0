@@ -1,49 +1,43 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 09 Feb 2017 02:07:41 +0000
-Subject: Re: [PATCH] drm/amdgpu/virt: fix double kfree on bo_va
-Message-Id: <CADnq5_MWcg7qXiFj5=MUqZhAJLH++he3JViNoeLP8fSbcUv8Gw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 10 Feb 2017 21:18:14 +0000
+Subject: [PATCH] ovl: Avoid some memory allocation
+Message-Id: <20170210211814.18257-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170203202342.13128-1-colin.king@canonical.com>
-In-Reply-To: <20170203202342.13128-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Xiangliang Yu <Xiangliang.Yu@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Monk Liu <Monk.Liu@amd.com>
+To: miklos@szeredi.hu
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Feb 3, 2017 at 3:23 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> bo_va is being kfree'd twice, once in the call to amdgpu_vm_bo_rmv
-> and then a short while later. Fix this double free by removing
-> the 2nd kfree.
->
-> Detected by CoverityScan, CID#1399524 ("Double Free")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reorder code to avoid allocating and then freeing some memory in an error
+handling path.
 
-Applied.  thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/overlayfs/namei.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> index 3fd951c..dcfb7df 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-> @@ -83,7 +83,6 @@ int amdgpu_map_static_csa(struct amdgpu_device *adev, struct amdgpu_vm *vm)
->                 DRM_ERROR("failed to do bo_map on static CSA, err=%d\n", r);
->                 amdgpu_vm_bo_rmv(adev, bo_va);
->                 ttm_eu_backoff_reservation(&ticket, &list);
-> -               kfree(bo_va);
->                 return r;
->         }
->
-> --
-> 2.10.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 023bb0b03352..ba80ebb8a104 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -35,13 +35,13 @@ static int ovl_check_redirect(struct dentry *dentry, struct ovl_lookup_data *d,
+ 			return 0;
+ 		goto fail;
+ 	}
++	if (res = 0)
++		goto invalid;
++
+ 	buf = kzalloc(prelen + res + strlen(post) + 1, GFP_TEMPORARY);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	if (res = 0)
+-		goto invalid;
+-
+ 	res = vfs_getxattr(dentry, OVL_XATTR_REDIRECT, buf, res);
+ 	if (res < 0)
+ 		goto fail;
+-- 
+2.9.3
+
