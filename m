@@ -1,25 +1,46 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Tue, 21 Feb 2017 21:20:25 +0000
-Subject: Re: [PATCH] nvmet-rdma: Fix error handling
-Message-Id: <bea43248-6c09-2a2e-56cc-59c707c2226b@grimberg.me>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 10 Feb 2017 20:17:19 +0000
+Subject: [PATCH 2/2] net: fs_enet: Simplify code
+Message-Id: <20170210201719.16636-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219190438.19371-1-christophe.jaillet@wanadoo.fr>
- <20170219194657.GA6591@lst.de>
-In-Reply-To: <20170219194657.GA6591@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: pantelis.antoniou@gmail.com, vbordug@ru.mvista.com
+Cc: linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+There is no need to use an intermediate variable to handle an error code
+in this case.
 
-> On Sun, Feb 19, 2017 at 08:04:38PM +0100, Christophe JAILLET wrote:
->> According to the surrounding goto, it is likely that 'out_destroy_sq' was
->> expected here.
->
-> s/surrounding/preceeding/ ?
->
-> But the patch itself looks good, thanks.
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I think that the remaining use of 'err' a few lines above could also be
+dropped. However, it could change the return value (i.e. propagation of the
+error returned by 'of_phy_register_fixed_link' instead of -ENODEV) and I'm
+unsure it would be correct. So I leave it as-is.
+---
+ drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Picked it up and reworded, thanks.
+diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+index 5c6426756d11..753259091b22 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+@@ -964,11 +964,10 @@ static int fs_enet_probe(struct platform_device *ofdev)
+ 	 */
+ 	clk = devm_clk_get(&ofdev->dev, "per");
+ 	if (!IS_ERR(clk)) {
+-		err = clk_prepare_enable(clk);
+-		if (err) {
+-			ret = err;
++		ret = clk_prepare_enable(clk);
++		if (ret)
+ 			goto out_deregister_fixed_link;
+-		}
++
+ 		fpi->clk_per = clk;
+ 	}
+ 
+-- 
+2.9.3
+
