@@ -1,42 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Feb 2017 12:05:48 +0000
-Subject: [PATCH] staging: wilc1000: remove redundant result < 0 check
-Message-Id: <20170228120548.20734-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:00:09 +0000
+Subject: [PATCH 0/5] IB/hfi1: Fine-tuning for three function implementations
+Message-Id: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Feb 2017 21:53:21 +0100
 
-The check for result < 0 is redundant because at that point result
-is always zero, hence we can remove this check and the netdev_err
-message.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1357147 ("Logically Dead Code")
+Markus Elfring (5):
+  Use kcalloc() in hfi1_user_exp_rcv_init()
+  Use kcalloc() in hfi1_user_sdma_alloc_queues()
+  Adjust another size determination in hfi1_user_sdma_alloc_queues()
+  Use memdup_user() rather than duplicating its implementation in hfi1_user_sdma_process_request()
+  Improve another size determination in hfi1_user_sdma_process_request()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/host_interface.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c |  5 +++--
+ drivers/infiniband/hw/hfi1/user_sdma.c    | 35 +++++++++++++++----------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index e83fa21..f848bb8 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -3350,10 +3350,6 @@ int wilc_init(struct net_device *dev, struct host_if_drv **hif_drv_handler)
- 	init_completion(&hif_drv->comp_inactive_time);
- 
- 	if (clients_count = 0)	{
--		if (result < 0) {
--			netdev_err(vif->ndev, "Failed to creat MQ\n");
--			goto _fail_;
--		}
- 		hif_workqueue = create_singlethread_workqueue("WILC_wq");
- 		if (!hif_workqueue) {
- 			netdev_err(vif->ndev, "Failed to create workqueue\n");
 -- 
-2.10.2
+2.11.1
 
