@@ -1,53 +1,38 @@
-From: Majd Dibbiny <majd@mellanox.com>
-Date: Sun, 19 Feb 2017 17:36:47 +0000
-Subject: Re: [PATCH 15/29] IB/mlx4: Delete an unnecessary return statement in do_slave_init()
-Message-Id: <3AE7A897-1158-44EB-8B64-F5B762BF9505@mellanox.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 13 Feb 2017 11:12:51 +0000
+Subject: Re: IB/hfi1: Use memdup_user() rather than duplicating its implementation in hfi1_user_sdma_process_
+Message-Id: <4094dc04-bb2c-a74e-8d4d-8879ac4e7761@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <50e213dd-b3b0-5028-a463-b9fbdf6e25cf@users.sourceforge.net>
-In-Reply-To: <50e213dd-b3b0-5028-a463-b9fbdf6e25cf@users.sourceforge.net>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+ <b19e44b3-601f-c642-b8d3-12c000511ce2@users.sourceforge.net>
+ <477c8499-93ad-253d-aa2b-8f209ecfad62@intel.com>
+ <20170213105350.GA4108@mwanda>
+In-Reply-To: <20170213105350.GA4108@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+>> Thanks for the patch, but this one is already taken care of along
+>> with other similar uses of kmalloc/copy:
+>>
+>> http://marc.info/?l=3Dlinux-rdma&m=148656088729538&w=3D2
+>>
+>=20
+> Michael's patch doesn't change user_sdma_free_request() so it introduces
+> a kfreeing an error pointer bug.
 
-> On Feb 18, 2017, at 11:04 PM, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 18 Feb 2017 15:16:54 +0100
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: void function return statements are not generally useful
-> 
-> Thus remove such a statement here.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/infiniband/hw/mlx4/main.c | 1 -
-> 1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-> index 89bbb61d62f5..b2b472977a39 100644
-> --- a/drivers/infiniband/hw/mlx4/main.c
-> +++ b/drivers/infiniband/hw/mlx4/main.c
-> @@ -3131,7 +3131,6 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
->    }
-> out:
->    kfree(dm);
-> -    return;
-> }
-> 
-> static void mlx4_ib_handle_catas_error(struct mlx4_ib_dev *ibdev)
-> -- 
-> 2.11.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Thanks,
-Reviewed-by: Majd Dibbiny
-<majd@mellanox.com>
+Did you notice that another local variable =93tmp=94 was introduced in the =
+update step
+=93[PATCH 27/27] IB/hfi1: Code reuse with memdup_copy=94 so that
+the mentioned function will usually get a null pointer after a failure ther=
+e?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
