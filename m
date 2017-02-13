@@ -1,74 +1,71 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 19 Feb 2017 16:35:02 +0000
-Subject: Applied "spi: spi-ti-qspi: Fix error handling" to the spi tree
-Message-Id: <E1cfURy-0004ra-Q2@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 13 Feb 2017 10:37:19 +0000
+Subject: Re: IB/hfi1: Adjust another size determination in hfi1_user_sdma_alloc_queues()
+Message-Id: <8ec653df-9d73-3c94-9559-7a732417e578@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+ <0fdf4d81-58d7-c6fc-b37f-41d47675dd83@users.sourceforge.net>
+ <fc714096-8534-2231-17fd-8e3ca3f7a87b@suse.de>
+ <4dca91c1-488d-120d-bd25-74f400242bd2@users.sourceforge.net>
+ <9ce8c7b1-1ae5-fe15-2740-b4f7653555c4@suse.de>
+In-Reply-To: <9ce8c7b1-1ae5-fe15-2740-b4f7653555c4-l3A5Bk7waGM@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The patch
+>> How often does it really make sense to keep such a product in this local variable?
+> 
+> It depends. Lets take it the other way round. If I this in a review I'd
+> suggest the submitter to create a local variable for the multiplication
+> to get rid of the line break. It's avoidable.
 
-   spi: spi-ti-qspi: Fix error handling
+I imagine that there are further possibilities to improve the involved
+programming for various arrays.
 
-has been applied to the spi tree at
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> And again, the compiler will optimize it away.
+> 
+> Apart from the fact that you haven't tested your patch at all:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This is true in principle as I could compile the source code adjustment at least.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> jthumshirn@linux-x5ow:linux (test)$ git am ~/\[PATCH\ 3_5\]\ IB_hfi1\:\
+> Adjust\ another\ size\ determination\ in\
+> hfi1_user_sdma_alloc_queues\(\).eml
+> Applying: IB/hfi1: Adjust another size determination in
+> hfi1_user_sdma_alloc_queues()
+> jthumshirn@linux-x5ow:linux (test)$ make
+> drivers/infiniband/hw/hfi1/user_sdma.o  CHK
+> include/config/kernel.release
+>   CHK     include/generated/uapi/linux/version.h
+>   CHK     include/generated/utsrelease.h
+>   CHK     include/generated/bounds.h
+>   CHK     include/generated/timeconst.h
+>   CHK     include/generated/asm-offsets.h
+>   CALL    scripts/checksyscalls.sh
+>   CC      drivers/infiniband/hw/hfi1/user_sdma.o
+> drivers/infiniband/hw/hfi1/user_sdma.c: In function
+> ‘hfi1_user_sdma_alloc_queues’:
+> drivers/infiniband/hw/hfi1/user_sdma.c:402:2: error: ‘memsize’
+> undeclared (first use in this function)
+>   memsize = sizeof(*pq->reqs) * hfi1_sdma_comp_ring_size;
+>   ^
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+How do you think about to apply also the previous update step like “[PATCH 2/5] IB/hfi1:
+Use kcalloc() in hfi1_user_sdma_alloc_queues()”?
 
-Thanks,
-Mark
 
-From 30fb27239f987c53429f24297f5d46e28d0e16ed Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Feb 2017 10:42:02 +0100
-Subject: [PATCH] spi: spi-ti-qspi: Fix error handling
+> So to sum up: there is no evident improvement in the resulting binary
 
-'dma_request_chan_by_mask()' can not return NULL.
-Try to keep the logic in 'no_dma:' by resetting 'qspi->rx_chan' in case
-of error.
+There might not be a remarkable difference with the default software build parameters.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-ti-qspi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index ec6fb09e2e17..0fefa6423ff4 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -714,9 +714,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
- 	dma_cap_set(DMA_MEMCPY, mask);
- 
- 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
--	if (!qspi->rx_chan) {
-+	if (IS_ERR(qspi->rx_chan)) {
- 		dev_err(qspi->dev,
- 			"No Rx DMA available, trying mmap mode\n");
-+		qspi->rx_chan = NULL;
- 		ret = 0;
- 		goto no_dma;
- 	}
--- 
-2.11.0
+> and you introduce a stylistic glitch (the new line break in a function call).
 
+There are different opinions about this implementation detail, aren't there?
+
+Regards,
+Markus
