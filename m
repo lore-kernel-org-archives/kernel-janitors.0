@@ -1,38 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Feb 2017 13:55:13 +0000
-Subject: [PATCH] scsi: aacraid: fix information leak on hbainfo.driver_name
-Message-Id: <20170207135513.21392-1-colin.king@canonical.com>
+From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Date: Mon, 13 Feb 2017 20:18:49 +0000
+Subject: RE: [PATCH] scsi: aacraid: fix information leak on hbainfo.driver_name
+Message-Id: <4D8E82A446BF54499747901DBDEB737A7B8BD4F7@avsrvexchmbx2.microsemi.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170207135513.21392-1-colin.king@canonical.com>
+In-Reply-To: <20170207135513.21392-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The driver_name field is not initialized and hence information
-on the stack is being leaked to userspace on the copy_to_user.
-Fix this.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/aacraid/commctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 614842a..eb48d0a 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -1015,7 +1015,7 @@ static int aac_get_pci_info(struct aac_dev* dev, void __user *arg)
- 
- static int aac_get_hba_info(struct aac_dev *dev, void __user *arg)
- {
--	struct aac_hba_info hbainfo;
-+	struct aac_hba_info hbainfo = { 0 };
- 
- 	hbainfo.adapter_number		= (u8) dev->id;
- 	hbainfo.system_io_bus_number	= dev->pdev->bus->number;
--- 
-2.10.2
-
+SGVsbG8gQ29saW4sDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBD
+b2xpbiBLaW5nIFttYWlsdG86Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUdWVz
+ZGF5LCBGZWJydWFyeSA3LCAyMDE3IDU6NTUgQU0NCj4gVG86IGRsLWVzYy1BYWNyYWlkIExpbnV4
+IERyaXZlciA8YWFjcmFpZEBtaWNyb3NlbWkuY29tPjsgSmFtZXMgRSAuIEogLg0KPiBCb3R0b21s
+ZXkgPGplamJAbGludXgudm5ldC5pYm0uY29tPjsgTWFydGluIEsgLiBQZXRlcnNlbg0KPiA8bWFy
+dGluLnBldGVyc2VuQG9yYWNsZS5jb20+OyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZw0KPiBD
+Yzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIHNjc2k6IGFhY3JhaWQ6IGZpeCBpbmZvcm1hdGlv
+biBsZWFrIG9uIGhiYWluZm8uZHJpdmVyX25hbWUNCj4gDQo+IEVYVEVSTkFMIEVNQUlMDQo+IA0K
+PiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4g
+DQo+IFRoZSBkcml2ZXJfbmFtZSBmaWVsZCBpcyBub3QgaW5pdGlhbGl6ZWQgYW5kIGhlbmNlIGlu
+Zm9ybWF0aW9uDQo+IG9uIHRoZSBzdGFjayBpcyBiZWluZyBsZWFrZWQgdG8gdXNlcnNwYWNlIG9u
+IHRoZSBjb3B5X3RvX3VzZXIuDQo+IEZpeCB0aGlzLg0KDQpJIGFtIGN1cmlvdXMsIGRvIHlvdSBt
+ZWFuIHRoYXQgdGhlIHVzZXIgd2lsbCBiZSBhYmxlIHRvIHJldHJpZXZlIGdhcmJhZ2Ugc3RhY2sg
+IHZhbHVlcyBmcm9tIHRoZSB2YXJpYWJsZXMgdGhhdCB3ZXJlIG5vdCBzZXQgKGRyaXZlcl9uYW1l
+IGV0Yyk/IC4NCiBJZiBzbyBob3cgaXMgaXQgYSBzZWN1cml0eSB0aHJlYXQ/DQoNClJlZ2FyZHMs
+DQpSYWdoYXZhIEFkaXR5YQ0KDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xp
+bi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9zY3NpL2FhY3JhaWQvY29t
+bWN0cmwuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
+dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS9hYWNyYWlkL2NvbW1jdHJs
+LmMgYi9kcml2ZXJzL3Njc2kvYWFjcmFpZC9jb21tY3RybC5jDQo+IGluZGV4IDYxNDg0MmEuLmVi
+NDhkMGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc2NzaS9hYWNyYWlkL2NvbW1jdHJsLmMNCj4g
+KysrIGIvZHJpdmVycy9zY3NpL2FhY3JhaWQvY29tbWN0cmwuYw0KPiBAQCAtMTAxNSw3ICsxMDE1
+LDcgQEAgc3RhdGljIGludCBhYWNfZ2V0X3BjaV9pbmZvKHN0cnVjdCBhYWNfZGV2KiBkZXYsDQo+
+IHZvaWQgX191c2VyICphcmcpDQo+IA0KPiAgc3RhdGljIGludCBhYWNfZ2V0X2hiYV9pbmZvKHN0
+cnVjdCBhYWNfZGV2ICpkZXYsIHZvaWQgX191c2VyICphcmcpDQo+ICB7DQo+IC0gICAgICAgc3Ry
+dWN0IGFhY19oYmFfaW5mbyBoYmFpbmZvOw0KPiArICAgICAgIHN0cnVjdCBhYWNfaGJhX2luZm8g
+aGJhaW5mbyA9IHsgMCB9Ow0KPiANCj4gICAgICAgICBoYmFpbmZvLmFkYXB0ZXJfbnVtYmVyICAg
+ICAgICAgID0gKHU4KSBkZXYtPmlkOw0KPiAgICAgICAgIGhiYWluZm8uc3lzdGVtX2lvX2J1c19u
+dW1iZXIgICAgPSBkZXYtPnBkZXYtPmJ1cy0+bnVtYmVyOw0KPiAtLQ0KPiAyLjEwLjINCg0K
