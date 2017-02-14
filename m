@@ -1,39 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Feb 2017 09:42:02 +0000
-Subject: [PATCH] spi: spi-ti-qspi: Fix error handling
-Message-Id: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Feb 2017 23:10:44 +0000
+Subject: [patch] Staging: bcm2835-audio: && vs & typo
+Message-Id: <20170214231044.GA9160@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: broonie@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-'dma_request_chan_by_mask()' can not return NULL.
-Try to keep the logic in 'no_dma:' by resetting 'qspi->rx_chan' in case
-of error.
+We intended to mask away the upper bits but there is a "&&" vs "&" typo
+so it's broken.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/spi/spi-ti-qspi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Fixes: 23b028c871e1 ("staging: bcm2835-audio: initial staging submission")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index ec6fb09e2e17..0fefa6423ff4 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -714,9 +714,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
- 	dma_cap_set(DMA_MEMCPY, mask);
+diff --git a/drivers/staging/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/bcm2835-audio/bcm2835-ctl.c
+index bfb7e9f74176..a4ffa1bf53e5 100644
+--- a/drivers/staging/bcm2835-audio/bcm2835-ctl.c
++++ b/drivers/staging/bcm2835-audio/bcm2835-ctl.c
+@@ -209,7 +209,7 @@ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
  
- 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
--	if (!qspi->rx_chan) {
-+	if (IS_ERR(qspi->rx_chan)) {
- 		dev_err(qspi->dev,
- 			"No Rx DMA available, trying mmap mode\n");
-+		qspi->rx_chan = NULL;
- 		ret = 0;
- 		goto no_dma;
- 	}
--- 
-2.9.3
-
+ 	for (i = 0; i < 4; i++)
+ 		ucontrol->value.iec958.status[i] -		(chip->spdif_status >> (i * 8)) && 0xff;
++			(chip->spdif_status >> (i * 8)) & 0xff;
+ 
+ 	mutex_unlock(&chip->audio_mutex);
+ 	return 0;
