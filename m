@@ -1,28 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Feb 2017 02:34:43 +0000
-Subject: Re: [bug report] rhashtable: Add nested tables
-Message-Id: <20170226.213443.335375063360642764.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Feb 2017 07:46:20 +0000
+Subject: [patch] drm/exynos/decon5433: & vs | typo
+Message-Id: <20170214074620.GA9710@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170216121703.GA26276@mwanda>
-        <20170225143811.GA28272@gondor.apana.org.au>
-In-Reply-To: <20170225143811.GA28272@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au
-Cc: dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, tgraf@suug.ch
+To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sat, 25 Feb 2017 22:38:11 +0800
+"&" was obviously intended instead of "|".  The original condition is
+always true.
 
-> Subject: rhashtable: Fix use before NULL check in bucket_table_free
-> 
-> Dan Carpenter reported a use before NULL check bug in the function
-> bucket_table_free.  In fact we don't need the NULL check at all as
-> no caller can provide a NULL argument.  So this patch fixes this by
-> simply removing it.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: b93c2e8b5d9d ("drm/exynos/decon5433: configure sysreg in case of hardware trigger")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also applied, thanks Herbert.
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 0fd6f7a18364..cca32a4fdab3 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -678,7 +678,7 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 		ctx->out_type |= IFTYPE_I80;
+ 	}
+ 
+-	if (ctx->out_type | I80_HW_TRG) {
++	if (ctx->out_type & I80_HW_TRG) {
+ 		ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 							"samsung,disp-sysreg");
+ 		if (IS_ERR(ctx->sysreg)) {
