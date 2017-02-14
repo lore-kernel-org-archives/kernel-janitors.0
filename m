@@ -1,74 +1,42 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 10:37:59 +0000
-Subject: Re: [PATCH] ALSA: emu10k1: Remove cast from memory allocation
-Message-Id: <20170222103759.GC30091@eros>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Feb 2017 23:02:06 +0000
+Subject: [patch] gpio: mockup: return -EFAULT if copy_from_user() fails
+Message-Id: <20170214230206.GA4048@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487746036-18181-1-git-send-email-me@tobin.cc>
- <s5h7f4ioglu.wl-tiwai@suse.de>
-In-Reply-To: <s5h7f4ioglu.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 22, 2017 at 07:59:57AM +0100, Takashi Iwai wrote:
-> On Wed, 22 Feb 2017 07:47:16 +0100,
-> Tobin C. Harding wrote:
-> > 
-> > Coccinelle emits multiple WARNING: casting value returned by memory allocation
-> > function to (u_int32_t __user *) is useless.
-> > 
-> > Remove unnecessary cast.
-> > 
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> 
-> __user annotation requires the explicit cast.
+copy_from_user() returns the number of bytes remaining to be copied but
+we want to return negative error codes on failue.
 
-Ok, thanks for reviewing.
+Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Tobin.
-
-> 
-> 
-> Takashi
-> 
-> 
-> > ---
-> >  sound/pci/emu10k1/emufx.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-> > index 56fc47b..8a39a6f 100644
-> > --- a/sound/pci/emu10k1/emufx.c
-> > +++ b/sound/pci/emu10k1/emufx.c
-> > @@ -1186,8 +1186,8 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
-> >  	if (!icode)
-> >  		return err;
-> >  
-> > -	icode->gpr_map = (u_int32_t __user *) kcalloc(512 + 256 + 256 + 2 * 1024,
-> > -						      sizeof(u_int32_t), GFP_KERNEL);
-> > +	icode->gpr_map = kcalloc(512 + 256 + 256 + 2 * 1024,
-> > +				sizeof(u_int32_t), GFP_KERNEL);
-> >  	if (!icode->gpr_map)
-> >  		goto __err_gpr;
-> >  	controls = kcalloc(SND_EMU10K1_GPR_CONTROLS,
-> > @@ -1824,8 +1824,8 @@ static int _snd_emu10k1_init_efx(struct snd_emu10k1 *emu)
-> >  	if (!icode)
-> >  		return err;
-> >  
-> > -	icode->gpr_map = (u_int32_t __user *) kcalloc(256 + 160 + 160 + 2 * 512,
-> > -						      sizeof(u_int32_t), GFP_KERNEL);
-> > +	icode->gpr_map = kcalloc(256 + 160 + 160 + 2 * 512,
-> > +				sizeof(u_int32_t), GFP_KERNEL);
-> >  	if (!icode->gpr_map)
-> >  		goto __err_gpr;
-> >  
-> > -- 
-> > 2.7.4
-> > 
-> > 
-
--- 
-Tobin Harding
-http://tobin.cc
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 06dac72cb69c..d99338689213 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -197,7 +197,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	struct seq_file *sfile;
+ 	struct gpio_desc *desc;
+ 	struct gpio_chip *gc;
+-	int status, val;
++	int val;
+ 	char buf;
+ 
+ 	sfile = file->private_data;
+@@ -206,9 +206,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	chip = priv->chip;
+ 	gc = &chip->gc;
+ 
+-	status = copy_from_user(&buf, usr_buf, 1);
+-	if (status)
+-		return status;
++	if (copy_from_user(&buf, usr_buf, 1))
++		return -EFAULT;
+ 
+ 	if (buf = '0')
+ 		val = 0;
