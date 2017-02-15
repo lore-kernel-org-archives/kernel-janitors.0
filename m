@@ -1,7 +1,7 @@
 From: Sumit Saxena <sumit.saxena@broadcom.com>
-Date: Wed, 15 Feb 2017 06:18:48 +0000
+Date: Wed, 15 Feb 2017 14:29:04 +0000
 Subject: RE: [patch] scsi: megaraid_sas: array overflow in megasas_dump_frame()
-Message-Id: <87590a598a0de2094b2a169fe6d9e818@mail.gmail.com>
+Message-Id: <88e4e1cf9306d5f0db1b7e24e4c4a6f7@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170214163855.GA1687@mwanda>
 In-Reply-To: <20170214163855.GA1687@mwanda>
@@ -44,5 +44,6 @@ context")
 > 			printk("\n\t");
 > 		printk("%08x ", le32_to_cpu(mfp[i]));
 
-Thanks for fixing this.
-Acked-by: Sumit Saxena<sumit.saxena@broadcom.com>
+Patch looks good. In last reply, Acked-by tag was not in proper format.
+Fixing it now. Sorry for inconvenience.
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
