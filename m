@@ -1,26 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 27 Feb 2017 10:37:40 +0000
-Subject: Re: [PATCH] crypto: cavium: fix leak on curr if curr->head fails to be allocated
-Message-Id: <20170227103740.GB31739@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Feb 2017 10:50:42 +0000
+Subject: [patch] drm/msm/dsi: free first element on error
+Message-Id: <20170216105042.GA25544@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170217155743.31525-1-colin.king@canonical.com>
-In-Reply-To: <20170217155743.31525-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: George Cherian <george.cherian@cavium.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Hai Li <hali-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
-On Fri, Feb 17, 2017 at 03:57:43PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The exit path when curr->head cannot be allocated fails to kfree the
-> earlier allocated curr.  Fix this by kfree'ing it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We want to free msm_host->bus_clks[0] so the > should be >=.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: 6e0eb52eba9e ("drm/msm/dsi: Parse bus clocks from a list")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 1fc07ce24686..239e79b39a45 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -437,7 +437,7 @@ static int dsi_bus_clk_enable(struct msm_dsi_host *msm_host)
+ 
+ 	return 0;
+ err:
+-	for (; i > 0; i--)
++	for (; i >= 0; i--)
+ 		clk_disable_unprepare(msm_host->bus_clks[i]);
+ 
+ 	return ret;
