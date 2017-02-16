@@ -1,60 +1,51 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Wed, 15 Feb 2017 22:41:40 +0000
-Subject: [PATCH 3.16 259/306] x86/apic/uv: Silence a shift wrapping warning
-Message-Id: <lsq.1487198500.252306363@decadent.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Feb 2017 09:02:58 +0000
+Subject: [PATCH 1/2] IB/hns: Use kmalloc_array() in hns_roce_cmd_use_events()
+Message-Id: <362af670-98b7-42f6-1e8d-6ec4818c5943@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1487198498.99718322@decadent.org.uk>
+References: <4863af1d-ca80-1818-213e-7eadda35e8a1@users.sourceforge.net>
+In-Reply-To: <4863af1d-ca80-1818-213e-7eadda35e8a1-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, Alex Thorlton <athorlton@sgi.com>, Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dimitri Sivanich <sivanich@sgi.com>, Dan Carpenter <dan.carpenter@oracle.com>, Mike Travis <travis@sgi.com>, Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Nathan Zimmer <nzimmer@sgi.com>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-3.16.40-rc1 review patch.  If anyone has any objections, please let me know.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Feb 2017 08:50:11 +0100
 
-------------------
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+  This issue was detected by using the Coccinelle software.
 
-commit c4597fd756836a5fb7900f2091797ab564390ad0 upstream.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-'m_io' is stored in 6 bits so it's a number in the 0-63 range.  Static
-analysis tools complain that 1 << 63 will wrap so I have changed it to
-1ULL << m_io.
-
-This code is over three years old so presumably the bug doesn't happen
-very frequently in real life or someone would have complained by now.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Thorlton <athorlton@sgi.com>
-Cc: Dimitri Sivanich <sivanich@sgi.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Travis <travis@sgi.com>
-Cc: Nathan Zimmer <nzimmer@sgi.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: b15cc4a12bed ("x86, uv, uv3: Update x2apic Support for SGI UV3")
-Link: http://lkml.kernel.org/r/20161123221908.GA23997@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/apic/x2apic_uv_x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_cmd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -633,9 +633,9 @@ static __init void map_mmioh_high_uv3(in
- 				l = li;
- 			}
- 			addr1 = (base << shift) +
--				f * (unsigned long)(1 << m_io);
-+				f * (1ULL << m_io);
- 			addr2 = (base << shift) +
--				(l + 1) * (unsigned long)(1 << m_io);
-+				(l + 1) * (1ULL << m_io);
- 			pr_info("UV: %s[%03d..%03d] NASID 0x%04x ADDR 0x%016lx - 0x%016lx\n",
- 				id, fi, li, lnasid, addr1, addr2);
- 			if (max_io < l)
+diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+index 8c1f7a6f84d2..b94dcd823ad1 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
++++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+@@ -299,9 +299,9 @@ int hns_roce_cmd_use_events(struct hns_roce_dev *hr_dev)
+ 	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
+ 	int i;
+ 
+-	hr_cmd->context = kmalloc(hr_cmd->max_cmds *
+-				  sizeof(struct hns_roce_cmd_context),
+-				  GFP_KERNEL);
++	hr_cmd->context = kmalloc_array(hr_cmd->max_cmds,
++					sizeof(*hr_cmd->context),
++					GFP_KERNEL);
+ 	if (!hr_cmd->context)
+ 		return -ENOMEM;
+ 
+-- 
+2.11.1
 
