@@ -1,26 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Feb 2017 13:52:53 +0000
-Subject: Re: [patch] gpio: mockup: return -EFAULT if copy_from_user() fails
-Message-Id: <CACRpkdYtcY2Jp2_Uc-wooKA5U7H4mz4foX+vMCVsUXYUdfx_Dg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Feb 2017 09:56:10 +0000
+Subject: [patch] dpaa_eth: small leak on error
+Message-Id: <20170216095610.GA23242@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170214230206.GA4048@mwanda>
-In-Reply-To: <20170214230206.GA4048@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 15, 2017 at 12:02 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+This should be >= instead of > here.  It means that we don't increment
+the free count enough so it becomes off by one.
 
-> copy_from_user() returns the number of bytes remaining to be copied but
-> we want to return negative error codes on failue.
->
-> Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Applies to -net tree.
 
-Patch applied for fixes.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index 25a14a3fe784..bc5a3347fd4a 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1666,7 +1666,7 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
+ 
+ free_buffers:
+ 	/* compensate sw bpool counter changes */
+-	for (i--; i > 0; i--) {
++	for (i--; i >= 0; i--) {
+ 		dpaa_bp = dpaa_bpid2pool(sgt[i].bpid);
+ 		if (dpaa_bp) {
+ 			count_ptr = this_cpu_ptr(dpaa_bp->percpu_count);
