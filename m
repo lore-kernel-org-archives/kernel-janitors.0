@@ -1,55 +1,60 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 16 Feb 2017 12:03:56 +0000
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 16 Feb 2017 12:15:50 +0000
 Subject: Re: [patch] drm/msm/dsi: free first element on error
-Message-Id: <58A5952C.105@bfs.de>
+Message-Id: <CAF6AEGtx=6MuypO=pgRCMkocHPuY4ZGOdF1CGhBO0d1bjD6eEg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170216105042.GA25544@mwanda> <87a89mnznw.fsf@intel.com> <20170216115307.GD4108@mwanda>
-In-Reply-To: <20170216115307.GD4108@mwanda>
+References: <20170216105042.GA25544@mwanda> <87a89mnznw.fsf@intel.com>
+ <20170216115307.GD4108@mwanda> <58A5952C.105@bfs.de>
+In-Reply-To: <58A5952C.105@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rob Clark <robdclark@gmail.com>, Archit Taneja <architt@codeaurora.org>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, freedreno@lists.freedesktop.org
+To: walter harms <wharms@bfs.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jani Nikula <jani.nikula@linux.intel.com>, Archit Taneja <architt@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, kernel-janitors@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, freedreno@lists.freedesktop.org
 
-
-
-Am 16.02.2017 12:53, schrieb Dan Carpenter:
-> On Thu, Feb 16, 2017 at 01:27:47PM +0200, Jani Nikula wrote:
->> On Thu, 16 Feb 2017, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>> We want to free msm_host->bus_clks[0] so the > should be >=.
+On Thu, Feb 16, 2017 at 7:03 AM, walter harms <wharms@bfs.de> wrote:
+>
+>
+> Am 16.02.2017 12:53, schrieb Dan Carpenter:
+>> On Thu, Feb 16, 2017 at 01:27:47PM +0200, Jani Nikula wrote:
+>>> On Thu, 16 Feb 2017, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>>>> We want to free msm_host->bus_clks[0] so the > should be >=.
+>>>>
+>>>> Fixes: 6e0eb52eba9e ("drm/msm/dsi: Parse bus clocks from a list")
+>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>>
+>>>> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+>>>> index 1fc07ce24686..239e79b39a45 100644
+>>>> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+>>>> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+>>>> @@ -437,7 +437,7 @@ static int dsi_bus_clk_enable(struct msm_dsi_host *msm_host)
+>>>>
+>>>>     return 0;
+>>>>  err:
+>>>> -   for (; i > 0; i--)
+>>>> +   for (; i >= 0; i--)
+>>>>             clk_disable_unprepare(msm_host->bus_clks[i]);
 >>>
->>> Fixes: 6e0eb52eba9e ("drm/msm/dsi: Parse bus clocks from a list")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>> By the looks of it this is also wrong. I didn't look at the functions,
+>>> but you probably don't want to unprepare something where prepare failed,
+>>> i.e. you want to -1 both the start and end offsets. Perhaps the right
+>>> fix is
 >>>
->>> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
->>> index 1fc07ce24686..239e79b39a45 100644
->>> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
->>> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
->>> @@ -437,7 +437,7 @@ static int dsi_bus_clk_enable(struct msm_dsi_host *msm_host)
->>>  
->>>  	return 0;
->>>  err:
->>> -	for (; i > 0; i--)
->>> +	for (; i >= 0; i--)
->>>  		clk_disable_unprepare(msm_host->bus_clks[i]);
+>>>      while (i--)
+>>>              clk_disable_unprepare(msm_host->bus_clks[i]);
+>>>
+>>> which also seems to be widely used on error paths.
+>>>
 >>
->> By the looks of it this is also wrong. I didn't look at the functions,
->> but you probably don't want to unprepare something where prepare failed,
->> i.e. you want to -1 both the start and end offsets. Perhaps the right
->> fix is
->>
->> 	while (i--)
->> 		clk_disable_unprepare(msm_host->bus_clks[i]);
->>
->> which also seems to be widely used on error paths.
->>
-> 
+>
+> We already know that programmers are bad in counting backwards ...
+>
+> any chance to make that into a forward loop ?
+>
 
-We already know that programmers are bad in counting backwards ...
+well, this *is* a common pattern.  And in some cases you actually do
+need to disable clks in reverse order.  So meh, I think while (i--)
+approach is fine
 
-any chance to make that into a forward loop ?
-
-re,
- wh
-
-
+BR,
+-R
