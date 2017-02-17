@@ -1,61 +1,46 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 22 Feb 2017 21:08:44 +0000
-Subject: Re: [PATCH v2] ncpfs: Remove cast from memory allocation
-Message-Id: <alpine.DEB.2.20.1702222207440.2041@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Feb 2017 23:26:18 +0000
+Subject: [patch] PCI: dwc: uninitialized variable in dw_handle_msi_irq()
+Message-Id: <20170217232618.GC26717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487797394-30306-1-git-send-email-me@tobin.cc>
-In-Reply-To: <1487797394-30306-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Petr Vandrovec <petr@vandrovec.name>, Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: Joao Pinto <Joao.Pinto@synopsys.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The bug is that "val" is unsigned long but we only initialize 32 bits
+of it.  Then we test "if (val)" and that might be true not because we
+set the bits but because some were never initialized.
 
+Fixes: f342d940ee0e ("PCI: exynos: Add support for MSI")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested.
 
-On Thu, 23 Feb 2017, Tobin C. Harding wrote:
-
-> Coccinelle emits WARNING: casting value returned by memory allocation
-> function to (struct ncp_inode_info *) is useless.
->
-> Remove unnecessary cast.
->
-> Changes since v1:
->  - Fix up typo
-
-Changes since v1 goes below the ---.  When this ends up in the git
-history, no one will care about the changes since v1, because v1 won't be
-part of the history.
-
-julia
-
->
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> ---
->
-> Kernel built successfully with patch applied.
->
->  fs/ncpfs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
-> index 7eb89c2..7a9ed33 100644
-> --- a/fs/ncpfs/inode.c
-> +++ b/fs/ncpfs/inode.c
-> @@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
->  static struct inode *ncp_alloc_inode(struct super_block *sb)
->  {
->  	struct ncp_inode_info *ei;
-> -	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
-> +	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
->  	if (!ei)
->  		return NULL;
->  	return &ei->vfs_inode;
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/pci/dwc/pcie-designware.c b/drivers/pci/dwc/pcie-designware.c
+index af8f6e92e885..5bfc377b83e4 100644
+--- a/drivers/pci/dwc/pcie-designware.c
++++ b/drivers/pci/dwc/pcie-designware.c
+@@ -257,17 +257,18 @@ static struct irq_chip dw_msi_irq_chip = {
+ /* MSI int handler */
+ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ {
+-	unsigned long val;
++	u32 val;
+ 	int i, pos, irq;
+ 	irqreturn_t ret = IRQ_NONE;
+ 
+ 	for (i = 0; i < MAX_MSI_CTRLS; i++) {
+ 		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
+-				(u32 *)&val);
++				    &val);
+ 		if (val) {
+ 			ret = IRQ_HANDLED;
+ 			pos = 0;
+-			while ((pos = find_next_bit(&val, 32, pos)) != 32) {
++			while ((pos = find_next_bit((unsigned long *)&val, 32,
++						    pos)) != 32) {
+ 				irq = irq_find_mapping(pp->irq_domain,
+ 						i * 32 + pos);
+ 				dw_pcie_wr_own_conf(pp,
