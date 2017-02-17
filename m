@@ -1,37 +1,61 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Feb 2017 10:53:50 +0000
-Subject: Re: [PATCH 4/5] IB/hfi1: Use memdup_user() rather than duplicating its implementation in hfi1_user_s
-Message-Id: <20170213105350.GA4108@mwanda>
+Date: Fri, 17 Feb 2017 23:20:15 +0000
+Subject: [patch v2] staging: bcm2835-camera: fix error handling in init
+Message-Id: <20170217232015.GA26717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
- <b19e44b3-601f-c642-b8d3-12c000511ce2@users.sourceforge.net>
- <477c8499-93ad-253d-aa2b-8f209ecfad62@intel.com>
-In-Reply-To: <477c8499-93ad-253d-aa2b-8f209ecfad62@intel.com>
+In-Reply-To: <58A44DFB.6090105@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Sean Hefty <sean.hefty@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-rpi-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 11, 2017 at 10:32:59AM -0500, Dennis Dalessandro wrote:
-> On 02/10/2017 04:04 PM, SF Markus Elfring wrote:
-> >From: Markus Elfring <elfring@users.sourceforge.net>
-> >Date: Fri, 10 Feb 2017 21:01:55 +0100
-> >
-> >Reuse existing functionality from memdup_user() instead of keeping
-> >duplicate source code.
-> >
-> >Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Thanks for the patch, but this one is already taken care of along
-> with other similar uses of kmalloc/copy:
-> 
-> http://marc.info/?l=linux-rdma&m8656088729538&w=2
-> 
+The unwinding here isn't right.  We don't free gdev[0] and instead
+free 1 step past what was allocated.  Also we can't allocate "dev" then
+we should unwind instead of returning directly.
 
-Michael's patch doesn't change user_sdma_free_request() so it introduces
-a kfreeing an error pointer bug.
+Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Change the style to make Walter Harms happy.  Fix some additional
+    bugs I missed in the first patch.
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+index ca15a698e018..c4dad30dd133 100644
+--- a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
++++ b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+@@ -1901,6 +1901,7 @@ static int __init bm2835_mmal_init(void)
+ 	unsigned int num_cameras;
+ 	struct vchiq_mmal_instance *instance;
+ 	unsigned int resolutions[MAX_BCM2835_CAMERAS][2];
++	int i;
+ 
+ 	ret = vchiq_mmal_init(&instance);
+ 	if (ret < 0)
+@@ -1914,8 +1915,10 @@ static int __init bm2835_mmal_init(void)
+ 
+ 	for (camera = 0; camera < num_cameras; camera++) {
+ 		dev = kzalloc(sizeof(struct bm2835_mmal_dev), GFP_KERNEL);
+-		if (!dev)
+-			return -ENOMEM;
++		if (!dev) {
++			ret = -ENOMEM;
++			goto cleanup_gdev;
++		}
+ 
+ 		dev->camera_num = camera;
+ 		dev->max_width = resolutions[camera][0];
+@@ -1998,9 +2001,10 @@ static int __init bm2835_mmal_init(void)
+ free_dev:
+ 	kfree(dev);
+ 
+-	for ( ; camera > 0; camera--) {
+-		bcm2835_cleanup_instance(gdev[camera]);
+-		gdev[camera] = NULL;
++cleanup_gdev:
++	for (i = 0; i < camera; i++) {
++		bcm2835_cleanup_instance(gdev[i]);
++		gdev[i] = NULL;
+ 	}
+ 	pr_info("%s: error %d while loading driver\n",
+ 		BM2835_MMAL_MODULE_NAME, ret);
