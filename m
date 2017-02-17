@@ -1,70 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:58:26 +0000
-Subject: [PATCH 15/18] HID-debug: Return an error code only as a constant in hid_debug_events_open()
-Message-Id: <9935147f-3387-a583-b878-cbd90f1bfac0@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Feb 2017 23:20:36 +0000
+Subject: [patch] staging: bcm2835/mmal-vchiq: unlock on error in buffer_from_host()
+Message-Id: <20170217232035.GB26717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Eric Anholt <eric@anholt.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Michael Zoran <mzoran@crowfest.net>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-rpi-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:08:04 +0100
+We should unlock before returning on this error path.
 
-* Return an error code without storing it in an intermediate variable.
+Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-* Delete the local variable "err" and the jump label "out" which became
-  unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-debug.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 444c63f0e4be..60984e2906a7 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1079,22 +1079,18 @@ static int hid_debug_rdesc_open(struct inode *inode, struct file *file)
+diff --git a/drivers/staging/media/platform/bcm2835/mmal-vchiq.c b/drivers/staging/media/platform/bcm2835/mmal-vchiq.c
+index f0639ee6c8b9..fdfb6a620a43 100644
+--- a/drivers/staging/media/platform/bcm2835/mmal-vchiq.c
++++ b/drivers/staging/media/platform/bcm2835/mmal-vchiq.c
+@@ -397,8 +397,10 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
  
- static int hid_debug_events_open(struct inode *inode, struct file *file)
- {
--	int err = 0;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
+ 	/* get context */
+ 	msg_context = get_msg_context(instance);
+-	if (msg_context = NULL)
+-		return -ENOMEM;
++	if (!msg_context) {
++		ret = -ENOMEM;
++		goto unlock;
++	}
  
- 	list = kzalloc(sizeof(*list), GFP_KERNEL);
--	if (!list) {
--		err = -ENOMEM;
--		goto out;
--	}
-+	if (!list)
-+		return -ENOMEM;
+ 	/* store bulk message context for when data arrives */
+ 	msg_context->u.bulk.instance = instance;
+@@ -454,6 +456,7 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
  
- 	list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE,
- 				      GFP_KERNEL);
- 	if (!list->hid_debug_buf) {
--		err = -ENOMEM;
- 		kfree(list);
--		goto out;
-+		return -ENOMEM;
- 	}
- 	list->hdev = (struct hid_device *) inode->i_private;
- 	file->private_data = list;
-@@ -1103,9 +1099,7 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_add_tail(&list->node, &list->hdev->debug_list);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--
--out:
--	return err;
-+	return 0;
- }
+ 	vchi_service_release(instance->handle);
  
- static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
--- 
-2.11.1
-
++unlock:
+ 	mutex_unlock(&instance->bulk_mutex);
+ 
+ 	return ret;
