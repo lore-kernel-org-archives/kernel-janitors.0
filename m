@@ -1,89 +1,40 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Tue, 21 Feb 2017 21:26:32 +0000
-Subject: Re: [PATCH] PM / runtime: Fix some typo
-Message-Id: <20170221212632.GA27706@amd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mYCpIKhGyMATD0i+"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Feb 2017 15:35:22 +0000
+Subject: [PATCH] RDMA/bnxt_re: remove redundant initialization of rc to zero
+Message-Id: <20170217153522.30988-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221204153.4803-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170221204153.4803-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: rjw@rjwysocki.net, len.brown@intel.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+rc is initialized to zero but is then updated by calls to
+bnxt_qplib_free_fast_reg_page_list and/or bnxt_qpliob_free_mrw
+so the initialization is redundant and can be removed.
 
-On Tue 2017-02-21 21:41:53, Christophe JAILLET wrote:
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Detected with CoverityScan, CID#1408448 ("Unused Value")
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  Documentation/power/runtime_pm.txt | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/power/runtime_pm.txt b/Documentation/power/run=
-time_pm.txt
-> index 4870980e967e..64546eb9a16a 100644
-> --- a/Documentation/power/runtime_pm.txt
-> +++ b/Documentation/power/runtime_pm.txt
-> @@ -100,7 +100,7 @@ knows what to do to handle the device).
->    * If the suspend callback returns an error code different from -EBUSY =
-and
->      -EAGAIN, the PM core regards this as a fatal error and will refuse t=
-o run
->      the helper functions described in Section 4 for the device until its=
- status
-> -    is directly set to  either'active', or 'suspended' (the PM core prov=
-ides
-> +    is directly set to  either 'active', or 'suspended' (the PM core pro=
-vides
->      special helper functions for this purpose).
-> =20
->  In particular, if the driver requires remote wakeup capability (i.e. har=
-dware
-> @@ -217,7 +217,7 @@ defined in include/linux/pm.h:
->        one to complete
-> =20
->    spinlock_t lock;
-> -    - lock used for synchronisation
-> +    - lock used for synchronization
-> =20
->    atomic_t usage_count;
->      - the usage counter of the device
-> @@ -565,7 +565,7 @@ appropriate to ensure that the device is not put back=
- to sleep during the
->  probe. This can happen with systems such as the network device layer.
-> =20
->  It may be desirable to suspend the device once ->probe() has finished.
-> -Therefore the driver core uses the asyncronous pm_request_idle() to subm=
-it a
-> +Therefore the driver core uses the asynchronous pm_request_idle() to sub=
-mit a
->  request to execute the subsystem-level idle callback for the device at t=
-hat
->  time.  A driver that makes use of the runtime autosuspend feature, may w=
-ant to
->  update the last busy mark before returning from ->probe().
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 33af2e3..17aa087 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -2818,7 +2818,7 @@ int bnxt_re_dereg_mr(struct ib_mr *ib_mr)
+ {
+ 	struct bnxt_re_mr *mr = container_of(ib_mr, struct bnxt_re_mr, ib_mr);
+ 	struct bnxt_re_dev *rdev = mr->rdev;
+-	int rc = 0;
++	int rc;
+ 
+ 	if (mr->npages && mr->pages) {
+ 		rc = bnxt_qplib_free_fast_reg_page_list(&rdev->qplib_res,
+-- 
+2.10.2
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlissIcACgkQMOfwapXb+vIJvQCgxNgWflpX2MIAmFR7RBoYk+oj
-ElEAoKE0aMz/OY6LR8sT1h80lueblxPN
-=GhXI
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
