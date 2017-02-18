@@ -1,38 +1,39 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 21 Feb 2017 21:33:11 +0000
-Subject: [PATCH] USB: gadgetfs: Fix a potential memory leak in 'dev_config()'
-Message-Id: <20170221213311.11299-1-christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 08:34:34 +0000
+Subject: [PATCH] irqchip/qcom: Fix error handling
+Message-Id: <20170218083434.2289-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'kbuf' is allocated just a few lines above using 'memdup_user()'.
-If the 'if (dev->buf)' test fails, this memory is never released.
+'devm_ioremap()' returns NULL on error, not an error pointer.
+
+Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/gadget/legacy/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/irqchip/qcom-irq-combiner.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
-index 79a2d8fba6b6..a2c916869293 100644
---- a/drivers/usb/gadget/legacy/inode.c
-+++ b/drivers/usb/gadget/legacy/inode.c
-@@ -1781,8 +1781,10 @@ dev_config (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index 03251da95397..226558698344 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -202,9 +202,9 @@ static acpi_status get_registers_cb(struct acpi_resource *ares, void *context)
+ 	}
  
- 	spin_lock_irq (&dev->lock);
- 	value = -EINVAL;
--	if (dev->buf)
-+	if (dev->buf) {
-+		kfree(kbuf);
- 		goto fail;
-+	}
- 	dev->buf = kbuf;
+ 	vaddr = devm_ioremap(ctx->dev, reg->address, REG_SIZE);
+-	if (IS_ERR(vaddr)) {
++	if (!vaddr) {
+ 		dev_err(ctx->dev, "Can't map register @%pa\n", &paddr);
+-		ctx->err = PTR_ERR(vaddr);
++		ctx->err = -ENOMEM;
+ 		return AE_ERROR;
+ 	}
  
- 	/* full or low speed config */
 -- 
 2.9.3
 
