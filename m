@@ -1,64 +1,58 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 11 Feb 2017 11:05:36 +0000
-Subject: Re: [PATCH] ovl: Avoid some memory allocation
-Message-Id: <589EF000.7050808@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 20:54:06 +0000
+Subject: [PATCH 06/29] IB/mlx4: Delete three unnecessary return statements
+Message-Id: <7edfe4d6-156d-23c9-acef-a6606680a5eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170210211814.18257-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170210211814.18257-1-christophe.jaillet@wanadoo.fr>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: miklos@szeredi.hu, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 17 Feb 2017 21:34:27 +0100
 
+The script "checkpatch.pl" pointed information out like the following.
 
-Am 10.02.2017 22:18, schrieb Christophe JAILLET:
-> Reorder code to avoid allocating and then freeing some memory in an error
-> handling path.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  fs/overlayfs/namei.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index 023bb0b03352..ba80ebb8a104 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -35,13 +35,13 @@ static int ovl_check_redirect(struct dentry *dentry, struct ovl_lookup_data *d,
->  			return 0;
->  		goto fail;
->  	}
-> +	if (res = 0)
-> +		goto invalid;
-> +
+WARNING: void function return statements are not generally useful
 
+Thus remove such a statement in the affected functions.
 
-perhaps:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/mad.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-   if (res = -ENODATA || res = -EOPNOTSUPP)
-	return 0;
-	
-   if (ret < 0)
-	goto fail;
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index d8c27e3ed69a..cf33efce69d2 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1173,7 +1173,6 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
+ out:
+ 	kfree(in_mad);
+ 	kfree(out_mad);
+-	return;
+ }
+ 
+ void handle_port_mgmt_change_event(struct work_struct *work)
+@@ -2140,7 +2139,6 @@ void mlx4_ib_tunnels_update_work(struct work_struct *work)
+ 	mlx4_ib_tunnels_update(dmxw->dev, dmxw->slave, (int) dmxw->port,
+ 			       dmxw->do_init);
+ 	kfree(dmxw);
+-	return;
+ }
+ 
+ static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
+@@ -2268,7 +2266,6 @@ static void mlx4_ib_master_tunnels(struct mlx4_ib_dev *dev, int do_init)
+ 	/* initialize or tear down tunnel QPs for the master */
+ 	for (i = 0; i < dev->dev->caps.num_ports; i++)
+ 		mlx4_ib_tunnels_update(dev, mlx4_master_func_num(dev->dev), i + 1, do_init);
+-	return;
+ }
+ 
+ int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
+-- 
+2.11.1
 
-   if (ret = 0)
-	goto invalid;
-
-I think its better to read, i guess the author also as we can find this
-pattern after the other vfs_getxattr() also.
-
-re,
- wh
-
->  	buf = kzalloc(prelen + res + strlen(post) + 1, GFP_TEMPORARY);
->  	if (!buf)
->  		return -ENOMEM;
->  
-> -	if (res = 0)
-> -		goto invalid;
-> -
->  	res = vfs_getxattr(dentry, OVL_XATTR_REDIRECT, buf, res);
->  	if (res < 0)
->  		goto fail;
