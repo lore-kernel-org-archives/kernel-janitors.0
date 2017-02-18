@@ -1,39 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Feb 2017 11:47:33 +0000
-Subject: [PATCH] staging: wilc1000: add check for kmalloc allocation failure.
-Message-Id: <20170228114733.20228-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:04:44 +0000
+Subject: [PATCH 16/29] IB/mlx4: Improve another size determination in do_slave_init()
+Message-Id: <a6065921-c7d3-cdb2-1f77-4f0e1495cb7e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 15:25:19 +0100
 
-Add a sanity check that wid.val has been allocated, fixes a null
-pointer deference on stamac when calling ether_add_copy.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected by CoverityScan, CID#1369537 ("Dereference null return value")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wilc1000/host_interface.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/mlx4/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index c307cce..e83fa21 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -1928,6 +1928,8 @@ static s32 Handle_Get_InActiveTime(struct wilc_vif *vif,
- 	wid.type = WID_STR;
- 	wid.size = ETH_ALEN;
- 	wid.val = kmalloc(wid.size, GFP_KERNEL);
-+	if (!wid.val)
-+		return -ENOMEM;
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index b2b472977a39..b78f17623121 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -3106,7 +3106,7 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+ 		return;
  
- 	stamac = wid.val;
- 	ether_addr_copy(stamac, strHostIfStaInactiveT->mac);
+ 	for (i = 0; i < ports; i++) {
+-		dm[i] = kmalloc(sizeof (struct mlx4_ib_demux_work), GFP_ATOMIC);
++		dm[i] = kmalloc(sizeof(*dm[i]), GFP_ATOMIC);
+ 		if (!dm[i]) {
+ 			while (--i >= 0)
+ 				kfree(dm[i]);
 -- 
-2.10.2
+2.11.1
 
