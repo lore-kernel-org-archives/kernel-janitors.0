@@ -1,50 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Feb 2017 15:59:34 +0000
-Subject: Re: [PATCH] RDMA/bnxt_re: remove redundant initialization of rc to zero
-Message-Id: <20170217155934.GE4108@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:11:22 +0000
+Subject: [PATCH 21/29] IB/mlx4: Delete unnecessary braces in mlx4_ib_add()
+Message-Id: <6abe0f08-b308-08ac-9f84-868887c0218c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170217153522.30988-1-colin.king@canonical.com>
-In-Reply-To: <20170217153522.30988-1-colin.king@canonical.com>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-drivers/infiniband/hw/bnxt_re/ib_verbs.c
-  2817  int bnxt_re_dereg_mr(struct ib_mr *ib_mr)
-  2818  {
-  2819          struct bnxt_re_mr *mr = container_of(ib_mr, struct bnxt_re_mr, ib_mr);
-  2820          struct bnxt_re_dev *rdev = mr->rdev;
-  2821          int rc = 0;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 16:32:41 +0100
 
-It's weird that it would complain about this because initializing
-variables to bogus values is a prefered style for some people.  It's
-bad style obviously, yes, but it's common and it seems like it would
-lead to a lot of false postives.
+Do not use curly brackets at one source code place
+where a single statement should be sufficient.
 
-  2822  
-  2823          if (mr->npages && mr->pages) {
-  2824                  rc = bnxt_qplib_free_fast_reg_page_list(&rdev->qplib_res,
-  2825                                                          &mr->qplib_frpl);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-And then it doesn't complain about this one which seems like a legit
-bug.
-
-  2826                  kfree(mr->pages);
-  2827                  mr->npages = 0;
-  2828                  mr->pages = NULL;
-  2829          }
-  2830          rc = bnxt_qplib_free_mrw(&rdev->qplib_res, &mr->qplib_mr);
-  2831  
-  2832          if (!IS_ERR(mr->ib_umem) && mr->ib_umem)
-  2833                  ib_umem_release(mr->ib_umem);
-  2834  
-  2835          kfree(mr);
-  2836          atomic_dec(&rdev->mr_count);
-  2837          return rc;
-  2838  }
-
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 33b46c463ffa..b950538e036e 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2898,9 +2898,8 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 		}
+ 		if (dev->caps.flags2 & MLX4_DEV_CAP_FLAG2_ROCE_V1_V2) {
+ 			err = mlx4_config_roce_v2_port(dev, ROCE_V2_UDP_DPORT);
+-			if (err) {
++			if (err)
+ 				goto err_notif;
+-			}
+ 		}
+ 	}
+ 
+-- 
+2.11.1
 
