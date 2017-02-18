@@ -1,58 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 20:45:51 +0000
-Subject: [PATCH 00/29] IB/mlx: Fine-tuning for several function implementations
-Message-Id: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 20:57:16 +0000
+Subject: [PATCH 09/29] IB/mlx4: Move an assignment out of a check in forward_trap()
+Message-Id: <ac39ba0d-8738-2532-9eec-a82c76fc9ff4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:34:32 +0100
+Date: Fri, 17 Feb 2017 22:22:53 +0100
 
-Several update suggestions were taken into account
-from static source code analysis.
+The script "checkpatch.pl" pointed information out like the following.
 
-Markus Elfring (29):
-  Use kcalloc() in mlx4_ib_alloc_pv_bufs()
-  Improve another size determination in mlx4_ib_alloc_pv_bufs()
-  Improve another size determination in mlx4_ib_alloc_demux_ctx()
-  Improve another size determination in alloc_pv_object()
-  Fix a typo in a comment line
-  Delete three unnecessary return statements
-  Split a condition check in handle_slaves_guid_change()
-  Delete an unnecessary check before the function call "kfree" in free_pv_object()
-  Move an assignment out of a check in forward_trap()
-  Enclose 15 expressions for the sizeof operator by parentheses
-  Use kmalloc_array() in three functions
-  Enclose 17 expressions for the sizeof operator by parentheses
-  Split a condition check in five functions
-  Delete an unnecessary variable in __mlx4_ib_query_gid()
-  Delete an unnecessary return statement in do_slave_init()
-  Improve another size determination in do_slave_init()
-  Improve another size determination in mlx4_ib_add()
-  Delete an unnecessary variable initialisation in mlx4_ib_add()
-  Delete an unnecessary variable assignment in mlx4_ib_add()
-  Delete an error message for a failed memory allocation in mlx4_ib_add()
-  Delete unnecessary braces in mlx4_ib_add()
-  Use kmalloc_array() in alloc_proxy_bufs()
-  Improve size determinations in create_qp_common()
-  Delete unwanted spaces behind usages of the sizeof operator
-  Add spaces for better code readability
-  Enclose 14 expressions for the sizeof operator by parentheses
-  Use kmalloc_array() in create_kernel_qp()
-  Less function calls in create_kernel_qp() after error detection
-  Use kmalloc_array() in create_srq_kernel()
+ERROR: do not use assignment in if condition
 
- drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
- drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++----------------
- drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++-------------------
- drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
- drivers/infiniband/hw/mlx5/srq.c  |   5 +-
- 5 files changed, 261 insertions(+), 219 deletions(-)
+Thus fix the affected source code place.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/mad.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index 9518b7244269..860fec8b9601 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -401,7 +401,8 @@ static void forward_trap(struct mlx4_ib_dev *dev, u8 port_num, const struct ib_m
+ 		 */
+ 		spin_lock_irqsave(&dev->sm_lock, flags);
+ 		memcpy(send_buf->mad, mad, sizeof *mad);
+-		if ((send_buf->ah = dev->sm_ah[port_num - 1]))
++		send_buf->ah = dev->sm_ah[port_num - 1];
++		if (send_buf->ah)
+ 			ret = ib_post_send_mad(send_buf, NULL);
+ 		else
+ 			ret = -EINVAL;
 -- 
 2.11.1
 
