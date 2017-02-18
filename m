@@ -1,36 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Feb 2017 16:41:53 +0000
-Subject: [PATCH] jump_label: fix spelling mistake: "allocatote" -> "allocate"
-Message-Id: <20170221164153.25102-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:15:03 +0000
+Subject: [PATCH 25/29] IB/mlx4: Add spaces for better code readability
+Message-Id: <92a1836f-8244-7b52-1e45-f791dc3ceec4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jason Baron <jbaron@akamai.com>, Paolo Bonzini <pbonzini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, Rusty Russell <rusty@rustcorp.com.au>, David Matlack <dmatlack@google.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 18:52:11 +0100
 
-Trivial fix to spelling mistake.
+Use space characters at some source code places according to
+the Linux coding style convention.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- kernel/jump_label.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx4/qp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 6c9cb20..aa123dd 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -595,7 +595,7 @@ jump_label_module_notify(struct notifier_block *self, unsigned long val,
- 		jump_label_lock();
- 		ret = jump_label_add_module(mod);
- 		if (ret) {
--			WARN(1, "Failed to allocatote memory: jump_label may not work properly.\n");
-+			WARN(1, "Failed to allocate memory: jump_label may not work properly.\n");
- 			jump_label_del_module(mod);
- 		}
- 		jump_label_unlock();
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 47a647c1d94f..16164ff09a86 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -1063,7 +1063,7 @@ static void destroy_qp_common(struct mlx4_ib_dev *dev, struct mlx4_ib_qp *qp,
+ 	list_del(&qp->cq_recv_list);
+ 	if (!is_user) {
+ 		__mlx4_ib_cq_clean(recv_cq, qp->mqp.qpn,
+-				 qp->ibqp.srq ? to_msrq(qp->ibqp.srq): NULL);
++				   qp->ibqp.srq ? to_msrq(qp->ibqp.srq) : NULL);
+ 		if (send_cq != recv_cq)
+ 			__mlx4_ib_cq_clean(send_cq, qp->mqp.qpn, NULL);
+ 	}
+@@ -2585,7 +2585,7 @@ static int build_mlx_header(struct mlx4_ib_sqp *sqp, struct ib_ud_wr *wr,
+ 		u16 ether_type;
+ 		u16 pcp = (be32_to_cpu(ah->av.ib.sl_tclass_flowlabel) >> 29) << 13;
+ 
+-		ether_type = (!is_udp) ? ETH_P_IBOE:
++		ether_type = (!is_udp) ? ETH_P_IBOE :
+ 			(ip_version = 4 ? ETH_P_IP : ETH_P_IPV6);
+ 
+ 		mlx->sched_prio = cpu_to_be16(pcp);
 -- 
-2.10.2
+2.11.1
 
