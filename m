@@ -1,102 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:59:21 +0000
-Subject: [PATCH 16/18] HID-debug: Add some spaces for better code readability
-Message-Id: <68441f8a-c654-8fe2-a302-fc67e5485464@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:17:03 +0000
+Subject: [PATCH 27/29] IB/mlx5: Use kmalloc_array() in create_kernel_qp()
+Message-Id: <afd15d0b-cc4f-4d59-14ab-bd59f3536c39@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:10:40 +0100
+Date: Sat, 18 Feb 2017 20:12:44 +0100
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-debug.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 60984e2906a7..044b12e32240 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -493,7 +493,7 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
- 
- 	if (!f) {
- 		len = strlen(buf);
--		snprintf(buf+len, max(0, HID_DEBUG_BUFSIZE - len), ".");
-+		snprintf(buf + len, max(0, HID_DEBUG_BUFSIZE - len), ".");
- 		len++;
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index 5ed5208d0ddd..e6e9b468b206 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -955,12 +955,21 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
+ 		goto err_free;
  	}
- 	else {
-@@ -501,12 +501,14 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
- 	}
- 	for (p = hid_usage_table; p->description; p++)
- 		if (p->page = (usage >> 16)) {
--			for(++p; p->description && p->usage != 0; p++)
-+			for (++p; p->description && p->usage != 0; p++)
- 				if (p->usage = (usage & 0xffff)) {
- 					if (!f)
- 						snprintf(buf + len,
--							max(0,HID_DEBUG_BUFSIZE - len - 1),
--							"%s", p->description);
-+							 max(0,
-+							     HID_DEBUG_BUFSIZE
-+							     - len - 1),
-+							 "%s", p->description);
- 					else
- 						seq_puts(f, p->description);
- 					return buf;
-@@ -582,7 +584,7 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 		sys = data & 0xf;
- 		data >>= 4;
  
--		if(sys > 4) {
-+		if (sys > 4) {
- 			tab(n, f);
- 			seq_puts(f, "Unit(Invalid)\n");
- 		}
-@@ -591,19 +593,19 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 
- 			tab(n, f); seq_printf(f, "Unit(%s : ", systems[sys]);
- 
--			for (i=1 ; i<sizeof(__u32)*2 ; i++) {
-+			for (i = 1; i < sizeof(__u32) * 2; i++) {
- 				char nibble = data & 0xf;
- 				data >>= 4;
- 				if (nibble != 0) {
--					if(earlier_unit++ > 0)
-+					if (earlier_unit++ > 0)
- 						seq_putc(f, '*');
- 					seq_puts(f, units[sys][i]);
--					if(nibble != 1) {
-+					if (nibble != 1) {
- 						/* This is a _signed_ nibble(!) */
+-	qp->sq.wrid = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wrid), GFP_KERNEL);
+-	qp->sq.wr_data = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wr_data), GFP_KERNEL);
+-	qp->rq.wrid = kmalloc(qp->rq.wqe_cnt * sizeof(*qp->rq.wrid), GFP_KERNEL);
+-	qp->sq.w_list = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.w_list), GFP_KERNEL);
+-	qp->sq.wqe_head = kmalloc(qp->sq.wqe_cnt * sizeof(*qp->sq.wqe_head), GFP_KERNEL);
 -
- 						int val = nibble & 0x7;
--						if(nibble & 0x08)
--							val = -((0x7 & ~val) +1);
-+
-+						if (nibble & 0x08)
-+							val = -((0x7 & ~val) + 1);
- 						seq_printf(f, "^%d", val);
- 					}
- 				}
-@@ -634,7 +636,7 @@ void hid_dump_device(struct hid_device *device, struct seq_file *f)
- 	struct hid_report_enum *report_enum;
- 	struct hid_report *report;
- 	struct list_head *list;
--	unsigned i,k;
-+	unsigned int i, k;
- 	static const char *table[] = {"INPUT", "OUTPUT", "FEATURE"};
- 
- 	for (i = 0; i < HID_REPORT_TYPES; i++) {
++	qp->sq.wrid = kmalloc_array(qp->sq.wqe_cnt,
++				    sizeof(*qp->sq.wrid),
++				    GFP_KERNEL);
++	qp->sq.wr_data = kmalloc_array(qp->sq.wqe_cnt,
++				       sizeof(*qp->sq.wr_data),
++				       GFP_KERNEL);
++	qp->rq.wrid = kmalloc_array(qp->rq.wqe_cnt,
++				    sizeof(*qp->rq.wrid),
++				    GFP_KERNEL);
++	qp->sq.w_list = kmalloc_array(qp->sq.wqe_cnt,
++				      sizeof(*qp->sq.w_list),
++				      GFP_KERNEL);
++	qp->sq.wqe_head = kmalloc_array(qp->sq.wqe_cnt,
++					sizeof(*qp->sq.wqe_head),
++					GFP_KERNEL);
+ 	if (!qp->sq.wrid || !qp->sq.wr_data || !qp->rq.wrid ||
+ 	    !qp->sq.w_list || !qp->sq.wqe_head) {
+ 		err = -ENOMEM;
 -- 
 2.11.1
 
