@@ -1,37 +1,39 @@
-From: POISSONNIER Emmanuel <poissonnier@amadeuss.fr>
-Date: Sat, 04 Feb 2017 10:29:50 +0000
-Subject: TRADING  ACCOUNT
-Message-Id: <3a2392e8fbcb3e2591367a24c00374ba@amadeuss.xyz>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 09:42:02 +0000
+Subject: [PATCH] spi: spi-ti-qspi: Fix error handling
+Message-Id: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: poissonnier@amadeuss.fr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: broonie@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-  Hello ,
+'dma_request_chan_by_mask()' can not return NULL.
+Try to keep the logic in 'no_dma:' by resetting 'qspi->rx_chan' in case
+of error.
 
-We, Amadeus, want to extend our list of suppliers in the purchase of 
-computer hardware and electronics ( IT computer ) and are specialized in 
-the resale and distribution of computer and electronic equipment. We are 
-interested to buy the products you sell and want to place an order With 
-you in big quantities
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spi-ti-qspi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Is it posible for you to give us payment facilities ( 14 , 30 or 60 days 
-payment terms ) ?
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index ec6fb09e2e17..0fefa6423ff4 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -714,9 +714,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
+ 	dma_cap_set(DMA_MEMCPY, mask);
+ 
+ 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
+-	if (!qspi->rx_chan) {
++	if (IS_ERR(qspi->rx_chan)) {
+ 		dev_err(qspi->dev,
+ 			"No Rx DMA available, trying mmap mode\n");
++		qspi->rx_chan = NULL;
+ 		ret = 0;
+ 		goto no_dma;
+ 	}
+-- 
+2.9.3
 
-What do you want for opening our account and credit line request ?.
-
-Best regards
-
-POISSONNIER Emmanuel
-
-AMADEUS
-485 ROUTE DU PIN MONTARD
-SOPHIA ANTIPOLIS 06410
-BIOT- France
-REG N° 344496252
-VAT N° FR37344496252
-TEL +33427865001
-FAX +33426078315
-www.amadeuss.com
-poissonnier@amadeuss.fr
