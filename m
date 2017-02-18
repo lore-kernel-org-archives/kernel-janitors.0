@@ -1,22 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 20 Feb 2017 15:34:05 +0000
-Subject: Re: [PATCH] qlcnic: Fix a memory leak in error handling path
-Message-Id: <20170220.103405.914863932599172326.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 18 Feb 2017 23:41:46 +0000
+Subject: [PATCH] fsl/fman: fix spelling mistake in variable name en_tsu_err_exeption
+Message-Id: <20170218234146.20041-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219093505.8620-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219093505.8620-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: harish.patil@cavium.com, manish.chopra@cavium.com, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 19 Feb 2017 10:35:05 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> If 'dma_alloc_coherent()' fails, we should release resources allocated so
-> far, just as done in all other cases in this function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+trivial fix to spelling mistake, en_tsu_err_exeption should
+be en_tsu_err_exception
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/freescale/fman/fman_dtsec.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+index c88918c..84ea130 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+@@ -337,7 +337,7 @@ struct fman_mac {
+ 	u8 mac_id;
+ 	u32 exceptions;
+ 	bool ptp_tsu_enabled;
+-	bool en_tsu_err_exeption;
++	bool en_tsu_err_exception;
+ 	struct dtsec_cfg *dtsec_drv_param;
+ 	void *fm;
+ 	struct fman_rev_info fm_rev_info;
+@@ -1247,12 +1247,12 @@ int dtsec_set_exception(struct fman_mac *dtsec,
+ 		switch (exception) {
+ 		case FM_MAC_EX_1G_1588_TS_RX_ERR:
+ 			if (enable) {
+-				dtsec->en_tsu_err_exeption = true;
++				dtsec->en_tsu_err_exception = true;
+ 				iowrite32be(ioread32be(&regs->tmr_pemask) |
+ 					    TMR_PEMASK_TSREEN,
+ 					    &regs->tmr_pemask);
+ 			} else {
+-				dtsec->en_tsu_err_exeption = false;
++				dtsec->en_tsu_err_exception = false;
+ 				iowrite32be(ioread32be(&regs->tmr_pemask) &
+ 					    ~TMR_PEMASK_TSREEN,
+ 					    &regs->tmr_pemask);
+@@ -1420,7 +1420,7 @@ struct fman_mac *dtsec_config(struct fman_mac_params *params)
+ 	dtsec->event_cb = params->event_cb;
+ 	dtsec->dev_id = params->dev_id;
+ 	dtsec->ptp_tsu_enabled = dtsec->dtsec_drv_param->ptp_tsu_en;
+-	dtsec->en_tsu_err_exeption = dtsec->dtsec_drv_param->ptp_exception_en;
++	dtsec->en_tsu_err_exception = dtsec->dtsec_drv_param->ptp_exception_en;
+ 
+ 	dtsec->fm = params->fm;
+ 	dtsec->basex_if = params->basex_if;
+-- 
+2.10.2
+
