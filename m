@@ -1,24 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 08 Feb 2017 08:41:09 +0000
-Subject: Re: [patch] pinctrl: samsung: checking for IS_ERR() instead of NULL
-Message-Id: <CAJKOXPcHYMGCGiq3X2vkpT9VtXe6hBBROjeZdJSvL2MMooYTPQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:03:52 +0000
+Subject: [PATCH 15/29] IB/mlx4: Delete an unnecessary return statement in do_slave_init()
+Message-Id: <50e213dd-b3b0-5028-a463-b9fbdf6e25cf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170208072310.GA12877@mwanda>
-In-Reply-To: <20170208072310.GA12877@mwanda>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 8, 2017 at 9:23 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> devm_ioremap() returns NULL on error.  It doesn't return error pointers.
->
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 15:16:54 +0100
 
-Fix already sent by Wei:
-https://www.spinics.net/lists/arm-kernel/msg560747.html
+The script "checkpatch.pl" pointed information out like the following.
 
-Best regards,
-Krzysztof
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement here.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 89bbb61d62f5..b2b472977a39 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -3131,7 +3131,6 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+ 	}
+ out:
+ 	kfree(dm);
+-	return;
+ }
+ 
+ static void mlx4_ib_handle_catas_error(struct mlx4_ib_dev *ibdev)
+-- 
+2.11.1
+
