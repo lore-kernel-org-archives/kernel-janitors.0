@@ -1,37 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Feb 2017 14:01:56 +0000
-Subject: Re: IB/hfi1: Use memdup_user() rather than duplicating its implementation in hfi1_user_sdma_process_
-Message-Id: <20170213140156.GD4162@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 11:28:15 +0000
+Subject: [PATCH] RDMA/qedr: Fix some error handling
+Message-Id: <20170218112815.9329-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
- <b19e44b3-601f-c642-b8d3-12c000511ce2@users.sourceforge.net>
- <477c8499-93ad-253d-aa2b-8f209ecfad62@intel.com>
- <20170213105350.GA4108@mwanda>
- <4094dc04-bb2c-a74e-8d4d-8879ac4e7761@users.sourceforge.net>
-In-Reply-To: <4094dc04-bb2c-a74e-8d4d-8879ac4e7761-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ram.Amrani-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, Michal.Kalderon-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, rajesh.borundia-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org, weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On Mon, Feb 13, 2017 at 12:12:51PM +0100, SF Markus Elfring wrote:
-> >> Thanks for the patch, but this one is already taken care of along
-> >> with other similar uses of kmalloc/copy:
-> >>
-> >> http://marc.info/?l=linux-rdma&m8656088729538&w=2
-> >>
-> > 
-> > Michael's patch doesn't change user_sdma_free_request() so it introduces
-> > a kfreeing an error pointer bug.
-> 
-> Did you notice that another local variable “tmp” was introduced in the update step
-> “[PATCH 27/27] IB/hfi1: Code reuse with memdup_copy” so that
-> the mentioned function will usually get a null pointer after a failure there?
-> 
+'qedr_alloc_pbl_tbl()' can not return NULL.
 
-Ah right.  Thanks.  I missed that.
+In qedr_init_user_queue():
+ - simplify the test for the return value, no need to test for NULL
+ - propagate the error pointer if needed, otherwise 0 (success) is returned.
+   This is spurious.
 
-regards,
-dan carpenter
+In init_mr_info():
+ - test the return value with IS_ERR
+ - propagate the error pointer if needed instead of an exlictit -ENOMEM.
+   This is a no-op as the only error pointer that we can have here is
+   already -ENOMEM
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/qedr/verbs.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index ef83a3f322d6..0c51657af151 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -771,8 +771,10 @@ static inline int qedr_init_user_queue(struct ib_ucontext *ib_ctx,
+ 		goto err0;
+ 
+ 	q->pbl_tbl = qedr_alloc_pbl_tbl(dev, &q->pbl_info, GFP_KERNEL);
+-	if (IS_ERR_OR_NULL(q->pbl_tbl))
++	if (IS_ERR(q->pbl_tbl)) {
++		rc = PTR_ERR(q->pbl_tbl);
+ 		goto err0;
++	}
+ 
+ 	qedr_populate_pbls(dev, q->umem, q->pbl_tbl, &q->pbl_info);
+ 
+@@ -2105,8 +2107,8 @@ static int init_mr_info(struct qedr_dev *dev, struct mr_info *info,
+ 		goto done;
+ 
+ 	info->pbl_table = qedr_alloc_pbl_tbl(dev, &info->pbl_info, GFP_KERNEL);
+-	if (!info->pbl_table) {
+-		rc = -ENOMEM;
++	if (IS_ERR(info->pbl_table)) {
++		rc = PTR_ERR(info->pbl_table);
+ 		goto done;
+ 	}
+ 
+@@ -2117,7 +2119,7 @@ static int init_mr_info(struct qedr_dev *dev, struct mr_info *info,
+ 	 * list and allocating another one
+ 	 */
+ 	tmp = qedr_alloc_pbl_tbl(dev, &info->pbl_info, GFP_KERNEL);
+-	if (!tmp) {
++	if (IS_ERR(tmp)) {
+ 		DP_DEBUG(dev, QEDR_MSG_MR, "Extra PBL is not allocated\n");
+ 		goto done;
+ 	}
+-- 
+2.9.3
 
