@@ -1,50 +1,75 @@
-From: Bart Van Assche <Bart.VanAssche@sandisk.com>
-Date: Tue, 28 Feb 2017 22:45:48 +0000
-Subject: Re: [patch] net/mlx4: && vs & typo
-Message-Id: <1D08B61A9CF0974AA09887BE32D889DA0C193A@ULS-OP-MBXIP03.sdcorp.global.sandisk.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 20:55:08 +0000
+Subject: [PATCH 07/29] IB/mlx4: Split a condition check in handle_slaves_guid_change()
+Message-Id: <951c0746-b88e-8ee7-78e8-5be2a53a2e43@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170228120215.GA27947@mwanda>
- <1488296129.3056.1.camel@sandisk.com> <1488320630.25838.39.camel@perches.com>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "eugenia-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org" <eugenia-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, "dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org" <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org" <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: "netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 02/28/2017 02:23 PM, Joe Perches wrote:
-> On Tue, 2017-02-28 at 15:35 +0000, Bart Van Assche wrote:
->> On Tue, 2017-02-28 at 15:02 +0300, Dan Carpenter wrote:
->>> Bitwise & was obviously intended here.
-> []
->>> diff --git a/include/linux/mlx4/driver.h b/include/linux/mlx4/driver.h
-> []
->>> @@ -109,7 +109,7 @@ static inline void 	(u8 *addr, u64 mac)
->>>  	int i;
->>>  
->>>  	for (i = ETH_ALEN; i > 0; i--) {
->>> -		addr[i - 1] = mac && 0xFF;
->>> +		addr[i - 1] = mac & 0xFF;
->>>  		mac >>= 8;
->>>  	}
->>>  }
->>
->> Is this the only place where such a loop occurs?
-> 
-> Seems to be.
-> 
->> Should a put_unaligned_be48()
->> function be introduced?
-> 
-> Why?  This is used exactly once.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 17 Feb 2017 21:41:25 +0100
 
-Really? Here is an example of another open-coded version of
-put_unaligned_be48() from arch/mips/cavium-octeon/octeon-platform.c:
+The kfree() function was called in up to two cases by the
+handle_slaves_guid_change() function during error handling even if
+the passed variable contained a null pointer.
 
-	new_mac[0] = (mac >> 40) & 0xff;
-	new_mac[1] = (mac >> 32) & 0xff;
-	new_mac[2] = (mac >> 24) & 0xff;
-	new_mac[3] = (mac >> 16) & 0xff;
-	new_mac[4] = (mac >> 8) & 0xff;
-	new_mac[5] = mac & 0xff;
+* Split a condition check for memory allocation failures.
 
-Bart.
+* Adjust jump targets according to the Linux coding style convention.
+
+* Delete an initialisation for these variables at the beginning
+  which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/mad.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index cf33efce69d2..75b6522b3a8f 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1128,17 +1128,20 @@ static void propagate_pkey_ev(struct mlx4_ib_dev *dev, int port_num,
+ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
+ 				      u32 guid_tbl_blk_num, u32 change_bitmap)
+ {
+-	struct ib_smp *in_mad  = NULL;
+-	struct ib_smp *out_mad  = NULL;
++	struct ib_smp *in_mad;
++	struct ib_smp *out_mad;
+ 	u16 i;
+ 
+ 	if (!mlx4_is_mfunc(dev->dev) || !mlx4_is_master(dev->dev))
+ 		return;
+ 
+ 	in_mad  = kmalloc(sizeof *in_mad, GFP_KERNEL);
++	if (!in_mad)
++		return;
++
+ 	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
+-	if (!in_mad || !out_mad)
+-		goto out;
++	if (!out_mad)
++		goto free_in_mad;
+ 
+ 	guid_tbl_blk_num  *= 4;
+ 
+@@ -1171,8 +1174,9 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
+ 	}
+ 
+ out:
+-	kfree(in_mad);
+ 	kfree(out_mad);
++free_in_mad:
++	kfree(in_mad);
+ }
+ 
+ void handle_port_mgmt_change_event(struct work_struct *work)
+-- 
+2.11.1
+
