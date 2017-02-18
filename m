@@ -1,50 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Feb 2017 09:02:58 +0000
-Subject: [PATCH 1/2] IB/hns: Use kmalloc_array() in hns_roce_cmd_use_events()
-Message-Id: <362af670-98b7-42f6-1e8d-6ec4818c5943@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:06:51 +0000
+Subject: [PATCH 18/29] IB/mlx4: Delete an unnecessary variable initialisation in mlx4_ib_add()
+Message-Id: <69869c49-bb77-3b1e-f704-4aede0fff936@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4863af1d-ca80-1818-213e-7eadda35e8a1@users.sourceforge.net>
-In-Reply-To: <4863af1d-ca80-1818-213e-7eadda35e8a1-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
 Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Feb 2017 08:50:11 +0100
+Date: Sat, 18 Feb 2017 15:52:31 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+The local variable "new_counter_index" will be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/hns/hns_roce_cmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx4/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-index 8c1f7a6f84d2..b94dcd823ad1 100644
---- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-@@ -299,9 +299,9 @@ int hns_roce_cmd_use_events(struct hns_roce_dev *hr_dev)
- 	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
- 	int i;
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index f3194f2a6e62..4e08e4d57181 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2612,7 +2612,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 	int num_req_counters;
+ 	int allocated;
+ 	u32 counter_index;
+-	struct counter_index *new_counter_index = NULL;
++	struct counter_index *new_counter_index;
  
--	hr_cmd->context = kmalloc(hr_cmd->max_cmds *
--				  sizeof(struct hns_roce_cmd_context),
--				  GFP_KERNEL);
-+	hr_cmd->context = kmalloc_array(hr_cmd->max_cmds,
-+					sizeof(*hr_cmd->context),
-+					GFP_KERNEL);
- 	if (!hr_cmd->context)
- 		return -ENOMEM;
+ 	pr_info_once("%s", mlx4_ib_version);
  
 -- 
 2.11.1
