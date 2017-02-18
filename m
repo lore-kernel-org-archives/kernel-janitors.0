@@ -1,40 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:06:51 +0000
-Subject: [PATCH 18/29] IB/mlx4: Delete an unnecessary variable initialisation in mlx4_ib_add()
-Message-Id: <69869c49-bb77-3b1e-f704-4aede0fff936@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 Feb 2017 21:34:59 +0000
+Subject: [patch] sunrpc: silence uninitialized variable warning
+Message-Id: <20170218213459.GA32320@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, Jeff Layton <jlayton@poochiereds.net>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 15:52:31 +0100
+kstrtouint() can return a couple different error codes so the check for
+"ret = -EINVAL" is wrong and static analysis tools correctly complain
+that we can use "num" without initializing it.  It's not super harmful
+because we check the bounds.  But it's also easy enough to fix.
 
-The local variable "new_counter_index" will be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mlx4/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index f3194f2a6e62..4e08e4d57181 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2612,7 +2612,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 	int num_req_counters;
- 	int allocated;
- 	u32 counter_index;
--	struct counter_index *new_counter_index = NULL;
-+	struct counter_index *new_counter_index;
- 
- 	pr_info_once("%s", mlx4_ib_version);
- 
--- 
-2.11.1
-
+diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+index 956c7bce80d1..311ce92384b7 100644
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -3209,7 +3209,9 @@ static int param_set_uint_minmax(const char *val,
+ 	if (!val)
+ 		return -EINVAL;
+ 	ret = kstrtouint(val, 0, &num);
+-	if (ret = -EINVAL || num < min || num > max)
++	if (ret)
++		return ret;
++	if (num < min || num > max)
+ 		return -EINVAL;
+ 	*((unsigned int *)kp->arg) = num;
+ 	return 0;
