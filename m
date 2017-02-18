@@ -1,50 +1,122 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:01:21 +0000
-Subject: [PATCH 1/5] IB/hfi1: Use kcalloc() in hfi1_user_exp_rcv_init()
-Message-Id: <89f8b926-e272-71f2-f15e-3c322251da7b@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:18:16 +0000
+Subject: [PATCH 28/29] IB/mlx5: Less function calls in create_kernel_qp() after error detection
+Message-Id: <01c34ad6-5a61-84dd-8749-ea2b69eb2381@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
-In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
 Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 9 Feb 2017 15:30:53 +0100
+Date: Sat, 18 Feb 2017 21:00:50 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kcalloc".
+The kfree() function was called in up to five cases
+by the create_kernel_qp() function during error handling
+even if the passed data structure member contained a null pointer.
 
-  This issue was detected by using the Coccinelle software.
+* Adjust jump targets according to the Linux coding style convention.
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+* Split a condition check for memory allocation failures so that
+  each pointer from these function calls will be checked immediately.
+
+  See also background information:
+  Topic "CWE-754: Improper check for unusual or exceptional conditions"
+  Link: https://cwe.mitre.org/data/definitions/754.html
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/hfi1/user_exp_rcv.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 43 ++++++++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/user_exp_rcv.c b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
-index 64d26525435a..8ae0d26a34c6 100644
---- a/drivers/infiniband/hw/hfi1/user_exp_rcv.c
-+++ b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
-@@ -199,8 +199,9 @@ int hfi1_user_exp_rcv_init(struct file *fp)
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index e6e9b468b206..c47afce5fc6a 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -930,7 +930,7 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
+ 	*in = mlx5_vzalloc(*inlen);
+ 	if (!*in) {
+ 		err = -ENOMEM;
+-		goto err_buf;
++		goto free_buffer;
+ 	}
  
- 	if (!HFI1_CAP_UGET_MASK(uctxt->flags, TID_UNMAP)) {
- 		fd->invalid_tid_idx = 0;
--		fd->invalid_tids = kzalloc(uctxt->expected_count *
--					   sizeof(u32), GFP_KERNEL);
-+		fd->invalid_tids = kcalloc(uctxt->expected_count,
-+					   sizeof(*fd->invalid_tids),
-+					   GFP_KERNEL);
- 		if (!fd->invalid_tids) {
- 			ret = -ENOMEM;
- 			goto done;
+ 	qpc = MLX5_ADDR_OF(create_qp_in, *in, qpc);
+@@ -952,45 +952,56 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
+ 	err = mlx5_db_alloc(dev->mdev, &qp->db);
+ 	if (err) {
+ 		mlx5_ib_dbg(dev, "err %d\n", err);
+-		goto err_free;
++		goto vfree_in;
+ 	}
+ 
+ 	qp->sq.wrid = kmalloc_array(qp->sq.wqe_cnt,
+ 				    sizeof(*qp->sq.wrid),
+ 				    GFP_KERNEL);
++	if (!qp->sq.wrid)
++		goto free_db;
++
+ 	qp->sq.wr_data = kmalloc_array(qp->sq.wqe_cnt,
+ 				       sizeof(*qp->sq.wr_data),
+ 				       GFP_KERNEL);
++	if (!qp->sq.wr_data)
++		goto free_sq_wrid;
++
+ 	qp->rq.wrid = kmalloc_array(qp->rq.wqe_cnt,
+ 				    sizeof(*qp->rq.wrid),
+ 				    GFP_KERNEL);
++	if (!qp->rq.wrid)
++		goto free_sq_wr_data;
++
+ 	qp->sq.w_list = kmalloc_array(qp->sq.wqe_cnt,
+ 				      sizeof(*qp->sq.w_list),
+ 				      GFP_KERNEL);
++	if (!qp->sq.w_list)
++		goto free_rq_wrid;
++
+ 	qp->sq.wqe_head = kmalloc_array(qp->sq.wqe_cnt,
+ 					sizeof(*qp->sq.wqe_head),
+ 					GFP_KERNEL);
+-	if (!qp->sq.wrid || !qp->sq.wr_data || !qp->rq.wrid ||
+-	    !qp->sq.w_list || !qp->sq.wqe_head) {
+-		err = -ENOMEM;
+-		goto err_wrid;
+-	}
++	if (!qp->sq.wqe_head)
++		goto free_sq_w_list;
++
+ 	qp->create_type = MLX5_QP_KERNEL;
+ 
+ 	return 0;
+-
+-err_wrid:
+-	kfree(qp->sq.wqe_head);
++free_sq_w_list:
+ 	kfree(qp->sq.w_list);
+-	kfree(qp->sq.wrid);
+-	kfree(qp->sq.wr_data);
++free_rq_wrid:
+ 	kfree(qp->rq.wrid);
++free_sq_wr_data:
++	kfree(qp->sq.wr_data);
++free_sq_wrid:
++	kfree(qp->sq.wrid);
++free_db:
+ 	mlx5_db_free(dev->mdev, &qp->db);
+-
+-err_free:
++	err = -ENOMEM;
++vfree_in:
+ 	kvfree(*in);
+-
+-err_buf:
++free_buffer:
+ 	mlx5_buf_free(dev->mdev, &qp->buf);
+ 	return err;
+ }
 -- 
 2.11.1
 
