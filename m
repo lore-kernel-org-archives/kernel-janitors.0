@@ -1,40 +1,76 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Feb 2017 11:31:15 +0000
-Subject: [PATCH] netfilter: remove redundant check on ret being non-zero
-Message-Id: <20170228113115.19888-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 19:07:36 +0000
+Subject: [PATCH] scsi: hpsa: Use 'pci_dma_mapping_error()' instead of 'dma_mapping_error()'
+Message-Id: <20170218190736.31555-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: don.brace@microsemi.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Use 'pci_dma_mapping_error()' instead of 'dma_mapping_error()' because it
+is more consistent with the rest of the code. It is also a little less
+verbove.
 
-ret is initialized to zero and if it is set to non-zero in the
-xt_entry_foreach loop then we exit via the out_free label. Hence
-the check for ret being non-zero is redundant and can be removed.
+While at it, remove some '(dma_addr_t)' casts in order to be consistent
+within the file.
 
-Detected by CoverityScan, CID#1357132 ("Logically Dead Code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/ipv4/netfilter/arp_tables.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/hpsa.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
-index 6241a81..f17dab1 100644
---- a/net/ipv4/netfilter/arp_tables.c
-+++ b/net/ipv4/netfilter/arp_tables.c
-@@ -562,8 +562,6 @@ static int translate_table(struct xt_table_info *newinfo, void *entry0,
- 		    XT_ERROR_TARGET) = 0)
- 			++newinfo->stacksize;
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 524a0c755ed7..bd9df28cc4f0 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -2169,7 +2169,7 @@ static int hpsa_map_ioaccel2_sg_chain_block(struct ctlr_info *h,
+ 	chain_size = le32_to_cpu(cp->sg[0].length);
+ 	temp64 = pci_map_single(h->pdev, chain_block, chain_size,
+ 				PCI_DMA_TODEVICE);
+-	if (dma_mapping_error(&h->pdev->dev, temp64)) {
++	if (pci_dma_mapping_error(h->pdev, temp64)) {
+ 		/* prevent subsequent unmapping */
+ 		cp->sg->address = 0;
+ 		return -1;
+@@ -2206,7 +2206,7 @@ static int hpsa_map_sg_chain_block(struct ctlr_info *h,
+ 	chain_sg->Len = cpu_to_le32(chain_len);
+ 	temp64 = pci_map_single(h->pdev, chain_block, chain_len,
+ 				PCI_DMA_TODEVICE);
+-	if (dma_mapping_error(&h->pdev->dev, temp64)) {
++	if (pci_dma_mapping_error(h->pdev, temp64)) {
+ 		/* prevent subsequent unmapping */
+ 		chain_sg->Addr = cpu_to_le64(0);
+ 		return -1;
+@@ -2743,7 +2743,7 @@ static int hpsa_map_one(struct pci_dev *pdev,
  	}
--	if (ret != 0)
--		goto out_free;
  
- 	ret = -EINVAL;
- 	if (i != repl->num_entries)
+ 	addr64 = pci_map_single(pdev, buf, buflen, data_direction);
+-	if (dma_mapping_error(&pdev->dev, addr64)) {
++	if (pci_dma_mapping_error(pdev, addr64)) {
+ 		/* Prevent subsequent unmap of something never mapped */
+ 		cp->Header.SGList = 0;
+ 		cp->Header.SGTotal = cpu_to_le16(0);
+@@ -6632,7 +6632,7 @@ static int hpsa_passthru_ioctl(struct ctlr_info *h, void __user *argp)
+ 	if (iocommand.buf_size > 0) {
+ 		temp64 = pci_map_single(h->pdev, buff,
+ 			iocommand.buf_size, PCI_DMA_BIDIRECTIONAL);
+-		if (dma_mapping_error(&h->pdev->dev, (dma_addr_t) temp64)) {
++		if (pci_dma_mapping_error(h->pdev, temp64)) {
+ 			c->SG[0].Addr = cpu_to_le64(0);
+ 			c->SG[0].Len = cpu_to_le32(0);
+ 			rc = -ENOMEM;
+@@ -6759,8 +6759,7 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
+ 		for (i = 0; i < sg_used; i++) {
+ 			temp64 = pci_map_single(h->pdev, buff[i],
+ 				    buff_size[i], PCI_DMA_BIDIRECTIONAL);
+-			if (dma_mapping_error(&h->pdev->dev,
+-							(dma_addr_t) temp64)) {
++			if (pci_dma_mapping_error(h->pdev, temp64)) {
+ 				c->SG[i].Addr = cpu_to_le64(0);
+ 				c->SG[i].Len = cpu_to_le32(0);
+ 				hpsa_pci_unmap(h->pdev, c, i,
 -- 
-2.10.2
+2.9.3
 
