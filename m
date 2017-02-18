@@ -1,46 +1,40 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 08 Feb 2017 09:01:36 +0000
-Subject: Re: [patch] ASoC: sun4i-i2s: remove some dead code
-Message-Id: <CAGb2v67m5n4R+7jSpTq=_BYN1wFP=vwnPWSq6aCKmcyx8M7Jjw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:08:52 +0000
+Subject: [PATCH 19/29] IB/mlx4: Delete an unnecessary variable assignment in mlx4_ib_add()
+Message-Id: <3f4e69c8-a030-fb75-26bb-e14208c141c5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207131934.GD28207@mwanda>
- <20170207134215.f47cufvs7tngrabk@lukather>
- <20170207135008.GL11103@mwanda> <20170208085841.rilib45uhwgu24j4@lukather>
-In-Reply-To: <20170208085841.rilib45uhwgu24j4@lukather>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@free-electrons.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Feb 8, 2017 at 4:58 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Feb 07, 2017 at 04:50:08PM +0300, Dan Carpenter wrote:
->> On Tue, Feb 07, 2017 at 02:42:15PM +0100, Maxime Ripard wrote:
->> > > - if (!IS_ERR(i2s->rst)) {
->> > > -         ret = reset_control_deassert(i2s->rst);
->> > > -         if (ret) {
->> > > -                 dev_err(&pdev->dev,
->> > > -                         "Failed to deassert the reset control\n");
->> > > -                 return -EINVAL;
->> > > -         }
->> > > + ret = reset_control_deassert(i2s->rst);
->> > > + if (ret) {
->> > > +         dev_err(&pdev->dev,
->> > > +                 "Failed to deassert the reset control\n");
->> > > +         return -EINVAL;
->> >
->> > In the case where has_reset is false, rst is NULL and will trigger a
->> > WARN_ON in reset_control_deassert.
->> >
->>
->> No it won't.  reset_control_deassert(NULL) just returns success
->> immediately.
->
-> Not in current Linus' tree at least:
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/reset/core.c#n217
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 16:00:28 +0100
 
-The changes were just pulled into arm-soc. I suggest waiting for -rc1 at least
-before merging this change.
+Delete an assignment for the local variable "num_ports" at the beginning
+because it was initialised with the same value.
 
-ChenYu
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 4e08e4d57181..21b88d5ceda4 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2615,8 +2615,6 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 	struct counter_index *new_counter_index;
+ 
+ 	pr_info_once("%s", mlx4_ib_version);
+-
+-	num_ports = 0;
+ 	mlx4_foreach_ib_transport_port(i, dev)
+ 		num_ports++;
+ 
+-- 
+2.11.1
+
