@@ -1,21 +1,41 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 22 Feb 2017 02:55:00 +0000
-Subject: Re: [PATCH] dmaengine: stm32-dma: fix up error dev_err message
-Message-Id: <20170222024259.GW2843@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 20:51:43 +0000
+Subject: [PATCH 04/29] IB/mlx4: Improve another size determination in alloc_pv_object()
+Message-Id: <398511b4-2e62-ee7e-69b7-f9a83922332b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221183046.27560-1-colin.king@canonical.com>
-In-Reply-To: <20170221183046.27560-1-colin.king@canonical.com>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 21, 2017 at 06:30:45PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake and make channel plural.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 17 Feb 2017 20:20:43 +0100
 
-Applied, thanks
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/mad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index 284634d36b1c..ea4892b0f39e 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1948,7 +1948,7 @@ static int alloc_pv_object(struct mlx4_ib_dev *dev, int slave, int port,
+ 	struct mlx4_ib_demux_pv_ctx *ctx;
+ 
+ 	*ret_ctx = NULL;
+-	ctx = kzalloc(sizeof (struct mlx4_ib_demux_pv_ctx), GFP_KERNEL);
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
 -- 
-~Vinod
+2.11.1
+
