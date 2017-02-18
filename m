@@ -1,53 +1,65 @@
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date: Mon, 06 Feb 2017 23:05:42 +0000
-Subject: Re: [PATCH] powerpc/pseries: Fix missing of_node_put
-Message-Id: <ec50fa3a-1012-805f-2541-1519ef1c0327@linux.vnet.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 08:06:14 +0000
+Subject: [PATCH] soc: ti: knav_dma: Fix some error handling
+Message-Id: <20170218080614.1828-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170206213616.3661-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170206213616.3661-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, nfont@linux.vnet.ibm.com, jallen@linux.vnet.ibm.com
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 02/06/2017 01:36 PM, Christophe JAILLET wrote:
-> If 'dlpar_configure_connector()' fails, 'parent_dn' should be released as
-> already done in the normal case.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/powerpc/platforms/pseries/mobility.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
-> index 5a0c7ba429ce..b8060c182ae2 100644
-> --- a/arch/powerpc/platforms/pseries/mobility.c
-> +++ b/arch/powerpc/platforms/pseries/mobility.c
-> @@ -226,13 +226,16 @@ static int add_dt_node(__be32 parent_phandle, __be32 drc_index)
->  		return -ENOENT;
-> 
->  	dn = dlpar_configure_connector(drc_index, parent_dn);
+'pktdma_get_regs()' never returns NULL. It returns an error pointer or a
+valid pointer.
+So test its return value with IS_ERR.
 
-Simpler approach would be to move the of_node_put() call to here
-directly after the last use of parent_dn.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+After checking with IS_ERR, it could be better to propagate the error code
+instead of returning -ENODEV uncondionnaly
+---
+ drivers/soc/ti/knav_dma.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
--Tyrel
-
-> -	if (!dn)
-> -		return -ENOENT;
-> +	if (!dn) {
-> +		rc = -ENOENT;
-> +		goto out;
-> +	}
-> 
->  	rc = dlpar_attach_node(dn);
->  	if (rc)
->  		dlpar_free_cc_nodes(dn);
-> 
-> +out:
->  	of_node_put(parent_dn);
->  	return rc;
->  }
-> 
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index ecebe2eecc3a..3272b379bfcd 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -649,7 +649,7 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
+ 	}
+ 
+ 	dma->reg_global	 = pktdma_get_regs(dma, node, 0, &size);
+-	if (!dma->reg_global)
++	if (IS_ERR(dma->reg_global))
+ 		return -ENODEV;
+ 	if (size < sizeof(struct reg_global)) {
+ 		dev_err(kdev->dev, "bad size %pa for global regs\n", &size);
+@@ -657,22 +657,22 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
+ 	}
+ 
+ 	dma->reg_tx_chan = pktdma_get_regs(dma, node, 1, &size);
+-	if (!dma->reg_tx_chan)
++	if (IS_ERR(dma->reg_tx_chan))
+ 		return -ENODEV;
+ 
+ 	max_tx_chan = size / sizeof(struct reg_chan);
+ 	dma->reg_rx_chan = pktdma_get_regs(dma, node, 2, &size);
+-	if (!dma->reg_rx_chan)
++	if (IS_ERR(dma->reg_rx_chan))
+ 		return -ENODEV;
+ 
+ 	max_rx_chan = size / sizeof(struct reg_chan);
+ 	dma->reg_tx_sched = pktdma_get_regs(dma, node, 3, &size);
+-	if (!dma->reg_tx_sched)
++	if (IS_ERR(dma->reg_tx_sched))
+ 		return -ENODEV;
+ 
+ 	max_tx_sched = size / sizeof(struct reg_tx_sched);
+ 	dma->reg_rx_flow = pktdma_get_regs(dma, node, 4, &size);
+-	if (!dma->reg_rx_flow)
++	if (IS_ERR(ma->reg_rx_flow))
+ 		return -ENODEV;
+ 
+ 	max_rx_flow = size / sizeof(struct reg_rx_flow);
+-- 
+2.9.3
 
