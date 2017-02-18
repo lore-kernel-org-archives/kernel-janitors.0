@@ -1,101 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Feb 2017 07:18:08 +0000
-Subject: [patch] staging: gdm724x: fix a couple array overflows
-Message-Id: <20170208071808.GA12703@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:19:08 +0000
+Subject: [PATCH 29/29] IB/mlx5: Use kmalloc_array() in create_srq_kernel()
+Message-Id: <8dfa1135-5691-caf7-84e9-b30419c69187@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The find_dev_index() function is frustrating.  If you give it an invalid
-index then it returns 0.  That was the intent except there is an
-off-by-one so it can return MAX_NIC_TYPE which is one higher than we
-want.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Feb 2017 21:18:15 +0100
 
-There is one caller which had a sanity check to catch invalid returns,
-but the other two callers assumed that index was valid.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-My feeling is that when we are given invalid indexes, that should be
-treated like an error and we abandon what we were doing.
+  This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not tested.
+ drivers/infiniband/hw/mlx5/srq.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gdm724x/gdm_lte.c b/drivers/staging/gdm724x/gdm_lte.c
-index a182757544c8..02b269ac25e5 100644
---- a/drivers/staging/gdm724x/gdm_lte.c
-+++ b/drivers/staging/gdm724x/gdm_lte.c
-@@ -560,13 +560,13 @@ void gdm_lte_event_exit(void)
+diff --git a/drivers/infiniband/hw/mlx5/srq.c b/drivers/infiniband/hw/mlx5/srq.c
+index 7cb145f9a6db..8ba1953177af 100644
+--- a/drivers/infiniband/hw/mlx5/srq.c
++++ b/drivers/infiniband/hw/mlx5/srq.c
+@@ -195,8 +195,9 @@ static int create_srq_kernel(struct mlx5_ib_dev *dev, struct mlx5_ib_srq *srq,
+ 		goto err_buf;
  	}
- }
- 
--static u8 find_dev_index(u32 nic_type)
-+static int find_dev_index(u32 nic_type)
- {
- 	u8 index;
- 
- 	index = (u8)(nic_type & 0x0000000f);
--	if (index > MAX_NIC_TYPE)
--		index = 0;
-+	if (index >= MAX_NIC_TYPE)
-+		return -EINVAL;
- 
- 	return index;
- }
-@@ -695,7 +695,7 @@ static void gdm_lte_multi_sdu_pkt(struct phy_dev *phy_dev, char *buf, int len)
- 	u16 hci_len;
- 	u16 cmd_evt;
- 	u32 nic_type;
--	u8 index;
-+	int index;
- 
- 	hci_len = gdm_dev16_to_cpu(endian, multi_sdu->len);
- 	num_packet = gdm_dev16_to_cpu(endian, multi_sdu->num_packet);
-@@ -717,13 +717,13 @@ static void gdm_lte_multi_sdu_pkt(struct phy_dev *phy_dev, char *buf, int len)
- 		}
- 
- 		index = find_dev_index(nic_type);
--		if (index < MAX_NIC_TYPE) {
--			dev = phy_dev->dev[index];
--			gdm_lte_netif_rx(dev, (char *)sdu->data,
--					 (int)(hci_len - 12), nic_type);
--		} else {
-+		if (index < 0) {
- 			pr_err("rx sdu invalid nic_type :%x\n", nic_type);
-+			return;
- 		}
-+		dev = phy_dev->dev[index];
-+		gdm_lte_netif_rx(dev, (char *)sdu->data,
-+				 (int)(hci_len - 12), nic_type);
- 
- 		data += ((hci_len + 3) & 0xfffc) + HCI_HEADER_SIZE;
- 	}
-@@ -763,7 +763,7 @@ static int gdm_lte_receive_pkt(struct phy_dev *phy_dev, char *buf, int len)
- 	int ret = 0;
- 	u16 cmd_evt;
- 	u32 nic_type;
--	u8 index;
-+	int index;
- 
- 	if (!len)
- 		return ret;
-@@ -779,6 +779,8 @@ static int gdm_lte_receive_pkt(struct phy_dev *phy_dev, char *buf, int len)
- 		sdu = (struct sdu *)hci->data;
- 		nic_type = gdm_dev32_to_cpu(endian, sdu->nic_type);
- 		index = find_dev_index(nic_type);
-+		if (index < 0)
-+			return index;
- 		dev = phy_dev->dev[index];
- 		gdm_lte_netif_rx(dev, hci->data, len, nic_type);
- 		break;
-@@ -794,6 +796,8 @@ static int gdm_lte_receive_pkt(struct phy_dev *phy_dev, char *buf, int len)
- 		pdn_table = (struct hci_pdn_table_ind *)buf;
- 		nic_type = gdm_dev32_to_cpu(endian, pdn_table->nic_type);
- 		index = find_dev_index(nic_type);
-+		if (index < 0)
-+			return index;
- 		dev = phy_dev->dev[index];
- 		gdm_lte_pdn_table(dev, buf, len);
- 		/* Fall through */
+ 	mlx5_fill_page_array(&srq->buf, in->pas);
+-
+-	srq->wrid = kmalloc(srq->msrq.max * sizeof(u64), GFP_KERNEL);
++	srq->wrid = kmalloc_array(srq->msrq.max,
++				  sizeof(*srq->wrid),
++				  GFP_KERNEL);
+ 	if (!srq->wrid) {
+ 		err = -ENOMEM;
+ 		goto err_in;
+-- 
+2.11.1
+
