@@ -1,31 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:00:09 +0000
-Subject: [PATCH 0/5] IB/hfi1: Fine-tuning for three function implementations
-Message-Id: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 13:12:49 +0000
+Subject: [PATCH] soc: mediatek: PMIC wrap: Fix error handling
+Message-Id: <20170219131249.12010-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:53:21 +0100
+According to error handling in this function, it is likely that going to
+'err_out2' was expected here.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Markus Elfring (5):
-  Use kcalloc() in hfi1_user_exp_rcv_init()
-  Use kcalloc() in hfi1_user_sdma_alloc_queues()
-  Adjust another size determination in hfi1_user_sdma_alloc_queues()
-  Use memdup_user() rather than duplicating its implementation in hfi1_user_sdma_process_request()
-  Improve another size determination in hfi1_user_sdma_process_request()
-
- drivers/infiniband/hw/hfi1/user_exp_rcv.c |  5 +++--
- drivers/infiniband/hw/hfi1/user_sdma.c    | 35 +++++++++++++++----------------
- 2 files changed, 20 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+index a5f10936fb9c..285b434449a6 100644
+--- a/drivers/soc/mediatek/mtk-pmic-wrap.c
++++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+@@ -1200,7 +1200,8 @@ static int pwrap_probe(struct platform_device *pdev)
+ 
+ 	if (!(pwrap_readl(wrp, PWRAP_WACS2_RDATA) & PWRAP_STATE_INIT_DONE0)) {
+ 		dev_dbg(wrp->dev, "initialization isn't finished\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_out2;
+ 	}
+ 
+ 	/* Initialize watchdog, may not be done by the bootloader */
+@@ -1220,8 +1221,10 @@ static int pwrap_probe(struct platform_device *pdev)
+ 		goto err_out2;
+ 
+ 	wrp->regmap = devm_regmap_init(wrp->dev, NULL, wrp, &pwrap_regmap_config);
+-	if (IS_ERR(wrp->regmap))
+-		return PTR_ERR(wrp->regmap);
++	if (IS_ERR(wrp->regmap)) {
++		ret = PTR_ERR(wrp->regmap);
++		goto err_out2;
++	}
+ 
+ 	ret = of_platform_populate(np, NULL, NULL, wrp->dev);
+ 	if (ret) {
 -- 
-2.11.1
+2.9.3
 
