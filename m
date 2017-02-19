@@ -1,154 +1,122 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 20:58:39 +0000
-Subject: [PATCH 10/29] IB/mlx4: Enclose 15 expressions for the sizeof operator by parentheses
-Message-Id: <c535767b-0cbd-e8e6-e7b0-f2b05cfd05e5@users.sourceforge.net>
+From: Majd Dibbiny <majd@mellanox.com>
+Date: Sun, 19 Feb 2017 17:21:58 +0000
+Subject: Re: [PATCH 10/29] IB/mlx4: Enclose 15 expressions for the sizeof operator by parentheses
+Message-Id: <DC6B3471-8721-49CA-B2E3-CA883E60D341@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+ <c535767b-0cbd-e8e6-e7b0-f2b05cfd05e5@users.sourceforge.net>
+In-Reply-To: <c535767b-0cbd-e8e6-e7b0-f2b05cfd05e5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 09:54:15 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: sizeof … should be sizeof(…)
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mlx4/mad.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index 860fec8b9601..b26817f0669f 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -195,7 +195,7 @@ static void update_sm_ah(struct mlx4_ib_dev *dev, u8 port_num, u16 lid, u8 sl)
- 	if (!dev->send_agent[port_num - 1][0])
- 		return;
- 
--	memset(&ah_attr, 0, sizeof ah_attr);
-+	memset(&ah_attr, 0, sizeof(ah_attr));
- 	ah_attr.dlid     = lid;
- 	ah_attr.sl       = sl;
- 	ah_attr.port_num = port_num;
-@@ -400,7 +400,7 @@ static void forward_trap(struct mlx4_ib_dev *dev, u8 port_num, const struct ib_m
- 		 * it's OK for our devices).
- 		 */
- 		spin_lock_irqsave(&dev->sm_lock, flags);
--		memcpy(send_buf->mad, mad, sizeof *mad);
-+		memcpy(send_buf->mad, mad, sizeof(*mad));
- 		send_buf->ah = dev->sm_ah[port_num - 1];
- 		if (send_buf->ah)
- 			ret = ib_post_send_mad(send_buf, NULL);
-@@ -555,7 +555,7 @@ int mlx4_ib_send_to_slave(struct mlx4_ib_dev *dev, int slave, u8 port,
- 
- 	/* create ah. Just need an empty one with the port num for the post send.
- 	 * The driver will set the force loopback bit in post_send */
--	memset(&attr, 0, sizeof attr);
-+	memset(&attr, 0, sizeof(attr));
- 	attr.port_num = port;
- 	if (is_eth) {
- 		union ib_gid sgid;
-@@ -590,8 +590,8 @@ int mlx4_ib_send_to_slave(struct mlx4_ib_dev *dev, int slave, u8 port,
- 
- 	/* copy over to tunnel buffer */
- 	if (grh)
--		memcpy(&tun_mad->grh, grh, sizeof *grh);
--	memcpy(&tun_mad->mad, mad, sizeof *mad);
-+		memcpy(&tun_mad->grh, grh, sizeof(*grh));
-+	memcpy(&tun_mad->mad, mad, sizeof(*mad));
- 
- 	/* adjust tunnel data */
- 	tun_mad->hdr.pkey_index = cpu_to_be16(tun_pkey_ix);
-@@ -961,7 +961,7 @@ static int iboe_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
- 	}
- 	mutex_unlock(&dev->counters_table[port_num - 1].mutex);
- 	if (stats_avail) {
--		memset(out_mad->data, 0, sizeof out_mad->data);
-+		memset(out_mad->data, 0, sizeof(out_mad->data));
- 		switch (counter_stats.counter_mode & 0xf) {
- 		case 0:
- 			edit_counter(&counter_stats,
-@@ -1136,11 +1136,11 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
- 	if (!mlx4_is_mfunc(dev->dev) || !mlx4_is_master(dev->dev))
- 		return;
- 
--	in_mad  = kmalloc(sizeof *in_mad, GFP_KERNEL);
-+	in_mad  = kmalloc(sizeof(*in_mad), GFP_KERNEL);
- 	if (!in_mad)
- 		return;
- 
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	if (!out_mad)
- 		goto free_in_mad;
- 
-@@ -1149,8 +1149,8 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
- 	for (i = 0; i < 4; i++) {
- 		if (change_bitmap && (!((change_bitmap >> (8 * i)) & 0xff)))
- 			continue;
--		memset(in_mad, 0, sizeof *in_mad);
--		memset(out_mad, 0, sizeof *out_mad);
-+		memset(in_mad, 0, sizeof(*in_mad));
-+		memset(out_mad, 0, sizeof(*out_mad));
- 
- 		in_mad->base_version  = 1;
- 		in_mad->mgmt_class    = IB_MGMT_CLASS_SUBN_LID_ROUTED;
-@@ -1421,7 +1421,7 @@ int mlx4_ib_send_to_wire(struct mlx4_ib_dev *dev, int slave, u8 port,
- 				   sizeof (struct mlx4_mad_snd_buf),
- 				   DMA_TO_DEVICE);
- 
--	memcpy(&sqp_mad->payload, mad, sizeof *mad);
-+	memcpy(&sqp_mad->payload, mad, sizeof(*mad));
- 
- 	ib_dma_sync_single_for_device(&dev->ib_dev,
- 				      sqp->tx_ring[wire_tx_ix].buf.map,
-@@ -1804,7 +1804,7 @@ static int create_pv_sqp(struct mlx4_ib_demux_pv_ctx *ctx,
- 
- 	tun_qp = &ctx->qp[qp_type];
- 
--	memset(&qp_init_attr, 0, sizeof qp_init_attr);
-+	memset(&qp_init_attr, 0, sizeof(qp_init_attr));
- 	qp_init_attr.init_attr.send_cq = ctx->cq;
- 	qp_init_attr.init_attr.recv_cq = ctx->cq;
- 	qp_init_attr.init_attr.sq_sig_type = IB_SIGNAL_ALL_WR;
-@@ -1837,7 +1837,7 @@ static int create_pv_sqp(struct mlx4_ib_demux_pv_ctx *ctx,
- 		return ret;
- 	}
- 
--	memset(&attr, 0, sizeof attr);
-+	memset(&attr, 0, sizeof(attr));
- 	attr.qp_state = IB_QPS_INIT;
- 	ret = 0;
- 	if (create_tun)
-@@ -2184,7 +2184,7 @@ static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
- 		goto err_mcg;
- 	}
- 
--	snprintf(name, sizeof name, "mlx4_ibt%d", port);
-+	snprintf(name, sizeof(name), "mlx4_ibt%d", port);
- 	ctx->wq = alloc_ordered_workqueue(name, WQ_MEM_RECLAIM);
- 	if (!ctx->wq) {
- 		pr_err("Failed to create tunnelling WQ for port %d\n", port);
-@@ -2192,7 +2192,7 @@ static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
- 		goto err_wq;
- 	}
- 
--	snprintf(name, sizeof name, "mlx4_ibud%d", port);
-+	snprintf(name, sizeof(name), "mlx4_ibud%d", port);
- 	ctx->ud_wq = alloc_ordered_workqueue(name, WQ_MEM_RECLAIM);
- 	if (!ctx->ud_wq) {
- 		pr_err("Failed to create up/down WQ for port %d\n", port);
--- 
-2.11.1
-
+DQo+IE9uIEZlYiAxOCwgMjAxNywgYXQgMTA6NTkgUE0sIFNGIE1hcmt1cyBFbGZyaW5nIDxlbGZy
+aW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4gd3JvdGU6DQo+IA0KPiBGcm9tOiBNYXJrdXMgRWxm
+cmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFNhdCwgMTggRmVi
+IDIwMTcgMDk6NTQ6MTUgKzAxMDANCj4gTUlNRS1WZXJzaW9uOiAxLjANCj4gQ29udGVudC1UeXBl
+OiB0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04DQo+IENvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6
+IDhiaXQNCj4gDQo+IFRoZSBzY3JpcHQgImNoZWNrcGF0Y2gucGwiIHBvaW50ZWQgaW5mb3JtYXRp
+b24gb3V0IGxpa2UgdGhlIGZvbGxvd2luZy4NCj4gDQo+IFdBUk5JTkc6IHNpemVvZiDigKYgc2hv
+dWxkIGJlIHNpemVvZijigKYpDQo+IA0KPiBUaHVzIGZpeCB0aGUgYWZmZWN0ZWQgc291cmNlIGNv
+ZGUgcGxhY2VzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdA
+dXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiAtLS0NCj4gZHJpdmVycy9pbmZpbmliYW5kL2h3L21s
+eDQvbWFkLmMgfCAzMCArKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0NCj4gMSBmaWxlIGNo
+YW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg0L21hZC5jIGIvZHJpdmVycy9pbmZpbmliYW5k
+L2h3L21seDQvbWFkLmMNCj4gaW5kZXggODYwZmVjOGI5NjAxLi5iMjY4MTdmMDY2OWYgMTAwNjQ0
+DQo+IC0tLSBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg0L21hZC5jDQo+ICsrKyBiL2RyaXZl
+cnMvaW5maW5pYmFuZC9ody9tbHg0L21hZC5jDQo+IEBAIC0xOTUsNyArMTk1LDcgQEAgc3RhdGlj
+IHZvaWQgdXBkYXRlX3NtX2FoKHN0cnVjdCBtbHg0X2liX2RldiAqZGV2LCB1OCBwb3J0X251bSwg
+dTE2IGxpZCwgdTggc2wpDQo+ICAgIGlmICghZGV2LT5zZW5kX2FnZW50W3BvcnRfbnVtIC0gMV1b
+MF0pDQo+ICAgICAgICByZXR1cm47DQo+IA0KPiAtICAgIG1lbXNldCgmYWhfYXR0ciwgMCwgc2l6
+ZW9mIGFoX2F0dHIpOw0KPiArICAgIG1lbXNldCgmYWhfYXR0ciwgMCwgc2l6ZW9mKGFoX2F0dHIp
+KTsNCj4gICAgYWhfYXR0ci5kbGlkICAgICA9IGxpZDsNCj4gICAgYWhfYXR0ci5zbCAgICAgICA9
+IHNsOw0KPiAgICBhaF9hdHRyLnBvcnRfbnVtID0gcG9ydF9udW07DQo+IEBAIC00MDAsNyArNDAw
+LDcgQEAgc3RhdGljIHZvaWQgZm9yd2FyZF90cmFwKHN0cnVjdCBtbHg0X2liX2RldiAqZGV2LCB1
+OCBwb3J0X251bSwgY29uc3Qgc3RydWN0IGliX20NCj4gICAgICAgICAqIGl0J3MgT0sgZm9yIG91
+ciBkZXZpY2VzKS4NCj4gICAgICAgICAqLw0KPiAgICAgICAgc3Bpbl9sb2NrX2lycXNhdmUoJmRl
+di0+c21fbG9jaywgZmxhZ3MpOw0KPiAtICAgICAgICBtZW1jcHkoc2VuZF9idWYtPm1hZCwgbWFk
+LCBzaXplb2YgKm1hZCk7DQo+ICsgICAgICAgIG1lbWNweShzZW5kX2J1Zi0+bWFkLCBtYWQsIHNp
+emVvZigqbWFkKSk7DQo+ICAgICAgICBzZW5kX2J1Zi0+YWggPSBkZXYtPnNtX2FoW3BvcnRfbnVt
+IC0gMV07DQo+ICAgICAgICBpZiAoc2VuZF9idWYtPmFoKQ0KPiAgICAgICAgICAgIHJldCA9IGli
+X3Bvc3Rfc2VuZF9tYWQoc2VuZF9idWYsIE5VTEwpOw0KPiBAQCAtNTU1LDcgKzU1NSw3IEBAIGlu
+dCBtbHg0X2liX3NlbmRfdG9fc2xhdmUoc3RydWN0IG1seDRfaWJfZGV2ICpkZXYsIGludCBzbGF2
+ZSwgdTggcG9ydCwNCj4gDQo+ICAgIC8qIGNyZWF0ZSBhaC4gSnVzdCBuZWVkIGFuIGVtcHR5IG9u
+ZSB3aXRoIHRoZSBwb3J0IG51bSBmb3IgdGhlIHBvc3Qgc2VuZC4NCj4gICAgICogVGhlIGRyaXZl
+ciB3aWxsIHNldCB0aGUgZm9yY2UgbG9vcGJhY2sgYml0IGluIHBvc3Rfc2VuZCAqLw0KPiAtICAg
+IG1lbXNldCgmYXR0ciwgMCwgc2l6ZW9mIGF0dHIpOw0KPiArICAgIG1lbXNldCgmYXR0ciwgMCwg
+c2l6ZW9mKGF0dHIpKTsNCj4gICAgYXR0ci5wb3J0X251bSA9IHBvcnQ7DQo+ICAgIGlmIChpc19l
+dGgpIHsNCj4gICAgICAgIHVuaW9uIGliX2dpZCBzZ2lkOw0KPiBAQCAtNTkwLDggKzU5MCw4IEBA
+IGludCBtbHg0X2liX3NlbmRfdG9fc2xhdmUoc3RydWN0IG1seDRfaWJfZGV2ICpkZXYsIGludCBz
+bGF2ZSwgdTggcG9ydCwNCj4gDQo+ICAgIC8qIGNvcHkgb3ZlciB0byB0dW5uZWwgYnVmZmVyICov
+DQo+ICAgIGlmIChncmgpDQo+IC0gICAgICAgIG1lbWNweSgmdHVuX21hZC0+Z3JoLCBncmgsIHNp
+emVvZiAqZ3JoKTsNCj4gLSAgICBtZW1jcHkoJnR1bl9tYWQtPm1hZCwgbWFkLCBzaXplb2YgKm1h
+ZCk7DQo+ICsgICAgICAgIG1lbWNweSgmdHVuX21hZC0+Z3JoLCBncmgsIHNpemVvZigqZ3JoKSk7
+DQo+ICsgICAgbWVtY3B5KCZ0dW5fbWFkLT5tYWQsIG1hZCwgc2l6ZW9mKCptYWQpKTsNCj4gDQo+
+ICAgIC8qIGFkanVzdCB0dW5uZWwgZGF0YSAqLw0KPiAgICB0dW5fbWFkLT5oZHIucGtleV9pbmRl
+eCA9IGNwdV90b19iZTE2KHR1bl9wa2V5X2l4KTsNCj4gQEAgLTk2MSw3ICs5NjEsNyBAQCBzdGF0
+aWMgaW50IGlib2VfcHJvY2Vzc19tYWQoc3RydWN0IGliX2RldmljZSAqaWJkZXYsIGludCBtYWRf
+ZmxhZ3MsIHU4IHBvcnRfbnVtLA0KPiAgICB9DQo+ICAgIG11dGV4X3VubG9jaygmZGV2LT5jb3Vu
+dGVyc190YWJsZVtwb3J0X251bSAtIDFdLm11dGV4KTsNCj4gICAgaWYgKHN0YXRzX2F2YWlsKSB7
+DQo+IC0gICAgICAgIG1lbXNldChvdXRfbWFkLT5kYXRhLCAwLCBzaXplb2Ygb3V0X21hZC0+ZGF0
+YSk7DQo+ICsgICAgICAgIG1lbXNldChvdXRfbWFkLT5kYXRhLCAwLCBzaXplb2Yob3V0X21hZC0+
+ZGF0YSkpOw0KPiAgICAgICAgc3dpdGNoIChjb3VudGVyX3N0YXRzLmNvdW50ZXJfbW9kZSAmIDB4
+Zikgew0KPiAgICAgICAgY2FzZSAwOg0KPiAgICAgICAgICAgIGVkaXRfY291bnRlcigmY291bnRl
+cl9zdGF0cywNCj4gQEAgLTExMzYsMTEgKzExMzYsMTEgQEAgc3RhdGljIHZvaWQgaGFuZGxlX3Ns
+YXZlc19ndWlkX2NoYW5nZShzdHJ1Y3QgbWx4NF9pYl9kZXYgKmRldiwgdTggcG9ydF9udW0sDQo+
+ICAgIGlmICghbWx4NF9pc19tZnVuYyhkZXYtPmRldikgfHwgIW1seDRfaXNfbWFzdGVyKGRldi0+
+ZGV2KSkNCj4gICAgICAgIHJldHVybjsNCj4gDQo+IC0gICAgaW5fbWFkICA9IGttYWxsb2Moc2l6
+ZW9mICppbl9tYWQsIEdGUF9LRVJORUwpOw0KPiArICAgIGluX21hZCAgPSBrbWFsbG9jKHNpemVv
+ZigqaW5fbWFkKSwgR0ZQX0tFUk5FTCk7DQo+ICAgIGlmICghaW5fbWFkKQ0KPiAgICAgICAgcmV0
+dXJuOw0KPiANCj4gLSAgICBvdXRfbWFkID0ga21hbGxvYyhzaXplb2YgKm91dF9tYWQsIEdGUF9L
+RVJORUwpOw0KPiArICAgIG91dF9tYWQgPSBrbWFsbG9jKHNpemVvZigqb3V0X21hZCksIEdGUF9L
+RVJORUwpOw0KPiAgICBpZiAoIW91dF9tYWQpDQo+ICAgICAgICBnb3RvIGZyZWVfaW5fbWFkOw0K
+PiANCj4gQEAgLTExNDksOCArMTE0OSw4IEBAIHN0YXRpYyB2b2lkIGhhbmRsZV9zbGF2ZXNfZ3Vp
+ZF9jaGFuZ2Uoc3RydWN0IG1seDRfaWJfZGV2ICpkZXYsIHU4IHBvcnRfbnVtLA0KPiAgICBmb3Ig
+KGkgPSAwOyBpIDwgNDsgaSsrKSB7DQo+ICAgICAgICBpZiAoY2hhbmdlX2JpdG1hcCAmJiAoISgo
+Y2hhbmdlX2JpdG1hcCA+PiAoOCAqIGkpKSAmIDB4ZmYpKSkNCj4gICAgICAgICAgICBjb250aW51
+ZTsNCj4gLSAgICAgICAgbWVtc2V0KGluX21hZCwgMCwgc2l6ZW9mICppbl9tYWQpOw0KPiAtICAg
+ICAgICBtZW1zZXQob3V0X21hZCwgMCwgc2l6ZW9mICpvdXRfbWFkKTsNCj4gKyAgICAgICAgbWVt
+c2V0KGluX21hZCwgMCwgc2l6ZW9mKCppbl9tYWQpKTsNCj4gKyAgICAgICAgbWVtc2V0KG91dF9t
+YWQsIDAsIHNpemVvZigqb3V0X21hZCkpOw0KPiANCj4gICAgICAgIGluX21hZC0+YmFzZV92ZXJz
+aW9uICA9IDE7DQo+ICAgICAgICBpbl9tYWQtPm1nbXRfY2xhc3MgICAgPSBJQl9NR01UX0NMQVNT
+X1NVQk5fTElEX1JPVVRFRDsNCj4gQEAgLTE0MjEsNyArMTQyMSw3IEBAIGludCBtbHg0X2liX3Nl
+bmRfdG9fd2lyZShzdHJ1Y3QgbWx4NF9pYl9kZXYgKmRldiwgaW50IHNsYXZlLCB1OCBwb3J0LA0K
+PiAgICAgICAgICAgICAgICAgICBzaXplb2YgKHN0cnVjdCBtbHg0X21hZF9zbmRfYnVmKSwNCj4g
+ICAgICAgICAgICAgICAgICAgRE1BX1RPX0RFVklDRSk7DQo+IA0KPiAtICAgIG1lbWNweSgmc3Fw
+X21hZC0+cGF5bG9hZCwgbWFkLCBzaXplb2YgKm1hZCk7DQo+ICsgICAgbWVtY3B5KCZzcXBfbWFk
+LT5wYXlsb2FkLCBtYWQsIHNpemVvZigqbWFkKSk7DQo+IA0KPiAgICBpYl9kbWFfc3luY19zaW5n
+bGVfZm9yX2RldmljZSgmZGV2LT5pYl9kZXYsDQo+ICAgICAgICAgICAgICAgICAgICAgIHNxcC0+
+dHhfcmluZ1t3aXJlX3R4X2l4XS5idWYubWFwLA0KPiBAQCAtMTgwNCw3ICsxODA0LDcgQEAgc3Rh
+dGljIGludCBjcmVhdGVfcHZfc3FwKHN0cnVjdCBtbHg0X2liX2RlbXV4X3B2X2N0eCAqY3R4LA0K
+PiANCj4gICAgdHVuX3FwID0gJmN0eC0+cXBbcXBfdHlwZV07DQo+IA0KPiAtICAgIG1lbXNldCgm
+cXBfaW5pdF9hdHRyLCAwLCBzaXplb2YgcXBfaW5pdF9hdHRyKTsNCj4gKyAgICBtZW1zZXQoJnFw
+X2luaXRfYXR0ciwgMCwgc2l6ZW9mKHFwX2luaXRfYXR0cikpOw0KPiAgICBxcF9pbml0X2F0dHIu
+aW5pdF9hdHRyLnNlbmRfY3EgPSBjdHgtPmNxOw0KPiAgICBxcF9pbml0X2F0dHIuaW5pdF9hdHRy
+LnJlY3ZfY3EgPSBjdHgtPmNxOw0KPiAgICBxcF9pbml0X2F0dHIuaW5pdF9hdHRyLnNxX3NpZ190
+eXBlID0gSUJfU0lHTkFMX0FMTF9XUjsNCj4gQEAgLTE4MzcsNyArMTgzNyw3IEBAIHN0YXRpYyBp
+bnQgY3JlYXRlX3B2X3NxcChzdHJ1Y3QgbWx4NF9pYl9kZW11eF9wdl9jdHggKmN0eCwNCj4gICAg
+ICAgIHJldHVybiByZXQ7DQo+ICAgIH0NCj4gDQo+IC0gICAgbWVtc2V0KCZhdHRyLCAwLCBzaXpl
+b2YgYXR0cik7DQo+ICsgICAgbWVtc2V0KCZhdHRyLCAwLCBzaXplb2YoYXR0cikpOw0KPiAgICBh
+dHRyLnFwX3N0YXRlID0gSUJfUVBTX0lOSVQ7DQo+ICAgIHJldCA9IDA7DQo+ICAgIGlmIChjcmVh
+dGVfdHVuKQ0KPiBAQCAtMjE4NCw3ICsyMTg0LDcgQEAgc3RhdGljIGludCBtbHg0X2liX2FsbG9j
+X2RlbXV4X2N0eChzdHJ1Y3QgbWx4NF9pYl9kZXYgKmRldiwNCj4gICAgICAgIGdvdG8gZXJyX21j
+ZzsNCj4gICAgfQ0KPiANCj4gLSAgICBzbnByaW50ZihuYW1lLCBzaXplb2YgbmFtZSwgIm1seDRf
+aWJ0JWQiLCBwb3J0KTsNCj4gKyAgICBzbnByaW50ZihuYW1lLCBzaXplb2YobmFtZSksICJtbHg0
+X2lidCVkIiwgcG9ydCk7DQo+ICAgIGN0eC0+d3EgPSBhbGxvY19vcmRlcmVkX3dvcmtxdWV1ZShu
+YW1lLCBXUV9NRU1fUkVDTEFJTSk7DQo+ICAgIGlmICghY3R4LT53cSkgew0KPiAgICAgICAgcHJf
+ZXJyKCJGYWlsZWQgdG8gY3JlYXRlIHR1bm5lbGxpbmcgV1EgZm9yIHBvcnQgJWRcbiIsIHBvcnQp
+Ow0KPiBAQCAtMjE5Miw3ICsyMTkyLDcgQEAgc3RhdGljIGludCBtbHg0X2liX2FsbG9jX2RlbXV4
+X2N0eChzdHJ1Y3QgbWx4NF9pYl9kZXYgKmRldiwNCj4gICAgICAgIGdvdG8gZXJyX3dxOw0KPiAg
+ICB9DQo+IA0KPiAtICAgIHNucHJpbnRmKG5hbWUsIHNpemVvZiBuYW1lLCAibWx4NF9pYnVkJWQi
+LCBwb3J0KTsNCj4gKyAgICBzbnByaW50ZihuYW1lLCBzaXplb2YobmFtZSksICJtbHg0X2lidWQl
+ZCIsIHBvcnQpOw0KPiAgICBjdHgtPnVkX3dxID0gYWxsb2Nfb3JkZXJlZF93b3JrcXVldWUobmFt
+ZSwgV1FfTUVNX1JFQ0xBSU0pOw0KPiAgICBpZiAoIWN0eC0+dWRfd3EpIHsNCj4gICAgICAgIHBy
+X2VycigiRmFpbGVkIHRvIGNyZWF0ZSB1cC9kb3duIFdRIGZvciBwb3J0ICVkXG4iLCBwb3J0KTsN
+Cj4gLS0gDQo+IDIuMTEuMQ0KPiANCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxp
+c3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXJkbWEiIGluDQo+IHRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jk
+b21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
+VGhhbmtzLA0KUmV2aWV3ZWQtYnk6IE1hamQgRGliYmlueQ0KPG1hamRAbWVsbGFub3guY29tPg=
