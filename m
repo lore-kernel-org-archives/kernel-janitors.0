@@ -1,41 +1,74 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 23 Feb 2017 16:42:26 +0000
-Subject: Re: [patch] ceph: tidy some white space in get_nonsnap_parent()
-Message-Id: <CAOi1vP9V8F3z9AAO=-wMKVRKs8LDMLEBn3QM216S=iaVtKehkw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 19 Feb 2017 16:35:01 +0000
+Subject: Applied "spi: spi-ti-qspi: Fix error handling" to the spi tree
+Message-Id: <E1cfURx-0004ql-O5@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170223103852.GA27418@mwanda>
-In-Reply-To: <20170223103852.GA27418@mwanda>
+References: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
-On Thu, Feb 23, 2017 at 11:39 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> The white space here seems slightly messed up.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index fdbc3544e41c..c681762d76e6 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -679,8 +679,9 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
->   * working with them. Once we hit a candidate dentry, we attempt to take a
->   * reference to it, and return that as the result.
->   */
-> -static struct inode *get_nonsnap_parent(struct dentry *dentry) { struct inode
-> -       *inode = NULL;
-> +static struct inode *get_nonsnap_parent(struct dentry *dentry)
-> +{
-> +       struct inode *inode = NULL;
->
->         while (dentry && !IS_ROOT(dentry)) {
->                 inode = d_inode_rcu(dentry);
+The patch
 
-Applied.
+   spi: spi-ti-qspi: Fix error handling
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-                Ilya
+From 7abfe04c47d97243a7aeeb8fe211a15687bff67f Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Feb 2017 10:42:02 +0100
+Subject: [PATCH] spi: spi-ti-qspi: Fix error handling
+
+'dma_request_chan_by_mask()' can not return NULL.
+Try to keep the logic in 'no_dma:' by resetting 'qspi->rx_chan' in case
+of error.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-ti-qspi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index e784d0f64dc1..ad76a44fee6f 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -718,9 +718,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
+ 	dma_cap_set(DMA_MEMCPY, mask);
+ 
+ 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
+-	if (!qspi->rx_chan) {
++	if (IS_ERR(qspi->rx_chan)) {
+ 		dev_err(qspi->dev,
+ 			"No Rx DMA available, trying mmap mode\n");
++		qspi->rx_chan = NULL;
+ 		ret = 0;
+ 		goto no_dma;
+ 	}
+-- 
+2.11.0
+
