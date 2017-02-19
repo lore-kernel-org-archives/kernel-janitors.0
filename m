@@ -1,49 +1,42 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 08 Feb 2017 13:02:41 +0000
-Subject: Re: [PATCH] tpm xen: drop unneeded chip variable
-Message-Id: <20170208130241.lj7gixi7vhbkfqih@intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 09:35:05 +0000
+Subject: [PATCH] qlcnic: Fix a memory leak in error handling path
+Message-Id: <20170219093505.8620-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1486330777-11341-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1486330777-11341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter Huewe <peterhuewe@gmx.de>, kernel-janitors@vger.kernel.org, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: harish.patil@cavium.com, manish.chopra@cavium.com, Dept-GELinuxNICDev@cavium.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Feb 05, 2017 at 10:39:37PM +0100, Julia Lawall wrote:
-> The call that used chip was dropped in 1f0f30e404b3.  Drop the
-> leftover declaration and initialization.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+If 'dma_alloc_coherent()' fails, we should release resources allocated so
+far, just as done in all other cases in this function.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+checkpatch.pl complains about '= NULL'. I have left it as-is because both
+'= NULL' and '!' are already used in the file.
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_ctx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-/Jarkko
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ctx.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ctx.c
+index daf05155b732..d344e9d43832 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ctx.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ctx.c
+@@ -573,8 +573,10 @@ int qlcnic_alloc_hw_resources(struct qlcnic_adapter *adapter)
+ 		ptr = (__le32 *)dma_alloc_coherent(&pdev->dev, sizeof(u32),
+ 						   &tx_ring->hw_cons_phys_addr,
+ 						   GFP_KERNEL);
+-		if (ptr = NULL)
+-			return -ENOMEM;
++		if (ptr = NULL) {
++			err = -ENOMEM;
++			goto err_out_free;
++		}
+ 
+ 		tx_ring->hw_consumer = ptr;
+ 		/* cmd desc ring */
+-- 
+2.9.3
 
-> 
-> ---
->  drivers/char/tpm/xen-tpmfront.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 5aaa268..656e8af 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -289,7 +289,6 @@ static int tpmfront_probe(struct xenbus_device *dev,
->  		const struct xenbus_device_id *id)
->  {
->  	struct tpm_private *priv;
-> -	struct tpm_chip *chip;
->  	int rv;
->  
->  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> @@ -306,7 +305,6 @@ static int tpmfront_probe(struct xenbus_device *dev,
->  
->  	rv = setup_ring(dev, priv);
->  	if (rv) {
-> -		chip = dev_get_drvdata(&dev->dev);
->  		ring_free(priv);
->  		return rv;
->  	}
-> 
