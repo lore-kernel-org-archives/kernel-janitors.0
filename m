@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Sun, 19 Feb 2017 16:35:01 +0000
+Date: Sun, 19 Feb 2017 16:35:02 +0000
 Subject: Applied "spi: spi-ti-qspi: Fix error handling" to the spi tree
-Message-Id: <E1cfURx-0004ql-O5@finisterre>
+Message-Id: <E1cfURy-0004ra-Q2@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170218094202.6454-1-christophe.jaillet@wanadoo.fr>
@@ -38,7 +38,7 @@ to this mail.
 Thanks,
 Mark
 
-From 7abfe04c47d97243a7aeeb8fe211a15687bff67f Mon Sep 17 00:00:00 2001
+From 30fb27239f987c53429f24297f5d46e28d0e16ed Mon Sep 17 00:00:00 2001
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Date: Sat, 18 Feb 2017 10:42:02 +0100
 Subject: [PATCH] spi: spi-ti-qspi: Fix error handling
@@ -54,10 +54,10 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index e784d0f64dc1..ad76a44fee6f 100644
+index ec6fb09e2e17..0fefa6423ff4 100644
 --- a/drivers/spi/spi-ti-qspi.c
 +++ b/drivers/spi/spi-ti-qspi.c
-@@ -718,9 +718,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
+@@ -714,9 +714,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
  	dma_cap_set(DMA_MEMCPY, mask);
  
  	qspi->rx_chan = dma_request_chan_by_mask(&mask);
