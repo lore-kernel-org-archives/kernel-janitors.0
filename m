@@ -1,43 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:39:22 +0000
-Subject: [PATCH 01/18] HID: Use kmalloc_array() in hid_input_field()
-Message-Id: <540faed6-c664-def3-fbf9-767b40444165@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 09:58:47 +0000
+Subject: [PATCH] NFC: st21nfca: Fix potential memory leak
+Message-Id: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, sameo@linux.intel.com, christophe.ricard@gmail.com
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Feb 2017 18:18:41 +0100
+If all bits of 'dev_mask' are already set, there is a memory leak because
+'info' should be freed before returning.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+While fixing it, 'return -ENOMEM' directly if the first kzalloc fails.
+This makes the code more readable.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hid/hid-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nfc/st21nfca/core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 538ff697a4cf..9b0a97bbde96 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1272,7 +1272,7 @@ static void hid_input_field(struct hid_device *hid, struct hid_field *field,
- 	__s32 max = field->logical_maximum;
- 	__s32 *value;
+diff --git a/drivers/nfc/st21nfca/core.c b/drivers/nfc/st21nfca/core.c
+index dacb9166081b..50be3b788f1c 100644
+--- a/drivers/nfc/st21nfca/core.c
++++ b/drivers/nfc/st21nfca/core.c
+@@ -959,10 +959,8 @@ int st21nfca_hci_probe(void *phy_id, struct nfc_phy_ops *phy_ops,
+ 	unsigned long quirks = 0;
  
--	value = kmalloc(sizeof(__s32) * count, GFP_ATOMIC);
-+	value = kmalloc_array(count, sizeof(__s32), GFP_ATOMIC);
- 	if (!value)
- 		return;
+ 	info = kzalloc(sizeof(struct st21nfca_hci_info), GFP_KERNEL);
+-	if (!info) {
+-		r = -ENOMEM;
+-		goto err_alloc_hdev;
+-	}
++	if (!info)
++		return -ENOMEM;
+ 
+ 	info->phy_ops = phy_ops;
+ 	info->phy_id = phy_id;
+@@ -978,8 +976,10 @@ int st21nfca_hci_probe(void *phy_id, struct nfc_phy_ops *phy_ops,
+ 	 * persistent info to discriminate 2 identical chips
+ 	 */
+ 	dev_num = find_first_zero_bit(dev_mask, ST21NFCA_NUM_DEVICES);
+-	if (dev_num >= ST21NFCA_NUM_DEVICES)
+-		return -ENODEV;
++	if (dev_num >= ST21NFCA_NUM_DEVICES) {
++		r = -ENODEV;
++		goto err_alloc_hdev;
++	}
+ 
+ 	set_bit(dev_num, dev_mask);
  
 -- 
-2.11.1
+2.9.3
 
