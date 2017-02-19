@@ -1,153 +1,113 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 21:00:45 +0000
-Subject: [PATCH 12/29] IB/mlx4: Enclose 17 expressions for the sizeof operator by parentheses
-Message-Id: <9ba34d2d-1d54-4f65-4c01-152c72b624b4@users.sourceforge.net>
+From: Majd Dibbiny <majd@mellanox.com>
+Date: Sun, 19 Feb 2017 17:21:53 +0000
+Subject: Re: [PATCH 12/29] IB/mlx4: Enclose 17 expressions for the sizeof operator by parentheses
+Message-Id: <15CAFA80-3F81-4FF3-90A6-F215FF69FD33@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>,<9ba34d2d-1d54-4f65-4c01-152c72b624b4@users.sourceforge.net>
+In-Reply-To: <9ba34d2d-1d54-4f65-4c01-152c72b624b4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Feb 2017 11:28:41 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: sizeof … should be sizeof(…)
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mlx4/main.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 350c9148340e..b3b5ded85166 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -457,8 +457,8 @@ static int mlx4_ib_query_device(struct ib_device *ibdev,
- 
- 	resp.response_length = offsetof(typeof(resp), response_length) +
- 		sizeof(resp.response_length);
--	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	err = -ENOMEM;
- 	if (!in_mad || !out_mad)
- 		goto out;
-@@ -471,8 +471,7 @@ static int mlx4_ib_query_device(struct ib_device *ibdev,
- 	if (err)
- 		goto out;
- 
--	memset(props, 0, sizeof *props);
--
-+	memset(props, 0, sizeof(*props));
- 	have_ib_ports = num_ib_ports(dev->dev);
- 
- 	props->fw_ver = dev->dev->caps.fw_ver;
-@@ -595,8 +594,8 @@ static int ib_link_query_port(struct ib_device *ibdev, u8 port,
- 	int mad_ifc_flags = MLX4_MAD_IFC_IGNORE_KEYS;
- 	int err = -ENOMEM;
- 
--	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	if (!in_mad || !out_mad)
- 		goto out;
- 
-@@ -771,8 +770,8 @@ int __mlx4_ib_query_gid(struct ib_device *ibdev, u8 port, int index,
- 	int clear = 0;
- 	int mad_ifc_flags = MLX4_MAD_IFC_IGNORE_KEYS;
- 
--	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	if (!in_mad || !out_mad)
- 		goto out;
- 
-@@ -908,8 +907,8 @@ int __mlx4_ib_query_pkey(struct ib_device *ibdev, u8 port, u16 index,
- 	int mad_ifc_flags = MLX4_MAD_IFC_IGNORE_KEYS;
- 	int err = -ENOMEM;
- 
--	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	if (!in_mad || !out_mad)
- 		goto out;
- 
-@@ -1280,7 +1279,7 @@ static struct ib_pd *mlx4_ib_alloc_pd(struct ib_device *ibdev,
- 	struct mlx4_ib_pd *pd;
- 	int err;
- 
--	pd = kmalloc(sizeof *pd, GFP_KERNEL);
-+	pd = kmalloc(sizeof(*pd), GFP_KERNEL);
- 	if (!pd)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -1319,7 +1318,7 @@ static struct ib_xrcd *mlx4_ib_alloc_xrcd(struct ib_device *ibdev,
- 	if (!(to_mdev(ibdev)->dev->caps.flags & MLX4_DEV_CAP_FLAG_XRC))
- 		return ERR_PTR(-ENOSYS);
- 
--	xrcd = kmalloc(sizeof *xrcd, GFP_KERNEL);
-+	xrcd = kmalloc(sizeof(*xrcd), GFP_KERNEL);
- 	if (!xrcd)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -1367,7 +1366,7 @@ static int add_gid_entry(struct ib_qp *ibqp, union ib_gid *gid)
- 	struct mlx4_ib_dev *mdev = to_mdev(ibqp->device);
- 	struct mlx4_ib_gid_entry *ge;
- 
--	ge = kzalloc(sizeof *ge, GFP_KERNEL);
-+	ge = kzalloc(sizeof(*ge), GFP_KERNEL);
- 	if (!ge)
- 		return -ENOMEM;
- 
-@@ -2089,8 +2088,8 @@ static int init_node_data(struct mlx4_ib_dev *dev)
- 	int mad_ifc_flags = MLX4_MAD_IFC_IGNORE_KEYS;
- 	int err = -ENOMEM;
- 
--	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
--	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
-+	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-+	out_mad = kmalloc(sizeof(*out_mad), GFP_KERNEL);
- 	if (!in_mad || !out_mad)
- 		goto out;
- 
-@@ -2600,7 +2599,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 	if (num_ports = 0)
- 		return NULL;
- 
--	ibdev = (struct mlx4_ib_dev *) ib_alloc_device(sizeof *ibdev);
-+	ibdev = (struct mlx4_ib_dev *) ib_alloc_device(sizeof(*ibdev));
- 	if (!ibdev) {
- 		dev_err(&dev->persist->pdev->dev,
- 			"Device struct alloc failed\n");
-@@ -3301,12 +3300,12 @@ static void mlx4_ib_event(struct mlx4_dev *dev, void *ibdev_ptr,
- 		break;
- 
- 	case MLX4_DEV_EVENT_PORT_MGMT_CHANGE:
--		ew = kmalloc(sizeof *ew, GFP_ATOMIC);
-+		ew = kmalloc(sizeof(*ew), GFP_ATOMIC);
- 		if (!ew)
- 			break;
- 
- 		INIT_WORK(&ew->work, handle_port_mgmt_change_event);
--		memcpy(&ew->ib_eqe, eqe, sizeof *eqe);
-+		memcpy(&ew->ib_eqe, eqe, sizeof(*eqe));
- 		ew->ib_dev = ibdev;
- 		/* need to queue only for port owner, which uses GEN_EQE */
- 		if (mlx4_is_master(dev))
--- 
-2.11.1
-
+DQo+IE9uIEZlYiAxOCwgMjAxNywgYXQgMTE6MDIgUE0sIFNGIE1hcmt1cyBFbGZyaW5nIDxlbGZy
+aW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4gd3JvdGU6DQo+IA0KPiBGcm9tOiBNYXJrdXMgRWxm
+cmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IERhdGU6IFNhdCwgMTggRmVi
+IDIwMTcgMTE6Mjg6NDEgKzAxMDANCj4gTUlNRS1WZXJzaW9uOiAxLjANCj4gQ29udGVudC1UeXBl
+OiB0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04DQo+IENvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6
+IDhiaXQNCj4gDQo+IFRoZSBzY3JpcHQgImNoZWNrcGF0Y2gucGwiIHBvaW50ZWQgaW5mb3JtYXRp
+b24gb3V0IGxpa2UgdGhlIGZvbGxvd2luZy4NCj4gDQo+IFdBUk5JTkc6IHNpemVvZiDigKYgc2hv
+dWxkIGJlIHNpemVvZijigKYpDQo+IA0KPiBUaHVzIGZpeCB0aGUgYWZmZWN0ZWQgc291cmNlIGNv
+ZGUgcGxhY2VzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdA
+dXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiAtLS0NCj4gZHJpdmVycy9pbmZpbmliYW5kL2h3L21s
+eDQvbWFpbi5jIHwgMzUgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0NCj4gMSBm
+aWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg0L21haW4uYyBiL2RyaXZlcnMvaW5m
+aW5pYmFuZC9ody9tbHg0L21haW4uYw0KPiBpbmRleCAzNTBjOTE0ODM0MGUuLmIzYjVkZWQ4NTE2
+NiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL2h3L21seDQvbWFpbi5jDQo+ICsr
+KyBiL2RyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg0L21haW4uYw0KPiBAQCAtNDU3LDggKzQ1Nyw4
+IEBAIHN0YXRpYyBpbnQgbWx4NF9pYl9xdWVyeV9kZXZpY2Uoc3RydWN0IGliX2RldmljZSAqaWJk
+ZXYsDQo+IA0KPiAgICByZXNwLnJlc3BvbnNlX2xlbmd0aCA9IG9mZnNldG9mKHR5cGVvZihyZXNw
+KSwgcmVzcG9uc2VfbGVuZ3RoKSArDQo+ICAgICAgICBzaXplb2YocmVzcC5yZXNwb25zZV9sZW5n
+dGgpOw0KPiAtICAgIGluX21hZCAgPSBremFsbG9jKHNpemVvZiAqaW5fbWFkLCBHRlBfS0VSTkVM
+KTsNCj4gLSAgICBvdXRfbWFkID0ga21hbGxvYyhzaXplb2YgKm91dF9tYWQsIEdGUF9LRVJORUwp
+Ow0KPiArICAgIGluX21hZCAgPSBremFsbG9jKHNpemVvZigqaW5fbWFkKSwgR0ZQX0tFUk5FTCk7
+DQo+ICsgICAgb3V0X21hZCA9IGttYWxsb2Moc2l6ZW9mKCpvdXRfbWFkKSwgR0ZQX0tFUk5FTCk7
+DQo+ICAgIGVyciA9IC1FTk9NRU07DQo+ICAgIGlmICghaW5fbWFkIHx8ICFvdXRfbWFkKQ0KPiAg
+ICAgICAgZ290byBvdXQ7DQo+IEBAIC00NzEsOCArNDcxLDcgQEAgc3RhdGljIGludCBtbHg0X2li
+X3F1ZXJ5X2RldmljZShzdHJ1Y3QgaWJfZGV2aWNlICppYmRldiwNCj4gICAgaWYgKGVycikNCj4g
+ICAgICAgIGdvdG8gb3V0Ow0KPiANCj4gLSAgICBtZW1zZXQocHJvcHMsIDAsIHNpemVvZiAqcHJv
+cHMpOw0KPiAtDQo+ICsgICAgbWVtc2V0KHByb3BzLCAwLCBzaXplb2YoKnByb3BzKSk7DQo+ICAg
+IGhhdmVfaWJfcG9ydHMgPSBudW1faWJfcG9ydHMoZGV2LT5kZXYpOw0KPiANCj4gICAgcHJvcHMt
+PmZ3X3ZlciA9IGRldi0+ZGV2LT5jYXBzLmZ3X3ZlcjsNCj4gQEAgLTU5NSw4ICs1OTQsOCBAQCBz
+dGF0aWMgaW50IGliX2xpbmtfcXVlcnlfcG9ydChzdHJ1Y3QgaWJfZGV2aWNlICppYmRldiwgdTgg
+cG9ydCwNCj4gICAgaW50IG1hZF9pZmNfZmxhZ3MgPSBNTFg0X01BRF9JRkNfSUdOT1JFX0tFWVM7
+DQo+ICAgIGludCBlcnIgPSAtRU5PTUVNOw0KPiANCj4gLSAgICBpbl9tYWQgID0ga3phbGxvYyhz
+aXplb2YgKmluX21hZCwgR0ZQX0tFUk5FTCk7DQo+IC0gICAgb3V0X21hZCA9IGttYWxsb2Moc2l6
+ZW9mICpvdXRfbWFkLCBHRlBfS0VSTkVMKTsNCj4gKyAgICBpbl9tYWQgID0ga3phbGxvYyhzaXpl
+b2YoKmluX21hZCksIEdGUF9LRVJORUwpOw0KPiArICAgIG91dF9tYWQgPSBrbWFsbG9jKHNpemVv
+Zigqb3V0X21hZCksIEdGUF9LRVJORUwpOw0KPiAgICBpZiAoIWluX21hZCB8fCAhb3V0X21hZCkN
+Cj4gICAgICAgIGdvdG8gb3V0Ow0KPiANCj4gQEAgLTc3MSw4ICs3NzAsOCBAQCBpbnQgX19tbHg0
+X2liX3F1ZXJ5X2dpZChzdHJ1Y3QgaWJfZGV2aWNlICppYmRldiwgdTggcG9ydCwgaW50IGluZGV4
+LA0KPiAgICBpbnQgY2xlYXIgPSAwOw0KPiAgICBpbnQgbWFkX2lmY19mbGFncyA9IE1MWDRfTUFE
+X0lGQ19JR05PUkVfS0VZUzsNCj4gDQo+IC0gICAgaW5fbWFkICA9IGt6YWxsb2Moc2l6ZW9mICpp
+bl9tYWQsIEdGUF9LRVJORUwpOw0KPiAtICAgIG91dF9tYWQgPSBrbWFsbG9jKHNpemVvZiAqb3V0
+X21hZCwgR0ZQX0tFUk5FTCk7DQo+ICsgICAgaW5fbWFkICA9IGt6YWxsb2Moc2l6ZW9mKCppbl9t
+YWQpLCBHRlBfS0VSTkVMKTsNCj4gKyAgICBvdXRfbWFkID0ga21hbGxvYyhzaXplb2YoKm91dF9t
+YWQpLCBHRlBfS0VSTkVMKTsNCj4gICAgaWYgKCFpbl9tYWQgfHwgIW91dF9tYWQpDQo+ICAgICAg
+ICBnb3RvIG91dDsNCj4gDQo+IEBAIC05MDgsOCArOTA3LDggQEAgaW50IF9fbWx4NF9pYl9xdWVy
+eV9wa2V5KHN0cnVjdCBpYl9kZXZpY2UgKmliZGV2LCB1OCBwb3J0LCB1MTYgaW5kZXgsDQo+ICAg
+IGludCBtYWRfaWZjX2ZsYWdzID0gTUxYNF9NQURfSUZDX0lHTk9SRV9LRVlTOw0KPiAgICBpbnQg
+ZXJyID0gLUVOT01FTTsNCj4gDQo+IC0gICAgaW5fbWFkICA9IGt6YWxsb2Moc2l6ZW9mICppbl9t
+YWQsIEdGUF9LRVJORUwpOw0KPiAtICAgIG91dF9tYWQgPSBrbWFsbG9jKHNpemVvZiAqb3V0X21h
+ZCwgR0ZQX0tFUk5FTCk7DQo+ICsgICAgaW5fbWFkICA9IGt6YWxsb2Moc2l6ZW9mKCppbl9tYWQp
+LCBHRlBfS0VSTkVMKTsNCj4gKyAgICBvdXRfbWFkID0ga21hbGxvYyhzaXplb2YoKm91dF9tYWQp
+LCBHRlBfS0VSTkVMKTsNCj4gICAgaWYgKCFpbl9tYWQgfHwgIW91dF9tYWQpDQo+ICAgICAgICBn
+b3RvIG91dDsNCj4gDQo+IEBAIC0xMjgwLDcgKzEyNzksNyBAQCBzdGF0aWMgc3RydWN0IGliX3Bk
+ICptbHg0X2liX2FsbG9jX3BkKHN0cnVjdCBpYl9kZXZpY2UgKmliZGV2LA0KPiAgICBzdHJ1Y3Qg
+bWx4NF9pYl9wZCAqcGQ7DQo+ICAgIGludCBlcnI7DQo+IA0KPiAtICAgIHBkID0ga21hbGxvYyhz
+aXplb2YgKnBkLCBHRlBfS0VSTkVMKTsNCj4gKyAgICBwZCA9IGttYWxsb2Moc2l6ZW9mKCpwZCks
+IEdGUF9LRVJORUwpOw0KPiAgICBpZiAoIXBkKQ0KPiAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVO
+T01FTSk7DQo+IA0KPiBAQCAtMTMxOSw3ICsxMzE4LDcgQEAgc3RhdGljIHN0cnVjdCBpYl94cmNk
+ICptbHg0X2liX2FsbG9jX3hyY2Qoc3RydWN0IGliX2RldmljZSAqaWJkZXYsDQo+ICAgIGlmICgh
+KHRvX21kZXYoaWJkZXYpLT5kZXYtPmNhcHMuZmxhZ3MgJiBNTFg0X0RFVl9DQVBfRkxBR19YUkMp
+KQ0KPiAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT1NZUyk7DQo+IA0KPiAtICAgIHhyY2QgPSBr
+bWFsbG9jKHNpemVvZiAqeHJjZCwgR0ZQX0tFUk5FTCk7DQo+ICsgICAgeHJjZCA9IGttYWxsb2Mo
+c2l6ZW9mKCp4cmNkKSwgR0ZQX0tFUk5FTCk7DQo+ICAgIGlmICgheHJjZCkNCj4gICAgICAgIHJl
+dHVybiBFUlJfUFRSKC1FTk9NRU0pOw0KPiANCj4gQEAgLTEzNjcsNyArMTM2Niw3IEBAIHN0YXRp
+YyBpbnQgYWRkX2dpZF9lbnRyeShzdHJ1Y3QgaWJfcXAgKmlicXAsIHVuaW9uIGliX2dpZCAqZ2lk
+KQ0KPiAgICBzdHJ1Y3QgbWx4NF9pYl9kZXYgKm1kZXYgPSB0b19tZGV2KGlicXAtPmRldmljZSk7
+DQo+ICAgIHN0cnVjdCBtbHg0X2liX2dpZF9lbnRyeSAqZ2U7DQo+IA0KPiAtICAgIGdlID0ga3ph
+bGxvYyhzaXplb2YgKmdlLCBHRlBfS0VSTkVMKTsNCj4gKyAgICBnZSA9IGt6YWxsb2Moc2l6ZW9m
+KCpnZSksIEdGUF9LRVJORUwpOw0KPiAgICBpZiAoIWdlKQ0KPiAgICAgICAgcmV0dXJuIC1FTk9N
+RU07DQo+IA0KPiBAQCAtMjA4OSw4ICsyMDg4LDggQEAgc3RhdGljIGludCBpbml0X25vZGVfZGF0
+YShzdHJ1Y3QgbWx4NF9pYl9kZXYgKmRldikNCj4gICAgaW50IG1hZF9pZmNfZmxhZ3MgPSBNTFg0
+X01BRF9JRkNfSUdOT1JFX0tFWVM7DQo+ICAgIGludCBlcnIgPSAtRU5PTUVNOw0KPiANCj4gLSAg
+ICBpbl9tYWQgID0ga3phbGxvYyhzaXplb2YgKmluX21hZCwgR0ZQX0tFUk5FTCk7DQo+IC0gICAg
+b3V0X21hZCA9IGttYWxsb2Moc2l6ZW9mICpvdXRfbWFkLCBHRlBfS0VSTkVMKTsNCj4gKyAgICBp
+bl9tYWQgID0ga3phbGxvYyhzaXplb2YoKmluX21hZCksIEdGUF9LRVJORUwpOw0KPiArICAgIG91
+dF9tYWQgPSBrbWFsbG9jKHNpemVvZigqb3V0X21hZCksIEdGUF9LRVJORUwpOw0KPiAgICBpZiAo
+IWluX21hZCB8fCAhb3V0X21hZCkNCj4gICAgICAgIGdvdG8gb3V0Ow0KPiANCj4gQEAgLTI2MDAs
+NyArMjU5OSw3IEBAIHN0YXRpYyB2b2lkICptbHg0X2liX2FkZChzdHJ1Y3QgbWx4NF9kZXYgKmRl
+dikNCj4gICAgaWYgKG51bV9wb3J0cyA9PSAwKQ0KPiAgICAgICAgcmV0dXJuIE5VTEw7DQo+IA0K
+PiAtICAgIGliZGV2ID0gKHN0cnVjdCBtbHg0X2liX2RldiAqKSBpYl9hbGxvY19kZXZpY2Uoc2l6
+ZW9mICppYmRldik7DQo+ICsgICAgaWJkZXYgPSAoc3RydWN0IG1seDRfaWJfZGV2ICopIGliX2Fs
+bG9jX2RldmljZShzaXplb2YoKmliZGV2KSk7DQo+ICAgIGlmICghaWJkZXYpIHsNCj4gICAgICAg
+IGRldl9lcnIoJmRldi0+cGVyc2lzdC0+cGRldi0+ZGV2LA0KPiAgICAgICAgICAgICJEZXZpY2Ug
+c3RydWN0IGFsbG9jIGZhaWxlZFxuIik7DQo+IEBAIC0zMzAxLDEyICszMzAwLDEyIEBAIHN0YXRp
+YyB2b2lkIG1seDRfaWJfZXZlbnQoc3RydWN0IG1seDRfZGV2ICpkZXYsIHZvaWQgKmliZGV2X3B0
+ciwNCj4gICAgICAgIGJyZWFrOw0KPiANCj4gICAgY2FzZSBNTFg0X0RFVl9FVkVOVF9QT1JUX01H
+TVRfQ0hBTkdFOg0KPiAtICAgICAgICBldyA9IGttYWxsb2Moc2l6ZW9mICpldywgR0ZQX0FUT01J
+Qyk7DQo+ICsgICAgICAgIGV3ID0ga21hbGxvYyhzaXplb2YoKmV3KSwgR0ZQX0FUT01JQyk7DQo+
+ICAgICAgICBpZiAoIWV3KQ0KPiAgICAgICAgICAgIGJyZWFrOw0KPiANCj4gICAgICAgIElOSVRf
+V09SSygmZXctPndvcmssIGhhbmRsZV9wb3J0X21nbXRfY2hhbmdlX2V2ZW50KTsNCj4gLSAgICAg
+ICAgbWVtY3B5KCZldy0+aWJfZXFlLCBlcWUsIHNpemVvZiAqZXFlKTsNCj4gKyAgICAgICAgbWVt
+Y3B5KCZldy0+aWJfZXFlLCBlcWUsIHNpemVvZigqZXFlKSk7DQo+ICAgICAgICBldy0+aWJfZGV2
+ID0gaWJkZXY7DQo+ICAgICAgICAvKiBuZWVkIHRvIHF1ZXVlIG9ubHkgZm9yIHBvcnQgb3duZXIs
+IHdoaWNoIHVzZXMgR0VOX0VRRSAqLw0KPiAgICAgICAgaWYgKG1seDRfaXNfbWFzdGVyKGRldikp
+DQo+IC0tIA0KPiAyLjExLjENCj4gDQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1yZG1hIiBpbg0KPiB0aGUgYm9k
+eSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZw0KPiBNb3JlIG1ham9y
+ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwN
+ClRoYW5rcywNClJldmlld2VkLWJ5OiBNYWpkIERpYmJpbnkNCjxtYWpkQG1lbGxhbm94LmNvbT4
