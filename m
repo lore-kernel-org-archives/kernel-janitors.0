@@ -1,118 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:55:09 +0000
-Subject: [PATCH 12/18] HID-debug: Replace 12 seq_printf() calls by seq_puts()
-Message-Id: <5e7692e4-b857-f708-080c-013ddcdcfe0f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 13:19:02 +0000
+Subject: [PATCH] spi: spi-fsl-dspi: Fix error handling
+Message-Id: <20170219131902.12269-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:02:45 +0100
+According to error handling in this function, it is likely that going to
+'out_master_put' was expected here.
 
-Strings which did not contain data format specifications should be put into
-a sequence. Thus use the corresponding function "seq_puts".
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hid/hid-debug.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ drivers/spi/spi-fsl-dspi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 8d019d0db4f3..2ce809eb4c97 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -508,9 +508,7 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
- 							max(0,HID_DEBUG_BUFSIZE - len - 1),
- 							"%s", p->description);
- 					else
--						seq_printf(f,
--							"%s",
--							p->description);
-+						seq_puts(f, p->description);
- 					return buf;
- 				}
- 			break;
-@@ -533,18 +531,21 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 
- 	if (field->physical) {
- 		tab(n, f);
--		seq_printf(f, "Physical(");
--		hid_resolv_usage(field->physical, f); seq_printf(f, ")\n");
-+		seq_puts(f, "Physical(");
-+		hid_resolv_usage(field->physical, f);
-+		seq_puts(f, ")\n");
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 14c8e7ce1913..15201645bdc4 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -1002,7 +1002,8 @@ static int dspi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dspi->regmap)) {
+ 		dev_err(&pdev->dev, "failed to init regmap: %ld\n",
+ 				PTR_ERR(dspi->regmap));
+-		return PTR_ERR(dspi->regmap);
++		ret = PTR_ERR(dspi->regmap);
++		goto out_master_put;
  	}
- 	if (field->logical) {
- 		tab(n, f);
--		seq_printf(f, "Logical(");
--		hid_resolv_usage(field->logical, f); seq_printf(f, ")\n");
-+		seq_puts(f, "Logical(");
-+		hid_resolv_usage(field->logical, f);
-+		seq_puts(f, ")\n");
- 	}
- 	if (field->application) {
- 		tab(n, f);
--		seq_printf(f, "Application(");
--		hid_resolv_usage(field->application, f); seq_printf(f, ")\n");
-+		seq_puts(f, "Application(");
-+		hid_resolv_usage(field->application, f);
-+		seq_puts(f, ")\n");
- 	}
- 	tab(n, f); seq_printf(f, "Usage(%d)\n", field->maxusage);
- 	for (j = 0; j < field->maxusage; j++) {
-@@ -582,7 +583,8 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 		data >>= 4;
  
- 		if(sys > 4) {
--			tab(n, f); seq_printf(f, "Unit(Invalid)\n");
-+			tab(n, f);
-+			seq_puts(f, "Unit(Invalid)\n");
- 		}
- 		else {
- 			int earlier_unit = 0;
-@@ -595,7 +597,7 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 				if (nibble != 0) {
- 					if(earlier_unit++ > 0)
- 						seq_putc(f, '*');
--					seq_printf(f, "%s", units[sys][i]);
-+					seq_puts(f, units[sys][i]);
- 					if(nibble != 1) {
- 						/* This is a _signed_ nibble(!) */
- 
-@@ -606,7 +608,7 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
- 					}
- 				}
- 			}
--			seq_printf(f, ")\n");
-+			seq_puts(f, ")\n");
- 		}
- 	}
- 	tab(n, f); seq_printf(f, "Report Size(%u)\n", field->report_size);
-@@ -1036,7 +1038,7 @@ static void hid_dump_input_mapping(struct hid_device *hid, struct seq_file *f)
- 				for ( j = 0; j < report->field[i]->maxusage; j++) {
- 					usage = report->field[i]->usage + j;
- 					hid_resolv_usage(usage->hid, f);
--					seq_printf(f, " ---> ");
-+					seq_puts(f, " ---> ");
- 					hid_resolv_event(usage->type, usage->code, f);
- 					seq_putc(f, '\n');
- 				}
-@@ -1061,7 +1063,7 @@ static int hid_debug_rdesc_show(struct seq_file *f, void *p)
- 	/* dump HID report descriptor */
- 	for (i = 0; i < rsize; i++)
- 		seq_printf(f, "%02x ", rdesc[i]);
--	seq_printf(f, "\n\n");
-+	seq_puts(f, "\n\n");
- 
- 	/* dump parsed data and input mappings */
- 	hid_dump_device(hdev, f);
+ 	dspi_init(dspi);
 -- 
-2.11.1
+2.9.3
 
