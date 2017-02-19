@@ -1,26 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Feb 2017 19:00:50 +0000
-Subject: Re: [patch v2 net-next] sfc: fix an off by one bug
-Message-Id: <20170207.140050.1152060406801498921.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 12:07:59 +0000
+Subject: [PATCH] HID: i2c-hid: Fix error handling
+Message-Id: <20170219120759.11162-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <60d163b6-0b49-172f-288c-e1712e04a84e@solarflare.com>
-        <20170207074431.GA18377@mwanda>
-In-Reply-To: <20170207074431.GA18377@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jikos@kernel.org, benjamin.tissoires@redhat.com, briannorris@chromium.org, dianders@chromium.org
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 7 Feb 2017 10:44:31 +0300
+According to error handling in this function, it is likely that some
+resources should be freed before returning.
+Replace 'return ret', with 'goto err'.
 
-> This bug is harmless because it's just a sanity check and we always
-> pass valid values for "encap_type" but the test is off by one.
-> 
-> Fixes: 9b4108012517 ("sfc: insert catch-all filters for encapsulated traffic")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Rebased against last linux-next
+While at it, remove some spaces at the beginning of the lines to be more
+consistent.
 
-Applied, thanks Dan.
+
+Fixes: ead0687fe304a ("HID: i2c-hid: support regulator power on/off")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/i2c-hid/i2c-hid.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index d5288f3fb5ee..1a57ac2d8524 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1058,13 +1058,13 @@ static int i2c_hid_probe(struct i2c_client *client,
+ 	}
+ 
+ 	ihid->pdata.supply = devm_regulator_get(&client->dev, "vdd");
+- 	if (IS_ERR(ihid->pdata.supply)) {
+- 		ret = PTR_ERR(ihid->pdata.supply);
+- 		if (ret != -EPROBE_DEFER)
+- 			dev_err(&client->dev, "Failed to get regulator: %d\n",
+- 				ret);
+- 		return ret;
+- 	}
++	if (IS_ERR(ihid->pdata.supply)) {
++		ret = PTR_ERR(ihid->pdata.supply);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&client->dev, "Failed to get regulator: %d\n",
++				ret);
++		goto err;
++	}
+  
+ 	ret = regulator_enable(ihid->pdata.supply);
+ 	if (ret < 0) {
+-- 
+2.9.3
+
