@@ -1,18 +1,118 @@
 From: Jason Vas Dias <jason.vas.dias@gmail.com>
-Date: Sun, 19 Feb 2017 00:31:19 +0000
+Date: Sun, 19 Feb 2017 15:35:54 +0000
 Subject: [PATCH] arch/x86/kernel/tsc.c : set X86_FEATURE_ART for TSC on CPUs like i7-4910MQ : bug #194609
-Message-Id: <CALyZvKyAH8xfj_j2Vh_z2BOgYJeP73LvFwhvQ26-Kyfthdtwiw@mail.gmail.com>
+Message-Id: <CALyZvKwVDP8bTDdteYZT01GJGDd0d+hQ7oib-oXj+DarNHMWnQ@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="001a114dd062156e590548d7442e"
+Content-Type: multipart/mixed; boundary="001a114dd0621b67780548e3e763"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, prarit@redhat.com
+References: <CALyZvKyAH8xfj_j2Vh_z2BOgYJeP73LvFwhvQ26-Kyfthdtwiw@mail.gmail.com>
+In-Reply-To: <CALyZvKyAH8xfj_j2Vh_z2BOgYJeP73LvFwhvQ26-Kyfthdtwiw@mail.gmail.com>
+To: kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Prarit Bhargava <prarit@redhat.com>, x86@kernel.org
 
---001a114dd062156e590548d7442e
+--001a114dd0621b67780548e3e763
 Content-Type: text/plain; charset=UTF-8
+
+Patch to make tsc.c set X86_FEATURE_ART and setup the TSC_ADJUST MSR
+correctly on my "i7-4910MQ" CPU, which reports
+( boot_cpu_data.cpuid_level==0x13  &&
+  boot_cpu_data.extended_cpuid_level==0x80000008
+), so the code didn't think it supported CPUID:15h, but it does .
+
+Patch:
+<quote><code><pre><patch>
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 46b2f41..f76cca8 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1030,6 +1030,7 @@ core_initcall(cpufreq_register_tsc_scaling);
+ #endif /* CONFIG_CPU_FREQ */
+
+ #define ART_CPUID_LEAF (0x15)
++#define MINIMUM_CPUID_EXTENDED_LEAF_THAT_MUST_HAVE_ART (0x80000008)
+ #define ART_MIN_DENOMINATOR (1)
+
+
+@@ -1038,24 +1039,43 @@ core_initcall(cpufreq_register_tsc_scaling);
+  */
+ static void detect_art(void)
+ {
+-	unsigned int unused[2];
+-
+-	if (boot_cpu_data.cpuid_level < ART_CPUID_LEAF)
+-		return;
+-
+-	cpuid(ART_CPUID_LEAF, &art_to_tsc_denominator,
+-	      &art_to_tsc_numerator, unused, unused+1);
+-
++	unsigned int v[2];
++
++	if(boot_cpu_data.cpuid_level < ART_CPUID_LEAF)
++        {
++                if(boot_cpu_data.extended_cpuid_level >=
+MINIMUM_CPUID_EXTENDED_LEAF_THAT_MUST_HAVE_ART)
++                {
++                        pr_info("Would normally not use ART -
+cpuid_level:%d < %d - but extended_cpuid_level is: %x, so probing for
+ART support.\n",
++                        boot_cpu_data.cpuid_level, ART_CPUID_LEAF,
+boot_cpu_data.extended_cpuid_level);
++                }else
++                        return;
++        }
++
++        cpuid(ART_CPUID_LEAF, &art_to_tsc_denominator,
++              &art_to_tsc_numerator, v, v+1);
++
+ 	/* Don't enable ART in a VM, non-stop TSC required */
+ 	if (boot_cpu_has(X86_FEATURE_HYPERVISOR) ||
+-	    !boot_cpu_has(X86_FEATURE_NONSTOP_TSC) ||
+-	    art_to_tsc_denominator < ART_MIN_DENOMINATOR)
+-		return;
+-
+-	if (rdmsrl_safe(MSR_IA32_TSC_ADJUST, &art_to_tsc_offset))
+-		return;
+-
++           !boot_cpu_has(X86_FEATURE_NONSTOP_TSC) ||
++	   art_to_tsc_denominator < ART_MIN_DENOMINATOR)
++        {
++                pr_info("Not using Intel ART for TSC - HYPERVISOR:%d
+NO NONSTOP_TSC:%d  bad TSC/Crystal ratio denominator: %d.",
+boot_cpu_has(X86_FEATURE_HYPERVISOR),
+!boot_cpu_has(X86_FEATURE_NONSTOP_TSC), art_to_tsc_denominator );
++                return;
++        }
++	if (  (v[0]=rdmsrl_safe(MSR_IA32_TSC_ADJUST,
+&art_to_tsc_offset))!=0) /* will get fault on first read if nothing
+written yet */
++        {
++                if((v[1]=wrmsrl_safe(MSR_IA32_TSC_ADJUST, 0))!=0)
++                {
++                        pr_info("Not using Intel ART for TSC - failed
+to initialize TSC_ADJUST: %d %d.\n", v[0], v[1] );
++                        return;
++                }else
++                {
++                        art_to_tsc_offset = 0; /* perhaps initalize
+to -1 * current rdtsc value ? */
++                        pr_info("Using Intel ART for TSC - TSC_ADJUST
+initialized to %llu.\n",art_to_tsc_offset);
++                }
++        }
+ 	/* Make this sticky over multiple CPU init calls */
++        pr_info("Using Intel Always Running Timer (ART) feature %x
+for TSC on all CPUs - TSC/CCC: %d/%d offset: %llu.\n",
+X86_FEATURE_ART, art_to_tsc_numerator, art_to_tsc_denominator,
+art_to_tsc_offset );
+ 	setup_force_cpu_cap(X86_FEATURE_ART);
+ }
+</patch></quote></code></pre>
 
 I originally reported this issue on bugzilla.kernel.org : bug # 194609 :
 https://bugzilla.kernel.org/show_bug.cgi?id=194609
-, but it was not posted to the list .
+, but it was not posted to the list , & then I posted it to the list, but
+Julia Lawell <julia.lawall@lip6.fr> kindly suggested I should re-post with
+patch inline, & include extra recipients, which includes the last
+person to modify tsc.c (Prarit), so am doing so.
 
 My CPU reports 'model name' as
 "Intel(R) Core(TM) i7-4910MQ CPU @ 2.90GHz" ,
@@ -90,7 +190,19 @@ when casting each {ts.tv_sec, ts.tv_nsec} to a 128 bit long long integer .
 It shows a user-space program can read the TSC with a latency of @20ns
 but can only measure times >= @ 140ns using Linux clock_gettime()  on this CPU.
 
---001a114dd062156e590548d7442e
+Please make Linux provide some help to programs that want to use the
+TSC from user-space by applying the patch so they can determine with
+confidence that Linux
+is supplying TSC values with a predictable conversion function in response to
+clock_gettime(CLOCK_MONOTONIC_RAW,&ts) system calls. It would also
+be nice if it actually exported the 'Refined TSC calibrated frequency'
+(tsc_khz)
+in sysfs , but that's another story.
+
+Best Regards,
+Jason
+
+--001a114dd0621b67780548e3e763
 Content-Type: application/octet-stream; name="x86_kernel_tsc-bz194609.patch"
 Content-Disposition: attachment; filename="x86_kernel_tsc-bz194609.patch"
 Content-Transfer-Encoding: base64
@@ -149,4 +261,4 @@ QVJUKSBmZWF0dXJlICV4IGZvciBUU0Mgb24gYWxsIENQVXMgLSBUU0MvQ0NDOiAlZC8lZCBvZmZz
 ZXQ6ICVsbHUuXG4iLCBYODZfRkVBVFVSRV9BUlQsIGFydF90b190c2NfbnVtZXJhdG9yLCBhcnRf
 dG9fdHNjX2Rlbm9taW5hdG9yLCBhcnRfdG9fdHNjX29mZnNldCApOwogCXNldHVwX2ZvcmNlX2Nw
 dV9jYXAoWDg2X0ZFQVRVUkVfQVJUKTsKIH0KIAo=
---001a114dd062156e590548d7442e--
+--001a114dd0621b67780548e3e763--
