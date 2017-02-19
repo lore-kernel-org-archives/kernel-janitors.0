@@ -1,75 +1,69 @@
-From: "Amrani, Ram" <Ram.Amrani@cavium.com>
-Date: Sun, 19 Feb 2017 11:46:34 +0000
-Subject: RE: [PATCH] RDMA/qedr: Fix some error handling
-Message-Id: <SN1PR07MB220717357BB9DABB438CFD94F85F0@SN1PR07MB2207.namprd07.prod.outlook.com>
+From: Doug Ledford <dledford@redhat.com>
+Date: Sun, 19 Feb 2017 13:59:39 +0000
+Subject: Re: [PATCH] RDMA/qedr: Fix some error handling
+Message-Id: <1487512779.86943.118.camel@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-UGgB60q0HiriAfa1gEH3"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170218112815.9329-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170218112815.9329-1-christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "dledford@redhat.com" <dledford@redhat.com>, "sean.hefty@intel.com" <sean.hefty@intel.com>, "hal.rosenstock@gmail.com" <hal.rosenstock@gmail.com>, "Kalderon, Michal" <Michal.Kalderon@cavium.com>, "Borundia, Rajesh" <Rajesh.Borundia@cavium.com>, "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+In-Reply-To: <20170218112815.9329-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ram.Amrani-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, Michal.Kalderon-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, rajesh.borundia-74tsMCuadCbQT0dZR+AlfA@public.gmane.org, weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+
+--=-UGgB60q0HiriAfa1gEH3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 2017-02-18 at 12:28 +0100, Christophe JAILLET wrote:
 > 'qedr_alloc_pbl_tbl()' can not return NULL.
-> 
+>=20
 > In qedr_init_user_queue():
->  - simplify the test for the return value, no need to test for NULL
->  - propagate the error pointer if needed, otherwise 0 (success) is returned.
->    This is spurious.
-> 
+> =C2=A0- simplify the test for the return value, no need to test for NULL
+> =C2=A0- propagate the error pointer if needed, otherwise 0 (success) is
+> returned.
+> =C2=A0=C2=A0 This is spurious.
+>=20
 > In init_mr_info():
->  - test the return value with IS_ERR
->  - propagate the error pointer if needed instead of an exlictit -ENOMEM.
->    This is a no-op as the only error pointer that we can have here is
->    already -ENOMEM
-> 
+> =C2=A0- test the return value with IS_ERR
+> =C2=A0- propagate the error pointer if needed instead of an exlictit
+> -ENOMEM.
+> =C2=A0=C2=A0 This is a no-op as the only error pointer that we can have h=
+ere is
+> =C2=A0=C2=A0 already -ENOMEM
+>=20
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/infiniband/hw/qedr/verbs.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-> index ef83a3f322d6..0c51657af151 100644
-> --- a/drivers/infiniband/hw/qedr/verbs.c
-> +++ b/drivers/infiniband/hw/qedr/verbs.c
-> @@ -771,8 +771,10 @@ static inline int qedr_init_user_queue(struct ib_ucontext *ib_ctx,
->  		goto err0;
-> 
->  	q->pbl_tbl = qedr_alloc_pbl_tbl(dev, &q->pbl_info, GFP_KERNEL);
-> -	if (IS_ERR_OR_NULL(q->pbl_tbl))
-> +	if (IS_ERR(q->pbl_tbl)) {
-> +		rc = PTR_ERR(q->pbl_tbl);
->  		goto err0;
-> +	}
-> 
->  	qedr_populate_pbls(dev, q->umem, q->pbl_tbl, &q->pbl_info);
-> 
-> @@ -2105,8 +2107,8 @@ static int init_mr_info(struct qedr_dev *dev, struct mr_info *info,
->  		goto done;
-> 
->  	info->pbl_table = qedr_alloc_pbl_tbl(dev, &info->pbl_info, GFP_KERNEL);
-> -	if (!info->pbl_table) {
-> -		rc = -ENOMEM;
-> +	if (IS_ERR(info->pbl_table)) {
-> +		rc = PTR_ERR(info->pbl_table);
->  		goto done;
->  	}
-> 
-> @@ -2117,7 +2119,7 @@ static int init_mr_info(struct qedr_dev *dev, struct mr_info *info,
->  	 * list and allocating another one
->  	 */
->  	tmp = qedr_alloc_pbl_tbl(dev, &info->pbl_info, GFP_KERNEL);
-> -	if (!tmp) {
-> +	if (IS_ERR(tmp)) {
->  		DP_DEBUG(dev, QEDR_MSG_MR, "Extra PBL is not allocated\n");
->  		goto done;
->  	}
-> --
-> 2.9.3
 
+Thanks, applied.
 
-Acked-by: Ram Amrani <Ram.Amrani@cavium.com>
+--=20
+Doug Ledford <dledford@redhat.com>
+=C2=A0 =C2=A0 GPG KeyID: B826A3330E572FDD
+=C2=A0 =C2=A0
+Key fingerprint =3D AE6B 1BDA 122B 23B4 265B =C2=A01274 B826 A333 0E57 2FDD
 
-Merci
+--=-UGgB60q0HiriAfa1gEH3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJYqaTLAAoJELgmozMOVy/diFEP/10sPSLolkFQ6Q2W5EdSufFD
+tRxIx7e3h3/F0kCA1Nxk+Q/nC1p8OQ9cukK1yAtQvWOTy0rylor+jmF22rYqrB/Z
+IfEX9pOCYNrPmy1TkuEonT9n3ILaHHXp0kqY2OgAjBV/pSMUl+7FRCM/gObuyXQP
+Jr6PlgS2HAqlo5mDSLomrR7a/Nn0JmWa5ETFF9I6UZGKFil+9JS44UV68V1DnrcM
+IXd3G5CySlMQP5Mqxq1nEEhvUD2tgDKSg4hgMSuq7ozI0RSNxgfpiM0IYut6nqdq
+1CI8nEtswUsTkOIHCtTaKKjjhepUzye/FqwZKcgNqh5mE3CfGc7t2bnQGVT3viaF
+f4Y1XicezHDJJ+NM25n0/Bnl5kNtBRWa+pTczQGkW+anFQGAj70XIxNLq9JYoqkT
+m73uWIHm5/S72RfeQgOyiRRuxddnphB0J3qWhp43r1GxPPJIc/syBXSNdx2QCs03
+Xdl1JmTNI96VUjJeyZekNGzNZxB88j7wSy4h2uSJPOPyxsayMPO++8JZwXdwB8Bv
+jUSHeMzB0qkgDNVazQl4oAUZiTDE1SSM84NyHjWYyj9BeJRkJSS7SO8TKyBZPy34
+dnH49UYiqxhIVqWK/lny9qkZ/rm27a8ndWmkISD5JVIvImc5tibRXIqQtvp2CYf4
+XerV7qyQkJQXKba/zfff
+=+CHP
+-----END PGP SIGNATURE-----
+
+--=-UGgB60q0HiriAfa1gEH3--
 
