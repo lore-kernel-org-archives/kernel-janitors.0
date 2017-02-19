@@ -1,22 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Feb 2017 17:45:38 +0000
-Subject: Re: [patch net-next] ethernet: aquantia: fix dma_mapping_error test
-Message-Id: <20170201.124538.2087709954972565603.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 13:02:29 +0000
+Subject: [PATCH] phy: qcom-usb-hsic: Fix error handling
+Message-Id: <20170219130229.11730-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170201085215.GB31514@mwanda>
-In-Reply-To: <20170201085215.GB31514@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vomlehn@texas.net, Dmitry.Bezrukov@aquantia.com, Pavel.Belous@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kishon-l0cyMroinI0@public.gmane.org, stephen.boyd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 1 Feb 2017 11:52:15 +0300
+According to error handling in this function, it is likely that going to
+'err_ulpi' was expected here.
 
-> dma_mapping_error() returns 1 if there is an error and 0 if not.
-> 
-> Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 	605b8652f7f0 ("phy: Add support for Qualcomm's USB HSIC phy")
 
-Applied, thanks Dan.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/phy/phy-qcom-usb-hsic.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/phy/phy-qcom-usb-hsic.c b/drivers/phy/phy-qcom-usb-hsic.c
+index 47690f9945b9..b466ccb045fc 100644
+--- a/drivers/phy/phy-qcom-usb-hsic.c
++++ b/drivers/phy/phy-qcom-usb-hsic.c
+@@ -58,8 +58,10 @@ static int qcom_usb_hsic_phy_power_on(struct phy *phy)
+ 
+ 	/* Configure pins for HSIC functionality */
+ 	pins_default = pinctrl_lookup_state(uphy->pctl, PINCTRL_STATE_DEFAULT);
+-	if (IS_ERR(pins_default))
+-		return PTR_ERR(pins_default);
++	if (IS_ERR(pins_default)) {
++		ret = PTR_ERR(pins_default);
++		goto err_ulpi;
++	}
+ 
+ 	ret = pinctrl_select_state(uphy->pctl, pins_default);
+ 	if (ret)
+-- 
+2.9.3
+
