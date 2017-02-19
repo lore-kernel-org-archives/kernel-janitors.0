@@ -1,92 +1,52 @@
-From: Don Brace <don.brace@microsemi.com>
-Date: Wed, 22 Feb 2017 15:17:36 +0000
-Subject: RE: [PATCH 2/3] cciss: Fix checkpatch OPEN_BRACE
-Message-Id: <4993A297653ECB4581FA5C3C31323D194F3224B5@avsrvexchmbx1.microsemi.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 16:59:42 +0000
+Subject: [PATCH] drm/rockchip: cdn-dp: Fix error handling
+Message-Id: <20170219165942.17268-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487743958-4208-1-git-send-email-me@tobin.cc>
- <1487743958-4208-3-git-send-email-me@tobin.cc>
-In-Reply-To: <1487743958-4208-3-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: mark.yao@rock-chips.com, airlied@linux.ie, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> -----Original Message-----
-> From: Tobin C. Harding [mailto:me@tobin.cc]
-> Sent: Wednesday, February 22, 2017 12:13 AM
-> To: Don Brace <don.brace@microsemi.com>
-> Cc: linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org; Tobin C.
-> Harding <me@tobin.cc>
-> Subject: [PATCH 2/3] cciss: Fix checkpatch OPEN_BRACE
-> 
-> EXTERNAL EMAIL
-> 
-> 
-> Checkpatch emits ERROR:OPEN_BRACE: that open brace { should be on the
-> previous line.
-> 
-> Move open brace to new line. Also add space after if/switch statement
-> since we introduce more checkpatch errors if not fixed at the same
-> time.
-> 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-Acked-by: Don Brace <don.brace@microsemi.com>
-> ---
->  drivers/block/cciss_scsi.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/block/cciss_scsi.c b/drivers/block/cciss_scsi.c
-> index 2b8cfd4..f5c21f3 100644
-> --- a/drivers/block/cciss_scsi.c
-> +++ b/drivers/block/cciss_scsi.c
-> @@ -699,10 +699,8 @@ static void
-> complete_scsi_command(CommandList_struct *c, int timeout,
->                         ei->SenseLen);
->         scsi_set_resid(cmd, ei->ResidualCnt);
-> 
-> -       if(ei->CommandStatus != 0)
-> -       { /* an error has occurred */
-> -               switch(ei->CommandStatus)
-> -               {
-> +       if (ei->CommandStatus != 0) { /* an error has occurred */
-> +               switch (ei->CommandStatus) {
->                         case CMD_TARGET_STATUS:
->                                 /* Pass it up to the upper layers... */
->                                 if (!ei->ScsiStatus) {
-> @@ -902,8 +900,7 @@ cciss_scsi_interpret_error(ctlr_info_t *h,
-> CommandList_struct *c)
->         ErrorInfo_struct *ei;
-> 
->         ei = c->err_info;
-> -       switch(ei->CommandStatus)
-> -       {
-> +       switch (ei->CommandStatus) {
->                 case CMD_TARGET_STATUS:
->                         dev_warn(&h->pdev->dev,
->                                 "cmd %p has completed with errors\n", c);
-> @@ -1182,8 +1179,7 @@ cciss_update_non_disk_devices(ctlr_info_t *h, int
-> hostno)
->                 cciss_scsi_get_device_id(h, scsi3addr,
->                         this_device->device_id, sizeof(this_device->device_id));
-> 
-> -               switch (this_device->devtype)
-> -               {
-> +               switch (this_device->devtype) {
->                   case 0x05: /* CD-ROM */ {
-> 
->                         /* We don't *really* support actual CD-ROM devices,
-> @@ -1414,8 +1410,7 @@ cciss_scsi_queue_command_lck(struct scsi_cmnd
-> *cmd, void (*done)(struct scsi_cmn
->         memcpy(c->Request.CDB, cmd->cmnd, cmd->cmd_len);
->         c->Request.Type.Type = TYPE_CMD;
->         c->Request.Type.Attribute = ATTR_SIMPLE;
-> -       switch(cmd->sc_data_direction)
-> -       {
-> +       switch (cmd->sc_data_direction) {
->           case DMA_TO_DEVICE:
->                 c->Request.Type.Direction = XFER_WRITE;
->                 break;
-> --
-> 2.7.4
+It is likely that both 'clk_disable_unprepare()' should be called if
+'pm_runtime_get_sync()' fails.
+
+Add a new label for that, because 'err_set_rate' is not meaningful in this
+case.
+
+
+Fixes: 1a0f7ed3abe2 ("drm/rockchip: cdn-dp: add cdn DP support for rk3399")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure but a 'pm_runtime_get_sync()' is maybe also required in the
+'err_set_rate' path.
+---
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index 9ab67a670885..0fe1ec8b8fb1 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -111,7 +111,7 @@ static int cdn_dp_clk_enable(struct cdn_dp_device *dp)
+ 	ret = pm_runtime_get_sync(dp->dev);
+ 	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "cannot get pm runtime %d\n", ret);
+-		goto err_pclk;
++		goto err_sync;
+ 	}
+ 
+ 	reset_control_assert(dp->core_rst);
+@@ -133,6 +133,7 @@ static int cdn_dp_clk_enable(struct cdn_dp_device *dp)
+ 	return 0;
+ 
+ err_set_rate:
++err_sync:
+ 	clk_disable_unprepare(dp->core_clk);
+ err_core_clk:
+ 	clk_disable_unprepare(dp->pclk);
+-- 
+2.9.3
 
