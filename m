@@ -1,21 +1,34 @@
-From: Miss Marbell <spdr3re9@friend.ocn.ne.jp>
-Date: Wed, 01 Feb 2017 08:14:00 +0000
-Subject: =?utf-8?Q?Bitte_kontaktieren_Sie_mich_f=C3=BCr_weitere_Details!?=
-Message-Id: <1779029208.132172183.1485936840267.JavaMail.root@friend.ocn.ne.jp>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 17:30:22 +0000
+Subject: [PATCH] [media] s5p-g2d: Fix error handling
+Message-Id: <20170219173022.18707-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-Sehr geehrte Damen und Herren,
+According to the surrounding goto, it is likely that 'unprep_clk_gate' was
+expected here.
 
-Ich brauche Ihre Unterstützung in Ihrem Land zu verlagern und zu investieren.Ich bitte Sie um Hilfe, weil ich nicht das Wissen über
-Geschäft und die Regeln, die Ihr Land für eine sichere Investition führen.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/s5p-g2d/g2d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Werden Sie versprechen, mit mir aufrichtig zu sein?
+diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+index 62c0dec30b59..81ed5cd5cd5d 100644
+--- a/drivers/media/platform/s5p-g2d/g2d.c
++++ b/drivers/media/platform/s5p-g2d/g2d.c
+@@ -679,7 +679,7 @@ static int g2d_probe(struct platform_device *pdev)
+ 						0, pdev->name, dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to install IRQ\n");
+-		goto put_clk_gate;
++		goto unprep_clk_gate;
+ 	}
+ 
+ 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+-- 
+2.9.3
 
-Bitte kontaktieren Sie mich für weitere Details!
-
-Mit freundlichen Grüßen,
-Fräulein Marbell.
