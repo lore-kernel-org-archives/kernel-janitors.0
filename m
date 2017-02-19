@@ -1,39 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 25 Feb 2017 04:11:11 +0000
-Subject: Re: [PATCH] staging: bcm2835: Fix a memory leak in error handling path
-Message-Id: <20170225041111.GB4429@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 09:19:57 +0000
+Subject: [PATCH] net: mvpp2: Fix a memory leak in error handling path
+Message-Id: <20170219091957.8035-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219103412.10092-1-christophe.jaillet@wanadoo.fr>
- <6585ca42-71f4-1517-c6fc-b9ed2f23c687@i2se.com>
- <20170224195731.GB4480@mwanda>
- <398315856.259038.1487972318815@email.1und1.de>
-In-Reply-To: <398315856.259038.1487972318815@email.1und1.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: davem@davemloft.net, jszhang@marvell.com, tremyfr@gmail.com, f.fainelli@gmail.com, edumazet@google.com, thomas.petazzoni@free-electrons.com, arnd@arndb.de, jarod@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Feb 24, 2017 at 10:38:38PM +0100, Stefan Wahren wrote:
-> 
-> > Dan Carpenter <dan.carpenter@oracle.com> hat am 24. Februar 2017 um 20:57 geschrieben:
-> > 
-> > 
-> > On Fri, Feb 24, 2017 at 01:37:30PM +0100, Stefan Wahren wrote:
-> > > Hi Christophe,
-> > > 
-> > > Am 19.02.2017 um 11:34 schrieb Christophe JAILLET:
-> > > >If 'kzalloc()' fails, we should release resources allocated so far, just as
-> > > >done in all other cases in this function.
-> > > >
-> > > >Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > >---
-> > > >Not sure that the error handling path is correct.
-> > > >Is 'gdev[0]' freed? Should it be?
-> > > 
-> > 
-> > Yes, but I already sent a patch to fix this and your leak as well and
-> > Greg merged it.
-> 
-> My leak? I'm confused.
+if 'devm_kzalloc()' fails, we should release resources allocated so far,
+just as done a few lines below.
 
-The one you're fixing I mean.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index c2fd7c36f927..c48632048f71 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -5971,8 +5971,10 @@ static int mvpp2_port_init(struct mvpp2_port *port)
+ 		struct mvpp2_tx_queue *txq;
+ 
+ 		txq = devm_kzalloc(dev, sizeof(*txq), GFP_KERNEL);
+-		if (!txq)
+-			return -ENOMEM;
++		if (!txq) {
++			err = -ENOMEM;
++			goto err_free_percpu;
++		}
+ 
+ 		txq->pcpu = alloc_percpu(struct mvpp2_txq_pcpu);
+ 		if (!txq->pcpu) {
+-- 
+2.9.3
+
