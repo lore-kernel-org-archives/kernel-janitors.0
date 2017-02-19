@@ -1,47 +1,41 @@
-From: "Rangankar, Manish" <Manish.Rangankar@cavium.com>
-Date: Tue, 28 Feb 2017 11:29:34 +0000
-Subject: Re: [PATCH] scsi: qedi: fix missing return error code check on call to qedi_setup_int
-Message-Id: <D4DB5CBA.37A86%manish.rangankar@cavium.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 10:34:12 +0000
+Subject: [PATCH] staging: bcm2835: Fix a memory leak in error handling path
+Message-Id: <20170219103412.10092-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170228110248.19290-1-colin.king@canonical.com>
-In-Reply-To: <20170228110248.19290-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dept-Eng QLogic Storage Upstream <QLogic-Storage-Upstream@cavium.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
+If 'kzalloc()' fails, we should release resources allocated so far, just as
+done in all other cases in this function.
 
-On 28/02/17 4:32 PM, "Colin King" <colin.king@canonical.com> wrote:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that the error handling path is correct.
+Is 'gdev[0]' freed? Should it be?
+---
+ drivers/staging/media/platform/bcm2835/bcm2835-camera.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->From: Colin Ian King <colin.king@canonical.com>
->
->The call to qedi_setup_int is not updating the return code rc yet rc
->is being checked for an error. Fix this by assigning rc to the return
->code from the call to qedi_setup_int.
->
->Signed-off-by: Colin Ian King <colin.king@canonical.com>
->---
-> drivers/scsi/qedi/qedi_main.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
->index 5eda21d..8e3d928 100644
->--- a/drivers/scsi/qedi/qedi_main.c
->+++ b/drivers/scsi/qedi/qedi_main.c
->@@ -1805,7 +1805,7 @@ static int __qedi_probe(struct pci_dev *pdev, int
->mode)
-> 	 */
-> 	qedi_ops->common->update_pf_params(qedi->cdev, &qedi->pf_params);
-> 
->-	qedi_setup_int(qedi);
->+	rc = qedi_setup_int(qedi);
-> 	if (rc)
-> 		goto stop_iscsi_func;
-> 
->-- 
->2.10.2
->
-
-Acked-by: Manish Rangankar <Manish.Rangankar@cavium.com>
+diff --git a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+index ca15a698e018..9651b9bc3439 100644
+--- a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
++++ b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+@@ -1914,8 +1914,10 @@ static int __init bm2835_mmal_init(void)
+ 
+ 	for (camera = 0; camera < num_cameras; camera++) {
+ 		dev = kzalloc(sizeof(struct bm2835_mmal_dev), GFP_KERNEL);
+-		if (!dev)
+-			return -ENOMEM;
++		if (!dev) {
++			ret = -ENOMEM;
++			goto free_dev;
++		}
+ 
+ 		dev->camera_num = camera;
+ 		dev->max_width = resolutions[camera][0];
+-- 
+2.9.3
 
