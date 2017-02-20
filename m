@@ -1,46 +1,54 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 24 Feb 2017 18:09:42 +0000
-Subject: [PATCH v2] staging: bcm2835-camera: Fix a memory leak in error handling path in 'bm2835_mmal_init()'
-Message-Id: <20170224180942.17048-1-christophe.jaillet@wanadoo.fr>
+Date: Mon, 20 Feb 2017 07:08:15 +0000
+Subject: [PATCH v2] drm/rockchip: cdn-dp: Fix error handling
+Message-Id: <20170220070815.23096-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170217232015.GA26717@mwanda>
-In-Reply-To: <20170217232015.GA26717@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: mark.yao@rock-chips.com, airlied@linux.ie, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-If 'kzalloc()' fails, we should release resources allocated so far, just as
-done in all other cases in this function.
+It is likely that both 'clk_disable_unprepare()' should be called if
+'pm_runtime_get_sync()' fails.
+
+Add a new label for that, because 'err_set_rate' is not meaningful in this
+case.
+
+Add a missing call to 'pm_runtime_put()'.
+
+Fixes: 1a0f7ed3abe2 ("drm/rockchip: cdn-dp: add cdn DP support for rk3399")
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Not sure that the error handling path is correct.
-Is 'gdev[0]' freed? Should it be?
-
-
-v2: Rename patch to include '-camera' in the subject
+V2: rename label
+    add missing call to 'pm_runtime_put_sync()' in error path
 ---
- drivers/staging/media/platform/bcm2835/bcm2835-camera.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-index ca15a698e018..9651b9bc3439 100644
---- a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-+++ b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-@@ -1914,8 +1914,10 @@ static int __init bm2835_mmal_init(void)
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index 9ab67a670885..0fe1ec8b8fb1 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -111,7 +111,7 @@ static int cdn_dp_clk_enable(struct cdn_dp_device *dp)
+ 	ret = pm_runtime_get_sync(dp->dev);
+ 	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "cannot get pm runtime %d\n", ret);
+-		goto err_pclk;
++		goto err_pm_runtime_get;
+ 	}
  
- 	for (camera = 0; camera < num_cameras; camera++) {
- 		dev = kzalloc(sizeof(struct bm2835_mmal_dev), GFP_KERNEL);
--		if (!dev)
--			return -ENOMEM;
-+		if (!dev) {
-+			ret = -ENOMEM;
-+			goto free_dev;
-+		}
+ 	reset_control_assert(dp->core_rst);
+@@ -133,6 +133,8 @@ static int cdn_dp_clk_enable(struct cdn_dp_device *dp)
+ 	return 0;
  
- 		dev->camera_num = camera;
- 		dev->max_width = resolutions[camera][0];
+ err_set_rate:
++	pm_runtime_put(dp->dev);
++err_pm_runtime_get:
+ 	clk_disable_unprepare(dp->core_clk);
+ err_core_clk:
+ 	clk_disable_unprepare(dp->pclk);
 -- 
 2.9.3
 
