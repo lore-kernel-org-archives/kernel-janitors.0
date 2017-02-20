@@ -1,41 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 20:00:08 +0000
-Subject: [PATCH 17/18] HID-debug: Delete an unnecessary variable initialisation in hid_resolv_usage()
-Message-Id: <87289011-09d8-d544-f4f7-46ca739ccbf5@users.sourceforge.net>
+From: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
+Date: Mon, 20 Feb 2017 10:58:36 +0000
+Subject: [PATCH v2] tools/vm: Fix possible resource leak in page_owner_sort.c
+Message-Id: <20170220104636.GA4607@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Feb 2017 20:12:09 +0100
-
-The local variable "buf" will be set to an appropriate pointer
-by the following statement. Thus omit the explicit initialisation
-at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The patch addresses explicit closing of file pointers on exit
+and redirects the errors to the stderr
+Signed-off-by: Saurabh Badhwar <sbsaurabhbadhwar9@gmail.com>
 ---
- drivers/hid/hid-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/vm/page_owner_sort.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 044b12e32240..0d33bf0d47d1 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -481,7 +481,7 @@ static char *resolv_usage_page(unsigned page, struct seq_file *f) {
+diff --git a/tools/vm/page_owner_sort.c b/tools/vm/page_owner_sort.c
+index 8346261..b3c3efa 100644
+--- a/tools/vm/page_owner_sort.c
++++ b/tools/vm/page_owner_sort.c
+@@ -109,7 +109,7 @@ int main(int argc, char **argv)
+ 	list = malloc(max_size * sizeof(*list));
+ 	buf = malloc(BUF_SIZE);
+ 	if (!list || !buf) {
+-		printf("Out of memory\n");
++		perror("Unable to allocate memory: ");
+ 		fclose(fin);
+ 		fclose(fout);
+ 		exit(1);
+@@ -145,8 +145,8 @@ int main(int argc, char **argv)
+ 	qsort(list2, count, sizeof(list[0]), compare_num);
  
- char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
- 	const struct hid_usage_entry *p;
--	char *buf = NULL;
-+	char *buf;
- 	int len = 0;
- 
- 	buf = resolv_usage_page(usage >> 16, f);
+ 	for (i = 0; i < count; i++)
+-		fprintf(fout, "%d times:\n%s\n", list2[i].num, list2[i].txt);
+-		
++		fprintf(fout, "%d times:\n%s\n", list2[i].num, list2[i].txt);	
++	
+ 	fclose(fout);
+ 	return 0;
+ }
 -- 
-2.11.1
+2.9.3
 
