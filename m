@@ -1,48 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Feb 2017 14:09:14 +0000
-Subject: [PATCH] scsi: lpfc: don't dereference dma_buf->iocbq before null check
-Message-Id: <20170224140914.6011-1-colin.king@canonical.com>
+Date: Tue, 21 Feb 2017 16:41:53 +0000
+Subject: [PATCH] jump_label: fix spelling mistake: "allocatote" -> "allocate"
+Message-Id: <20170221164153.25102-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jason Baron <jbaron@akamai.com>, Paolo Bonzini <pbonzini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, Rusty Russell <rusty@rustcorp.com.au>, David Matlack <dmatlack@google.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-dma_buf->iocbq is being dereferenced immediately before it is
-being null checked, so we have a potential null pointer dereference
-bug.  Fix this by only dereferencing it only once we have passed
-a null check on the pointer.
-
-Detected by CoverityScan, CID#1411652 ("Dereference before null check")
+Trivial fix to spelling mistake.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/lpfc/lpfc_mem.c | 2 +-
+ kernel/jump_label.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
-index c61d8d6..5986c79 100644
---- a/drivers/scsi/lpfc/lpfc_mem.c
-+++ b/drivers/scsi/lpfc/lpfc_mem.c
-@@ -646,7 +646,6 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
- 	}
- 
- 	dma_buf->iocbq = lpfc_sli_get_iocbq(phba);
--	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
- 	if (!dma_buf->iocbq) {
- 		kfree(dma_buf->context);
- 		pci_pool_free(phba->lpfc_drb_pool, dma_buf->dbuf.virt,
-@@ -658,6 +657,7 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
- 				"2621 Ran out of nvmet iocb/WQEs\n");
- 		return NULL;
- 	}
-+	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
- 	nvmewqe = dma_buf->iocbq;
- 	wqe = (union lpfc_wqe128 *)&nvmewqe->wqe;
- 	/* Initialize WQE */
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 6c9cb20..aa123dd 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -595,7 +595,7 @@ jump_label_module_notify(struct notifier_block *self, unsigned long val,
+ 		jump_label_lock();
+ 		ret = jump_label_add_module(mod);
+ 		if (ret) {
+-			WARN(1, "Failed to allocatote memory: jump_label may not work properly.\n");
++			WARN(1, "Failed to allocate memory: jump_label may not work properly.\n");
+ 			jump_label_del_module(mod);
+ 		}
+ 		jump_label_unlock();
 -- 
 2.10.2
 
