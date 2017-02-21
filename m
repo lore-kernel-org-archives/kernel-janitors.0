@@ -1,55 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 22 Feb 2017 22:32:19 +0000
-Subject: [PATCH] [media] tm6000: Fix resource freeing in 'tm6000_prepare_isoc()'
-Message-Id: <20170222223219.13211-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Feb 2017 18:50:05 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
+Message-Id: <20170221185005.27973-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org, wsa-dev@sang-engineering.com, hans.verkuil@cisco.com, kumar.san1093@gmail.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Vinod Koul <vinod.koul@intel.com>, Dharageswari R <dharageswari.r@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'usb_free_urb(urb)' is a no-op, because urb is known to be NULL.
+From: Colin Ian King <colin.king@canonical.com>
 
-It is likelly that releasing resources allocated by
-'tm6000_alloc_urb_buffers()' just a few lines above is expected here.
+Trivial fix to spelling mistake in dev_err message.
 
-
-This has been spotted by the following coccinelle script:
-@@
-expression ret, x, e;
-identifier f;
-@@
-
-*   if (x = NULL)
-    {
-     ... when != x = e;
-(
-*    f(<+...x...+>);
-|
-*    ret = f(<+...x...+>);
-)
-     ...
-    }
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/tm6000/tm6000-video.c | 2 +-
+ sound/soc/intel/skylake/skl-pcm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index c4fdc1fa32ef..7e960d0a5b92 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -631,7 +631,7 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
- 		urb = usb_alloc_urb(max_packets, GFP_KERNEL);
- 		if (!urb) {
- 			tm6000_uninit_isoc(dev);
--			usb_free_urb(urb);
-+			tm6000_free_urb_buffers(dev);
- 			return -ENOMEM;
+diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
+index e12520e..635cbb1 100644
+--- a/sound/soc/intel/skylake/skl-pcm.c
++++ b/sound/soc/intel/skylake/skl-pcm.c
+@@ -1165,7 +1165,7 @@ static int skl_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 						snd_dma_pci_data(skl->pci),
+ 						size, MAX_PREALLOC_SIZE);
+ 		if (retval) {
+-			dev_err(dai->dev, "dma buffer allocationf fail\n");
++			dev_err(dai->dev, "dma buffer allocation fail\n");
+ 			return retval;
  		}
- 		dev->isoc_ctl.urb[i] = urb;
+ 	}
 -- 
-2.9.3
+2.10.2
 
