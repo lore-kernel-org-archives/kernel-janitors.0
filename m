@@ -1,36 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Feb 2017 16:50:04 +0000
-Subject: [PATCH] ASoC: Intel: Atom: ix spelling mistake: "allocationf" -> "allocation"
-Message-Id: <20170221165004.25316-1-colin.king@canonical.com>
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Date: Tue, 21 Feb 2017 18:38:34 +0000
+Subject: Re: [PATCH] ASoC: Intel: Atom: ix spelling mistake: "allocationf" -> "allocation"
+Message-Id: <1487702287.3343.0.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170221165004.25316-1-colin.king@canonical.com>
+In-Reply-To: <20170221165004.25316-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "colin.king@canonical.com" <colin.king@canonical.com>, "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>, "perex@perex.cz" <perex@perex.cz>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2017-02-21 at 16:50 +-0000, Colin King wrote:
++AD4- From: Colin Ian King +ADw-colin.king+AEA-canonical.com+AD4-
++AD4- 
++AD4- Trivial fix to spelling mistake in dev+AF8-err message.
 
-Trivial fix to spelling mistake in dev_err message.
+Acked-by: Vinod Koul +ADw-vinod.koul+AEA-intel.com+AD4-
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/intel/atom/sst-mfld-platform-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/intel/atom/sst-mfld-platform-pcm.c b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-index 21cac1c..e741191 100644
---- a/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-+++ b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
-@@ -690,7 +690,7 @@ static int sst_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 			snd_dma_continuous_data(GFP_DMA),
- 			SST_MIN_BUFFER, SST_MAX_BUFFER);
- 		if (retval) {
--			dev_err(rtd->dev, "dma buffer allocationf fail\n");
-+			dev_err(rtd->dev, "dma buffer allocation fail\n");
- 			return retval;
- 		}
- 	}
 -- 
-2.10.2
-
++AH4-Vinod
