@@ -1,61 +1,71 @@
-From: Greg Kurz <groug@kaod.org>
-Date: Wed, 22 Feb 2017 08:08:21 +0000
-Subject: Re: [V9fs-developer] [PATCH] fs/9p: Remove cast from memory allocation
-Message-Id: <20170222090821.4b6f32b0@bahia.lan>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/rMs4mZr7Sck4J7TTYZN7t=K"
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 21 Feb 2017 17:52:08 +0000
+Subject: Applied "spi: spi-fsl-dspi: Fix error handling" to the spi tree
+Message-Id: <E1cgEbg-0002LZ-1L@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487745253-15411-1-git-send-email-me@tobin.cc>
-In-Reply-To: <1487745253-15411-1-git-send-email-me@tobin.cc>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20170219131902.12269-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170219131902.12269-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
---Sig_/rMs4mZr7Sck4J7TTYZN7t=K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The patch
 
-On Wed, 22 Feb 2017 17:34:13 +1100
-"Tobin C. Harding" <me@tobin.cc> wrote:
+   spi: spi-fsl-dspi: Fix error handling
 
-> Coccinelle emits WARNING: casting value returned by memory allocation
-> function to (struct v9fs_inode *) is useless.
->=20
-> Remove unnecessary cast.
->=20
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> ---
+has been applied to the spi tree at
 
-Reviewed-by: Greg Kurz <groug@kaod.org>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
->  fs/9p/vfs_inode.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-> index f4f4450..462e9e4 100644
-> --- a/fs/9p/vfs_inode.c
-> +++ b/fs/9p/vfs_inode.c
-> @@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
->  struct inode *v9fs_alloc_inode(struct super_block *sb)
->  {
->  	struct v9fs_inode *v9inode;
-> -	v9inode =3D (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
-> -							GFP_KERNEL);
-> +	v9inode =3D kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
->  	if (!v9inode)
->  		return NULL;
->  #ifdef CONFIG_9P_FSCACHE
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---Sig_/rMs4mZr7Sck4J7TTYZN7t=K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iEYEARECAAYFAlitRvUACgkQAvw66wEB28IoLQCfaSoreBIzfM3kg+uvPm95VByb
-aDcAniMfjo8DkvVEMUmb+0KjTzQa7osu
-=mgfN
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---Sig_/rMs4mZr7Sck4J7TTYZN7t=K--
+From fbad6c24396b265d4e19cc78aef9b1c7e7e6de64 Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 19 Feb 2017 14:19:02 +0100
+Subject: [PATCH] spi: spi-fsl-dspi: Fix error handling
+
+According to error handling in this function, it is likely that going to
+'out_master_put' was expected here.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-fsl-dspi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 14c8e7ce1913..15201645bdc4 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -1002,7 +1002,8 @@ static int dspi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dspi->regmap)) {
+ 		dev_err(&pdev->dev, "failed to init regmap: %ld\n",
+ 				PTR_ERR(dspi->regmap));
+-		return PTR_ERR(dspi->regmap);
++		ret = PTR_ERR(dspi->regmap);
++		goto out_master_put;
+ 	}
+ 
+ 	dspi_init(dspi);
+-- 
+2.11.0
+
