@@ -1,33 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 07 Feb 2017 13:17:57 +0000
-Subject: [patch] Staging: bcm2835-audio: remove unneeded NULL check
-Message-Id: <20170207131757.GC28207@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Feb 2017 16:27:11 +0000
+Subject: [PATCH] scsi: BusLogic: fix incorrect spelling of adatper_reset_req
+Message-Id: <20170221162711.24694-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Khalid Aziz <khalid@gonehiking.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-We just dereferenced "instance" on the line before so checking it here
-is pointless.  Anyway, it can't be NULL here so let's remove the check.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+trivial fix to spelling mistake, adatper_reset_req should
+be adapter_reset_req.  Also break up very long seq_printf statement
+into multiple lines.
 
-diff --git a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-index b7922be4909c..6578246b0f08 100644
---- a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-@@ -775,10 +775,9 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
- 	mutex_unlock(&instance->vchi_mutex);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/BusLogic.c | 14 +++++++++++---
+ drivers/scsi/BusLogic.h |  2 +-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+index c7be7bb..35380a5 100644
+--- a/drivers/scsi/BusLogic.c
++++ b/drivers/scsi/BusLogic.c
+@@ -3009,7 +3009,7 @@ static int blogic_hostreset(struct scsi_cmnd *SCpnt)
  
- 	/* Stop the audio service */
--	if (instance) {
--		vc_vchi_audio_deinit(instance);
--		alsa_stream->instance = NULL;
--	}
-+	vc_vchi_audio_deinit(instance);
-+	alsa_stream->instance = NULL;
-+
- 	LOG_DBG(" .. OUT\n");
- 	return ret;
- }
+ 	spin_lock_irq(SCpnt->device->host->host_lock);
+ 
+-	blogic_inc_count(&stats->adatper_reset_req);
++	blogic_inc_count(&stats->adapter_reset_req);
+ 
+ 	rc = blogic_resetadapter(adapter, false);
+ 	spin_unlock_irq(SCpnt->device->host->host_lock);
+@@ -3560,8 +3560,16 @@ Target	Requested Completed  Requested Completed  Requested Completed\n\
+ 		struct blogic_tgt_flags *tgt_flags = &adapter->tgt_flags[tgt];
+ 		if (!tgt_flags->tgt_exists)
+ 			continue;
+-		seq_printf(m, "\
+-  %2d	 %5d %5d %5d    %5d %5d %5d	   %5d %5d %5d\n", tgt, tgt_stats[tgt].aborts_request, tgt_stats[tgt].aborts_tried, tgt_stats[tgt].aborts_done, tgt_stats[tgt].bdr_request, tgt_stats[tgt].bdr_tried, tgt_stats[tgt].bdr_done, tgt_stats[tgt].adatper_reset_req, tgt_stats[tgt].adapter_reset_attempt, tgt_stats[tgt].adapter_reset_done);
++		seq_printf(m, "  %2d	 %5d %5d %5d    %5d %5d %5d	   %5d %5d %5d\n",
++			   tgt, tgt_stats[tgt].aborts_request,
++			   tgt_stats[tgt].aborts_tried,
++			   tgt_stats[tgt].aborts_done,
++			   tgt_stats[tgt].bdr_request,
++			   tgt_stats[tgt].bdr_tried,
++			   tgt_stats[tgt].bdr_done,
++			   tgt_stats[tgt].adapter_reset_req,
++			   tgt_stats[tgt].adapter_reset_attempt,
++			   tgt_stats[tgt].adapter_reset_done);
+ 	}
+ 	seq_printf(m, "\nExternal Host Adapter Resets: %d\n", adapter->ext_resets);
+ 	seq_printf(m, "Host Adapter Internal Errors: %d\n", adapter->adapter_intern_errors);
+diff --git a/drivers/scsi/BusLogic.h b/drivers/scsi/BusLogic.h
+index b53ec2f..8d47e2c 100644
+--- a/drivers/scsi/BusLogic.h
++++ b/drivers/scsi/BusLogic.h
+@@ -935,7 +935,7 @@ struct blogic_tgt_stats {
+ 	unsigned short bdr_request;
+ 	unsigned short bdr_tried;
+ 	unsigned short bdr_done;
+-	unsigned short adatper_reset_req;
++	unsigned short adapter_reset_req;
+ 	unsigned short adapter_reset_attempt;
+ 	unsigned short adapter_reset_done;
+ };
+-- 
+2.10.2
+
