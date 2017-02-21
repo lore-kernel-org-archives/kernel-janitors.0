@@ -1,82 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Feb 2017 21:16:46 +0000
-Subject: [PATCH 06/14] RDMA/cxgb4: Return an error code only as a constant in stag_open()
-Message-Id: <b636e00c-5a42-cdaa-9286-c4b7e48b497b@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 21 Feb 2017 21:33:11 +0000
+Subject: [PATCH] USB: gadgetfs: Fix a potential memory leak in 'dev_config()'
+Message-Id: <20170221213311.11299-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
-In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Steve Wise <swise@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Feb 2017 16:50:52 +0100
+'kbuf' is allocated just a few lines above using 'memdup_user()'.
+If the 'if (dev->buf)' test fails, this memory is never released.
 
-* Return an error code without storing it in an intermediate variable.
-
-* Adjust jump targets according to the Linux coding style convention.
-
-* Delete the local variable "ret" which became unnecessary with
-  this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/infiniband/hw/cxgb4/device.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/usb/gadget/legacy/inode.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
-index 51801a7d4fb3..90fa96abb5bc 100644
---- a/drivers/infiniband/hw/cxgb4/device.c
-+++ b/drivers/infiniband/hw/cxgb4/device.c
-@@ -433,14 +433,12 @@ static int stag_release(struct inode *inode, struct file *file)
- static int stag_open(struct inode *inode, struct file *file)
- {
- 	struct c4iw_debugfs_data *stagd;
--	int ret = 0;
- 	int count = 1;
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index 79a2d8fba6b6..a2c916869293 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -1781,8 +1781,10 @@ dev_config (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
  
- 	stagd = kmalloc(sizeof *stagd, GFP_KERNEL);
--	if (!stagd) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!stagd)
-+		goto failure_indication;
-+
- 	stagd->devp = inode->i_private;
- 	stagd->pos = 0;
+ 	spin_lock_irq (&dev->lock);
+ 	value = -EINVAL;
+-	if (dev->buf)
++	if (dev->buf) {
++		kfree(kbuf);
+ 		goto fail;
++	}
+ 	dev->buf = kbuf;
  
-@@ -450,10 +448,8 @@ static int stag_open(struct inode *inode, struct file *file)
- 
- 	stagd->bufsize = count * 256;
- 	stagd->buf = vmalloc(stagd->bufsize);
--	if (!stagd->buf) {
--		ret = -ENOMEM;
--		goto err1;
--	}
-+	if (!stagd->buf)
-+		goto free_stagd;
- 
- 	spin_lock_irq(&stagd->devp->lock);
- 	idr_for_each(&stagd->devp->mmidr, dump_stag, stagd);
-@@ -461,11 +457,11 @@ static int stag_open(struct inode *inode, struct file *file)
- 
- 	stagd->buf[stagd->pos++] = 0;
- 	file->private_data = stagd;
--	goto out;
--err1:
-+	return 0;
-+free_stagd:
- 	kfree(stagd);
--out:
--	return ret;
-+failure_indication:
-+	return -ENOMEM;
- }
- 
- static const struct file_operations stag_debugfs_fops = {
+ 	/* full or low speed config */
 -- 
-2.11.1
+2.9.3
 
