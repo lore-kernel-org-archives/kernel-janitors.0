@@ -1,43 +1,50 @@
-From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Date: Mon, 13 Feb 2017 20:18:49 +0000
-Subject: RE: [PATCH] scsi: aacraid: fix information leak on hbainfo.driver_name
-Message-Id: <4D8E82A446BF54499747901DBDEB737A7B8BD4F7@avsrvexchmbx2.microsemi.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 21 Feb 2017 20:41:53 +0000
+Subject: [PATCH] PM / runtime: Fix some typo
+Message-Id: <20170221204153.4803-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207135513.21392-1-colin.king@canonical.com>
-In-Reply-To: <20170207135513.21392-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-SGVsbG8gQ29saW4sDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBD
-b2xpbiBLaW5nIFttYWlsdG86Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUdWVz
-ZGF5LCBGZWJydWFyeSA3LCAyMDE3IDU6NTUgQU0NCj4gVG86IGRsLWVzYy1BYWNyYWlkIExpbnV4
-IERyaXZlciA8YWFjcmFpZEBtaWNyb3NlbWkuY29tPjsgSmFtZXMgRSAuIEogLg0KPiBCb3R0b21s
-ZXkgPGplamJAbGludXgudm5ldC5pYm0uY29tPjsgTWFydGluIEsgLiBQZXRlcnNlbg0KPiA8bWFy
-dGluLnBldGVyc2VuQG9yYWNsZS5jb20+OyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZw0KPiBD
-Yzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIHNjc2k6IGFhY3JhaWQ6IGZpeCBpbmZvcm1hdGlv
-biBsZWFrIG9uIGhiYWluZm8uZHJpdmVyX25hbWUNCj4gDQo+IEVYVEVSTkFMIEVNQUlMDQo+IA0K
-PiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4g
-DQo+IFRoZSBkcml2ZXJfbmFtZSBmaWVsZCBpcyBub3QgaW5pdGlhbGl6ZWQgYW5kIGhlbmNlIGlu
-Zm9ybWF0aW9uDQo+IG9uIHRoZSBzdGFjayBpcyBiZWluZyBsZWFrZWQgdG8gdXNlcnNwYWNlIG9u
-IHRoZSBjb3B5X3RvX3VzZXIuDQo+IEZpeCB0aGlzLg0KDQpJIGFtIGN1cmlvdXMsIGRvIHlvdSBt
-ZWFuIHRoYXQgdGhlIHVzZXIgd2lsbCBiZSBhYmxlIHRvIHJldHJpZXZlIGdhcmJhZ2Ugc3RhY2sg
-IHZhbHVlcyBmcm9tIHRoZSB2YXJpYWJsZXMgdGhhdCB3ZXJlIG5vdCBzZXQgKGRyaXZlcl9uYW1l
-IGV0Yyk/IC4NCiBJZiBzbyBob3cgaXMgaXQgYSBzZWN1cml0eSB0aHJlYXQ/DQoNClJlZ2FyZHMs
-DQpSYWdoYXZhIEFkaXR5YQ0KDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xp
-bi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9zY3NpL2FhY3JhaWQvY29t
-bWN0cmwuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
-dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS9hYWNyYWlkL2NvbW1jdHJs
-LmMgYi9kcml2ZXJzL3Njc2kvYWFjcmFpZC9jb21tY3RybC5jDQo+IGluZGV4IDYxNDg0MmEuLmVi
-NDhkMGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc2NzaS9hYWNyYWlkL2NvbW1jdHJsLmMNCj4g
-KysrIGIvZHJpdmVycy9zY3NpL2FhY3JhaWQvY29tbWN0cmwuYw0KPiBAQCAtMTAxNSw3ICsxMDE1
-LDcgQEAgc3RhdGljIGludCBhYWNfZ2V0X3BjaV9pbmZvKHN0cnVjdCBhYWNfZGV2KiBkZXYsDQo+
-IHZvaWQgX191c2VyICphcmcpDQo+IA0KPiAgc3RhdGljIGludCBhYWNfZ2V0X2hiYV9pbmZvKHN0
-cnVjdCBhYWNfZGV2ICpkZXYsIHZvaWQgX191c2VyICphcmcpDQo+ICB7DQo+IC0gICAgICAgc3Ry
-dWN0IGFhY19oYmFfaW5mbyBoYmFpbmZvOw0KPiArICAgICAgIHN0cnVjdCBhYWNfaGJhX2luZm8g
-aGJhaW5mbyA9IHsgMCB9Ow0KPiANCj4gICAgICAgICBoYmFpbmZvLmFkYXB0ZXJfbnVtYmVyICAg
-ICAgICAgID0gKHU4KSBkZXYtPmlkOw0KPiAgICAgICAgIGhiYWluZm8uc3lzdGVtX2lvX2J1c19u
-dW1iZXIgICAgPSBkZXYtPnBkZXYtPmJ1cy0+bnVtYmVyOw0KPiAtLQ0KPiAyLjEwLjINCg0K
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ Documentation/power/runtime_pm.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/power/runtime_pm.txt b/Documentation/power/runtime_pm.txt
+index 4870980e967e..64546eb9a16a 100644
+--- a/Documentation/power/runtime_pm.txt
++++ b/Documentation/power/runtime_pm.txt
+@@ -100,7 +100,7 @@ knows what to do to handle the device).
+   * If the suspend callback returns an error code different from -EBUSY and
+     -EAGAIN, the PM core regards this as a fatal error and will refuse to run
+     the helper functions described in Section 4 for the device until its status
+-    is directly set to  either'active', or 'suspended' (the PM core provides
++    is directly set to  either 'active', or 'suspended' (the PM core provides
+     special helper functions for this purpose).
+ 
+ In particular, if the driver requires remote wakeup capability (i.e. hardware
+@@ -217,7 +217,7 @@ defined in include/linux/pm.h:
+       one to complete
+ 
+   spinlock_t lock;
+-    - lock used for synchronisation
++    - lock used for synchronization
+ 
+   atomic_t usage_count;
+     - the usage counter of the device
+@@ -565,7 +565,7 @@ appropriate to ensure that the device is not put back to sleep during the
+ probe. This can happen with systems such as the network device layer.
+ 
+ It may be desirable to suspend the device once ->probe() has finished.
+-Therefore the driver core uses the asyncronous pm_request_idle() to submit a
++Therefore the driver core uses the asynchronous pm_request_idle() to submit a
+ request to execute the subsystem-level idle callback for the device at that
+ time.  A driver that makes use of the runtime autosuspend feature, may want to
+ update the last busy mark before returning from ->probe().
+-- 
+2.9.3
+
