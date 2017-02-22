@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 18 Feb 2017 12:08:03 +0000
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Wed, 22 Feb 2017 20:20:09 +0000
 Subject: Re: [patch] PCI: dwc: uninitialized variable in dw_handle_msi_irq()
-Message-Id: <58A83923.3040903@bfs.de>
+Message-Id: <20170222202009.GA4359@bhelgaas-glaptop.roam.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170217232618.GC26717@mwanda>
 In-Reply-To: <20170217232618.GC26717@mwanda>
@@ -11,15 +11,16 @@ Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 18.02.2017 00:26, schrieb Dan Carpenter:
+On Sat, Feb 18, 2017 at 02:26:18AM +0300, Dan Carpenter wrote:
 > The bug is that "val" is unsigned long but we only initialize 32 bits
 > of it.  Then we test "if (val)" and that might be true not because we
 > set the bits but because some were never initialized.
 > 
 > Fixes: f342d940ee0e ("PCI: exynos: Add support for MSI")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Jingoo, Joao?
+
 > ---
 > Static analysis.  Not tested.
 > 
@@ -41,13 +42,6 @@ Am 18.02.2017 00:26, schrieb Dan Carpenter:
 > -				(u32 *)&val);
 > +				    &val);
 >  		if (val) {
-
-why not
-	if (!val) continue;
-
-it would save an entire indent level and make things a bit more easy to read.
-
-
 >  			ret = IRQ_HANDLED;
 >  			pos = 0;
 > -			while ((pos = find_next_bit(&val, 32, pos)) != 32) {
@@ -55,23 +49,4 @@ it would save an entire indent level and make things a bit more easy to read.
 > +						    pos)) != 32) {
 >  				irq = irq_find_mapping(pp->irq_domain,
 >  						i * 32 + pos);
-
-irq seems to be 0 when nothing is found. This can never happen ?
-
-find_next_bit() feels a bit overpowered perhaps a simple loop
-would be more effective and more easy to understand ?
-something like:
-	while ( val) {
-	 if (val & 1 )
-		found ...
-	val>>=1;
-	pos++;
-	}
-
-just my 2 cents,
-
-re,
- wh
-
-
 >  				dw_pcie_wr_own_conf(pp,
