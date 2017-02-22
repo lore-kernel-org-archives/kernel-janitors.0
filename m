@@ -1,28 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 08 Feb 2017 18:27:24 +0000
-Subject: Re: [patch net-next] net: dsa: bcm_sf2: cleanup bcm_sf2_cfp_rule_get() a little
-Message-Id: <20170208.132724.942207581380658378.davem@davemloft.net>
+From: "Tobin C. Harding" <me@tobin.cc>
+Date: Wed, 22 Feb 2017 05:49:11 +0000
+Subject: [PATCH 3/3] cciss: Remove kmalloc cast
+Message-Id: <1487742551-10839-4-git-send-email-me@tobin.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207131527.GB31552@mwanda>
-In-Reply-To: <20170207131527.GB31552@mwanda>
+References: <1487742551-10839-1-git-send-email-me@tobin.cc>
+In-Reply-To: <1487742551-10839-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, vivien.didelot@savoirfairelinux.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Don Brace <don.brace@microsemi.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 7 Feb 2017 16:15:27 +0300
+Coccinelle emits a warning about casting the return value of
+kmalloc(). Coccinelle suggests removing the cast as do
+kerneljanitors.
 
-> This patch doesn't affect how the code works.
-> 
-> My static checker complains that the mask and shift doesn't make sense
-> because 0xffffff << 16 goes beyond the end of 32 bits.  It should be
-> 0xffff instead but the existing code won't cause runtime bugs.
-> 
-> Also the casting here is not needed and not consistent with the rest of
-> the code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove cast from kmalloc() call.
 
-Applied, thanks Dan.
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ drivers/block/cciss_scsi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/block/cciss_scsi.c b/drivers/block/cciss_scsi.c
+index f5c21f3..01a1f7e 100644
+--- a/drivers/block/cciss_scsi.c
++++ b/drivers/block/cciss_scsi.c
+@@ -647,8 +647,7 @@ cciss_scsi_setup(ctlr_info_t *h)
+ 	struct cciss_scsi_adapter_data_t * shba;
+ 
+ 	ccissscsi[h->ctlr].ndevices = 0;
+-	shba = (struct cciss_scsi_adapter_data_t *)
+-		kmalloc(sizeof(*shba), GFP_KERNEL);
++	shba = kmalloc(sizeof(*shba), GFP_KERNEL);
+ 	if (shba = NULL)
+ 		return;
+ 	shba->scsi_host = NULL;
+-- 
+2.7.4
+
