@@ -1,10 +1,10 @@
 From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 05:49:10 +0000
+Date: Wed, 22 Feb 2017 06:12:37 +0000
 Subject: [PATCH 2/3] cciss: Fix checkpatch OPEN_BRACE
-Message-Id: <1487742551-10839-3-git-send-email-me@tobin.cc>
+Message-Id: <1487743958-4208-3-git-send-email-me@tobin.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487742551-10839-1-git-send-email-me@tobin.cc>
-In-Reply-To: <1487742551-10839-1-git-send-email-me@tobin.cc>
+References: <1487743958-4208-1-git-send-email-me@tobin.cc>
+In-Reply-To: <1487743958-4208-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
