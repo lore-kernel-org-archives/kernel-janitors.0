@@ -1,49 +1,43 @@
-From: Pavel Shilovsky <piastryyy@gmail.com>
-Date: Wed, 08 Feb 2017 01:00:17 +0000
-Subject: Re: [patch] CIFS: set *resp_buf_type to NO_BUFFER on error
-Message-Id: <CAKywueSLJJWNK2su4ux4ouz0Rz=fw9eY5vHN+iYFAO5Ek1s+=w@mail.gmail.com>
+From: "Tobin C. Harding" <me@tobin.cc>
+Date: Wed, 22 Feb 2017 21:03:14 +0000
+Subject: [PATCH v2] ncpfs: Remove cast from memory allocation
+Message-Id: <1487797394-30306-1-git-send-email-me@tobin.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207131841.GC31552@mwanda>
-In-Reply-To: <20170207131841.GC31552@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, linux-cifs <linux-cifs@vger.kernel.org>, kernel-janitors@vger.kernel.org, samba-technical <samba-technical@lists.samba.org>, Pavel Shilovsky <pshilov@microsoft.com>
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2017-02-07 5:18 GMT-08:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> We recently shuffled this code around and introduced a new error path
-> before *resp_buf_type gets initialized.  It creates uninitialized
-> variable bugs in the callers.
->
->     fs/cifs/smb2pdu.c:579 SMB2_negotiate()
->     error: uninitialized symbol 'resp_buftype'.
->
-> Fixes: 738f9de5cdb9 ("CIFS: Send RFC1001 length in a separate iov")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-> index 526f0533cb4e..8fa5e058fb15 100644
-> --- a/fs/cifs/transport.c
-> +++ b/fs/cifs/transport.c
-> @@ -807,6 +807,8 @@ SendReceive2(const unsigned int xid, struct cifs_ses *ses,
->         struct kvec *new_iov;
->         int rc;
->
-> +       *resp_buf_type = CIFS_NO_BUFFER; /* no response buf yet */
-> +
->         new_iov = kmalloc(sizeof(struct kvec) * (n_vec + 1), GFP_KERNEL);
->         if (!new_iov)
->                 return -ENOMEM;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Coccinelle emits WARNING: casting value returned by memory allocation
+function to (struct ncp_inode_info *) is useless.
 
-Good catch, thanks!
+Remove unnecessary cast.
 
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Changes since v1:
+ - Fix up typo
 
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+
+Kernel built successfully with patch applied.
+
+ fs/ncpfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
+index 7eb89c2..7a9ed33 100644
+--- a/fs/ncpfs/inode.c
++++ b/fs/ncpfs/inode.c
+@@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
+ {
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
-Best regards,
-Pavel Shilovsky
+2.7.4
+
