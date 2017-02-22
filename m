@@ -1,44 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:05:40 +0000
-Subject: [PATCH 5/5] IB/hfi1: Improve another size determination in hfi1_user_sdma_process_request()
-Message-Id: <ee953516-99a1-133c-9c6b-45838698a235@users.sourceforge.net>
+From: "Tobin C. Harding" <me@tobin.cc>
+Date: Wed, 22 Feb 2017 22:02:50 +0000
+Subject: [PATCH v3] ncpfs: Remove cast from memory allocation
+Message-Id: <1487800970-4887-1-git-send-email-me@tobin.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
-In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:45:38 +0100
+Coccinelle emits WARNING: casting value returned by memory allocation
+function to (struct ncp_inode_info *) is useless.
 
-Replace the specification of a data structure by a reference to
-the desired member as the parameter for the operator "sizeof" to make
-the corresponding size determination a bit safer according to
-the Linux coding style convention.
+Remove unnecessary cast.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
 ---
- drivers/infiniband/hw/hfi1/user_sdma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
-index 5a73d738f2ba..da131a530b88 100644
---- a/drivers/infiniband/hw/hfi1/user_sdma.c
-+++ b/drivers/infiniband/hw/hfi1/user_sdma.c
-@@ -704,7 +704,9 @@ int hfi1_user_sdma_process_request(struct file *fp, struct iovec *iovec,
- 	/* Save all the IO vector structures */
- 	for (i = 0; i < req->data_iovs; i++) {
- 		INIT_LIST_HEAD(&req->iovs[i].list);
--		memcpy(&req->iovs[i].iov, iovec + idx++, sizeof(struct iovec));
-+		memcpy(&req->iovs[i].iov,
-+		       iovec + idx++,
-+		       sizeof(req->iovs[i].iov));
- 		ret = pin_vector_pages(req, &req->iovs[i]);
- 		if (ret) {
- 			req->status = ret;
+Changes since v2:
+ - Put version amendment comments in correct place within patch email.
+
+Changes since v1:
+ - Fix up typo
+
+Kernel built successfully with patch applied.
+
+ fs/ncpfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
+index 7eb89c2..7a9ed33 100644
+--- a/fs/ncpfs/inode.c
++++ b/fs/ncpfs/inode.c
+@@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
+ {
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
-2.11.1
+2.7.4
 
