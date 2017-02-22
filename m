@@ -1,28 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Feb 2017 23:10:44 +0000
-Subject: [patch] Staging: bcm2835-audio: && vs & typo
-Message-Id: <20170214231044.GA9160@mwanda>
+From: "Tobin C. Harding" <me@tobin.cc>
+Date: Wed, 22 Feb 2017 06:27:07 +0000
+Subject: [PATCH] ncpfs: Remove cast from memory allocation
+Message-Id: <1487744827-20312-1-git-send-email-me@tobin.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
 
-We intended to mask away the upper bits but there is a "&&" vs "&" typo
-so it's broken.
+Coccinelle emits WARNING: casting value returned by memory allocation
+function to (struct ncp_inode_info *) is useless.
 
-Fixes: 23b028c871e1 ("staging: bcm2835-audio: initial staging submission")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove unnecessary cast.
 
-diff --git a/drivers/staging/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/bcm2835-audio/bcm2835-ctl.c
-index bfb7e9f74176..a4ffa1bf53e5 100644
---- a/drivers/staging/bcm2835-audio/bcm2835-ctl.c
-+++ b/drivers/staging/bcm2835-audio/bcm2835-ctl.c
-@@ -209,7 +209,7 @@ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
- 
- 	for (i = 0; i < 4; i++)
- 		ucontrol->value.iec958.status[i] -		(chip->spdif_status >> (i * 8)) && 0xff;
-+			(chip->spdif_status >> (i * 8)) & 0xff;
- 
- 	mutex_unlock(&chip->audio_mutex);
- 	return 0;
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ fs/ncpfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
+index 7eb89c2..a1b8e7a 100644
+--- a/fs/ncpfs/inode.c
++++ b/fs/ncpfs/inode.c
+@@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
+ {
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++	ei = lkmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
+-- 
+2.7.4
+
