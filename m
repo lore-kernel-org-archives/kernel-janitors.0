@@ -1,121 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Feb 2017 21:23:22 +0000
-Subject: [PATCH 13/14] RDMA/cxgb4: Rename jump labels in c4iw_create_qp()
-Message-Id: <8f233488-a0fd-7f64-012d-d0281f02624a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Feb 2017 10:39:57 +0000
+Subject: [patch] drm/i915: return false on failure in intel_dp_compute_config()
+Message-Id: <20170223103956.GA27484@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0aff92fa-2891-333a-2e1e-ca309db2ec72@users.sourceforge.net>
-In-Reply-To: <0aff92fa-2891-333a-2e1e-ca309db2ec72-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Chandra Konduru <chandra.konduru@intel.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Feb 2017 21:12:26 +0100
+This function is a bool type where we are supposed to return false on
+failure and true on success.  Negative error codes are currently treated
+as true.
 
-Adjust jump labels according to the Linux coding style convention.
+Fixes: a1b2278e4dfc ("drm/i915: skylake panel fitting using shared scalers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/cxgb4/qp.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-index ac63b1f70731..c278b1d968b0 100644
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1817,7 +1817,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
- 	ret = create_qp(&rhp->rdev, &qhp->wq, &schp->cq, &rchp->cq,
- 			ucontext ? &ucontext->uctx : &rhp->rdev.uctx);
- 	if (ret)
--		goto err1;
-+		goto free_qhp;
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index d1670b8afbf5..9173548ba601 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -1637,10 +1637,8 @@ intel_dp_compute_config(struct intel_encoder *encoder,
+ 				       adjusted_mode);
  
- 	attrs->cap.max_recv_wr = rqsize - 1;
- 	attrs->cap.max_send_wr = sqsize - 1;
-@@ -1848,35 +1848,35 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 		if (INTEL_GEN(dev_priv) >= 9) {
+-			int ret;
+-			ret = skl_update_scaler_crtc(pipe_config);
+-			if (ret)
+-				return ret;
++			if (skl_update_scaler_crtc(pipe_config))
++				return false;
+ 		}
  
- 	ret = insert_handle(rhp, &rhp->qpidr, qhp, qhp->wq.sq.qid);
- 	if (ret)
--		goto err2;
-+		goto destroy_qp;
- 
- 	if (udata) {
- 		sq_key_mm = kmalloc(sizeof(*sq_key_mm), GFP_KERNEL);
- 		if (!sq_key_mm) {
- 			ret = -ENOMEM;
--			goto err3;
-+			goto remove_handle;
- 		}
- 		rq_key_mm = kmalloc(sizeof(*rq_key_mm), GFP_KERNEL);
- 		if (!rq_key_mm) {
- 			ret = -ENOMEM;
--			goto err4;
-+			goto free_sq_key;
- 		}
- 		sq_db_key_mm = kmalloc(sizeof(*sq_db_key_mm), GFP_KERNEL);
- 		if (!sq_db_key_mm) {
- 			ret = -ENOMEM;
--			goto err5;
-+			goto free_rq_key;
- 		}
- 		rq_db_key_mm = kmalloc(sizeof(*rq_db_key_mm), GFP_KERNEL);
- 		if (!rq_db_key_mm) {
- 			ret = -ENOMEM;
--			goto err6;
-+			goto free_sq_db_key;
- 		}
- 		if (t4_sq_onchip(&qhp->wq.sq)) {
- 			ma_sync_key_mm = kmalloc(sizeof(*ma_sync_key_mm),
- 						 GFP_KERNEL);
- 			if (!ma_sync_key_mm) {
- 				ret = -ENOMEM;
--				goto err7;
-+				goto free_rq_db_key;
- 			}
- 			uresp.flags = C4IW_QPF_ONCHIP;
- 		} else
-@@ -1906,7 +1906,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
- 		spin_unlock(&ucontext->mmap_lock);
- 		ret = ib_copy_to_udata(udata, &uresp, sizeof uresp);
- 		if (ret)
--			goto err8;
-+			goto free_ma_sync_key;
- 		sq_key_mm->key = uresp.sq_key;
- 		sq_key_mm->addr = qhp->wq.sq.phys_addr;
- 		sq_key_mm->len = PAGE_ALIGN(qhp->wq.sq.memsize);
-@@ -1944,22 +1944,22 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
- 	     attrs->cap.max_send_wr, qhp->wq.rq.qid, qhp->wq.rq.size,
- 	     qhp->wq.rq.memsize, attrs->cap.max_recv_wr);
- 	return &qhp->ibqp;
--err8:
-+free_ma_sync_key:
- 	kfree(ma_sync_key_mm);
--err7:
-+free_rq_db_key:
- 	kfree(rq_db_key_mm);
--err6:
-+free_sq_db_key:
- 	kfree(sq_db_key_mm);
--err5:
-+free_rq_key:
- 	kfree(rq_key_mm);
--err4:
-+free_sq_key:
- 	kfree(sq_key_mm);
--err3:
-+remove_handle:
- 	remove_handle(rhp, &rhp->qpidr, qhp->wq.sq.qid);
--err2:
-+destroy_qp:
- 	destroy_qp(&rhp->rdev, &qhp->wq,
- 		   ucontext ? &ucontext->uctx : &rhp->rdev.uctx);
--err1:
-+free_qhp:
- 	kfree(qhp);
- 	return ERR_PTR(ret);
- }
--- 
-2.11.1
-
+ 		if (HAS_GMCH_DISPLAY(dev_priv))
