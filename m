@@ -1,54 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Feb 2017 11:20:19 +0000
-Subject: Re: [Intel-gfx] [patch] drm/i915: return false on failure in intel_dp_compute_config()
-Message-Id: <20170223112019.GC4196@mwanda>
+Date: Thu, 23 Feb 2017 10:40:16 +0000
+Subject: [patch] RDMA/ocrdma: fix a type issue in ocrdma_put_pd_num()
+Message-Id: <20170223104016.GA27526@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170223103956.GA27484@mwanda>
- <1487848154.3052.40.camel@linux.intel.com>
-In-Reply-To: <1487848154.3052.40.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 23, 2017 at 01:09:14PM +0200, Joonas Lahtinen wrote:
-> On to, 2017-02-23 at 13:39 +0300, Dan Carpenter wrote:
-> > This function is a bool type where we are supposed to return false on
-> > failure and true on success.=A0=A0Negative error codes are currently tr=
-eated
-> > as true.
-> >=20
-> > Fixes: a1b2278e4dfc ("drm/i915: skylake panel fitting using shared scal=
-ers")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> <SNIP>
->=20
-> >=20
-> > @@ -1637,10 +1637,8 @@ intel_dp_compute_config(struct intel_encoder *en=
-coder,
-> > =A0				=A0=A0=A0=A0=A0=A0=A0adjusted_mode);
-> > =A0
-> > =A0		if (INTEL_GEN(dev_priv) >=3D 9) {
-> > -			int ret;
-> > -			ret =3D skl_update_scaler_crtc(pipe_config);
-> > -			if (ret)
-> > -				return ret;
-> > +			if (skl_update_scaler_crtc(pipe_config))
-> > +				return false;
-> > =A0		}
->=20
-> You can drop the braces, too.
->=20
+We want to return zero on success or negative error codes.  The type
+should be int and not u8.
 
-Multi-line indents get braces for readability.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index e06ad7250963..b1b075763eaa 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -371,7 +371,7 @@ static int _ocrdma_pd_mgr_put_bitmap(struct ocrdma_dev *dev, u16 pd_id,
+ 	return 0;
+ }
+ 
+-static u8 ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
++static int ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
+ 				   bool dpp_pool)
+ {
+ 	int status;
