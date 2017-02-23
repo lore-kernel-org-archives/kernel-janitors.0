@@ -1,51 +1,45 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 08 Feb 2017 08:49:11 +0000
-Subject: Re: [patch] drm/atomic: fix an error code in mode_fixup()
-Message-Id: <20170208084911.5jjddqfiqxvuy5x6@phenom.ffwll.local>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Date: Thu, 23 Feb 2017 11:09:14 +0000
+Subject: Re: [Intel-gfx] [patch] drm/i915: return false on failure in intel_dp_compute_config()
+Message-Id: <1487848154.3052.40.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170207234601.GA23981@mwanda>
-In-Reply-To: <20170207234601.GA23981@mwanda>
+References: <20170223103956.GA27484@mwanda>
+In-Reply-To: <20170223103956.GA27484@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@intel.com>, Chandra Konduru <chandra.konduru@intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Wed, Feb 08, 2017 at 02:46:01AM +0300, Dan Carpenter wrote:
-> Having "ret" be a bool type works for everything except
-> ret = funcs->atomic_check().  The other functions all return zero on
-> error but ->atomic_check() returns negative error codes.  We want to
-> propagate the error code but instead we return 1.
+On to, 2017-02-23 at 13:39 +0300, Dan Carpenter wrote:
+> This function is a bool type where we are supposed to return false on
+> failure and true on success.  Negative error codes are currently treated
+> as true.
 > 
-> I found this bug with static analysis and I don't know if it affects
-> run time.
-> 
-> Fixes: 4cd4df8080a3 ("drm/atomic: Add ->atomic_check() to encoder helpers")
+> Fixes: a1b2278e4dfc ("drm/i915: skylake panel fitting using shared scalers")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to drm-misc for 4.11, thanks.
--Daniel
+<SNIP>
 
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 9a08445a7a7a..01d936b7be43 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -369,7 +369,7 @@ mode_fixup(struct drm_atomic_state *state)
->  	struct drm_connector *connector;
->  	struct drm_connector_state *conn_state;
->  	int i;
-> -	bool ret;
-> +	int ret;
->  
->  	for_each_crtc_in_state(state, crtc, crtc_state, i) {
->  		if (!crtc_state->mode_changed &&
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> @@ -1637,10 +1637,8 @@ intel_dp_compute_config(struct intel_encoder *encoder,
+>  				       adjusted_mode);
+>  
+>  		if (INTEL_GEN(dev_priv) >= 9) {
+> -			int ret;
+> -			ret = skl_update_scaler_crtc(pipe_config);
+> -			if (ret)
+> -				return ret;
+> +			if (skl_update_scaler_crtc(pipe_config))
+> +				return false;
+>  		}
 
+You can drop the braces, too.
+
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+
+Regards, Joonas
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Joonas Lahtinen
+Open Source Technology Center
+Intel Corporation
