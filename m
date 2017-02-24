@@ -1,35 +1,51 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 06 Feb 2017 14:15:20 +0000
-Subject: Re: [patch] tpm: silence an array overflow warning
-Message-Id: <20170206141520.nc7v4u2dysv3lsgj@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Feb 2017 14:43:30 +0000
+Subject: [PATCH] scsi: aacraid: remove redundant zero check on ret
+Message-Id: <20170224144330.6707-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170203103040.GA5467@mwanda>
-	<20170203181120.d3r7ab4twbvelwmi@intel.com>
-	<20170206092007.GA11103@mwanda>
-In-Reply-To: <20170206092007.GA11103@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tpmdd-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 06, 2017 at 12:20:07PM +0300, Dan Carpenter wrote:
-> On Fri, Feb 03, 2017 at 08:11:20PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Feb 03, 2017 at 01:30:40PM +0300, Dan Carpenter wrote:
-> > > We should check that we're within bounds first before checking that
-> > > "chip->active_banks[i] != TPM2_ALG_ERROR" so I've re-ordered the two
-> > > checks.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Thank you, good catch! Do you mind if I squash this.
-> > 
-> 
-> Not at all.
-> 
-> regards,
-> dan carpenter
+From: Colin Ian King <colin.king@canonical.com>
 
-Already went as a separate commit in a pull request to James :-)
+The check for ret being zero is redundant as a few statements earlier
+we break out of the while loop if ret is non-zero.  Thus we can
+remove the zero check and also the dead-code non-zero case too.
 
-/Jarkko
+Detected by CoverityScan, CID#1411632 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/commsup.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index 1994c74..a3ad042 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -2508,8 +2508,7 @@ int aac_command_thread(void *data)
+ 			 && (now.tv_usec > (1000000 / HZ)))
+ 				difference = (((1000000 - now.tv_usec) * HZ)
+ 				  + 500000) / 1000000;
+-			else if (ret = 0) {
+-
++			else {
+ 				if (now.tv_usec > 500000)
+ 					++now.tv_sec;
+ 
+@@ -2520,9 +2519,6 @@ int aac_command_thread(void *data)
+ 					ret = aac_send_hosttime(dev, &now);
+ 
+ 				difference = (long)(unsigned)update_interval*HZ;
+-			} else {
+-				/* retry shortly */
+-				difference = 10 * HZ;
+ 			}
+ 			next_jiffies = jiffies + difference;
+ 			if (time_before(next_check_jiffies,next_jiffies))
+-- 
+2.10.2
+
