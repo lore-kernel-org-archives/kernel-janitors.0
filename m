@@ -1,72 +1,46 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 18 Feb 2017 11:35:10 +0000
-Subject: Re: [patch v2] staging: bcm2835-camera: fix error handling in init
-Message-Id: <58A8316E.9060709@bfs.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 24 Feb 2017 18:09:42 +0000
+Subject: [PATCH v2] staging: bcm2835-camera: Fix a memory leak in error handling path in 'bm2835_mmal_init()'
+Message-Id: <20170224180942.17048-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170217232015.GA26717@mwanda>
 In-Reply-To: <20170217232015.GA26717@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-rpi-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-looks more readable now :)
+If 'kzalloc()' fails, we should release resources allocated so far, just as
+done in all other cases in this function.
 
-Acked-by: wharms@bfs.de
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that the error handling path is correct.
+Is 'gdev[0]' freed? Should it be?
 
-Am 18.02.2017 00:20, schrieb Dan Carpenter:
-> The unwinding here isn't right.  We don't free gdev[0] and instead
-> free 1 step past what was allocated.  Also we can't allocate "dev" then
-> we should unwind instead of returning directly.
-> 
-> Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Change the style to make Walter Harms happy.  Fix some additional
->     bugs I missed in the first patch.
-> 
-> diff --git a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-> index ca15a698e018..c4dad30dd133 100644
-> --- a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-> +++ b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
-> @@ -1901,6 +1901,7 @@ static int __init bm2835_mmal_init(void)
->  	unsigned int num_cameras;
->  	struct vchiq_mmal_instance *instance;
->  	unsigned int resolutions[MAX_BCM2835_CAMERAS][2];
-> +	int i;
->  
->  	ret = vchiq_mmal_init(&instance);
->  	if (ret < 0)
-> @@ -1914,8 +1915,10 @@ static int __init bm2835_mmal_init(void)
->  
->  	for (camera = 0; camera < num_cameras; camera++) {
->  		dev = kzalloc(sizeof(struct bm2835_mmal_dev), GFP_KERNEL);
-> -		if (!dev)
-> -			return -ENOMEM;
-> +		if (!dev) {
-> +			ret = -ENOMEM;
-> +			goto cleanup_gdev;
-> +		}
->  
->  		dev->camera_num = camera;
->  		dev->max_width = resolutions[camera][0];
-> @@ -1998,9 +2001,10 @@ static int __init bm2835_mmal_init(void)
->  free_dev:
->  	kfree(dev);
->  
-> -	for ( ; camera > 0; camera--) {
-> -		bcm2835_cleanup_instance(gdev[camera]);
-> -		gdev[camera] = NULL;
-> +cleanup_gdev:
-> +	for (i = 0; i < camera; i++) {
-> +		bcm2835_cleanup_instance(gdev[i]);
-> +		gdev[i] = NULL;
->  	}
->  	pr_info("%s: error %d while loading driver\n",
->  		BM2835_MMAL_MODULE_NAME, ret);
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+v2: Rename patch to include '-camera' in the subject
+---
+ drivers/staging/media/platform/bcm2835/bcm2835-camera.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+index ca15a698e018..9651b9bc3439 100644
+--- a/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
++++ b/drivers/staging/media/platform/bcm2835/bcm2835-camera.c
+@@ -1914,8 +1914,10 @@ static int __init bm2835_mmal_init(void)
+ 
+ 	for (camera = 0; camera < num_cameras; camera++) {
+ 		dev = kzalloc(sizeof(struct bm2835_mmal_dev), GFP_KERNEL);
+-		if (!dev)
+-			return -ENOMEM;
++		if (!dev) {
++			ret = -ENOMEM;
++			goto free_dev;
++		}
+ 
+ 		dev->camera_num = camera;
+ 		dev->max_width = resolutions[camera][0];
+-- 
+2.9.3
+
