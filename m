@@ -1,38 +1,38 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 06:34:13 +0000
-Subject: [PATCH] fs/9p:  Remove cast from memory allocation
-Message-Id: <1487745253-15411-1-git-send-email-me@tobin.cc>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Feb 2017 13:45:23 +0000
+Subject: [PATCH] scsi: lpfc: remove redundant assignment of sgel
+Message-Id: <20170224134523.5385-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>
-Cc: v9fs-developer@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Coccinelle emits WARNING: casting value returned by memory allocation
-function to (struct v9fs_inode *) is useless.
+From: Colin Ian King <colin.king@canonical.com>
 
-Remove unnecessary cast.
+In the NVMET_FCOP_RSP case, sgel is assigned but never used and
+hence is redundant and can be removed.
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
+Detected by CoverityScan, CID#1411658 ("Unused value")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_nvmet.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index f4f4450..462e9e4 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
- {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
- 		return NULL;
- #ifdef CONFIG_9P_FSCACHE
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index c421e17..e59a0a8 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1445,7 +1445,6 @@ lpfc_nvmet_prep_fcp_wqe(struct lpfc_hba *phba,
+ 
+ 	case NVMET_FCOP_RSP:
+ 		/* Words 0 - 2 */
+-		sgel = &rsp->sg[0];
+ 		physaddr = rsp->rspdma;
+ 		wqe->fcp_trsp.bde.tus.f.bdeFlags = BUFF_TYPE_BDE_64;
+ 		wqe->fcp_trsp.bde.tus.f.bdeSize = rsp->rsplen;
 -- 
-2.7.4
+2.10.2
 
