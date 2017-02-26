@@ -1,24 +1,41 @@
-From: Stephen Boyd <stephen.boyd@linaro.org>
-Date: Mon, 20 Feb 2017 08:17:03 +0000
-Subject: Re: [PATCH] phy: qcom-usb-hsic: Fix error handling
-Message-Id: <148757862379.30630.3244433580235647479@sboyd-linaro>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 26 Feb 2017 07:52:06 +0000
+Subject: [PATCH] drm/msm/dsi: Fix the releasing of resources in error path in 'dsi_bus_clk_enable()'
+Message-Id: <20170226075206.25762-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219130229.11730-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219130229.11730-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kishon@ti.com, robh@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: robdclark@gmail.com, airlied@linux.ie, architt@codeaurora.org, hali@codeaurora.org, yongjun_wei@trendmicro.com.cn
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Quoting Christophe JAILLET (2017-02-19 05:02:29)
-> According to error handling in this function, it is likely that going to
-> 'err_ulpi' was expected here.
-> 
-> Fixes:  605b8652f7f0 ("phy: Add support for Qualcomm's USB HSIC phy")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If a 'clk_prepare_enable()' fails, then we need to disable_unprepare the
+clk already handled.
 
-Yes. Thanks.
+With the current implemenatation, we try to do that on the clk that has
+triggered the error, which is a no-op, and leave 'msm_host->bus_clks[0]'
+untouched.
 
-Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
+Shift by one the index array to free resources correctly.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 1fc07ce24686..eac4987f3946 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -438,7 +438,7 @@ static int dsi_bus_clk_enable(struct msm_dsi_host *msm_host)
+ 	return 0;
+ err:
+ 	for (; i > 0; i--)
+-		clk_disable_unprepare(msm_host->bus_clks[i]);
++		clk_disable_unprepare(msm_host->bus_clks[i-1]);
+ 
+ 	return ret;
+ }
+-- 
+2.9.3
+
