@@ -1,58 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Feb 2017 21:02:19 +0000
-Subject: [PATCH 2/5] IB/hfi1: Use kcalloc() in hfi1_user_sdma_alloc_queues()
-Message-Id: <71be9ebc-950f-7af2-4044-2c4b1ee44281@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Feb 2017 23:40:19 +0000
+Subject: [PATCH] wireless: ipw2200: remove redundant check of rc < 0
+Message-Id: <20170227234019.19081-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
-In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 9 Feb 2017 16:06:12 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus reuse the corresponding function "kcalloc".
+The check for rc < 0 is always false so the check is redundant
+and can be removed.
 
-  This issue was detected by using the Coccinelle software.
+Detected with CoverityScan, CID#101143 ("Logically dead code")
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/hw/hfi1/user_sdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
-index 7d22f8ee98ef..15194554a92b 100644
---- a/drivers/infiniband/hw/hfi1/user_sdma.c
-+++ b/drivers/infiniband/hw/hfi1/user_sdma.c
-@@ -400,13 +400,15 @@ int hfi1_user_sdma_alloc_queues(struct hfi1_ctxtdata *uctxt, struct file *fp)
- 	if (!pq)
- 		goto pq_nomem;
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 5ef3c5c..bbc579b 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -3539,9 +3539,6 @@ static int ipw_load(struct ipw_priv *priv)
+ 	fw_img = &fw->data[le32_to_cpu(fw->boot_size) +
+ 			   le32_to_cpu(fw->ucode_size)];
  
--	memsize = sizeof(*pq->reqs) * hfi1_sdma_comp_ring_size;
--	pq->reqs = kzalloc(memsize, GFP_KERNEL);
-+	pq->reqs = kcalloc(hfi1_sdma_comp_ring_size,
-+			   sizeof(*pq->reqs),
-+			   GFP_KERNEL);
- 	if (!pq->reqs)
- 		goto pq_reqs_nomem;
- 
--	memsize = BITS_TO_LONGS(hfi1_sdma_comp_ring_size) * sizeof(long);
--	pq->req_in_use = kzalloc(memsize, GFP_KERNEL);
-+	pq->req_in_use = kcalloc(BITS_TO_LONGS(hfi1_sdma_comp_ring_size),
-+				 sizeof(*pq->req_in_use),
-+				 GFP_KERNEL);
- 	if (!pq->req_in_use)
- 		goto pq_reqs_no_in_use;
- 
+-	if (rc < 0)
+-		goto error;
+-
+ 	if (!priv->rxq)
+ 		priv->rxq = ipw_rx_queue_alloc(priv);
+ 	else
 -- 
-2.11.1
+2.10.2
 
