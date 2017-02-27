@@ -1,36 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 17 Feb 2017 15:57:43 +0000
-Subject: [PATCH] crypto: cavium: fix leak on curr if curr->head fails to be allocated
-Message-Id: <20170217155743.31525-1-colin.king@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 27 Feb 2017 10:37:40 +0000
+Subject: Re: [PATCH] crypto: cavium: fix leak on curr if curr->head fails to be allocated
+Message-Id: <20170227103740.GB31739@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170217155743.31525-1-colin.king@canonical.com>
+In-Reply-To: <20170217155743.31525-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: George Cherian <george.cherian@cavium.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: George Cherian <george.cherian@cavium.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 17, 2017 at 03:57:43PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The exit path when curr->head cannot be allocated fails to kfree the
+> earlier allocated curr.  Fix this by kfree'ing it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The exit path when curr->head cannot be allocated fails to kfree the
-earlier allocated curr.  Fix this by kfree'ing it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/cavium/cpt/cptvf_main.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/crypto/cavium/cpt/cptvf_main.c b/drivers/crypto/cavium/cpt/cptvf_main.c
-index 527bdc3..3247c7f 100644
---- a/drivers/crypto/cavium/cpt/cptvf_main.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_main.c
-@@ -242,6 +242,7 @@ static int alloc_command_queues(struct cpt_vf *cptvf,
- 			if (!curr->head) {
- 				dev_err(&pdev->dev, "Command Q (%d) chunk (%d) allocation failed\n",
- 					i, queue->nchunks);
-+				kfree(curr);
- 				goto cmd_qfail;
- 			}
- 
+Patch applied.  Thanks.
 -- 
-2.10.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
