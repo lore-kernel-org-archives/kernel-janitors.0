@@ -1,53 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Feb 2017 23:15:44 +0000
-Subject: [patch] staging: bcm2835-audio: allocate enough data for work queues
-Message-Id: <20170214231544.GA9284@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 12:05:48 +0000
+Subject: [PATCH] staging: wilc1000: remove redundant result < 0 check
+Message-Id: <20170228120548.20734-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We accidentally allocate sizeof(void *) bytes instead of 112 bytes.  It
-results in memory corruption.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 23b028c871e1 ("staging: bcm2835-audio: initial staging submission")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The check for result < 0 is redundant because at that point result
+is always zero, hence we can remove this check and the netdev_err
+message.
 
-diff --git a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-index d11f2cdd1014..f5c6a83569f3 100644
---- a/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/bcm2835-audio/bcm2835-vchiq.c
-@@ -134,8 +134,9 @@ int bcm2835_audio_start(struct bcm2835_alsa_stream *alsa_stream)
- 	int ret = -1;
- 	LOG_DBG(" .. IN\n");
- 	if (alsa_stream->my_wq) {
--		struct bcm2835_audio_work *work -			kmalloc(sizeof(struct bcm2835_audio_work *), GFP_ATOMIC);
-+		struct bcm2835_audio_work *work;
-+
-+		work = kmalloc(sizeof(*work), GFP_ATOMIC);
- 		/*--- Queue some work (item 1) ---*/
- 		if (work) {
- 			INIT_WORK(&work->my_work, my_wq_function);
-@@ -155,8 +156,9 @@ int bcm2835_audio_stop(struct bcm2835_alsa_stream *alsa_stream)
- 	int ret = -1;
- 	LOG_DBG(" .. IN\n");
- 	if (alsa_stream->my_wq) {
--		struct bcm2835_audio_work *work -			kmalloc(sizeof(struct bcm2835_audio_work *), GFP_ATOMIC);
-+		struct bcm2835_audio_work *work;
-+
-+		work = kmalloc(sizeof(*work), GFP_ATOMIC);
- 		/*--- Queue some work (item 1) ---*/
- 		if (work) {
- 			INIT_WORK(&work->my_work, my_wq_function);
-@@ -177,8 +179,9 @@ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
- 	int ret = -1;
- 	LOG_DBG(" .. IN\n");
- 	if (alsa_stream->my_wq) {
--		struct bcm2835_audio_work *work -			kmalloc(sizeof(struct bcm2835_audio_work *), GFP_ATOMIC);
-+		struct bcm2835_audio_work *work;
-+
-+		work = kmalloc(sizeof(*work), GFP_ATOMIC);
- 		/*--- Queue some work (item 1) ---*/
- 		if (work) {
- 			INIT_WORK(&work->my_work, my_wq_function);
+Detected by CoverityScan, CID#1357147 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wilc1000/host_interface.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index e83fa21..f848bb8 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -3350,10 +3350,6 @@ int wilc_init(struct net_device *dev, struct host_if_drv **hif_drv_handler)
+ 	init_completion(&hif_drv->comp_inactive_time);
+ 
+ 	if (clients_count = 0)	{
+-		if (result < 0) {
+-			netdev_err(vif->ndev, "Failed to creat MQ\n");
+-			goto _fail_;
+-		}
+ 		hif_workqueue = create_singlethread_workqueue("WILC_wq");
+ 		if (!hif_workqueue) {
+ 			netdev_err(vif->ndev, "Failed to create workqueue\n");
+-- 
+2.10.2
+
