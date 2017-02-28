@@ -1,64 +1,40 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 06 Feb 2017 20:24:35 +0000
-Subject: [RFC] mips: ath79: clock:- Unmap region obtained by of_iomap
-Message-Id: <5fac1423-00e9-e5b2-161d-5ddc2f47bfc9@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 11:31:15 +0000
+Subject: [PATCH] netfilter: remove redundant check on ret being non-zero
+Message-Id: <20170228113115.19888-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: antonynpavlov@gmail.comantonynpavlov@gmail.com, albeu@free.fr, hackpascal@gmail.com, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-mips@linux-mips.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-I had a patch similar to:
+ret is initialized to zero and if it is set to non-zero in the
+xt_entry_foreach loop then we exit via the out_free label. Hence
+the check for ret being non-zero is redundant and can be removed.
 
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/arc=
-h/mips/ath79/clock.c?id=B3d91db3f71d5f70ea60d900425a3f96aeb3d065
+Detected by CoverityScan, CID#1357132 ("Logically Dead Code")
 
-in my own tree.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/netfilter/arp_tables.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-However, mine was slightly different and was also freeing the memory=20
-mapping in the normal case, when 'pll_base' seems to be no more useful.
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index 6241a81..f17dab1 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -562,8 +562,6 @@ static int translate_table(struct xt_table_info *newinfo, void *entry0,
+ 		    XT_ERROR_TARGET) = 0)
+ 			++newinfo->stacksize;
+ 	}
+-	if (ret != 0)
+-		goto out_free;
+ 
+ 	ret = -EINVAL;
+ 	if (i != repl->num_entries)
+-- 
+2.10.2
 
-Best regards,
-
-CJ
-
-=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D=
-+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+=3D+
-
-diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
-index c1102cffe37d..b5d81acb2d7a 100644
---- a/arch/mips/ath79/clock.c
-+++ b/arch/mips/ath79/clock.c
-@@ -508,9 +508,11 @@ static void __init ath79_clocks_init_dt_ng(struct=20
-device_node *np)
-          ar9330_clk_init(ref_clk, pll_base);
-      else {
-          pr_err("%s: could not find any appropriate clk_init()\n", dnfn);
--        goto err_clk;
-+        goto err_unmap;
-      }
-
-+    iounmap(pll_base);
-+
-      if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data)) {
-          pr_err("%s: could not register clk provider\n", dnfn);
-          goto err_clk;
-@@ -518,6 +520,8 @@ static void __init ath79_clocks_init_dt_ng(struct=20
-device_node *np)
-
-      return;
-
-+err_unmap:
-+    iounmap(pll_base);
-  err_clk:
-      clk_put(ref_clk);
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
