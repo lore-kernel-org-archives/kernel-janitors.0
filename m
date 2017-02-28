@@ -1,31 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Feb 2017 12:02:15 +0000
-Subject: [patch] net/mlx4: && vs & typo
-Message-Id: <20170228120215.GA27947@mwanda>
+From: Bart Van Assche <Bart.VanAssche@sandisk.com>
+Date: Tue, 28 Feb 2017 15:35:44 +0000
+Subject: Re: [patch] net/mlx4: && vs & typo
+Message-Id: <1488296129.3056.1.camel@sandisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170228120215.GA27947@mwanda>
+In-Reply-To: <20170228120215.GA27947@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Eugenia Emantayev <eugenia-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "eugenia-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org" <eugenia-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, "dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org" <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org" <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: "netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-Bitwise & was obviously intended here.
-
-Fixes: 745d8ae4622c ("net/mlx4: Spoofcheck and zero MAC can't coexist")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Applies to net.git.
-
-diff --git a/include/linux/mlx4/driver.h b/include/linux/mlx4/driver.h
-index e965e5090d96..a858bcb6220b 100644
---- a/include/linux/mlx4/driver.h
-+++ b/include/linux/mlx4/driver.h
-@@ -109,7 +109,7 @@ static inline void mlx4_u64_to_mac(u8 *addr, u64 mac)
- 	int i;
- 
- 	for (i = ETH_ALEN; i > 0; i--) {
--		addr[i - 1] = mac && 0xFF;
-+		addr[i - 1] = mac & 0xFF;
- 		mac >>= 8;
- 	}
- }
+T24gVHVlLCAyMDE3LTAyLTI4IGF0IDE1OjAyICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBCaXR3aXNlICYgd2FzIG9idmlvdXNseSBpbnRlbmRlZCBoZXJlLg0KPiANCj4gRml4ZXM6IDc0
+NWQ4YWU0NjIyYyAoIm5ldC9tbHg0OiBTcG9vZmNoZWNrIGFuZCB6ZXJvIE1BQyBjYW4ndCBjb2V4
+aXN0IikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFj
+bGUuY29tPg0KPiAtLS0NCj4gQXBwbGllcyB0byBuZXQuZ2l0Lg0KPiANCj4gZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvbGludXgvbWx4NC9kcml2ZXIuaCBiL2luY2x1ZGUvbGludXgvbWx4NC9kcml2ZXIu
+aA0KPiBpbmRleCBlOTY1ZTUwOTBkOTYuLmE4NThiY2I2MjIwYiAxMDA2NDQNCj4gLS0tIGEvaW5j
+bHVkZS9saW51eC9tbHg0L2RyaXZlci5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbWx4NC9kcml2
+ZXIuaA0KPiBAQCAtMTA5LDcgKzEwOSw3IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBtbHg0X3U2NF90
+b19tYWModTggKmFkZHIsIHU2NCBtYWMpDQo+ICAJaW50IGk7DQo+ICANCj4gIAlmb3IgKGkgPSBF
+VEhfQUxFTjsgaSA+IDA7IGktLSkgew0KPiAtCQlhZGRyW2kgLSAxXSA9IG1hYyAmJiAweEZGOw0K
+PiArCQlhZGRyW2kgLSAxXSA9IG1hYyAmIDB4RkY7DQo+ICAJCW1hYyA+Pj0gODsNCj4gIAl9DQo+
+ICB9DQoNCklzIHRoaXMgdGhlIG9ubHkgcGxhY2Ugd2hlcmUgc3VjaCBhIGxvb3Agb2NjdXJzPyBT
+aG91bGQgYSBwdXRfdW5hbGlnbmVkX2JlNDgoKQ0KZnVuY3Rpb24gYmUgaW50cm9kdWNlZD8NCg0K
+QmFydC4
