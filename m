@@ -1,39 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Feb 2017 08:34:34 +0000
-Subject: [PATCH] irqchip/qcom: Fix error handling
-Message-Id: <20170218083434.2289-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 11:47:33 +0000
+Subject: [PATCH] staging: wilc1000: add check for kmalloc allocation failure.
+Message-Id: <20170228114733.20228-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'devm_ioremap()' returns NULL on error, not an error pointer.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
+Add a sanity check that wid.val has been allocated, fixes a null
+pointer deference on stamac when calling ether_add_copy.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Detected by CoverityScan, CID#1369537 ("Dereference null return value")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/irqchip/qcom-irq-combiner.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/wilc1000/host_interface.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
-index 03251da95397..226558698344 100644
---- a/drivers/irqchip/qcom-irq-combiner.c
-+++ b/drivers/irqchip/qcom-irq-combiner.c
-@@ -202,9 +202,9 @@ static acpi_status get_registers_cb(struct acpi_resource *ares, void *context)
- 	}
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index c307cce..e83fa21 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -1928,6 +1928,8 @@ static s32 Handle_Get_InActiveTime(struct wilc_vif *vif,
+ 	wid.type = WID_STR;
+ 	wid.size = ETH_ALEN;
+ 	wid.val = kmalloc(wid.size, GFP_KERNEL);
++	if (!wid.val)
++		return -ENOMEM;
  
- 	vaddr = devm_ioremap(ctx->dev, reg->address, REG_SIZE);
--	if (IS_ERR(vaddr)) {
-+	if (!vaddr) {
- 		dev_err(ctx->dev, "Can't map register @%pa\n", &paddr);
--		ctx->err = PTR_ERR(vaddr);
-+		ctx->err = -ENOMEM;
- 		return AE_ERROR;
- 	}
- 
+ 	stamac = wid.val;
+ 	ether_addr_copy(stamac, strHostIfStaInactiveT->mac);
 -- 
-2.9.3
+2.10.2
 
