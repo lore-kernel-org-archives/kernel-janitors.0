@@ -1,37 +1,44 @@
-From: "Tobin C. Harding" <me@tobin.cc>
-Date: Wed, 22 Feb 2017 06:42:00 +0000
-Subject: [PATCH] proc:  Remove cast from memory allocation
-Message-Id: <1487745720-16967-1-git-send-email-me@tobin.cc>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 11:14:39 +0000
+Subject: [PATCH] ath10k: remove redundant error check
+Message-Id: <20170228111439.19546-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <seth.forshee@canonical.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, "Eric W. Biederman" <ebiederm@xmission.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Coccinelle emits WARNING: casting value returned by memory allocation
-function to (struct proc_inode *) is useless.
+From: Colin Ian King <colin.king@canonical.com>
 
-Remove unnecessary cast.
+The check on ret for an error is redundant because it is already been
+checked for non-zero earlier on and ret is never non-zero at this point.
+Fix this by removing the redundant check and error message.
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
+Detected by CoverityScan, CID#1357170 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/proc/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/pci.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 842a5ff..1eb2326 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -57,7 +57,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
- 	struct proc_inode *ei;
- 	struct inode *inode;
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index 6094372..52896c2 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -970,12 +970,6 @@ static int ath10k_pci_diag_read_mem(struct ath10k *ar, u32 address, void *data,
+ 		}
  
--	ei = (struct proc_inode *)kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	ei->pid = NULL;
+ 		remaining_bytes -= nbytes;
+-
+-		if (ret) {
+-			ath10k_warn(ar, "failed to read diag value at 0x%x: %d\n",
+-				    address, ret);
+-			break;
+-		}
+ 		memcpy(data, data_buf, nbytes);
+ 
+ 		address += nbytes;
 -- 
-2.7.4
+2.10.2
 
