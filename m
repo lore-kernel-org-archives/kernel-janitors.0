@@ -1,22 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 06 Feb 2017 17:01:14 +0000
-Subject: Re: [patch net-next] net/mlx4_en: fix a condition
-Message-Id: <20170206.120114.1158013558292422641.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 11:02:48 +0000
+Subject: [PATCH] scsi: qedi: fix missing return error code check on call to qedi_setup_int
+Message-Id: <20170228110248.19290-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170203095459.GA5704@mwanda>
-In-Reply-To: <20170203095459.GA5704@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: yishaih@mellanox.com, shakerd@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 3 Feb 2017 12:54:59 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> There is a "||" vs "|" typo here so we test 0x1 instead of 0x6.
-> 
-> Fixes: 1f8176f7352a ("net/mlx4_en: Check the enabling pptx/pprx flags in SET_PORT wrapper flow")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The call to qedi_setup_int is not updating the return code rc yet rc
+is being checked for an error. Fix this by assigning rc to the return
+code from the call to qedi_setup_int.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qedi/qedi_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index 5eda21d..8e3d928 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1805,7 +1805,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
+ 	 */
+ 	qedi_ops->common->update_pf_params(qedi->cdev, &qedi->pf_params);
+ 
+-	qedi_setup_int(qedi);
++	rc = qedi_setup_int(qedi);
+ 	if (rc)
+ 		goto stop_iscsi_func;
+ 
+-- 
+2.10.2
+
