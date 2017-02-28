@@ -1,34 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 19 Feb 2017 17:30:22 +0000
-Subject: [PATCH] [media] s5p-g2d: Fix error handling
-Message-Id: <20170219173022.18707-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 12:18:51 +0000
+Subject: [PATCH] net: bcmgenet: fix off-by-one comparison on timeout
+Message-Id: <20170228121851.21145-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-According to the surrounding goto, it is likely that 'unprep_clk_gate' was
-expected here.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+At the end of the timeout loop, timeout will be 1001 and not 1000 and
+so the timeout error will never be detected. Fix the off-by-one
+comparison by checking to see if timeout is greater than 1000.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/s5p-g2d/g2d.c | 2 +-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-index 62c0dec30b59..81ed5cd5cd5d 100644
---- a/drivers/media/platform/s5p-g2d/g2d.c
-+++ b/drivers/media/platform/s5p-g2d/g2d.c
-@@ -679,7 +679,7 @@ static int g2d_probe(struct platform_device *pdev)
- 						0, pdev->name, dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to install IRQ\n");
--		goto put_clk_gate;
-+		goto unprep_clk_gate;
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index f928968..24e7201 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1829,7 +1829,7 @@ static int reset_umac(struct bcmgenet_priv *priv)
+ 		udelay(1);
  	}
  
- 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+-	if (timeout = 1000) {
++	if (timeout > 1000) {
+ 		dev_err(kdev,
+ 			"timeout waiting for MAC to come out of reset\n");
+ 		return -ETIMEDOUT;
 -- 
-2.9.3
+2.10.2
 
