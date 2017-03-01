@@ -1,46 +1,77 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Sun, 12 Mar 2017 14:46:53 +0000
-Subject: [PATCH 2/3] staging: dgnc: remove useless switch-case statements
-Message-Id: <20170312144653.GA24016@jyoun-Latitude-E6530>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Mar 2017 15:10:53 +0000
+Subject: [PATCH] Bluetooth: fix assignments on error variable err
+Message-Id: <20170301151053.25779-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160504051326.GA21217@certreview.com>
-In-Reply-To: <20160504051326.GA21217@certreview.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The dgnc_tty_send_break() has a switch-case condition for msec.
-It is no use except case -1.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Variable err is being initialized to zero and then later being
+set to the error return from the call to hci_req_run_skb; hence
+we can remove the redundant initialization to zero.
+
+Also on two occassions err is not being set from the error return
+from the call to hci_req_run_skb, so add these missing assignments.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/dgnc/dgnc_tty.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ net/bluetooth/amp.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index c563ee3..7133d2c 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1786,16 +1786,8 @@ static int dgnc_tty_send_break(struct tty_struct *tty, int msec)
- 	if (!bd || bd->magic != DGNC_BOARD_MAGIC)
- 		return ret;
+diff --git a/net/bluetooth/amp.c b/net/bluetooth/amp.c
+index 02a4ccc..ebcab5b 100644
+--- a/net/bluetooth/amp.c
++++ b/net/bluetooth/amp.c
+@@ -263,7 +263,7 @@ void amp_read_loc_assoc_frag(struct hci_dev *hdev, u8 phy_handle)
+ 	struct hci_cp_read_local_amp_assoc cp;
+ 	struct amp_assoc *loc_assoc = &hdev->loc_assoc;
+ 	struct hci_request req;
+-	int err = 0;
++	int err;
  
--	switch (msec) {
--	case -1:
-+	if (msec < 0)
- 		msec = 0xFFFF;
--		break;
--	case 0:
--		msec = 0;
--		break;
--	default:
--		break;
--	}
+ 	BT_DBG("%s handle %d", hdev->name, phy_handle);
  
- 	spin_lock_irqsave(&ch->ch_lock, flags);
+@@ -282,7 +282,7 @@ void amp_read_loc_assoc(struct hci_dev *hdev, struct amp_mgr *mgr)
+ {
+ 	struct hci_cp_read_local_amp_assoc cp;
+ 	struct hci_request req;
+-	int err = 0;
++	int err;
  
+ 	memset(&hdev->loc_assoc, 0, sizeof(struct amp_assoc));
+ 	memset(&cp, 0, sizeof(cp));
+@@ -292,7 +292,7 @@ void amp_read_loc_assoc(struct hci_dev *hdev, struct amp_mgr *mgr)
+ 	set_bit(READ_LOC_AMP_ASSOC, &mgr->state);
+ 	hci_req_init(&req, hdev);
+ 	hci_req_add(&req, HCI_OP_READ_LOCAL_AMP_ASSOC, sizeof(cp), &cp);
+-	hci_req_run_skb(&req, read_local_amp_assoc_complete);
++	err = hci_req_run_skb(&req, read_local_amp_assoc_complete);
+ 	if (err < 0)
+ 		a2mp_send_getampassoc_rsp(hdev, A2MP_STATUS_INVALID_CTRL_ID);
+ }
+@@ -303,7 +303,7 @@ void amp_read_loc_assoc_final_data(struct hci_dev *hdev,
+ 	struct hci_cp_read_local_amp_assoc cp;
+ 	struct amp_mgr *mgr = hcon->amp_mgr;
+ 	struct hci_request req;
+-	int err = 0;
++	int err;
+ 
+ 	cp.phy_handle = hcon->handle;
+ 	cp.len_so_far = cpu_to_le16(0);
+@@ -314,7 +314,7 @@ void amp_read_loc_assoc_final_data(struct hci_dev *hdev,
+ 	/* Read Local AMP Assoc final link information data */
+ 	hci_req_init(&req, hdev);
+ 	hci_req_add(&req, HCI_OP_READ_LOCAL_AMP_ASSOC, sizeof(cp), &cp);
+-	hci_req_run_skb(&req, read_local_amp_assoc_complete);
++	err = hci_req_run_skb(&req, read_local_amp_assoc_complete);
+ 	if (err < 0)
+ 		a2mp_send_getampassoc_rsp(hdev, A2MP_STATUS_INVALID_CTRL_ID);
+ }
 -- 
-2.7.4
+2.10.2
 
