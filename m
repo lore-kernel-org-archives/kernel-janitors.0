@@ -1,33 +1,27 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:14 +0000
-Subject: [PATCH 06/14] cxl: remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-6-afd@ti.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 01 Mar 2017 17:52:26 +0000
+Subject: Re: [PATCH] net: usb: asix_devices: fix missing return code check on call to asix_write_medium_mode
+Message-Id: <20170301.125226.289007568565020464.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170228115822.20485-1-colin.king@canonical.com>
+In-Reply-To: <20170228115822.20485-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: colin.king@canonical.com
+Cc: robert.foss@collabora.com, grundler@google.com, allan@asix.com.tw, vpalatin@chromium.org, jarod@redhat.com, peter.chen@nxp.com, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Feb 2017 11:58:22 +0000
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/misc/cxl/sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The call to asix_write_medium_mode is not updating the return code ret
+> and yet ret is being checked for an error. Fix this by assigning ret to
+> the return code from the call asix_write_medium_mode.
+> 
+> Detected by CoverityScan, CID#1357148 ("Logically Dead Code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/misc/cxl/sysfs.c b/drivers/misc/cxl/sysfs.c
-index a8b6d6a635e9..64c600e6c045 100644
---- a/drivers/misc/cxl/sysfs.c
-+++ b/drivers/misc/cxl/sysfs.c
-@@ -161,7 +161,7 @@ static ssize_t perst_reloads_same_image_store(struct device *device,
- 	if ((rc != 1) || !(val = 1 || val = 0))
- 		return -EINVAL;
- 
--	adapter->perst_same_image = (val = 1 ? true : false);
-+	adapter->perst_same_image = (val = 1);
- 	return count;
- }
- 
--- 
-2.11.0
-
+Applied.
