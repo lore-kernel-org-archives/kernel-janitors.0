@@ -1,29 +1,43 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 27 Mar 2017 18:20:50 +0000
-Subject: Re: selinux: Delete unnecessary variable assignments in policydb_index()
-Message-Id: <CAHC9VhSPv11X=HYV3qoiMV4GDg4VDaxvNYru0xDjU4Y2t27CPg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Mar 2017 14:07:21 +0000
+Subject: [PATCH] engine: mv_xor: remove redundant null check on cd
+Message-Id: <20170301140721.22341-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
-	<CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
-	<1ae9af46-a3ca-33b8-d347-8983a22cb3cb@users.sourceforge.net>
-In-Reply-To: <1ae9af46-a3ca-33b8-d347-8983a22cb3cb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 27, 2017 at 2:24 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> However, I agree with Casey that this patch is mostly just code churn
->> so I'm going to drop this from your series.
->
-> How do you think about to return only constant error codes in this function?
-> Would it be acceptable to replace any statements “goto out;” with
-> “return -ENOMEM;” here instead?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes.
+The check to see if cd is null is redundant, pdata->channels is
+never null at this point, and hence &pdata->channels[i] cannot
+be null, so remove the null check.
 
+Detected by CoverityScan, CID#1357194 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/mv_xor.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 0cb951b..ea53b87 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1580,11 +1580,6 @@ static int mv_xor_probe(struct platform_device *pdev)
+ 			int irq;
+ 
+ 			cd = &pdata->channels[i];
+-			if (!cd) {
+-				ret = -ENODEV;
+-				goto err_channel_add;
+-			}
+-
+ 			irq = platform_get_irq(pdev, i);
+ 			if (irq < 0) {
+ 				ret = irq;
 -- 
-paul moore
-www.paul-moore.com
+2.10.2
+
