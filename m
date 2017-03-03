@@ -1,40 +1,106 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 23 Mar 2017 11:49:56 +0000
-Subject: [PATCH] qla2xxx: remove redundant check on sess being non-null
-Message-Id: <20170323114956.18245-1-colin.king@canonical.com>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
+Date: Fri, 03 Mar 2017 14:52:48 +0000
+Subject: [PATCH 10/10] Added vendor prefix. Added range information
+Message-Id: <1488552768-14901-11-git-send-email-ryans.lee@maximintegrated.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-All error paths to label out_term2 result in sess being null, so the
-check for sess being non-null and the call to put_sess is dead code
-and can therefore be removed.
-
-Detected with CoverityScan, CID#1420664 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
 ---
- drivers/scsi/qla2xxx/qla_target.c | 2 --
- 1 file changed, 2 deletions(-)
+Vendor prefix was added.
+Range information of each propery was added.
 
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 0e03ca2ab3e5..32e07f21ddb2 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -5853,8 +5853,6 @@ static void qlt_abort_work(struct qla_tgt *tgt,
- 	return;
+ .../devicetree/bindings/sound/max98927.txt         | 33 +++++++++++++---------
+ sound/soc/codecs/max98927.c                        |  8 ++++--
+ 2 files changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/max98927.txt b/Documentation/devicetree/bindings/sound/max98927.txt
+index ddcd332..d610879 100755
+--- a/Documentation/devicetree/bindings/sound/max98927.txt
++++ b/Documentation/devicetree/bindings/sound/max98927.txt
+@@ -6,19 +6,25 @@ Required properties:
  
- out_term2:
--	if (sess)
--		ha->tgt.tgt_ops->put_sess(sess);
- 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags2);
+   - compatible : "maxim,max98927"
  
- out_term:
+-  - vmon-slot-no : slot number used to send voltage information
++  - maxim,vmon-slot-no : slot number used to send voltage information
+                    or in inteleave mode this will be used as
+                    interleave slot.
+-
+-  - imon-slot-no : slot number used to send current information
+-
+-  - interleave-mode : When using two MAX98927 in a system it is
+-                      possible to create ADC data that that will
+-                      overflow the frame size. Digital Audio Interleave
+-                      mode provides a means to output VMON and IMON data
+-                      from two devices on a single DOUT line when running
+-                      smaller frames sizes such as 32 BCLKS per LRCLK or
+-                      48 BCLKS per LRCLK.
++                   This property can be set to values from 0 to 15 for slot 0 to 15.
++                   Default value is 0.
++
++  - maxim,imon-slot-no : slot number used to send current information
++                   This property can be set to values from 0 to 15 for slot 0 to 15.
++                   Default value is 0.
++
++  - maxim,interleave-mode : When using two MAX98927 in a system it is
++                   possible to create ADC data that that will
++                   overflow the frame size. Digital Audio Interleave
++                   mode provides a means to output VMON and IMON data
++                   from two devices on a single DOUT line when running
++                   smaller frames sizes such as 32 BCLKS per LRCLK or
++                   48 BCLKS per LRCLK.
++                   This property can be set to values from 0 to 1 for off and on.
++                   Default value is 0.
+ 
+   - reg : the I2C address of the device for I2C
+ 
+@@ -26,7 +32,8 @@ Example:
+ 
+ codec: max98927@3a {
+    compatible = "maxim,max98927";
+-   vmon-slot-no = <1>;
+-   imon-slot-no = <0>;
++   maxim,vmon-slot-no = <0>;
++   maxim,imon-slot-no = <1>;
++   maxim,interleave-mode = <0>;
+    reg = <0x3a>;
+ };
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 0614936..b9b7621 100755
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -926,11 +926,13 @@ static void max98927_slot_config(struct i2c_client *i2c,
+ {
+ 	int value;
+ 
+-	if (!of_property_read_u32(i2c->dev.of_node, "vmon-l-slot", &value))
++	if (!of_property_read_u32(i2c->dev.of_node,
++		"maxim,vmon-slot-no", &value))
+ 		max98927->v_l_slot = value & 0xF;
+ 	else
+ 		max98927->v_l_slot = 0;
+-	if (!of_property_read_u32(i2c->dev.of_node, "imon-l-slot", &value))
++	if (!of_property_read_u32(i2c->dev.of_node,
++		"maxim,imon-slot-no", &value))
+ 		max98927->i_l_slot = value & 0xF;
+ 	else
+ 		max98927->i_l_slot = 1;
+@@ -954,7 +956,7 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
+ 
+ 	/* update interleave mode info */
+ 	if (!of_property_read_u32(i2c->dev.of_node,
+-		"interleave_mode", &value)) {
++		"maxim,interleave_mode", &value)) {
+ 		if (value > 0)
+ 			max98927->interleave_mode = 1;
+ 		else
 -- 
-2.11.0
+2.7.4
 
