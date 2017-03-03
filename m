@@ -1,204 +1,82 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 06 Mar 2017 17:42:44 +0000
-Subject: [PATCH 3/5] IB/nes: Adjust 16 checks for null pointers
-Message-Id: <34a4575b-d8fd-755a-9eaa-5ba7bcec994f@users.sourceforge.net>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
+Date: Fri, 03 Mar 2017 14:52:43 +0000
+Subject: [PATCH 05/10] Replaced pr_err by dev_err. Modified debug message
+Message-Id: <1488552768-14901-6-git-send-email-ryans.lee@maximintegrated.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
-In-Reply-To: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
+References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Faisal Latif <faisal.latif@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Mar 2017 16:54:03 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
-
-The script "checkpatch.pl" pointed information out like the following.
-
-Comparison to NULL could be written !=E2=80=A6
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
 ---
- drivers/infiniband/hw/nes/nes_verbs.c | 35 +++++++++++++++++--------------=
-----
- 1 file changed, 17 insertions(+), 18 deletions(-)
+Replaced 'pr_err' by 'dev_err'. Modified error message.
 
-diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/=
-nes/nes_verbs.c
-index a28dfeaa1f45..f79ea50e3ab5 100644
---- a/drivers/infiniband/hw/nes/nes_verbs.c
-+++ b/drivers/infiniband/hw/nes/nes_verbs.c
-@@ -106,7 +106,7 @@ static struct ib_mw *nes_alloc_mw(struct ib_pd *ibpd, e=
-num ib_mw_type type,
-=20
- 	/* Register the region with the adapter */
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		kfree(nesmr);
- 		nes_free_resource(nesadapter, nesadapter->allocated_mrs, stag_index);
- 		return ERR_PTR(-ENOMEM);
-@@ -171,7 +171,7 @@ static int nes_dealloc_mw(struct ib_mw *ibmw)
-=20
- 	/* Deallocate the window with the adapter */
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_MR, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -224,7 +224,7 @@ static int alloc_fast_reg_mr(struct nes_device *nesdev,=
- struct nes_pd *nespd,
-=20
-=20
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_MR, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -627,7 +627,7 @@ static int nes_mmap(struct ib_ucontext *context, struct=
- vm_area_struct *vma)
- 			return -EFAULT;
- 		}
- 		nesqp =3D nes_ucontext->mmap_nesqp[index];
--		if (nesqp =3D NULL) {
-+		if (!nesqp) {
- 			nes_debug(NES_DBG_MMAP, "wq %lu has a NULL QP base.\n", index);
- 			return -EFAULT;
- 		}
-@@ -1228,7 +1228,7 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
-=20
- 			/* Create the QP */
- 			cqp_request =3D nes_get_cqp_request(nesdev);
--			if (cqp_request =3D NULL) {
-+			if (!cqp_request) {
- 				nes_debug(NES_DBG_QP, "Failed to get a cqp_request\n");
- 				nes_free_resource(nesadapter, nesadapter->allocated_qps, qp_num);
- 				nes_free_qp_mem(nesdev, nesqp,virt_wqs);
-@@ -1539,7 +1539,7 @@ static struct ib_cq *nes_create_cq(struct ib_device *=
-ibdev,
-=20
- 	/* send CreateCQ request to CQP */
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_CQ, "Failed to get a cqp_request.\n");
- 		if (!context)
- 			pci_free_consistent(nesdev->pcidev, nescq->cq_mem_size, mem,
-@@ -1697,7 +1697,7 @@ static int nes_destroy_cq(struct ib_cq *ib_cq)
- 	u32 opcode =3D 0;
- 	int ret;
-=20
--	if (ib_cq =3D NULL)
-+	if (!ib_cq)
- 		return 0;
-=20
- 	nescq =3D to_nescq(ib_cq);
-@@ -1709,7 +1709,7 @@ static int nes_destroy_cq(struct ib_cq *ib_cq)
-=20
- 	/* Send DestroyCQ request to CQP */
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_CQ, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -1788,8 +1788,7 @@ static u32 root_256(struct nes_device *nesdev,
- 	if (pbl_count_4k =3D 1) {
- 		new_root->pbl_vbase =3D pci_alloc_consistent(nesdev->pcidev,
- 						512, &new_root->pbl_pbase);
--
--		if (new_root->pbl_vbase =3D NULL)
-+		if (!new_root->pbl_vbase)
- 			return 0;
-=20
- 		leaf_pbl =3D (u64)root_vpbl->pbl_pbase;
-@@ -1847,7 +1846,7 @@ static int nes_reg_mr(struct nes_device *nesdev, stru=
-ct nes_pd *nespd,
-=20
- 	/* Register the region with the adapter */
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_MR, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -2509,7 +2508,7 @@ static int nes_dereg_mr(struct ib_mr *ib_mr)
- 	/* Deallocate the region with the adapter */
-=20
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_MR, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -2673,7 +2672,7 @@ int nes_hw_modify_qp(struct nes_device *nesdev, struc=
-t nes_qp *nesqp,
- 			nesqp->hwqp.qp_id, atomic_read(&nesqp->refcount));
-=20
- 	cqp_request =3D nes_get_cqp_request(nesdev);
--	if (cqp_request =3D NULL) {
-+	if (!cqp_request) {
- 		nes_debug(NES_DBG_MOD_QP, "Failed to get a cqp_request.\n");
- 		return -ENOMEM;
- 	}
-@@ -2793,7 +2792,7 @@ int nes_modify_qp(struct ib_qp *ibqp, struct ib_qp_at=
-tr *attr,
- 					spin_unlock_irqrestore(&nesqp->lock, qplockflags);
- 					return -EINVAL;
- 				}
--				if (nesqp->cm_id =3D NULL) {
-+				if (!nesqp->cm_id) {
- 					nes_debug(NES_DBG_MOD_QP, "QP%u: Failing attempt to move QP to RTS wi=
-thout a CM_ID. \n",
- 							nesqp->hwqp.qp_id );
- 					spin_unlock_irqrestore(&nesqp->lock, qplockflags);
-@@ -3696,9 +3695,9 @@ struct nes_ib_device *nes_init_ofa_device(struct net_=
-device *netdev)
- 	struct nes_device *nesdev =3D nesvnic->nesdev;
-=20
- 	nesibdev =3D (struct nes_ib_device *)ib_alloc_device(sizeof(struct nes_ib=
-_device));
--	if (nesibdev =3D NULL) {
-+	if (!nesibdev)
- 		return NULL;
--	}
-+
- 	strlcpy(nesibdev->ibdev.name, "nes%d", IB_DEVICE_NAME_MAX);
- 	nesibdev->ibdev.owner =3D THIS_MODULE;
-=20
-@@ -3772,7 +3771,7 @@ struct nes_ib_device *nes_init_ofa_device(struct net_=
-device *netdev)
- 	nesibdev->ibdev.drain_rq =3D nes_drain_rq;
-=20
- 	nesibdev->ibdev.iwcm =3D kzalloc(sizeof(*nesibdev->ibdev.iwcm), GFP_KERNE=
-L);
--	if (nesibdev->ibdev.iwcm =3D NULL) {
-+	if (!nesibdev->ibdev.iwcm) {
- 		ib_dealloc_device(&nesibdev->ibdev);
- 		return NULL;
- 	}
-@@ -3844,7 +3843,7 @@ void  nes_port_ibevent(struct nes_vnic *nesvnic)
-  */
- void nes_destroy_ofa_device(struct nes_ib_device *nesibdev)
+ sound/soc/codecs/max98927.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index efc761b..0abf6d3 100755
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -254,6 +254,7 @@ static const int rate_table[] = {
+ static int max98927_set_clock(struct max98927_priv *max98927,
+ 	struct snd_pcm_hw_params *params)
  {
--	if (nesibdev =3D NULL)
-+	if (!nesibdev)
- 		return;
-=20
- 	nes_unregister_ofa_device(nesibdev);
---=20
-2.12.0
++	struct snd_soc_codec *codec = max98927->codec;
+ 	/* BCLK/LRCLK ratio calculation */
+ 	int blr_clk_ratio = params_channels(params) * max98927->ch_size;
+ 	int reg = MAX98927_R0022_PCM_CLK_SETUP;
+@@ -268,8 +269,7 @@ static int max98927_set_clock(struct max98927_priv *max98927,
+ 				break;
+ 		}
+ 		if (i = ARRAY_SIZE(rate_table)) {
+-			pr_err("%s couldn't get the MCLK to match codec\n",
+-				__func__);
++			dev_err(codec->dev, "failed to find proper clock rate.\n");
+ 			return -EINVAL;
+ 		}
+ 		regmap_update_bits(max98927->regmap,
+@@ -327,12 +327,12 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
+ 		max98927->ch_size = 32;
+ 		break;
+ 	default:
+-		pr_err("%s: format unsupported %d",
+-			__func__, params_format(params));
++		dev_err(codec->dev, "format unsupported %d",
++			params_format(params));
+ 		goto err;
+ 	}
+-	dev_dbg(codec->dev, "%s: format supported %d",
+-		__func__, params_format(params));
++	dev_dbg(codec->dev, "format supported %d",
++		params_format(params));
+ 
+ 	/* sampling rate configuration */
+ 	switch (params_rate(params)) {
+@@ -364,8 +364,8 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
+ 		sampling_rate |= MAX98927_PCM_SR_SET1_SR_48000;
+ 		break;
+ 	default:
+-		pr_err("%s rate %d not supported\n",
+-			__func__, params_rate(params));
++		dev_err(codec->dev, "rate %d not supported\n",
++			params_rate(params));
+ 		goto err;
+ 	}
+ 	/* set DAI_SR to correct LRCLK frequency */
+@@ -490,7 +490,7 @@ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 
+ 	ucontrol->value.integer.value[0] = max98927->digital_gain;
+-	dev_dbg(codec->dev, "%s: spk_gain setting returned %d\n", __func__,
++	dev_dbg(codec->dev, "%s: digital_gain setting returned %d\n", __func__,
+ 		(int) ucontrol->value.integer.value[0]);
+ 	return 0;
+ }
+-- 
+2.7.4
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
