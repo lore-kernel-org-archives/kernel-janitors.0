@@ -1,53 +1,48 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:45:05 +0000
-Subject: Re: [PATCH 43/46] selinux: Use kmalloc_array() in sidtab_init()
-Message-Id: <CAHC9VhS4Wx95NH97o-2JnEaxpWtw31HW9LU7=5z1sqyzQKpHOQ@mail.gmail.com>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
+Date: Fri, 03 Mar 2017 14:52:38 +0000
+Subject: [PATCH 00/10] ALSA SoC MAX98927 driver - revision
+Message-Id: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<9ce64f74-f424-b9c5-605b-a54982888e1a@users.sourceforge.net>
-In-Reply-To: <9ce64f74-f424-b9c5-605b-a54982888e1a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:43 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 13:13:19 +0100
->
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/sidtab.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Merged, thanks.
-
-> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-> index 5840a35155fc..c9533b21942b 100644
-> --- a/security/selinux/ss/sidtab.c
-> +++ b/security/selinux/ss/sidtab.c
-> @@ -18,7 +18,7 @@ int sidtab_init(struct sidtab *s)
->  {
->         int i;
->
-> -       s->htable = kmalloc(sizeof(*(s->htable)) * SIDTAB_SIZE, GFP_ATOMIC);
-> +       s->htable = kmalloc_array(SIDTAB_SIZE, sizeof(*s->htable), GFP_ATOMIC);
->         if (!s->htable)
->                 return -ENOMEM;
->         for (i = 0; i < SIDTAB_SIZE; i++)
-> --
-> 2.11.0
->
+The initial driver had many textual and structural problems.
+I have added next patches to modify existing problems.
+There was concern about the design of keeping separate regmaps for each instance of the amplifier explicitly instead of instantiating two instances of a single, simpler driver.
+This was major change of this release. Coding style problem like indentation also have been fixed.
 
 
+Ryan Lee (10):
+  ALSA SoC MAX98927 driver - Initial release
+  Updated max98927_reg table with physical defaults. Replaced max98927.h
+    for better legibility
+  Removed the secondary device initialization from the primary device
+    initialization. Removed manual register configuration from
+    devicetree
+  Modified indentation
+  Replaced pr_err by dev_err. Modified debug message
+  Added mask variable to apply it in one round after the switch
+  Modified initialization code of VI sensing
+  Added DAI Sel Mux and minor updates
+  Added ACPI support. Changed snd_kcontrol_chip to
+    snd_soc_kcontrol_codec
+  Added vendor prefix. Added range information
+
+ .../devicetree/bindings/sound/max98927.txt         |   39 +
+ sound/soc/codecs/Kconfig                           |    5 +
+ sound/soc/codecs/Makefile                          |    2 +
+ sound/soc/codecs/max98927.c                        | 1039 ++++++++++++++++++++
+ sound/soc/codecs/max98927.h                        |  267 +++++
+ 5 files changed, 1352 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/sound/max98927.txt
+ mode change 100644 => 100755 sound/soc/codecs/Kconfig
+ mode change 100644 => 100755 sound/soc/codecs/Makefile
+ create mode 100755 sound/soc/codecs/max98927.c
+ create mode 100755 sound/soc/codecs/max98927.h
 
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
