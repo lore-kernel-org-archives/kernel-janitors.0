@@ -1,53 +1,120 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:31:38 +0000
-Subject: Re: [PATCH 35/46] selinux: Return directly after a failed kzalloc() in perm_read()
-Message-Id: <CAHC9VhQ8LhDcwf-Nbrv7YT9XxCboUZZpmBfJ519=TzNhruuBtg@mail.gmail.com>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
+Date: Fri, 03 Mar 2017 14:52:47 +0000
+Subject: [PATCH 09/10] Added ACPI support. Changed snd_kcontrol_chip to snd_soc_kcontrol_codec
+Message-Id: <1488552768-14901-10-git-send-email-ryans.lee@maximintegrated.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<b7648542-fcd6-6852-ddcd-0b88b842e1a8@users.sourceforge.net>
-In-Reply-To: <b7648542-fcd6-6852-ddcd-0b88b842e1a8@users.sourceforge.net>
+References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:35 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 11:20:13 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+---
+snd_kcontrol_chip was changed to snd_soc_kcontrol_codec.
+acpi_match_table was added.
 
-Merged, thanks.
+ sound/soc/codecs/max98927.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 551685283399..9b595f2e0d9f 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1116,10 +1116,9 @@ static int perm_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[2];
->         u32 len;
->
-> -       rc = -ENOMEM;
->         perdatum = kzalloc(sizeof(*perdatum), GFP_KERNEL);
->         if (!perdatum)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         rc = next_entry(buf, fp, sizeof buf);
->         if (rc)
-> --
-> 2.11.0
->
-
-
-
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 6eb745bd..0614936 100755
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -10,7 +10,7 @@
+  *  option) any later version.
+  */
+ 
+-#include <linux/delay.h>
++#include <linux/acpi.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -144,7 +144,7 @@ static int max98927_reg_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol, unsigned int reg,
+ 	unsigned int mask, unsigned int shift)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 	int data;
+ 
+@@ -157,7 +157,7 @@ static int max98927_reg_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol, unsigned int reg,
+ 	unsigned int mask, unsigned int shift)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 	unsigned int sel = ucontrol->value.integer.value[0];
+ 
+@@ -473,7 +473,7 @@ static DECLARE_TLV_DB_SCALE(max98927_digital_tlv, -1600, 25, 0);
+ static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 
+ 	ucontrol->value.integer.value[0] = max98927->spk_gain;
+@@ -485,7 +485,7 @@ static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
+ static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 	unsigned int sel = ucontrol->value.integer.value[0];
+ 
+@@ -503,7 +503,7 @@ static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
+ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 
+ 	ucontrol->value.integer.value[0] = max98927->digital_gain;
+@@ -515,7 +515,7 @@ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
+ static int max98927_digital_gain_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+ 	unsigned int sel = ucontrol->value.integer.value[0];
+ 
+@@ -1002,17 +1002,27 @@ static const struct i2c_device_id max98927_i2c_id[] = {
+ 
+ MODULE_DEVICE_TABLE(i2c, max98927_i2c_id);
+ 
++#if defined(CONFIG_OF)
+ static const struct of_device_id max98927_of_match[] = {
+ 	{ .compatible = "maxim,max98927", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, max98927_of_match);
++#endif
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id max98927_acpi_match[] = {
++	{ "MX98927", 0 },
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, max98927_acpi_match);
++#endif
+ 
+ static struct i2c_driver max98927_i2c_driver = {
+ 	.driver = {
+ 		.name = "max98927",
+-		.owner = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(max98927_of_match),
++		.acpi_match_table = ACPI_PTR(max98927_acpi_match),
+ 		.pm = NULL,
+ 	},
+ 	.probe  = max98927_i2c_probe,
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
