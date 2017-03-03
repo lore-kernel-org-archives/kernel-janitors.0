@@ -1,50 +1,155 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:09:32 +0000
-Subject: Re: [PATCH 17/46] selinux: Delete an unnecessary variable assignment in filename_trans_read()
-Message-Id: <CAHC9VhToUf-sncer+NWwwVUA1yP1D1j03AQ_5rFgpd8VVVs05w@mail.gmail.com>
+From: Ryan Lee <ryans.lee@maximintegrated.com>
+Date: Fri, 03 Mar 2017 14:52:44 +0000
+Subject: [PATCH 06/10] Added mask variable to apply it in one round after the switch
+Message-Id: <1488552768-14901-7-git-send-email-ryans.lee@maximintegrated.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<71120ef7-6463-6497-f915-fcaf9e54239d@users.sourceforge.net>
-In-Reply-To: <71120ef7-6463-6497-f915-fcaf9e54239d@users.sourceforge.net>
+References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:17 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 19:02:42 +0100
->
-> The local variable "ft" was set to a null pointer despite of an
-> immediate reassignment.
-> Thus remove this statement from the beginning of a loop.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 1 -
->  1 file changed, 1 deletion(-)
+Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+---
+Added the mask variable to apply in one round after the switch.
 
-Merged, thanks.
+ sound/soc/codecs/max98927.c | 64 ++++++++++++++++++++++-----------------------
+ 1 file changed, 31 insertions(+), 33 deletions(-)
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 106a1da1d68a..2be5b18eb149 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1927,7 +1927,6 @@ static int filename_trans_read(struct policydb *p, void *fp)
->         nel = le32_to_cpu(buf[0]);
->
->         for (i = 0; i < nel; i++) {
-> -               ft = NULL;
->                 otype = NULL;
->                 name = NULL;
->                 ft = kzalloc(sizeof(*ft), GFP_KERNEL);
-> --
-> 2.11.0
->
-
-
-
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 0abf6d3..9e70883 100755
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -171,34 +171,31 @@ static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
+ {
+ 	struct snd_soc_codec *codec = codec_dai->codec;
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
++	unsigned int mode = 0;
+ 	unsigned int invert = 0;
+ 
+ 	dev_dbg(codec->dev, "%s: fmt 0x%08X\n", __func__, fmt);
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0021_PCM_MASTER_MODE,
+-			MAX98927_PCM_MASTER_MODE_MASK,
+-			MAX98927_PCM_MASTER_MODE_SLAVE);
++		mode = MAX98927_PCM_MASTER_MODE_SLAVE;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFM:
+ 		max98927->master = true;
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0021_PCM_MASTER_MODE,
+-			MAX98927_PCM_MASTER_MODE_MASK,
+-			MAX98927_PCM_MASTER_MODE_MASTER);
++		mode = MAX98927_PCM_MASTER_MODE_MASTER;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFM:
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0021_PCM_MASTER_MODE,
+-			MAX98927_PCM_MASTER_MODE_MASK,
+-			MAX98927_PCM_MASTER_MODE_HYBRID);
++		mode = MAX98927_PCM_MASTER_MODE_HYBRID;
+ 	default:
+ 		dev_err(codec->dev, "DAI clock mode unsupported");
+ 		return -EINVAL;
+ 	}
+ 
++	regmap_update_bits(max98927->regmap,
++		MAX98927_R0021_PCM_MASTER_MODE,
++		MAX98927_PCM_MASTER_MODE_MASK,
++		mode);
++
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+ 	case SND_SOC_DAIFMT_NB_NF:
+ 		break;
+@@ -210,24 +207,28 @@ static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
+ 		return -EINVAL;
+ 	}
+ 
++	regmap_update_bits(max98927->regmap,
++		MAX98927_R0020_PCM_MODE_CFG,
++		MAX98927_PCM_MODE_CFG_PCM_BCLKEDGE,
++		invert);
++
+ 	/* interface format */
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		max98927->iface |= SND_SOC_DAIFMT_I2S;
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0020_PCM_MODE_CFG,
+-			max98927->iface, max98927->iface);
+-		break;
++
++	break;
+ 	case SND_SOC_DAIFMT_LEFT_J:
+ 		max98927->iface |= SND_SOC_DAIFMT_LEFT_J;
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0020_PCM_MODE_CFG,
+-			max98927->iface, max98927->iface);
+-		break;
++	break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
++	regmap_update_bits(max98927->regmap,
++		MAX98927_R0020_PCM_MODE_CFG,
++		max98927->iface, max98927->iface);
++
+ 	/* pcm channel configuration */
+ 	if (max98927->iface & (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_LEFT_J)) {
+ 		regmap_write(max98927->regmap,
+@@ -301,29 +302,21 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_codec *codec = dai->codec;
+ 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
+-	int sampling_rate = 0;
++	unsigned int sampling_rate = 0;
++	unsigned int chan_sz = 0;
+ 
+ 	/* pcm mode configuration */
+ 	switch (snd_pcm_format_width(params_format(params))) {
+ 	case 16:
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0020_PCM_MODE_CFG,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_16,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_16);
++		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_16;
+ 		max98927->ch_size = 16;
+ 		break;
+ 	case 24:
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0020_PCM_MODE_CFG,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_24,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_24);
++		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_24;
+ 		max98927->ch_size = 24;
+ 		break;
+ 	case 32:
+-		regmap_update_bits(max98927->regmap,
+-			MAX98927_R0020_PCM_MODE_CFG,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_32,
+-			MAX98927_PCM_MODE_CFG_CHANSZ_32);
++		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_32;
+ 		max98927->ch_size = 32;
+ 		break;
+ 	default:
+@@ -331,6 +324,11 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
+ 			params_format(params));
+ 		goto err;
+ 	}
++
++	regmap_update_bits(max98927->regmap,
++		MAX98927_R0020_PCM_MODE_CFG,
++		MAX98927_PCM_MODE_CFG_CHANSZ_MASK, chan_sz);
++
+ 	dev_dbg(codec->dev, "format supported %d",
+ 		params_format(params));
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
