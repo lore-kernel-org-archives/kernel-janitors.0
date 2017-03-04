@@ -1,53 +1,44 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:23:00 +0000
-Subject: Re: [PATCH 30/46] selinux: Return directly after a failed kzalloc() in role_read()
-Message-Id: <CAHC9VhRyNgQkOOfwzKe88ePW9U6a0aa4cvR6Zfp31ER6vY73tg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 04 Mar 2017 12:01:03 +0000
+Subject: [bug report] tools/power turbostat: decode MSR_MISC_FEATURE_CONTROL
+Message-Id: <20170304120103.GA3292@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<c8d230f3-2c13-0384-3a46-343dc5ebe812@users.sourceforge.net>
-In-Reply-To: <c8d230f3-2c13-0384-3a46-343dc5ebe812@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:30 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 22:20:25 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Hello Len Brown,
 
-Merged, thanks.
+The patch 33148d671cc1: "tools/power turbostat: decode
+MSR_MISC_FEATURE_CONTROL" from Jan 21, 2017, leads to the following
+static checker warning:
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 662139365449..34b670227c4d 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1410,10 +1410,9 @@ static int role_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[3];
->         u32 len;
->
-> -       rc = -ENOMEM;
->         role = kzalloc(sizeof(*role), GFP_KERNEL);
->         if (!role)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
->                 to_read = 3;
-> --
-> 2.11.0
->
+	tools/power/x86/turbostat/turbostat.c:3918 decode_misc_feature_control()
+	warn: bitwise AND condition is false here
 
+tools/power/x86/turbostat/turbostat.c
+  3908  void decode_misc_feature_control(void)
+  3909  {
+  3910          unsigned long long msr;
+  3911  
+  3912          if (!has_misc_feature_control)
+  3913                  return;
+  3914  
+  3915          if (!get_msr(base_cpu, MSR_MISC_FEATURE_CONTROL, &msr))
+  3916                  fprintf(outf, "cpu%d: MSR_MISC_FEATURE_CONTROL: 0x%08llx (%sL2-Prefetch %sL2-Prefetch-pair %sL1-Prefetch %sL1-IP-Prefetch)\n",
+  3917                          base_cpu, msr,
+  3918                          msr & (0 << 0) ? "No-" : "",
+                                ^^^^^^^^^^^^^
+Never true.
 
+  3919                          msr & (1 << 0) ? "No-" : "",
+  3920                          msr & (2 << 0) ? "No-" : "",
+  3921                          msr & (3 << 0) ? "No-" : "");
 
--- 
-paul moore
-www.paul-moore.com
+Was this supposed to be 1 << 0, 1 << 2 etc?
+
+  3922  }
+
+regards,
+dan carpenter
