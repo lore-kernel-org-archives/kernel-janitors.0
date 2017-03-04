@@ -1,46 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 06 Mar 2017 17:41:40 +0000
-Subject: [PATCH 2/5] IB/nes: Use kcalloc() in nes_reg_user_mr()
-Message-Id: <192fcb99-eef6-8820-9260-b6ad0ee60165@users.sourceforge.net>
+From: James Smart <james.smart@broadcom.com>
+Date: Sat, 04 Mar 2017 17:42:38 +0000
+Subject: Re: [PATCH] scsi: lpfc: sanity check hrq is null before dereferencing it
+Message-Id: <d84cd90f-9252-2329-9f36-c5c461a80290@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
-In-Reply-To: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
+References: <20170224135642.5690-1-colin.king@canonical.com>
+In-Reply-To: <20170224135642.5690-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Faisal Latif <faisal.latif@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Mar 2017 16:26:25 +0100
+Looks good. I included it in the lpfc patch set just posted.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus reuse the corresponding function "kcalloc".
+-- james
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/nes/nes_verbs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-index d3eae2f3e9f5..a28dfeaa1f45 100644
---- a/drivers/infiniband/hw/nes/nes_verbs.c
-+++ b/drivers/infiniband/hw/nes/nes_verbs.c
-@@ -2260,8 +2260,9 @@ static struct ib_mr *nes_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
- 								ibmr = ERR_PTR(-ENOMEM);
- 								goto reg_user_mr_err;
- 							}
--							root_vpbl.leaf_vpbl = kzalloc(sizeof(*root_vpbl.leaf_vpbl)*1024,
--									GFP_KERNEL);
-+							root_vpbl.leaf_vpbl = kcalloc(1024,
-+										      sizeof(*root_vpbl.leaf_vpbl),
-+										      GFP_KERNEL);
- 							if (!root_vpbl.leaf_vpbl) {
- 								ib_umem_release(region);
- 								pci_free_consistent(nesdev->pcidev, 8192, root_vpbl.pbl_vbase,
--- 
-2.12.0
+On 2/24/2017 5:56 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The sanity check for hrq should be moved to before the deference
+> of hrq to ensure we don't perform a null pointer deference.
+>
+> Detected by CoverityScan, CID#1411650 ("Dereference before null check")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_sli.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+> index e43e5e2..1fba5dc 100644
+> --- a/drivers/scsi/lpfc/lpfc_sli.c
+> +++ b/drivers/scsi/lpfc/lpfc_sli.c
+> @@ -15185,17 +15185,17 @@ lpfc_mrq_create(struct lpfc_hba *phba, struct lpfc_queue **hrqp,
+>   		drq = drqp[idx];
+>   		cq  = cqp[idx];
+>   
+> -		if (hrq->entry_count != drq->entry_count) {
+> -			status = -EINVAL;
+> -			goto out;
+> -		}
+> -
+>   		/* sanity check on queue memory */
+>   		if (!hrq || !drq || !cq) {
+>   			status = -ENODEV;
+>   			goto out;
+>   		}
+>   
+> +		if (hrq->entry_count != drq->entry_count) {
+> +			status = -EINVAL;
+> +			goto out;
+> +		}
+> +
+>   		if (idx = 0) {
+>   			bf_set(lpfc_mbx_rq_create_num_pages,
+>   			       &rq_create->u.request,
 
