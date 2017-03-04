@@ -1,51 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 20 Mar 2017 11:51:23 +0000
-Subject: [PATCH] i2c: designware-baytrail: fix potential null pointer dereference on dev
-Message-Id: <20170320115123.31536-1-colin.king@canonical.com>
+From: James Smart <james.smart@broadcom.com>
+Date: Sat, 04 Mar 2017 17:42:45 +0000
+Subject: Re: [PATCH] scsi: lpfc: don't dereference dma_buf->iocbq before null check
+Message-Id: <c7423fa3-299b-c010-bf4e-c34a11c146d3@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170224140914.6011-1-colin.king@canonical.com>
+In-Reply-To: <20170224140914.6011-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Looks good. I included it in the lpfc patch set just posted.
 
-The assignment to addr requires a call to get_sem_addr that dereferences
-dev, however, this dereference occurs before a null pointer check on dev.
-Move this assignment after the null check on dev to avoid a potential null
-pointer dereference.
+-- james
 
-Detected by CoverityScan, CID#1419700 ("Dereference before null check")
 
-Fixes: fd476fa22a1f432 ("i2c: designware-baytrail: Add support for cherrytrail")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/i2c/busses/i2c-designware-baytrail.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-baytrail.c b/drivers/i2c/busses/i2c-designware-baytrail.c
-index 1749a0f5a9fa..2cbb2e9195ca 100644
---- a/drivers/i2c/busses/i2c-designware-baytrail.c
-+++ b/drivers/i2c/busses/i2c-designware-baytrail.c
-@@ -70,7 +70,7 @@ static void reset_semaphore(struct dw_i2c_dev *dev)
- 
- static int baytrail_i2c_acquire(struct dw_i2c_dev *dev)
- {
--	u32 addr = get_sem_addr(dev);
-+	u32 addr;
- 	u32 sem = PUNIT_SEMAPHORE_ACQUIRE;
- 	int ret;
- 	unsigned long start, end;
-@@ -94,6 +94,8 @@ static int baytrail_i2c_acquire(struct dw_i2c_dev *dev)
- 	 */
- 	pm_qos_update_request(&dev->pm_qos, 0);
- 
-+	addr = get_sem_addr(dev);
-+
- 	/* host driver writes to side band semaphore register */
- 	ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE, addr, sem);
- 	if (ret) {
--- 
-2.11.0
+On 2/24/2017 6:09 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> dma_buf->iocbq is being dereferenced immediately before it is
+> being null checked, so we have a potential null pointer dereference
+> bug.  Fix this by only dereferencing it only once we have passed
+> a null check on the pointer.
+>
+> Detected by CoverityScan, CID#1411652 ("Dereference before null check")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_mem.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
+> index c61d8d6..5986c79 100644
+> --- a/drivers/scsi/lpfc/lpfc_mem.c
+> +++ b/drivers/scsi/lpfc/lpfc_mem.c
+> @@ -646,7 +646,6 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
+>   	}
+>   
+>   	dma_buf->iocbq = lpfc_sli_get_iocbq(phba);
+> -	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
+>   	if (!dma_buf->iocbq) {
+>   		kfree(dma_buf->context);
+>   		pci_pool_free(phba->lpfc_drb_pool, dma_buf->dbuf.virt,
+> @@ -658,6 +657,7 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
+>   				"2621 Ran out of nvmet iocb/WQEs\n");
+>   		return NULL;
+>   	}
+> +	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
+>   	nvmewqe = dma_buf->iocbq;
+>   	wqe = (union lpfc_wqe128 *)&nvmewqe->wqe;
+>   	/* Initialize WQE */
 
