@@ -1,30 +1,47 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Thu, 16 Mar 2017 04:28:36 +0000
-Subject: Re: [PATCH v3 4/7] macintosh: Only descend into directory when CONFIG_MACINTOSH_DRIVERS is set
-Message-Id: <87var9u9or.fsf@concordia.ellerman.id.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 06 Mar 2017 17:40:13 +0000
+Subject: [PATCH 1/5] IB/nes: Use kcalloc() in nes_init_mgt_qp()
+Message-Id: <c7ce5066-0466-209e-883b-677768c771a4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170315163730.17055-1-afd@ti.com> <20170315163730.17055-5-afd@ti.com>
-In-Reply-To: <20170315163730.17055-5-afd@ti.com>
+References: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
+In-Reply-To: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, kernel-janitors@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Faisal Latif <faisal.latif@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-"Andrew F. Davis" <afd@ti.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 6 Mar 2017 16:07:41 +0100
 
-> When CONFIG_MACINTOSH_DRIVERS is not set make will still descend into the
-> macintosh directory but nothing will be built. This produces unneeded
-> build artifacts and messages in addition to slowing the build.
-> Fix this here.
->
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->  drivers/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-LGTM.
+  This issue was detected by using the Coccinelle software.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-cheersj
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/nes/nes_mgt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes_mgt.c b/drivers/infiniband/hw/nes/nes_mgt.c
+index 33624f17c347..a84fffd33c21 100644
+--- a/drivers/infiniband/hw/nes/nes_mgt.c
++++ b/drivers/infiniband/hw/nes/nes_mgt.c
+@@ -877,7 +877,7 @@ int nes_init_mgt_qp(struct nes_device *nesdev, struct net_device *netdev, struct
+ 	int ret;
+ 
+ 	/* Allocate space the all mgt QPs once */
+-	mgtvnic = kzalloc(NES_MGT_QP_COUNT * sizeof(struct nes_vnic_mgt), GFP_KERNEL);
++	mgtvnic = kcalloc(NES_MGT_QP_COUNT, sizeof(*mgtvnic), GFP_KERNEL);
+ 	if (!mgtvnic)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.0
+
