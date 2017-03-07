@@ -1,56 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Mar 2017 07:56:19 +0000
-Subject: [PATCH] staging: rtl8188eu: fix some inverted conditions
-Message-Id: <20170314075619.GC6061@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 07 Mar 2017 12:57:26 +0000
+Subject: Applied "ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"" to the asoc tree
+Message-Id: <E1clEgA-0004fV-8c@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170221185005.27973-1-colin.king@canonical.com>
+In-Reply-To: <20170221185005.27973-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, linux-kernel@vger.kernel.org
 
-We converted these conditions from = NULL and != NULL but messed up
-and inverted some.
+The patch
 
-Fixes: e31447f934d3 ("staging: rtl8188eu: Replace x=NULL by !x")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 6b1a758618cc..301085a459c9 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -524,7 +524,7 @@ static int rtw_is_desired_network(struct adapter *adapter, struct wlan_network *
- 	privacy = pnetwork->network.Privacy;
- 
- 	if (check_fwstate(pmlmepriv, WIFI_UNDER_WPS)) {
--		if (!rtw_get_wps_ie(pnetwork->network.IEs+_FIXED_IE_LENGTH_, pnetwork->network.IELength-_FIXED_IE_LENGTH_, NULL, &wps_ielen))
-+		if (rtw_get_wps_ie(pnetwork->network.IEs+_FIXED_IE_LENGTH_, pnetwork->network.IELength-_FIXED_IE_LENGTH_, NULL, &wps_ielen))
- 			return true;
- 		else
- 			return false;
-@@ -1136,7 +1136,7 @@ static u8 search_max_mac_id(struct adapter *padapter)
- #if defined(CONFIG_88EU_AP_MODE)
- 	if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
- 		for (aid = (pstapriv->max_num_sta); aid > 0; aid--) {
--			if (!pstapriv->sta_aid[aid-1])
-+			if (pstapriv->sta_aid[aid-1])
- 				break;
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 08458871b60c4bfe49973ce1c27a2b4bc4c159b0 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 21 Feb 2017 18:50:05 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" ->
+ "allocation"
+
+Trivial fix to spelling mistake in dev_err message.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/skylake/skl-pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
+index e12520e142ff..635cbb1e7d91 100644
+--- a/sound/soc/intel/skylake/skl-pcm.c
++++ b/sound/soc/intel/skylake/skl-pcm.c
+@@ -1165,7 +1165,7 @@ static int skl_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 						snd_dma_pci_data(skl->pci),
+ 						size, MAX_PREALLOC_SIZE);
+ 		if (retval) {
+-			dev_err(dai->dev, "dma buffer allocationf fail\n");
++			dev_err(dai->dev, "dma buffer allocation fail\n");
+ 			return retval;
  		}
- 		mac_id = aid + 1;
-@@ -1189,7 +1189,7 @@ void rtw_stassoc_event_callback(struct adapter *adapter, u8 *pbuf)
- #endif
- 	/* for AD-HOC mode */
- 	psta = rtw_get_stainfo(&adapter->stapriv, pstassoc->macaddr);
--	if (!psta) {
-+	if (psta) {
- 		/* the sta have been in sta_info_queue => do nothing */
- 		RT_TRACE(_module_rtl871x_mlme_c_, _drv_err_, ("Error: rtw_stassoc_event_callback: sta has been in sta_hash_queue\n"));
- 		return; /* between drv has received this event before and  fw have not yet to set key to CAM_ENTRY) */
-@@ -2085,7 +2085,7 @@ void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- 
- 	struct wlan_network *pnetwork;
- 
--	if (!tgt_network)
-+	if (tgt_network)
- 		pnetwork = tgt_network;
- 	else
- 		pnetwork = &pmlmepriv->cur_network;
+ 	}
+-- 
+2.11.0
+
