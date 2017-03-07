@@ -1,33 +1,22 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:18 +0000
-Subject: [PATCH 10/14] thermal: devfreq_cooling: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-10-afd@ti.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Tue, 07 Mar 2017 04:37:50 +0000
+Subject: Re: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
+Message-Id: <20170307042549.GZ2843@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170221185005.27973-1-colin.king@canonical.com>
+In-Reply-To: <20170221185005.27973-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, linux-kernel@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+On Tue, Feb 21, 2017 at 06:50:05PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in dev_err message.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/thermal/devfreq_cooling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Vinod Koul <vinod.koul@intel.com>
 
-diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_cooling.c
-index 7743a78d4723..b72e2ccc8e40 100644
---- a/drivers/thermal/devfreq_cooling.c
-+++ b/drivers/thermal/devfreq_cooling.c
-@@ -75,7 +75,7 @@ static int partition_enable_opps(struct devfreq_cooling_device *dfc,
- 		struct dev_pm_opp *opp;
- 		int ret = 0;
- 		unsigned int freq = dfc->freq_table[i];
--		bool want_enable = i >= cdev_state ? true : false;
-+		bool want_enable = i >= cdev_state;
- 
- 		opp = dev_pm_opp_find_freq_exact(dev, freq, !want_enable);
- 
 -- 
-2.11.0
-
+~Vinod
