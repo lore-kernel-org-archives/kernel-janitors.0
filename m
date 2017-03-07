@@ -1,46 +1,39 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 21 Mar 2017 17:02:14 +0000
-Subject: Re: [PATCH] gen_init_cpio: allocate enough space for dname
-Message-Id: <58D15C96.7010100@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Mar 2017 14:08:21 +0000
+Subject: [PATCH] virtio: remove redundant check on error return err
+Message-Id: <20170307140821.29689-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170321164439.30828-1-colin.king@canonical.com>
-In-Reply-To: <20170321164439.30828-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+err has previously been checked for a -ve error return so this
+redundant check can be removed.
 
-Am 21.03.2017 17:44, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The allocation of dname is short by 1 byte, so increase the allocation
-> size.
-> 
-> Detected with CoverityScan, CID#711628 ("Out-of-bounds-access (OVERRUN)")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  usr/gen_init_cpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-> index 225ad244cf88..981682f4faea 100644
-> --- a/usr/gen_init_cpio.c
-> +++ b/usr/gen_init_cpio.c
-> @@ -418,7 +418,7 @@ static int cpio_mkfile_line(const char *line)
->  		int len;
->  		int nend;
->  
-> -		dname = malloc(strlen(line));
-> +		dname = malloc(strlen(line) + 1);
->  		if (!dname) {
->  			fprintf (stderr, "out of memory (%d)\n", dname_len);
->  			goto fail;
+Detected by CoverityScan, CID#1415271 ("Logically Dead Code")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/virtio/virtio_pci_common.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-this is a case for strdup()
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index df548a6..ceb4395 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -173,8 +173,6 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned nvqs,
+ 		if (err < 0)
+ 			return err;
+ 	}
+-	if (err < 0)
+-		return err;
+ 
+ 	vp_dev->msix_vectors = nvectors;
+ 	vp_dev->msix_names = kmalloc_array(nvectors,
+-- 
+2.10.2
 
-re,
- wh
