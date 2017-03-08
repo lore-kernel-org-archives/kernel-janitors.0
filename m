@@ -1,36 +1,63 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Mar 2017 09:40:36 +0000
-Subject: [PATCH] staging/atomisp: fix spelling mistake: "falied" -> "failed"
-Message-Id: <20170330094036.19049-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:09:02 +0000
+Subject: [PATCH 13/26] IB/ocrdma: Use kcalloc() in ocrdma_alloc_resources()
+Message-Id: <5c457559-d7a2-12ec-505c-5b030a425e47@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 21:55:42 +0100
 
-trivial fix to spelling mistake in dev_err error message
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determinations a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c b/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
-index 87090cea5b9d..d22a2d2388c2 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
-@@ -59,7 +59,7 @@ int hmm_bo_device_init(struct hmm_bo_device *bdev,
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+index 3e43bdc81e7a..9caa4c564e34 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+@@ -225,19 +225,19 @@ static int ocrdma_register_device(struct ocrdma_dev *dev)
+ static int ocrdma_alloc_resources(struct ocrdma_dev *dev)
+ {
+ 	mutex_init(&dev->dev_lock);
+-	dev->cq_tbl = kzalloc(sizeof(struct ocrdma_cq *) *
+-			      OCRDMA_MAX_CQ, GFP_KERNEL);
++	dev->cq_tbl = kcalloc(OCRDMA_MAX_CQ, sizeof(*dev->cq_tbl), GFP_KERNEL);
+ 	if (!dev->cq_tbl)
+ 		goto alloc_err;
  
- 	ret = hmm_vm_init(&bdev->vaddr_space, vaddr_start, size);
- 	if (ret) {
--		dev_err(atomisp_dev, "hmm_vm_init falied. vaddr_start = 0x%x, size = %d\n",
-+		dev_err(atomisp_dev, "hmm_vm_init failed. vaddr_start = 0x%x, size = %d\n",
- 			vaddr_start, size);
- 		goto vm_init_err;
+ 	if (dev->attr.max_qp) {
+-		dev->qp_tbl = kzalloc(sizeof(struct ocrdma_qp *) *
+-				      OCRDMA_MAX_QP, GFP_KERNEL);
++		dev->qp_tbl = kcalloc(OCRDMA_MAX_QP, sizeof(*dev->qp_tbl),
++				      GFP_KERNEL);
+ 		if (!dev->qp_tbl)
+ 			goto alloc_err;
  	}
+ 
+-	dev->stag_arr = kzalloc(sizeof(u64) * OCRDMA_MAX_STAG, GFP_KERNEL);
++	dev->stag_arr = kcalloc(OCRDMA_MAX_STAG, sizeof(*dev->stag_arr),
++				GFP_KERNEL);
+ 	if (dev->stag_arr = NULL)
+ 		goto alloc_err;
+ 
 -- 
-2.11.0
+2.12.0
 
