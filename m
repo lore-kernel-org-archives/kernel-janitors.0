@@ -1,131 +1,122 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Thu, 30 Mar 2017 10:26:40 +0000
-Subject: Re: [PATCH 2/2] staging: atomisp: use local variable to reduce the number of reference
-Message-Id: <CAHb8M2CN3SE8SmJVRBri9NG71X35Gksxde4RN+7D-+Aoicy3Eg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:32:15 +0000
+Subject: [PATCH 25/26] IB/ocrdma: Delete unnecessary braces
+Message-Id: <dddca366-47ad-9319-4933-e1a07578018e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170330062517.GA25231@SEL-JYOUN-D1> <58DCB178.6070909@bfs.de>
-In-Reply-To: <58DCB178.6070909@bfs.de>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: mchehab@kernel.org, Greg KH <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, SIMRAN SINGHAL <singhalsimran0@gmail.com>, linux-media@vger.kernel.org, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-2017-03-30 16:19 GMT+09:00 walter harms <wharms@bfs.de>:
->
->
-> Am 30.03.2017 08:25, schrieb Daeseok Youn:
->> Define new local variable to reduce the number of reference.
->> The new local variable is added to save the addess of dfs
->> and used in atomisp_freq_scaling() function.
->>
->> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
->> ---
->>  .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 37 ++++++++++++----------
->>  1 file changed, 20 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->> index eebfccd..d76a95c 100644
->> --- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->> +++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->> @@ -251,6 +251,7 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
->>  {
->>       /* FIXME! Only use subdev[0] status yet */
->>       struct atomisp_sub_device *asd = &isp->asd[0];
->> +     const struct atomisp_dfs_config *dfs;
->>       unsigned int new_freq;
->>       struct atomisp_freq_scaling_rule curr_rules;
->>       int i, ret;
->> @@ -268,20 +269,22 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
->>           ATOMISP_USE_YUVPP(asd))
->>               isp->dfs = &dfs_config_cht_soc;
->>
->> -     if (isp->dfs->lowest_freq = 0 || isp->dfs->max_freq_at_vmin = 0 ||
->> -         isp->dfs->highest_freq = 0 || isp->dfs->dfs_table_size = 0 ||
->> -         !isp->dfs->dfs_table) {
->> +     dfs = isp->dfs;
->> +
->> +     if (dfs->lowest_freq = 0 || dfs->max_freq_at_vmin = 0 ||
->> +         dfs->highest_freq = 0 || dfs->dfs_table_size = 0 ||
->> +         !dfs->dfs_table) {
->>               dev_err(isp->dev, "DFS configuration is invalid.\n");
->>               return -EINVAL;
->>       }
->>
->>       if (mode = ATOMISP_DFS_MODE_LOW) {
->> -             new_freq = isp->dfs->lowest_freq;
->> +             new_freq = dfs->lowest_freq;
->>               goto done;
->>       }
->>
->>       if (mode = ATOMISP_DFS_MODE_MAX) {
->> -             new_freq = isp->dfs->highest_freq;
->> +             new_freq = dfs->highest_freq;
->>               goto done;
->>       }
->>
->> @@ -307,26 +310,26 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
->>       }
->>
->>       /* search for the target frequency by looping freq rules*/
->> -     for (i = 0; i < isp->dfs->dfs_table_size; i++) {
->> -             if (curr_rules.width != isp->dfs->dfs_table[i].width &&
->> -                 isp->dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
->> +     for (i = 0; i < dfs->dfs_table_size; i++) {
->> +             if (curr_rules.width != dfs->dfs_table[i].width &&
->> +                 dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
->>                       continue;
->> -             if (curr_rules.height != isp->dfs->dfs_table[i].height &&
->> -                 isp->dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
->> +             if (curr_rules.height != dfs->dfs_table[i].height &&
->> +                 dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
->>                       continue;
->> -             if (curr_rules.fps != isp->dfs->dfs_table[i].fps &&
->> -                 isp->dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
->> +             if (curr_rules.fps != dfs->dfs_table[i].fps &&
->> +                 dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
->>                       continue;
->> -             if (curr_rules.run_mode != isp->dfs->dfs_table[i].run_mode &&
->> -                 isp->dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
->> +             if (curr_rules.run_mode != dfs->dfs_table[i].run_mode &&
->> +                 dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
->>                       continue;
->>               break;
->>       }
->
->>
->> -     if (i = isp->dfs->dfs_table_size)
->> -             new_freq = isp->dfs->max_freq_at_vmin;
->> +     if (i = dfs->dfs_table_size)
->> +             new_freq = dfs->max_freq_at_vmin;
->>       else
->> -             new_freq = isp->dfs->dfs_table[i].isp_freq;
->> +             new_freq = dfs->dfs_table[i].isp_freq;
->>
->
-> you can eliminate the last block by setting
->
->  new_freq = dfs->max_freq_at_vmin;
->
->   for(i=0;....) {
->         ....
->         new_freq = dfs->dfs_table[i].isp_freq;
->         break;
-> }
-Yes, it could be. I will make another patch to improve it as your comment.
->
-> unfortunately i have no good idea how to make the loop more readable.
-I am not sure whether the for-loop is possible to improve for
-readability or not. :-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Mar 2017 12:36:41 +0100
 
-Thanks for comment.
-Regards,
-Daeseok.
->
->
-> re,
->  wh
->
->
->>  done:
->>       dev_dbg(isp->dev, "DFS target frequency=%d.\n", new_freq);
+Do not use curly brackets at some source code places
+where a single statement should be sufficient.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 41 +++++++++++------------------
+ 1 file changed, 16 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index d3cb8e2f099f..bfd86fd08847 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -502,10 +502,10 @@ static int ocrdma_dealloc_ucontext_pd(struct ocrdma_ucontext *uctx)
+ 	struct ocrdma_pd *pd = uctx->cntxt_pd;
+ 	struct ocrdma_dev *dev = get_ocrdma_dev(pd->ibpd.device);
+ 
+-	if (uctx->pd_in_use) {
++	if (uctx->pd_in_use)
+ 		pr_err("%s(%d) Freeing in use pdid=0x%x.\n",
+ 		       __func__, dev->id, pd->id);
+-	}
++
+ 	uctx->cntxt_pd = NULL;
+ 	(void)_ocrdma_dealloc_pd(dev, pd);
+ 	return 0;
+@@ -739,11 +739,10 @@ struct ib_pd *ocrdma_alloc_pd(struct ib_device *ibdev,
+ 	return &pd->ibpd;
+ 
+ err:
+-	if (is_uctx_pd) {
++	if (is_uctx_pd)
+ 		ocrdma_release_ucontext_pd(uctx);
+-	} else {
++	else
+ 		status = _ocrdma_dealloc_pd(dev, pd);
+-	}
+ exit:
+ 	return ERR_PTR(status);
+ }
+@@ -1018,10 +1017,10 @@ int ocrdma_dereg_mr(struct ib_mr *ib_mr)
+ 	kfree(mr);
+ 
+ 	/* Don't stop cleanup, in case FW is unresponsive */
+-	if (dev->mqe_ctx.fw_error_state) {
++	if (dev->mqe_ctx.fw_error_state)
+ 		pr_err("%s(%d) fw not responding.\n",
+ 		       __func__, dev->id);
+-	}
++
+ 	return 0;
+ }
+ 
+@@ -1410,10 +1409,10 @@ struct ib_qp *ocrdma_create_qp(struct ib_pd *ibpd,
+ 		goto gen_err;
+ 
+ 	memset(&ureq, 0, sizeof(ureq));
+-	if (udata) {
++	if (udata)
+ 		if (ib_copy_from_udata(&ureq, udata, sizeof(ureq)))
+ 			return ERR_PTR(-EFAULT);
+-	}
++
+ 	qp = kzalloc(sizeof(*qp), GFP_KERNEL);
+ 	if (!qp) {
+ 		status = -ENOMEM;
+@@ -2829,15 +2828,11 @@ static bool ocrdma_poll_rcqe(struct ocrdma_qp *qp, struct ocrdma_cqe *cqe,
+ 	bool expand = false;
+ 
+ 	ibwc->wc_flags = 0;
+-	if (qp->qp_type = IB_QPT_UD || qp->qp_type = IB_QPT_GSI) {
+-		status = (le32_to_cpu(cqe->flags_status_srcqpn) &
+-					OCRDMA_CQE_UD_STATUS_MASK) >>
+-					OCRDMA_CQE_UD_STATUS_SHIFT;
+-	} else {
+-		status = (le32_to_cpu(cqe->flags_status_srcqpn) &
+-			     OCRDMA_CQE_STATUS_MASK) >> OCRDMA_CQE_STATUS_SHIFT;
+-	}
+-
++	status = (qp->qp_type = IB_QPT_UD || qp->qp_type = IB_QPT_GSI)
++		 ? ((le32_to_cpu(cqe->flags_status_srcqpn) &
++		    OCRDMA_CQE_UD_STATUS_MASK) >> OCRDMA_CQE_UD_STATUS_SHIFT)
++		 : ((le32_to_cpu(cqe->flags_status_srcqpn) &
++		    OCRDMA_CQE_STATUS_MASK) >> OCRDMA_CQE_STATUS_SHIFT);
+ 	if (status = OCRDMA_CQE_SUCCESS) {
+ 		*polled = true;
+ 		ocrdma_poll_success_rcqe(qp, cqe, ibwc);
+@@ -2885,13 +2880,9 @@ static int ocrdma_poll_hwcq(struct ocrdma_cq *cq, int num_entries,
+ 		qp = dev->qp_tbl[qpn];
+ 		BUG_ON(qp = NULL);
+ 
+-		if (is_cqe_for_sq(cqe)) {
+-			expand = ocrdma_poll_scqe(qp, cqe, ibwc, &polled,
+-						  &stop);
+-		} else {
+-			expand = ocrdma_poll_rcqe(qp, cqe, ibwc, &polled,
+-						  &stop);
+-		}
++		expand = is_cqe_for_sq(cqe)
++			 ? ocrdma_poll_scqe(qp, cqe, ibwc, &polled, &stop)
++			 : ocrdma_poll_rcqe(qp, cqe, ibwc, &polled, &stop);
+ 		if (expand)
+ 			goto expand_cqe;
+ 		if (stop)
+-- 
+2.12.0
+
