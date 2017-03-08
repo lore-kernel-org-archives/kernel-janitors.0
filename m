@@ -1,66 +1,50 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Sat, 25 Mar 2017 18:47:34 +0000
-Subject: Re: [PATCH 0/3] Add public w1 driver interface
-Message-Id: <20170325184734.5ftcu6k47flixrng@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="w6rqzgmuossb2xtr"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 12:58:49 +0000
+Subject: [PATCH 08/26] IB/ocrdma: Improve size determinations in ocrdma_mbx_rdma_stats()
+Message-Id: <b72381fc-8ffd-ba40-45d3-2d3f8fb2e224@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170316151955.10710-1-afd@ti.com>
-In-Reply-To: <20170316151955.10710-1-afd@ti.com>
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 20:16:16 +0100
 
---w6rqzgmuossb2xtr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determinations a bit safer according to the Linux coding style convention.
 
-Hi,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Thu, Mar 16, 2017 at 10:19:52AM -0500, Andrew F. Davis wrote:
-> As part of continuing work to cleanup the BQ27xxx driver I am attempting
-> to remove the need for the platform driver interface. For this we first
-> need the w1 subsystem to act more like a traditional bus subsystem
-> and allow drivers for attached devices to live outside of the w1
-> directory.
->=20
-> The first couple patches are trivial, the last a bit more involved
-> but should make no functional change, just a re-organization of
-> header files.
->=20
-> Thanks,
-> Andrew
->=20
-> Andrew F. Davis (3):
->   w1: Use kernel common min() implementation
->   w1: Remove unneeded use of assert() and remove w1_log.h
->   w1: Add subsystem kernel public interface
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 1f7d88d7569e..0628600bee56 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1302,7 +1302,7 @@ int ocrdma_mbx_rdma_stats(struct ocrdma_dev *dev, bool reset)
+ 	mqe->u.nonemb_req.sge[0].len = dev->stats_mem.size;
+ 
+ 	/* Cache the old stats */
+-	memcpy(old_stats, req, sizeof(struct ocrdma_rdma_stats_resp));
++	memcpy(old_stats, req, sizeof(*old_stats));
+ 	memset(req, 0, dev->stats_mem.size);
+ 
+ 	ocrdma_init_mch((struct ocrdma_mbx_hdr *)req,
+@@ -1315,7 +1315,7 @@ int ocrdma_mbx_rdma_stats(struct ocrdma_dev *dev, bool reset)
+ 	status = ocrdma_nonemb_mbx_cmd(dev, mqe, dev->stats_mem.va);
+ 	if (status)
+ 		/* Copy from cache, if mbox fails */
+-		memcpy(req, old_stats, sizeof(struct ocrdma_rdma_stats_resp));
++		memcpy(req, old_stats, sizeof(*old_stats));
+ 	else
+ 		ocrdma_le32_to_cpu(req, dev->stats_mem.size);
+ 
+-- 
+2.12.0
 
-For the whole series:
-
-Reviewed-by: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
---w6rqzgmuossb2xtr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljWu0YACgkQ2O7X88g7
-+pp8Tg//UdyFVd/f8o/mQxik73isavMBuk4AnVH5cTMrSVGhmRM5vF9+iwV01J39
-6bixugI6jLdnA85SLWabwtEO9eCXRkndHPiQW4J3CyMz9Oa0IU3gG3MDtxpRTdRH
-6qnvkghWmCwEbWa7741yHNNf5FMUWycitffSFXlRJsg3r2lRIP7tHukFZ505TcqZ
-ZvtebSQ5n1KfWcWn3fmTEdx2+d9hrF6GI/KYqjDqEcRYJ8Z1F9lXQlURMGCSvKET
-tzBXjLtZMF61dnJwgAZy5jc7+nKgeGOsnUqVhYmlxd1E/izn0rdF1anUNmOy1q1p
-wXkB++KPSvwEKV8RN/s60nBZ8lmfS4f+SZELLQzu0R6y+QbL+6PXe+PZEdlY+K0O
-NXBNWOj1fzqeBGzqSN7fW/IvJ+7hgehZ2EtKZrkUu7sQ5eh5FSFxlp3I3FEZ/MA7
-+hFLAwJiTcCxTzIOi1Nug8xuPWhERD4XNIulGmOvl3DZx/aYrkpS9zcrCHESQ+2q
-6fXn6hdmoY0C3ZcXEfJ8Pd8pVmvrA4sP+747KjvB3ULotnXwiy22uJzw/6OMKODG
-hCWoPep2TtMuLv1S/+v2vlJZrtsDFi0MkRXjf8Gamno4UuwnfAj11C0a14Mm3AxW
-Nd7aLE7OHdI4k/K/YaYucysYJ/wt5NrKsoYHD28k6w3PggGXfoE=
-=pKl0
------END PGP SIGNATURE-----
-
---w6rqzgmuossb2xtr--
