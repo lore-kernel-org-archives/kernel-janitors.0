@@ -1,44 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Mar 2017 13:13:11 +0000
-Subject: [PATCH 15/26] IB/ocrdma: Delete an error message for a failed memory allocation in ocrdma_add()
-Message-Id: <20d97719-3d3a-62f6-a249-f39cf528c5e9@users.sourceforge.net>
+From: Devesh Sharma <devesh.sharma@broadcom.com>
+Date: Wed, 08 Mar 2017 15:15:04 +0000
+Subject: Re: [PATCH 15/26] IB/ocrdma: Delete an error message for a failed memory allocation in ocrdma_add()
+Message-Id: <CANjDDBj_8OYNqshrqBy25TdzaSdCGBaYkApBJG+jjHmx5O0DKA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
-In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net> <20d97719-3d3a-62f6-a249-f39cf528c5e9@users.sourceforge.net>
+In-Reply-To: <20d97719-3d3a-62f6-a249-f39cf528c5e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma <linux-rdma@vger.kernel.org>, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Mar 2017 22:23:17 +0100
+Acked-By: Devesh sharma <devesh.sharma@broadcom.com>
 
-Omit an extra message for a memory allocation failure in this function.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/ocrdma/ocrdma_main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-index c49b4491d4e7..93113feeb2d5 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-@@ -304,10 +304,9 @@ static struct ocrdma_dev *ocrdma_add(struct be_dev_info *dev_info)
- 	struct ocrdma_dev *dev;
- 
- 	dev = (struct ocrdma_dev *)ib_alloc_device(sizeof(*dev));
--	if (!dev) {
--		pr_err("Unable to allocate ib device\n");
-+	if (!dev)
- 		return NULL;
--	}
-+
- 	dev->mbx_cmd = kzalloc(sizeof(struct ocrdma_mqe_emb_cmd), GFP_KERNEL);
- 	if (!dev->mbx_cmd)
- 		goto idr_err;
--- 
-2.12.0
-
+On Wed, Mar 8, 2017 at 6:43 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 7 Mar 2017 22:23:17 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/infiniband/hw/ocrdma/ocrdma_main.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+> index c49b4491d4e7..93113feeb2d5 100644
+> --- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+> @@ -304,10 +304,9 @@ static struct ocrdma_dev *ocrdma_add(struct be_dev_info *dev_info)
+>         struct ocrdma_dev *dev;
+>
+>         dev = (struct ocrdma_dev *)ib_alloc_device(sizeof(*dev));
+> -       if (!dev) {
+> -               pr_err("Unable to allocate ib device\n");
+> +       if (!dev)
+>                 return NULL;
+> -       }
+> +
+>         dev->mbx_cmd = kzalloc(sizeof(struct ocrdma_mqe_emb_cmd), GFP_KERNEL);
+>         if (!dev->mbx_cmd)
+>                 goto idr_err;
+> --
+> 2.12.0
+>
