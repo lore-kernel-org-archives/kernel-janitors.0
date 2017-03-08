@@ -1,47 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Mar 2017 11:19:50 +0000
-Subject: [PATCH] vmci: Fix a couple integer overflow tests
-Message-Id: <20170322111950.GA11279@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 12:36:53 +0000
+Subject: [PATCH 01/26] IB/ocrdma: Use kcalloc() in ocrdma_create_eqs()
+Message-Id: <c96d5d88-fcee-26c5-4b01-8a12f6f46561@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Hocko <mhocko@suse.com>, Jorgen Hansen <jhansen@vmware.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Andy King <acking@vmware.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The "DIV_ROUND_UP(size, PAGE_SIZE)" operation can overflow if "size" is
-more than ULLONG_MAX - PAGE_SIZE.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 17:56:45 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-index 498c0854305f..06c4974ee8dd 100644
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -298,8 +298,11 @@ static void *qp_alloc_queue(u64 size, u32 flags)
- 	size_t pas_size;
- 	size_t vas_size;
- 	size_t queue_size = sizeof(*queue) + sizeof(*queue->kernel_if);
--	const u64 num_pages = DIV_ROUND_UP(size, PAGE_SIZE) + 1;
-+	u64 num_pages;
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index aa6967197620..cbac41b15d94 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -3103,7 +3103,7 @@ static int ocrdma_create_eqs(struct ocrdma_dev *dev)
+ 	if (!num_eq)
+ 		return -EINVAL;
  
-+	if (size > SIZE_MAX - PAGE_SIZE)
-+		return NULL;
-+	num_pages = DIV_ROUND_UP(size, PAGE_SIZE) + 1;
- 	if (num_pages >
- 		 (SIZE_MAX - queue_size) /
- 		 (sizeof(*queue->kernel_if->u.g.pas) +
-@@ -624,9 +627,12 @@ static struct vmci_queue *qp_host_alloc_queue(u64 size)
- {
- 	struct vmci_queue *queue;
- 	size_t queue_page_size;
--	const u64 num_pages = DIV_ROUND_UP(size, PAGE_SIZE) + 1;
-+	u64 num_pages;
- 	const size_t queue_size = sizeof(*queue) + sizeof(*(queue->kernel_if));
+-	dev->eq_tbl = kzalloc(sizeof(struct ocrdma_eq) * num_eq, GFP_KERNEL);
++	dev->eq_tbl = kcalloc(num_eq, sizeof(*dev->eq_tbl), GFP_KERNEL);
+ 	if (!dev->eq_tbl)
+ 		return -ENOMEM;
  
-+	if (size > SIZE_MAX - PAGE_SIZE)
-+		return NULL;
-+	num_pages = DIV_ROUND_UP(size, PAGE_SIZE) + 1;
- 	if (num_pages > (SIZE_MAX - queue_size) /
- 		 sizeof(*queue->kernel_if->u.h.page))
- 		return NULL;
+-- 
+2.12.0
+
