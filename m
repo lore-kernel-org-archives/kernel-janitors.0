@@ -1,33 +1,42 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:22 +0000
-Subject: [PATCH 14/14] ath5k: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-14-afd@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 12:53:17 +0000
+Subject: [PATCH 06/26] IB/ocrdma: Improve another size determination in ocrdma_alloc_pd_pool()
+Message-Id: <00537ca7-1c89-b1a0-8faf-eb1c65a114ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 19:54:38 +0100
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ath/ath5k/ani.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath5k/ani.c b/drivers/net/wireless/ath/ath5k/ani.c
-index 0624333f5430..850c608b43a3 100644
---- a/drivers/net/wireless/ath/ath5k/ani.c
-+++ b/drivers/net/wireless/ath/ath5k/ani.c
-@@ -501,7 +501,7 @@ ath5k_ani_calibration(struct ath5k_hw *ah)
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 8122a1c7d2ae..56f29e06dfe4 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1595,8 +1595,7 @@ void ocrdma_alloc_pd_pool(struct ocrdma_dev *dev)
+ {
+ 	int status;
  
- 	if (as->ofdm_errors > ofdm_high || as->cck_errors > cck_high) {
- 		/* too many PHY errors - we have to raise immunity */
--		bool ofdm_flag = as->ofdm_errors > ofdm_high ? true : false;
-+		bool ofdm_flag = as->ofdm_errors > ofdm_high;
- 		ath5k_ani_raise_immunity(ah, as, ofdm_flag);
- 		ath5k_ani_period_restart(as);
+-	dev->pd_mgr = kzalloc(sizeof(struct ocrdma_pd_resource_mgr),
+-			      GFP_KERNEL);
++	dev->pd_mgr = kzalloc(sizeof(*dev->pd_mgr), GFP_KERNEL);
+ 	if (!dev->pd_mgr)
+ 		return;
  
 -- 
-2.11.0
+2.12.0
 
