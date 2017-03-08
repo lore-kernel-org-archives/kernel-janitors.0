@@ -1,65 +1,94 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Mon, 06 Mar 2017 13:17:38 +0000
-Subject: Re: [PATCH] HID: i2c-hid: Fix error handling
-Message-Id: <alpine.LSU.2.20.1703061416160.31814@cbobk.fhfr.pm>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:04:56 +0000
+Subject: [PATCH 11/26] IB/ocrdma: Delete unnecessary braces
+Message-Id: <c4c62b82-db2a-3db9-03c4-9f8d95a6a29b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219120759.11162-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219120759.11162-1-christophe.jaillet@wanadoo.fr>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benjamin.tissoires@redhat.com, briannorris@chromium.org, dianders@chromium.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, 19 Feb 2017, Christophe JAILLET wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 21:12:56 +0100
 
-> According to error handling in this function, it is likely that some
-> resources should be freed before returning.
-> Replace 'return ret', with 'goto err'.
-> 
-> While at it, remove some spaces at the beginning of the lines to be more
-> consistent.
-> 
-> 
-> Fixes: ead0687fe304a ("HID: i2c-hid: support regulator power on/off")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/hid/i2c-hid/i2c-hid.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> index d5288f3fb5ee..1a57ac2d8524 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> @@ -1058,13 +1058,13 @@ static int i2c_hid_probe(struct i2c_client *client,
->  	}
->  
->  	ihid->pdata.supply = devm_regulator_get(&client->dev, "vdd");
-> - 	if (IS_ERR(ihid->pdata.supply)) {
-> - 		ret = PTR_ERR(ihid->pdata.supply);
-> - 		if (ret != -EPROBE_DEFER)
-> - 			dev_err(&client->dev, "Failed to get regulator: %d\n",
-> - 				ret);
-> - 		return ret;
-> - 	}
-> +	if (IS_ERR(ihid->pdata.supply)) {
-> +		ret = PTR_ERR(ihid->pdata.supply);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&client->dev, "Failed to get regulator: %d\n",
-> +				ret);
-> +		goto err;
-> +	}
+Do not use curly brackets at some source code places
+where a single statement should be sufficient.
 
-I don't see any spaces at the beginning of lines in the version that's in 
-my tree ... o_O?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-Therefore I've converted this patch into simple 'return ret -> goto err' 
-transformation and applied on top for-4.12/i2c-hid.
-
-Thanks,
-
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index aa32bc9f323d..d5b988b011d1 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1092,14 +1092,14 @@ static int ocrdma_mbx_cmd(struct ocrdma_dev *dev, struct ocrdma_mqe *mqe)
+ 	if (cqe_status || ext_status) {
+ 		pr_err("%s() cqe_status=0x%x, ext_status=0x%x,",
+ 		       __func__, cqe_status, ext_status);
+-		if (rsp) {
++		if (rsp)
+ 			/* This is for embedded cmds. */
+ 			pr_err("opcode=0x%x, subsystem=0x%x\n",
+ 			       (rsp->subsys_op & OCRDMA_MBX_RSP_OPCODE_MASK) >>
+ 				OCRDMA_MBX_RSP_OPCODE_SHIFT,
+ 				(rsp->subsys_op & OCRDMA_MBX_RSP_SUBSYS_MASK) >>
+ 				OCRDMA_MBX_RSP_SUBSYS_SHIFT);
+-		}
++
+ 		status = ocrdma_get_mbx_cqe_errno(cqe_status);
+ 		goto mbx_err;
+ 	}
+@@ -1600,10 +1600,9 @@ void ocrdma_alloc_pd_pool(struct ocrdma_dev *dev)
+ 		return;
+ 
+ 	status = ocrdma_mbx_alloc_pd_range(dev);
+-	if (status) {
++	if (status)
+ 		pr_err("%s(%d) Unable to initialize PD pool, using default.\n",
+ 			 __func__, dev->id);
+-	}
+ }
+ 
+ static void ocrdma_free_pd_pool(struct ocrdma_dev *dev)
+@@ -2997,11 +2996,10 @@ static int ocrdma_parse_dcbxcfg_rsp(struct ocrdma_dev *dev, int ptype,
+ 					goto out;
+ 				}
+ 			}
+-			if (slindx = OCRDMA_MAX_SERVICE_LEVEL_INDEX) {
++			if (slindx = OCRDMA_MAX_SERVICE_LEVEL_INDEX)
+ 				pr_info("%s ocrdma%d application priority not set for 0x%x protocol\n",
+ 					dev_name(&dev->nic_info.pdev->dev),
+ 					dev->id, proto);
+-			}
+ 		}
+ 	}
+ 
+@@ -3158,16 +3156,17 @@ static int ocrdma_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
+ 			     int num)
+ {
+ 	int num_eqs, i = 0;
+-	if (num > 8) {
++
++	if (num > 8)
+ 		while (num) {
+ 			num_eqs = min(num, 8);
+ 			ocrdma_mbx_modify_eqd(dev, &eq[i], num_eqs);
+ 			i += num_eqs;
+ 			num -= num_eqs;
+ 		}
+-	} else {
++	else
+ 		ocrdma_mbx_modify_eqd(dev, eq, num);
+-	}
++
+ 	return 0;
+ }
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.12.0
 
