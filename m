@@ -1,66 +1,41 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 27 Mar 2017 11:04:40 +0000
-Subject: Re: [PATCH] [media] coda: remove redundant call to v4l2_m2m_get_vq
-Message-Id: <58D8F1C8.1010503@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:24:00 +0000
+Subject: [PATCH 21/26] IB/ocrdma: Improve another size determination in ocrdma_create_srq()
+Message-Id: <53b2ab35-8b0c-5cdd-dbc9-d38c7cf9e580@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170323115746.18474-1-colin.king@canonical.com>         <45a3ba2e-634c-156b-71b4-75aa8d89827b@xs4all.nl> <1490609415.2409.5.camel@pengutronix.de>
-In-Reply-To: <1490609415.2409.5.camel@pengutronix.de>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Mar 2017 10:10:50 +0100
 
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Am 27.03.2017 12:10, schrieb Philipp Zabel:
-> On Mon, 2017-03-27 at 11:46 +0200, Hans Verkuil wrote:
->> On 23/03/17 12:57, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The call to v4ls_m2m_get_vq is only used to get the return value
->>> which is not being used, so it appears to be redundant and can
->>> be removed.
->>>
->>> Detected with CoverityScan, CID#1420674 ("Useless call")
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/media/platform/coda/coda-common.c | 2 --
->>>  1 file changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
->>> index 800d2477f1a0..95e4648f18e6 100644
->>> --- a/drivers/media/platform/coda/coda-common.c
->>> +++ b/drivers/media/platform/coda/coda-common.c
->>> @@ -817,8 +817,6 @@ static int coda_qbuf(struct file *file, void *priv,
->>>  static bool coda_buf_is_end_of_stream(struct coda_ctx *ctx,
->>>  				      struct vb2_v4l2_buffer *buf)
->>>  {
->>> -	v4l2_m2m_get_vq(ctx->fh.m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
->>> -
->>>  	return ((ctx->bit_stream_param & CODA_BIT_STREAM_END_FLAG) &&
->>>  		(buf->sequence = (ctx->qsequence - 1)));
->>>  }
->>>
->>
->> Philipp, is this correct, or should this actually check whether the queue is an
->> output queue?
-> 
-> Yes, this was previously assigned to an unused local variable src_vq,
-> since initial commit 918c66fd4126 ("[media] coda: add CODA7541 decoding
-> support").
-> 
-> coda_buf_is_end_of_stream is called from coda_m2m_buf_done, which is
-> exclusively used on destination buffers on the capture queue.
-> 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-> regards
-> Philipp
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is that function needed at all ?
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index af8798fd35b1..bedc229be89d 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1915,7 +1915,7 @@ struct ib_srq *ocrdma_create_srq(struct ib_pd *ibpd,
+ 		if (srq->idx_bit_fields = NULL)
+ 			goto arm_err;
+ 		memset(srq->idx_bit_fields, 0xff,
+-		       srq->bit_fields_len * sizeof(u32));
++		       srq->bit_fields_len * sizeof(*srq->idx_bit_fields));
+ 	}
+ 
+ 	if (init_attr->attr.srq_limit) {
+-- 
+2.12.0
 
-re,
- wh
