@@ -1,27 +1,40 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 20 Mar 2017 14:26:33 +0000
-Subject: Re: [PATCH] staging: vc04_services: fix NULL pointer dereference on pointer 'service'
-Message-Id: <b6549e96-1313-6eba-acbc-cbfc235ac433@i2se.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:02:46 +0000
+Subject: [PATCH 10/26] IB/ocrdma: Improve another size determination in ocrdma_init_emb_mqe()
+Message-Id: <4d92b910-f0fb-1362-0392-fccd8af1d169@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170320140850.10570-1-colin.king@canonical.com>
-In-Reply-To: <20170320140850.10570-1-colin.king@canonical.com>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-[add Mauro to CC]
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 20:33:29 +0100
 
-Am 20.03.2017 um 15:08 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently, if pservice is null then service is set to NULL and immediately
-> afterwards service is dereferenced causing a null pointer dereference. Fix
-> this by bailing out early of the function with a null return.
->
-> Detected by CoverityScan, CID#1419681 ("Explicit null dereferenced")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 7d1e1caa90de..aa32bc9f323d 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -352,7 +352,7 @@ static void *ocrdma_init_emb_mqe(u8 opcode, u32 cmd_len)
+ {
+ 	struct ocrdma_mqe *mqe;
+ 
+-	mqe = kzalloc(sizeof(struct ocrdma_mqe), GFP_KERNEL);
++	mqe = kzalloc(sizeof(*mqe), GFP_KERNEL);
+ 	if (!mqe)
+ 		return NULL;
+ 	mqe->hdr.spcl_sge_cnt_emb |-- 
+2.12.0
 
