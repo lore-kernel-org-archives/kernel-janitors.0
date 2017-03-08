@@ -1,43 +1,78 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Mar 2017 23:01:19 +0000
-Subject: Re: [PATCH] netvsc: fix dereference before null check errors
-Message-Id: <20170327.160119.277346270230368504.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:19:23 +0000
+Subject: [PATCH 18/26] IB/ocrdma: Use kcalloc() in three functions
+Message-Id: <b90d1d62-6c0e-6f29-0ec3-58287fe87059@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170325142639.11452-1-colin.king@canonical.com>
-        <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
-In-Reply-To: <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: haiyangz@microsoft.com
-Cc: colin.king@canonical.com, kys@microsoft.com, sthemmin@microsoft.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Mon, 27 Mar 2017 00:50:27 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Mar 2017 09:19:47 +0100
 
-> 
-> 
->> -----Original Message-----
->> From: Colin King [mailto:colin.king@canonical.com]
->> Sent: Saturday, March 25, 2017 10:27 AM
->> To: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
->> <haiyangz@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
->> devel@linuxdriverproject.org; netdev@vger.kernel.org
->> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: [PATCH] netvsc: fix dereference before null check errors
->> 
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> ndev is being checked to see if it is a null pointer however before
->> the null check ndev is being dereferenced; hence there is a potential
->> null pointer dereference bug that needs fixing. Fix this by only
->> dereferencing ndev after the null check.
->> 
->> Detected by CoverityScan, CID#1420760, CID#140761 ("Dereference
->> before null check")
->> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-Applied.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determinations a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index ef670ac1cbe9..330617e1ef75 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -879,9 +879,8 @@ static int ocrdma_build_pbl_tbl(struct ocrdma_dev *dev, struct ocrdma_hw_mr *mr)
+ 	void *va;
+ 	dma_addr_t pa;
+ 
+-	mr->pbl_table = kzalloc(sizeof(struct ocrdma_pbl) *
+-				mr->num_pbls, GFP_KERNEL);
+-
++	mr->pbl_table = kcalloc(mr->num_pbls, sizeof(*mr->pbl_table),
++				GFP_KERNEL);
+ 	if (!mr->pbl_table)
+ 		return -ENOMEM;
+ 
+@@ -1362,13 +1361,12 @@ static void ocrdma_set_qp_db(struct ocrdma_dev *dev, struct ocrdma_qp *qp,
+ 
+ static int ocrdma_alloc_wr_id_tbl(struct ocrdma_qp *qp)
+ {
+-	qp->wqe_wr_id_tbl -	    kzalloc(sizeof(*(qp->wqe_wr_id_tbl)) * qp->sq.max_cnt,
+-		    GFP_KERNEL);
++	qp->wqe_wr_id_tbl = kcalloc(qp->sq.max_cnt, sizeof(*qp->wqe_wr_id_tbl),
++				    GFP_KERNEL);
+ 	if (qp->wqe_wr_id_tbl = NULL)
+ 		return -ENOMEM;
+-	qp->rqe_wr_id_tbl -	    kzalloc(sizeof(u64) * qp->rq.max_cnt, GFP_KERNEL);
++	qp->rqe_wr_id_tbl = kcalloc(qp->rq.max_cnt, sizeof(*qp->rqe_wr_id_tbl),
++				    GFP_KERNEL);
+ 	if (qp->rqe_wr_id_tbl = NULL)
+ 		return -ENOMEM;
+ 
+@@ -1903,8 +1901,9 @@ struct ib_srq *ocrdma_create_srq(struct ib_pd *ibpd,
+ 		goto err;
+ 
+ 	if (udata = NULL) {
+-		srq->rqe_wr_id_tbl = kzalloc(sizeof(u64) * srq->rq.max_cnt,
+-			    GFP_KERNEL);
++		srq->rqe_wr_id_tbl = kcalloc(srq->rq.max_cnt,
++					     sizeof(*srq->rqe_wr_id_tbl),
++					     GFP_KERNEL);
+ 		if (srq->rqe_wr_id_tbl = NULL)
+ 			goto arm_err;
+ 
+-- 
+2.12.0
+
