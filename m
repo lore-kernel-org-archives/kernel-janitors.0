@@ -1,50 +1,50 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Fri, 17 Mar 2017 23:52:04 +0000
-Subject: Re: [PATCH] drm: vc4: remove redundant check of plane being non-null
-Message-Id: <877f3njwbf.fsf@eliezer.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 13:26:16 +0000
+Subject: [PATCH 22/26] IB/ocrdma: Returning only value constants in ocrdma_resize_cq()
+Message-Id: <dd638070-d1d6-44e8-6c10-16919b59482c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170316185418.32765-1-colin.king@canonical.com>
-In-Reply-To: <20170316185418.32765-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Mar 2017 10:48:24 +0100
 
-Colin King <colin.king@canonical.com> writes:
+Return constant integer values without storing them in the local
+variable "status".
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer plane is always null on the error path at label 'fail'
-> hence the check if it is non-null is redundant. We can therefore
-> remove the check and the destruction of plane as well as the fail
-> error path and instead just return an -ENOMEM ERR_PTR.
->
-> Detected by CoverityScan, CID#1339532 ("Logically Dead Code")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Reviewed and applied.  Thanks!
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index bedc229be89d..1d25512416f5 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1123,15 +1123,12 @@ struct ib_cq *ocrdma_create_cq(struct ib_device *ibdev,
+ int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
+ 		     struct ib_udata *udata)
+ {
+-	int status = 0;
+ 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
+ 
+-	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
+-		status = -EINVAL;
+-		return status;
+-	}
++	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
++		return -EINVAL;
+ 	ibcq->cqe = new_cnt;
+-	return status;
++	return 0;
+ }
+ 
+ static void ocrdma_flush_cq(struct ocrdma_cq *cq)
+-- 
+2.12.0
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAljMdqQACgkQtdYpNtH8
-nuhvyg/+Kpcqi/z4jwkAwxBwtZ/JuBkCpMWY0AcVZnggOD/KVqL5ZMyqlxx7FkYM
-xUEMyLX1oWa8vPIY9h26YXRPpyij1Xe/ovE3H96GTeDAQ2uRiqqXhJJEIUvBs6/B
-Xa16plN11kuKfu0GUsk9MEGF5B7hA8jf8pvZZ9XRH0RaKVKBda77N5QDlHnesFQQ
-IoYYOwfrwNkTWEyBMyCt2W9boT67Tkp18CChJafeqjEVF8ShWYjD3Ub/kgNtCBH9
-gjp7jrZL+/I23UHUBaDPUiQ4UM7Qd9SVs9hsB1lqKykjKAa1rE2gBsWX1stlWtbL
-26MCb8nNPiwjTo09APnEr186yNb29UpmXG19xtg5EVvKYRpBGKYlNNdBHrMa4029
-7KoVB0Gx5rDeyyZEkkX1xx7Q0JKg2dWvKPTHwQJKDoMbRcKIRiO5AEouJ8rLWKlg
-T3A8SHVWRTPPqAMcJ4QEj0Gqaeo1JhStSKObkU4XF+WSTX6EAn6SOI1W9AVHNaO2
-om0A72q8bnR5SwEsETsBKLnnIYV8d3/PkfEtWUUr26bTQ06igXgwN7JwC8RPB/IL
-5BHp56o/5hf2x6XBIJOagxn7NHmIk8hPFPvM7kHPrPawE+6SV/B2RH8IC+wUk4SZ
-0R5ozZEvGhhRBA0qOx0r3x9gUYW+RTnH6EsTb/L6vuKxPj6Brhc=
-=jr2X
------END PGP SIGNATURE-----
---=-=-=--
