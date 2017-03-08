@@ -1,69 +1,43 @@
-From: Philippe Reynes <tremyfr@gmail.com>
-Date: Tue, 14 Mar 2017 21:24:40 +0000
-Subject: Re: [bug report] net: sun: sungem: use new api ethtool_{get|set}_link_ksettings
-Message-Id: <CAC=8w90zsmMYU5vBXGVf8fuGFJzMJrd1wFmOUDz-WNnoiJN8qA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 12:48:46 +0000
+Subject: [PATCH 04/26] IB/ocrdma: Delete unnecessary variable initialisations in ocrdma_mbx_get_dcbx_config()
+Message-Id: <5780384b-87ef-fb39-6804-35f7eaada0c7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170314075010.GA6022@mwanda>
-In-Reply-To: <20170314075010.GA6022@mwanda>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 19:25:55 +0100
 
+The local variables "req" and "rsp" will be set to appropriate pointers
+a bit later. Thus omit the explicit initialisations at the beginning.
 
-On 3/14/17, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Philippe Reynes,
->
-> This is a semi-automatic email about new static checker warnings.
->
-> The patch 92552fdd557: "net: sun: sungem: use new api
-> ethtool_{get|set}_link_ksettings" from Mar 5, 2017, leads to the
-> following Smatch complaint:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks a lot for reporting this issue. I've send a patch to fix it.
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 85bebb887c5c..517a18e9351a 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -2895,9 +2895,8 @@ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
+ 	int status;
+ 	dma_addr_t pa;
+ 	struct ocrdma_mqe cmd;
+-
+-	struct ocrdma_get_dcbx_cfg_req *req = NULL;
+-	struct ocrdma_get_dcbx_cfg_rsp *rsp = NULL;
++	struct ocrdma_get_dcbx_cfg_req *req;
++	struct ocrdma_get_dcbx_cfg_rsp *rsp;
+ 	struct pci_dev *pdev = dev->nic_info.pdev;
+ 	struct ocrdma_mqe_sge *mqe_sge = cmd.u.nonemb_req.sge;
+ 
+-- 
+2.12.0
 
-Philippe
-
-
-> drivers/net/ethernet/sun/sungem.c:1284 gem_begin_auto_negotiation()
-> 	 warn: variable dereferenced before check 'ep' (see line 1263)
->
-> drivers/net/ethernet/sun/sungem.c
->   1262		ethtool_convert_link_mode_to_legacy_u32(&advertising,
->   1263							ep->link_modes.advertising);
->
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Patch adds new dereference.
->
->   1264	
->   1265		if (gp->phy_type != phy_mii_mdio0 &&
->   1266	     	    gp->phy_type != phy_mii_mdio1)
->   1267	     	    	goto non_mii;
->   1268	
->   1269		/* Setup advertise */
->   1270		if (found_mii_phy(gp))
->   1271			features = gp->phy_mii.def->features;
->   1272		else
->   1273			features = 0;
->   1274	
->   1275		advertise = features & ADVERTISE_MASK;
->   1276		if (gp->phy_mii.advertising != 0)
->   1277			advertise &= gp->phy_mii.advertising;
->   1278	
->   1279		autoneg = gp->want_autoneg;
->   1280		speed = gp->phy_mii.speed;
->   1281		duplex = gp->phy_mii.duplex;
->   1282	
->   1283		/* Setup link parameters */
->   1284		if (!ep)
->                     ^^^
-> Old code assumed it could be NULL.
->
->   1285			goto start_aneg;
->   1286		if (ep->base.autoneg = AUTONEG_ENABLE) {
->
-> regards,
-> dan carpenter
->
