@@ -1,46 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 18 Mar 2017 04:14:22 +0000
-Subject: Re: dm crypt: remove an impossible condition
-Message-Id: <20170318041422.GC4102@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Mar 2017 12:41:00 +0000
+Subject: [PATCH 02/26] IB/ocrdma: Use kcalloc() in ocrdma_mbx_alloc_pd_range()
+Message-Id: <7abcae42-6bc2-0653-69ea-5112943ff72e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170317204655.GA28261@mwanda> <20170317213819.GC6475@redhat.com>
-In-Reply-To: <20170317213819.GC6475@redhat.com>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, Milan Broz <gmazyland@gmail.com>, Alasdair Kergon <agk@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 17, 2017 at 05:38:19PM -0400, Mike Snitzer wrote:
-> On Fri, Mar 17 2017 at  4:46pm -0400,
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
->=20
-> > Static checkers complain that it doesn't make sense to check if "sval"
-> > is NULL.  The intention was to check if strchr() returned NULL, but in
-> > that situation "sval" would be "NULL + 1" so the check doesn't work.  We
-> > know from the sscanf() that there is a ':' character in the string so
-> > the check is unnecessary and can be removed.
-> >=20
-> > Now that the check doesn't depend on "sval" it can be moved earlier
-> > for readability.
-> >=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Thanks Dan, I've folded this fix into the original commit, see:
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.gi=
-t/commit/?h=3Ddm-4.12&id=CF22cd5f3afe7335afee5659f7450000e8fa2a15
->=20
-> I didn't add your Signed-off-by though, I can backfill that if you
-> like.. it is just I didn't want to taint you with all the extensive
-> changes in that commit.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 7 Mar 2017 18:23:54 +0100
 
-That's fine, thanks.  Sign-off isn't really the appropriate tag anyway...
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-regards,
-dan carpenter
+  This issue was detected by using the Coccinelle software.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+* Delete the local variable "pd_bitmap_size" which became unnecessary with
+  this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index cbac41b15d94..d5a3127b6df8 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1505,7 +1505,6 @@ int ocrdma_mbx_dealloc_pd(struct ocrdma_dev *dev, struct ocrdma_pd *pd)
+ static int ocrdma_mbx_alloc_pd_range(struct ocrdma_dev *dev)
+ {
+ 	int status = -ENOMEM;
+-	size_t pd_bitmap_size;
+ 	struct ocrdma_alloc_pd_range *cmd;
+ 	struct ocrdma_alloc_pd_range_rsp *rsp;
+ 
+@@ -1527,10 +1526,10 @@ static int ocrdma_mbx_alloc_pd_range(struct ocrdma_dev *dev)
+ 			dev->pd_mgr->pd_dpp_start = rsp->dpp_page_pdid &
+ 					OCRDMA_ALLOC_PD_RNG_RSP_START_PDID_MASK;
+ 			dev->pd_mgr->max_dpp_pd = rsp->pd_count;
+-			pd_bitmap_size -				BITS_TO_LONGS(rsp->pd_count) * sizeof(long);
+-			dev->pd_mgr->pd_dpp_bitmap = kzalloc(pd_bitmap_size,
+-							     GFP_KERNEL);
++			dev->pd_mgr->pd_dpp_bitmap
++				= kcalloc(BITS_TO_LONGS(rsp->pd_count),
++							sizeof(long),
++							GFP_KERNEL);
+ 		}
+ 		kfree(cmd);
+ 	}
+@@ -1546,9 +1545,10 @@ static int ocrdma_mbx_alloc_pd_range(struct ocrdma_dev *dev)
+ 		dev->pd_mgr->pd_norm_start = rsp->dpp_page_pdid &
+ 					OCRDMA_ALLOC_PD_RNG_RSP_START_PDID_MASK;
+ 		dev->pd_mgr->max_normal_pd = rsp->pd_count;
+-		pd_bitmap_size = BITS_TO_LONGS(rsp->pd_count) * sizeof(long);
+-		dev->pd_mgr->pd_norm_bitmap = kzalloc(pd_bitmap_size,
+-						      GFP_KERNEL);
++		dev->pd_mgr->pd_norm_bitmap
++			= kcalloc(BITS_TO_LONGS(rsp->pd_count),
++						sizeof(long),
++						GFP_KERNEL);
+ 	}
+ 	kfree(cmd);
+ 
+-- 
+2.12.0
+
