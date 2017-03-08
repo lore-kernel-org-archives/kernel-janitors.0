@@ -1,38 +1,36 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Thu, 16 Mar 2017 19:30:25 +0000
-Subject: Re: [PATCH 1/2] switchtec: off by one in ioctl_event_ctl()
-Message-Id: <20170316193025.GA9739@bhelgaas-glaptop.roam.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Mar 2017 05:22:37 +0000
+Subject: [PATCH] NFC: nfcmrvl: double free on error path
+Message-Id: <20170308052237.GA14542@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170313105004.GA24989@mwanda>
-In-Reply-To: <20170313105004.GA24989@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>, Stephen Bates <stephen.bates@microsemi.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Vincent Cuissard <cuissard@marvell.com>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 13, 2017 at 01:50:04PM +0300, Dan Carpenter wrote:
-> The > should be >= SWITCHTEC_IOCTL_MAX_EVENTS.  Otherwise we probably
-> read one space beyond the end of the loop, hit a sanity check and return
-> -EINVAL.  This bug doesn't look super serious.
-> 
-> Fixes: 61c2e02154a9 ("switchtec: Add IOCTLs to the Switchtec driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The nci_spi_send() function calls kfree_skb(skb) on both error and
+success so this extra kfree_skb() is a double free.
 
-Since these patches are on my "next" branch but haven't been merged
-anywhere else, I folded both patches into the initial commits and added a
-changelog note to credit Dan.
+Fixes: caf6e49bf6d0 ("NFC: nfcmrvl: add spi driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested.
 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index 1f045c95dec6..82ae08956457 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -1049,7 +1049,7 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
->  	if (copy_from_user(&ctl, uctl, sizeof(ctl)))
->  		return -EFAULT;
->  
-> -	if (ctl.event_id > SWITCHTEC_IOCTL_MAX_EVENTS)
-> +	if (ctl.event_id >= SWITCHTEC_IOCTL_MAX_EVENTS)
->  		return -EINVAL;
->  
->  	if (ctl.flags & SWITCHTEC_IOCTL_EVENT_FLAG_UNUSED)
+diff --git a/drivers/nfc/nfcmrvl/spi.c b/drivers/nfc/nfcmrvl/spi.c
+index a7faa0bcc01e..fc8e78a29d77 100644
+--- a/drivers/nfc/nfcmrvl/spi.c
++++ b/drivers/nfc/nfcmrvl/spi.c
+@@ -96,10 +96,9 @@ static int nfcmrvl_spi_nci_send(struct nfcmrvl_private *priv,
+ 	/* Send the SPI packet */
+ 	err = nci_spi_send(drv_data->nci_spi, &drv_data->handshake_completion,
+ 			   skb);
+-	if (err != 0) {
++	if (err)
+ 		nfc_err(priv->dev, "spi_send failed %d", err);
+-		kfree_skb(skb);
+-	}
++
+ 	return err;
+ }
+ 
