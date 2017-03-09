@@ -1,54 +1,31 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:32:11 +0000
-Subject: Re: [PATCH 36/46] selinux: Move an assignment for the variable "rc" in mls_read_range_helper()
-Message-Id: <CAHC9VhTxotWNL8XaOGUS5E8xvBFLaJp7Gi2xfvzu92K7gvmh=w@mail.gmail.com>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Thu, 09 Mar 2017 08:02:44 +0000
+Subject: Re: wcn36xx: Fix error handling
+Message-Id: <b37f84dce99d4f6fa577845f664aaba6@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<02c3392e-3507-4d91-a8c0-6d933a034058@users.sourceforge.net>
-In-Reply-To: <02c3392e-3507-4d91-a8c0-6d933a034058@users.sourceforge.net>
+References: <20170219174751.18966-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170219174751.18966-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: k.eugene.e@gmail.com, kvalo@codeaurora.org, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:36 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 11:22:23 +0100
->
-> A local variable was set to an error code in one case before a concrete
-> error situation was detected. Thus move the corresponding assignment into
-> an if branch to indicate a software failure there.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
+> Reorder 'out_free_dxe_pool' and 'out_free_dxe_ctl' error handling labels
+> in order to match the way resources have been allocated.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Dropped as previously discussed.
+Patch applied to ath-next branch of ath.git, thanks.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 9b595f2e0d9f..7cf635c650dc 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -996,10 +996,10 @@ static int mls_read_range_helper(struct mls_range *r, void *fp)
->         if (rc)
->                 goto out;
->
-> -       rc = -EINVAL;
->         items = le32_to_cpu(buf[0]);
->         if (items > ARRAY_SIZE(buf)) {
->                 printk(KERN_ERR "SELinux: mls:  range overflow\n");
-> +               rc = -EINVAL;
->                 goto out;
->         }
->
-> --
-> 2.11.0
->
-
-
+4aa2d31f5df8 wcn36xx: Fix error handling
 
 -- 
-paul moore
-www.paul-moore.com
+https://patchwork.kernel.org/patch/9581709/
+
+Documentation about submitting wireless patches and checking status
+from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
