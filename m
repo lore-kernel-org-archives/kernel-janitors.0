@@ -1,50 +1,40 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Wed, 08 Mar 2017 14:27:55 +0000
-Subject: Re: [PATCH 14/26] IB/ocrdma: Improve another size determination in ocrdma_add()
-Message-Id: <20170308142755.GL4828@yuval-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 Mar 2017 19:19:22 +0000
+Subject: [PATCH] ASoC: cs35l35: trivial fix to indentation
+Message-Id: <20170311191922.6209-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <97417c29-a9d0-d30b-952a-3b3325a52bcf@users.sourceforge.net>
-In-Reply-To: <97417c29-a9d0-d30b-952a-3b3325a52bcf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Brian Austin <brian.austin@cirrus.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jiri Kosina <trivial@kernel.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 08, 2017 at 02:10:33PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 7 Mar 2017 22:12:36 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-> index 9caa4c564e34..c49b4491d4e7 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-> @@ -303,7 +303,7 @@ static struct ocrdma_dev *ocrdma_add(struct be_dev_info *dev_info)
->  	u8 lstate = 0;
->  	struct ocrdma_dev *dev;
->  
-> -	dev = (struct ocrdma_dev *)ib_alloc_device(sizeof(struct ocrdma_dev));
-> +	dev = (struct ocrdma_dev *)ib_alloc_device(sizeof(*dev));
->  	if (!dev) {
->  		pr_err("Unable to allocate ib device\n");
->  		return NULL;
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Remove extraneous tab to correct the nesting level indentation
 
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Detected by CoverityScan, CID#1416584 ("Nesting level does
+not match indentation")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/cs35l35.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/cs35l35.c b/sound/soc/codecs/cs35l35.c
+index 260ed42..43d33f4 100644
+--- a/sound/soc/codecs/cs35l35.c
++++ b/sound/soc/codecs/cs35l35.c
+@@ -1370,7 +1370,8 @@ static int cs35l35_i2c_probe(struct i2c_client *i2c_client,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(cs35l35_supplies); i++)
+ 		cs35l35->supplies[i].supply = cs35l35_supplies[i];
+-		cs35l35->num_supplies = ARRAY_SIZE(cs35l35_supplies);
++
++	cs35l35->num_supplies = ARRAY_SIZE(cs35l35_supplies);
+ 
+ 	ret = devm_regulator_bulk_get(&i2c_client->dev,
+ 			cs35l35->num_supplies,
+-- 
+2.10.2
+
