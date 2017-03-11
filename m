@@ -1,98 +1,60 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 21:50:07 +0000
-Subject: Re: [PATCH 13/46] selinux: Move four assignments for the variable "rc" in genfs_read()
-Message-Id: <CAHC9VhReS47k5sK51WXE+AcmSQJw4=jmzQ0k3C1r07DF1pWpew@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 Mar 2017 19:09:45 +0000
+Subject: [PATCH] dm cache: handle kmalloc failure allocating background_tracker struct
+Message-Id: <20170311190945.5930-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<99ebe15e-c30f-d129-82a0-a809769aa5dc@users.sourceforge.net>
-In-Reply-To: <99ebe15e-c30f-d129-82a0-a809769aa5dc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:13 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 17:21:59 +0100
->
-> One local variable was set to an error code in four cases before
-> a concrete error situation was detected. Thus move the corresponding
-> assignments into if branches to indicate a software failure there.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-See my previous comments.
+currently there is no kmalloc failure check on the allocation of
+the background_tracker struct variable b, and so a null return
+will lead to a null pointer deference error. Add null check and move
+the failure debug message and NULL return so that the two allocation
+errors can share the same error exit path.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 7544e374dec9..a12d9166f0e4 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -2012,11 +2012,11 @@ static int genfs_read(struct policydb *p, void *fp)
->                 if (rc)
->                         goto out;
->                 len = le32_to_cpu(buf[0]);
-> -
-> -               rc = -ENOMEM;
->                 newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
-> -               if (!newgenfs)
-> +               if (!newgenfs) {
-> +                       rc = -ENOMEM;
->                         goto out;
-> +               }
->
->                 rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
->                 if (rc)
-> @@ -2024,10 +2024,10 @@ static int genfs_read(struct policydb *p, void *fp)
->
->                 for (genfs_p = NULL, genfs = p->genfs; genfs;
->                      genfs_p = genfs, genfs = genfs->next) {
-> -                       rc = -EINVAL;
->                         if (strcmp(newgenfs->fstype, genfs->fstype) = 0) {
->                                 printk(KERN_ERR "SELinux:  dup genfs fstype %s\n",
->                                        newgenfs->fstype);
-> +                               rc = -EINVAL;
->                                 goto out;
->                         }
->                         if (strcmp(newgenfs->fstype, genfs->fstype) < 0)
-> @@ -2051,11 +2051,11 @@ static int genfs_read(struct policydb *p, void *fp)
->                         if (rc)
->                                 goto out;
->                         len = le32_to_cpu(buf[0]);
-> -
-> -                       rc = -ENOMEM;
->                         newc = kzalloc(sizeof(*newc), GFP_KERNEL);
-> -                       if (!newc)
-> +                       if (!newc) {
-> +                               rc = -ENOMEM;
->                                 goto out;
-> +                       }
->
->                         rc = str_read(&newc->u.name, GFP_KERNEL, fp, len);
->                         if (rc)
-> @@ -2072,12 +2072,12 @@ static int genfs_read(struct policydb *p, void *fp)
->
->                         for (l = NULL, c = genfs->head; c;
->                              l = c, c = c->next) {
-> -                               rc = -EINVAL;
->                                 if (!strcmp(newc->u.name, c->u.name) &&
->                                     (!c->v.sclass || !newc->v.sclass ||
->                                      newc->v.sclass = c->v.sclass)) {
->                                         printk(KERN_ERR "SELinux:  dup genfs entry (%s,%s)\n",
->                                                genfs->fstype, c->u.name);
-> +                                       rc = -EINVAL;
->                                         goto out;
->                                 }
->                                 len = strlen(newc->u.name);
-> --
-> 2.11.0
->
+Detected by CoverityScan, CID#1416587 ("Dereference null return value")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/dm-cache-background-tracker.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/md/dm-cache-background-tracker.c b/drivers/md/dm-cache-background-tracker.c
+index 9b1afdf..d27edbcc 100644
+--- a/drivers/md/dm-cache-background-tracker.c
++++ b/drivers/md/dm-cache-background-tracker.c
+@@ -33,6 +33,8 @@ struct background_tracker *btracker_create(unsigned max_work)
+ {
+ 	struct background_tracker *b = kmalloc(sizeof(*b), GFP_KERNEL);
+ 
++	if (!b)
++		goto err;
+ 	b->max_work = max_work;
+ 	atomic_set(&b->pending_promotes, 0);
+ 	atomic_set(&b->pending_writebacks, 0);
+@@ -44,12 +46,15 @@ struct background_tracker *btracker_create(unsigned max_work)
+ 	b->pending = RB_ROOT;
+ 	b->work_cache = KMEM_CACHE(bt_work, 0);
+ 	if (!b->work_cache) {
+-		DMERR("couldn't create mempool for background work items");
+ 		kfree(b);
+-		b = NULL;
++		goto err;
+ 	}
+ 
+ 	return b;
++err:
++	DMERR("couldn't create mempool for background work items");
++	return NULL;
++
+ }
+ EXPORT_SYMBOL_GPL(btracker_create);
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.10.2
+
