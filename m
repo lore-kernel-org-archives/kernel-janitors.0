@@ -1,34 +1,39 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Tue, 28 Mar 2017 10:20:14 +0000
-Subject: Re: [PATCH] usb: gadget: udc: remove redundant initial assignments to the pointer 's'
-Message-Id: <66ad4118-7c0a-06b9-b780-d0d613cb8152@cogentembedded.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 Mar 2017 19:48:19 +0000
+Subject: [PATCH] staging: atomisp: remove redundant check for client being null
+Message-Id: <20170311194819.6772-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170327223439.10063-1-colin.king@canonical.com>
-In-Reply-To: <20170327223439.10063-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>, Bhumika Goyal <bhumirks@gmail.com>, Michal Nazarewicz <mina86@mina86.com>, linux-usb@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello!
+From: Colin Ian King <colin.king@canonical.com>
 
-On 3/28/2017 1:34 AM, Colin King wrote:
+The previous statement checks if client is null, so the null check
+when assigning dev is redundant and can be removed.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The initial setting of pointer s to the driver name or to the literal
-> string "(none)" is redundant as later it is always set to point to
-> a different literal string before it is printed log.  Remove this
+Detected by CoverityScan, CID#1416555 ("Logically Dead Code")
 
-    Printed to log, perhaps?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> redundant code.
->
-> Detected with CoverityScan, CID#1227032, CID#1227033 ("Unused Value")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
+index 65513ca..2929492 100644
+--- a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
+@@ -354,7 +354,7 @@ static struct gmin_subdev *gmin_subdev_add(struct v4l2_subdev *subdev)
+ 	if (!client)
+ 		return NULL;
+ 
+-	dev = client ? &client->dev : NULL;
++	dev = &client->dev;
+ 
+ 	for (i=0; i < MAX_SUBDEVS && gmin_subdevs[i].subdev; i++)
+ 		;
+-- 
+2.10.2
 
