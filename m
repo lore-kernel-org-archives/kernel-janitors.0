@@ -1,57 +1,29 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 15 Mar 2017 21:34:57 +0000
-Subject: Re: [PATCH v3 0/7] Remove unneeded build directory traversals
-Message-Id: <CAK8P3a3JxkbEyJig3M=Df=W8KDbwZURmfs7YdMWHx_K+2LsEfQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Mar 2017 12:32:37 +0000
+Subject: [patch] ASoC: cs35l35: returning uninitialized in probe()
+Message-Id: <20170313123237.GA9287@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170315163730.17055-1-afd@ti.com> <CAK8P3a1XBUUtJHrzfTa3GRqh+beU+1MteQ0evB8Vvy5zABRbmw@mail.gmail.com>
- <59d8c3d4-1fdf-7f30-f78c-92ddc9028d36@ti.com>
-In-Reply-To: <59d8c3d4-1fdf-7f30-f78c-92ddc9028d36@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org
+To: Brian Austin <brian.austin@cirrus.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-On Wed, Mar 15, 2017 at 10:15 PM, Andrew F. Davis <afd@ti.com> wrote:
-> On 03/15/2017 04:03 PM, Arnd Bergmann wrote:
->> On Wed, Mar 15, 2017 at 5:37 PM, Andrew F. Davis <afd@ti.com> wrote:
->>> Hello all,
->>>
->>> I was building a kernel for x86 and noticed Make still descended into
->>> directories like drivers/gpu/drm/hisilicon, this seems kind of odd given
->>> nothing will be built here. It looks to be due to some directories being
->>> included in obj-y unconditionally instead of only when the relevant
->>> CONFIG_ is set.
->>>
->>> These patches are split by subsystem in-case, for some reason, a file in
->>> a directory does need to be built, I believe I have checked for all
->>> instances of this, but a quick review from some maintainers would be nice.
->>
->> I didn't see anything wrong with the patches, and made sure that there
->> are no tristate symbols controlling the subdirectory for anything that
->> requires a built-in driver (which would cause a link failure).
->>
->> I'm not sure about drivers/lguest, which has some special magic
->> in its Makefile, it's possible that this now fails with CONFIG_LGUEST=m.
->>
->
-> lguest and mmc are the strange ones, so I put them last in the series in
-> case they did need to be dropped.
->
-> lguest was supposed to have been taken from v1:
-> https://lkml.org/lkml/2016/6/20/1086
-> but it looks like it didn't so I re-introduced it for v3.
->
-> mmc caught some 0-day build warnings but I never got to the bottom of them.
+If cs35l35->pdata.stereo is false then "ret" isn't initialized.
 
-Ah, I see now what happened to mmc:
+Fixes: 6387f866a2cc ("ASoC: Add support for Cirrus Logic CS35L35 Amplifier")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-obj-$(subst m,y,$(CONFIG_MMC))  += host/
-tmio_mmc_core-$(subst m,y,$(CONFIG_MMC_SDHI))   += tmio_mmc_dma.o
-obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))        += sdhci-pci-data.o
-
-with CONFIG_MMC=m, this will fail to build the built-in files in
-drivers/mmc/host. I suppose this could be expressed in a different
-way these days, but dropping the patch would be easier.
-
-     Arnd
+diff --git a/sound/soc/codecs/cs35l35.c b/sound/soc/codecs/cs35l35.c
+index 260ed42c71e9..142ae642eaa1 100644
+--- a/sound/soc/codecs/cs35l35.c
++++ b/sound/soc/codecs/cs35l35.c
+@@ -964,7 +964,7 @@ static int cs35l35_codec_probe(struct snd_soc_codec *codec)
+ 		}
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static struct snd_soc_codec_driver soc_codec_dev_cs35l35 = {
