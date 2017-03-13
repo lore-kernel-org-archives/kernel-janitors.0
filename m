@@ -1,48 +1,26 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Mon, 13 Mar 2017 15:40:01 +0000
+From: Alan Cox <alan@linux.intel.com>
+Date: Mon, 13 Mar 2017 17:54:46 +0000
 Subject: Re: [PATCH] staging: atomisp: use k{v}zalloc instead of k{v}alloc and memset
-Message-Id: <CAHb8M2CwfTN-dx4ojUJCvF_jr0E1bo4KLWpZE74y45WkV_6C+A@mail.gmail.com>
+Message-Id: <1489427686.24765.9.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170313105421.GA32342@SEL-JYOUN-D1> <20170313115129.GC4136@mwanda>
- <CAHb8M2BOcuW8ToYTT3EUm-GieOMz6+xUhmzwW+3hbygti11k0A@mail.gmail.com>
-In-Reply-To: <CAHb8M2BOcuW8ToYTT3EUm-GieOMz6+xUhmzwW+3hbygti11k0A@mail.gmail.com>
+References: <20170313105421.GA32342@SEL-JYOUN-D1>
+In-Reply-To: <20170313105421.GA32342@SEL-JYOUN-D1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: mchehab@kernel.org, devel <devel@driverdev.osuosl.org>, Greg KH <gregkh@linuxfoundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, alan@linux.intel.com, linux-media@vger.kernel.org
+To: Daeseok Youn <daeseok.youn@gmail.com>, mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2017-03-13 23:07 GMT+09:00 DaeSeok Youn <daeseok.youn@gmail.com>:
-> 2017-03-13 20:51 GMT+09:00 Dan Carpenter <dan.carpenter@oracle.com>:
->> On Mon, Mar 13, 2017 at 07:54:21PM +0900, Daeseok Youn wrote:
->>> If the atomisp_kernel_zalloc() has "true" as a second parameter, it
->>> tries to allocate zeroing memory from kmalloc(vmalloc) and memset.
->>> But using kzalloc is rather than kmalloc followed by memset with 0.
->>> (vzalloc is for same reason with kzalloc)
->>>
->>> And also atomisp_kernel_malloc() can be used with
->>> atomisp_kernel_zalloc(<size>, false);
->>>
->>
->> We should just change all the callers to kvmalloc() and kvzmalloc().
-> ok. I will try to change all the callers to kvmalloc() and kvzalloc().
+On Mon, 2017-03-13 at 19:54 +0900, Daeseok Youn wrote:
+> If the atomisp_kernel_zalloc() has "true" as a second parameter, it
+> tries to allocate zeroing memory from kmalloc(vmalloc) and memset.
+> But using kzalloc is rather than kmalloc followed by memset with 0.
+> (vzalloc is for same reason with kzalloc)
 
-The kvmalloc() and kvzalloc() are not ready to use in staging-testing
-branch on staging tree.
-If the kvmalloc and kvzalloc are available to use, I will replace
-atomisp_kernel_malloc() and atomisp_kernel_zalloc() with kvmalloc()
-and kvzalloc().
+This is true but please don't apply this. There are about five other
+layers of indirection for memory allocators that want removing first so
+that the driver just uses the correct kmalloc/kzalloc/kv* functions in
+the right places.
 
-Thanks.
-Regards,
-Daeseok Youn.
+Alan
 
-
->
-> Thanks.
-> Regards,
-> Daeseok Youn
->>
->> regards,
->> dan carpenter
->>
