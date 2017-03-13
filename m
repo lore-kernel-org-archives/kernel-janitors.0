@@ -1,45 +1,31 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Thu, 23 Mar 2017 09:45:48 +0000
-Subject: Re: [patch] mtd: nand: hynix: Fix an error code in init
-Message-Id: <20170323104548.30aae3d0@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Mar 2017 12:34:14 +0000
+Subject: [PATCH] staging: atomisp: potential underflow in atomisp_get_metadata_by_type()
+Message-Id: <20170313123414.GB9287@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170322090145.GA14520@mwanda>
-In-Reply-To: <20170322090145.GA14520@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Wed, 22 Mar 2017 12:01:45 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+md_type is an enum.  On my tests, GCC treats it as unsigned but
+according to the C standard it's an implementation dependant thing so we
+should check for negatives.
 
-> We should be return -ENOMEM instead of success.
-> 
-> Fixes: 626994e07480 ("mtd: nand: hynix: Add read-retry support for 1x nm MLC NANDs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
-
-Thanks,
-
-Boris
-
-> 
-> diff --git a/drivers/mtd/nand/nand_hynix.c b/drivers/mtd/nand/nand_hynix.c
-> index 2a5d0efea498..b12dc7325378 100644
-> --- a/drivers/mtd/nand/nand_hynix.c
-> +++ b/drivers/mtd/nand/nand_hynix.c
-> @@ -270,8 +270,10 @@ static int hynix_mlc_1xnm_rr_init(struct nand_chip *chip,
->  		goto out;
->  
->  	rr = kzalloc(sizeof(*rr) + (nregs * nmodes), GFP_KERNEL);
-> -	if (!rr)
-> +	if (!rr) {
-> +		ret = -ENOMEM;
->  		goto out;
-> +	}
->  
->  	for (i = 0; i < nmodes; i++) {
->  		for (j = 0; j < nregs; j++) {
-
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index d9a5c24633cb..0d77ebc5c865 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -3005,7 +3005,7 @@ int atomisp_get_metadata_by_type(struct atomisp_sub_device *asd, int flag,
+ 		return 0;
+ 
+ 	md_type = md->type;
+-	if (md_type >= ATOMISP_METADATA_TYPE_NUM)
++	if (md_type < 0 || md_type >= ATOMISP_METADATA_TYPE_NUM)
+ 		return -EINVAL;
+ 
+ 	/* This is done in the atomisp_buf_done() */
