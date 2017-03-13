@@ -1,51 +1,68 @@
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Fri, 31 Mar 2017 09:01:31 +0000
-Subject: Re: [PATCH] HID: sony: remove redundant check for -ve err
-Message-Id: <20170331090131.GG22683@mail.corp.redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 13 Mar 2017 19:14:08 +0000
+Subject: [PATCH] scsi: cxgb3i: remove redundant null check and kfree on skb
+Message-Id: <20170313191408.20080-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170327175118.28322-1-colin.king@canonical.com>
-In-Reply-To: <20170327175118.28322-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mar 27 2017 or thereabouts, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> err is being checked for failure each time it is being updated
-> so this err check is totally redundant and can be removed
-> 
-> Detected with CoverityScan, CID#1420665 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Indeed. Not sure if it will conflict with Roderick's series, but still:
+On the error exit path, skb is always null, so the non-null check
+and __kfree_skb call are redundant.  Remove the redundant code,
+rename the rel_release label to err and make error paths jump to
+the err exit path.
 
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Detected by CoverityScan, CID#114328 ("Logically Dead Code")
 
-Cheers,
-Benjamin
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
->  drivers/hid/hid-sony.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-> index bb124e339d26..e3c6fe554056 100644
-> --- a/drivers/hid/hid-sony.c
-> +++ b/drivers/hid/hid-sony.c
-> @@ -2614,9 +2614,6 @@ static int sony_input_configured(struct hid_device *hdev,
->  		ret = 0;
->  	}
->  
-> -	if (ret < 0)
-> -		goto err_stop;
-> -
->  	if (sc->quirks & SONY_LED_SUPPORT) {
->  		ret = sony_leds_init(sc);
->  		if (ret < 0)
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 1880eb6..f453a78 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -972,21 +972,21 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 			      &csk->daddr.sin_addr.s_addr);
+ 	if (!csk->l2t) {
+ 		pr_err("NO l2t available.\n");
+-		return -EINVAL;
++		goto err;
+ 	}
+ 	cxgbi_sock_get(csk);
+ 
+ 	csk->atid = cxgb3_alloc_atid(t3dev, &t3_client, csk);
+ 	if (csk->atid < 0) {
+ 		pr_err("NO atid available.\n");
+-		goto rel_resource;
++		goto err;
+ 	}
+ 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
+ 	cxgbi_sock_get(csk);
+ 
+ 	skb = alloc_wr(sizeof(struct cpl_act_open_req), 0, GFP_KERNEL);
+ 	if (!skb)
+-		goto rel_resource;
++		goto err;
+ 	skb->sk = (struct sock *)csk;
+ 	set_arp_failure_handler(skb, act_open_arp_failure);
+ 	csk->snd_win = cxgb3i_snd_win;
+@@ -1008,9 +1008,7 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	send_act_open_req(csk, skb, csk->l2t);
+ 	return 0;
+ 
+-rel_resource:
+-	if (skb)
+-		__kfree_skb(skb);
++err:
+ 	return -EINVAL;
+ }
+ 
+-- 
+2.10.2
+
