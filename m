@@ -1,53 +1,40 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 13:57:53 +0000
-Subject: Re: [PATCH 25/46] selinux: Return directly after a failed kzalloc() in sens_read()
-Message-Id: <CAHC9VhRf77mdk40jjQciLxbZ+x=R9ZhS9HANJigEG=ZKAyCV_A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 13 Mar 2017 18:20:28 +0000
+Subject: [PATCH] staging: atomisp: fix missing break in switch statement
+Message-Id: <20170313182028.19318-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
-In-Reply-To: <8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Varsha Rao <rvarsha016@gmail.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:25 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 21:42:02 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Merged, thanks.
+I believe there is a missing break in the switch statement for
+case V4L2_CID_FOCUS_STATUS as the current fall-through looks
+suspect to me.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index eb898dcbe502..5caa1fa5ea80 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1593,10 +1593,9 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[2];
->         u32 len;
->
-> -       rc = -ENOMEM;
->         levdatum = kzalloc(sizeof(*levdatum), GFP_ATOMIC);
->         if (!levdatum)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         rc = next_entry(buf, fp, sizeof buf);
->         if (rc)
-> --
-> 2.11.0
->
+Detected by CoverityScan, CID#1416580 ("Missing break in switch")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/atomisp/i2c/ov5693/ov5693.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
+index e3d4d0e..ac75982 100644
+--- a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
++++ b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
+@@ -1132,7 +1132,7 @@ static int ov5693_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+ 		break;
+ 	case V4L2_CID_FOCUS_STATUS:
+ 		ret = ov5693_q_focus_status(&dev->sd, &ctrl->val);
+-
++		break;
+ 	case V4L2_CID_BIN_FACTOR_HORZ:
+ 		ret = ov5693_g_bin_factor_x(&dev->sd, &ctrl->val);
+ 		break;
 -- 
-paul moore
-www.paul-moore.com
+2.10.2
+
