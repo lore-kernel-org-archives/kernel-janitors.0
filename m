@@ -1,36 +1,28 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Sun, 12 Mar 2017 14:47:28 +0000
-Subject: [PATCH 3/3] staging: dngc: ch->ch_bd is already assigned to bd variable
-Message-Id: <20170312144727.GA24031@jyoun-Latitude-E6530>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Mon, 13 Mar 2017 22:26:11 +0000
+Subject: Re: [PATCH 3/3] staging: dngc: ch->ch_bd is already assigned to bd variable
+Message-Id: <20170313222611.GA23550@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170312144727.GA24031@jyoun-Latitude-E6530>
+In-Reply-To: <20170312144727.GA24031@jyoun-Latitude-E6530>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daeseok Youn <daeseok.youn@gmail.com>
+Cc: devel@driverdev.osuosl.org, lidza.louina@gmail.com, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The bd variable in dgnc_tty_digiseta() is assigned with
-ch->ch_bd but it is not used in this function except checking NULL.
-The ch->ch_bd could be replaced with bd variable in dgnc_tty_digiseta()
+On Sun, Mar 12, 2017 at 11:47:28PM +0900, Daeseok Youn wrote:
+> The bd variable in dgnc_tty_digiseta() is assigned with
+> ch->ch_bd but it is not used in this function except checking NULL.
+> The ch->ch_bd could be replaced with bd variable in dgnc_tty_digiseta()
+> 
+> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+> ---
+>  drivers/staging/dgnc/dgnc_tty.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/staging/dgnc/dgnc_tty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please merge this with your first patch in the series and resend them.
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 7133d2c..b075350 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -2081,7 +2081,7 @@ static int dgnc_tty_digiseta(struct tty_struct *tty,
- 	if (ch->ch_digi.digi_offlen > DIGI_PLEN)
- 		ch->ch_digi.digi_offlen = DIGI_PLEN;
- 
--	ch->ch_bd->bd_ops->param(tty);
-+	bd->bd_ops->param(tty);
- 
- 	spin_unlock_irqrestore(&ch->ch_lock, flags);
- 
--- 
-2.7.4
+thanks,
 
+greg k-h
