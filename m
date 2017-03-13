@@ -1,29 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 29 Mar 2017 04:49:58 +0000
-Subject: Re: [PATCH] VSOCK: remove unnecessary ternary operator on return value
-Message-Id: <20170328.214958.1031055485189943869.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Mar 2017 10:50:04 +0000
+Subject: [PATCH 1/2] switchtec: off by one in ioctl_event_ctl()
+Message-Id: <20170313105004.GA24989@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170328155424.22873-1-colin.king@canonical.com>
-In-Reply-To: <20170328155424.22873-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhansen@vmware.com, aditr@vmware.com, julia.lawall@lip6.fr, stefanha@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>
+Cc: Stephen Bates <stephen.bates@microsemi.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Mar 2017 16:54:24 +0100
+The > should be >= SWITCHTEC_IOCTL_MAX_EVENTS.  Otherwise we probably
+read one space beyond the end of the loop, hit a sanity check and return
+-EINVAL.  This bug doesn't look super serious.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Rather than assign the positive errno values to ret and then
-> checking if it is positive and flip the sign, just set ret to
-> be the -ve errno value.
-> 
-> Detected by CoverityScan, CID#986649 ("Logically Dead Code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 61c2e02154a9 ("switchtec: Add IOCTLs to the Switchtec driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Just return the error directly instead of having this variable.
-
-Thanks.
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index 1f045c95dec6..82ae08956457 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -1049,7 +1049,7 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
+ 	if (copy_from_user(&ctl, uctl, sizeof(ctl)))
+ 		return -EFAULT;
+ 
+-	if (ctl.event_id > SWITCHTEC_IOCTL_MAX_EVENTS)
++	if (ctl.event_id >= SWITCHTEC_IOCTL_MAX_EVENTS)
+ 		return -EINVAL;
+ 
+ 	if (ctl.flags & SWITCHTEC_IOCTL_EVENT_FLAG_UNUSED)
