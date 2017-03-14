@@ -1,78 +1,60 @@
-From: Devesh Sharma <devesh.sharma@broadcom.com>
-Date: Wed, 08 Mar 2017 14:58:37 +0000
-Subject: Re: [PATCH 03/26] IB/ocrdma: Improve size determinations in ocrdma_mbx_get_dcbx_config()
-Message-Id: <CANjDDBiZdPdhTKmr3QjhTsXQZWPf0jZJ=baGRHdiuUHZ=AGKVg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Mar 2017 10:48:43 +0000
+Subject: [PATCH][V2] scsi: cxgb3i: remove redundant null check and kfree on skb
+Message-Id: <20170314104843.1358-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <907034da-34ae-9e5b-6e56-3a2feb4924da@users.sourceforge.net> <20170308135409.GB4828@yuval-lap>
-In-Reply-To: <20170308135409.GB4828@yuval-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yuval Shaia <yuval.shaia@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma <linux-rdma@vger.kernel.org>, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Mar 8, 2017 at 7:24 PM, Yuval Shaia <yuval.shaia@oracle.com> wrote:
-> On Wed, Mar 08, 2017 at 01:45:43PM +0100, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 7 Mar 2017 19:09:20 +0100
->>
->> Replace the specification of data structures by references for variables
->> as the parameter for the operator "sizeof" to make the corresponding size
->> determinations a bit safer according to the Linux coding style convention.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 13 +++++--------
->>  1 file changed, 5 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
->> index d5a3127b6df8..85bebb887c5c 100644
->> --- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
->> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
->> @@ -2901,9 +2901,8 @@ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
->>       struct pci_dev *pdev = dev->nic_info.pdev;
->>       struct ocrdma_mqe_sge *mqe_sge = cmd.u.nonemb_req.sge;
->>
->> -     memset(&cmd, 0, sizeof(struct ocrdma_mqe));
->> -     cmd.hdr.pyld_len = max_t (u32, sizeof(struct ocrdma_get_dcbx_cfg_rsp),
->> -                                     sizeof(struct ocrdma_get_dcbx_cfg_req));
->> +     memset(&cmd, 0, sizeof(cmd));
->> +     cmd.hdr.pyld_len = max_t(u32, sizeof(*rsp), sizeof(*req));
->>       req = dma_alloc_coherent(&pdev->dev, cmd.hdr.pyld_len, &pa, GFP_KERNEL);
->>       if (!req) {
->>               status = -ENOMEM;
->> @@ -2915,8 +2914,7 @@ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
->>       mqe_sge->pa_lo = (u32) (pa & 0xFFFFFFFFUL);
->>       mqe_sge->pa_hi = (u32) upper_32_bits(pa);
->>       mqe_sge->len = cmd.hdr.pyld_len;
->> -
->> -     memset(req, 0, sizeof(struct ocrdma_get_dcbx_cfg_req));
->> +     memset(req, 0, sizeof(*req));
->>       ocrdma_init_mch(&req->hdr, OCRDMA_CMD_GET_DCBX_CONFIG,
->>                       OCRDMA_SUBSYS_DCBX, cmd.hdr.pyld_len);
->>       req->param_type = ptype;
->> @@ -2926,9 +2924,8 @@ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
->>               goto mbx_err;
->>
->>       rsp = (struct ocrdma_get_dcbx_cfg_rsp *)req;
->> -     ocrdma_le32_to_cpu(rsp, sizeof(struct ocrdma_get_dcbx_cfg_rsp));
->> -     memcpy(dcbxcfg, &rsp->cfg, sizeof(struct ocrdma_dcbx_cfg));
->> -
->> +     ocrdma_le32_to_cpu(rsp, sizeof(*rsp));
->> +     memcpy(dcbxcfg, &rsp->cfg, sizeof(*dcbxcfg));
->>  mbx_err:
->>       dma_free_coherent(&pdev->dev, cmd.hdr.pyld_len, req, pa);
->>  mem_err:
->
-> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
->
->> --
->> 2.12.0
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On the error exit path, skb is always null, so the non-null check
+and __kfree_skb call are redundant.  Remove the redundant code and
+just directly return with the appropriate error return code.
+
+Detected by CoverityScan, CID#114328 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/cxgbi/cxgb3i/cxgb3i.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 1880eb6..3c9f8cf2 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -979,14 +979,14 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	csk->atid = cxgb3_alloc_atid(t3dev, &t3_client, csk);
+ 	if (csk->atid < 0) {
+ 		pr_err("NO atid available.\n");
+-		goto rel_resource;
++		return -EINVAL;
+ 	}
+ 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
+ 	cxgbi_sock_get(csk);
+ 
+ 	skb = alloc_wr(sizeof(struct cpl_act_open_req), 0, GFP_KERNEL);
+ 	if (!skb)
+-		goto rel_resource;
++		return -ENOMEM;
+ 	skb->sk = (struct sock *)csk;
+ 	set_arp_failure_handler(skb, act_open_arp_failure);
+ 	csk->snd_win = cxgb3i_snd_win;
+@@ -1007,11 +1007,6 @@ static int init_act_open(struct cxgbi_sock *csk)
+ 	cxgbi_sock_set_state(csk, CTP_ACTIVE_OPEN);
+ 	send_act_open_req(csk, skb, csk->l2t);
+ 	return 0;
+-
+-rel_resource:
+-	if (skb)
+-		__kfree_skb(skb);
+-	return -EINVAL;
+ }
+ 
+ cxgb3_cpl_handler_func cxgb3i_cpl_handlers[NUM_CPL_CMDS] = {
+-- 
+2.10.2
+
