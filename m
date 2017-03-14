@@ -1,43 +1,30 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Thu, 16 Mar 2017 15:19:53 +0000
-Subject: [PATCH 1/3] w1: Use kernel common min() implementation
-Message-Id: <20170316151955.10710-2-afd@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Mar 2017 07:55:01 +0000
+Subject: [PATCH] staging: atomisp: silence an array overflow warning
+Message-Id: <20170314075501.GB6022@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170316151955.10710-1-afd@ti.com>
-In-Reply-To: <20170316151955.10710-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/w1/w1_netlink.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Static checkers complain that we should check if "i" is in bounds
+before we check if "var8[i]" is a NUL char.  This bug is harmless but
+also easy to fix.
 
-diff --git a/drivers/w1/w1_netlink.c b/drivers/w1/w1_netlink.c
-index 49e520ca79c5..18374cad3ace 100644
---- a/drivers/w1/w1_netlink.c
-+++ b/drivers/w1/w1_netlink.c
-@@ -23,8 +23,6 @@
- 
- #if defined(CONFIG_W1_CON) && (defined(CONFIG_CONNECTOR) || (defined(CONFIG_CONNECTOR_MODULE) && defined(CONFIG_W1_MODULE)))
- 
--#define MIN(a, b)                   (((a) < (b)) ? (a) : (b))
--
- /* Bundle together everything required to process a request in one memory
-  * allocation.
-  */
-@@ -598,7 +596,7 @@ static void w1_cn_callback(struct cn_msg *cn, struct netlink_skb_parms *nsp)
- 				sizeof(struct w1_netlink_msg) +
- 				sizeof(struct w1_netlink_cmd));
- 		}
--		reply_size = MIN(CONNECTOR_MAX_MSG_SIZE, reply_size);
-+		reply_size = min(CONNECTOR_MAX_MSG_SIZE, reply_size);
- 
- 		/* allocate space for the block, a copy of the original message,
- 		 * one node per cmd to point into the original message,
--- 
-2.11.0
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
+index 65513cae93ce..1dd061f00cd9 100644
+--- a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
+@@ -669,7 +669,7 @@ int gmin_get_config_var(struct device *dev, const char *var, char *out, size_t *
+ 	/* Our variable names are ASCII by construction, but EFI names
+ 	 * are wide chars.  Convert and zero-pad. */
+ 	memset(var16, 0, sizeof(var16));
+-	for (i=0; var8[i] && i < sizeof(var8); i++)
++	for (i = 0; i < sizeof(var8) && var8[i]; i++)
+ 		var16[i] = var8[i];
+ 
+ 	/* To avoid owerflows when calling the efivar API */
