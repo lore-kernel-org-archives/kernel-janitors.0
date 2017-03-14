@@ -1,23 +1,47 @@
-From: Jens Axboe <axboe@fb.com>
-Date: Thu, 23 Mar 2017 14:16:35 +0000
-Subject: Re: [PATCH] block: make nr_iovecs unsigned in bio_alloc_bioset()
-Message-Id: <0a6f04c4-7006-397f-21ac-4e8b35363a8b@fb.com>
+From: Miguel Robles <miguel.robles@farole.net>
+Date: Tue, 14 Mar 2017 16:33:41 +0000
+Subject: [PATCH v2] Staging: iio: cdc: ad7152.c, use octal permissions instead of symbolic
+Message-Id: <1489509221-12547-1-git-send-email-miguel.robles@farole.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170323102455.GA20154@mwanda>
-In-Reply-To: <20170323102455.GA20154@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ming Lei <tom.leiming@gmail.com>, Mike Christie <mchristi@redhat.com>, Kent Overstreet <kent.overstreet@gmail.com>, Hannes Reinecke <hare@suse.com>, Chaitanya Kulkarni <chaitanya.kulkarni@hgst.com>, Mike Snitzer <snitzer@redhat.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Miguel Robles <miguel.robles@farole.net>
 
-On 03/23/2017 04:24 AM, Dan Carpenter wrote:
-> There isn't a bug here, but Smatch is not smart enough to know that
-> "nr_iovecs" can't be negative so it complains about underflows.
-> Really, it's slightly cleaner to make this parameter unsigned.
+Fix checkpatch warnings:
+Symbolic permissions are not preferred. Consider using octal permissions.
 
-Applied, thanks Dan.
+Signed-off-by: Miguel Robles <miguel.robles@farole.net>
+---
+Changes in v2:
+- Remove "[Patch]" from the subject.
 
+ drivers/staging/iio/cdc/ad7152.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
+index e8609b8..dd0c24c 100644
+--- a/drivers/staging/iio/cdc/ad7152.c
++++ b/drivers/staging/iio/cdc/ad7152.c
+@@ -155,13 +155,13 @@ static ssize_t ad7152_start_gain_calib(struct device *dev,
+ }
+ 
+ static IIO_DEVICE_ATTR(in_capacitance0_calibbias_calibration,
+-		       S_IWUSR, NULL, ad7152_start_offset_calib, 0);
++		       0200, NULL, ad7152_start_offset_calib, 0);
+ static IIO_DEVICE_ATTR(in_capacitance1_calibbias_calibration,
+-		       S_IWUSR, NULL, ad7152_start_offset_calib, 1);
++		       0200, NULL, ad7152_start_offset_calib, 1);
+ static IIO_DEVICE_ATTR(in_capacitance0_calibscale_calibration,
+-		       S_IWUSR, NULL, ad7152_start_gain_calib, 0);
++		       0200, NULL, ad7152_start_gain_calib, 0);
+ static IIO_DEVICE_ATTR(in_capacitance1_calibscale_calibration,
+-		       S_IWUSR, NULL, ad7152_start_gain_calib, 1);
++		       0200, NULL, ad7152_start_gain_calib, 1);
+ 
+ /* Values are Update Rate (Hz), Conversion Time (ms) + 1*/
+ static const unsigned char ad7152_filter_rate_table[][2] = {
 -- 
-Jens Axboe
+2.7.4
 
