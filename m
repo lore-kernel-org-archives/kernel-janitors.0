@@ -1,44 +1,50 @@
-From: Luca Coelho <luca@coelho.fi>
-Date: Thu, 23 Mar 2017 12:25:44 +0000
-Subject: Re: [PATCH] iwlwifi: mvm: writing zero bytes to debugfs causes a crash
-Message-Id: <1490271944.2700.63.camel@coelho.fi>
+From: Peter Rosin <peda@axentia.se>
+Date: Tue, 14 Mar 2017 16:49:58 +0000
+Subject: [PATCH] mux: core: fix error handling in devm_mux_chip_alloc
+Message-Id: <1489510198-10414-1-git-send-email-peda@axentia.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170323104000.GB20154@mwanda>
-In-Reply-To: <20170323104000.GB20154@mwanda>
+References: <8a1d806c-1626-0558-855b-02d7396baae4@axentia.se>
+In-Reply-To: <8a1d806c-1626-0558-855b-02d7396baae4@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Johannes Berg <johannes.berg@intel.com>, Golan Ben-Ami <golan.ben.ami@intel.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Sara Sharon <sara.sharon@intel.com>, Ido Yariv <ido@wizery.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2017-03-23 at 13:40 +0300, Dan Carpenter wrote:
-> This is a static analysis fix.  The warning is:
-> 
-> 	drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c:912 iwl_mvm_fw_dbg_collect()
-> 	warn: integer overflows 'sizeof(*desc) + len'
-> 
-> I guess this code is supposed to take a NUL character, but if we write
-> zero bytes then it tries to write -1 characters and crashes.
-> 
-> Fixes: c91b865cb14d ("iwlwifi: mvm: support description for user triggered fw dbg collection")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> index a260cd503200..077bfd8f4c0c 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> @@ -1056,6 +1056,8 @@ static ssize_t iwl_dbgfs_fw_dbg_collect_write(struct iwl_mvm *mvm,
->  
->  	if (ret)
->  		return ret;
-> +	if (count = 0)
-> +		return 0;
->  
->  	iwl_mvm_fw_dbg_collect(mvm, FW_DBG_TRIGGER_USER, buf,
->  			       (count - 1), NULL);
+The error handling is mixed up. mux_chip_alloc() doesn't return an error
+pointer (just NULL on failure), so check for NULL instead of using IS_ERR.
+devm_mux_chip_alloc is documented to return NULL on failure, so fix that
+as well.
 
-Thanks! I'm going to push this via our internal tree.
+All users of devm_mux_chip_alloc() are coded according to documentation.
 
---
-Cheers,
-Luca.
+Fixes: a11c524a6b90 ("mux: minimal mux subsystem and gpio-based mux controller")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/mux/mux-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mux/mux-core.c b/drivers/mux/mux-core.c
+index 900b88526f97..66a8bccfc3d7 100644
+--- a/drivers/mux/mux-core.c
++++ b/drivers/mux/mux-core.c
+@@ -166,12 +166,12 @@ struct mux_chip *devm_mux_chip_alloc(struct device *dev,
+ 
+ 	ptr = devres_alloc(devm_mux_chip_release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	mux_chip = mux_chip_alloc(dev, controllers, sizeof_priv);
+-	if (IS_ERR(mux_chip)) {
++	if (!mux_chip) {
+ 		devres_free(ptr);
+-		return mux_chip;
++		return NULL;
+ 	}
+ 
+ 	*ptr = mux_chip;
+-- 
+2.1.4
+
