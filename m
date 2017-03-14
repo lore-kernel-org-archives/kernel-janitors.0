@@ -1,35 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 20 Mar 2017 17:16:41 +0000
-Subject: Re: ipw2200: remove redundant check of rc < 0
-Message-Id: <20170320171641.6B24460C78@smtp.codeaurora.org>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 14 Mar 2017 02:07:45 +0000
+Subject: [PATCH 2/2 V2] staging: dgnc: remove useless switch-case statements
+Message-Id: <20170314020745.GA23033@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170227234019.19081-1-colin.king@canonical.com>
-In-Reply-To: <20170227234019.19081-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check for rc < 0 is always false so the check is redundant
-> and can be removed.
-> 
-> Detected with CoverityScan, CID#101143 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The dgnc_tty_send_break() has a switch-case condition for msec.
+It is no use except case -1.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+V2: The two patches in previous series are merged into one patch.
 
-889cdff72b85 ipw2200: remove redundant check of rc < 0
+ drivers/staging/dgnc/dgnc_tty.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index dc76e9f..854bd1d 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1790,16 +1790,8 @@ static int dgnc_tty_send_break(struct tty_struct *tty, int msec)
+ 	if (!bd || bd->magic != DGNC_BOARD_MAGIC)
+ 		return -EIO;
+ 
+-	switch (msec) {
+-	case -1:
++	if (msec < 0)
+ 		msec = 0xFFFF;
+-		break;
+-	case 0:
+-		msec = 0;
+-		break;
+-	default:
+-		break;
+-	}
+ 
+ 	spin_lock_irqsave(&ch->ch_lock, flags);
+ 
 -- 
-https://patchwork.kernel.org/patch/9594495/
-
-Documentation about submitting wireless patches and checking status
-from patchwork:
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+1.9.1
 
