@@ -1,28 +1,33 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Date: Thu, 23 Mar 2017 19:37:18 +0000
-Subject: Re: [PATCH] leds: mt6323: Fix an off by one bug in probe
-Message-Id: <af65e771-f0ae-193d-5ece-74e76489d726@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Mar 2017 07:56:30 +0000
+Subject: [PATCH] rtc: cpcap: kfreeing devm allocated memory
+Message-Id: <20170314075319.GB6111@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170323104049.GC20154@mwanda> <20170323111655.GA12792@amd>
-In-Reply-To: <20170323111655.GA12792@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Sebastian Reichel <sre@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, rtc-linux@googlegroups.com, kernel-janitors@vger.kernel.org
 
-On 03/23/2017 12:16 PM, Pavel Machek wrote:
-> On Thu 2017-03-23 13:40:49, Dan Carpenter wrote:
->> It should be ">= MT6323_MAX_LEDS" instead of ">".  Also "reg" is a u32
->> so it can't be negative and we can remove the test for negative values.
->>
->> Fixes: 216ec6cc4c19 ("leds: Add LED support for MT6323 PMIC")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+We shouldn't kfree(rtc) because is devm_ managed memory.  It leads to a
+double free.
 
-Applied, thanks.
+Fixes: dd3bf50b35e3 ("rtc: cpcap: new rtc driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Best regards,
-Jacek Anaszewski
+diff --git a/drivers/rtc/rtc-cpcap.c b/drivers/rtc/rtc-cpcap.c
+index 7c6a3c3167bd..5d163be98e9f 100644
+--- a/drivers/rtc/rtc-cpcap.c
++++ b/drivers/rtc/rtc-cpcap.c
+@@ -266,10 +266,8 @@ static int cpcap_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc_dev = devm_rtc_device_register(dev, "cpcap_rtc",
+ 						&cpcap_rtc_ops, THIS_MODULE);
+ 
+-	if (IS_ERR(rtc->rtc_dev)) {
+-		kfree(rtc);
++	if (IS_ERR(rtc->rtc_dev))
+ 		return PTR_ERR(rtc->rtc_dev);
+-	}
+ 
+ 	err = cpcap_get_vendor(dev, rtc->regmap, &rtc->vendor);
+ 	if (err)
