@@ -1,29 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Mar 2017 07:54:10 +0000
-Subject: [PATCH] drm: qxl: add missing return check
-Message-Id: <20170314075410.GB5984@mwanda>
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Tue, 14 Mar 2017 11:02:22 +0000
+Subject: Re: [PATCH] drm: qxl: add missing return check
+Message-Id: <1489489342.27633.3.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170314075410.GB5984@mwanda>
+In-Reply-To: <20170314075410.GB5984@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Airlie <airlied@redhat.com>, Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Cc: kernel-janitors@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Dave Airlie <airlied@redhat.com>, Gabriel Krisman Bertazi <krisman@collabora.co.uk>
 
-My static checker complains that "release" is uninitialized if
-qxl_alloc_release_reserved() fails, so let's add a check for that.
+On Di, 2017-03-14 at 10:54 +0300, Dan Carpenter wrote:
+> My static checker complains that "release" is uninitialized if
+> qxl_alloc_release_reserved() fails, so let's add a check for that.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+applied to drm-misc-next.
 
-diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index 9548bb58d3bc..058340a002c2 100644
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -572,6 +572,8 @@ static void qxl_cursor_atomic_update(struct drm_plane *plane,
- 	ret = qxl_alloc_release_reserved(qdev, sizeof(*cmd),
- 					 QXL_RELEASE_CURSOR_CMD,
- 					 &release, NULL);
-+	if (ret)
-+		return;
- 
- 	cmd = (struct qxl_cursor_cmd *) qxl_release_map(qdev, release);
- 
+thanks,
+  Gerd
+
