@@ -1,25 +1,56 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Wed, 15 Mar 2017 10:01:19 +0000
-Subject: Re: [PATCH] mux: core: fix error handling in devm_mux_chip_alloc
-Message-Id: <4c1e2c1d-39a4-50c2-d791-873b4bf6f522@axentia.se>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Mar 2017 07:50:10 +0000
+Subject: [bug report] net: sun: sungem: use new api ethtool_{get|set}_link_ksettings
+Message-Id: <20170314075010.GA6022@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8a1d806c-1626-0558-855b-02d7396baae4@axentia.se>
- <1489510198-10414-1-git-send-email-peda@axentia.se>
- <20170314181630.GF4187@mwanda>
-In-Reply-To: <20170314181630.GF4187@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 2017-03-14 19:16, Dan Carpenter wrote:
-> Looks good!
+Hello Philippe Reynes,
 
-Thanks, now pushed out to the for-next branch of
+This is a semi-automatic email about new static checker warnings.
 
-	https://gitlab.com/peda-linux/mux.git
+The patch 92552fdd557: "net: sun: sungem: use new api 
+ethtool_{get|set}_link_ksettings" from Mar 5, 2017, leads to the 
+following Smatch complaint:
 
-Cheers,
-peda
+drivers/net/ethernet/sun/sungem.c:1284 gem_begin_auto_negotiation()
+	 warn: variable dereferenced before check 'ep' (see line 1263)
 
+drivers/net/ethernet/sun/sungem.c
+  1262		ethtool_convert_link_mode_to_legacy_u32(&advertising,
+  1263							ep->link_modes.advertising);
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Patch adds new dereference.
+
+  1264	
+  1265		if (gp->phy_type != phy_mii_mdio0 &&
+  1266	     	    gp->phy_type != phy_mii_mdio1)
+  1267	     	    	goto non_mii;
+  1268	
+  1269		/* Setup advertise */
+  1270		if (found_mii_phy(gp))
+  1271			features = gp->phy_mii.def->features;
+  1272		else
+  1273			features = 0;
+  1274	
+  1275		advertise = features & ADVERTISE_MASK;
+  1276		if (gp->phy_mii.advertising != 0)
+  1277			advertise &= gp->phy_mii.advertising;
+  1278	
+  1279		autoneg = gp->want_autoneg;
+  1280		speed = gp->phy_mii.speed;
+  1281		duplex = gp->phy_mii.duplex;
+  1282	
+  1283		/* Setup link parameters */
+  1284		if (!ep)
+                    ^^^
+Old code assumed it could be NULL.
+
+  1285			goto start_aneg;
+  1286		if (ep->base.autoneg = AUTONEG_ENABLE) {
+
+regards,
+dan carpenter
