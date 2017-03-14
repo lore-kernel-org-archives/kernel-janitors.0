@@ -1,54 +1,44 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 25 Mar 2017 15:38:11 +0000
-Subject: Re: selinux: Move some assignments for the variable "rc" in policydb_read()
-Message-Id: <CAHC9VhSCq=Qqwh7z5mAhMNA6ELUa8nvNoX2cuXtuSJGCf1gThA@mail.gmail.com>
+From: Miguel Robles <miguel.robles@farole.net>
+Date: Tue, 14 Mar 2017 15:52:43 +0000
+Subject: [PATCH] [PATCH] Staging: iio: cdc: ad7152.c, use octal permissions instead of symbolic
+Message-Id: <1489506763-11364-1-git-send-email-miguel.robles@farole.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<7fdcfc8f-affa-fcf8-adaf-dc8fd9e1b472@users.sourceforge.net>
-	<CAHC9VhSfvsoWCD1DHFPYhnmWx_cmmapo6vjboS8e=6OZ8ca9gA@mail.gmail.com>
-	<eb71602a-3bb8-a643-5926-9d23aa2798ba@users.sourceforge.net>
-In-Reply-To: <eb71602a-3bb8-a643-5926-9d23aa2798ba@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: jic23@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Miguel Robles <miguel.robles@farole.net>
 
-On Fri, Mar 24, 2017 at 6:09 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> One local variable was set to an error code in some cases before
->>> a concrete error situation was detected. Thus move the corresponding
->>> assignments into if branches to indicate a software failure there.
->>>
->>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>> ---
->>>  security/selinux/ss/policydb.c | 59 +++++++++++++++++++++++++-----------------
->>>  1 file changed, 35 insertions(+), 24 deletions(-)
->>
->> More code churn with no real advantage.
->
-> There are different opinions about the mentioned implementation details.
->
->> I agree with the style you are using,
->
-> Thanks for such feedback.
->
->> and would support changing it if you are in the function fixing bugs
->> or doing other substantial changes in that code,
->
-> Is this expectation a contradiction for a desired patch granularity?
->
->> but I can't justify it as a standalone change, sorry.
->
-> This update suggestion seems to be not attractive enough for you at the moment
-> as another change step of my patch series.
-> Would you like to check if there are other effects worthwhile besides the proposed
-> coding style adjustment here?
+Fix checkpatch warnings:
+Symbolic permissions are not preferred. Consider using octal permissions.
 
-To be honest, I would just leave it alone for now.  If you want to
-contribute, focus on meaningful improvements such as bug fixing and/or
-new features; changing only the code style isn't very interesting or
-appealing, even if I happen to agree with your changes.
+Signed-off-by: Miguel Robles <miguel.robles@farole.net>
+---
+ drivers/staging/iio/cdc/ad7152.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
+index e8609b8..dd0c24c 100644
+--- a/drivers/staging/iio/cdc/ad7152.c
++++ b/drivers/staging/iio/cdc/ad7152.c
+@@ -155,13 +155,13 @@ static ssize_t ad7152_start_gain_calib(struct device *dev,
+ }
+ 
+ static IIO_DEVICE_ATTR(in_capacitance0_calibbias_calibration,
+-		       S_IWUSR, NULL, ad7152_start_offset_calib, 0);
++		       0200, NULL, ad7152_start_offset_calib, 0);
+ static IIO_DEVICE_ATTR(in_capacitance1_calibbias_calibration,
+-		       S_IWUSR, NULL, ad7152_start_offset_calib, 1);
++		       0200, NULL, ad7152_start_offset_calib, 1);
+ static IIO_DEVICE_ATTR(in_capacitance0_calibscale_calibration,
+-		       S_IWUSR, NULL, ad7152_start_gain_calib, 0);
++		       0200, NULL, ad7152_start_gain_calib, 0);
+ static IIO_DEVICE_ATTR(in_capacitance1_calibscale_calibration,
+-		       S_IWUSR, NULL, ad7152_start_gain_calib, 1);
++		       0200, NULL, ad7152_start_gain_calib, 1);
+ 
+ /* Values are Update Rate (Hz), Conversion Time (ms) + 1*/
+ static const unsigned char ad7152_filter_rate_table[][2] = {
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
