@@ -1,23 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 22 Mar 2017 19:46:29 +0000
-Subject: Re: [patch -next] net: dwc-xlgmac: fix an error code in xlgmac_alloc_pages()
-Message-Id: <20170322.124629.675577955142901395.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Mar 2017 07:54:10 +0000
+Subject: [PATCH] drm: qxl: add missing return check
+Message-Id: <20170314075410.GB5984@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170321204227.GB22118@mwanda>
-In-Reply-To: <20170321204227.GB22118@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiedeng@synopsys.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Cc: kernel-janitors@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Mar 2017 23:42:27 +0300
+My static checker complains that "release" is uninitialized if
+qxl_alloc_release_reserved() fails, so let's add a check for that.
 
-> The dma_mapping_error() returns true if there is an error but we want
-> to return -ENOMEM and not 1.
-> 
-> Fixes: 65e0ace2c5cd ("net: dwc-xlgmac: Initial driver for DesignWare Enterprise Ethernet")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index 9548bb58d3bc..058340a002c2 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -572,6 +572,8 @@ static void qxl_cursor_atomic_update(struct drm_plane *plane,
+ 	ret = qxl_alloc_release_reserved(qdev, sizeof(*cmd),
+ 					 QXL_RELEASE_CURSOR_CMD,
+ 					 &release, NULL);
++	if (ret)
++		return;
+ 
+ 	cmd = (struct qxl_cursor_cmd *) qxl_release_map(qdev, release);
+ 
