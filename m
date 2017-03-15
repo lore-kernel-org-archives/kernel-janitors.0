@@ -1,97 +1,39 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:37:20 +0000
-Subject: Re: [PATCH 38/46] selinux: One function call less in five functions after null pointer detection
-Message-Id: <CAHC9VhQaCFirdVRBnd9UsbHZzdmfrEc5ZtzzSvru7uXqCeLL8Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Mar 2017 16:36:41 +0000
+Subject: [PATCH] ath10k: remove redundant check of len with buf_len
+Message-Id: <20170315163641.17052-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
-In-Reply-To: <b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:38 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 11:28:02 +0100
->
-> Call the function "kfree" at the end only after it was determined
-> that the passed parameter contained a non-null pointer.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index faa6ecc2450d..88730b372277 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -620,8 +620,8 @@ static int common_destroy(void *key, void *datum, void *p)
->                 comdatum = datum;
->                 hashtab_map(comdatum->permissions.table, perm_destroy, NULL);
->                 hashtab_destroy(comdatum->permissions.table);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm dropping this patch because it really doesn't do much other than
-add some code churn.  I suppose you can argue it removes one
-conditional if datum is NULL, but that is such a corner case I'm not
-worried about it.
+The check of len > buf_len is redundant as len is initialized
+to 0 and buf_len to 4096, so this comparison is always false.
+Remove it.
 
-If I were to merge this, I would probably expect "kfree(datum)" to be
-converted to "kfree(comdatum)" (and similar in the cases below).
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath10k/debug.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> @@ -675,8 +675,8 @@ static int cls_destroy(void *key, void *datum, void *p)
->                         kfree(ctemp);
->                 }
->                 kfree(cladatum->comkey);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
-> @@ -689,8 +689,8 @@ static int role_destroy(void *key, void *datum, void *p)
->                 role = datum;
->                 ebitmap_destroy(&role->dominates);
->                 ebitmap_destroy(&role->types);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
-> @@ -712,8 +712,8 @@ static int user_destroy(void *key, void *datum, void *p)
->                 ebitmap_destroy(&usrdatum->range.level[0].cat);
->                 ebitmap_destroy(&usrdatum->range.level[1].cat);
->                 ebitmap_destroy(&usrdatum->dfltlevel.cat);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
-> @@ -726,8 +726,8 @@ static int sens_destroy(void *key, void *datum, void *p)
->                 levdatum = datum;
->                 ebitmap_destroy(&levdatum->level->cat);
->                 kfree(levdatum->level);
-> +               kfree(datum);
->         }
-> -       kfree(datum);
->         return 0;
->  }
->
-> --
-> 2.11.0
->
-
-
-
+diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
+index fb0ade3..b499a09 100644
+--- a/drivers/net/wireless/ath/ath10k/debug.c
++++ b/drivers/net/wireless/ath/ath10k/debug.c
+@@ -249,9 +249,6 @@ static ssize_t ath10k_read_wmi_services(struct file *file,
+ 
+ 	mutex_lock(&ar->conf_mutex);
+ 
+-	if (len > buf_len)
+-		len = buf_len;
+-
+ 	spin_lock_bh(&ar->data_lock);
+ 	for (i = 0; i < WMI_SERVICE_MAX; i++) {
+ 		enabled = test_bit(i, ar->wmi.svc_map);
 -- 
-paul moore
-www.paul-moore.com
+2.10.2
+
