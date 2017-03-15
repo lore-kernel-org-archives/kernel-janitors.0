@@ -1,53 +1,33 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:21:12 +0000
-Subject: Re: [PATCH 29/46] selinux: Return directly after a failed kzalloc() in type_read()
-Message-Id: <CAHC9VhSGZYkLBQV1Ojwt8cfXQfb=M9NLgDwRJUcszc1M5DGz6A@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:12 +0000
+Subject: [PATCH 04/14] iio: dac: mcp4725: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-4-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<3719abdd-0551-c567-31f0-94693a83d683@users.sourceforge.net>
-In-Reply-To: <3719abdd-0551-c567-31f0-94693a83d683@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:29 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 22:15:54 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Merged, thanks.
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/iio/dac/mcp4725.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 1c046d39e2a7..662139365449 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1467,10 +1467,9 @@ static int type_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[4];
->         u32 len;
->
-> -       rc = -ENOMEM;
->         typdatum = kzalloc(sizeof(*typdatum), GFP_KERNEL);
->         if (!typdatum)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
->                 to_read = 4;
-> --
-> 2.11.0
->
-
-
-
+diff --git a/drivers/iio/dac/mcp4725.c b/drivers/iio/dac/mcp4725.c
+index db109f0cdd8c..3da207cf9020 100644
+--- a/drivers/iio/dac/mcp4725.c
++++ b/drivers/iio/dac/mcp4725.c
+@@ -473,7 +473,7 @@ static int mcp4725_probe(struct i2c_client *client,
+ 		goto err_disable_vref_reg;
+ 	}
+ 	pd = (inbuf[0] >> 1) & 0x3;
+-	data->powerdown = pd > 0 ? true : false;
++	data->powerdown = pd > 0;
+ 	data->powerdown_mode = pd ? pd - 1 : 2; /* largest resistor to gnd */
+ 	data->dac_value = (inbuf[1] << 4) | (inbuf[2] >> 4);
+ 	if (data->id = MCP4726)
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
