@@ -1,29 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Mar 2017 07:56:44 +0000
-Subject: [PATCH] staging: atomicsp: fix a loop timeout
-Message-Id: <20170314075644.GB6274@mwanda>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:13 +0000
+Subject: [PATCH 05/14] IB/ocrdma: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-5-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-It's a post-op loop so we timeout with "max_wait" set to -1, not 0.
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-index 46cdb0f3f993..49f6d18a068b 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-@@ -418,7 +418,7 @@ void punit_ddr_dvfs_enable(bool enable)
- 		}
- 	}
- 
--	if (max_wait = 0)
-+	if (max_wait = -1)
- 		pr_info("DDR DVFS, door bell is not cleared within 3ms\n");
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index bc9fb144e57b..dc00924f8a3c 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -463,7 +463,7 @@ static struct ocrdma_pd *_ocrdma_alloc_pd(struct ocrdma_dev *dev,
+ static inline int is_ucontext_pd(struct ocrdma_ucontext *uctx,
+ 				 struct ocrdma_pd *pd)
+ {
+-	return (uctx->cntxt_pd = pd ? true : false);
++	return (uctx->cntxt_pd = pd);
  }
  
+ static int _ocrdma_dealloc_pd(struct ocrdma_dev *dev,
+-- 
+2.11.0
+
