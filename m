@@ -1,64 +1,48 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:40:58 +0000
-Subject: Re: [PATCH 41/46] selinux: Move two assignments for the variable "rc" in roles_init()
-Message-Id: <CAHC9VhQEWP=+wM1tXrXaWW0rfzB1Kh5JMJUGksM+ahZQNuevmg@mail.gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 15 Mar 2017 05:55:29 +0000
+Subject: [PATCH 2/4] staging: atomisp: fix inconsistent indenting
+Message-Id: <20170315055529.GA8583@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
-In-Reply-To: <aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:41 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 12:40:35 +0100
->
-> One local variable was set to an error code in two cases before
-> a concrete error situation was detected. Thus move the corresponding
-> assignments into if branches to indicate a software failure there.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+Fix warnings from the smatch tool
 
-Dropped for reasons previously discussed.
+atomisp_cmd.c:5698
+   atomisp_set_fmt_to_snr() warn: inconsistent indenting
+atomisp_cmd.c:5714
+   atomisp_set_fmt_to_snr() warn: inconsistent indenting
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index ccc146bfd4c2..be445abf047b 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -182,15 +182,17 @@ static int roles_init(struct policydb *p)
->         if (!role)
->                 return -ENOMEM;
->
-> -       rc = -EINVAL;
->         role->value = ++p->p_roles.nprim;
-> -       if (role->value != OBJECT_R_VAL)
-> +       if (role->value != OBJECT_R_VAL) {
-> +               rc = -EINVAL;
->                 goto out;
-> +       }
->
-> -       rc = -ENOMEM;
->         key = kstrdup(OBJECT_R, GFP_KERNEL);
-> -       if (!key)
-> +       if (!key) {
-> +               rc = -ENOMEM;
->                 goto out;
-> +       }
->
->         rc = hashtab_insert(p->p_roles.table, key, role);
->         if (rc)
-> --
-> 2.11.0
->
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 9c3ba11..6160119 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -5693,7 +5693,7 @@ static int atomisp_set_fmt_to_snr(struct video_device *vdev,
+ 	/* Disable dvs if resolution can't be supported by sensor */
+ 	if (asd->params.video_dis_en &&
+ 	    source_pad = ATOMISP_SUBDEV_PAD_SOURCE_VIDEO) {
+-	    vformat.which = V4L2_SUBDEV_FORMAT_TRY;
++		vformat.which = V4L2_SUBDEV_FORMAT_TRY;
+ 		ret = v4l2_subdev_call(isp->inputs[asd->input_curr].camera,
+ 			pad, set_fmt, &pad_cfg, &vformat);
+ 		if (ret)
+@@ -5710,7 +5710,7 @@ static int atomisp_set_fmt_to_snr(struct video_device *vdev,
+ 	}
+ 	dev_dbg(isp->dev, "sensor width: %d, height: %d\n",
+ 		ffmt->width, ffmt->height);
+-    vformat.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++	vformat.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+ 	ret = v4l2_subdev_call(isp->inputs[asd->input_curr].camera, pad,
+ 			       set_fmt, NULL, &vformat);
+ 	if (ret)
 -- 
-paul moore
-www.paul-moore.com
+1.9.1
+
