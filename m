@@ -1,54 +1,43 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Sat, 04 Mar 2017 17:42:45 +0000
-Subject: Re: [PATCH] scsi: lpfc: don't dereference dma_buf->iocbq before null check
-Message-Id: <c7423fa3-299b-c010-bf4e-c34a11c146d3@broadcom.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 15 Mar 2017 05:55:06 +0000
+Subject: [PATCH 1/4] staging: atomisp: fix unsigned int comparison with less than zero
+Message-Id: <20170315055506.GA8565@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170224140914.6011-1-colin.king@canonical.com>
-In-Reply-To: <20170224140914.6011-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Looks good. I included it in the lpfc patch set just posted.
+Fix warnings from the smatch tool
 
--- james
+atomisp_cmd.c:2649
+  atomisp_set_array_res() warn:
+  unsigned 'config->width' is never less than zero.
 
+atomisp_cmd.c:2650
+  atomisp_set_array_res() warn:
+  unsigned 'config->height' is never less than zero.
 
-On 2/24/2017 6:09 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> dma_buf->iocbq is being dereferenced immediately before it is
-> being null checked, so we have a potential null pointer dereference
-> bug.  Fix this by only dereferencing it only once we have passed
-> a null check on the pointer.
->
-> Detected by CoverityScan, CID#1411652 ("Dereference before null check")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/scsi/lpfc/lpfc_mem.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
-> index c61d8d6..5986c79 100644
-> --- a/drivers/scsi/lpfc/lpfc_mem.c
-> +++ b/drivers/scsi/lpfc/lpfc_mem.c
-> @@ -646,7 +646,6 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
->   	}
->   
->   	dma_buf->iocbq = lpfc_sli_get_iocbq(phba);
-> -	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
->   	if (!dma_buf->iocbq) {
->   		kfree(dma_buf->context);
->   		pci_pool_free(phba->lpfc_drb_pool, dma_buf->dbuf.virt,
-> @@ -658,6 +657,7 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
->   				"2621 Ran out of nvmet iocb/WQEs\n");
->   		return NULL;
->   	}
-> +	dma_buf->iocbq->iocb_flag = LPFC_IO_NVMET;
->   	nvmewqe = dma_buf->iocbq;
->   	wqe = (union lpfc_wqe128 *)&nvmewqe->wqe;
->   	/* Initialize WQE */
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 1ee99d0..9c3ba11 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -2646,8 +2646,7 @@ int atomisp_set_array_res(struct atomisp_sub_device *asd,
+ 			 struct atomisp_resolution  *config)
+ {
+ 	dev_dbg(asd->isp->dev, ">%s start\n", __func__);
+-	if (config = NULL || config->width < 0
+-		|| config->height < 0) {
++	if (!config) {
+ 		dev_err(asd->isp->dev, "Set sensor array size is not valid\n");
+ 		return -EINVAL;
+ 	}
+-- 
+1.9.1
 
