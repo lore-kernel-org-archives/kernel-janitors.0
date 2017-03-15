@@ -1,42 +1,34 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 21 Mar 2017 02:10:02 +0000
-Subject: [PATCH 1/4 V2] staging: atomisp: remove else statement after return
-Message-Id: <20170321021002.GA1115@SEL-JYOUN-D1>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:15 +0000
+Subject: [PATCH 07/14] mtd: nand: qcom: remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-7-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, singhalsimran0@gmail.com, dan.carpenter@oracle.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-It doesn't need to have else statement after return.
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
-V2: one(2/4) of this series was updated so I tried to send them again.
+ drivers/mtd/nand/qcom_nandc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index d97a8df..8bdb224 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -2958,11 +2958,11 @@ int atomisp_get_metadata(struct atomisp_sub_device *asd, int flag,
- 		dev_err(isp->dev, "copy to user failed: copied %d bytes\n",
- 			ret);
- 		return -EFAULT;
--	} else {
--		list_del_init(&md_buf->list);
--		list_add_tail(&md_buf->list, &asd->metadata[md_type]);
- 	}
+diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+index 57d483ac5765..d1cec4311dde 100644
+--- a/drivers/mtd/nand/qcom_nandc.c
++++ b/drivers/mtd/nand/qcom_nandc.c
+@@ -1037,8 +1037,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
  
-+	list_del_init(&md_buf->list);
-+	list_add_tail(&md_buf->list, &asd->metadata[md_type]);
-+
- 	dev_dbg(isp->dev, "%s: HAL de-queued metadata type %d with exp_id %d\n",
- 		__func__, md_type, md->exp_id);
- 	return 0;
+ 			/* ignore erased codeword errors */
+ 			if (host->bch_enabled) {
+-				erased = (erased_cw & ERASED_CW) = ERASED_CW ?
+-					 true : false;
++				erased = (erased_cw & ERASED_CW) = ERASED_CW;
+ 			} else {
+ 				erased = erased_chunk_check_and_fixup(data_buf,
+ 								      data_len);
 -- 
-1.9.1
+2.11.0
 
