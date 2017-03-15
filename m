@@ -1,65 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 20 Mar 2017 12:03:03 +0000
-Subject: [PATCH] i40evf: dereference vsi after vsi has been null checked
-Message-Id: <20170320120303.32284-1-colin.king@canonical.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:10 +0000
+Subject: [PATCH 02/14] drm/nouveau: remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-2-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-vsi is being dereferenced before the vsi null check; if vsi is
-null we end up with a null pointer dereference.  Fix this by
-performing vsi deference after the vsi null check.  Also remove
-the need for using adapter by using vsi->back->cinst.
-
-Detected by CoverityScan, CID#1419696, CID#1419697
-("Dereference before null check")
-
-Fixes: ed0e894de7c133 ("i40evf: add client interface")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/net/ethernet/intel/i40evf/i40evf_client.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_ttm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_client.c b/drivers/net/ethernet/intel/i40evf/i40evf_client.c
-index 5b43e5b6e2eb..a579b2a5bd37 100644
---- a/drivers/net/ethernet/intel/i40evf/i40evf_client.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_client.c
-@@ -34,12 +34,12 @@ static struct i40e_ops i40evf_lan_ops = {
-  **/
- void i40evf_notify_client_message(struct i40e_vsi *vsi, u8 *msg, u16 len)
- {
--	struct i40evf_adapter *adapter = vsi->back;
--	struct i40e_client_instance *cinst = adapter->cinst;
-+	struct i40e_client_instance *cinst;
- 
- 	if (!vsi)
- 		return;
- 
-+	cinst = vsi->back->cinst;
- 	if (!cinst || !cinst->client || !cinst->client->ops ||
- 	    !cinst->client->ops->virtchnl_receive) {
- 		dev_dbg(&vsi->back->pdev->dev,
-@@ -58,12 +58,13 @@ void i40evf_notify_client_message(struct i40e_vsi *vsi, u8 *msg, u16 len)
-  **/
- void i40evf_notify_client_l2_params(struct i40e_vsi *vsi)
- {
--	struct i40evf_adapter *adapter = vsi->back;
--	struct i40e_client_instance *cinst = adapter->cinst;
-+	struct i40e_client_instance *cinst;
- 	struct i40e_params params;
- 
- 	if (!vsi)
- 		return;
-+
-+	cinst = vsi->back->cinst;
- 	memset(&params, 0, sizeof(params));
- 	params.mtu = vsi->netdev->mtu;
- 	params.link_up = vsi->back->link_up;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+index 13e5cc5f07fe..0e24c4bb38e8 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+@@ -389,7 +389,7 @@ nouveau_ttm_init(struct nouveau_drm *drm)
+ 				  &nouveau_bo_driver,
+ 				  dev->anon_inode->i_mapping,
+ 				  DRM_FILE_PAGE_OFFSET,
+-				  bits <= 32 ? true : false);
++				  bits <= 32);
+ 	if (ret) {
+ 		NV_ERROR(drm, "error initialising bo driver, %d\n", ret);
+ 		return ret;
 -- 
 2.11.0
 
