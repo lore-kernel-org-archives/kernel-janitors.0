@@ -1,78 +1,34 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 28 Mar 2017 12:52:14 +0000
-Subject: Re: [PATCH] usb: gadget: pch_udc: don't update td->next after it has been released to the pool
-Message-Id: <aa97a9ea-ea55-4c22-8e2f-5929039afaeb@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 15 Mar 2017 21:03:43 +0000
+Subject: Re: [PATCH v3 0/7] Remove unneeded build directory traversals
+Message-Id: <CAK8P3a1XBUUtJHrzfTa3GRqh+beU+1MteQ0evB8Vvy5zABRbmw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170328122850.18819-1-colin.king@canonical.com>
- <878tnph8dy.fsf@linux.intel.com>
-In-Reply-To: <878tnph8dy.fsf@linux.intel.com>
+References: <20170315163730.17055-1-afd@ti.com>
+In-Reply-To: <20170315163730.17055-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Michal Nazarewicz <mina86@mina86.com>, "Gustavo A . R . Silva" <garsilva@embeddedor.com>, Iago Abal <mail@iagoabal.eu>, Romain Perier <romain.perier@collabora.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org
 
-On 28/03/17 13:51, Felipe Balbi wrote:
-> 
-> Hi,
-> 
-> Colin King <colin.king@canonical.com> writes:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Writing to td->next should be avoided after td has been freed using
->> dma_pool_free. The intent was to nullify the next pointer, but this
->> is potentially dangerous once it is back in the pool. Remove it.
->>
->> Detected by CoverityScan, CID#1091173 ("Write tp pointer after free")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/usb/gadget/udc/pch_udc.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/usb/gadget/udc/pch_udc.c b/drivers/usb/gadget/udc/pch_udc.c
->> index 84dcbcd756f0..08bbe2c24134 100644
->> --- a/drivers/usb/gadget/udc/pch_udc.c
->> +++ b/drivers/usb/gadget/udc/pch_udc.c
->> @@ -1523,7 +1523,6 @@ static void pch_udc_free_dma_chain(struct pch_udc_dev *dev,
->>  		td = phys_to_virt(addr);
->>  		addr2 = (dma_addr_t)td->next;
->>  		dma_pool_free(dev->data_requests, td, addr);
->> -		td->next = 0x00;
-> 
-> I already have a patch for this, thanks
+On Wed, Mar 15, 2017 at 5:37 PM, Andrew F. Davis <afd@ti.com> wrote:
+> Hello all,
+>
+> I was building a kernel for x86 and noticed Make still descended into
+> directories like drivers/gpu/drm/hisilicon, this seems kind of odd given
+> nothing will be built here. It looks to be due to some directories being
+> included in obj-y unconditionally instead of only when the relevant
+> CONFIG_ is set.
+>
+> These patches are split by subsystem in-case, for some reason, a file in
+> a directory does need to be built, I believe I have checked for all
+> instances of this, but a quick review from some maintainers would be nice.
 
-Ah, I somehow overlooked that. Good to see it is fixed.
+I didn't see anything wrong with the patches, and made sure that there
+are no tristate symbols controlling the subdirectory for anything that
+requires a built-in driver (which would cause a link failure).
 
-Colin
+I'm not sure about drivers/lguest, which has some special magic
+in its Makefile, it's possible that this now fails with CONFIG_LGUEST=m.
 
-> 
-> 1f459262b0e1649a1e5ad12fa4c66eb76c2220ce
-> Author:     Gustavo A. R. Silva <garsilva@embeddedor.com>
-> AuthorDate: Fri Mar 10 15:39:32 2017 -0600
-> Commit:     Felipe Balbi <felipe.balbi@linux.intel.com>
-> CommitDate: Wed Mar 22 11:21:10 2017 +0200
-> 
-> usb: gadget: udc: remove pointer dereference after free
-> 
-> Remove pointer dereference after free.
-> 
-> Addresses-Coverity-ID: 1091173
-> Acked-by: Michal Nazarewicz <mina86@mina86.com>
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-> 
-> 1 file changed, 1 deletion(-)
-> drivers/usb/gadget/udc/pch_udc.c | 1 -
-> 
-> modified   drivers/usb/gadget/udc/pch_udc.c
-> @@ -1523,7 +1523,6 @@ static void pch_udc_free_dma_chain(struct pch_udc_dev *dev,
->  		td = phys_to_virt(addr);
->  		addr2 = (dma_addr_t)td->next;
->  		pci_pool_free(dev->data_requests, td, addr);
-> -		td->next = 0x00;
->  		addr = addr2;
->  	}
->  	req->chain_len = 1;
-> 
-
+      Arnd
