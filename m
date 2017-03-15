@@ -1,71 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 13 Mar 2017 16:57:49 +0000
-Subject: Applied "ASoC: cs35l35: returning uninitialized in probe()" to the asoc tree
-Message-Id: <E1cnTI5-00050Z-FK@debutante>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:18 +0000
+Subject: [PATCH 10/14] thermal: devfreq_cooling: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-10-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170313123237.GA9287@mwanda>
-In-Reply-To: <20170313123237.GA9287@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>, Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Paul Handrigan <Paul.Handrigan@cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>alsa-devel@alsa-project.org
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-   ASoC: cs35l35: returning uninitialized in probe()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bfe41c678d49f440de3ae80b945f7f94d5dbd340 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Mar 2017 15:32:37 +0300
-Subject: [PATCH] ASoC: cs35l35: returning uninitialized in probe()
-
-If cs35l35->pdata.stereo is false then "ret" isn't initialized.
-
-Fixes: 6387f866a2cc ("ASoC: Add support for Cirrus Logic CS35L35 Amplifier")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Paul Handrigan <Paul.Handrigan@cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- sound/soc/codecs/cs35l35.c | 2 +-
+ drivers/thermal/devfreq_cooling.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs35l35.c b/sound/soc/codecs/cs35l35.c
-index 6a266516f543..05117fca7e3c 100644
---- a/sound/soc/codecs/cs35l35.c
-+++ b/sound/soc/codecs/cs35l35.c
-@@ -969,7 +969,7 @@ static int cs35l35_codec_probe(struct snd_soc_codec *codec)
- 		}
- 	}
+diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_cooling.c
+index 7743a78d4723..b72e2ccc8e40 100644
+--- a/drivers/thermal/devfreq_cooling.c
++++ b/drivers/thermal/devfreq_cooling.c
+@@ -75,7 +75,7 @@ static int partition_enable_opps(struct devfreq_cooling_device *dfc,
+ 		struct dev_pm_opp *opp;
+ 		int ret = 0;
+ 		unsigned int freq = dfc->freq_table[i];
+-		bool want_enable = i >= cdev_state ? true : false;
++		bool want_enable = i >= cdev_state;
  
--	return ret;
-+	return 0;
- }
+ 		opp = dev_pm_opp_find_freq_exact(dev, freq, !want_enable);
  
- static struct snd_soc_codec_driver soc_codec_dev_cs35l35 = {
 -- 
 2.11.0
 
