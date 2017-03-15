@@ -1,50 +1,32 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 27 Mar 2017 08:52:20 +0000
-Subject: [PATCH] staging: atomisp: fix an issue timeout value for checking error
-Message-Id: <20170327085220.GA26407@SEL-JYOUN-D1>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:19 +0000
+Subject: [PATCH 11/14] [SCSI] Buslogic: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-11-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The timeout variable could be zero even if the bits has expected result.
-The checking expected bits again would be better instead whether
-the timeout value is zero or not.
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/BusLogic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index 94bc793..f2e5749 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -220,11 +220,11 @@ static int write_target_freq_to_hw(struct atomisp_device *isp,
- 			timeout--;
- 		}
- 
--		if (timeout != 0)
-+		if (!(isp_sspm1 & ISP_FREQ_VALID_MASK))
- 			break;
+diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+index c7be7bb37209..fe2b4bfc8be2 100644
+--- a/drivers/scsi/BusLogic.c
++++ b/drivers/scsi/BusLogic.c
+@@ -2241,7 +2241,7 @@ static bool __init blogic_inquiry(struct blogic_adapter *adapter)
+ 					"INQUIRE INSTALLED DEVICES ID 0 TO 7");
+ 		for (tgt_id = 0; tgt_id < 8; tgt_id++)
+ 			adapter->tgt_flags[tgt_id].tgt_exists -				(installed_devs0to7[tgt_id] != 0 ? true : false);
++				(installed_devs0to7[tgt_id] != 0);
  	}
- 
--	if (timeout = 0) {
-+	if (isp_sspm1 & ISP_FREQ_VALID_MASK) {
- 		dev_err(isp->dev, "DFS failed due to HW error.\n");
- 		return -EINVAL;
- 	}
-@@ -238,7 +238,7 @@ static int write_target_freq_to_hw(struct atomisp_device *isp,
- 		udelay(100);
- 		timeout--;
- 	}
--	if (timeout = 0) {
-+	if ((isp_sspm1 >> ISP_FREQ_STAT_OFFSET) != ratio) {
- 		dev_err(isp->dev, "DFS target freq is rejected by HW.\n");
- 		return -EINVAL;
- 	}
+ 	/*
+ 	   Issue the Inquire Setup Information command.
 -- 
-1.9.1
+2.11.0
 
