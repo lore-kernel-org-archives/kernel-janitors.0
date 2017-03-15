@@ -1,46 +1,33 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 14 Mar 2017 02:07:45 +0000
-Subject: [PATCH 2/2 V2] staging: dgnc: remove useless switch-case statements
-Message-Id: <20170314020745.GA23033@SEL-JYOUN-D1>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:22 +0000
+Subject: [PATCH 14/14] ath5k: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-14-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The dgnc_tty_send_break() has a switch-case condition for msec.
-It is no use except case -1.
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
-V2: The two patches in previous series are merged into one patch.
+ drivers/net/wireless/ath/ath5k/ani.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/staging/dgnc/dgnc_tty.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index dc76e9f..854bd1d 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1790,16 +1790,8 @@ static int dgnc_tty_send_break(struct tty_struct *tty, int msec)
- 	if (!bd || bd->magic != DGNC_BOARD_MAGIC)
- 		return -EIO;
+diff --git a/drivers/net/wireless/ath/ath5k/ani.c b/drivers/net/wireless/ath/ath5k/ani.c
+index 0624333f5430..850c608b43a3 100644
+--- a/drivers/net/wireless/ath/ath5k/ani.c
++++ b/drivers/net/wireless/ath/ath5k/ani.c
+@@ -501,7 +501,7 @@ ath5k_ani_calibration(struct ath5k_hw *ah)
  
--	switch (msec) {
--	case -1:
-+	if (msec < 0)
- 		msec = 0xFFFF;
--		break;
--	case 0:
--		msec = 0;
--		break;
--	default:
--		break;
--	}
- 
- 	spin_lock_irqsave(&ch->ch_lock, flags);
+ 	if (as->ofdm_errors > ofdm_high || as->cck_errors > cck_high) {
+ 		/* too many PHY errors - we have to raise immunity */
+-		bool ofdm_flag = as->ofdm_errors > ofdm_high ? true : false;
++		bool ofdm_flag = as->ofdm_errors > ofdm_high;
+ 		ath5k_ani_raise_immunity(ah, as, ofdm_flag);
+ 		ath5k_ani_period_restart(as);
  
 -- 
-1.9.1
+2.11.0
 
