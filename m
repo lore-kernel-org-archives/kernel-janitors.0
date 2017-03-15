@@ -1,47 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 22 Mar 2017 16:32:01 +0000
-Subject: [PATCH] [media] usb: au0828: remove redundant code
-Message-Id: <20170322163201.30886-1-colin.king@canonical.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:16 +0000
+Subject: [PATCH 08/14] atl1c: remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-8-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hans.verkuil@cisco.com>, Shuah Khan <shuah@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-The check for ret being non-zero is false as ret is always
-zero, hence we have redundant dead code that can be removed.
-
-Detected with CoverityScan, CID#112968 ("Constant' variable guards
-dead code (DEADCODE)'")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/media/usb/au0828/au0828-video.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index 16f9125a985a..2a255bd32bb3 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -809,16 +809,9 @@ static void au0828_analog_stream_reset(struct au0828_dev *dev)
-  */
- static int au0828_stream_interrupt(struct au0828_dev *dev)
- {
--	int ret = 0;
--
- 	dev->stream_state = STREAM_INTERRUPT;
- 	if (test_bit(DEV_DISCONNECTED, &dev->dev_state))
- 		return -ENODEV;
--	else if (ret) {
--		set_bit(DEV_MISCONFIGURED, &dev->dev_state);
--		dprintk(1, "%s device is misconfigured!\n", __func__);
--		return ret;
--	}
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+index 7e913d8331c3..5c507b87bc2e 100644
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+@@ -1201,7 +1201,7 @@ static void atl1c_start_mac(struct atl1c_adapter *adapter)
+ 	struct atl1c_hw *hw = &adapter->hw;
+ 	u32 mac, txq, rxq;
+ 
+-	hw->mac_duplex = adapter->link_duplex = FULL_DUPLEX ? true : false;
++	hw->mac_duplex = adapter->link_duplex = FULL_DUPLEX;
+ 	hw->mac_speed = adapter->link_speed = SPEED_1000 ?
+ 		atl1c_mac_speed_1000 : atl1c_mac_speed_10_100;
  
 -- 
 2.11.0
