@@ -1,53 +1,33 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:25:50 +0000
-Subject: Re: [PATCH 32/46] selinux: Return directly after a failed kzalloc() in class_read()
-Message-Id: <CAHC9VhSKbHq=2Btj3Z1boNjPvugRARGmf0pOYwn_vBCgP_W5pw@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Wed, 15 Mar 2017 16:23:11 +0000
+Subject: [PATCH 03/14] drm/vmwgfx: Remove unneeded conversions to bool
+Message-Id: <20170315162322.12096-3-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<6ceee0fa-a0ab-fe42-4213-f7985031ddfa@users.sourceforge.net>
-In-Reply-To: <6ceee0fa-a0ab-fe42-4213-f7985031ddfa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:32 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 22:30:51 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Found with scripts/coccinelle/misc/boolconv.cocci.
 
-Merged, thanks.
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 49fc5d8990e9..3af2b0849495 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1316,10 +1316,9 @@ static int class_read(struct policydb *p, struct hashtab *h, void *fp)
->         u32 len, len2, ncons, nel;
->         int i, rc;
->
-> -       rc = -ENOMEM;
->         cladatum = kzalloc(sizeof(*cladatum), GFP_KERNEL);
->         if (!cladatum)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         rc = next_entry(buf, fp, sizeof(u32)*6);
->         if (rc)
-> --
-> 2.11.0
->
-
-
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+index d492d57d5309..88b72f738639 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@ -234,7 +234,7 @@ int vmw_du_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
+ {
+ 	struct vmw_private *dev_priv = vmw_priv(crtc->dev);
+ 	struct vmw_display_unit *du = vmw_crtc_to_du(crtc);
+-	bool shown = du->cursor_surface || du->cursor_dmabuf ? true : false;
++	bool shown = du->cursor_surface || du->cursor_dmabuf;
+ 
+ 	du->cursor_x = x + du->set_gui_x;
+ 	du->cursor_y = y + du->set_gui_y;
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
