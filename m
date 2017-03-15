@@ -1,64 +1,42 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 11 Mar 2017 18:30:36 +0000
-Subject: Re: [PATCH v2] iio: multiplexer: fix unsigned check with less than zero
-Message-Id: <d91161d3-3795-af99-16ba-31de49cc42a4@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Mar 2017 16:46:24 +0000
+Subject: [PATCH] [SCSI] esas2r: remove redundant NULL check on buffer
+Message-Id: <20170315164624.17264-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <687fdd3a-4e0d-1eda-e8fc-27173c611909@canonical.com>
- <1488979698-12545-1-git-send-email-peda@axentia.se>
-In-Reply-To: <1488979698-12545-1-git-send-email-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Rosin <peda@axentia.se>, Colin Ian King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bradley Grove <linuxdrivers@attotech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/03/17 13:28, Peter Rosin wrote:
-> Comparing a size_t with less than zero is always false as size_t
-> is unsigned. So, change the type of the variable to ssize_t and
-> replicate the size check from mux_configure_channel() into
-> mux_write_ext_info() thus ensuring that the size will fit in the
-> ssize_t variable.
-> 
-> Detected by CoverityScan, CID#1415278 ("Unsigned compared against 0")
-> 
-> Reported-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-For what it's worth, looks good to me.
+From: Colin Ian King <colin.king@canonical.com>
 
-Jonathan
-> ---
->  drivers/iio/multiplexer/iio-mux.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> Hi!
-> 
-> Here's what intend to queue up.
-> 
-> Cheers,
-> peda
-> 
-> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> index 94d40f9b..bab9e69 100644
-> --- a/drivers/iio/multiplexer/iio-mux.c
-> +++ b/drivers/iio/multiplexer/iio-mux.c
-> @@ -21,7 +21,7 @@
->  
->  struct mux_ext_info_cache {
->  	char *data;
-> -	size_t size;
-> +	ssize_t size;
->  };
->  
->  struct mux_child {
-> @@ -206,6 +206,9 @@ static ssize_t mux_write_ext_info(struct iio_dev *indio_dev, uintptr_t private,
->  	char *new;
->  	ssize_t ret;
->  
-> +	if (len >= PAGE_SIZE)
-> +		return -EINVAL;
-> +
->  	ret = iio_mux_select(mux, idx);
->  	if (ret < 0)
->  		return ret;
-> 
+buffer is a pointer to the static char array event_buffer and
+therefore can never be null, so the check is redundant. Remove it.
+
+Detected by CoverityScan, CID#1077556 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/esas2r/esas2r_log.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/scsi/esas2r/esas2r_log.c b/drivers/scsi/esas2r/esas2r_log.c
+index a82030a..65fdf22 100644
+--- a/drivers/scsi/esas2r/esas2r_log.c
++++ b/drivers/scsi/esas2r/esas2r_log.c
+@@ -130,11 +130,6 @@ static int esas2r_log_master(const long level,
+ 
+ 		spin_lock_irqsave(&event_buffer_lock, flags);
+ 
+-		if (buffer = NULL) {
+-			spin_unlock_irqrestore(&event_buffer_lock, flags);
+-			return -1;
+-		}
+-
+ 		memset(buffer, 0, buflen);
+ 
+ 		/*
+-- 
+2.10.2
 
