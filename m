@@ -1,39 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Mar 2017 17:13:50 +0000
-Subject: [PATCH] regulator: twl6030: remove redundant range check min_uV > 1300000 && min_uV <= 1350000
-Message-Id: <20170324171350.9953-1-colin.king@canonical.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Thu, 16 Mar 2017 15:19:53 +0000
+Subject: [PATCH 1/3] w1: Use kernel common min() implementation
+Message-Id: <20170316151955.10710-2-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170316151955.10710-1-afd@ti.com>
+In-Reply-To: <20170316151955.10710-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alban.auzeill@sonarsource.com, Tony Lindgren <tony@atomide.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-It has been pointed out to me that the range for vsel = 58 is actually
-dead code as this is covered by an earlier check for (min_uV >= 700000)
-&& (min_uV <= 1420000) so remove that check completely.
-
-Reported-by: Alban Auzeill <alban.auzeill@sonarsource.com>
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/regulator/twl6030-regulator.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/w1/w1_netlink.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/twl6030-regulator.c b/drivers/regulator/twl6030-regulator.c
-index 716191046a70..56aada387887 100644
---- a/drivers/regulator/twl6030-regulator.c
-+++ b/drivers/regulator/twl6030-regulator.c
-@@ -456,8 +456,6 @@ static int twl6030smps_map_voltage(struct regulator_dev *rdev, int min_uV,
- 			vsel = 60;
- 		else if ((min_uV > 1350000) && (min_uV <= 1500000))
- 			vsel = 59;
--		else if ((min_uV > 1300000) && (min_uV <= 1350000))
--			vsel = 58;
- 		else
- 			return -EINVAL;
- 		break;
+diff --git a/drivers/w1/w1_netlink.c b/drivers/w1/w1_netlink.c
+index 49e520ca79c5..18374cad3ace 100644
+--- a/drivers/w1/w1_netlink.c
++++ b/drivers/w1/w1_netlink.c
+@@ -23,8 +23,6 @@
+ 
+ #if defined(CONFIG_W1_CON) && (defined(CONFIG_CONNECTOR) || (defined(CONFIG_CONNECTOR_MODULE) && defined(CONFIG_W1_MODULE)))
+ 
+-#define MIN(a, b)                   (((a) < (b)) ? (a) : (b))
+-
+ /* Bundle together everything required to process a request in one memory
+  * allocation.
+  */
+@@ -598,7 +596,7 @@ static void w1_cn_callback(struct cn_msg *cn, struct netlink_skb_parms *nsp)
+ 				sizeof(struct w1_netlink_msg) +
+ 				sizeof(struct w1_netlink_cmd));
+ 		}
+-		reply_size = MIN(CONNECTOR_MAX_MSG_SIZE, reply_size);
++		reply_size = min(CONNECTOR_MAX_MSG_SIZE, reply_size);
+ 
+ 		/* allocate space for the block, a copy of the original message,
+ 		 * one node per cmd to point into the original message,
 -- 
 2.11.0
 
