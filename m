@@ -1,33 +1,36 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:20 +0000
-Subject: [PATCH 12/14] i40e: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-12-afd@ti.com>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Thu, 16 Mar 2017 08:57:51 +0000
+Subject: Re: ath10k: remove redundant error check
+Message-Id: <f9f879b23b604117bf434e122146882e@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170228111439.19546-1-colin.king@canonical.com>
+In-Reply-To: <20170228111439.19546-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+Colin Ian King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The check on ret for an error is redundant because it is already been
+> checked for non-zero earlier on and ret is never non-zero at this point.
+> Fix this by removing the redundant check and error message.
+> 
+> Detected by CoverityScan, CID#1357170 ("Logically Dead Code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index e8a8351c8ea9..8dbdd1b1e881 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -8281,7 +8281,7 @@ static int i40e_get_rss_aq(struct i40e_vsi *vsi, const u8 *seed,
- 	}
- 
- 	if (lut) {
--		bool pf_lut = vsi->type = I40E_VSI_MAIN ? true : false;
-+		bool pf_lut = vsi->type = I40E_VSI_MAIN;
- 
- 		ret = i40e_aq_get_rss_lut(hw, vsi->id, pf_lut, lut, lut_size);
- 		if (ret) {
+51f60b8b6979 ath10k: remove redundant error check
+
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9595221/
+
+Documentation about submitting wireless patches and checking status
+from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
