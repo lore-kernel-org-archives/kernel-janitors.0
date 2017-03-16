@@ -1,99 +1,74 @@
-From: Devesh Sharma <devesh.sharma@broadcom.com>
-Date: Wed, 08 Mar 2017 15:11:19 +0000
-Subject: Re: [PATCH 11/26] IB/ocrdma: Delete unnecessary braces
-Message-Id: <CANjDDBj3nBkA=9L6po7OUK1A3CQGOydOEmf5hw+f0ByaSndMpg@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Thu, 16 Mar 2017 15:19:52 +0000
+Subject: [PATCH 0/3] Add public w1 driver interface
+Message-Id: <20170316151955.10710-1-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net> <c4c62b82-db2a-3db9-03c4-9f8d95a6a29b@users.sourceforge.net>
-In-Reply-To: <c4c62b82-db2a-3db9-03c4-9f8d95a6a29b-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
-On Wed, Mar 8, 2017 at 6:34 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 7 Mar 2017 21:12:56 +0100
->
-> Do not use curly brackets at some source code places
-> where a single statement should be sufficient.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> index aa32bc9f323d..d5b988b011d1 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> @@ -1092,14 +1092,14 @@ static int ocrdma_mbx_cmd(struct ocrdma_dev *dev, struct ocrdma_mqe *mqe)
->         if (cqe_status || ext_status) {
->                 pr_err("%s() cqe_status=0x%x, ext_status=0x%x,",
->                        __func__, cqe_status, ext_status);
-> -               if (rsp) {
-> +               if (rsp)
->                         /* This is for embedded cmds. */
->                         pr_err("opcode=0x%x, subsystem=0x%x\n",
->                                (rsp->subsys_op & OCRDMA_MBX_RSP_OPCODE_MASK) >>
->                                 OCRDMA_MBX_RSP_OPCODE_SHIFT,
->                                 (rsp->subsys_op & OCRDMA_MBX_RSP_SUBSYS_MASK) >>
->                                 OCRDMA_MBX_RSP_SUBSYS_SHIFT);
-> -               }
-> +
->                 status = ocrdma_get_mbx_cqe_errno(cqe_status);
->                 goto mbx_err;
->         }
-> @@ -1600,10 +1600,9 @@ void ocrdma_alloc_pd_pool(struct ocrdma_dev *dev)
->                 return;
->
->         status = ocrdma_mbx_alloc_pd_range(dev);
-> -       if (status) {
-> +       if (status)
->                 pr_err("%s(%d) Unable to initialize PD pool, using default.\n",
->                          __func__, dev->id);
-> -       }
->  }
->
->  static void ocrdma_free_pd_pool(struct ocrdma_dev *dev)
-> @@ -2997,11 +2996,10 @@ static int ocrdma_parse_dcbxcfg_rsp(struct ocrdma_dev *dev, int ptype,
->                                         goto out;
->                                 }
->                         }
-> -                       if (slindx = OCRDMA_MAX_SERVICE_LEVEL_INDEX) {
-> +                       if (slindx = OCRDMA_MAX_SERVICE_LEVEL_INDEX)
->                                 pr_info("%s ocrdma%d application priority not set for 0x%x protocol\n",
->                                         dev_name(&dev->nic_info.pdev->dev),
->                                         dev->id, proto);
-> -                       }
->                 }
->         }
->
-> @@ -3158,16 +3156,17 @@ static int ocrdma_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
->                              int num)
->  {
->         int num_eqs, i = 0;
-> -       if (num > 8) {
-> +
-> +       if (num > 8)
->                 while (num) {
->                         num_eqs = min(num, 8);
->                         ocrdma_mbx_modify_eqd(dev, &eq[i], num_eqs);
->                         i += num_eqs;
->                         num -= num_eqs;
->                 }
+Hi All,
 
-May be compiler would give you a warning here, could you check once?
+As part of continuing work to cleanup the BQ27xxx driver I am attempting
+to remove the need for the platform driver interface. For this we first
+need the w1 subsystem to act more like a traditional bus subsystem
+and allow drivers for attached devices to live outside of the w1
+directory.
 
-> -       } else {
-> +       else
->                 ocrdma_mbx_modify_eqd(dev, eq, num);
-> -       }
-> +
->         return 0;
->  }
->
-> --
-> 2.12.0
->
+The first couple patches are trivial, the last a bit more involved
+but should make no functional change, just a re-organization of
+header files.
+
+Thanks,
+Andrew
+
+Andrew F. Davis (3):
+  w1: Use kernel common min() implementation
+  w1: Remove unneeded use of assert() and remove w1_log.h
+  w1: Add subsystem kernel public interface
+
+ MAINTAINERS                        |   1 +
+ drivers/w1/masters/ds1wm.c         |   3 +-
+ drivers/w1/masters/ds2482.c        |   3 +-
+ drivers/w1/masters/ds2490.c        |   3 +-
+ drivers/w1/masters/matrox_w1.c     |   9 +--
+ drivers/w1/masters/mxc_w1.c        |   3 +-
+ drivers/w1/masters/omap_hdq.c      |   3 +-
+ drivers/w1/masters/w1-gpio.c       |   3 +-
+ drivers/w1/slaves/w1_bq27000.c     |   6 +-
+ drivers/w1/slaves/w1_ds2405.c      |   5 +-
+ drivers/w1/slaves/w1_ds2406.c      |   6 +-
+ drivers/w1/slaves/w1_ds2408.c      |   6 +-
+ drivers/w1/slaves/w1_ds2413.c      |   6 +-
+ drivers/w1/slaves/w1_ds2423.c      |   6 +-
+ drivers/w1/slaves/w1_ds2431.c      |   6 +-
+ drivers/w1/slaves/w1_ds2433.c      |   6 +-
+ drivers/w1/slaves/w1_ds2760.c      |   7 ++-
+ drivers/w1/slaves/w1_ds2780.c      |   7 ++-
+ drivers/w1/slaves/w1_ds2781.c      |   7 ++-
+ drivers/w1/slaves/w1_ds28e04.c     |   6 +-
+ drivers/w1/slaves/w1_smem.c        |   7 ++-
+ drivers/w1/slaves/w1_therm.c       |  10 +++-
+ drivers/w1/w1.c                    |   7 +--
+ drivers/w1/w1_family.c             |   3 +-
+ drivers/w1/w1_family.h             |  97 -------------------------------
+ drivers/w1/w1_int.c                |   4 +-
+ drivers/w1/w1_int.h                |  27 ---------
+ drivers/w1/w1_internal.h           |  87 ++++++++++++++++++++++++++++
+ drivers/w1/w1_io.c                 |   3 +-
+ drivers/w1/w1_log.h                |  31 ----------
+ drivers/w1/w1_netlink.c            |   7 +--
+ drivers/w1/w1_netlink.h            |   2 +-
+ {drivers/w1 => include/linux}/w1.h | 116 ++++++++++++++++---------------------
+ 33 files changed, 205 insertions(+), 298 deletions(-)
+ delete mode 100644 drivers/w1/w1_family.h
+ delete mode 100644 drivers/w1/w1_int.h
+ create mode 100644 drivers/w1/w1_internal.h
+ delete mode 100644 drivers/w1/w1_log.h
+ rename {drivers/w1 => include/linux}/w1.h (76%)
+
+-- 
+2.11.0
+
