@@ -1,50 +1,34 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:05:29 +0000
-Subject: Re: [PATCH 15/46] selinux: One check and function call less in genfs_read() after error detection
-Message-Id: <CAHC9VhTtxZsUyWDga4tZC0hEUO3L8s0jFqy9L=TWqZiHts5=eQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Mar 2017 20:52:35 +0000
+Subject: [PATCH] bna: integer overflow bug in debugfs
+Message-Id: <20170317205234.GA2888@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<dbd8e89d-45a1-5785-f2dd-673389ac01a3@users.sourceforge.net>
-	<a9983d7d-e1f7-8f85-f696-107cf32160ef@schaufler-ca.com>
-	<60ed4f02-4ff8-2ef2-bcc3-ae62bc61cda9@users.sourceforge.net>
-	<55f62ee9-9e98-f5e0-67eb-fc7aa5cbe8f8@schaufler-ca.com>
-In-Reply-To: <55f62ee9-9e98-f5e0-67eb-fc7aa5cbe8f8@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Rasesh Mody <rasesh.mody@cavium.com>, Krishna Gudipati <kgudipat@brocade.com>
+Cc: Sudarsana Kalluru <sudarsana.kalluru@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 17, 2017 at 12:53 PM, Casey Schaufler
-<casey@schaufler-ca.com> wrote:
-> On 1/17/2017 8:37 AM, SF Markus Elfring wrote:
->>>> @@ -2015,7 +2015,7 @@ static int genfs_read(struct policydb *p, void *fp)
->>>>             newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
->>>>             if (!newgenfs) {
->>>>                     rc = -ENOMEM;
->>>> -                   goto out;
->>>> +                   goto exit;
->>>>             }
->>>>
->>>>             rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
->>>> @@ -2101,7 +2101,7 @@ static int genfs_read(struct policydb *p, void *fp)
->>>>             kfree(newgenfs);
->>>>     }
->>>>     ocontext_destroy(newc, OCON_FSUSE);
->>>> -
->>>> +exit:
->>>>     return rc;
->>> Why not replace the "goto out" with "return rc" rather
->>> than add a target?
->> Would you accept to use the statement "return -ENOMEM;" there instead?
->
-> That would be even better.
+We could allocate less memory than intended because we do:
 
-I *hate* code that does a jump to a label only to then do a
-return/exit.  That said, see my earlier comments about not worrying
-too much about performance of the error path and in this case I like
-the "feel good" nature of the code where ever failure in the loop goes
-to "out".
+	bnad->regdata = kzalloc(len << 2, GFP_KERNEL);
 
--- 
-paul moore
-www.paul-moore.com
+The shift can overflow leading to a crash.  This is debugfs code so the
+impact is very small.
+
+Fixes: 7afc5dbde091 ("bna: Add debugfs interface.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/brocade/bna/bnad_debugfs.c b/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
+index 05c1c1dd7751..cebfe3bd086e 100644
+--- a/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
++++ b/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
+@@ -325,7 +325,7 @@ bnad_debugfs_write_regrd(struct file *file, const char __user *buf,
+ 		return PTR_ERR(kern_buf);
+ 
+ 	rc = sscanf(kern_buf, "%x:%x", &addr, &len);
+-	if (rc < 2) {
++	if (rc < 2 || len > UINT_MAX >> 2) {
+ 		netdev_warn(bnad->netdev, "failed to read user buffer\n");
+ 		kfree(kern_buf);
+ 		return -EINVAL;
