@@ -1,48 +1,41 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Thu, 30 Mar 2017 15:39:43 +0000
-Subject: Re: [PATCH 1/2] staging: atomisp: simplify the if condition in atomisp_freq_scaling()
-Message-Id: <CAHb8M2A6oEeY5JXKEw6U5LCt1hBYaOQztLphnen7QjE3zuSjyg@mail.gmail.com>
+From: Mike Snitzer <snitzer@redhat.com>
+Date: Fri, 17 Mar 2017 21:38:19 +0000
+Subject: Re: dm crypt: remove an impossible condition
+Message-Id: <20170317213819.GC6475@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170330062449.GA25214@SEL-JYOUN-D1> <1490871164.4738.0.camel@linux.intel.com>
-In-Reply-To: <1490871164.4738.0.camel@linux.intel.com>
+References: <20170317204655.GA28261@mwanda>
+In-Reply-To: <20170317204655.GA28261@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@linux.intel.com>
-Cc: mchehab@kernel.org, Greg KH <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@oracle.com>, SIMRAN SINGHAL <singhalsimran0@gmail.com>, linux-media@vger.kernel.org, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, Milan Broz <gmazyland@gmail.com>, Alasdair Kergon <agk@redhat.com>
 
-2017-03-30 19:52 GMT+09:00 Alan Cox <alan@linux.intel.com>:
-> On Thu, 2017-03-30 at 15:24 +0900, Daeseok Youn wrote:
->> The condition line in if-statement is needed to be shorthen to
->> improve readability.
->>
->> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
->> ---
->
-> How about a define for ATOMISP_IS_CHT(isp) instead - as we will need
-hmm.. I think there is another way to get a *device*(unsigned short or
-__u32) to mask with "ATOMISP_PCI_DEVICE_SOC_MASK".
-In the atomisp_freq_scaling() function, the "device" value is getting
-started from "isp" structure.
-(isp->pdev->device)
+On Fri, Mar 17 2017 at  4:46pm -0400,
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-if the function has only "pci_dev" struction as a parameter and it
-need to check the CHT. Then we cannot use the definition like
-ATOMISP_IS_CHT(isp). it means we have another definition to check the
-CHT.
+> Static checkers complain that it doesn't make sense to check if "sval"
+> is NULL.  The intention was to check if strchr() returned NULL, but in
+> that situation "sval" would be "NULL + 1" so the check doesn't work.  We
+> know from the sscanf() that there is a ':' character in the string so
+> the check is unnecessary and can be removed.
+>=20
+> Now that the check doesn't depend on "sval" it can be moved earlier
+> for readability.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am I right?
+Thanks Dan, I've folded this fix into the original commit, see:
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/=
+commit/?h=3Ddm-4.12&id=CF22cd5f3afe7335afee5659f7450000e8fa2a15
 
-> these tests in other places where there are ISP2400/ISP2401 ifdefs ?
-I am not sure whether these tests are needed in other place or not.
-(Actually, I didn't find good H/W reference for Atom ISP device - Can
-you please share the link to refer document like H/W manual to
-develop?) I have tried to clean up the code first. in the meantime, I
-will have a look at the document if I have good reference manual.
+I didn't add your Signed-off-by though, I can backfill that if you
+like.. it is just I didn't want to taint you with all the extensive
+changes in that commit.
 
-Thanks.
-Regards,
-Daeseok.
->
-> Alan
->
+Mike
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
