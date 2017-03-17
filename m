@@ -1,50 +1,42 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:12:24 +0000
-Subject: Re: [PATCH 19/46] selinux: Return directly after a failed next_entry() in range_read()
-Message-Id: <CAHC9VhRvyZq_dMdvu3LoXO-rs87Xsm49vdKN75TrwRHH-awBrw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Mar 2017 20:46:56 +0000
+Subject: [PATCH] dm crypt: remove an impossible condition
+Message-Id: <20170317204655.GA28261@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<9e75f8b7-1275-b2e6-a01c-d0c5ebac1a44@users.sourceforge.net>
-In-Reply-To: <9e75f8b7-1275-b2e6-a01c-d0c5ebac1a44@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Milan Broz <gmazyland@gmail.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:19 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 19:35:59 +0100
->
-> Return directly after a call of the function "next_entry" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Static checkers complain that it doesn't make sense to check if "sval"
+is NULL.  The intention was to check if strchr() returned NULL, but in
+that situation "sval" would be "NULL + 1" so the check doesn't work.  We
+know from the sscanf() that there is a ':' character in the string so
+the check is unnecessary and can be removed.
 
-Merged, thanks.
+Now that the check doesn't depend on "sval" it can be moved earlier
+for readability.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 5f122e846332..a696876fc327 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1850,7 +1850,7 @@ static int range_read(struct policydb *p, void *fp)
->
->         rc = next_entry(buf, fp, sizeof(u32));
->         if (rc)
-> -               goto out;
-> +               return rc;
->
->         nel = le32_to_cpu(buf[0]);
->         for (i = 0; i < nel; i++) {
-> --
-> 2.11.0
->
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-
--- 
-paul moore
-www.paul-moore.com
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index ec09bd703b7d..eba218737bdb 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2401,12 +2401,12 @@ static int crypt_ctr_optional(struct dm_target *ti, unsigned int argc, char **ar
+ 		else if (!strcasecmp(opt_string, "submit_from_crypt_cpus"))
+ 			set_bit(DM_CRYPT_NO_OFFLOAD, &cc->flags);
+ 		else if (sscanf(opt_string, "integrity:%u:", &val) = 1) {
+-			cc->on_disk_tag_size = val;
+-			sval = strchr(opt_string + strlen("integrity:"), ':') + 1;
+-			if (val = 0 || val > MAX_TAG_SIZE || !sval) {
++			if (val = 0 || val > MAX_TAG_SIZE) {
+ 				ti->error = "Invalid integrity arguments";
+ 				return -EINVAL;
+ 			}
++			cc->on_disk_tag_size = val;
++			sval = strchr(opt_string + strlen("integrity:"), ':') + 1;
+ 			if (!strcasecmp(sval, "aead")) {
+ 				set_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags);
+ 			} else  if (!strncasecmp(sval, "hmac(", strlen("hmac("))) {
