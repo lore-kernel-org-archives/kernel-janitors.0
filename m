@@ -1,53 +1,51 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:17:09 +0000
-Subject: Re: [PATCH 28/46] selinux: Return directly after a failed kzalloc() in user_read()
-Message-Id: <CAHC9VhQ5XK2KrEDRKY-6ZsWKmy8uSHx6B41Yfzc8dvgoZY-TLQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Mar 2017 11:51:23 +0000
+Subject: [PATCH] i2c: designware-baytrail: fix potential null pointer dereference on dev
+Message-Id: <20170320115123.31536-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
-In-Reply-To: <3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:28 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 22:08:22 +0100
->
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Merged, thanks.
+The assignment to addr requires a call to get_sem_addr that dereferences
+dev, however, this dereference occurs before a null pointer check on dev.
+Move this assignment after the null check on dev to avoid a potential null
+pointer dereference.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 3e43556e67b8..1c046d39e2a7 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -1542,10 +1542,9 @@ static int user_read(struct policydb *p, struct hashtab *h, void *fp)
->         __le32 buf[3];
->         u32 len;
->
-> -       rc = -ENOMEM;
->         usrdatum = kzalloc(sizeof(*usrdatum), GFP_KERNEL);
->         if (!usrdatum)
-> -               goto bad;
-> +               return -ENOMEM;
->
->         if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
->                 to_read = 3;
-> --
-> 2.11.0
->
+Detected by CoverityScan, CID#1419700 ("Dereference before null check")
 
+Fixes: fd476fa22a1f432 ("i2c: designware-baytrail: Add support for cherrytrail")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-designware-baytrail.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
+diff --git a/drivers/i2c/busses/i2c-designware-baytrail.c b/drivers/i2c/busses/i2c-designware-baytrail.c
+index 1749a0f5a9fa..2cbb2e9195ca 100644
+--- a/drivers/i2c/busses/i2c-designware-baytrail.c
++++ b/drivers/i2c/busses/i2c-designware-baytrail.c
+@@ -70,7 +70,7 @@ static void reset_semaphore(struct dw_i2c_dev *dev)
+ 
+ static int baytrail_i2c_acquire(struct dw_i2c_dev *dev)
+ {
+-	u32 addr = get_sem_addr(dev);
++	u32 addr;
+ 	u32 sem = PUNIT_SEMAPHORE_ACQUIRE;
+ 	int ret;
+ 	unsigned long start, end;
+@@ -94,6 +94,8 @@ static int baytrail_i2c_acquire(struct dw_i2c_dev *dev)
+ 	 */
+ 	pm_qos_update_request(&dev->pm_qos, 0);
+ 
++	addr = get_sem_addr(dev);
++
+ 	/* host driver writes to side band semaphore register */
+ 	ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE, addr, sem);
+ 	if (ret) {
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
