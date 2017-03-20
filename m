@@ -1,30 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Mar 2017 20:45:05 +0000
-Subject: [PATCH] Staging: atomisp: fix an uninitialized variable bug
-Message-Id: <20170317204505.GC16505@mwanda>
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+Date: Mon, 20 Mar 2017 23:33:06 +0000
+Subject: RE: [Intel-wired-lan] [PATCH] i40e: fix memcpy with swapped arguments
+Message-Id: <02874ECE860811409154E81DA85FBB5857DAF748@ORSMSX115.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170320144627.11524-1-colin.king@canonical.com>
+In-Reply-To: <20170320144627.11524-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-There are some error paths in atomisp_css_frame_allocate() which don't
-initialize "res" so it could lead us to try release random memory.
-
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index d9a5c24633cb..0f01047cdf8e 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -4733,7 +4733,7 @@ static int
- atomisp_v4l2_framebuffer_to_css_frame(const struct v4l2_framebuffer *arg,
- 					 struct atomisp_css_frame **result)
- {
--	struct atomisp_css_frame *res;
-+	struct atomisp_css_frame *res = NULL;
- 	unsigned int padded_width;
- 	enum atomisp_css_frame_format sh_format;
- 	char *tmp_buf = NULL;
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBJbnRlbC13aXJlZC1sYW4gW21h
+aWx0bzppbnRlbC13aXJlZC1sYW4tYm91bmNlc0BsaXN0cy5vc3Vvc2wub3JnXSBPbg0KPiBCZWhh
+bGYgT2YgQ29saW4gS2luZw0KPiBTZW50OiBNb25kYXksIE1hcmNoIDIwLCAyMDE3IDc6NDYgQU0N
+Cj4gVG86IEtpcnNoZXIsIEplZmZyZXkgVCA8amVmZnJleS50LmtpcnNoZXJAaW50ZWwuY29tPjsg
+aW50ZWwtd2lyZWQtDQo+IGxhbkBsaXN0cy5vc3Vvc2wub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwu
+b3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtJbnRlbC13aXJlZC1sYW5dIFtQQVRDSF0gaTQw
+ZTogZml4IG1lbWNweSB3aXRoIHN3YXBwZWQgYXJndW1lbnRzDQo+IA0KPiBGcm9tOiBDb2xpbiBJ
+YW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpIaSB0aGVyZSwNCg0KPiANCj4g
+VGhlIGN1cnJlbnQgY29kZSBjb3BpZXMgYW4gdW5pbml0aWFsaXplZCBwYXJhbXMgaW50bw0KPiBj
+ZGV2LT5sYW5faW5mby5wYXJhbXMgYW5kIHRoZW4gcGFzc2VzIHRoZSB1bmluaXRpYWxpemVkIHBh
+cmFtcw0KPiB0byB0aGUgY2FsbCBjZGV2LT5jbGllbnQtPm9wcy0+bDJfcGFyYW1fY2hhbmdlLiAg
+SSBiZWxpZXZlIHRoZQ0KPiBvcmRlciBvZiB0aGUgc291cmNlIGFuZCBkZXN0aW5hdGlvbiBpbiB0
+aGUgbWVtY3B5IGlzIHRoZSB3cm9uZw0KPiB3YXkgYXJvdW5kIGFuZCBzaG91bGQgYmUgc3dhcHBl
+ZC4NCj4gDQoNClNvIHlvdSBhcmUgY29ycmVjdCB0aGF0IHBhcmFtcyBpcyB1bmluaXRpYWxpemVk
+LiBIb3dldmVyLCB0aGUgZml4IGhlcmUgaXMgbm90IGNvcnJlY3QuIFNvbWVob3cgd2UgZHJvcHBl
+ZCB0aGUgY29kZSBmb3IgaW5pdGlhbGl6aW5nIHRoZSBwYXJhbWV0ZXJzLg0KDQpTZWUgY29tbWl0
+IGQ3Y2U2NDIyZDZlNiAoImk0MGU6IGRvbid0IGNoZWNrIHBhcmFtcyB1bnRpbCBhZnRlciBjaGVj
+a2luZyBmb3IgY2xpZW50IGluc3RhbmNlIiwgMjAxNy0wMi0wOSkgSXQgbG9va3MgbGlrZSB0aGUg
+Y29tbWl0IGl0c2VsZiB3YXMgbWFsZm9ybWVkIHdoZW4gYXBwbGllZCB1cHN0cmVhbSwgYW5kIGEg
+bGF0ZXIgY29tbWl0IHdoaWNoIHNob3VsZCBoYXZlIHByZXNlcnZlZCB0aGUgY2hhbmdlcyAzMTQw
+YWE5YTc4YzkgKCJpNDBlOiBLSVNTIHRoZSBjbGllbnQgaW50ZXJmYWNlIiwgMjAxNy0wMy0xNCkg
+YWNjaWRlbnRhbGx5IGRyb3BwZWQgdGhlbS4NCg0KSSdsbCBwcm92aWRlIGEgcGF0Y2ggdG8gZ2V0
+IHRoaXMgYmFjayBpbnRvIHRoZSBjb3JyZWN0IHN0YXRlLg0KDQpUaGFua3MgZm9yIGNhdGNoaW5n
+IHRoaXMuDQoNClJlZ2FyZHMsDQpKYWtlDQo
