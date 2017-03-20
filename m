@@ -1,74 +1,40 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 21:15:06 +0000
-Subject: Re: [PATCH 06/46] selinux: Use kcalloc() in policydb_index()
-Message-Id: <CAHC9VhTP40gob2m7M=OCkKgxc=MTQd2H66LeTYHN+OuevnkQ8g@mail.gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 20 Mar 2017 10:59:15 +0000
+Subject: [PATCH 1/4] staging: atomisp: remove else statement after return
+Message-Id: <20170320105915.GA17117@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<2c5e5708-72a3-954f-a773-e5716df174d1@users.sourceforge.net>
-In-Reply-To: <2c5e5708-72a3-954f-a773-e5716df174d1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:03 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 13:08:59 +0100
->
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kcalloc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+It doesn't need to have else statement after return.
 
-Merged, thanks.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index d719db4219cd..21869b622c0c 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -540,23 +540,23 @@ static int policydb_index(struct policydb *p)
->  #endif
->
->         rc = -ENOMEM;
-> -       p->class_val_to_struct > -               kzalloc(p->p_classes.nprim * sizeof(*(p->class_val_to_struct)),
-> -                       GFP_KERNEL);
-> +       p->class_val_to_struct = kcalloc(p->p_classes.nprim,
-> +                                        sizeof(*p->class_val_to_struct),
-> +                                        GFP_KERNEL);
->         if (!p->class_val_to_struct)
->                 goto out;
->
->         rc = -ENOMEM;
-> -       p->role_val_to_struct > -               kzalloc(p->p_roles.nprim * sizeof(*(p->role_val_to_struct)),
-> -                       GFP_KERNEL);
-> +       p->role_val_to_struct = kcalloc(p->p_roles.nprim,
-> +                                       sizeof(*p->role_val_to_struct),
-> +                                       GFP_KERNEL);
->         if (!p->role_val_to_struct)
->                 goto out;
->
->         rc = -ENOMEM;
-> -       p->user_val_to_struct > -               kzalloc(p->p_users.nprim * sizeof(*(p->user_val_to_struct)),
-> -                       GFP_KERNEL);
-> +       p->user_val_to_struct = kcalloc(p->p_users.nprim,
-> +                                       sizeof(*p->user_val_to_struct),
-> +                                       GFP_KERNEL);
->         if (!p->user_val_to_struct)
->                 goto out;
->
-> --
-> 2.11.0
->
-
-
-
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index d97a8df..8bdb224 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -2958,11 +2958,11 @@ int atomisp_get_metadata(struct atomisp_sub_device *asd, int flag,
+ 		dev_err(isp->dev, "copy to user failed: copied %d bytes\n",
+ 			ret);
+ 		return -EFAULT;
+-	} else {
+-		list_del_init(&md_buf->list);
+-		list_add_tail(&md_buf->list, &asd->metadata[md_type]);
+ 	}
+ 
++	list_del_init(&md_buf->list);
++	list_add_tail(&md_buf->list, &asd->metadata[md_type]);
++
+ 	dev_dbg(isp->dev, "%s: HAL de-queued metadata type %d with exp_id %d\n",
+ 		__func__, md_type, md->exp_id);
+ 	return 0;
 -- 
-paul moore
-www.paul-moore.com
+1.9.1
+
