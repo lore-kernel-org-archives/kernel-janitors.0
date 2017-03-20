@@ -1,23 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 16 Mar 2017 23:50:25 +0000
-Subject: Re: [PATCH] [SCSI] esas2r: remove redundant NULL check on buffer
-Message-Id: <yq1inn8n5mm.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Mar 2017 14:08:50 +0000
+Subject: [PATCH] staging: vc04_services: fix NULL pointer dereference on pointer 'service'
+Message-Id: <20170320140850.10570-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170315164624.17264-1-colin.king@canonical.com>
-In-Reply-To: <20170315164624.17264-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 15 Mar 2017 16:46:24 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Bradley Grove <linuxdrivers@attotech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> buffer is a pointer to the static char array event_buffer and
-> therefore can never be null, so the check is redundant. Remove it.
+Currently, if pservice is null then service is set to NULL and immediately
+afterwards service is dereferenced causing a null pointer dereference. Fix
+this by bailing out early of the function with a null return.
 
-Applied to 4.12/scsi-queue. Thank you!
+Detected by CoverityScan, CID#1419681 ("Explicit null dereferenced")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index dc9f85c2a5da..4f9e738abddf 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -2673,7 +2673,7 @@ vchiq_add_service_internal(VCHIQ_STATE_T *state,
+ 
+ 	if (!pservice) {
+ 		kfree(service);
+-		service = NULL;
++		return NULL;
+ 	}
+ 
+ 	service_quota = &state->service_quotas[service->localport];
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
