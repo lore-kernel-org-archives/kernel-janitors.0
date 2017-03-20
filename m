@@ -1,28 +1,40 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 27 Mar 2017 18:19:43 +0000
-Subject: Re: SELinux: Fine-tuning for several function implementations
-Message-Id: <CAHC9VhQRHECQS7+-6X4YQzFQNaLSMCqnwdr2i3TTLidPAvDO1g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Mar 2017 14:23:36 +0000
+Subject: [PATCH] tpm2: fix off-by-one comparison and out-of-bounds read error
+Message-Id: <20170320142336.10997-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
-	<c8dd502c-bbde-3fe0-a2a0-b803beefc67e@users.sourceforge.net>
-In-Reply-To: <c8dd502c-bbde-3fe0-a2a0-b803beefc67e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 27, 2017 at 1:48 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> I've made it through the first half (23/46) and of those
->> I've merged patches …, 7, …
->
-> It seems that you dropped this one while integrating the eighth
-> update step.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, my mistake, as I said in my response to that patch, I do not plan
-on merging 07/46.
+The comparison of an out of range index into space->context_tbl is
+off-by-one and should be using >= rather than > in the comparison.
 
+Detected by CoverityScan, CID#1419694 ("Out-of-bounds read")
+
+Fixes: 849246e7ce9ce ("tpm2: add session handle context saving and restoring to the space code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/tpm/tpm2-space.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index d36d81e07076..009934269514 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -229,7 +229,7 @@ static bool tpm2_map_to_phandle(struct tpm_space *space, void *handle)
+ 	int i;
+ 
+ 	i = 0xFFFFFF - (vhandle & 0xFFFFFF);
+-	if (i > ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
++	if (i >= ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
+ 		return false;
+ 
+ 	phandle = space->context_tbl[i];
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
