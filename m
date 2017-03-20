@@ -1,80 +1,43 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:43:23 +0000
-Subject: Re: [PATCH 42/46] selinux: One function call less in roles_init() after error detection
-Message-Id: <CAHC9VhT_P_PpMvWQ3hUrSVJxkd5HyxyeSCU7GwnGo-U0msf8wQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Mar 2017 13:58:05 +0000
+Subject: [PATCH] spi: loopback-test: fix potential integer overflow on multiple
+Message-Id: <20170320135805.10182-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<e26b4b88-b04f-0a82-0396-8b53a80d03a9@users.sourceforge.net>
-In-Reply-To: <e26b4b88-b04f-0a82-0396-8b53a80d03a9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:42 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 12:56:54 +0100
->
-> The kfree() function was called in up to two cases by the
-> roles_init() function during error handling even if the passed variable
-> contained a null pointer.
->
-> * Adjust a jump target according to the Linux coding style convention.
->
-> * Delete an initialisation for the variable "key" at the beginning
->   which became unnecessary with this refactoring.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/policydb.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Dropped due to unnecessary code churn with no significant advantage.
+A multiplication of 8U * xfer-len with the type of a 32 bit unsigned int
+is evaluated using 32 bit arithmetic and then used in a context that
+expects an expression of type unsigned long long (64 bits).  Avoid any
+potential overflow by casting BITS_PER_BYTE to unsigned long long.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index be445abf047b..7dd5c6f7786f 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -174,7 +174,7 @@ static struct policydb_compat_info *policydb_lookup_compat(int version)
->   */
->  static int roles_init(struct policydb *p)
->  {
-> -       char *key = NULL;
-> +       char *key;
->         int rc;
->         struct role_datum *role;
->
-> @@ -185,13 +185,13 @@ static int roles_init(struct policydb *p)
->         role->value = ++p->p_roles.nprim;
->         if (role->value != OBJECT_R_VAL) {
->                 rc = -EINVAL;
-> -               goto out;
-> +               goto free_role;
->         }
->
->         key = kstrdup(OBJECT_R, GFP_KERNEL);
->         if (!key) {
->                 rc = -ENOMEM;
-> -               goto out;
-> +               goto free_role;
->         }
->
->         rc = hashtab_insert(p->p_roles.table, key, role);
-> @@ -201,6 +201,7 @@ static int roles_init(struct policydb *p)
->         return 0;
->  out:
->         kfree(key);
-> +free_role:
->         kfree(role);
->         return rc;
->  }
-> --
-> 2.11.0
->
+Detected by CoverityScan, CID#1419691 ("Unintentional integer overflow")
 
+Fixes: ea9936f324356 ("spi: loopback-test: add elapsed time check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-loopback-test.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
+diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
+index 0d0739142cd3..51c0ceab04cc 100644
+--- a/drivers/spi/spi-loopback-test.c
++++ b/drivers/spi/spi-loopback-test.c
+@@ -521,7 +521,8 @@ static int spi_test_check_elapsed_time(struct spi_device *spi,
+ 
+ 	for (i = 0; i < test->transfer_count; i++) {
+ 		struct spi_transfer *xfer = test->transfers + i;
+-		unsigned long long nbits = BITS_PER_BYTE * xfer->len;
++		unsigned long long nbits = (unsigned long long)BITS_PER_BYTE *
++					   xfer->len;
+ 
+ 		delay_usecs += xfer->delay_usecs;
+ 		if (!xfer->speed_hz)
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
