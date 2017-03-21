@@ -1,38 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Mar 2017 09:22:01 +0000
-Subject: Re: [PATCH] kprobes: Remove an unneeded condition
-Message-Id: <20170323092201.GL32449@mwanda>
+Date: Tue, 21 Mar 2017 20:42:27 +0000
+Subject: [patch -next] net: dwc-xlgmac: fix an error code in xlgmac_alloc_pages()
+Message-Id: <20170321204227.GB22118@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170321204348.GD22118@mwanda>
-In-Reply-To: <20170321204348.GD22118@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jie Deng <jiedeng@synopsys.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 09:15:16AM +0900, Masami Hiramatsu wrote:
-> On Wed, 22 Mar 2017 12:34:26 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > On Wed, Mar 22, 2017 at 07:55:38AM +0900, Masami Hiramatsu wrote:
-> > > On Tue, 21 Mar 2017 23:43:48 +0300
-> > > Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > 
-> > > > We know that "addr" is non-NULL here so there is no need to check if
-> > > > "addr + offset" is NULL.
-> > > 
-> > > What about "UINT_MAX - addr + 1 = offset" case on 32bit arch ? :)
-> > > 
-> > 
-> > I think if that's really possible then we are so screwed that a NULL
-> > check won't help?
-> 
-> Fair enough. Even if the addr is not NULL, that could be out of text area.
-> Could you add that to patch description, and also clean up the whole
-> function? It seems "invalid" label is no more needed.
+The dma_mapping_error() returns true if there is an error but we want
+to return -ENOMEM and not 1.
 
-Sure.  I'll resend.
+Fixes: 65e0ace2c5cd ("net: dwc-xlgmac: Initial driver for DesignWare Enterprise Ethernet")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/net/ethernet/synopsys/dwc-xlgmac-desc.c b/drivers/net/ethernet/synopsys/dwc-xlgmac-desc.c
+index 55c796ed7d26..39b5cb967bba 100644
+--- a/drivers/net/ethernet/synopsys/dwc-xlgmac-desc.c
++++ b/drivers/net/ethernet/synopsys/dwc-xlgmac-desc.c
+@@ -335,7 +335,6 @@ static int xlgmac_alloc_pages(struct xlgmac_pdata *pdata,
+ {
+ 	struct page *pages = NULL;
+ 	dma_addr_t pages_dma;
+-	int ret;
+ 
+ 	/* Try to obtain pages, decreasing order if necessary */
+ 	gfp |= __GFP_COLD | __GFP_COMP | __GFP_NOWARN;
+@@ -352,10 +351,9 @@ static int xlgmac_alloc_pages(struct xlgmac_pdata *pdata,
+ 	/* Map the pages */
+ 	pages_dma = dma_map_page(pdata->dev, pages, 0,
+ 				 PAGE_SIZE << order, DMA_FROM_DEVICE);
+-	ret = dma_mapping_error(pdata->dev, pages_dma);
+-	if (ret) {
++	if (dma_mapping_error(pdata->dev, pages_dma)) {
+ 		put_page(pages);
+-		return ret;
++		return -ENOMEM;
+ 	}
+ 
+ 	pa->pages = pages;
