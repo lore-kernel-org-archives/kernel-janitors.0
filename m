@@ -1,58 +1,30 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 12 Mar 2017 15:00:23 +0000
-Subject: Re: [PATCH] staging: atomisp: clean up return logic, remove redunant code
-Message-Id: <alpine.DEB.2.20.1703121559470.2174@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 Mar 2017 20:43:48 +0000
+Subject: [PATCH] kprobes: Remove an unneeded condition
+Message-Id: <20170321204348.GD22118@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170311193205.6410-1-colin.king@canonical.com> <58C561B5.8080102@bfs.de>
-In-Reply-To: <58C561B5.8080102@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+We know that "addr" is non-NULL here so there is no need to check if
+"addr + offset" is NULL.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sun, 12 Mar 2017, walter harms wrote:
-
->
->
-> Am 11.03.2017 20:32, schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is no need to check if ret is non-zero, remove this
-> > redundant check and just return the error status from the call
-> > to mt9m114_write_reg_array.
-> >
-> > Detected by CoverityScan, CID#1416577 ("Identical code for
-> > different branches")
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/staging/media/atomisp/i2c/mt9m114.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/staging/media/atomisp/i2c/mt9m114.c b/drivers/staging/media/atomisp/i2c/mt9m114.c
-> > index 8762124..a555aec 100644
-> > --- a/drivers/staging/media/atomisp/i2c/mt9m114.c
-> > +++ b/drivers/staging/media/atomisp/i2c/mt9m114.c
-> > @@ -444,12 +444,8 @@ static int mt9m114_set_suspend(struct v4l2_subdev *sd)
-> >  static int mt9m114_init_common(struct v4l2_subdev *sd)
-> >  {
-> >  	struct i2c_client *client = v4l2_get_subdevdata(sd);
-> > -	int ret;
-> >
-> > -	ret = mt9m114_write_reg_array(client, mt9m114_common, PRE_POLLING);
-> > -	if (ret)
-> > -		return ret;
-> > -	return ret;
-> > +	return mt9m114_write_reg_array(client, mt9m114_common, PRE_POLLING);
-> >  }
->
->
-> any use for "client" ?
-
-I guess the code would be on two lines in any case.  It looks like a nice
-decomposition as is.
-
-julia
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index d733479a10ee..88617178a63e 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1403,9 +1403,7 @@ static kprobe_opcode_t *_kprobe_addr(kprobe_opcode_t *addr,
+ 			return ERR_PTR(-ENOENT);
+ 	}
+ 
+-	addr = (kprobe_opcode_t *)(((char *)addr) + offset);
+-	if (addr)
+-		return addr;
++	return (kprobe_opcode_t *)(((char *)addr) + offset);
+ 
+ invalid:
+ 	return ERR_PTR(-EINVAL);
