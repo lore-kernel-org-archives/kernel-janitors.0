@@ -1,42 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Mar 2017 12:53:17 +0000
-Subject: [PATCH 06/26] IB/ocrdma: Improve another size determination in ocrdma_alloc_pd_pool()
-Message-Id: <00537ca7-1c89-b1a0-8faf-eb1c65a114ec@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 21 Mar 2017 02:12:57 +0000
+Subject: [PATCH 3/4 V2] staging: atomisp: remove useless condition in if-statements
+Message-Id: <20170321021257.GA1658@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
-In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Mar 2017 19:54:38 +0100
+The css_pipe_id was checked with 'CSS_PIPE_ID_COPY' in previous if-
+statement. In this case, if the css_pipe_id equals to 'CSS_PIPE_ID_COPY',
+it could not enter the next if-statement. But the "next" if-statement
+has the condition to check whether the css_pipe_id equals to
+'CSS_PIPE_ID_COPY' or not. It should be removed.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+V2: one(2/4) of this series was updated so I tried to send them again.
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index 8122a1c7d2ae..56f29e06dfe4 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -1595,8 +1595,7 @@ void ocrdma_alloc_pd_pool(struct ocrdma_dev *dev)
- {
- 	int status;
- 
--	dev->pd_mgr = kzalloc(sizeof(struct ocrdma_pd_resource_mgr),
--			      GFP_KERNEL);
-+	dev->pd_mgr = kzalloc(sizeof(*dev->pd_mgr), GFP_KERNEL);
- 	if (!dev->pd_mgr)
- 		return;
- 
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 811331d..f7c0705 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -910,8 +910,7 @@ static struct atomisp_video_pipe *__atomisp_get_pipe(
+ 	} else if (asd->run_mode->val = ATOMISP_RUN_MODE_VIDEO) {
+ 		/* For online video or SDV video pipe. */
+ 		if (css_pipe_id = CSS_PIPE_ID_VIDEO ||
+-		    css_pipe_id = CSS_PIPE_ID_COPY ||
+-		    css_pipe_id = CSS_PIPE_ID_YUVPP) {
++		    css_pipe_id = CSS_PIPE_ID_COPY) {
+ 			if (buf_type = CSS_BUFFER_TYPE_OUTPUT_FRAME)
+ 				return &asd->video_out_video_capture;
+ 			return &asd->video_out_preview;
+@@ -919,8 +918,7 @@ static struct atomisp_video_pipe *__atomisp_get_pipe(
+ 	} else if (asd->run_mode->val = ATOMISP_RUN_MODE_PREVIEW) {
+ 		/* For online preview or ZSL preview pipe. */
+ 		if (css_pipe_id = CSS_PIPE_ID_PREVIEW ||
+-		    css_pipe_id = CSS_PIPE_ID_COPY ||
+-		    css_pipe_id = CSS_PIPE_ID_YUVPP)
++		    css_pipe_id = CSS_PIPE_ID_COPY)
+ 			return &asd->video_out_preview;
+ 	}
+ 	/* For capture pipe. */
 -- 
-2.12.0
+1.9.1
 
