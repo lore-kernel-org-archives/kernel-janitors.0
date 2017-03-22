@@ -1,36 +1,39 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:24:54 +0000
-Subject: Re: [PATCH 00/46] SELinux: Fine-tuning for several function implementations
-Message-Id: <CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Mar 2017 14:01:37 +0000
+Subject: [PATCH] scsi: fcoe: sanity check string size for store_ctrl_mode option
+Message-Id: <20170322140137.28485-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 9:55 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 15:15:14 +0100
->
-> Several update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (46): ....
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus,
+Reading and writing to mode[count - 1] implies the count should not
+be less than 1 so add a sanity check for this.
 
-Thank you for your patience with this patchset, I realize it has taken
-me quite a long time to get around to merging them.  I just wanted to
-send a quick summary: I've made it through the first half (23/46) and
-of those I've merged patches 1, 2, 3, 4, 5, 6, 7, 11, 14, 17, 19, and
-22.  Unfortunately, this is all the time I have for today, but I'll
-resume working on the remaining patches soon.
+Detected with CoverityScan, CID#1357345 ("Overflowed array index write")
 
-Thanks for the patches and your understanding.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fcoe/fcoe_sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
+index 9cf3d56296ab..e298240c728c 100644
+--- a/drivers/scsi/fcoe/fcoe_sysfs.c
++++ b/drivers/scsi/fcoe/fcoe_sysfs.c
+@@ -288,7 +288,7 @@ static ssize_t store_ctlr_mode(struct device *dev,
+ 	struct fcoe_ctlr_device *ctlr = dev_to_ctlr(dev);
+ 	char mode[FCOE_MAX_MODENAME_LEN + 1];
+ 
+-	if (count > FCOE_MAX_MODENAME_LEN)
++	if (count < 1 || count > FCOE_MAX_MODENAME_LEN)
+ 		return -EINVAL;
+ 
+ 	strncpy(mode, buf, count);
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
