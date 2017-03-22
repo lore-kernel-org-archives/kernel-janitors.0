@@ -1,47 +1,15 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Mar 2017 11:32:08 +0000
-Subject: Applied "ASoC: intel: remove unused variable data and associated code" to the asoc tree
-Message-Id: <E1csSsa-0000m3-Dz@debutante>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Mar 2017 14:36:44 +0000
+Subject: [PATCH] ASoC: intel: remove unused variable data and associated code
+Message-Id: <20170322143644.29051-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170322143644.29051-1-colin.king@canonical.com>
-In-Reply-To: <20170322143644.29051-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Jie Yang <yang.jie@intel.com>, Mark Brown <broonie@kernel.org>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
-
-   ASoC: intel: remove unused variable data and associated code
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 74a4ce4c8e13820799911c746b917efd7cc25f55 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 22 Mar 2017 14:36:44 +0000
-Subject: [PATCH] ASoC: intel: remove unused variable data and associated code
 
 The variable 'data' is assigned null and never re-assigned. There
 is also a redundant check for data being non-null which is always
@@ -52,8 +20,6 @@ Detected with CoverityScan, CID#1324015 ("'Constant' variable gaurds
 dead code")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Jie Yang <yang.jie@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
  sound/soc/intel/haswell/sst-haswell-ipc.c | 6 ------
  1 file changed, 6 deletions(-)
