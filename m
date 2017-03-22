@@ -1,90 +1,137 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 17 Mar 2017 18:39:11 +0000
-Subject: Re: [PATCH] drm/amdgpu: remove redundant outer loop and remove commented out code
-Message-Id: <CADnq5_P8712br5qGWg1FQpy8toQwptgDoG2D66BLhTqESNPggA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Mar 2017 18:50:04 +0000
+Subject: [PATCH] scsi: pm8001: build in relevant functions and code on PM8001_USE_MSIX
+Message-Id: <20170322185004.1012-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170317143722.13473-1-colin.king@canonical.com>
-In-Reply-To: <20170317143722.13473-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Tom St Denis <tom.stdenis-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, jimqu <Jim.Qu-5C7GfCeVMHo@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: Jack Wang <jinpu.wang@profitbricks.com>, lindar_liu@usish.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, pmchba@pmcs.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 17, 2017 at 10:37 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The outer loop is redundant and can be removed as it is doing nothing
-> useful. Also remove some commented out code that is not being used.
->
-> Detected by CoverityScan, CID#1402073
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+Currently the misx and intx variables of the interrupt enable/disable
+helper functions are built in no matter what the setting of the
+macro PM8001_USE_MSIX.  Clean this up by just building in the
+necessary helper functions and calls to these functions depending on
+the setting of PM8001_USE_MSIX.  This addresses several dead code
+paths found by static analysis with CoverityScan.
 
-Alex
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/pm8001/pm8001_hwi.c | 63 +++++++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 30 deletions(-)
 
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index 10546faac58c..d1be10fd1350 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -1204,26 +1204,7 @@ void pm8001_chip_iounmap(struct pm8001_hba_info *pm8001_ha)
+ 	}
+ }
+ 
+-/**
+- * pm8001_chip_interrupt_enable - enable PM8001 chip interrupt
+- * @pm8001_ha: our hba card information
+- */
+-static void
+-pm8001_chip_intx_interrupt_enable(struct pm8001_hba_info *pm8001_ha)
+-{
+-	pm8001_cw32(pm8001_ha, 0, MSGU_ODMR, ODMR_CLEAR_ALL);
+-	pm8001_cw32(pm8001_ha, 0, MSGU_ODCR, ODCR_CLEAR_ALL);
+-}
+-
+- /**
+-  * pm8001_chip_intx_interrupt_disable- disable PM8001 chip interrupt
+-  * @pm8001_ha: our hba card information
+-  */
+-static void
+-pm8001_chip_intx_interrupt_disable(struct pm8001_hba_info *pm8001_ha)
+-{
+-	pm8001_cw32(pm8001_ha, 0, MSGU_ODMR, ODMR_MASK_ALL);
+-}
++#ifdef PM8001_USE_MSIX
+ 
+ /**
+  * pm8001_chip_msix_interrupt_enable - enable PM8001 chip interrupt
+@@ -1257,6 +1238,30 @@ pm8001_chip_msix_interrupt_disable(struct pm8001_hba_info *pm8001_ha,
+ 	pm8001_cw32(pm8001_ha, 0,  msi_index, MSIX_INTERRUPT_DISABLE);
+ }
+ 
++#else
++
++/**
++ * pm8001_chip_interrupt_enable - enable PM8001 chip interrupt
++ * @pm8001_ha: our hba card information
++ */
++static void
++pm8001_chip_intx_interrupt_enable(struct pm8001_hba_info *pm8001_ha)
++{
++	pm8001_cw32(pm8001_ha, 0, MSGU_ODMR, ODMR_CLEAR_ALL);
++	pm8001_cw32(pm8001_ha, 0, MSGU_ODCR, ODCR_CLEAR_ALL);
++}
++
++ /**
++  * pm8001_chip_intx_interrupt_disable- disable PM8001 chip interrupt
++  * @pm8001_ha: our hba card information
++  */
++static void
++pm8001_chip_intx_interrupt_disable(struct pm8001_hba_info *pm8001_ha)
++{
++	pm8001_cw32(pm8001_ha, 0, MSGU_ODMR, ODMR_MASK_ALL);
++}
++#endif
++
+ /**
+  * pm8001_chip_interrupt_enable - enable PM8001 chip interrupt
+  * @pm8001_ha: our hba card information
+@@ -1266,10 +1271,9 @@ pm8001_chip_interrupt_enable(struct pm8001_hba_info *pm8001_ha, u8 vec)
+ {
+ #ifdef PM8001_USE_MSIX
+ 	pm8001_chip_msix_interrupt_enable(pm8001_ha, 0);
+-	return;
+-#endif
++#else
+ 	pm8001_chip_intx_interrupt_enable(pm8001_ha);
+-
++#endif
+ }
+ 
+ /**
+@@ -1281,10 +1285,9 @@ pm8001_chip_interrupt_disable(struct pm8001_hba_info *pm8001_ha, u8 vec)
+ {
+ #ifdef PM8001_USE_MSIX
+ 	pm8001_chip_msix_interrupt_disable(pm8001_ha, 0);
+-	return;
+-#endif
++#else
+ 	pm8001_chip_intx_interrupt_disable(pm8001_ha);
+-
++#endif
+ }
+ 
+ /**
+@@ -4613,15 +4616,15 @@ static int pm8001_chip_phy_ctl_req(struct pm8001_hba_info *pm8001_ha,
+ 
+ static u32 pm8001_chip_is_our_interupt(struct pm8001_hba_info *pm8001_ha)
+ {
+-	u32 value;
+ #ifdef PM8001_USE_MSIX
+ 	return 1;
+-#endif
+-	value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
++#else
++	u32 value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
++
+ 	if (value)
+ 		return 1;
+ 	return 0;
+-
++#endif
+ }
+ 
+ /**
+-- 
+2.11.0
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/vce_v2_0.c | 27 +++++++--------------------
->  1 file changed, 7 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c b/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
-> index 9ea99348e493..72dea663f113 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/vce_v2_0.c
-> @@ -273,24 +273,14 @@ static int vce_v2_0_start(struct amdgpu_device *adev)
->
->  static int vce_v2_0_stop(struct amdgpu_device *adev)
->  {
-> -       int i, j;
-> +       int i;
->         int status;
->
->         if (vce_v2_0_lmi_clean(adev)) {
->                 DRM_INFO("vce is not idle \n");
->                 return 0;
->         }
-> -/*
-> -       for (i = 0; i < 10; ++i) {
-> -               for (j = 0; j < 100; ++j) {
-> -                       status = RREG32(mmVCE_FW_REG_STATUS);
-> -                       if (!(status & 1))
-> -                               break;
-> -                       mdelay(1);
-> -               }
-> -               break;
-> -       }
-> -*/
-> +
->         if (vce_v2_0_wait_for_idle(adev)) {
->                 DRM_INFO("VCE is busy, Can't set clock gateing");
->                 return 0;
-> @@ -299,14 +289,11 @@ static int vce_v2_0_stop(struct amdgpu_device *adev)
->         /* Stall UMC and register bus before resetting VCPU */
->         WREG32_P(mmVCE_LMI_CTRL2, 1 << 8, ~(1 << 8));
->
-> -       for (i = 0; i < 10; ++i) {
-> -               for (j = 0; j < 100; ++j) {
-> -                       status = RREG32(mmVCE_LMI_STATUS);
-> -                       if (status & 0x240)
-> -                               break;
-> -                       mdelay(1);
-> -               }
-> -               break;
-> +       for (i = 0; i < 100; ++i) {
-> +               status = RREG32(mmVCE_LMI_STATUS);
-> +               if (status & 0x240)
-> +                       break;
-> +               mdelay(1);
->         }
->
->         WREG32_P(mmVCE_VCPU_CNTL, 0, ~0x80001);
-> --
-> 2.11.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
