@@ -1,30 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Mar 2017 07:55:01 +0000
-Subject: [PATCH] staging: atomisp: silence an array overflow warning
-Message-Id: <20170314075501.GB6022@mwanda>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:12:24 +0000
+Subject: Re: [PATCH 19/46] selinux: Return directly after a failed next_entry() in range_read()
+Message-Id: <CAHC9VhRvyZq_dMdvu3LoXO-rs87Xsm49vdKN75TrwRHH-awBrw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<9e75f8b7-1275-b2e6-a01c-d0c5ebac1a44@users.sourceforge.net>
+In-Reply-To: <9e75f8b7-1275-b2e6-a01c-d0c5ebac1a44@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Static checkers complain that we should check if "i" is in bounds
-before we check if "var8[i]" is a NUL char.  This bug is harmless but
-also easy to fix.
+On Sun, Jan 15, 2017 at 10:19 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 19:35:59 +0100
+>
+> Return directly after a call of the function "next_entry" failed
+> at the beginning.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Merged, thanks.
 
-diff --git a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-index 65513cae93ce..1dd061f00cd9 100644
---- a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-+++ b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-@@ -669,7 +669,7 @@ int gmin_get_config_var(struct device *dev, const char *var, char *out, size_t *
- 	/* Our variable names are ASCII by construction, but EFI names
- 	 * are wide chars.  Convert and zero-pad. */
- 	memset(var16, 0, sizeof(var16));
--	for (i=0; var8[i] && i < sizeof(var8); i++)
-+	for (i = 0; i < sizeof(var8) && var8[i]; i++)
- 		var16[i] = var8[i];
- 
- 	/* To avoid owerflows when calling the efivar API */
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 5f122e846332..a696876fc327 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1850,7 +1850,7 @@ static int range_read(struct policydb *p, void *fp)
+>
+>         rc = next_entry(buf, fp, sizeof(u32));
+>         if (rc)
+> -               goto out;
+> +               return rc;
+>
+>         nel = le32_to_cpu(buf[0]);
+>         for (i = 0; i < nel; i++) {
+> --
+> 2.11.0
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
