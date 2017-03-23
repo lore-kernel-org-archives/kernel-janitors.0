@@ -1,41 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 13 Mar 2017 17:55:12 +0000
-Subject: [PATCH] staging/atomisp: remove redundant null check on frame
-Message-Id: <20170313175512.18756-1-colin.king@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:18:00 +0000
+Subject: Re: [PATCH 22/46] selinux: Delete an unnecessary variable initialisation in range_read()
+Message-Id: <CAHC9VhTU=f3bDy5o0PBnrcHHfQTMh6E=Ut=o6SO_72UtqGHsUg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<d5af857a-d19d-265a-2378-3e98b176c5ec@users.sourceforge.net>
+In-Reply-To: <d5af857a-d19d-265a-2378-3e98b176c5ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jan 15, 2017 at 10:22 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 20:40:12 +0100
+>
+> The local variable "rt" will be set to an appropriate pointer a bit later.
+> Thus omit the explicit initialisation at the beginning which became
+> unnecessary with a previous update step.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is no need to perform a null check on frame as there is an earlier
-null check check and return hence making the null check redundant.
-Remove it.
+Merged, thanks.
 
-Detected by CoverityScan, CID#1416563 ("Logically Dead Code")
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 0d2f64558c0a..6121a26ada64 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1839,7 +1839,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
+>
+>  static int range_read(struct policydb *p, void *fp)
+>  {
+> -       struct range_trans *rt = NULL;
+> +       struct range_trans *rt;
+>         struct mls_range *r = NULL;
+>         int i, rc;
+>         __le32 buf[2];
+> --
+> 2.11.0
+>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c       | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
-index 25e9d88..604bde6 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
-@@ -159,8 +159,7 @@ enum ia_css_err ia_css_frame_allocate(struct ia_css_frame **frame,
- 
- #ifndef ISP2401
- 	ia_css_debug_dtrace(IA_CSS_DEBUG_TRACE,
--		      "ia_css_frame_allocate() leave: frame=%p\n",
--		      frame ? *frame : (void *)-1);
-+		      "ia_css_frame_allocate() leave: frame=%p\n", *frame);
- #else
- 	if ((*frame != NULL) && err = IA_CSS_SUCCESS)
- 		ia_css_debug_dtrace(IA_CSS_DEBUG_TRACE,
+
 -- 
-2.10.2
-
+paul moore
+www.paul-moore.com
