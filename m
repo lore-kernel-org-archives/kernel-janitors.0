@@ -1,105 +1,82 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 21:20:14 +0000
-Subject: Re: [PATCH 07/46] selinux: Delete unnecessary variable assignments in policydb_index()
-Message-Id: <CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
+Date: Thu, 23 Mar 2017 22:13:05 +0000
+Subject: Re: [PATCH 20/46] selinux: Move four assignments for the variable "rc" in range_read()
+Message-Id: <CAHC9VhTzp2ccYOGBCysOfm3ibvQrLoj6d5=-w7uT7_0R2xTb4A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
-In-Reply-To: <247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
+	<196aacb8-6aab-841b-3301-71da75628954@users.sourceforge.net>
+In-Reply-To: <196aacb8-6aab-841b-3301-71da75628954@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:04 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:20 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 13:40:25 +0100
+> Date: Sat, 14 Jan 2017 19:55:00 +0100
 >
-> The local variable "rc" was reset with an error code up to five times
-> before a memory allocation failure was detected.
->
-> Add a jump target so that this assignment will only be performed after
-> a concrete software failure.
+> One local variable was set to an error code in four cases before
+> a concrete error situation was detected. Thus move the corresponding
+> assignments into if branches to indicate a software failure there.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
+>  security/selinux/ss/policydb.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 
-Like you, I generally despise the notion of unconditionally setting
-return codes to an error value *before* the faulting call; see Eric's
-response on patch 0/46, my preferred style is different from Eric.
-However, I agree with Casey that this patch is mostly just code churn
-so I'm going to drop this from your series.
+See previous comments.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 21869b622c0c..4d4ba1ad910d 100644
+> index a696876fc327..4cd96ce51322 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -539,34 +539,30 @@ static int policydb_index(struct policydb *p)
->         symtab_hash_eval(p->symtab);
->  #endif
+> @@ -1854,10 +1854,11 @@ static int range_read(struct policydb *p, void *fp)
 >
-> -       rc = -ENOMEM;
->         p->class_val_to_struct = kcalloc(p->p_classes.nprim,
->                                          sizeof(*p->class_val_to_struct),
->                                          GFP_KERNEL);
->         if (!p->class_val_to_struct)
-> -               goto out;
-> +               goto failure_indication;
->
-> -       rc = -ENOMEM;
->         p->role_val_to_struct = kcalloc(p->p_roles.nprim,
->                                         sizeof(*p->role_val_to_struct),
->                                         GFP_KERNEL);
->         if (!p->role_val_to_struct)
-> -               goto out;
-> +               goto failure_indication;
->
-> -       rc = -ENOMEM;
->         p->user_val_to_struct = kcalloc(p->p_users.nprim,
->                                         sizeof(*p->user_val_to_struct),
->                                         GFP_KERNEL);
->         if (!p->user_val_to_struct)
-> -               goto out;
-> +               goto failure_indication;
->
->         /* Yes, I want the sizeof the pointer, not the structure */
-> -       rc = -ENOMEM;
->         p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
->                                                        p->p_types.nprim,
->                                                        GFP_KERNEL | __GFP_ZERO);
->         if (!p->type_val_to_struct_array)
-> -               goto out;
-> +               goto failure_indication;
->
->         rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
->                                  p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
-> @@ -578,12 +574,11 @@ static int policydb_index(struct policydb *p)
->                 goto out;
->
->         for (i = 0; i < SYM_NUM; i++) {
+>         nel = le32_to_cpu(buf[0]);
+>         for (i = 0; i < nel; i++) {
 > -               rc = -ENOMEM;
->                 p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
->                                                          p->symtab[i].nprim,
->                                                          GFP_KERNEL | __GFP_ZERO);
->                 if (!p->sym_val_to_name[i])
-> -                       goto out;
-> +                       goto failure_indication;
+>                 rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+> -               if (!rt)
+> +               if (!rt) {
+> +                       rc = -ENOMEM;
+>                         goto out;
+> +               }
 >
->                 rc = flex_array_prealloc(p->sym_val_to_name[i],
->                                          0, p->symtab[i].nprim,
-> @@ -598,6 +593,9 @@ static int policydb_index(struct policydb *p)
->         rc = 0;
->  out:
->         return rc;
-> +failure_indication:
-> +       rc = -ENOMEM;
-> +       goto out;
->  }
+>                 rc = next_entry(buf, fp, (sizeof(u32) * 2));
+>                 if (rc)
+> @@ -1873,24 +1874,26 @@ static int range_read(struct policydb *p, void *fp)
+>                 } else
+>                         rt->target_class = p->process_class;
 >
->  /*
+> -               rc = -EINVAL;
+>                 if (!policydb_type_isvalid(p, rt->source_type) ||
+>                     !policydb_type_isvalid(p, rt->target_type) ||
+> -                   !policydb_class_isvalid(p, rt->target_class))
+> +                   !policydb_class_isvalid(p, rt->target_class)) {
+> +                       rc = -EINVAL;
+>                         goto out;
+> +               }
+>
+> -               rc = -ENOMEM;
+>                 r = kzalloc(sizeof(*r), GFP_KERNEL);
+> -               if (!r)
+> +               if (!r) {
+> +                       rc = -ENOMEM;
+>                         goto out;
+> +               }
+>
+>                 rc = mls_read_range_helper(r, fp);
+>                 if (rc)
+>                         goto out;
+>
+> -               rc = -EINVAL;
+>                 if (!mls_range_isvalid(p, r)) {
+>                         printk(KERN_WARNING "SELinux:  rangetrans:  invalid range\n");
+> +                       rc = -EINVAL;
+>                         goto out;
+>                 }
+>
 > --
 > 2.11.0
 >
