@@ -1,47 +1,57 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 15:40:13 +0000
-Subject: Re: [PATCH 40/46] selinux: Return directly after a failed kzalloc() in roles_init()
-Message-Id: <CAHC9VhStS59YiUoBhKqWPgN17wQ_5iXGfDgY2QTQPdUkWip3EA@mail.gmail.com>
+Date: Thu, 23 Mar 2017 21:48:54 +0000
+Subject: Re: [PATCH 12/46] selinux: Move assignments for two pointers in genfs_read()
+Message-Id: <CAHC9VhQvzd3uSEUbSE2h+AWXz5TEkrwt9hije7=HVx3frYUGkw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<2c370330-a80c-9879-2013-3a99a21dc06d@users.sourceforge.net>
-In-Reply-To: <2c370330-a80c-9879-2013-3a99a21dc06d@users.sourceforge.net>
+	<05e70901-776f-8f3c-f0f3-014a42712dc6@users.sourceforge.net>
+In-Reply-To: <05e70901-776f-8f3c-f0f3-014a42712dc6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:40 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:12 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Jan 2017 12:10:09 +0100
+> Date: Sat, 14 Jan 2017 16:56:51 +0100
 >
-> Return directly after a call of the function "kzalloc" failed
-> at the beginning.
+> Move the assignment for the local variables "newc" and "newgenfs" behind
+> a call of the function "next_entry" at the beginning so that they will
+> only be set after a successful call.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  security/selinux/ss/policydb.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Merged, thanks.
+I think it is cleaner, and arguably safer, the way it is now.  I'm not
+worried about performance gains in the error path, especially when
+those gains are probably not measurable.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 8b9ed3f1b132..ccc146bfd4c2 100644
+> index 754f829d2027..7544e374dec9 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -178,10 +178,9 @@ static int roles_init(struct policydb *p)
->         int rc;
->         struct role_datum *role;
+> @@ -1997,14 +1997,14 @@ static int genfs_read(struct policydb *p, void *fp)
+>         int i, j, rc;
+>         u32 nel, nel2, len, len2;
+>         __le32 buf[1];
+> -       struct ocontext *l, *c;
+> -       struct ocontext *newc = NULL;
+> -       struct genfs *genfs_p, *genfs;
+> -       struct genfs *newgenfs = NULL;
+> +       struct ocontext *l, *c, *newc;
+> +       struct genfs *genfs_p, *genfs, *newgenfs;
 >
-> -       rc = -ENOMEM;
->         role = kzalloc(sizeof(*role), GFP_KERNEL);
->         if (!role)
-> -               goto out;
-> +               return -ENOMEM;
+>         rc = next_entry(buf, fp, sizeof(u32));
+>         if (rc)
+>                 return rc;
+> +       newc = NULL;
+> +       newgenfs = NULL;
+>         nel = le32_to_cpu(buf[0]);
 >
->         rc = -EINVAL;
->         role->value = ++p->p_roles.nprim;
+>         for (i = 0; i < nel; i++) {
 > --
 > 2.11.0
 >
