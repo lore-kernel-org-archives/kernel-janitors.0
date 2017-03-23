@@ -1,43 +1,50 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Sat, 25 Mar 2017 01:11:40 +0000
-Subject: Re: [patch] RDMA/ocrdma: fix a type issue in ocrdma_put_pd_num()
-Message-Id: <1490404300.2404.30.camel@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:05:29 +0000
+Subject: Re: [PATCH 15/46] selinux: One check and function call less in genfs_read() after error detection
+Message-Id: <CAHC9VhTtxZsUyWDga4tZC0hEUO3L8s0jFqy9L=TWqZiHts5=eQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170223104016.GA27526@mwanda>
-In-Reply-To: <20170223104016.GA27526@mwanda>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<dbd8e89d-45a1-5785-f2dd-673389ac01a3@users.sourceforge.net>
+	<a9983d7d-e1f7-8f85-f696-107cf32160ef@schaufler-ca.com>
+	<60ed4f02-4ff8-2ef2-bcc3-ae62bc61cda9@users.sourceforge.net>
+	<55f62ee9-9e98-f5e0-67eb-fc7aa5cbe8f8@schaufler-ca.com>
+In-Reply-To: <55f62ee9-9e98-f5e0-67eb-fc7aa5cbe8f8@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
-Cc: Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-security-module@vger.kernel.org
 
-On Thu, 2017-02-23 at 13:40 +0300, Dan Carpenter wrote:
-> We want to return zero on success or negative error codes.  The type
-> should be int and not u8.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index e06ad7250963..b1b075763eaa 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -371,7 +371,7 @@ static int _ocrdma_pd_mgr_put_bitmap(struct
-> ocrdma_dev *dev, u16 pd_id,
->  	return 0;
->  }
->  
-> -static u8 ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
-> +static int ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
->  				   bool dpp_pool)
->  {
->  	int status;
+On Tue, Jan 17, 2017 at 12:53 PM, Casey Schaufler
+<casey@schaufler-ca.com> wrote:
+> On 1/17/2017 8:37 AM, SF Markus Elfring wrote:
+>>>> @@ -2015,7 +2015,7 @@ static int genfs_read(struct policydb *p, void *fp)
+>>>>             newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
+>>>>             if (!newgenfs) {
+>>>>                     rc = -ENOMEM;
+>>>> -                   goto out;
+>>>> +                   goto exit;
+>>>>             }
+>>>>
+>>>>             rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
+>>>> @@ -2101,7 +2101,7 @@ static int genfs_read(struct policydb *p, void *fp)
+>>>>             kfree(newgenfs);
+>>>>     }
+>>>>     ocontext_destroy(newc, OCON_FSUSE);
+>>>> -
+>>>> +exit:
+>>>>     return rc;
+>>> Why not replace the "goto out" with "return rc" rather
+>>> than add a target?
+>> Would you accept to use the statement "return -ENOMEM;" there instead?
+>
+> That would be even better.
 
-Thanks, applied for -rc.
+I *hate* code that does a jump to a label only to then do a
+return/exit.  That said, see my earlier comments about not worrying
+too much about performance of the error path and in this case I like
+the "feel good" nature of the code where ever failure in the loop goes
+to "out".
 
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-   
-Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
+paul moore
+www.paul-moore.com
