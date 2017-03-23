@@ -1,35 +1,50 @@
-From: "uv" <qq@723292855.com>
-Date: Sat, 25 Mar 2017 20:02:07 +0000
-Subject: =?utf-8?B?5Zue5aSNOmtldmluNzkxMiDimIU25pyIMi005pel?= =?utf-8?B?4piF44CQ5Lit5Zu977yI5bm/5bee77yJ5Zu96
-Message-Id: <20170326021152688023@cpd.com.cn>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:09:32 +0000
+Subject: Re: [PATCH 17/46] selinux: Delete an unnecessary variable assignment in filename_trans_read()
+Message-Id: <CAHC9VhToUf-sncer+NWwwVUA1yP1D1j03AQ_5rFgpd8VVVs05w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<71120ef7-6463-6497-f915-fcaf9e54239d@users.sourceforge.net>
+In-Reply-To: <71120ef7-6463-6497-f915-fcaf9e54239d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-44CADQrjgJDkuK3mloflkI3np7DjgJEgMjAxN+esrOWNgeS6lOWxiuS4reWbve+8iOW5v+W3nu+8
-ieWbvemZheaxvei9pumbtumDqOS7tuWPiueUqOWTgeWxleiniOS8mg0K44CQ6Iux5paH5ZCN56ew
-44CRIFRoZSAxNXRoIENoaW5hIChHdWFuZ3pob3UpIEludGVybmF0aW9uYWwgQXV0byBQYXJ0cyBF
-eHBvLDIwMTcg77yIQ0FQRSAyMDE377yJDQrjgIANCuOAkOWxleS8muaXpeacn+OAkSAyMDE35bm0
-MDbmnIgwMuKAlDA05pelDQrjgJDlsZXkvJrlnLrppobjgJEg5bm/5bee55C25rSy5L+d5Yip5LiW
-6LS45Y2a6KeI6aaGDQrjgIANCuOAkOWxleS8mueugOS7i+OAkSDmnKzlsYpDQVBF6aKE6K6h5bGV
-5Lya6Z2i56evNjcwMDDlubPmlrnnsbPvvIzmoIflh4blsZXkvY0zMDAw5aSa5Liq77yM5Y+C6KeC
-6KeC5LyXNjUzMzDlpJrkurrvvJvlhbbkuK3vvIzkuJPkuJrkubDlrrYzMDAwMOWkmuS6uu+8jOe7
-iOerr+a2iOi0ueiAhTI1MDAw5aSa5Lq677yM5Zu95aSW6YeH6LSt5ZWGNzU1MeWkmuS6uuOAgg0K
-44CQ5Y+C5bGV5oOF5Ya144CRIOebruWJjeS7heWJqeWwkemHj+WxleS9je+8jOivt+WNs+WIu+eZ
-u+mZhuWumOe9keaKpeWQjeOAguacuuS4jeWPr+Wkse+8gQ0K44CADQrjgJDlj4LlsZXogZTns7vj
-gJEgDQrlrpjnvZHvvJpodHRwOi8vd3d3LkNBUEUtY2hpbmEuY29tIA0K77yx77yx77yaMTI4MDkz
-OTUjcXEuY29t77yI6YKu566x77yJDQrnlLXor53vvJo0MDAwLTY4MC04NjDovaw4MTQ077ybIDAx
-MOKAlDg2OTktNzE1NeOAgTY5MjMtNjk0NCANCuaJi+acuu+8mjEzOS0xMDMxLTgxNDTvvJsgDQro
-gZTns7vkurrvvJrnjovotoUg77yI5YWI55Sf77yJDQoNCg0K44CA44CADQrjgIDjgIANCuOAgOOA
-gA0K44CQ5YWs5LyX5bmz5Y+w44CRDQrjgIDjgIANCuW+ruS/oe+8miDlj4LlsZXmtojmga8g77yI
-SUTvvJpDYW5aaGFuWGlhb1hp77yJ4oCU4oCUIOWTgeeJjOaJqeW8oOeahOW5s+WPsOOAgOW4guWc
-uuW8gOaLk+eahOahpeaigQ0K5b6u5L+h77yaIOWxleWVhuS5i+WutiDvvIhJRO+8mlpoYW5TaGFu
-Z1poaUppYe+8ieKAlOKAlCDkuLrlsZXllYbmj5DkvpvmnIDkvbPokKXlnLDjgIDkuLrpmIHkuIvo
-kKXpgKDlj4LlsZXku7flgLwNCuOAgOOAgA0K44CA44CADQrjgIDjgIANCuOAgOOAgA0K44CA44CA
-DQrnmb7kuIfnvqTlj5Hns7vnu5985Li65oKo5Y+R6YCBfOWmguS4jeW4jOacm+WGjeaUtuWIsOat
-pOihjOS4mui1hOiur3zor7flm57lpI3igJzpgIDorqIrQ0FQRTIwMTfigJ3oh7Ppgq7nrrExMDU1
-ODAwODEyQHFxLmNvbQ0K
+On Sun, Jan 15, 2017 at 10:17 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 19:02:42 +0100
+>
+> The local variable "ft" was set to a null pointer despite of an
+> immediate reassignment.
+> Thus remove this statement from the beginning of a loop.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 1 -
+>  1 file changed, 1 deletion(-)
+
+Merged, thanks.
+
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 106a1da1d68a..2be5b18eb149 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1927,7 +1927,6 @@ static int filename_trans_read(struct policydb *p, void *fp)
+>         nel = le32_to_cpu(buf[0]);
+>
+>         for (i = 0; i < nel; i++) {
+> -               ft = NULL;
+>                 otype = NULL;
+>                 name = NULL;
+>                 ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+> --
+> 2.11.0
+>
 
 
+
+-- 
+paul moore
+www.paul-moore.com
