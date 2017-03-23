@@ -1,66 +1,30 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Thu, 09 Mar 2017 11:57:21 +0000
-Subject: Re: [PATCH 23/26] IB/ocrdma: Delete an unnecessary variable in ocrdma_dealloc_pd()
-Message-Id: <20170309115720.GH3307@yuval-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Mar 2017 10:40:49 +0000
+Subject: [PATCH] leds: mt6323: Fix an off by one bug in probe
+Message-Id: <20170323104049.GC20154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <0e667a69-3afa-6122-ed3b-d313bc5909ad@users.sourceforge.net>
-In-Reply-To: <0e667a69-3afa-6122-ed3b-d313bc5909ad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Mar 08, 2017 at 02:28:10PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Mar 2017 10:58:34 +0100
-> 
-> 1. Return zero in one case directly.
-> 
-> 2. Return the value from a call of the function "_ocrdma_dealloc_pd"
->    without using an extra assignment for the local variable.
-> 
-> 3. Remove the variable "status" in this function then.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index 1d25512416f5..ae0d343d1731 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -755,7 +755,6 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
->  	struct ocrdma_pd *pd = get_ocrdma_pd(ibpd);
->  	struct ocrdma_dev *dev = get_ocrdma_dev(ibpd->device);
->  	struct ocrdma_ucontext *uctx = NULL;
-> -	int status = 0;
->  	u64 usr_db;
->  
->  	uctx = pd->uctx;
-> @@ -769,11 +768,10 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
->  
->  		if (is_ucontext_pd(uctx, pd)) {
->  			ocrdma_release_ucontext_pd(uctx);
-> -			return status;
-> +			return 0;
->  		}
->  	}
-> -	status = _ocrdma_dealloc_pd(dev, pd);
-> -	return status;
-> +	return _ocrdma_dealloc_pd(dev, pd);
->  }
+It should be ">= MT6323_MAX_LEDS" instead of ">".  Also "reg" is a u32
+so it can't be negative and we can remove the test for negative values.
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Fixes: 216ec6cc4c19 ("leds: Add LED support for MT6323 PMIC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->  
->  static int ocrdma_alloc_lkey(struct ocrdma_dev *dev, struct ocrdma_mr *mr,
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
+index 48081bccbea5..8893c74e9a1f 100644
+--- a/drivers/leds/leds-mt6323.c
++++ b/drivers/leds/leds-mt6323.c
+@@ -417,7 +417,7 @@ static int mt6323_led_probe(struct platform_device *pdev)
+ 			goto put_child_node;
+ 		}
+ 
+-		if (reg < 0 || reg > MT6323_MAX_LEDS || leds->led[reg]) {
++		if (reg >= MT6323_MAX_LEDS || leds->led[reg]) {
+ 			dev_err(dev, "Invalid led reg %u\n", reg);
+ 			ret = -EINVAL;
+ 			goto put_child_node;
