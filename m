@@ -1,34 +1,35 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 27 Mar 2017 15:22:17 +0000
-Subject: Re: [PATCH] Btrfs: fix an integer overflow check
-Message-Id: <20170327152217.GG4781@twin.jikos.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Mar 2017 10:41:42 +0000
+Subject: [PATCH] scsi: osd_uld: remove an unneeded NULL check
+Message-Id: <20170323104142.GD20154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170317205120.GE16505@mwanda>
-In-Reply-To: <20170317205120.GE16505@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boaz Harrosh <ooo@electrozaur.com>
+Cc: Benny Halevy <bhalevy@primarydata.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 17, 2017 at 11:51:20PM +0300, Dan Carpenter wrote:
-> This isn't super serious because you need CAP_ADMIN to run this code.
-> 
-> I added this integer overflow check last year but apparently I am
-> rubbish at writing integer overflow checks...  There are two issues.
-> First, access_ok() works on unsigned long type and not u64 so on 32 bit
-> systems the access_ok() could be checking a truncated size.  The other
-> issue is that we should be using a stricter limit so we don't overflow
-> the kzalloc() setting ctx->clone_roots later in the function after the
-> access_ok():
-> 
-> 	alloc_size = sizeof(struct clone_root) * (arg->clone_sources_count + 1);
-> 	sctx->clone_roots = kzalloc(alloc_size, GFP_KERNEL | __GFP_NOWARN);
-> 
-> Fixes: f5ecec3ce21f ("btrfs: send: silence an integer overflow warning")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We don't call the remove() function unless probe() succeeds so "oud"
+can't be NULL here.  Plus, if it were NULL, we dereference it on the
+next line so it would crash anyway.
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'll copy parts of the changelog and add as comments, it's not obvious
-what the check does.
+diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+index 4101c3178411..8b9941a5687a 100644
+--- a/drivers/scsi/osd/osd_uld.c
++++ b/drivers/scsi/osd/osd_uld.c
+@@ -507,10 +507,9 @@ static int osd_remove(struct device *dev)
+ 	struct scsi_device *scsi_device = to_scsi_device(dev);
+ 	struct osd_uld_device *oud = dev_get_drvdata(dev);
+ 
+-	if (!oud || (oud->od.scsi_device != scsi_device)) {
+-		OSD_ERR("Half cooked osd-device %p,%p || %p!=%p",
+-			dev, oud, oud ? oud->od.scsi_device : NULL,
+-			scsi_device);
++	if (oud->od.scsi_device != scsi_device) {
++		OSD_ERR("Half cooked osd-device %p, || %p!=%p",
++			dev, oud->od.scsi_device, scsi_device);
+ 	}
+ 
+ 	cdev_device_del(&oud->cdev, &oud->class_dev);
