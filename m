@@ -1,32 +1,54 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:19 +0000
-Subject: [PATCH 11/14] [SCSI] Buslogic: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-11-afd@ti.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 21:54:29 +0000
+Subject: Re: [PATCH 14/46] selinux: One function call less in genfs_read() after null pointer detection
+Message-Id: <CAHC9VhQpXW8FezS0f1NNKfLAO790+JXOhS16A6ZL7kVdFOvtoA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<202d7312-b266-ce9d-8f7a-3e8282c7b0c5@users.sourceforge.net>
+In-Reply-To: <202d7312-b266-ce9d-8f7a-3e8282c7b0c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+On Sun, Jan 15, 2017 at 10:14 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 17:43:47 +0100
+>
+> Call the function "kfree" at the end only after it was determined
+> that the local variable "newgenfs" contained a non-null pointer.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/scsi/BusLogic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Merged, thanks.
 
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index c7be7bb37209..fe2b4bfc8be2 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -2241,7 +2241,7 @@ static bool __init blogic_inquiry(struct blogic_adapter *adapter)
- 					"INQUIRE INSTALLED DEVICES ID 0 TO 7");
- 		for (tgt_id = 0; tgt_id < 8; tgt_id++)
- 			adapter->tgt_flags[tgt_id].tgt_exists -				(installed_devs0to7[tgt_id] != 0 ? true : false);
-+				(installed_devs0to7[tgt_id] != 0);
- 	}
- 	/*
- 	   Issue the Inquire Setup Information command.
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index a12d9166f0e4..5dc31faa601f 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -2096,9 +2096,10 @@ static int genfs_read(struct policydb *p, void *fp)
+>         }
+>         rc = 0;
+>  out:
+> -       if (newgenfs)
+> +       if (newgenfs) {
+>                 kfree(newgenfs->fstype);
+> -       kfree(newgenfs);
+> +               kfree(newgenfs);
+> +       }
+>         ocontext_destroy(newc, OCON_FSUSE);
+>
+>         return rc;
+> --
+> 2.11.0
+>
+
+
+
 -- 
-2.11.0
-
+paul moore
+www.paul-moore.com
