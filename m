@@ -1,72 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Mar 2017 16:42:09 +0000
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Thu, 23 Mar 2017 18:12:25 +0000
 Subject: Re: [PATCH] tpm2: fix off-by-one comparison and out-of-bounds read error
-Message-Id: <20170323164209.GO32449@mwanda>
+Message-Id: <20170323181225.3hz4rsuzr35yk7uw@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170320142336.10997-1-colin.king@canonical.com>
  <20170322114256.pdwg6buj2wkhcooy@intel.com>
  <d96bb5c9-e1b3-abe5-2273-fc525dc00190@canonical.com>
  <20170322131248.GJ32449@mwanda>
  <20170323155358.jpotoweghjnl4vjx@intel.com>
-In-Reply-To: <20170323155358.jpotoweghjnl4vjx@intel.com>
+ <20170323164209.GO32449@mwanda>
+In-Reply-To: <20170323164209.GO32449@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Colin Ian King <colin.king@canonical.com>, Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 05:53:58PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Mar 22, 2017 at 04:12:49PM +0300, Dan Carpenter wrote:
-> > On Wed, Mar 22, 2017 at 11:45:37AM +0000, Colin Ian King wrote:
-> > > On 22/03/17 11:42, Jarkko Sakkinen wrote:
-> > > > On Mon, Mar 20, 2017 at 02:23:36PM +0000, Colin King wrote:
-> > > >> From: Colin Ian King <colin.king@canonical.com>
-> > > >>
-> > > >> The comparison of an out of range index into space->context_tbl is
-> > > >> off-by-one and should be using >= rather than > in the comparison.
-> > > >>
-> > > >> Detected by CoverityScan, CID#1419694 ("Out-of-bounds read")
-> > > >>
-> > > >> Fixes: 849246e7ce9ce ("tpm2: add session handle context saving and restoring to the space code")
-> > > >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > >> ---
-> > > >>  drivers/char/tpm/tpm2-space.c | 2 +-
-> > > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >>
-> > > >> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > > >> index d36d81e07076..009934269514 100644
-> > > >> --- a/drivers/char/tpm/tpm2-space.c
-> > > >> +++ b/drivers/char/tpm/tpm2-space.c
-> > > >> @@ -229,7 +229,7 @@ static bool tpm2_map_to_phandle(struct tpm_space *space, void *handle)
-> > > >>  	int i;
-> > > >>  
-> > > >>  	i = 0xFFFFFF - (vhandle & 0xFFFFFF);
-> > > >> -	if (i > ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
-> > > >> +	if (i >= ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
-> > > >>  		return false;
-> > > >>  
-> > > >>  	phandle = space->context_tbl[i];
-> > > >> -- 
-> > > >> 2.11.0
-> > > > 
-> > > > Thanks. If you don't mind, I would squash this to that patch?
-> > > > 
-> > > > /Jarkko
-> > > > 
-> > > Sure squash it, and maybe add a Reported-by: Colin Ian King
-> > > <colin.king@canonical.com> if that's OK with you.
+On Thu, Mar 23, 2017 at 07:42:09PM +0300, Dan Carpenter wrote:
+> On Thu, Mar 23, 2017 at 05:53:58PM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Mar 22, 2017 at 04:12:49PM +0300, Dan Carpenter wrote:
+> > > On Wed, Mar 22, 2017 at 11:45:37AM +0000, Colin Ian King wrote:
+> > > > On 22/03/17 11:42, Jarkko Sakkinen wrote:
+> > > > > On Mon, Mar 20, 2017 at 02:23:36PM +0000, Colin King wrote:
+> > > > >> From: Colin Ian King <colin.king@canonical.com>
+> > > > >>
+> > > > >> The comparison of an out of range index into space->context_tbl is
+> > > > >> off-by-one and should be using >= rather than > in the comparison.
+> > > > >>
+> > > > >> Detected by CoverityScan, CID#1419694 ("Out-of-bounds read")
+> > > > >>
+> > > > >> Fixes: 849246e7ce9ce ("tpm2: add session handle context saving and restoring to the space code")
+> > > > >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > > >> ---
+> > > > >>  drivers/char/tpm/tpm2-space.c | 2 +-
+> > > > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >>
+> > > > >> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> > > > >> index d36d81e07076..009934269514 100644
+> > > > >> --- a/drivers/char/tpm/tpm2-space.c
+> > > > >> +++ b/drivers/char/tpm/tpm2-space.c
+> > > > >> @@ -229,7 +229,7 @@ static bool tpm2_map_to_phandle(struct tpm_space *space, void *handle)
+> > > > >>  	int i;
+> > > > >>  
+> > > > >>  	i = 0xFFFFFF - (vhandle & 0xFFFFFF);
+> > > > >> -	if (i > ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
+> > > > >> +	if (i >= ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
+> > > > >>  		return false;
+> > > > >>  
+> > > > >>  	phandle = space->context_tbl[i];
+> > > > >> -- 
+> > > > >> 2.11.0
+> > > > > 
+> > > > > Thanks. If you don't mind, I would squash this to that patch?
+> > > > > 
+> > > > > /Jarkko
+> > > > > 
+> > > > Sure squash it, and maybe add a Reported-by: Colin Ian King
+> > > > <colin.king@canonical.com> if that's OK with you.
+> > > 
+> > > Reported-by isn't really correct though...  We should have a Fixes-from:
+> > > tag for squashed fixes.
+> > > 
+> > > regards,
+> > > dan carpenter
 > > 
-> > Reported-by isn't really correct though...  We should have a Fixes-from:
-> > tag for squashed fixes.
-> > 
-> > regards,
-> > dan carpenter
+> > Hmm... Maybe so depending on how you interpret Reported-by but
+> > Fixes-from is not something that is used at the moment, is it?
 > 
-> Hmm... Maybe so depending on how you interpret Reported-by but
-> Fixes-from is not something that is used at the moment, is it?
+> No, but we should create it.
+> 
+> regards,
+> dan carpenter
 
-No, but we should create it.
+Fully agreed. Using reported-by in the commit in question implies as if
+the whole commit was proposed by Colin.
 
-regards,
-dan carpenter
-
+/Jarkko
