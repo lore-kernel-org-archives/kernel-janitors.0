@@ -1,36 +1,36 @@
-From: Shaohua Li <shli@kernel.org>
-Date: Fri, 24 Mar 2017 05:37:56 +0000
-Subject: Re: [PATCH] raid5-ppl: silence a misleading warning message
-Message-Id: <20170324053756.o6efazfnv7fc6ihj@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:24:54 +0000
+Subject: Re: [PATCH 00/46] SELinux: Fine-tuning for several function implementations
+Message-Id: <CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170321204305.GC22118@mwanda>
-In-Reply-To: <20170321204305.GC22118@mwanda>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On Tue, Mar 21, 2017 at 11:43:05PM +0300, Dan Carpenter wrote:
-> The "need_cache_flush" variable is never set to false.  When the
-> variable is true that means we print a warning message at the end of
-> the function.
-> 
-> Fixes: 3418d036c81d ("raid5-ppl: Partial Parity Log write logging implementation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sun, Jan 15, 2017 at 9:55 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 15 Jan 2017 15:15:14 +0100
+>
+> Several update suggestions were taken into account
+> from static source code analysis.
+>
+> Markus Elfring (46): ....
 
-applied, thanks!
- 
-> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-> index 27bad3e2d7ce..86ea9addb51a 100644
-> --- a/drivers/md/raid5-ppl.c
-> +++ b/drivers/md/raid5-ppl.c
-> @@ -1070,7 +1070,7 @@ int ppl_init_log(struct r5conf *conf)
->  	struct mddev *mddev = conf->mddev;
->  	int ret = 0;
->  	int i;
-> -	bool need_cache_flush;
-> +	bool need_cache_flush = false;
->  
->  	pr_debug("md/raid:%s: enabling distributed Partial Parity Log\n",
->  		 mdname(conf->mddev));
+Hi Markus,
+
+Thank you for your patience with this patchset, I realize it has taken
+me quite a long time to get around to merging them.  I just wanted to
+send a quick summary: I've made it through the first half (23/46) and
+of those I've merged patches 1, 2, 3, 4, 5, 6, 7, 11, 14, 17, 19, and
+22.  Unfortunately, this is all the time I have for today, but I'll
+resume working on the remaining patches soon.
+
+Thanks for the patches and your understanding.
+
+-- 
+paul moore
+www.paul-moore.com
