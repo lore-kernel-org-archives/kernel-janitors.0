@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Mar 2017 13:12:49 +0000
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Thu, 23 Mar 2017 15:51:54 +0000
 Subject: Re: [PATCH] tpm2: fix off-by-one comparison and out-of-bounds read error
-Message-Id: <20170322131248.GJ32449@mwanda>
+Message-Id: <20170323155154.xypbv4t6xsjrhkcc@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170320142336.10997-1-colin.king@canonical.com>
  <20170322114256.pdwg6buj2wkhcooy@intel.com>
@@ -11,7 +11,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Wed, Mar 22, 2017 at 11:45:37AM +0000, Colin Ian King wrote:
 > On 22/03/17 11:42, Jarkko Sakkinen wrote:
@@ -51,10 +51,9 @@ On Wed, Mar 22, 2017 at 11:45:37AM +0000, Colin Ian King wrote:
 > > 
 > Sure squash it, and maybe add a Reported-by: Colin Ian King
 > <colin.king@canonical.com> if that's OK with you.
+> 
+> Colin
 
-Reported-by isn't really correct though...  We should have a Fixes-from:
-tag for squashed fixes.
+Thanks I'll do that!
 
-regards,
-dan carpenter
-
+/Jarkko
