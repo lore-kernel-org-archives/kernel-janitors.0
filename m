@@ -1,25 +1,40 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Mon, 13 Mar 2017 17:52:36 +0000
-Subject: Re: [PATCH] staging: atomisp: potential underflow in atomisp_get_metadata_by_type()
-Message-Id: <1489427556.24765.8.camel@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Mar 2017 11:57:46 +0000
+Subject: [PATCH] [media] coda: remove redundant call to v4l2_m2m_get_vq
+Message-Id: <20170323115746.18474-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170313123414.GB9287@mwanda>
-In-Reply-To: <20170313123414.GB9287@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-03-13 at 15:34 +0300, Dan Carpenter wrote:
-> md_type is an enum.  On my tests, GCC treats it as unsigned but
-> according to the C standard it's an implementation dependant thing so
-> we
-> should check for negatives.
+From: Colin Ian King <colin.king@canonical.com>
 
-Can do but the kernel assumes GNU C everywhere else.
+The call to v4ls_m2m_get_vq is only used to get the return value
+which is not being used, so it appears to be redundant and can
+be removed.
 
-Acked-by: Alan Cox <alan@linux.intel.com>
+Detected with CoverityScan, CID#1420674 ("Useless call")
 
-Alan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/coda/coda-common.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index 800d2477f1a0..95e4648f18e6 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -817,8 +817,6 @@ static int coda_qbuf(struct file *file, void *priv,
+ static bool coda_buf_is_end_of_stream(struct coda_ctx *ctx,
+ 				      struct vb2_v4l2_buffer *buf)
+ {
+-	v4l2_m2m_get_vq(ctx->fh.m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
+-
+ 	return ((ctx->bit_stream_param & CODA_BIT_STREAM_END_FLAG) &&
+ 		(buf->sequence = (ctx->qsequence - 1)));
+ }
+-- 
+2.11.0
 
