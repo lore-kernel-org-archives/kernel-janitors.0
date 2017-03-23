@@ -1,45 +1,78 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Sat, 04 Mar 2017 17:42:31 +0000
-Subject: Re: [PATCH] scsi: lpfc: remove redundant assignment of sgel
-Message-Id: <7eb92880-0cd8-3260-a890-8ef970ef2568@broadcom.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 20:30:01 +0000
+Subject: Re: [PATCH 03/46] selinux: Improve size determinations in four functions
+Message-Id: <CAHC9VhTH2OViD2+az0g9_w4x9c7hY0pxTT4B9qZrk8P0yv8-jw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170224134523.5385-1-colin.king@canonical.com>
-In-Reply-To: <20170224134523.5385-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<f36c8dc9-0d90-6eee-9229-fb02d6b27708@users.sourceforge.net>
+In-Reply-To: <f36c8dc9-0d90-6eee-9229-fb02d6b27708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Looks good. I included it in the lpfc patch set just posted.
-
--- james
-
-
-
-On 2/24/2017 5:45 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jan 15, 2017 at 10:00 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 11:22:12 +0100
 >
-> In the NVMET_FCOP_RSP case, sgel is assigned but never used and
-> hence is redundant and can be removed.
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer.
 >
-> Detected by CoverityScan, CID#1411658 ("Unused value")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->   drivers/scsi/lpfc/lpfc_nvmet.c | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-> index c421e17..e59a0a8 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvmet.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-> @@ -1445,7 +1445,6 @@ lpfc_nvmet_prep_fcp_wqe(struct lpfc_hba *phba,
->   
->   	case NVMET_FCOP_RSP:
->   		/* Words 0 - 2 */
-> -		sgel = &rsp->sg[0];
->   		physaddr = rsp->rspdma;
->   		wqe->fcp_trsp.bde.tus.f.bdeFlags = BUFF_TYPE_BDE_64;
->   		wqe->fcp_trsp.bde.tus.f.bdeSize = rsp->rsplen;
+>  security/selinux/ss/conditional.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
+Merged, thanks.
+
+> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+> index 4a3bf29f7565..771c96afe1d5 100644
+> --- a/security/selinux/ss/conditional.c
+> +++ b/security/selinux/ss/conditional.c
+> @@ -227,7 +227,7 @@ int cond_read_bool(struct policydb *p, struct hashtab *h, void *fp)
+>         u32 len;
+>         int rc;
+>
+> -       booldatum = kzalloc(sizeof(struct cond_bool_datum), GFP_KERNEL);
+> +       booldatum = kzalloc(sizeof(*booldatum), GFP_KERNEL);
+>         if (!booldatum)
+>                 return -ENOMEM;
+>
+> @@ -332,7 +332,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>                 goto err;
+>         }
+>
+> -       list = kzalloc(sizeof(struct cond_av_list), GFP_KERNEL);
+> +       list = kzalloc(sizeof(*list), GFP_KERNEL);
+>         if (!list) {
+>                 rc = -ENOMEM;
+>                 goto err;
+> @@ -421,7 +421,7 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+>                         goto err;
+>
+>                 rc = -ENOMEM;
+> -               expr = kzalloc(sizeof(struct cond_expr), GFP_KERNEL);
+> +               expr = kzalloc(sizeof(*expr), GFP_KERNEL);
+>                 if (!expr)
+>                         goto err;
+>
+> @@ -472,7 +472,7 @@ int cond_read_list(struct policydb *p, void *fp)
+>
+>         for (i = 0; i < len; i++) {
+>                 rc = -ENOMEM;
+> -               node = kzalloc(sizeof(struct cond_node), GFP_KERNEL);
+> +               node = kzalloc(sizeof(*node), GFP_KERNEL);
+>                 if (!node)
+>                         goto err;
+>
+> --
+> 2.11.0
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
