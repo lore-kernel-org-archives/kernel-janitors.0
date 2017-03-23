@@ -1,51 +1,40 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 21 Mar 2017 02:12:57 +0000
-Subject: [PATCH 3/4 V2] staging: atomisp: remove useless condition in if-statements
-Message-Id: <20170321021257.GA1658@SEL-JYOUN-D1>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Mar 2017 11:49:56 +0000
+Subject: [PATCH] qla2xxx: remove redundant check on sess being non-null
+Message-Id: <20170323114956.18245-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The css_pipe_id was checked with 'CSS_PIPE_ID_COPY' in previous if-
-statement. In this case, if the css_pipe_id equals to 'CSS_PIPE_ID_COPY',
-it could not enter the next if-statement. But the "next" if-statement
-has the condition to check whether the css_pipe_id equals to
-'CSS_PIPE_ID_COPY' or not. It should be removed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+All error paths to label out_term2 result in sess being null, so the
+check for sess being non-null and the call to put_sess is dead code
+and can therefore be removed.
+
+Detected with CoverityScan, CID#1420664 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-V2: one(2/4) of this series was updated so I tried to send them again.
+ drivers/scsi/qla2xxx/qla_target.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index 811331d..f7c0705 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -910,8 +910,7 @@ static struct atomisp_video_pipe *__atomisp_get_pipe(
- 	} else if (asd->run_mode->val = ATOMISP_RUN_MODE_VIDEO) {
- 		/* For online video or SDV video pipe. */
- 		if (css_pipe_id = CSS_PIPE_ID_VIDEO ||
--		    css_pipe_id = CSS_PIPE_ID_COPY ||
--		    css_pipe_id = CSS_PIPE_ID_YUVPP) {
-+		    css_pipe_id = CSS_PIPE_ID_COPY) {
- 			if (buf_type = CSS_BUFFER_TYPE_OUTPUT_FRAME)
- 				return &asd->video_out_video_capture;
- 			return &asd->video_out_preview;
-@@ -919,8 +918,7 @@ static struct atomisp_video_pipe *__atomisp_get_pipe(
- 	} else if (asd->run_mode->val = ATOMISP_RUN_MODE_PREVIEW) {
- 		/* For online preview or ZSL preview pipe. */
- 		if (css_pipe_id = CSS_PIPE_ID_PREVIEW ||
--		    css_pipe_id = CSS_PIPE_ID_COPY ||
--		    css_pipe_id = CSS_PIPE_ID_YUVPP)
-+		    css_pipe_id = CSS_PIPE_ID_COPY)
- 			return &asd->video_out_preview;
- 	}
- 	/* For capture pipe. */
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 0e03ca2ab3e5..32e07f21ddb2 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -5853,8 +5853,6 @@ static void qlt_abort_work(struct qla_tgt *tgt,
+ 	return;
+ 
+ out_term2:
+-	if (sess)
+-		ha->tgt.tgt_ops->put_sess(sess);
+ 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags2);
+ 
+ out_term:
 -- 
-1.9.1
+2.11.0
 
