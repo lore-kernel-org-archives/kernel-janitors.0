@@ -1,22 +1,74 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 07 Mar 2017 04:37:50 +0000
-Subject: Re: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
-Message-Id: <20170307042549.GZ2843@localhost>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 21:15:06 +0000
+Subject: Re: [PATCH 06/46] selinux: Use kcalloc() in policydb_index()
+Message-Id: <CAHC9VhTP40gob2m7M=OCkKgxc=MTQd2H66LeTYHN+OuevnkQ8g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221185005.27973-1-colin.king@canonical.com>
-In-Reply-To: <20170221185005.27973-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<2c5e5708-72a3-954f-a773-e5716df174d1@users.sourceforge.net>
+In-Reply-To: <2c5e5708-72a3-954f-a773-e5716df174d1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On Tue, Feb 21, 2017 at 06:50:05PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err message.
+On Sun, Jan 15, 2017 at 10:03 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 13:08:59 +0100
+>
+> Multiplications for the size determination of memory allocations
+> indicated that array data structures should be processed.
+> Thus use the corresponding function "kcalloc".
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+Merged, thanks.
+
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index d719db4219cd..21869b622c0c 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -540,23 +540,23 @@ static int policydb_index(struct policydb *p)
+>  #endif
+>
+>         rc = -ENOMEM;
+> -       p->class_val_to_struct > -               kzalloc(p->p_classes.nprim * sizeof(*(p->class_val_to_struct)),
+> -                       GFP_KERNEL);
+> +       p->class_val_to_struct = kcalloc(p->p_classes.nprim,
+> +                                        sizeof(*p->class_val_to_struct),
+> +                                        GFP_KERNEL);
+>         if (!p->class_val_to_struct)
+>                 goto out;
+>
+>         rc = -ENOMEM;
+> -       p->role_val_to_struct > -               kzalloc(p->p_roles.nprim * sizeof(*(p->role_val_to_struct)),
+> -                       GFP_KERNEL);
+> +       p->role_val_to_struct = kcalloc(p->p_roles.nprim,
+> +                                       sizeof(*p->role_val_to_struct),
+> +                                       GFP_KERNEL);
+>         if (!p->role_val_to_struct)
+>                 goto out;
+>
+>         rc = -ENOMEM;
+> -       p->user_val_to_struct > -               kzalloc(p->p_users.nprim * sizeof(*(p->user_val_to_struct)),
+> -                       GFP_KERNEL);
+> +       p->user_val_to_struct = kcalloc(p->p_users.nprim,
+> +                                       sizeof(*p->user_val_to_struct),
+> +                                       GFP_KERNEL);
+>         if (!p->user_val_to_struct)
+>                 goto out;
+>
+> --
+> 2.11.0
+>
+
+
 
 -- 
-~Vinod
+paul moore
+www.paul-moore.com
