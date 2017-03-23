@@ -1,39 +1,65 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Mar 2017 16:36:41 +0000
-Subject: [PATCH] ath10k: remove redundant check of len with buf_len
-Message-Id: <20170315163641.17052-1-colin.king@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:07:04 +0000
+Subject: Re: [PATCH 16/46] selinux: Move two assignments for the variable "rc" in filename_trans_read()
+Message-Id: <CAHC9VhS_cFfopAaWO8OLzdJT-+2py60G=hmxTQ=sOUzGX1d_cw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<d7e6f9c9-c6dc-5fd5-5537-85fe1617abb1@users.sourceforge.net>
+In-Reply-To: <d7e6f9c9-c6dc-5fd5-5537-85fe1617abb1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jan 15, 2017 at 10:16 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 18:50:52 +0100
+>
+> One local variable was set to an error code in two cases before
+> a concrete error situation was detected. Thus move the corresponding
+> assignments into if branches to indicate a software failure there.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
-The check of len > buf_len is redundant as len is initialized
-to 0 and buf_len to 4096, so this comparison is always false.
-Remove it.
+See previous comments.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/debug.c | 3 ---
- 1 file changed, 3 deletions(-)
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index e7b882251da8..106a1da1d68a 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1930,16 +1930,17 @@ static int filename_trans_read(struct policydb *p, void *fp)
+>                 ft = NULL;
+>                 otype = NULL;
+>                 name = NULL;
+> -
+> -               rc = -ENOMEM;
+>                 ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+> -               if (!ft)
+> +               if (!ft) {
+> +                       rc = -ENOMEM;
+>                         goto out;
+> +               }
+>
+> -               rc = -ENOMEM;
+>                 otype = kmalloc(sizeof(*otype), GFP_KERNEL);
+> -               if (!otype)
+> +               if (!otype) {
+> +                       rc = -ENOMEM;
+>                         goto out;
+> +               }
+>
+>                 /* length of the path component string */
+>                 rc = next_entry(buf, fp, sizeof(u32));
+> --
+> 2.11.0
+>
 
-diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
-index fb0ade3..b499a09 100644
---- a/drivers/net/wireless/ath/ath10k/debug.c
-+++ b/drivers/net/wireless/ath/ath10k/debug.c
-@@ -249,9 +249,6 @@ static ssize_t ath10k_read_wmi_services(struct file *file,
- 
- 	mutex_lock(&ar->conf_mutex);
- 
--	if (len > buf_len)
--		len = buf_len;
--
- 	spin_lock_bh(&ar->data_lock);
- 	for (i = 0; i < WMI_SERVICE_MAX; i++) {
- 		enabled = test_bit(i, ar->wmi.svc_map);
+
+
 -- 
-2.10.2
-
+paul moore
+www.paul-moore.com
