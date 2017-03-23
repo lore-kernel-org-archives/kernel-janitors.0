@@ -1,82 +1,111 @@
-From: Ryan Lee <ryans.lee@maximintegrated.com>
-Date: Fri, 03 Mar 2017 14:52:43 +0000
-Subject: [PATCH 05/10] Replaced pr_err by dev_err. Modified debug message
-Message-Id: <1488552768-14901-6-git-send-email-ryans.lee@maximintegrated.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 21:20:14 +0000
+Subject: Re: [PATCH 07/46] selinux: Delete unnecessary variable assignments in policydb_index()
+Message-Id: <CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
-In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
+In-Reply-To: <247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
----
-Replaced 'pr_err' by 'dev_err'. Modified error message.
+On Sun, Jan 15, 2017 at 10:04 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 13:40:25 +0100
+>
+> The local variable "rc" was reset with an error code up to five times
+> before a memory allocation failure was detected.
+>
+> Add a jump target so that this assignment will only be performed after
+> a concrete software failure.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
 
- sound/soc/codecs/max98927.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Like you, I generally despise the notion of unconditionally setting
+return codes to an error value *before* the faulting call; see Eric's
+response on patch 0/46, my preferred style is different from Eric.
+However, I agree with Casey that this patch is mostly just code churn
+so I'm going to drop this from your series.
 
-diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
-index efc761b..0abf6d3 100755
---- a/sound/soc/codecs/max98927.c
-+++ b/sound/soc/codecs/max98927.c
-@@ -254,6 +254,7 @@ static const int rate_table[] = {
- static int max98927_set_clock(struct max98927_priv *max98927,
- 	struct snd_pcm_hw_params *params)
- {
-+	struct snd_soc_codec *codec = max98927->codec;
- 	/* BCLK/LRCLK ratio calculation */
- 	int blr_clk_ratio = params_channels(params) * max98927->ch_size;
- 	int reg = MAX98927_R0022_PCM_CLK_SETUP;
-@@ -268,8 +269,7 @@ static int max98927_set_clock(struct max98927_priv *max98927,
- 				break;
- 		}
- 		if (i = ARRAY_SIZE(rate_table)) {
--			pr_err("%s couldn't get the MCLK to match codec\n",
--				__func__);
-+			dev_err(codec->dev, "failed to find proper clock rate.\n");
- 			return -EINVAL;
- 		}
- 		regmap_update_bits(max98927->regmap,
-@@ -327,12 +327,12 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
- 		max98927->ch_size = 32;
- 		break;
- 	default:
--		pr_err("%s: format unsupported %d",
--			__func__, params_format(params));
-+		dev_err(codec->dev, "format unsupported %d",
-+			params_format(params));
- 		goto err;
- 	}
--	dev_dbg(codec->dev, "%s: format supported %d",
--		__func__, params_format(params));
-+	dev_dbg(codec->dev, "format supported %d",
-+		params_format(params));
- 
- 	/* sampling rate configuration */
- 	switch (params_rate(params)) {
-@@ -364,8 +364,8 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
- 		sampling_rate |= MAX98927_PCM_SR_SET1_SR_48000;
- 		break;
- 	default:
--		pr_err("%s rate %d not supported\n",
--			__func__, params_rate(params));
-+		dev_err(codec->dev, "rate %d not supported\n",
-+			params_rate(params));
- 		goto err;
- 	}
- 	/* set DAI_SR to correct LRCLK frequency */
-@@ -490,7 +490,7 @@ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 
- 	ucontrol->value.integer.value[0] = max98927->digital_gain;
--	dev_dbg(codec->dev, "%s: spk_gain setting returned %d\n", __func__,
-+	dev_dbg(codec->dev, "%s: digital_gain setting returned %d\n", __func__,
- 		(int) ucontrol->value.integer.value[0]);
- 	return 0;
- }
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 21869b622c0c..4d4ba1ad910d 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -539,34 +539,30 @@ static int policydb_index(struct policydb *p)
+>         symtab_hash_eval(p->symtab);
+>  #endif
+>
+> -       rc = -ENOMEM;
+>         p->class_val_to_struct = kcalloc(p->p_classes.nprim,
+>                                          sizeof(*p->class_val_to_struct),
+>                                          GFP_KERNEL);
+>         if (!p->class_val_to_struct)
+> -               goto out;
+> +               goto failure_indication;
+>
+> -       rc = -ENOMEM;
+>         p->role_val_to_struct = kcalloc(p->p_roles.nprim,
+>                                         sizeof(*p->role_val_to_struct),
+>                                         GFP_KERNEL);
+>         if (!p->role_val_to_struct)
+> -               goto out;
+> +               goto failure_indication;
+>
+> -       rc = -ENOMEM;
+>         p->user_val_to_struct = kcalloc(p->p_users.nprim,
+>                                         sizeof(*p->user_val_to_struct),
+>                                         GFP_KERNEL);
+>         if (!p->user_val_to_struct)
+> -               goto out;
+> +               goto failure_indication;
+>
+>         /* Yes, I want the sizeof the pointer, not the structure */
+> -       rc = -ENOMEM;
+>         p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
+>                                                        p->p_types.nprim,
+>                                                        GFP_KERNEL | __GFP_ZERO);
+>         if (!p->type_val_to_struct_array)
+> -               goto out;
+> +               goto failure_indication;
+>
+>         rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
+>                                  p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
+> @@ -578,12 +574,11 @@ static int policydb_index(struct policydb *p)
+>                 goto out;
+>
+>         for (i = 0; i < SYM_NUM; i++) {
+> -               rc = -ENOMEM;
+>                 p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
+>                                                          p->symtab[i].nprim,
+>                                                          GFP_KERNEL | __GFP_ZERO);
+>                 if (!p->sym_val_to_name[i])
+> -                       goto out;
+> +                       goto failure_indication;
+>
+>                 rc = flex_array_prealloc(p->sym_val_to_name[i],
+>                                          0, p->symtab[i].nprim,
+> @@ -598,6 +593,9 @@ static int policydb_index(struct policydb *p)
+>         rc = 0;
+>  out:
+>         return rc;
+> +failure_indication:
+> +       rc = -ENOMEM;
+> +       goto out;
+>  }
+>
+>  /*
+> --
+> 2.11.0
+>
+
+
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
