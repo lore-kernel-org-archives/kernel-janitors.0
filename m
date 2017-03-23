@@ -1,27 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 22 Mar 2017 00:43:47 +0000
-Subject: Re: [PATCH] bna: integer overflow bug in debugfs
-Message-Id: <20170321.174347.845428848919617726.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Mar 2017 12:22:30 +0000
+Subject: [PATCH] drm/i915/kvmgt: avoid dereferencing a potentially null info pointer
+Message-Id: <20170323122230.19064-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170317205234.GA2888@mwanda>
-In-Reply-To: <20170317205234.GA2888@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: rasesh.mody@cavium.com, kgudipat@brocade.com, sudarsana.kalluru@cavium.com, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Mar 2017 23:52:35 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> We could allocate less memory than intended because we do:
-> 
-> 	bnad->regdata = kzalloc(len << 2, GFP_KERNEL);
-> 
-> The shift can overflow leading to a crash.  This is debugfs code so the
-> impact is very small.
-> 
-> Fixes: 7afc5dbde091 ("bna: Add debugfs interface.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+info is being checked to see if it is a null pointer, however, vpgu is
+dereferencing info before this check, leading to a potential null
+pointer dereference.  If info is null, then the error message being
+printed by macro gvt_vgpu_err and this requires vpgu to exist. We can
+use a null vpgu as the macro has a sanity check to see if vpgu is null,
+so this is OK.
 
-Applied.
+Detected with CoverityScan, CID#1420672 ("Dereference nefore null check")
+
+Fixes: 695fbc08d80f ("drm/i915/gvt: replace the gvt_err with gvt_vgpu_err")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index 1ea3eb270de8..f8619a772c44 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -1339,9 +1339,9 @@ static int kvmgt_guest_init(struct mdev_device *mdev)
+ 
+ static bool kvmgt_guest_exit(struct kvmgt_guest_info *info)
+ {
+-	struct intel_vgpu *vgpu = info->vgpu;
+-
+ 	if (!info) {
++		struct intel_vgpu *vgpu = NULL;
++
+ 		gvt_vgpu_err("kvmgt_guest_info invalid\n");
+ 		return false;
+ 	}
+-- 
+2.11.0
+
