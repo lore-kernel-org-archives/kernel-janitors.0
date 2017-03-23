@@ -1,42 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Mar 2017 20:46:56 +0000
-Subject: [PATCH] dm crypt: remove an impossible condition
-Message-Id: <20170317204655.GA28261@mwanda>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 20:24:34 +0000
+Subject: Re: [PATCH 01/46] selinux: Use kmalloc_array() in cond_init_bool_indexes()
+Message-Id: <CAHC9VhSmRJzKZnGCiytijY-wuZqPGFOdEfecPgy5D3TciPCCgA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<68a423a9-2f89-55f9-fb4c-97dd4df4bb1d@users.sourceforge.net>
+In-Reply-To: <68a423a9-2f89-55f9-fb4c-97dd4df4bb1d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Milan Broz <gmazyland@gmail.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Static checkers complain that it doesn't make sense to check if "sval"
-is NULL.  The intention was to check if strchr() returned NULL, but in
-that situation "sval" would be "NULL + 1" so the check doesn't work.  We
-know from the sscanf() that there is a ':' character in the string so
-the check is unnecessary and can be removed.
+On Sun, Jan 15, 2017 at 9:56 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 10:48:28 +0100
+>
+> * A multiplication for the size determination of a memory allocation
+>   indicated that an array data structure should be processed.
+>   Thus use the corresponding function "kmalloc_array".
+>
+>   This issue was detected by using the Coccinelle software.
+>
+> * Replace the specification of a data type by a pointer dereference
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/conditional.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Now that the check doesn't depend on "sval" it can be moved earlier
-for readability.
+Merged, thanks.  Sorry for the delay.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+> index 34afeadd9e73..fcfab2635c11 100644
+> --- a/security/selinux/ss/conditional.c
+> +++ b/security/selinux/ss/conditional.c
+> @@ -176,8 +176,9 @@ void cond_policydb_destroy(struct policydb *p)
+>  int cond_init_bool_indexes(struct policydb *p)
+>  {
+>         kfree(p->bool_val_to_struct);
+> -       p->bool_val_to_struct > -               kmalloc(p->p_bools.nprim * sizeof(struct cond_bool_datum *), GFP_KERNEL);
+> +       p->bool_val_to_struct = kmalloc_array(p->p_bools.nprim,
+> +                                             sizeof(*p->bool_val_to_struct),
+> +                                             GFP_KERNEL);
+>         if (!p->bool_val_to_struct)
+>                 return -ENOMEM;
+>         return 0;
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index ec09bd703b7d..eba218737bdb 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2401,12 +2401,12 @@ static int crypt_ctr_optional(struct dm_target *ti, unsigned int argc, char **ar
- 		else if (!strcasecmp(opt_string, "submit_from_crypt_cpus"))
- 			set_bit(DM_CRYPT_NO_OFFLOAD, &cc->flags);
- 		else if (sscanf(opt_string, "integrity:%u:", &val) = 1) {
--			cc->on_disk_tag_size = val;
--			sval = strchr(opt_string + strlen("integrity:"), ':') + 1;
--			if (val = 0 || val > MAX_TAG_SIZE || !sval) {
-+			if (val = 0 || val > MAX_TAG_SIZE) {
- 				ti->error = "Invalid integrity arguments";
- 				return -EINVAL;
- 			}
-+			cc->on_disk_tag_size = val;
-+			sval = strchr(opt_string + strlen("integrity:"), ':') + 1;
- 			if (!strcasecmp(sval, "aead")) {
- 				set_bit(CRYPT_MODE_INTEGRITY_AEAD, &cc->cipher_flags);
- 			} else  if (!strncasecmp(sval, "hmac(", strlen("hmac("))) {
+
+
+-- 
+paul moore
+www.paul-moore.com
