@@ -1,152 +1,59 @@
-From: Ryan Lee <ryans.lee@maximintegrated.com>
-Date: Fri, 03 Mar 2017 14:52:46 +0000
-Subject: [PATCH 08/10] Added DAI Sel Mux and minor updates
-Message-Id: <1488552768-14901-9-git-send-email-ryans.lee@maximintegrated.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:18:48 +0000
+Subject: Re: [PATCH 23/46] selinux: Move an assignment for a pointer in range_read()
+Message-Id: <CAHC9VhRewnyj7m_7XXZb_tXUoKTbYUiMWvKydDL60fnb+=TWPg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
-In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<668d71a5-d55c-449e-9de8-b5d70d7e11c9@users.sourceforge.net>
+In-Reply-To: <668d71a5-d55c-449e-9de8-b5d70d7e11c9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
----
-'DAI Sel Mux' was added.
-'max98927_volatile_reg' was added to identify volatile register.
+On Sun, Jan 15, 2017 at 10:23 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 21:00:45 +0100
+>
+> Move the assignment for the local variable "r" behind a call of the
+> function "next_entry" at the beginning so that it will only be set
+> after a successful call.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
- sound/soc/codecs/max98927.c | 60 +++++++++++++++++++++++++++++++++------------
- sound/soc/codecs/max98927.h |  2 --
- 2 files changed, 45 insertions(+), 17 deletions(-)
+See previous comments.
 
-diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
-index df2f4ff..6eb745bd 100755
---- a/sound/soc/codecs/max98927.c
-+++ b/sound/soc/codecs/max98927.c
-@@ -446,11 +446,24 @@ static int max98927_dac_event(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
- 
-+static const char * const max98927_switch_text[] = {
-+	"Left", "Right", "LeftRight"};
-+
-+static const struct soc_enum dai_sel_enum +	SOC_ENUM_SINGLE(MAX98927_R0025_PCM_TO_SPK_MONOMIX_A,
-+		MAX98927_PCM_TO_SPK_MONOMIX_CFG_SHIFT,
-+		3, max98927_switch_text);
-+
-+static const struct snd_kcontrol_new max98927_dai_controls +	SOC_DAPM_ENUM("DAI Sel", dai_sel_enum);
-+
- static const struct snd_soc_dapm_widget max98927_dapm_widgets[] = {
- 	SND_SOC_DAPM_AIF_IN("DAI_OUT", "HiFi Playback", 0, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_DAC_E("Amp Enable", "HiFi Playback", MAX98927_R003A_AMP_EN,
- 		0, 0, max98927_dac_event,
- 		SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
-+	SND_SOC_DAPM_MUX("DAI Sel Mux", SND_SOC_NOPM, 0, 0,
-+		&max98927_dai_controls),
- 	SND_SOC_DAPM_OUTPUT("BE_OUT"),
- };
- 
-@@ -476,12 +489,14 @@ static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 	unsigned int sel = ucontrol->value.integer.value[0];
- 
--	if (sel < ((1 << MAX98927_Speaker_Gain_Width) - 1)) {
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R003C_SPK_GAIN,
--			MAX98927_SPK_PCM_GAIN_MASK, sel);
--		max98927->spk_gain = sel;
--	}
-+	/* 0x7 is reserved */
-+	if (sel > 6)
-+		return -EINVAL;
-+
-+	regmap_update_bits(max98927->regmap,
-+		MAX98927_R003C_SPK_GAIN,
-+		MAX98927_SPK_PCM_GAIN_MASK, sel);
-+	max98927->spk_gain = sel;
- 	return 0;
- }
- 
-@@ -538,6 +553,15 @@ static int max98927_amp_vol_get(struct snd_kcontrol *kcontrol,
- 		MAX98927_AMP_VOL_SHIFT);
- }
- 
-+static int max98927_amp_vol_put(struct snd_kcontrol *kcontrol,
-+	struct snd_ctl_elem_value *ucontrol)
-+{
-+	return max98927_reg_put(kcontrol, ucontrol,
-+		MAX98927_R0036_AMP_VOL_CTRL,
-+		MAX98927_AMP_VOL_SEL,
-+		MAX98927_AMP_VOL_SHIFT);
-+}
-+
- static int max98927_amp_dsp_put(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
-@@ -587,14 +611,6 @@ static int max98927_dre_en_get(struct snd_kcontrol *kcontrol,
- 		MAX98927_R0039_DRE_CTRL,
- 		MAX98927_DRE_CTRL_DRE_EN, 0);
- }
--static int max98927_amp_vol_put(struct snd_kcontrol *kcontrol,
--	struct snd_ctl_elem_value *ucontrol)
--{
--	return max98927_reg_put(kcontrol, ucontrol,
--		MAX98927_R0036_AMP_VOL_CTRL,
--		MAX98927_AMP_VOL_SEL,
--		7);
--}
- static int max98927_spk_src_get(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
-@@ -646,6 +662,15 @@ static bool max98927_readable_register(struct device *dev, unsigned int reg)
- 	case MAX98927_R0100_SOFT_RESET:
- 	case MAX98927_R01FF_REV_ID:
- 		return true;
-+	}
-+	return false;
-+};
-+
-+static bool max98927_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case MAX98927_R0001_INT_RAW1 ... MAX98927_R0009_INT_FLAG3:
-+		return true;
- 	default:
- 		return false;
- 	}
-@@ -711,7 +736,11 @@ static const struct snd_kcontrol_new max98927_snd_controls[] = {
- };
- 
- static const struct snd_soc_dapm_route max98927_audio_map[] = {
--	{"BE_OUT", NULL, "Amp Enable"},
-+	{"Amp Enable", NULL, "DAI_OUT"},
-+	{"DAI Sel Mux", "Left", "Amp Enable"},
-+	{"DAI Sel Mux", "Right", "Amp Enable"},
-+	{"DAI Sel Mux", "LeftRight", "Amp Enable"},
-+	{"BE_OUT", NULL, "DAI Sel Mux"},
- };
- 
- static struct snd_soc_dai_driver max98927_dai[] = {
-@@ -888,6 +917,7 @@ static const struct regmap_config max98927_regmap = {
- 	.reg_defaults     = max98927_reg,
- 	.num_reg_defaults = ARRAY_SIZE(max98927_reg),
- 	.readable_reg	  = max98927_readable_register,
-+	.volatile_reg	  = max98927_volatile_reg,
- 	.cache_type       = REGCACHE_RBTREE,
- };
- 
-diff --git a/sound/soc/codecs/max98927.h b/sound/soc/codecs/max98927.h
-index 2de8504..e13e18a 100755
---- a/sound/soc/codecs/max98927.h
-+++ b/sound/soc/codecs/max98927.h
-@@ -264,6 +264,4 @@ struct max98927_priv {
- 	unsigned int master;
- 	unsigned int digital_gain;
- };
--#define MAX98927_Speaker_Gain_Width 3
--#define MAX98927_AMP_VOL_LOCATION_SHIFT 7
- #endif
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 6121a26ada64..5101592ae172 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1840,7 +1840,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
+>  static int range_read(struct policydb *p, void *fp)
+>  {
+>         struct range_trans *rt;
+> -       struct mls_range *r = NULL;
+> +       struct mls_range *r;
+>         int i, rc;
+>         __le32 buf[2];
+>         u32 nel;
+> @@ -1852,6 +1852,7 @@ static int range_read(struct policydb *p, void *fp)
+>         if (rc)
+>                 return rc;
+>
+> +       r = NULL;
+>         nel = le32_to_cpu(buf[0]);
+>         for (i = 0; i < nel; i++) {
+>                 rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+> --
+> 2.11.0
+>
+
+
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
