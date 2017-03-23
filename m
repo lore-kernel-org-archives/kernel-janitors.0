@@ -1,18 +1,19 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Thu, 23 Mar 2017 16:23:15 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Mar 2017 16:42:09 +0000
 Subject: Re: [PATCH] tpm2: fix off-by-one comparison and out-of-bounds read error
-Message-Id: <20170323162315.jadlprsu6hevm4ip@intel.com>
+Message-Id: <20170323164209.GO32449@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170320142336.10997-1-colin.king@canonical.com>
-	<20170322114256.pdwg6buj2wkhcooy@intel.com>
-	<d96bb5c9-e1b3-abe5-2273-fc525dc00190@canonical.com>
-	<20170322131248.GJ32449@mwanda>
-	<20170323155358.jpotoweghjnl4vjx@intel.com>
+ <20170322114256.pdwg6buj2wkhcooy@intel.com>
+ <d96bb5c9-e1b3-abe5-2273-fc525dc00190@canonical.com>
+ <20170322131248.GJ32449@mwanda>
+ <20170323155358.jpotoweghjnl4vjx@intel.com>
 In-Reply-To: <20170323155358.jpotoweghjnl4vjx@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Colin Ian King <colin.king@canonical.com>, Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Thu, Mar 23, 2017 at 05:53:58PM +0200, Jarkko Sakkinen wrote:
 > On Wed, Mar 22, 2017 at 04:12:49PM +0300, Dan Carpenter wrote:
@@ -63,13 +64,9 @@ On Thu, Mar 23, 2017 at 05:53:58PM +0200, Jarkko Sakkinen wrote:
 > 
 > Hmm... Maybe so depending on how you interpret Reported-by but
 > Fixes-from is not something that is used at the moment, is it?
-> 
-> /Jarkko
 
-When I started squashing the commit I realized what you meant so
-I'm adding this to the commit:
+No, but we should create it.
 
-Fixes-from: Colin Ian King <colin.king@canonical.com>
-
-/Jarkko
+regards,
+dan carpenter
 
