@@ -1,120 +1,58 @@
-From: Ryan Lee <ryans.lee@maximintegrated.com>
-Date: Fri, 03 Mar 2017 14:52:47 +0000
-Subject: [PATCH 09/10] Added ACPI support. Changed snd_kcontrol_chip to snd_soc_kcontrol_codec
-Message-Id: <1488552768-14901-10-git-send-email-ryans.lee@maximintegrated.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:10:37 +0000
+Subject: Re: [PATCH 18/46] selinux: One function call less in filename_trans_read() after error detection
+Message-Id: <CAHC9VhR0DM_fC17O8_S85L=38HmOFQgcccfatPNkTiEHmoZ_bA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
-In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
+In-Reply-To: <358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
----
-snd_kcontrol_chip was changed to snd_soc_kcontrol_codec.
-acpi_match_table was added.
+On Sun, Jan 15, 2017 at 10:18 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 19:19:42 +0100
+>
+> Adjust a jump target to avoid a function call at the end after a memory
+> allocation failed for the local variable "ft".
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
- sound/soc/codecs/max98927.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+It doesn't seem like this is worth adding another jump label.
 
-diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
-index 6eb745bd..0614936 100755
---- a/sound/soc/codecs/max98927.c
-+++ b/sound/soc/codecs/max98927.c
-@@ -10,7 +10,7 @@
-  *  option) any later version.
-  */
- 
--#include <linux/delay.h>
-+#include <linux/acpi.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
-@@ -144,7 +144,7 @@ static int max98927_reg_get(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol, unsigned int reg,
- 	unsigned int mask, unsigned int shift)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 	int data;
- 
-@@ -157,7 +157,7 @@ static int max98927_reg_put(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol, unsigned int reg,
- 	unsigned int mask, unsigned int shift)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 	unsigned int sel = ucontrol->value.integer.value[0];
- 
-@@ -473,7 +473,7 @@ static DECLARE_TLV_DB_SCALE(max98927_digital_tlv, -1600, 25, 0);
- static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 
- 	ucontrol->value.integer.value[0] = max98927->spk_gain;
-@@ -485,7 +485,7 @@ static int max98927_spk_gain_get(struct snd_kcontrol *kcontrol,
- static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 	unsigned int sel = ucontrol->value.integer.value[0];
- 
-@@ -503,7 +503,7 @@ static int max98927_spk_gain_put(struct snd_kcontrol *kcontrol,
- static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 
- 	ucontrol->value.integer.value[0] = max98927->digital_gain;
-@@ -515,7 +515,7 @@ static int max98927_digital_gain_get(struct snd_kcontrol *kcontrol,
- static int max98927_digital_gain_put(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
--	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
- 	unsigned int sel = ucontrol->value.integer.value[0];
- 
-@@ -1002,17 +1002,27 @@ static const struct i2c_device_id max98927_i2c_id[] = {
- 
- MODULE_DEVICE_TABLE(i2c, max98927_i2c_id);
- 
-+#if defined(CONFIG_OF)
- static const struct of_device_id max98927_of_match[] = {
- 	{ .compatible = "maxim,max98927", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, max98927_of_match);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id max98927_acpi_match[] = {
-+	{ "MX98927", 0 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, max98927_acpi_match);
-+#endif
- 
- static struct i2c_driver max98927_i2c_driver = {
- 	.driver = {
- 		.name = "max98927",
--		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(max98927_of_match),
-+		.acpi_match_table = ACPI_PTR(max98927_acpi_match),
- 		.pm = NULL,
- 	},
- 	.probe  = max98927_i2c_probe,
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 2be5b18eb149..5f122e846332 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1932,7 +1932,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
+>                 ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+>                 if (!ft) {
+>                         rc = -ENOMEM;
+> -                       goto out;
+> +                       goto free_name;
+>                 }
+>
+>                 otype = kmalloc(sizeof(*otype), GFP_KERNEL);
+> @@ -1986,6 +1986,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
+>         return 0;
+>  out:
+>         kfree(ft);
+> +free_name:
+>         kfree(name);
+>         kfree(otype);
+>
+> --
+> 2.11.0
+>
+
+
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
