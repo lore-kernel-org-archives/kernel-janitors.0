@@ -1,36 +1,63 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Mar 2017 09:54:40 +0000
-Subject: [PATCH] perf utils: fix spelling mistake: "Invalud" -> "Invalid"
-Message-Id: <20170330095440.19444-1-colin.king@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 23 Mar 2017 22:15:43 +0000
+Subject: Re: [PATCH 21/46] selinux: Two function calls less in range_read() after error detection
+Message-Id: <CAHC9VhQdMhC0a9+736=r1JHihLh2eC=rVZLXx7v3=52Pf2xrVQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<1e37fe86-2e83-c1f0-f43b-69ed2fb5c7aa@users.sourceforge.net>
+	<e3fcbcbb-a1fb-ef39-268f-2e79532739b1@schaufler-ca.com>
+In-Reply-To: <e3fcbcbb-a1fb-ef39-268f-2e79532739b1@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Krister Johansen <kjlx@templeofstupid.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jan 17, 2017 at 11:35 AM, Casey Schaufler
+<casey@schaufler-ca.com> wrote:
+> On 1/15/2017 7:21 AM, SF Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 14 Jan 2017 20:20:15 +0100
+>>
+>> Adjust a jump target to avoid two calls of the function "kfree" at the end
+>> after a memory allocation failed for the local variable "rt".
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  security/selinux/ss/policydb.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+>> index 4cd96ce51322..0d2f64558c0a 100644
+>> --- a/security/selinux/ss/policydb.c
+>> +++ b/security/selinux/ss/policydb.c
+>> @@ -1857,7 +1857,7 @@ static int range_read(struct policydb *p, void *fp)
+>>               rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+>>               if (!rt) {
+>>                       rc = -ENOMEM;
+>> -                     goto out;
+>> +                     goto exit;
+>
+> Why not "return rc;"?
+> goto to a return is wrong.
 
-trivial fix to spelling mistake in pr_debug message
+Agree with Casey, but also see my previous comments about the
+convenience of using a single error handling goto for loops like this.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/perf/util/hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>>               }
+>>
+>>               rc = next_entry(buf, fp, (sizeof(u32) * 2));
+>> @@ -1909,6 +1909,7 @@ static int range_read(struct policydb *p, void *fp)
+>>  out:
+>>       kfree(rt);
+>>       kfree(r);
+>> +exit:
+>>       return rc;
+>>  }
+>>
+>
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 3c4d4d00cb2c..61bf304206fd 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -2459,7 +2459,7 @@ int parse_filter_percentage(const struct option *opt __maybe_unused,
- 	else if (!strcmp(arg, "absolute"))
- 		symbol_conf.filter_relative = false;
- 	else {
--		pr_debug("Invalud percentage: %s\n", arg);
-+		pr_debug("Invalid percentage: %s\n", arg);
- 		return -1;
- 	}
- 
+
+
 -- 
-2.11.0
-
+paul moore
+www.paul-moore.com
