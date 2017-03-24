@@ -1,37 +1,61 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Tue, 14 Mar 2017 01:15:55 +0000
-Subject: Re: [PATCH] staging: atomisp: use k{v}zalloc instead of k{v}alloc and memset
-Message-Id: <CAHb8M2BFkzAsZ=sK+ARybtbR1E4w=ApzHo-BxEr0TEoDWK=gqA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 24 Mar 2017 09:50:34 +0000
+Subject: [PATCH v2] kprobes: cleanup _kprobe_addr()
+Message-Id: <20170324095033.GA15884@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170313105421.GA32342@SEL-JYOUN-D1> <1489427686.24765.9.camel@linux.intel.com>
-In-Reply-To: <1489427686.24765.9.camel@linux.intel.com>
+In-Reply-To: <20170323091516.1a41f01703629a0c756d0f94@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@linux.intel.com>
-Cc: mchehab@kernel.org, Greg KH <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2017-03-14 2:54 GMT+09:00 Alan Cox <alan@linux.intel.com>:
->
-> On Mon, 2017-03-13 at 19:54 +0900, Daeseok Youn wrote:
-> > If the atomisp_kernel_zalloc() has "true" as a second parameter, it
-> > tries to allocate zeroing memory from kmalloc(vmalloc) and memset.
-> > But using kzalloc is rather than kmalloc followed by memset with 0.
-> > (vzalloc is for same reason with kzalloc)
->
-> This is true but please don't apply this. There are about five other
-> layers of indirection for memory allocators that want removing first so
-> that the driver just uses the correct kmalloc/kzalloc/kv* functions in
-> the right places.
-right. kvmalloc/kvzalloc would be used after preparing those
-interfaces in staging tree.
-I will try to change all the atomisp_kernel_m{z}alloc() callers to
-correct functions to allocate memory.
+The important bit here is that at the end of the function we know that
+since "addr" isn't be NULL, it means we don't need to test
+"addr + offset" for NULL.
 
-Thanks.
-Regards,
-Jake.
+The NULL test generates a static checker warning because often something
+else is intended.  For example, a common bug looks like:
 
->
-> Alan
->
+	addr = strchr(buf, ':') + 1;
+	if (addr) {
+
+In that example, we intended to test the return of strchr() instead of
+"strchr() + 1".
+
+Techinically, with these static checker warnings you could worry about
+the addition wrapping but the NULL check wouldn't prevent "addr" from
+pointing to some other invalid memory outside the text area.  Also
+pointer wrapping is undefined behavior in C.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: more cleanups and changelog
+
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index d733479a10ee..ad30b5e22bda 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1395,7 +1395,7 @@ static kprobe_opcode_t *_kprobe_addr(kprobe_opcode_t *addr,
+ 			const char *symbol_name, unsigned int offset)
+ {
+ 	if ((symbol_name && addr) || (!symbol_name && !addr))
+-		goto invalid;
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (symbol_name) {
+ 		kprobe_lookup_name(symbol_name, addr);
+@@ -1403,12 +1403,7 @@ static kprobe_opcode_t *_kprobe_addr(kprobe_opcode_t *addr,
+ 			return ERR_PTR(-ENOENT);
+ 	}
+ 
+-	addr = (kprobe_opcode_t *)(((char *)addr) + offset);
+-	if (addr)
+-		return addr;
+-
+-invalid:
+-	return ERR_PTR(-EINVAL);
++	return (kprobe_opcode_t *)(((char *)addr) + offset);
+ }
+ 
+ static kprobe_opcode_t *kprobe_addr(struct kprobe *p)
