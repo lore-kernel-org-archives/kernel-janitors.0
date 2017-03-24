@@ -1,47 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 06 Mar 2017 17:40:13 +0000
-Subject: [PATCH 1/5] IB/nes: Use kcalloc() in nes_init_mgt_qp()
-Message-Id: <c7ce5066-0466-209e-883b-677768c771a4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Mar 2017 17:13:50 +0000
+Subject: [PATCH] regulator: twl6030: remove redundant range check min_uV > 1300000 && min_uV <= 1350000
+Message-Id: <20170324171350.9953-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
-In-Reply-To: <502a5a6f-ee91-dd2f-cdc7-63f396059529@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Faisal Latif <faisal.latif@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alban.auzeill@sonarsource.com, Tony Lindgren <tony@atomide.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Mar 2017 16:07:41 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kcalloc".
+It has been pointed out to me that the range for vsel = 58 is actually
+dead code as this is covered by an earlier check for (min_uV >= 700000)
+&& (min_uV <= 1420000) so remove that check completely.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reported-by: Alban Auzeill <alban.auzeill@sonarsource.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/hw/nes/nes_mgt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/twl6030-regulator.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/nes/nes_mgt.c b/drivers/infiniband/hw/nes/nes_mgt.c
-index 33624f17c347..a84fffd33c21 100644
---- a/drivers/infiniband/hw/nes/nes_mgt.c
-+++ b/drivers/infiniband/hw/nes/nes_mgt.c
-@@ -877,7 +877,7 @@ int nes_init_mgt_qp(struct nes_device *nesdev, struct net_device *netdev, struct
- 	int ret;
- 
- 	/* Allocate space the all mgt QPs once */
--	mgtvnic = kzalloc(NES_MGT_QP_COUNT * sizeof(struct nes_vnic_mgt), GFP_KERNEL);
-+	mgtvnic = kcalloc(NES_MGT_QP_COUNT, sizeof(*mgtvnic), GFP_KERNEL);
- 	if (!mgtvnic)
- 		return -ENOMEM;
- 
+diff --git a/drivers/regulator/twl6030-regulator.c b/drivers/regulator/twl6030-regulator.c
+index 716191046a70..56aada387887 100644
+--- a/drivers/regulator/twl6030-regulator.c
++++ b/drivers/regulator/twl6030-regulator.c
+@@ -456,8 +456,6 @@ static int twl6030smps_map_voltage(struct regulator_dev *rdev, int min_uV,
+ 			vsel = 60;
+ 		else if ((min_uV > 1350000) && (min_uV <= 1500000))
+ 			vsel = 59;
+-		else if ((min_uV > 1300000) && (min_uV <= 1350000))
+-			vsel = 58;
+ 		else
+ 			return -EINVAL;
+ 		break;
 -- 
-2.12.0
+2.11.0
 
