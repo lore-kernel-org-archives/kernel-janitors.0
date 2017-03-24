@@ -1,33 +1,48 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 29 Mar 2017 18:54:53 +0000
-Subject: Re: [PATCH][bluetooth-next][V2] ieee802154: ca8210: Add checks for kmalloc allocation failures
-Message-Id: <80D11AF4-0CD7-4FEE-AF17-AD79FBFBD294@holtmann.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 24 Mar 2017 10:09:02 +0000
+Subject: Re: selinux: Move some assignments for the variable "rc" in policydb_read()
+Message-Id: <eb71602a-3bb8-a643-5926-9d23aa2798ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170329170540.21011-1-colin.king@canonical.com>
-In-Reply-To: <20170329170540.21011-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<7fdcfc8f-affa-fcf8-adaf-dc8fd9e1b472@users.sourceforge.net>
+	<CAHC9VhSfvsoWCD1DHFPYhnmWx_cmmapo6vjboS8e=6OZ8ca9gA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSfvsoWCD1DHFPYhnmWx_cmmapo6vjboS8e=6OZ8ca9gA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Harry Morris <h.morris@cascoda.com>, linuxdev@cascoda.com, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Hi Colin,
-
-> Ensure we don't end up with a null pointer dereferences by checking
-> for for allocation failures.  Allocate by sizeof(*ptr) rather than
-> the type to fix checkpack warnings.  Also merge multiple lines into
-> one line for the kmalloc call.
+>> One local variable was set to an error code in some cases before
+>> a concrete error situation was detected. Thus move the corresponding
+>> assignments into if branches to indicate a software failure there.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  security/selinux/ss/policydb.c | 59 +++++++++++++++++++++++++-----------------
+>>  1 file changed, 35 insertions(+), 24 deletions(-)
 > 
-> Detected by CoverityScan, CID#1422435 ("Dereference null return value")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/net/ieee802154/ca8210.c | 18 ++++++++++--------
-> 1 file changed, 10 insertions(+), 8 deletions(-)
+> More code churn with no real advantage.
 
-patch has been applied to bluetooth-next tree.
+There are different opinions about the mentioned implementation details.
 
-Regards
 
-Marcel
+> I agree with the style you are using,
 
+Thanks for such feedback.
+
+
+> and would support changing it if you are in the function fixing bugs
+> or doing other substantial changes in that code,
+
+Is this expectation a contradiction for a desired patch granularity?
+
+
+> but I can't justify it as a standalone change, sorry.
+
+This update suggestion seems to be not attractive enough for you at the moment
+as another change step of my patch series.
+Would you like to check if there are other effects worthwhile besides the proposed
+coding style adjustment here?
+
+Regards,
+Markus
