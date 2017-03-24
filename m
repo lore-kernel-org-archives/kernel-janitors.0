@@ -1,29 +1,32 @@
-From: "Yu, Xiangliang" <Xiangliang.Yu@amd.com>
-Date: Thu, 30 Mar 2017 09:56:44 +0000
-Subject: RE: [PATCH] drm/amdgpu/virt: fix spelling mistake: "hypervior" -> "hypervisor"
-Message-Id: <BY2PR1201MB09352AC47FBA947FCA2E4692EB340@BY2PR1201MB0935.namprd12.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 24 Mar 2017 12:13:09 +0000
+Subject: Re: selinux: Delete an error message for a failed memory allocation in policydb_read()
+Message-Id: <ecce7c5c-cbeb-5896-ec12-26c97619c102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170330094622.19214-1-colin.king@canonical.com>
-In-Reply-To: <20170330094622.19214-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<c589a851-2bf6-c44f-1df7-11f242285a73@users.sourceforge.net>
+	<CAHC9VhTf6LdUNJHV9G+YA=P1rj78v5WKG8v+QNoFGZ6DA+mDmQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTf6LdUNJHV9G+YA=P1rj78v5WKG8v+QNoFGZ6DA+mDmQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, David Airlie <airlied@linux.ie>, "Liu, Monk" <Monk.Liu@amd.com>, "Liu, Shaoyun" <Shaoyun.Liu@amd.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org
 
-PiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4g
-DQo+IHRyaXZpYWwgZml4IHRvIHNwZWxsaW5nIG1pc3Rha2UgaW4gRFJNX0VSUk9SIGVycm9yIG1l
-c3NhZ2UNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNh
-bm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvbXhncHVf
-dmkuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlv
-bigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L214Z3B1
-X3ZpLmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9teGdwdV92aS5jDQo+IGluZGV4
-IGQyNjIyYjZmNDlmYS4uOTRhZjc1ZmM2MzIxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vYW1kL2FtZGdwdS9teGdwdV92aS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
-Z3B1L214Z3B1X3ZpLmMNCj4gQEAgLTQ4Nyw3ICs0ODcsNyBAQCBzdGF0aWMgdm9pZCB4Z3B1X3Zp
-X21haWxib3hfZmxyX3dvcmsoc3RydWN0DQo+IHdvcmtfc3RydWN0ICp3b3JrKQ0KPiANCj4gIAly
-ID0geGdwdV92aV9wb2xsX21zZyhhZGV2LCBJREhfRkxSX05PVElGSUNBVElPTl9DTVBMKTsNCj4g
-IAlpZiAocikNCj4gLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IGZsciBjbXBsIG1zZyBmcm9t
-IGh5cGVydmlvci5cbiIpOw0KPiArCQlEUk1fRVJST1IoImZhaWxlZCB0byBnZXQgZmxyIGNtcGwg
-bXNnIGZyb20gaHlwZXJ2aXNvci5cbiIpOw0KPiANCg0KDQpSZXZpZXdlZC1ieTogWGlhbmdsaWFu
-ZyBZdSA8WGlhbmdsaWFuZy5ZdUBhbWQuY29tPg0K
+>> Omit an extra message for a memory allocation failure in this function.
+>>
+>> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  security/selinux/ss/policydb.c | 5 +----
+>>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> I'm not going to remove an error message without some better reasoning
+> in the patch description.  Providing a link to slides is fine, but
+> your commit message needs to convey the important information and I
+> don't think that is the case here (what happens when that URL dies?).
+
+Do you need an explicit reminder there that the function “kmalloc” provides its own
+error reporting already because the flag “__GFP_NOWARN” was not passed here?
+
+Regards,
+Markus
