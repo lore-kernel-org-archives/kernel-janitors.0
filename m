@@ -1,36 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Mar 2017 05:22:37 +0000
-Subject: [PATCH] NFC: nfcmrvl: double free on error path
-Message-Id: <20170308052237.GA14542@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 25 Mar 2017 14:16:53 +0000
+Subject: [PATCH] netvsc: fix unititialized return value in variable ret
+Message-Id: <20170325141653.11238-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Vincent Cuissard <cuissard@marvell.com>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The nci_spi_send() function calls kfree_skb(skb) on both error and
-success so this extra kfree_skb() is a double free.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: caf6e49bf6d0 ("NFC: nfcmrvl: add spi driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It is possible for an uninitialized value of ret to be returned
+so fix this by initializing ret to zero.
+
+Detected by CoverityScan, CID#1420762 ("Uninitialized scalar variable")
+
+Fixes: 163891d7d429 ("netvsc: handle offline mtu and channel change")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Static analysis.  Not tested.
+ drivers/net/hyperv/netvsc_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/nfcmrvl/spi.c b/drivers/nfc/nfcmrvl/spi.c
-index a7faa0bcc01e..fc8e78a29d77 100644
---- a/drivers/nfc/nfcmrvl/spi.c
-+++ b/drivers/nfc/nfcmrvl/spi.c
-@@ -96,10 +96,9 @@ static int nfcmrvl_spi_nci_send(struct nfcmrvl_private *priv,
- 	/* Send the SPI packet */
- 	err = nci_spi_send(drv_data->nci_spi, &drv_data->handshake_completion,
- 			   skb);
--	if (err != 0) {
-+	if (err)
- 		nfc_err(priv->dev, "spi_send failed %d", err);
--		kfree_skb(skb);
--	}
-+
- 	return err;
- }
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index eb7ae79d47bb..f830bbbd8ad4 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -855,7 +855,7 @@ static int netvsc_change_mtu(struct net_device *ndev, int mtu)
+ 	struct hv_device *hdev = ndevctx->device_ctx;
+ 	struct netvsc_device_info device_info;
+ 	bool was_running;
+-	int ret;
++	int ret = 0;
  
+ 	if (!nvdev || nvdev->destroy)
+ 		return -ENODEV;
+-- 
+2.11.0
+
