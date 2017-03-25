@@ -1,50 +1,43 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 20 Mar 2017 18:30:43 +0000
-Subject: Re: [PATCH] drm/gma500: fix memory leak on edid
-Message-Id: <58D01FD3.4040007@bfs.de>
+From: Doug Ledford <dledford@redhat.com>
+Date: Sat, 25 Mar 2017 01:11:40 +0000
+Subject: Re: [patch] RDMA/ocrdma: fix a type issue in ocrdma_put_pd_num()
+Message-Id: <1490404300.2404.30.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170320175601.23149-1-colin.king@canonical.com>
-In-Reply-To: <20170320175601.23149-1-colin.king@canonical.com>
+References: <20170223104016.GA27526@mwanda>
+In-Reply-To: <20170223104016.GA27526@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-
-
-Am 20.03.2017 18:56, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2017-02-23 at 13:40 +0300, Dan Carpenter wrote:
+> We want to return zero on success or negative error codes.  The type
+> should be int and not u8.
 > 
-> edid is allocated on the call to psb_intel_sdvo_get_edid but not
-> kfree'd at all, causing a memory leak.  Fix this by kfree'ing
-> the edid.  (This may be null, but kfree can handle null frees).
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Detected by CoverityScan, CID#1090730 ("Resource Leak")
-> 
-> Fixes: 5736995b473b ("gma500: Replace SDVO code with slightly modified version from i915")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/gma500/psb_intel_sdvo.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/gma500/psb_intel_sdvo.c b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-> index e787d376ba67..f38e6ad1ab9b 100644
-> --- a/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-> +++ b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-> @@ -1650,6 +1650,7 @@ static bool psb_intel_sdvo_detect_hdmi_audio(struct drm_connector *connector)
->  	edid = psb_intel_sdvo_get_edid(connector);
->  	if (edid != NULL && edid->input & DRM_EDID_INPUT_DIGITAL)
-is the check here needed at all ?
-	drm_detect_monitor_audio--> drm_find_cea_extension -->drm_find_edid_extension (will check for NULL)
+> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> index e06ad7250963..b1b075763eaa 100644
+> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> @@ -371,7 +371,7 @@ static int _ocrdma_pd_mgr_put_bitmap(struct
+> ocrdma_dev *dev, u16 pd_id,
+>  	return 0;
+>  }
+>  
+> -static u8 ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
+> +static int ocrdma_put_pd_num(struct ocrdma_dev *dev, u16 pd_id,
+>  				   bool dpp_pool)
+>  {
+>  	int status;
 
-I missed DRM_EDID_INPUT_DIGITAL some where ? NTL i would expected drm_detect_monitor_audio to hanle it savely.
+Thanks, applied for -rc.
 
-re,
- wh
+-- 
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+   
+Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
->  		has_audio = drm_detect_monitor_audio(edid);
-> +	kfree(edid);
->  
->  	return has_audio;
->  }
