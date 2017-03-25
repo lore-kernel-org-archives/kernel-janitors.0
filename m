@@ -1,74 +1,66 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Thu, 16 Mar 2017 15:19:52 +0000
-Subject: [PATCH 0/3] Add public w1 driver interface
-Message-Id: <20170316151955.10710-1-afd@ti.com>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Sat, 25 Mar 2017 18:47:34 +0000
+Subject: Re: [PATCH 0/3] Add public w1 driver interface
+Message-Id: <20170325184734.5ftcu6k47flixrng@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="w6rqzgmuossb2xtr"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+References: <20170316151955.10710-1-afd@ti.com>
+In-Reply-To: <20170316151955.10710-1-afd@ti.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi All,
 
-As part of continuing work to cleanup the BQ27xxx driver I am attempting
-to remove the need for the platform driver interface. For this we first
-need the w1 subsystem to act more like a traditional bus subsystem
-and allow drivers for attached devices to live outside of the w1
-directory.
+--w6rqzgmuossb2xtr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The first couple patches are trivial, the last a bit more involved
-but should make no functional change, just a re-organization of
-header files.
+Hi,
 
-Thanks,
-Andrew
+On Thu, Mar 16, 2017 at 10:19:52AM -0500, Andrew F. Davis wrote:
+> As part of continuing work to cleanup the BQ27xxx driver I am attempting
+> to remove the need for the platform driver interface. For this we first
+> need the w1 subsystem to act more like a traditional bus subsystem
+> and allow drivers for attached devices to live outside of the w1
+> directory.
+>=20
+> The first couple patches are trivial, the last a bit more involved
+> but should make no functional change, just a re-organization of
+> header files.
+>=20
+> Thanks,
+> Andrew
+>=20
+> Andrew F. Davis (3):
+>   w1: Use kernel common min() implementation
+>   w1: Remove unneeded use of assert() and remove w1_log.h
+>   w1: Add subsystem kernel public interface
 
-Andrew F. Davis (3):
-  w1: Use kernel common min() implementation
-  w1: Remove unneeded use of assert() and remove w1_log.h
-  w1: Add subsystem kernel public interface
+For the whole series:
 
- MAINTAINERS                        |   1 +
- drivers/w1/masters/ds1wm.c         |   3 +-
- drivers/w1/masters/ds2482.c        |   3 +-
- drivers/w1/masters/ds2490.c        |   3 +-
- drivers/w1/masters/matrox_w1.c     |   9 +--
- drivers/w1/masters/mxc_w1.c        |   3 +-
- drivers/w1/masters/omap_hdq.c      |   3 +-
- drivers/w1/masters/w1-gpio.c       |   3 +-
- drivers/w1/slaves/w1_bq27000.c     |   6 +-
- drivers/w1/slaves/w1_ds2405.c      |   5 +-
- drivers/w1/slaves/w1_ds2406.c      |   6 +-
- drivers/w1/slaves/w1_ds2408.c      |   6 +-
- drivers/w1/slaves/w1_ds2413.c      |   6 +-
- drivers/w1/slaves/w1_ds2423.c      |   6 +-
- drivers/w1/slaves/w1_ds2431.c      |   6 +-
- drivers/w1/slaves/w1_ds2433.c      |   6 +-
- drivers/w1/slaves/w1_ds2760.c      |   7 ++-
- drivers/w1/slaves/w1_ds2780.c      |   7 ++-
- drivers/w1/slaves/w1_ds2781.c      |   7 ++-
- drivers/w1/slaves/w1_ds28e04.c     |   6 +-
- drivers/w1/slaves/w1_smem.c        |   7 ++-
- drivers/w1/slaves/w1_therm.c       |  10 +++-
- drivers/w1/w1.c                    |   7 +--
- drivers/w1/w1_family.c             |   3 +-
- drivers/w1/w1_family.h             |  97 -------------------------------
- drivers/w1/w1_int.c                |   4 +-
- drivers/w1/w1_int.h                |  27 ---------
- drivers/w1/w1_internal.h           |  87 ++++++++++++++++++++++++++++
- drivers/w1/w1_io.c                 |   3 +-
- drivers/w1/w1_log.h                |  31 ----------
- drivers/w1/w1_netlink.c            |   7 +--
- drivers/w1/w1_netlink.h            |   2 +-
- {drivers/w1 => include/linux}/w1.h | 116 ++++++++++++++++---------------------
- 33 files changed, 205 insertions(+), 298 deletions(-)
- delete mode 100644 drivers/w1/w1_family.h
- delete mode 100644 drivers/w1/w1_int.h
- create mode 100644 drivers/w1/w1_internal.h
- delete mode 100644 drivers/w1/w1_log.h
- rename {drivers/w1 => include/linux}/w1.h (76%)
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
 
--- 
-2.11.0
+-- Sebastian
 
+--w6rqzgmuossb2xtr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljWu0YACgkQ2O7X88g7
++pp8Tg//UdyFVd/f8o/mQxik73isavMBuk4AnVH5cTMrSVGhmRM5vF9+iwV01J39
+6bixugI6jLdnA85SLWabwtEO9eCXRkndHPiQW4J3CyMz9Oa0IU3gG3MDtxpRTdRH
+6qnvkghWmCwEbWa7741yHNNf5FMUWycitffSFXlRJsg3r2lRIP7tHukFZ505TcqZ
+ZvtebSQ5n1KfWcWn3fmTEdx2+d9hrF6GI/KYqjDqEcRYJ8Z1F9lXQlURMGCSvKET
+tzBXjLtZMF61dnJwgAZy5jc7+nKgeGOsnUqVhYmlxd1E/izn0rdF1anUNmOy1q1p
+wXkB++KPSvwEKV8RN/s60nBZ8lmfS4f+SZELLQzu0R6y+QbL+6PXe+PZEdlY+K0O
+NXBNWOj1fzqeBGzqSN7fW/IvJ+7hgehZ2EtKZrkUu7sQ5eh5FSFxlp3I3FEZ/MA7
++hFLAwJiTcCxTzIOi1Nug8xuPWhERD4XNIulGmOvl3DZx/aYrkpS9zcrCHESQ+2q
+6fXn6hdmoY0C3ZcXEfJ8Pd8pVmvrA4sP+747KjvB3ULotnXwiy22uJzw/6OMKODG
+hCWoPep2TtMuLv1S/+v2vlJZrtsDFi0MkRXjf8Gamno4UuwnfAj11C0a14Mm3AxW
+Nd7aLE7OHdI4k/K/YaYucysYJ/wt5NrKsoYHD28k6w3PggGXfoE=
+=pKl0
+-----END PGP SIGNATURE-----
+
+--w6rqzgmuossb2xtr--
