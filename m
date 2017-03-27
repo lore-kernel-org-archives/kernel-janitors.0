@@ -1,48 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Feb 2017 19:42:04 +0000
-Subject: [PATCH 03/18] HID: Use kmalloc_array() in open_collection()
-Message-Id: <2db59cee-8bb5-9b53-993b-c03fe5c58225@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Mar 2017 22:34:39 +0000
+Subject: [PATCH] usb: gadget: udc:  remove redundant initial assignments to the pointer 's'
+Message-Id: <20170327223439.10063-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
-In-Reply-To: <edd25fcd-8625-2469-fa28-2315f81b6b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>, Bhumika Goyal <bhumirks@gmail.com>, Michal Nazarewicz <mina86@mina86.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 6 Feb 2017 19:09:42 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+The initial setting of pointer s to the driver name or to the literal
+string "(none)" is redundant as later it is always set to point to
+a different literal string before it is printed log.  Remove this
+redundant code.
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Detected with CoverityScan, CID#1227032, CID#1227033 ("Unused Value")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/hid-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/net2272.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index ffb7e5d4ee19..51f3547ca44f 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -131,8 +131,9 @@ static int open_collection(struct hid_parser *parser, unsigned type)
- 	}
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+index 8f85a51bd2b3..dee4eb60d4c2 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -1191,11 +1191,6 @@ registers_show(struct device *_dev, struct device_attribute *attr, char *buf)
+ 	size = PAGE_SIZE;
+ 	spin_lock_irqsave(&dev->lock, flags);
  
- 	if (parser->device->maxcollection = parser->device->collection_size) {
--		collection = kmalloc(sizeof(struct hid_collection) *
--				parser->device->collection_size * 2, GFP_KERNEL);
-+		collection = kmalloc_array(parser->device->collection_size * 2,
-+					   sizeof(*collection),
-+					   GFP_KERNEL);
- 		if (!collection)
- 			return -ENOMEM;
- 
+-	if (dev->driver)
+-		s = dev->driver->driver.name;
+-	else
+-		s = "(none)";
+-
+ 	/* Main Control Registers */
+ 	t = scnprintf(next, size, "%s version %s,"
+ 		"chiprev %02x, locctl %02x\n"
 -- 
-2.11.1
+2.11.0
 
