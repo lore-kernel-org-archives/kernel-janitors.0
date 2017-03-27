@@ -1,44 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 27 Mar 2017 22:34:39 +0000
-Subject: [PATCH] usb: gadget: udc:  remove redundant initial assignments to the pointer 's'
-Message-Id: <20170327223439.10063-1-colin.king@canonical.com>
+From: YUAN Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Date: Mon, 27 Mar 2017 23:37:09 +0000
+Subject: RE: [PATCH] usb: gadget: udc:  remove redundant initial assignments to the pointer 's'
+Message-Id: <8729016553E3654398EA69218DA29EEF15B7401B@cnshjmbx02>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170327223439.10063-1-colin.king@canonical.com>
+In-Reply-To: <20170327223439.10063-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>, Bhumika Goyal <bhumirks@gmail.com>, Michal Nazarewicz <mina86@mina86.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bhumika Goyal <bhumirks@gmail.com>, Michal Nazarewicz <mina86@mina86.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The initial setting of pointer s to the driver name or to the literal
-string "(none)" is redundant as later it is always set to point to
-a different literal string before it is printed log.  Remove this
-redundant code.
-
-Detected with CoverityScan, CID#1227032, CID#1227033 ("Unused Value")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/gadget/udc/net2272.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
-index 8f85a51bd2b3..dee4eb60d4c2 100644
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -1191,11 +1191,6 @@ registers_show(struct device *_dev, struct device_attribute *attr, char *buf)
- 	size = PAGE_SIZE;
- 	spin_lock_irqsave(&dev->lock, flags);
- 
--	if (dev->driver)
--		s = dev->driver->driver.name;
--	else
--		s = "(none)";
--
- 	/* Main Control Registers */
- 	t = scnprintf(next, size, "%s version %s,"
- 		"chiprev %02x, locctl %02x\n"
--- 
-2.11.0
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBb
+bWFpbHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogVHVlc2RheSwgTWFyY2gg
+MjgsIDIwMTcgNjozNSBBTQ0KPiBUbzogRmVsaXBlIEJhbGJpOyBHcmVnIEtyb2FoLUhhcnRtYW47
+IFlVQU4gTGlueXU7IEJodW1pa2EgR295YWw7IE1pY2hhbA0KPiBOYXphcmV3aWN6OyBsaW51eC11
+c2JAdmdlci5rZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF0gdXNiOiBn
+YWRnZXQ6IHVkYzogcmVtb3ZlIHJlZHVuZGFudCBpbml0aWFsIGFzc2lnbm1lbnRzIHRvIHRoZQ0K
+PiBwb2ludGVyICdzJw0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fu
+b25pY2FsLmNvbT4NCj4gDQo+IFRoZSBpbml0aWFsIHNldHRpbmcgb2YgcG9pbnRlciBzIHRvIHRo
+ZSBkcml2ZXIgbmFtZSBvciB0byB0aGUgbGl0ZXJhbA0KPiBzdHJpbmcgIihub25lKSIgaXMgcmVk
+dW5kYW50IGFzIGxhdGVyIGl0IGlzIGFsd2F5cyBzZXQgdG8gcG9pbnQgdG8NCj4gYSBkaWZmZXJl
+bnQgbGl0ZXJhbCBzdHJpbmcgYmVmb3JlIGl0IGlzIHByaW50ZWQgbG9nLiAgUmVtb3ZlIHRoaXMN
+Cj4gcmVkdW5kYW50IGNvZGUuDQo+IA0KPiBEZXRlY3RlZCB3aXRoIENvdmVyaXR5U2NhbiwgQ0lE
+IzEyMjcwMzIsIENJRCMxMjI3MDMzICgiVW51c2VkIFZhbHVlIikNCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAg
+ZHJpdmVycy91c2IvZ2FkZ2V0L3VkYy9uZXQyMjcyLmMgfCA1IC0tLS0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9nYWRn
+ZXQvdWRjL25ldDIyNzIuYw0KPiBiL2RyaXZlcnMvdXNiL2dhZGdldC91ZGMvbmV0MjI3Mi5jDQo+
+IGluZGV4IDhmODVhNTFiZDJiMy4uZGVlNGViNjBkNGMyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L3VzYi9nYWRnZXQvdWRjL25ldDIyNzIuYw0KPiArKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvdWRj
+L25ldDIyNzIuYw0KPiBAQCAtMTE5MSwxMSArMTE5MSw2IEBAIHJlZ2lzdGVyc19zaG93KHN0cnVj
+dCBkZXZpY2UgKl9kZXYsIHN0cnVjdA0KPiBkZXZpY2VfYXR0cmlidXRlICphdHRyLCBjaGFyICpi
+dWYpDQo+ICAJc2l6ZSA9IFBBR0VfU0laRTsNCj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmZGV2LT5s
+b2NrLCBmbGFncyk7DQo+IA0KPiAtCWlmIChkZXYtPmRyaXZlcikNCj4gLQkJcyA9IGRldi0+ZHJp
+dmVyLT5kcml2ZXIubmFtZTsNCj4gLQllbHNlDQo+IC0JCXMgPSAiKG5vbmUpIjsNCj4gLQ0KPiAg
+CS8qIE1haW4gQ29udHJvbCBSZWdpc3RlcnMgKi8NCj4gIAl0ID0gc2NucHJpbnRmKG5leHQsIHNp
+emUsICIlcyB2ZXJzaW9uICVzLCINCj4gIAkJImNoaXByZXYgJTAyeCwgbG9jY3RsICUwMnhcbiIN
+CkkgdGhpbmsgaXQncyBvcmlnaW5hbCBwdXJwb3NlIGlzIG5vdCB1c2UgZHJpdmVyX25hbWUgZGly
+ZWN0bHkgaW4gYmVsb3cgc2NucHJpbnRmIGZ1bmN0aW9uIGNhbGwuDQpZb3UgY2FuIGNoYW5nZSBk
+cml2ZXJzX25hbWUgYmVsb3cgdG8gcy4NCg0KCS8qIE1haW4gQ29udHJvbCBSZWdpc3RlcnMgKi8N
+Cgl0ID0gc2NucHJpbnRmKG5leHQsIHNpemUsICIlcyB2ZXJzaW9uICVzLCINCgkJImNoaXByZXYg
+JTAyeCwgbG9jY3RsICUwMnhcbiINCgkJImlycWVuYjAgJTAyeCBpcnFlbmIxICUwMnggIg0KCQki
+aXJxc3RhdDAgJTAyeCBpcnFzdGF0MSAlMDJ4XG4iLA0KCQlkcml2ZXJfbmFtZSwgZHJpdmVyX3Zl
+cnMsIGRldi0+Y2hpcHJldiwNCj4gLS0NCj4gMi4xMS4wDQoNCg=
