@@ -1,40 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 25 Mar 2017 14:16:53 +0000
-Subject: [PATCH] netvsc: fix unititialized return value in variable ret
-Message-Id: <20170325141653.11238-1-colin.king@canonical.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Mon, 27 Mar 2017 00:52:38 +0000
+Subject: RE: [PATCH] netvsc: fix unititialized return value in variable ret
+Message-Id: <BLUPR03MB14128BF9E77DB2E22206F99ACA330@BLUPR03MB1412.namprd03.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170325141653.11238-1-colin.king@canonical.com>
+In-Reply-To: <20170325141653.11238-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-It is possible for an uninitialized value of ret to be returned
-so fix this by initializing ret to zero.
-
-Detected by CoverityScan, CID#1420762 ("Uninitialized scalar variable")
-
-Fixes: 163891d7d429 ("netvsc: handle offline mtu and channel change")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/hyperv/netvsc_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index eb7ae79d47bb..f830bbbd8ad4 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -855,7 +855,7 @@ static int netvsc_change_mtu(struct net_device *ndev, int mtu)
- 	struct hv_device *hdev = ndevctx->device_ctx;
- 	struct netvsc_device_info device_info;
- 	bool was_running;
--	int ret;
-+	int ret = 0;
- 
- 	if (!nvdev || nvdev->destroy)
- 		return -ENODEV;
--- 
-2.11.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogU2F0dXJkYXksIE1hcmNoIDI1
+LCAyMDE3IDEwOjE3IEFNDQo+IFRvOiBLWSBTcmluaXZhc2FuIDxreXNAbWljcm9zb2Z0LmNvbT47
+IEhhaXlhbmcgWmhhbmcNCj4gPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVuIEhlbW1p
+bmdlciA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT47DQo+IGRldmVsQGxpbnV4ZHJpdmVycHJvamVj
+dC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2Vy
+Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
+VENIXSBuZXR2c2M6IGZpeCB1bml0aXRpYWxpemVkIHJldHVybiB2YWx1ZSBpbiB2YXJpYWJsZSBy
+ZXQNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+
+DQo+IA0KPiBJdCBpcyBwb3NzaWJsZSBmb3IgYW4gdW5pbml0aWFsaXplZCB2YWx1ZSBvZiByZXQg
+dG8gYmUgcmV0dXJuZWQNCj4gc28gZml4IHRoaXMgYnkgaW5pdGlhbGl6aW5nIHJldCB0byB6ZXJv
+Lg0KPiANCj4gRGV0ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQyMDc2MiAoIlVuaW5pdGlh
+bGl6ZWQgc2NhbGFyIHZhcmlhYmxlIikNCj4gDQo+IEZpeGVzOiAxNjM4OTFkN2Q0MjkgKCJuZXR2
+c2M6IGhhbmRsZSBvZmZsaW5lIG10dSBhbmQgY2hhbm5lbCBjaGFuZ2UiKQ0KPiBTaWduZWQtb2Zm
+LWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4g
+IGRyaXZlcnMvbmV0L2h5cGVydi9uZXR2c2NfZHJ2LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9oeXBlcnYvbmV0dnNjX2Rydi5jDQo+IGIvZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZz
+Y19kcnYuYw0KPiBpbmRleCBlYjdhZTc5ZDQ3YmIuLmY4MzBiYmJkOGFkNCAxMDA2NDQNCj4gLS0t
+IGEvZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYuYw0KPiArKysgYi9kcml2ZXJzL25ldC9o
+eXBlcnYvbmV0dnNjX2Rydi5jDQo+IEBAIC04NTUsNyArODU1LDcgQEAgc3RhdGljIGludCBuZXR2
+c2NfY2hhbmdlX210dShzdHJ1Y3QgbmV0X2RldmljZSAqbmRldiwNCj4gaW50IG10dSkNCj4gIAlz
+dHJ1Y3QgaHZfZGV2aWNlICpoZGV2ID0gbmRldmN0eC0+ZGV2aWNlX2N0eDsNCj4gIAlzdHJ1Y3Qg
+bmV0dnNjX2RldmljZV9pbmZvIGRldmljZV9pbmZvOw0KPiAgCWJvb2wgd2FzX3J1bm5pbmc7DQo+
+IC0JaW50IHJldDsNCj4gKwlpbnQgcmV0ID0gMDsNCg0KVGhpcyB3YXMganVzdCBmaXggYnkgY29t
+bWl0OiAzODZmNTc2MjJjYzNiYmIzOWI5YzAwZmM4NzYyYmM5YWIyOGUwZjhkDQoNClRoYW5rcy4N
+Cg0KDQo
