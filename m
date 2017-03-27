@@ -1,53 +1,21 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Thu, 09 Mar 2017 11:59:13 +0000
-Subject: Re: [PATCH 20/26] IB/ocrdma: Delete an unnecessary variable assignment in ocrdma_alloc_mr()
-Message-Id: <20170309115912.GI3307@yuval-lap>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Mar 2017 05:48:53 +0000
+Subject: Re: SELinux: Fine-tuning for several function implementations
+Message-Id: <c8dd502c-bbde-3fe0-a2a0-b803beefc67e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <24b6074a-f678-c367-484b-e16a0c1f9b5f@users.sourceforge.net>
-In-Reply-To: <24b6074a-f678-c367-484b-e16a0c1f9b5f@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRsgmit4BMjTu1ZrTYY-LoMOxOgjfy7U1TgzjqCSmfmOA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org
 
-On Wed, Mar 08, 2017 at 02:22:21PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Mar 2017 10:00:41 +0100
-> 
-> Delete an assignment for the local variable "status" in an if branch
-> because the desired failure indication is already specified by a constant
-> error code at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index 05d55d361cfe..af8798fd35b1 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -3031,10 +3031,8 @@ struct ib_mr *ocrdma_alloc_mr(struct ib_pd *ibpd,
->  		return ERR_PTR(-ENOMEM);
->  
->  	mr->pages = kcalloc(max_num_sg, sizeof(*mr->pages), GFP_KERNEL);
-> -	if (!mr->pages) {
-> -		status = -ENOMEM;
-> +	if (!mr->pages)
->  		goto pl_err;
-> -	}
->  
+> I've made it through the first half (23/46) and of those
+> I've merged patches …, 7, …
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+It seems that you dropped this one while integrating the eighth
+update step.
 
->  	status = ocrdma_get_pbl_info(dev, mr, max_num_sg);
->  	if (status)
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Markus
