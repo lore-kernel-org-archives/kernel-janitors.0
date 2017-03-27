@@ -1,67 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 25 Mar 2017 14:26:39 +0000
-Subject: [PATCH] netvsc: fix dereference before null check errors
-Message-Id: <20170325142639.11452-1-colin.king@canonical.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Mon, 27 Mar 2017 00:50:27 +0000
+Subject: RE: [PATCH] netvsc: fix dereference before null check errors
+Message-Id: <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170325142639.11452-1-colin.king@canonical.com>
+In-Reply-To: <20170325142639.11452-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-ndev is being checked to see if it is a null pointer however before
-the null check ndev is being dereferenced; hence there is a potential
-null pointer dereference bug that needs fixing. Fix this by only
-dereferencing ndev after the null check.
-
-Detected by CoverityScan, CID#1420760, CID#140761 ("Dereference
-before null check")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/hyperv/netvsc_drv.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index f830bbbd8ad4..f24c2891dd0c 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -1135,7 +1135,7 @@ static int netvsc_get_rxfh(struct net_device *dev, u32 *indir, u8 *key,
- {
- 	struct net_device_context *ndc = netdev_priv(dev);
- 	struct netvsc_device *ndev = rcu_dereference(ndc->nvdev);
--	struct rndis_device *rndis_dev = ndev->extension;
-+	struct rndis_device *rndis_dev;
- 	int i;
- 
- 	if (!ndev)
-@@ -1144,6 +1144,7 @@ static int netvsc_get_rxfh(struct net_device *dev, u32 *indir, u8 *key,
- 	if (hfunc)
- 		*hfunc = ETH_RSS_HASH_TOP;	/* Toeplitz */
- 
-+	rndis_dev = ndev->extension;
- 	if (indir) {
- 		for (i = 0; i < ITAB_NUM; i++)
- 			indir[i] = rndis_dev->ind_table[i];
-@@ -1160,7 +1161,7 @@ static int netvsc_set_rxfh(struct net_device *dev, const u32 *indir,
- {
- 	struct net_device_context *ndc = netdev_priv(dev);
- 	struct netvsc_device *ndev = rtnl_dereference(ndc->nvdev);
--	struct rndis_device *rndis_dev = ndev->extension;
-+	struct rndis_device *rndis_dev;
- 	int i;
- 
- 	if (!ndev)
-@@ -1169,6 +1170,7 @@ static int netvsc_set_rxfh(struct net_device *dev, const u32 *indir,
- 	if (hfunc != ETH_RSS_HASH_NO_CHANGE && hfunc != ETH_RSS_HASH_TOP)
- 		return -EOPNOTSUPP;
- 
-+	rndis_dev = ndev->extension;
- 	if (indir) {
- 		for (i = 0; i < ITAB_NUM; i++)
- 			if (indir[i] >= dev->num_rx_queues)
--- 
-2.11.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogU2F0dXJkYXksIE1hcmNoIDI1
+LCAyMDE3IDEwOjI3IEFNDQo+IFRvOiBLWSBTcmluaXZhc2FuIDxreXNAbWljcm9zb2Z0LmNvbT47
+IEhhaXlhbmcgWmhhbmcNCj4gPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVuIEhlbW1p
+bmdlciA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT47DQo+IGRldmVsQGxpbnV4ZHJpdmVycHJvamVj
+dC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2Vy
+Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
+VENIXSBuZXR2c2M6IGZpeCBkZXJlZmVyZW5jZSBiZWZvcmUgbnVsbCBjaGVjayBlcnJvcnMNCj4g
+DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0K
+PiBuZGV2IGlzIGJlaW5nIGNoZWNrZWQgdG8gc2VlIGlmIGl0IGlzIGEgbnVsbCBwb2ludGVyIGhv
+d2V2ZXIgYmVmb3JlDQo+IHRoZSBudWxsIGNoZWNrIG5kZXYgaXMgYmVpbmcgZGVyZWZlcmVuY2Vk
+OyBoZW5jZSB0aGVyZSBpcyBhIHBvdGVudGlhbA0KPiBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2Ug
+YnVnIHRoYXQgbmVlZHMgZml4aW5nLiBGaXggdGhpcyBieSBvbmx5DQo+IGRlcmVmZXJlbmNpbmcg
+bmRldiBhZnRlciB0aGUgbnVsbCBjaGVjay4NCj4gDQo+IERldGVjdGVkIGJ5IENvdmVyaXR5U2Nh
+biwgQ0lEIzE0MjA3NjAsIENJRCMxNDA3NjEgKCJEZXJlZmVyZW5jZQ0KPiBiZWZvcmUgbnVsbCBj
+aGVjayIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPg0KDQpSZXZpZXdlZC1ieTogSGFpeWFuZyBaaGFuZyA8aGFpeWFuZ3pAbWlj
+cm9zb2Z0LmNvbT4NCg0KVGhhbmsgeW91IQ0K
