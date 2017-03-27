@@ -1,107 +1,23 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Tue, 21 Mar 2017 01:43:27 +0000
-Subject: Re: [PATCH 2/4] staging: atomisp: simplify if statement in atomisp_get_sensor_fps()
-Message-Id: <CAHb8M2AgV0J4YWc52-yzSsUWUCWfNP-ffmjOFkt6Y-mzsF8zUg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Mar 2017 06:24:36 +0000
+Subject: Re: selinux: Delete unnecessary variable assignments in policydb_index()
+Message-Id: <1ae9af46-a3ca-33b8-d347-8983a22cb3cb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170320105940.GA17472@SEL-JYOUN-D1> <58CFC561.8090104@bfs.de>
- <CAHb8M2DELnWoo8UAEni-dc8fnVmpp8d-XeOObeB37deT5+8_gQ@mail.gmail.com> <58CFD505.60201@bfs.de>
-In-Reply-To: <58CFD505.60201@bfs.de>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
+	<CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
+In-Reply-To: <CAHC9VhRHEDCRNVfOqw4mwJQD9PmESEcgyZ7xCEwHZKpiDSjnYw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: mchehab@kernel.org, Greg KH <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, SIMRAN SINGHAL <singhalsimran0@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org
 
-2017-03-20 22:11 GMT+09:00 walter harms <wharms@bfs.de>:
->
->
-> Am 20.03.2017 13:51, schrieb DaeSeok Youn:
->> 2017-03-20 21:04 GMT+09:00 walter harms <wharms@bfs.de>:
->>>
->>>
->>> Am 20.03.2017 11:59, schrieb Daeseok Youn:
->>>> If v4l2_subdev_call() gets the global frame interval values,
->>>> it returned 0 and it could be checked whether numerator is zero or not.
->>>>
->>>> If the numerator is not zero, the fps could be calculated in this function.
->>>> If not, it just returns 0.
->>>>
->>>> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
->>>> ---
->>>>  .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 22 ++++++++++------------
->>>>  1 file changed, 10 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->>>> index 8bdb224..6bdd19e 100644
->>>> --- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->>>> +++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
->>>> @@ -153,20 +153,18 @@ struct atomisp_acc_pipe *atomisp_to_acc_pipe(struct video_device *dev)
->>>>
->>>>  static unsigned short atomisp_get_sensor_fps(struct atomisp_sub_device *asd)
->>>>  {
->>>> -     struct v4l2_subdev_frame_interval frame_interval;
->>>> +     struct v4l2_subdev_frame_interval fi;
->>>>       struct atomisp_device *isp = asd->isp;
->>>> -     unsigned short fps;
->>>>
->>>> -     if (v4l2_subdev_call(isp->inputs[asd->input_curr].camera,
->>>> -         video, g_frame_interval, &frame_interval)) {
->>>> -             fps = 0;
->>>> -     } else {
->>>> -             if (frame_interval.interval.numerator)
->>>> -                     fps = frame_interval.interval.denominator /
->>>> -                         frame_interval.interval.numerator;
->>>> -             else
->>>> -                     fps = 0;
->>>> -     }
->>>> +     unsigned short fps = 0;
->>>> +     int ret;
->>>> +
->>>> +     ret = v4l2_subdev_call(isp->inputs[asd->input_curr].camera,
->>>> +                            video, g_frame_interval, &fi);
->>>> +
->>>> +     if (!ret && fi.interval.numerator)
->>>> +             fps = fi.interval.denominator / fi.interval.numerator;
->>>> +
->>>>       return fps;
->>>>  }
->>>
->>>
->>>
->>> do you need to check ret at all ? if an error occurs can fi.interval.numerator
->>> be something else than 0 ?
->> the return value from the v4l2_subdev_call() function is zero when it
->> is done without any error. and also I checked
->> the ret value whether is 0 or not. if the ret is 0 then the value of
->> numerator should be checked to avoid for dividing by 0.
->>>
->>> if ret is an ERRNO it would be wise to return ret not fps, but this may require
->>> changes at other places also.
->> hmm.., yes, you are right. but I think it is ok because the
->> atomisp_get_sensor_fps() function is needed to get fps value.
->> (originally, zero or calculated fps value was returned.)
->
-> maybe its better to divide this in:
->         if (ret)
->            return 0; // error case
->
->         return (fi.interval.numerator>0)?fi.interval.denominator / fi.interval.numerator:0;
->
-> So there is a chance that someone will a) understand and b) fix the error return.
-yes, it looks better than mine. I will update it and resend it.
+> However, I agree with Casey that this patch is mostly just code churn
+> so I'm going to drop this from your series.
 
-Thanks walter,
+How do you think about to return only constant error codes in this function?
+Would it be acceptable to replace any statements “goto out;” with
+“return -ENOMEM;” here instead?
+
 Regards,
-Daeseok Youn.
-
->
-> re,
->  wh
->
->>
->>>
->>> re,
->>>  wh
->>>
->>>>
->>
+Markus
