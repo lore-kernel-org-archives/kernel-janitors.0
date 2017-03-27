@@ -1,31 +1,43 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Mon, 27 Mar 2017 00:50:27 +0000
-Subject: RE: [PATCH] netvsc: fix dereference before null check errors
-Message-Id: <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 27 Mar 2017 23:01:19 +0000
+Subject: Re: [PATCH] netvsc: fix dereference before null check errors
+Message-Id: <20170327.160119.277346270230368504.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170325142639.11452-1-colin.king@canonical.com>
-In-Reply-To: <20170325142639.11452-1-colin.king@canonical.com>
+        <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
+In-Reply-To: <BLUPR03MB141236E1502819C7B992C9F9CA330@BLUPR03MB1412.namprd03.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: haiyangz@microsoft.com
+Cc: colin.king@canonical.com, kys@microsoft.com, sthemmin@microsoft.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
-bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogU2F0dXJkYXksIE1hcmNoIDI1
-LCAyMDE3IDEwOjI3IEFNDQo+IFRvOiBLWSBTcmluaXZhc2FuIDxreXNAbWljcm9zb2Z0LmNvbT47
-IEhhaXlhbmcgWmhhbmcNCj4gPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVuIEhlbW1p
-bmdlciA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT47DQo+IGRldmVsQGxpbnV4ZHJpdmVycHJvamVj
-dC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
-VENIXSBuZXR2c2M6IGZpeCBkZXJlZmVyZW5jZSBiZWZvcmUgbnVsbCBjaGVjayBlcnJvcnMNCj4g
-DQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0K
-PiBuZGV2IGlzIGJlaW5nIGNoZWNrZWQgdG8gc2VlIGlmIGl0IGlzIGEgbnVsbCBwb2ludGVyIGhv
-d2V2ZXIgYmVmb3JlDQo+IHRoZSBudWxsIGNoZWNrIG5kZXYgaXMgYmVpbmcgZGVyZWZlcmVuY2Vk
-OyBoZW5jZSB0aGVyZSBpcyBhIHBvdGVudGlhbA0KPiBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2Ug
-YnVnIHRoYXQgbmVlZHMgZml4aW5nLiBGaXggdGhpcyBieSBvbmx5DQo+IGRlcmVmZXJlbmNpbmcg
-bmRldiBhZnRlciB0aGUgbnVsbCBjaGVjay4NCj4gDQo+IERldGVjdGVkIGJ5IENvdmVyaXR5U2Nh
-biwgQ0lEIzE0MjA3NjAsIENJRCMxNDA3NjEgKCJEZXJlZmVyZW5jZQ0KPiBiZWZvcmUgbnVsbCBj
-aGVjayIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
-YW5vbmljYWwuY29tPg0KDQpSZXZpZXdlZC1ieTogSGFpeWFuZyBaaGFuZyA8aGFpeWFuZ3pAbWlj
-cm9zb2Z0LmNvbT4NCg0KVGhhbmsgeW91IQ0K
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Mon, 27 Mar 2017 00:50:27 +0000
+
+> 
+> 
+>> -----Original Message-----
+>> From: Colin King [mailto:colin.king@canonical.com]
+>> Sent: Saturday, March 25, 2017 10:27 AM
+>> To: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+>> <haiyangz@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+>> devel@linuxdriverproject.org; netdev@vger.kernel.org
+>> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: [PATCH] netvsc: fix dereference before null check errors
+>> 
+>> From: Colin Ian King <colin.king@canonical.com>
+>> 
+>> ndev is being checked to see if it is a null pointer however before
+>> the null check ndev is being dereferenced; hence there is a potential
+>> null pointer dereference bug that needs fixing. Fix this by only
+>> dereferencing ndev after the null check.
+>> 
+>> Detected by CoverityScan, CID#1420760, CID#140761 ("Dereference
+>> before null check")
+>> 
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+
+Applied.
