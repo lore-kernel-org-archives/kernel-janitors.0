@@ -1,36 +1,50 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Sun, 12 Mar 2017 14:46:22 +0000
-Subject: [PATCH 1/3] staging: dgnc: ch->ch_bd is already assigned to bd variable
-Message-Id: <20170312144622.GA23999@jyoun-Latitude-E6530>
+Date: Mon, 27 Mar 2017 08:52:20 +0000
+Subject: [PATCH] staging: atomisp: fix an issue timeout value for checking error
+Message-Id: <20170327085220.GA26407@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The bd variable in dgnc_tty_send_break() is assigned with
-ch->ch_bd but it is not used in this function except checking NULL.
-The ch->ch_bd could be replaced with bd variable in dgnc_tty_send_break()
+The timeout variable could be zero even if the bits has expected result.
+The checking expected bits again would be better instead whether
+the timeout value is zero or not.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_tty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index cde00e3..c563ee3 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1799,7 +1799,7 @@ static int dgnc_tty_send_break(struct tty_struct *tty, int msec)
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 94bc793..f2e5749 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -220,11 +220,11 @@ static int write_target_freq_to_hw(struct atomisp_device *isp,
+ 			timeout--;
+ 		}
  
- 	spin_lock_irqsave(&ch->ch_lock, flags);
+-		if (timeout != 0)
++		if (!(isp_sspm1 & ISP_FREQ_VALID_MASK))
+ 			break;
+ 	}
  
--	ch->ch_bd->bd_ops->send_break(ch, msec);
-+	bd->bd_ops->send_break(ch, msec);
- 
- 	spin_unlock_irqrestore(&ch->ch_lock, flags);
- 
+-	if (timeout = 0) {
++	if (isp_sspm1 & ISP_FREQ_VALID_MASK) {
+ 		dev_err(isp->dev, "DFS failed due to HW error.\n");
+ 		return -EINVAL;
+ 	}
+@@ -238,7 +238,7 @@ static int write_target_freq_to_hw(struct atomisp_device *isp,
+ 		udelay(100);
+ 		timeout--;
+ 	}
+-	if (timeout = 0) {
++	if ((isp_sspm1 >> ISP_FREQ_STAT_OFFSET) != ratio) {
+ 		dev_err(isp->dev, "DFS target freq is rejected by HW.\n");
+ 		return -EINVAL;
+ 	}
 -- 
-2.7.4
+1.9.1
 
