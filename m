@@ -1,26 +1,39 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 31 Mar 2017 15:28:06 +0000
-Subject: Re: [PATCH 2/2] ALSA: timer: Info leak in snd_timer_user_tinterrupt()
-Message-Id: <s5hr31d1n5l.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Mar 2017 12:28:50 +0000
+Subject: [PATCH] usb: gadget: pch_udc: don't update td->next after it has been released to the pool
+Message-Id: <20170328122850.18819-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170331152223.GC8141@mwanda>
-In-Reply-To: <20170331152223.GC8141@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kangjie Lu <kangjielu@gmail.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Michal Nazarewicz <mina86@mina86.com>, "Gustavo A . R . Silva" <garsilva@embeddedor.com>, Iago Abal <mail@iagoabal.eu>, Romain Perier <romain.perier@collabora.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 31 Mar 2017 17:22:23 +0200,
-Dan Carpenter wrote:
-> 
-> The "r1" struct has memory holes.  We clear it with memset on one path
-> where it is used but not the other.  Let's just memset it at the start
-> of the function so it's always safe.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Writing to td->next should be avoided after td has been freed using
+dma_pool_free. The intent was to nullify the next pointer, but this
+is potentially dangerous once it is back in the pool. Remove it.
 
+Detected by CoverityScan, CID#1091173 ("Write tp pointer after free")
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/pch_udc.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/udc/pch_udc.c b/drivers/usb/gadget/udc/pch_udc.c
+index 84dcbcd756f0..08bbe2c24134 100644
+--- a/drivers/usb/gadget/udc/pch_udc.c
++++ b/drivers/usb/gadget/udc/pch_udc.c
+@@ -1523,7 +1523,6 @@ static void pch_udc_free_dma_chain(struct pch_udc_dev *dev,
+ 		td = phys_to_virt(addr);
+ 		addr2 = (dma_addr_t)td->next;
+ 		dma_pool_free(dev->data_requests, td, addr);
+-		td->next = 0x00;
+ 		addr = addr2;
+ 	}
+ 	req->chain_len = 1;
+-- 
+2.11.0
+
