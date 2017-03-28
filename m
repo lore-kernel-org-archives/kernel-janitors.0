@@ -1,33 +1,34 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:17 +0000
-Subject: [PATCH 09/14] mlxsw: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-9-afd@ti.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Tue, 28 Mar 2017 10:20:14 +0000
+Subject: Re: [PATCH] usb: gadget: udc: remove redundant initial assignments to the pointer 's'
+Message-Id: <66ad4118-7c0a-06b9-b780-d0d613cb8152@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170327223439.10063-1-colin.king@canonical.com>
+In-Reply-To: <20170327223439.10063-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>, Bhumika Goyal <bhumirks@gmail.com>, Michal Nazarewicz <mina86@mina86.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+Hello!
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/net/ethernet/mellanox/mlxsw/switchx2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 3/28/2017 1:34 AM, Colin King wrote:
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/switchx2.c b/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
-index ec1e886d4566..a49532281b90 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
-@@ -214,7 +214,7 @@ static int mlxsw_sx_port_oper_status_get(struct mlxsw_sx_port *mlxsw_sx_port,
- 	if (err)
- 		return err;
- 	oper_status = mlxsw_reg_paos_oper_status_get(paos_pl);
--	*p_is_up = oper_status = MLXSW_PORT_ADMIN_STATUS_UP ? true : false;
-+	*p_is_up = oper_status = MLXSW_PORT_ADMIN_STATUS_UP;
- 	return 0;
- }
- 
--- 
-2.11.0
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The initial setting of pointer s to the driver name or to the literal
+> string "(none)" is redundant as later it is always set to point to
+> a different literal string before it is printed log.  Remove this
+
+    Printed to log, perhaps?
+
+> redundant code.
+>
+> Detected with CoverityScan, CID#1227032, CID#1227033 ("Unused Value")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+[...]
+
+MBR, Sergei
 
