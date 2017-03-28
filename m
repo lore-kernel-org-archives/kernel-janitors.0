@@ -1,35 +1,66 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Tue, 14 Mar 2017 16:47:38 +0000
-Subject: Re: [PATCH] mux: checking for IS_ERR() instead of NULL or vice versa
-Message-Id: <8a1d806c-1626-0558-855b-02d7396baae4@axentia.se>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Mar 2017 15:54:24 +0000
+Subject: [PATCH] VSOCK: remove unnecessary ternary operator on return value
+Message-Id: <20170328155424.22873-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170314075243.GA6169@mwanda>
-In-Reply-To: <20170314075243.GA6169@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Jorgen Hansen <jhansen@vmware.com>, Adit Ranadive <aditr@vmware.com>, Julia Lawall <julia.lawall@lip6.fr>, Stefan Hajnoczi <stefanha@redhat.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017-03-14 08:56, Dan Carpenter wrote:
-> This error handling is mixed up.  mux_chip_alloc() doesn't return error
-> pointers but devm_mux_chip_alloc() does.
-> 
-> Fixes: 4f5078327db1 ("mux: minimal mux subsystem and gpio-based mux controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Eeek, thanks for pointing this out! I have apparently stared at this for
-too long...
+Rather than assign the positive errno values to ret and then
+checking if it is positive and flip the sign, just set ret to
+be the -ve errno value.
 
-However, you did not update the documentation (in include/linux/mux.h) to
-match the code, so I'm going to use an alternative (and more localized) patch
-instead to align the code with the documentation.
+Detected by CoverityScan, CID#986649 ("Logically Dead Code")
 
-Patch in followup email, please review! I also updated the Fixes tag
-since I have amended the buggy patch since the version that is currently
-in linux-next was picked up (linux-next isn't getting any updates this
-week, which is why you're seeing "old" stuff).
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/vmw_vsock/vmci_transport.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Cheers,
-Peter
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+index 4be4fbbc0b50..a68cd6b0fb72 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -100,27 +100,27 @@ static s32 vmci_transport_error_to_vsock_error(s32 vmci_error)
+ 
+ 	switch (vmci_error) {
+ 	case VMCI_ERROR_NO_MEM:
+-		err = ENOMEM;
++		err = -ENOMEM;
+ 		break;
+ 	case VMCI_ERROR_DUPLICATE_ENTRY:
+ 	case VMCI_ERROR_ALREADY_EXISTS:
+-		err = EADDRINUSE;
++		err = -EADDRINUSE;
+ 		break;
+ 	case VMCI_ERROR_NO_ACCESS:
+-		err = EPERM;
++		err = -EPERM;
+ 		break;
+ 	case VMCI_ERROR_NO_RESOURCES:
+-		err = ENOBUFS;
++		err = -ENOBUFS;
+ 		break;
+ 	case VMCI_ERROR_INVALID_RESOURCE:
+-		err = EHOSTUNREACH;
++		err = -EHOSTUNREACH;
+ 		break;
+ 	case VMCI_ERROR_INVALID_ARGS:
+ 	default:
+-		err = EINVAL;
++		err = -EINVAL;
+ 	}
+ 
+-	return err > 0 ? -err : err;
++	return err;
+ }
+ 
+ static u32 vmci_transport_peer_rid(u32 peer_cid)
+-- 
+2.11.0
 
