@@ -1,59 +1,71 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Thu, 09 Mar 2017 12:01:39 +0000
-Subject: Re: [PATCH 22/26] IB/ocrdma: Returning only value constants in ocrdma_resize_cq()
-Message-Id: <20170309120139.GJ3307@yuval-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Mar 2017 15:54:47 +0000
+Subject: [PATCH] Add checks for kmalloc allocation failures
+Message-Id: <20170329155447.17991-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <dd638070-d1d6-44e8-6c10-16919b59482c@users.sourceforge.net>
-In-Reply-To: <dd638070-d1d6-44e8-6c10-16919b59482c-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Harry Morris <h.morris@cascoda.com>, linuxdev@cascoda.com, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 08, 2017 at 02:26:16PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Mar 2017 10:48:24 +0100
-> 
-> Return constant integer values without storing them in the local
-> variable "status".
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index bedc229be89d..1d25512416f5 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -1123,15 +1123,12 @@ struct ib_cq *ocrdma_create_cq(struct ib_device *ibdev,
->  int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
->  		     struct ib_udata *udata)
->  {
-> -	int status = 0;
->  	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
->  
-> -	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
-> -		status = -EINVAL;
-> -		return status;
-> -	}
-> +	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
-> +		return -EINVAL;
->  	ibcq->cqe = new_cnt;
-> -	return status;
-> +	return 0;
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Ensure we don't end up with a null pointer dereferences by checking
+for for allocation failures.  Allocate by sizeof(*ptr) rather than
+the type to fix checkpack warnings.  Also merge multiple lines into
+one line for the kmalloc call.
 
->  }
->  
->  static void ocrdma_flush_cq(struct ocrdma_cq *cq)
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Detected by CoverityScan, CID#1422435 ("Dereference null return value")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ieee802154/ca8210.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+index 53fa87bfede0..25fd3b04b3c0 100644
+--- a/drivers/net/ieee802154/ca8210.c
++++ b/drivers/net/ieee802154/ca8210.c
+@@ -634,6 +634,8 @@ static int ca8210_test_int_driver_write(
+ 		dev_dbg(&priv->spi->dev, "%#03x\n", buf[i]);
+ 
+ 	fifo_buffer = kmalloc(len, GFP_KERNEL);
++	if (!fifo_buffer)
++		return -ENOMEM;
+ 	memcpy(fifo_buffer, buf, len);
+ 	kfifo_in(&test->up_fifo, &fifo_buffer, 4);
+ 	wake_up_interruptible(&priv->test.readq);
+@@ -759,10 +761,10 @@ static void ca8210_rx_done(struct cas_control *cas_ctl)
+ 				&priv->spi->dev,
+ 				"Resetting MAC...\n");
+ 
+-			mlme_reset_wpc = kmalloc(
+-				sizeof(struct work_priv_container),
+-				GFP_KERNEL
+-			);
++			mlme_reset_wpc = kmalloc(sizeof(*mlme_reset_wpc),
++						 GFP_KERNEL);
++			if (!mlme_reset_wpc)
++				goto finish;
+ 			INIT_WORK(
+ 				&mlme_reset_wpc->work,
+ 				ca8210_mlme_reset_worker
+@@ -925,10 +927,10 @@ static int ca8210_spi_transfer(
+ 
+ 	dev_dbg(&spi->dev, "ca8210_spi_transfer called\n");
+ 
+-	cas_ctl = kmalloc(
+-		sizeof(struct cas_control),
+-		GFP_ATOMIC
+-	);
++	cas_ctl = kmalloc(sizeof(*cas_ctl), GFP_ATOMIC);
++	if (!cas_ctl)
++		return -ENOMEM;
++
+ 	cas_ctl->priv = priv;
+ 	memset(cas_ctl->tx_buf, SPI_IDLE, CA8210_SPI_BUF_SIZE);
+ 	memset(cas_ctl->tx_in_buf, SPI_IDLE, CA8210_SPI_BUF_SIZE);
+-- 
+2.11.0
+
