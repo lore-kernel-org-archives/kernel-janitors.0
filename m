@@ -1,25 +1,31 @@
 From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 29 Mar 2017 18:51:26 +0000
+Date: Wed, 29 Mar 2017 18:54:53 +0000
 Subject: Re: [PATCH][bluetooth-next][V2] ieee802154: ca8210: Add checks for kmalloc allocation failures
-Message-Id: <F83769CD-CFDF-460E-8528-ED2CF1D6FC88@holtmann.org>
+Message-Id: <80D11AF4-0CD7-4FEE-AF17-AD79FBFBD294@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170329170540.21011-1-colin.king@canonical.com>
- <20170329.101740.93561929292168345.davem@davemloft.net>
-In-Reply-To: <20170329.101740.93561929292168345.davem@davemloft.net>
+In-Reply-To: <20170329170540.21011-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Colin King <colin.king@canonical.com>, Harry Morris <h.morris@cascoda.com>, linuxdev@cascoda.com, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, Network Development <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Harry Morris <h.morris@cascoda.com>, linuxdev@cascoda.com, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hi Colin,
 
->> drivers/net/ieee802154/ca8210.c | 18 ++++++++++--------
+> Ensure we don't end up with a null pointer dereferences by checking
+> for for allocation failures.  Allocate by sizeof(*ptr) rather than
+> the type to fix checkpack warnings.  Also merge multiple lines into
+> one line for the kmalloc call.
 > 
-> This file doesn't exist in any of my trees.
+> Detected by CoverityScan, CID#1422435 ("Dereference null return value")
 > 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> drivers/net/ieee802154/ca8210.c | 18 ++++++++++--------
+> 1 file changed, 10 insertions(+), 8 deletions(-)
 
-because we have not send you a bluetooth-next pull request yet. I review it and take it through my tree first.
+patch has been applied to bluetooth-next tree.
 
 Regards
 
