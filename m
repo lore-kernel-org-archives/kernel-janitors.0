@@ -1,40 +1,53 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Mon, 27 Mar 2017 00:52:38 +0000
-Subject: RE: [PATCH] netvsc: fix unititialized return value in variable ret
-Message-Id: <BLUPR03MB14128BF9E77DB2E22206F99ACA330@BLUPR03MB1412.namprd03.prod.outlook.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Mar 2017 15:45:05 +0000
+Subject: Re: [PATCH 43/46] selinux: Use kmalloc_array() in sidtab_init()
+Message-Id: <CAHC9VhS4Wx95NH97o-2JnEaxpWtw31HW9LU7=5z1sqyzQKpHOQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170325141653.11238-1-colin.king@canonical.com>
-In-Reply-To: <20170325141653.11238-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<9ce64f74-f424-b9c5-605b-a54982888e1a@users.sourceforge.net>
+In-Reply-To: <9ce64f74-f424-b9c5-605b-a54982888e1a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
-bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogU2F0dXJkYXksIE1hcmNoIDI1
-LCAyMDE3IDEwOjE3IEFNDQo+IFRvOiBLWSBTcmluaXZhc2FuIDxreXNAbWljcm9zb2Z0LmNvbT47
-IEhhaXlhbmcgWmhhbmcNCj4gPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVuIEhlbW1p
-bmdlciA8c3RoZW1taW5AbWljcm9zb2Z0LmNvbT47DQo+IGRldmVsQGxpbnV4ZHJpdmVycHJvamVj
-dC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BB
-VENIXSBuZXR2c2M6IGZpeCB1bml0aXRpYWxpemVkIHJldHVybiB2YWx1ZSBpbiB2YXJpYWJsZSBy
-ZXQNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+
-DQo+IA0KPiBJdCBpcyBwb3NzaWJsZSBmb3IgYW4gdW5pbml0aWFsaXplZCB2YWx1ZSBvZiByZXQg
-dG8gYmUgcmV0dXJuZWQNCj4gc28gZml4IHRoaXMgYnkgaW5pdGlhbGl6aW5nIHJldCB0byB6ZXJv
-Lg0KPiANCj4gRGV0ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQyMDc2MiAoIlVuaW5pdGlh
-bGl6ZWQgc2NhbGFyIHZhcmlhYmxlIikNCj4gDQo+IEZpeGVzOiAxNjM4OTFkN2Q0MjkgKCJuZXR2
-c2M6IGhhbmRsZSBvZmZsaW5lIG10dSBhbmQgY2hhbm5lbCBjaGFuZ2UiKQ0KPiBTaWduZWQtb2Zm
-LWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4g
-IGRyaXZlcnMvbmV0L2h5cGVydi9uZXR2c2NfZHJ2LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL25ldC9oeXBlcnYvbmV0dnNjX2Rydi5jDQo+IGIvZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZz
-Y19kcnYuYw0KPiBpbmRleCBlYjdhZTc5ZDQ3YmIuLmY4MzBiYmJkOGFkNCAxMDA2NDQNCj4gLS0t
-IGEvZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYuYw0KPiArKysgYi9kcml2ZXJzL25ldC9o
-eXBlcnYvbmV0dnNjX2Rydi5jDQo+IEBAIC04NTUsNyArODU1LDcgQEAgc3RhdGljIGludCBuZXR2
-c2NfY2hhbmdlX210dShzdHJ1Y3QgbmV0X2RldmljZSAqbmRldiwNCj4gaW50IG10dSkNCj4gIAlz
-dHJ1Y3QgaHZfZGV2aWNlICpoZGV2ID0gbmRldmN0eC0+ZGV2aWNlX2N0eDsNCj4gIAlzdHJ1Y3Qg
-bmV0dnNjX2RldmljZV9pbmZvIGRldmljZV9pbmZvOw0KPiAgCWJvb2wgd2FzX3J1bm5pbmc7DQo+
-IC0JaW50IHJldDsNCj4gKwlpbnQgcmV0ID0gMDsNCg0KVGhpcyB3YXMganVzdCBmaXggYnkgY29t
-bWl0OiAzODZmNTc2MjJjYzNiYmIzOWI5YzAwZmM4NzYyYmM5YWIyOGUwZjhkDQoNClRoYW5rcy4N
-Cg0KDQo
+On Sun, Jan 15, 2017 at 10:43 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 15 Jan 2017 13:13:19 +0100
+>
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus use the corresponding function "kmalloc_array".
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/sidtab.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Merged, thanks.
+
+> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+> index 5840a35155fc..c9533b21942b 100644
+> --- a/security/selinux/ss/sidtab.c
+> +++ b/security/selinux/ss/sidtab.c
+> @@ -18,7 +18,7 @@ int sidtab_init(struct sidtab *s)
+>  {
+>         int i;
+>
+> -       s->htable = kmalloc(sizeof(*(s->htable)) * SIDTAB_SIZE, GFP_ATOMIC);
+> +       s->htable = kmalloc_array(SIDTAB_SIZE, sizeof(*s->htable), GFP_ATOMIC);
+>         if (!s->htable)
+>                 return -ENOMEM;
+>         for (i = 0; i < SIDTAB_SIZE; i++)
+> --
+> 2.11.0
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
