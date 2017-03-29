@@ -1,39 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 11 Mar 2017 19:48:19 +0000
-Subject: [PATCH] staging: atomisp: remove redundant check for client being null
-Message-Id: <20170311194819.6772-1-colin.king@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Mar 2017 13:57:53 +0000
+Subject: Re: [PATCH 25/46] selinux: Return directly after a failed kzalloc() in sens_read()
+Message-Id: <CAHC9VhRf77mdk40jjQciLxbZ+x=R9ZhS9HANJigEG=ZKAyCV_A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
+In-Reply-To: <8f253493-ae7f-ca02-a6f3-333e896eeb7d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jan 15, 2017 at 10:25 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 21:42:02 +0100
+>
+> Return directly after a call of the function "kzalloc" failed
+> at the beginning.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-The previous statement checks if client is null, so the null check
-when assigning dev is redundant and can be removed.
+Merged, thanks.
 
-Detected by CoverityScan, CID#1416555 ("Logically Dead Code")
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index eb898dcbe502..5caa1fa5ea80 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1593,10 +1593,9 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
+>         __le32 buf[2];
+>         u32 len;
+>
+> -       rc = -ENOMEM;
+>         levdatum = kzalloc(sizeof(*levdatum), GFP_ATOMIC);
+>         if (!levdatum)
+> -               goto bad;
+> +               return -ENOMEM;
+>
+>         rc = next_entry(buf, fp, sizeof buf);
+>         if (rc)
+> --
+> 2.11.0
+>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-index 65513ca..2929492 100644
---- a/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-+++ b/drivers/staging/media/atomisp/platform/intel-mid/atomisp_gmin_platform.c
-@@ -354,7 +354,7 @@ static struct gmin_subdev *gmin_subdev_add(struct v4l2_subdev *subdev)
- 	if (!client)
- 		return NULL;
- 
--	dev = client ? &client->dev : NULL;
-+	dev = &client->dev;
- 
- 	for (i=0; i < MAX_SUBDEVS && gmin_subdevs[i].subdev; i++)
- 		;
+
 -- 
-2.10.2
-
+paul moore
+www.paul-moore.com
