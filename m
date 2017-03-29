@@ -1,45 +1,47 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:18:00 +0000
-Subject: Re: [PATCH 22/46] selinux: Delete an unnecessary variable initialisation in range_read()
-Message-Id: <CAHC9VhTU=f3bDy5o0PBnrcHHfQTMh6E=Ut=o6SO_72UtqGHsUg@mail.gmail.com>
+Date: Wed, 29 Mar 2017 15:25:50 +0000
+Subject: Re: [PATCH 32/46] selinux: Return directly after a failed kzalloc() in class_read()
+Message-Id: <CAHC9VhSKbHq=2Btj3Z1boNjPvugRARGmf0pOYwn_vBCgP_W5pw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<d5af857a-d19d-265a-2378-3e98b176c5ec@users.sourceforge.net>
-In-Reply-To: <d5af857a-d19d-265a-2378-3e98b176c5ec@users.sourceforge.net>
+	<6ceee0fa-a0ab-fe42-4213-f7985031ddfa@users.sourceforge.net>
+In-Reply-To: <6ceee0fa-a0ab-fe42-4213-f7985031ddfa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:22 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:32 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 20:40:12 +0100
+> Date: Sat, 14 Jan 2017 22:30:51 +0100
 >
-> The local variable "rt" will be set to an appropriate pointer a bit later.
-> Thus omit the explicit initialisation at the beginning which became
-> unnecessary with a previous update step.
+> Return directly after a call of the function "kzalloc" failed
+> at the beginning.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/selinux/ss/policydb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
 Merged, thanks.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 0d2f64558c0a..6121a26ada64 100644
+> index 49fc5d8990e9..3af2b0849495 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -1839,7 +1839,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
->
->  static int range_read(struct policydb *p, void *fp)
->  {
-> -       struct range_trans *rt = NULL;
-> +       struct range_trans *rt;
->         struct mls_range *r = NULL;
+> @@ -1316,10 +1316,9 @@ static int class_read(struct policydb *p, struct hashtab *h, void *fp)
+>         u32 len, len2, ncons, nel;
 >         int i, rc;
->         __le32 buf[2];
+>
+> -       rc = -ENOMEM;
+>         cladatum = kzalloc(sizeof(*cladatum), GFP_KERNEL);
+>         if (!cladatum)
+> -               goto bad;
+> +               return -ENOMEM;
+>
+>         rc = next_entry(buf, fp, sizeof(u32)*6);
+>         if (rc)
 > --
 > 2.11.0
 >
