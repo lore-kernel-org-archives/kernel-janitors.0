@@ -1,104 +1,54 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 31 Mar 2017 01:30:12 +0000
-Subject: [PATCH 2/2 V2] staging: atomisp: use local variable to reduce the number of reference
-Message-Id: <20170331013012.GA15884@jyoun-Latitude-E6530>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Mar 2017 15:32:11 +0000
+Subject: Re: [PATCH 36/46] selinux: Move an assignment for the variable "rc" in mls_read_range_helper()
+Message-Id: <CAHC9VhTxotWNL8XaOGUS5E8xvBFLaJp7Gi2xfvzu92K7gvmh=w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<02c3392e-3507-4d91-a8c0-6d933a034058@users.sourceforge.net>
+In-Reply-To: <02c3392e-3507-4d91-a8c0-6d933a034058@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Define new local variable to reduce the number of reference.
-The new local variable is added to save the addess of dfs
-and used in atomisp_freq_scaling() function.
+On Sun, Jan 15, 2017 at 10:36 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 15 Jan 2017 11:22:23 +0100
+>
+> A local variable was set to an error code in one case before a concrete
+> error situation was detected. Thus move the corresponding assignment into
+> an if branch to indicate a software failure there.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-V2: this patch was rebased since the patch 1/2 was improved.
+Dropped as previously discussed.
 
- .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 37 ++++++++++++----------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 9b595f2e0d9f..7cf635c650dc 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -996,10 +996,10 @@ static int mls_read_range_helper(struct mls_range *r, void *fp)
+>         if (rc)
+>                 goto out;
+>
+> -       rc = -EINVAL;
+>         items = le32_to_cpu(buf[0]);
+>         if (items > ARRAY_SIZE(buf)) {
+>                 printk(KERN_ERR "SELinux: mls:  range overflow\n");
+> +               rc = -EINVAL;
+>                 goto out;
+>         }
+>
+> --
+> 2.11.0
+>
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index 87224d6..9f4041a 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -251,6 +251,7 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
- {
- 	/* FIXME! Only use subdev[0] status yet */
- 	struct atomisp_sub_device *asd = &isp->asd[0];
-+	const struct atomisp_dfs_config *dfs;
- 	unsigned int new_freq;
- 	struct atomisp_freq_scaling_rule curr_rules;
- 	int i, ret;
-@@ -264,20 +265,22 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
- 	if (ATOMISP_IS_CHT(isp) && ATOMISP_USE_YUVPP(asd))
- 		isp->dfs = &dfs_config_cht_soc;
- 
--	if (isp->dfs->lowest_freq = 0 || isp->dfs->max_freq_at_vmin = 0 ||
--	    isp->dfs->highest_freq = 0 || isp->dfs->dfs_table_size = 0 ||
--	    !isp->dfs->dfs_table) {
-+	dfs = isp->dfs;
-+
-+	if (dfs->lowest_freq = 0 || dfs->max_freq_at_vmin = 0 ||
-+	    dfs->highest_freq = 0 || dfs->dfs_table_size = 0 ||
-+	    !dfs->dfs_table) {
- 		dev_err(isp->dev, "DFS configuration is invalid.\n");
- 		return -EINVAL;
- 	}
- 
- 	if (mode = ATOMISP_DFS_MODE_LOW) {
--		new_freq = isp->dfs->lowest_freq;
-+		new_freq = dfs->lowest_freq;
- 		goto done;
- 	}
- 
- 	if (mode = ATOMISP_DFS_MODE_MAX) {
--		new_freq = isp->dfs->highest_freq;
-+		new_freq = dfs->highest_freq;
- 		goto done;
- 	}
- 
-@@ -303,26 +306,26 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
- 	}
- 
- 	/* search for the target frequency by looping freq rules*/
--	for (i = 0; i < isp->dfs->dfs_table_size; i++) {
--		if (curr_rules.width != isp->dfs->dfs_table[i].width &&
--		    isp->dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
-+	for (i = 0; i < dfs->dfs_table_size; i++) {
-+		if (curr_rules.width != dfs->dfs_table[i].width &&
-+		    dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
- 			continue;
--		if (curr_rules.height != isp->dfs->dfs_table[i].height &&
--		    isp->dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
-+		if (curr_rules.height != dfs->dfs_table[i].height &&
-+		    dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
- 			continue;
--		if (curr_rules.fps != isp->dfs->dfs_table[i].fps &&
--		    isp->dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
-+		if (curr_rules.fps != dfs->dfs_table[i].fps &&
-+		    dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
- 			continue;
--		if (curr_rules.run_mode != isp->dfs->dfs_table[i].run_mode &&
--		    isp->dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
-+		if (curr_rules.run_mode != dfs->dfs_table[i].run_mode &&
-+		    dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
- 			continue;
- 		break;
- 	}
- 
--	if (i = isp->dfs->dfs_table_size)
--		new_freq = isp->dfs->max_freq_at_vmin;
-+	if (i = dfs->dfs_table_size)
-+		new_freq = dfs->max_freq_at_vmin;
- 	else
--		new_freq = isp->dfs->dfs_table[i].isp_freq;
-+		new_freq = dfs->dfs_table[i].isp_freq;
- 
- done:
- 	dev_dbg(isp->dev, "DFS target frequency=%d.\n", new_freq);
+
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
