@@ -1,19 +1,19 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 28 Mar 2017 16:04:45 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 29 Mar 2017 04:49:58 +0000
 Subject: Re: [PATCH] VSOCK: remove unnecessary ternary operator on return value
-Message-Id: <58DA899D.70209@bfs.de>
+Message-Id: <20170328.214958.1031055485189943869.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170328155424.22873-1-colin.king@canonical.com>
 In-Reply-To: <20170328155424.22873-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jorgen Hansen <jhansen@vmware.com>, Adit Ranadive <aditr@vmware.com>, Julia Lawall <julia.lawall@lip6.fr>, Stefan Hajnoczi <stefanha@redhat.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: jhansen@vmware.com, aditr@vmware.com, julia.lawall@lip6.fr, stefanha@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 28 Mar 2017 16:54:24 +0100
 
-
-Am 28.03.2017 17:54, schrieb Colin King:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Rather than assign the positive errno values to ret and then
@@ -23,57 +23,7 @@ Am 28.03.2017 17:54, schrieb Colin King:
 > Detected by CoverityScan, CID#986649 ("Logically Dead Code")
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/vmw_vsock/vmci_transport.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
-> index 4be4fbbc0b50..a68cd6b0fb72 100644
-> --- a/net/vmw_vsock/vmci_transport.c
-> +++ b/net/vmw_vsock/vmci_transport.c
-> @@ -100,27 +100,27 @@ static s32 vmci_transport_error_to_vsock_error(s32 vmci_error)
->  
->  	switch (vmci_error) {
->  	case VMCI_ERROR_NO_MEM:
-> -		err = ENOMEM;
-> +		err = -ENOMEM;
->  		break;
->  	case VMCI_ERROR_DUPLICATE_ENTRY:
->  	case VMCI_ERROR_ALREADY_EXISTS:
-> -		err = EADDRINUSE;
-> +		err = -EADDRINUSE;
->  		break;
->  	case VMCI_ERROR_NO_ACCESS:
-> -		err = EPERM;
-> +		err = -EPERM;
->  		break;
->  	case VMCI_ERROR_NO_RESOURCES:
-> -		err = ENOBUFS;
-> +		err = -ENOBUFS;
->  		break;
->  	case VMCI_ERROR_INVALID_RESOURCE:
-> -		err = EHOSTUNREACH;
-> +		err = -EHOSTUNREACH;
->  		break;
->  	case VMCI_ERROR_INVALID_ARGS:
->  	default:
-> -		err = EINVAL;
-> +		err = -EINVAL;
->  	}
->  
-> -	return err > 0 ? -err : err;
-> +	return err;
->  }
->  
->  static u32 vmci_transport_peer_rid(u32 peer_cid)
 
+Just return the error directly instead of having this variable.
 
-yes, but because there is nothing to do you could return directly
-and forget about err.
-
-note: why is there a MCI_ERROR_NO_MEM when you can map this to ENOMEM ?
-
-re,
- wh
-
-
+Thanks.
