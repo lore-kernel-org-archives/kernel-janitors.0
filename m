@@ -1,47 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Mar 2017 12:36:53 +0000
-Subject: [PATCH 01/26] IB/ocrdma: Use kcalloc() in ocrdma_create_eqs()
-Message-Id: <c96d5d88-fcee-26c5-4b01-8a12f6f46561@users.sourceforge.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Mar 2017 14:53:24 +0000
+Subject: Re: [PATCH 27/46] selinux: Move an assignment for the variable "rc" in sens_read()
+Message-Id: <CAHC9VhRstKMJOiyVN3mOv870=vpZQ=YDMnnREF9DGNO-ML=aLg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
-In-Reply-To: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<6b93ee88-d4c0-b5e3-6f7e-fc74acfddd43@users.sourceforge.net>
+In-Reply-To: <6b93ee88-d4c0-b5e3-6f7e-fc74acfddd43@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 7 Mar 2017 17:56:45 +0100
+On Sun, Jan 15, 2017 at 10:27 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 14 Jan 2017 22:02:14 +0100
+>
+> A local variable was set to an error code in one case before a concrete
+> error situation was detected. Thus move the corresponding assignment into
+> an if branch to indicate a software failure there.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kcalloc".
+Dropped for reasons previously discussed.
 
-  This issue was detected by using the Coccinelle software.
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index edfcfd3bbc60..3e43556e67b8 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1608,10 +1608,11 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
+>         if (rc)
+>                 goto bad;
+>
+> -       rc = -ENOMEM;
+>         levdatum->level = kmalloc(sizeof(*levdatum->level), GFP_ATOMIC);
+> -       if (!levdatum->level)
+> +       if (!levdatum->level) {
+> +               rc = -ENOMEM;
+>                 goto bad;
+> +       }
+>
+>         rc = mls_read_level(levdatum->level, fp);
+>         if (rc)
+> --
+> 2.11.0
+>
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index aa6967197620..cbac41b15d94 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -3103,7 +3103,7 @@ static int ocrdma_create_eqs(struct ocrdma_dev *dev)
- 	if (!num_eq)
- 		return -EINVAL;
- 
--	dev->eq_tbl = kzalloc(sizeof(struct ocrdma_eq) * num_eq, GFP_KERNEL);
-+	dev->eq_tbl = kcalloc(num_eq, sizeof(*dev->eq_tbl), GFP_KERNEL);
- 	if (!dev->eq_tbl)
- 		return -ENOMEM;
- 
 -- 
-2.12.0
-
+paul moore
+www.paul-moore.com
