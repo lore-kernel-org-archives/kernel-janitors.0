@@ -1,72 +1,70 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Thu, 09 Mar 2017 11:55:03 +0000
-Subject: Re: [PATCH 24/26] IB/ocrdma: One jump label less in ocrdma_alloc_ucontext_pd()
-Message-Id: <20170309115502.GG3307@yuval-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Mar 2017 15:33:55 +0000
+Subject: [PATCH][V2] VSOCK: remove unnecessary ternary operator on return value
+Message-Id: <20170329153355.17525-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <3954cbe9-a265-bcb8-2dac-daade1a5e967@users.sourceforge.net>
-In-Reply-To: <3954cbe9-a265-bcb8-2dac-daade1a5e967-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "David S . Miller" <davem@davemloft.net>, Jorgen Hansen <jhansen@vmware.com>, "Michael S . Tsirkin" <mst@redhat.com>, Adit Ranadive <aditr@vmware.com>, George Zhang <georgezhang@vmware.com>, Stefan Hajnoczi <stefanha@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 08, 2017 at 02:30:18PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Mar 2017 11:11:35 +0100
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> 1. Return directly if a call of the function "_ocrdma_alloc_pd" failed.
-> 
-> 2. Reduce the scope for the local variable "status" to one case
->    of an if statement.
-> 
-> 3. Delete the jump label "err" then.
-> 
-> 4. Return zero as a constant at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index ae0d343d1731..d3cb8e2f099f 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -484,19 +484,17 @@ static int ocrdma_alloc_ucontext_pd(struct ocrdma_dev *dev,
->  				    struct ocrdma_ucontext *uctx,
->  				    struct ib_udata *udata)
->  {
-> -	int status = 0;
-> -
->  	uctx->cntxt_pd = _ocrdma_alloc_pd(dev, uctx, udata);
->  	if (IS_ERR(uctx->cntxt_pd)) {
-> -		status = PTR_ERR(uctx->cntxt_pd);
-> +		int status = PTR_ERR(uctx->cntxt_pd);
-> +
->  		uctx->cntxt_pd = NULL;
-> -		goto err;
-> +		return status;
->  	}
->  
->  	uctx->cntxt_pd->uctx = uctx;
->  	uctx->cntxt_pd->ibpd.device = &dev->ibdev;
-> -err:
-> -	return status;
-> +	return 0;
->  }
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Rather than assign the positive errno values to ret and then
+checking if it is positive and flip the sign, just return the
+errno value.
 
->  
->  static int ocrdma_dealloc_ucontext_pd(struct ocrdma_ucontext *uctx)
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Detected by CoverityScan, CID#986649 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/vmw_vsock/vmci_transport.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+index 4be4fbbc0b50..10ae7823a19d 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -96,31 +96,23 @@ static int PROTOCOL_OVERRIDE = -1;
+ 
+ static s32 vmci_transport_error_to_vsock_error(s32 vmci_error)
+ {
+-	int err;
+-
+ 	switch (vmci_error) {
+ 	case VMCI_ERROR_NO_MEM:
+-		err = ENOMEM;
+-		break;
++		return -ENOMEM;
+ 	case VMCI_ERROR_DUPLICATE_ENTRY:
+ 	case VMCI_ERROR_ALREADY_EXISTS:
+-		err = EADDRINUSE;
+-		break;
++		return -EADDRINUSE;
+ 	case VMCI_ERROR_NO_ACCESS:
+-		err = EPERM;
+-		break;
++		return -EPERM;
+ 	case VMCI_ERROR_NO_RESOURCES:
+-		err = ENOBUFS;
+-		break;
++		return -ENOBUFS;
+ 	case VMCI_ERROR_INVALID_RESOURCE:
+-		err = EHOSTUNREACH;
+-		break;
++		return -EHOSTUNREACH;
+ 	case VMCI_ERROR_INVALID_ARGS:
+ 	default:
+-		err = EINVAL;
++		break;
+ 	}
+-
+-	return err > 0 ? -err : err;
++	return -EINVAL;
+ }
+ 
+ static u32 vmci_transport_peer_rid(u32 peer_cid)
+-- 
+2.11.0
+
