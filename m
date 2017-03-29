@@ -1,64 +1,71 @@
-From: Jinpu Wang <jinpu.wang@profitbricks.com>
-Date: Thu, 23 Mar 2017 09:17:46 +0000
-Subject: Re: [PATCH] scsi: pm8001: build in relevant functions and code on PM8001_USE_MSIX
-Message-Id: <CAMGffEm6cvJ121K9ME6Tgk_uYSRJQgMq=bvKyYzKuQZP=sNwow@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 29 Mar 2017 17:05:40 +0000
+Subject: [PATCH][bluetooth-next][V2] ieee802154: ca8210: Add checks for kmalloc allocation failures
+Message-Id: <20170329170540.21011-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170322185004.1012-1-colin.king@canonical.com> <58D3889B.7030400@bfs.de>
-In-Reply-To: <58D3889B.7030400@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: wharms@bfs.de
-Cc: Colin King <colin.king@canonical.com>, lindar_liu <lindar_liu@usish.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, pmchba@pmcs.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Harry Morris <h.morris@cascoda.com>, linuxdev@cascoda.com, Alexander Aring <aar@pengutronix.de>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 9:34 AM, walter harms <wharms@bfs.de> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
->> @@ -4613,15 +4616,15 @@ static int pm8001_chip_phy_ctl_req(struct pm8001_hba_info *pm8001_ha,
->>
->>  static u32 pm8001_chip_is_our_interupt(struct pm8001_hba_info *pm8001_ha)
->>  {
->> -     u32 value;
->>  #ifdef PM8001_USE_MSIX
->>       return 1;
->> -#endif
->> -     value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
->> +#else
->> +     u32 value = pm8001_cr32(pm8001_ha, 0, MSGU_ODR);
->> +
->>       if (value)
->>               return 1;
->>       return 0;
->> -
->> +#endif
->>  }
->>
->
-> This is a bit strange, why do this function return u32 ?
->
-> re,
->  wh
->
->>  /**
+Ensure we don't end up with a null pointer dereferences by checking
+for for allocation failures.  Allocate by sizeof(*ptr) rather than
+the type to fix checkpack warnings.  Also merge multiple lines into
+one line for the kmalloc call.
 
-Hi Walter,
+Detected by CoverityScan, CID#1422435 ("Dereference null return value")
 
-Feel free to submit a patch to change it to bool.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ieee802154/ca8210.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-Thanks
-
+diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+index 53fa87bfede0..25fd3b04b3c0 100644
+--- a/drivers/net/ieee802154/ca8210.c
++++ b/drivers/net/ieee802154/ca8210.c
+@@ -634,6 +634,8 @@ static int ca8210_test_int_driver_write(
+ 		dev_dbg(&priv->spi->dev, "%#03x\n", buf[i]);
+ 
+ 	fifo_buffer = kmalloc(len, GFP_KERNEL);
++	if (!fifo_buffer)
++		return -ENOMEM;
+ 	memcpy(fifo_buffer, buf, len);
+ 	kfifo_in(&test->up_fifo, &fifo_buffer, 4);
+ 	wake_up_interruptible(&priv->test.readq);
+@@ -759,10 +761,10 @@ static void ca8210_rx_done(struct cas_control *cas_ctl)
+ 				&priv->spi->dev,
+ 				"Resetting MAC...\n");
+ 
+-			mlme_reset_wpc = kmalloc(
+-				sizeof(struct work_priv_container),
+-				GFP_KERNEL
+-			);
++			mlme_reset_wpc = kmalloc(sizeof(*mlme_reset_wpc),
++						 GFP_KERNEL);
++			if (!mlme_reset_wpc)
++				goto finish;
+ 			INIT_WORK(
+ 				&mlme_reset_wpc->work,
+ 				ca8210_mlme_reset_worker
+@@ -925,10 +927,10 @@ static int ca8210_spi_transfer(
+ 
+ 	dev_dbg(&spi->dev, "ca8210_spi_transfer called\n");
+ 
+-	cas_ctl = kmalloc(
+-		sizeof(struct cas_control),
+-		GFP_ATOMIC
+-	);
++	cas_ctl = kmalloc(sizeof(*cas_ctl), GFP_ATOMIC);
++	if (!cas_ctl)
++		return -ENOMEM;
++
+ 	cas_ctl->priv = priv;
+ 	memset(cas_ctl->tx_buf, SPI_IDLE, CA8210_SPI_BUF_SIZE);
+ 	memset(cas_ctl->tx_in_buf, SPI_IDLE, CA8210_SPI_BUF_SIZE);
 -- 
-Jinpu Wang
-Linux Kernel Developer
+2.11.0
 
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 30 577 008  042
-Fax:      +49 30 577 008 299
-Email:    jinpu.wang@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss
