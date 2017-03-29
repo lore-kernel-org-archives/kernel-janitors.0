@@ -1,52 +1,47 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 22:10:37 +0000
-Subject: Re: [PATCH 18/46] selinux: One function call less in filename_trans_read() after error detection
-Message-Id: <CAHC9VhR0DM_fC17O8_S85L=38HmOFQgcccfatPNkTiEHmoZ_bA@mail.gmail.com>
+Date: Wed, 29 Mar 2017 13:55:52 +0000
+Subject: Re: [PATCH 24/46] selinux: Return directly after a failed kzalloc() in cat_read()
+Message-Id: <CAHC9VhRg20-ZvJCcq6SA+1RGBqwA1+btLy9WKw=+=t+o35eEJw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
-In-Reply-To: <358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
+	<04142c87-5826-4796-c461-ec3e80f14928@users.sourceforge.net>
+In-Reply-To: <04142c87-5826-4796-c461-ec3e80f14928@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:18 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:24 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 19:19:42 +0100
+> Date: Sat, 14 Jan 2017 21:20:43 +0100
 >
-> Adjust a jump target to avoid a function call at the end after a memory
-> allocation failed for the local variable "ft".
+> Return directly after a call of the function "kzalloc" failed
+> at the beginning.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  security/selinux/ss/policydb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-It doesn't seem like this is worth adding another jump label.
+Merged, thanks.
 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 2be5b18eb149..5f122e846332 100644
+> index 5101592ae172..eb898dcbe502 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -1932,7 +1932,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
->                 ft = kzalloc(sizeof(*ft), GFP_KERNEL);
->                 if (!ft) {
->                         rc = -ENOMEM;
-> -                       goto out;
-> +                       goto free_name;
->                 }
+> @@ -1635,10 +1635,9 @@ static int cat_read(struct policydb *p, struct hashtab *h, void *fp)
+>         __le32 buf[3];
+>         u32 len;
 >
->                 otype = kmalloc(sizeof(*otype), GFP_KERNEL);
-> @@ -1986,6 +1986,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
->         return 0;
->  out:
->         kfree(ft);
-> +free_name:
->         kfree(name);
->         kfree(otype);
+> -       rc = -ENOMEM;
+>         catdatum = kzalloc(sizeof(*catdatum), GFP_ATOMIC);
+>         if (!catdatum)
+> -               goto bad;
+> +               return -ENOMEM;
 >
+>         rc = next_entry(buf, fp, sizeof buf);
+>         if (rc)
 > --
 > 2.11.0
 >
