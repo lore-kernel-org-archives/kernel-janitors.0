@@ -1,50 +1,91 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Mar 2017 14:53:24 +0000
-Subject: Re: [PATCH 27/46] selinux: Move an assignment for the variable "rc" in sens_read()
-Message-Id: <CAHC9VhRstKMJOiyVN3mOv870=vpZQ=YDMnnREF9DGNO-ML=aLg@mail.gmail.com>
+Date: Wed, 29 Mar 2017 15:37:20 +0000
+Subject: Re: [PATCH 38/46] selinux: One function call less in five functions after null pointer detection
+Message-Id: <CAHC9VhQaCFirdVRBnd9UsbHZzdmfrEc5ZtzzSvru7uXqCeLL8Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<6b93ee88-d4c0-b5e3-6f7e-fc74acfddd43@users.sourceforge.net>
-In-Reply-To: <6b93ee88-d4c0-b5e3-6f7e-fc74acfddd43@users.sourceforge.net>
+	<b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
+In-Reply-To: <b71e766c-a9a2-cd9c-8f87-7aaeaaf896f0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 10:27 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:38 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 22:02:14 +0100
+> Date: Sun, 15 Jan 2017 11:28:02 +0100
 >
-> A local variable was set to an error code in one case before a concrete
-> error situation was detected. Thus move the corresponding assignment into
-> an if branch to indicate a software failure there.
+> Call the function "kfree" at the end only after it was determined
+> that the passed parameter contained a non-null pointer.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/policydb.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-
-Dropped for reasons previously discussed.
-
+>  security/selinux/ss/policydb.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index edfcfd3bbc60..3e43556e67b8 100644
+> index faa6ecc2450d..88730b372277 100644
 > --- a/security/selinux/ss/policydb.c
 > +++ b/security/selinux/ss/policydb.c
-> @@ -1608,10 +1608,11 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
->         if (rc)
->                 goto bad;
+> @@ -620,8 +620,8 @@ static int common_destroy(void *key, void *datum, void *p)
+>                 comdatum = datum;
+>                 hashtab_map(comdatum->permissions.table, perm_destroy, NULL);
+>                 hashtab_destroy(comdatum->permissions.table);
+> +               kfree(datum);
+>         }
+> -       kfree(datum);
+>         return 0;
+>  }
+
+I'm dropping this patch because it really doesn't do much other than
+add some code churn.  I suppose you can argue it removes one
+conditional if datum is NULL, but that is such a corner case I'm not
+worried about it.
+
+If I were to merge this, I would probably expect "kfree(datum)" to be
+converted to "kfree(comdatum)" (and similar in the cases below).
+
+> @@ -675,8 +675,8 @@ static int cls_destroy(void *key, void *datum, void *p)
+>                         kfree(ctemp);
+>                 }
+>                 kfree(cladatum->comkey);
+> +               kfree(datum);
+>         }
+> -       kfree(datum);
+>         return 0;
+>  }
 >
-> -       rc = -ENOMEM;
->         levdatum->level = kmalloc(sizeof(*levdatum->level), GFP_ATOMIC);
-> -       if (!levdatum->level)
-> +       if (!levdatum->level) {
-> +               rc = -ENOMEM;
->                 goto bad;
-> +       }
+> @@ -689,8 +689,8 @@ static int role_destroy(void *key, void *datum, void *p)
+>                 role = datum;
+>                 ebitmap_destroy(&role->dominates);
+>                 ebitmap_destroy(&role->types);
+> +               kfree(datum);
+>         }
+> -       kfree(datum);
+>         return 0;
+>  }
 >
->         rc = mls_read_level(levdatum->level, fp);
->         if (rc)
+> @@ -712,8 +712,8 @@ static int user_destroy(void *key, void *datum, void *p)
+>                 ebitmap_destroy(&usrdatum->range.level[0].cat);
+>                 ebitmap_destroy(&usrdatum->range.level[1].cat);
+>                 ebitmap_destroy(&usrdatum->dfltlevel.cat);
+> +               kfree(datum);
+>         }
+> -       kfree(datum);
+>         return 0;
+>  }
+>
+> @@ -726,8 +726,8 @@ static int sens_destroy(void *key, void *datum, void *p)
+>                 levdatum = datum;
+>                 ebitmap_destroy(&levdatum->level->cat);
+>                 kfree(levdatum->level);
+> +               kfree(datum);
+>         }
+> -       kfree(datum);
+>         return 0;
+>  }
+>
 > --
 > 2.11.0
 >
