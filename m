@@ -1,60 +1,50 @@
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Mar 2017 20:24:34 +0000
-Subject: Re: [PATCH 01/46] selinux: Use kmalloc_array() in cond_init_bool_indexes()
-Message-Id: <CAHC9VhSmRJzKZnGCiytijY-wuZqPGFOdEfecPgy5D3TciPCCgA@mail.gmail.com>
+Date: Wed, 29 Mar 2017 15:17:09 +0000
+Subject: Re: [PATCH 28/46] selinux: Return directly after a failed kzalloc() in user_read()
+Message-Id: <CAHC9VhQ5XK2KrEDRKY-6ZsWKmy8uSHx6B41Yfzc8dvgoZY-TLQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<68a423a9-2f89-55f9-fb4c-97dd4df4bb1d@users.sourceforge.net>
-In-Reply-To: <68a423a9-2f89-55f9-fb4c-97dd4df4bb1d@users.sourceforge.net>
+	<3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
+In-Reply-To: <3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-On Sun, Jan 15, 2017 at 9:56 AM, SF Markus Elfring
+On Sun, Jan 15, 2017 at 10:28 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 10:48:28 +0100
+> Date: Sat, 14 Jan 2017 22:08:22 +0100
 >
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
->
->   This issue was detected by using the Coccinelle software.
->
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
+> Return directly after a call of the function "kzalloc" failed
+> at the beginning.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  security/selinux/ss/conditional.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  security/selinux/ss/policydb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Merged, thanks.  Sorry for the delay.
+Merged, thanks.
 
-> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-> index 34afeadd9e73..fcfab2635c11 100644
-> --- a/security/selinux/ss/conditional.c
-> +++ b/security/selinux/ss/conditional.c
-> @@ -176,8 +176,9 @@ void cond_policydb_destroy(struct policydb *p)
->  int cond_init_bool_indexes(struct policydb *p)
->  {
->         kfree(p->bool_val_to_struct);
-> -       p->bool_val_to_struct > -               kmalloc(p->p_bools.nprim * sizeof(struct cond_bool_datum *), GFP_KERNEL);
-> +       p->bool_val_to_struct = kmalloc_array(p->p_bools.nprim,
-> +                                             sizeof(*p->bool_val_to_struct),
-> +                                             GFP_KERNEL);
->         if (!p->bool_val_to_struct)
->                 return -ENOMEM;
->         return 0;
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 3e43556e67b8..1c046d39e2a7 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1542,10 +1542,9 @@ static int user_read(struct policydb *p, struct hashtab *h, void *fp)
+>         __le32 buf[3];
+>         u32 len;
+>
+> -       rc = -ENOMEM;
+>         usrdatum = kzalloc(sizeof(*usrdatum), GFP_KERNEL);
+>         if (!usrdatum)
+> -               goto bad;
+> +               return -ENOMEM;
+>
+>         if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
+>                 to_read = 3;
 > --
 > 2.11.0
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
 
