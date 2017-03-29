@@ -1,23 +1,54 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 06 Mar 2017 17:06:36 +0000
-Subject: Re: [PATCH] netfilter: remove redundant check on ret being non-zero
-Message-Id: <20170306170636.GA5955@salvia>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Mar 2017 15:32:50 +0000
+Subject: Re: [PATCH 37/46] selinux: Move an assignment for the variable "rc" in policydb_load_isids()
+Message-Id: <CAHC9VhRPBRp08pzpokHnEfqmEzrNaW2zq+RZD=CRRUdZwJdN6A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170228113115.19888-1-colin.king@canonical.com>
-In-Reply-To: <20170228113115.19888-1-colin.king@canonical.com>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<9202247d-8f44-8839-cf78-453b6e3b7d1e@users.sourceforge.net>
+In-Reply-To: <9202247d-8f44-8839-cf78-453b6e3b7d1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On Tue, Feb 28, 2017 at 11:31:15AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> ret is initialized to zero and if it is set to non-zero in the
-> xt_entry_foreach loop then we exit via the out_free label. Hence
-> the check for ret being non-zero is redundant and can be removed.
-> 
-> Detected by CoverityScan, CID#1357132 ("Logically Dead Code")
+On Sun, Jan 15, 2017 at 10:37 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 15 Jan 2017 11:24:51 +0100
+>
+> A local variable was set to an error code in one case before a concrete
+> error situation was detected. Thus move the corresponding assignment into
+> an if branch to indicate a software failure there.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/policydb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Dropped as previously discussed.
+
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 7cf635c650dc..faa6ecc2450d 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -897,10 +897,10 @@ int policydb_load_isids(struct policydb *p, struct sidtab *s)
+>
+>         head = p->ocontexts[OCON_ISID];
+>         for (c = head; c; c = c->next) {
+> -               rc = -EINVAL;
+>                 if (!c->context[0].user) {
+>                         printk(KERN_ERR "SELinux:  SID %s was never defined.\n",
+>                                 c->u.name);
+> +                       rc = -EINVAL;
+>                         goto out;
+>                 }
+>
+> --
+> 2.11.0
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
