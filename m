@@ -1,31 +1,36 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Thu, 09 Mar 2017 08:02:44 +0000
-Subject: Re: wcn36xx: Fix error handling
-Message-Id: <b37f84dce99d4f6fa577845f664aaba6@euamsexm01a.eu.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 09:40:36 +0000
+Subject: [PATCH] staging/atomisp: fix spelling mistake: "falied" -> "failed"
+Message-Id: <20170330094036.19049-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219174751.18966-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219174751.18966-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: k.eugene.e@gmail.com, kvalo@codeaurora.org, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
-> Reorder 'out_free_dxe_pool' and 'out_free_dxe_ctl' error handling labels
-> in order to match the way resources have been allocated.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied to ath-next branch of ath.git, thanks.
+trivial fix to spelling mistake in dev_err error message
 
-4aa2d31f5df8 wcn36xx: Fix error handling
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c b/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
+index 87090cea5b9d..d22a2d2388c2 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/hmm/hmm_bo_dev.c
+@@ -59,7 +59,7 @@ int hmm_bo_device_init(struct hmm_bo_device *bdev,
+ 
+ 	ret = hmm_vm_init(&bdev->vaddr_space, vaddr_start, size);
+ 	if (ret) {
+-		dev_err(atomisp_dev, "hmm_vm_init falied. vaddr_start = 0x%x, size = %d\n",
++		dev_err(atomisp_dev, "hmm_vm_init failed. vaddr_start = 0x%x, size = %d\n",
+ 			vaddr_start, size);
+ 		goto vm_init_err;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/9581709/
-
-Documentation about submitting wireless patches and checking status
-from patchwork:
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
