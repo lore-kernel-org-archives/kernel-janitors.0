@@ -1,33 +1,36 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:12 +0000
-Subject: [PATCH 04/14] iio: dac: mcp4725: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-4-afd@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 09:54:40 +0000
+Subject: [PATCH] perf utils: fix spelling mistake: "Invalud" -> "Invalid"
+Message-Id: <20170330095440.19444-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Krister Johansen <kjlx@templeofstupid.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+trivial fix to spelling mistake in pr_debug message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/dac/mcp4725.c | 2 +-
+ tools/perf/util/hist.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/dac/mcp4725.c b/drivers/iio/dac/mcp4725.c
-index db109f0cdd8c..3da207cf9020 100644
---- a/drivers/iio/dac/mcp4725.c
-+++ b/drivers/iio/dac/mcp4725.c
-@@ -473,7 +473,7 @@ static int mcp4725_probe(struct i2c_client *client,
- 		goto err_disable_vref_reg;
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 3c4d4d00cb2c..61bf304206fd 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -2459,7 +2459,7 @@ int parse_filter_percentage(const struct option *opt __maybe_unused,
+ 	else if (!strcmp(arg, "absolute"))
+ 		symbol_conf.filter_relative = false;
+ 	else {
+-		pr_debug("Invalud percentage: %s\n", arg);
++		pr_debug("Invalid percentage: %s\n", arg);
+ 		return -1;
  	}
- 	pd = (inbuf[0] >> 1) & 0x3;
--	data->powerdown = pd > 0 ? true : false;
-+	data->powerdown = pd > 0;
- 	data->powerdown_mode = pd ? pd - 1 : 2; /* largest resistor to gnd */
- 	data->dac_value = (inbuf[1] << 4) | (inbuf[2] >> 4);
- 	if (data->id = MCP4726)
+ 
 -- 
 2.11.0
 
