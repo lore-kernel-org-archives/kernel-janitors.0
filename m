@@ -1,30 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Mar 2017 07:52:02 +0000
-Subject: [patch] staging: atomisp: missing break statement in switch
-Message-Id: <20170314075202.GB6061@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 30 Mar 2017 21:23:29 +0000
+Subject: Applied "spi: loopback-test: fix spelling mistake: "minimam" -> "minimum"" to the spi tree
+Message-Id: <E1cthXV-0008LK-3V@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170330100125.19703-1-colin.king@canonical.com>
+In-Reply-To: <20170330100125.19703-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Varsha Rao <rvarsha016@gmail.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
 
-Static analysis tools suggest that we probably want a break statement
-here before then next cast statement.  Looks true to me.
+The patch
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   spi: loopback-test: fix spelling mistake: "minimam" -> "minimum"
 
-diff --git a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
-index e3d4d0e0ed9c..ac7598291b95 100644
---- a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
-+++ b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.c
-@@ -1132,7 +1132,7 @@ static int ov5693_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_FOCUS_STATUS:
- 		ret = ov5693_q_focus_status(&dev->sd, &ctrl->val);
--
-+		break;
- 	case V4L2_CID_BIN_FACTOR_HORZ:
- 		ret = ov5693_g_bin_factor_x(&dev->sd, &ctrl->val);
- 		break;
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 905e0b5ef9690c5433b642f46f1d756bb374da17 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 11:01:25 +0100
+Subject: [PATCH] spi: loopback-test: fix spelling mistake: "minimam" ->
+ "minimum"
+
+trivial fix to spelling mistake in dev_err error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-loopback-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
+index 6888d5c34ac4..e6041539afed 100644
+--- a/drivers/spi/spi-loopback-test.c
++++ b/drivers/spi/spi-loopback-test.c
+@@ -520,7 +520,7 @@ static int spi_test_check_elapsed_time(struct spi_device *spi,
+ 	estimated_time += delay_usecs * NSEC_PER_USEC;
+ 	if (test->elapsed_time < estimated_time) {
+ 		dev_err(&spi->dev,
+-			"elapsed time %lld ns is shorter than minimam estimated time %lld ns\n",
++			"elapsed time %lld ns is shorter than minimum estimated time %lld ns\n",
+ 			test->elapsed_time, estimated_time);
+ 
+ 		return -EINVAL;
+-- 
+2.11.0
+
