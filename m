@@ -1,49 +1,78 @@
-From: Stefan Hajnoczi <stefanha@redhat.com>
-Date: Wed, 29 Mar 2017 18:35:58 +0000
+From: "Jorgen S. Hansen" <jhansen@vmware.com>
+Date: Thu, 30 Mar 2017 13:18:10 +0000
 Subject: Re: [PATCH][V2] VSOCK: remove unnecessary ternary operator on return value
-Message-Id: <20170329183558.GA18142@stefanha-x1.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vtzGhvizbBRQ85DL"
+Message-Id: <3658D20B-EBF9-48A2-95A7-026D36F18AF8@vmware.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170329153355.17525-1-colin.king@canonical.com>
 In-Reply-To: <20170329153355.17525-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jorgen Hansen <jhansen@vmware.com>, "Michael S . Tsirkin" <mst@redhat.com>, Adit Ranadive <aditr@vmware.com>, George Zhang <georgezhang@vmware.com>, Julia Lawall <julia.lawall@lip6.fr>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>, "Michael S . Tsirkin" <mst@redhat.com>, Adit Ranadive <aditr@vmware.com>, George Zhang <georgezhang@vmware.com>, Stefan Hajnoczi <stefanha@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 29, 2017 at 04:33:55PM +0100, Colin King wrote:
+> On Mar 29, 2017, at 5:33 PM, Colin King <colin.king@canonical.com> wrote:
+> 
 > From: Colin Ian King <colin.king@canonical.com>
->=20
+> 
 > Rather than assign the positive errno values to ret and then
 > checking if it is positive and flip the sign, just return the
 > errno value.
->=20
+> 
 > Detected by CoverityScan, CID#986649 ("Logically Dead Code")
->=20
+> 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  net/vmw_vsock/vmci_transport.c | 22 +++++++---------------
->  1 file changed, 7 insertions(+), 15 deletions(-)
+> net/vmw_vsock/vmci_transport.c | 22 +++++++---------------
+> 1 file changed, 7 insertions(+), 15 deletions(-)
+> 
+> diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+> index 4be4fbbc0b50..10ae7823a19d 100644
+> --- a/net/vmw_vsock/vmci_transport.c
+> +++ b/net/vmw_vsock/vmci_transport.c
+> @@ -96,31 +96,23 @@ static int PROTOCOL_OVERRIDE = -1;
+> 
+> static s32 vmci_transport_error_to_vsock_error(s32 vmci_error)
+> {
+> -	int err;
+> -
+> 	switch (vmci_error) {
+> 	case VMCI_ERROR_NO_MEM:
+> -		err = ENOMEM;
+> -		break;
+> +		return -ENOMEM;
+> 	case VMCI_ERROR_DUPLICATE_ENTRY:
+> 	case VMCI_ERROR_ALREADY_EXISTS:
+> -		err = EADDRINUSE;
+> -		break;
+> +		return -EADDRINUSE;
+> 	case VMCI_ERROR_NO_ACCESS:
+> -		err = EPERM;
+> -		break;
+> +		return -EPERM;
+> 	case VMCI_ERROR_NO_RESOURCES:
+> -		err = ENOBUFS;
+> -		break;
+> +		return -ENOBUFS;
+> 	case VMCI_ERROR_INVALID_RESOURCE:
+> -		err = EHOSTUNREACH;
+> -		break;
+> +		return -EHOSTUNREACH;
+> 	case VMCI_ERROR_INVALID_ARGS:
+> 	default:
+> -		err = EINVAL;
+> +		break;
+> 	}
+> -
+> -	return err > 0 ? -err : err;
+> +	return -EINVAL;
+> }
+> 
+> static u32 vmci_transport_peer_rid(u32 peer_cid)
+> -- 
+> 2.11.0
+> 
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
 
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJY2/6OAAoJEJykq7OBq3PI/cUH/RCRDxR4eEGjy5+gOUJd5/Go
-FVDO2qYL72HQxQpK/8/MFAHJDIIA4yNu/tColyK3eIFGs95NAI2e9tf518ldmjdG
-sFHhGuezkAOTk3RLH+vUF7Dm3PWoHrSdT18N47ZnTO7PqAKK4mELOZGybdRUibaD
-LLpcmDpKH++Ys7yHAfDnWlzCdmK6hWK17HZHMRWYZVuNHyY0MQuONrnA+2Pj8/H3
-kojAAIhubjUPWyxLNhcU/qqnNmRPB5qQoVYyjmTcOh7ePNjs56BAasAYQ2Oy2/WL
-y3Elt30l44Apj8wDMn/PrUDaSp+ZG6kzibZQ5oBMh5CZhUCmLHC7D0U+IcBI86I=
-=n2yg
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
