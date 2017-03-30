@@ -1,30 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 30 Mar 2017 02:39:52 +0000
-Subject: Re: [PATCH] scsi: hisi_sas: add missing break in switch statement
-Message-Id: <yq1fuhv4hdz.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 09:22:31 +0000
+Subject: [PATCH] locking/ww_mutex: fix spelling mistake: "cylic" -> "cyclic"
+Message-Id: <20170330092231.18590-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170328111222.17303-1-colin.king@canonical.com>
-In-Reply-To: <20170328111222.17303-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 28 Mar 2017 12:12:22 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+trivial fix to spelling mistake in pr_err error message
 
-> It appears that a break in the TRANS_TX_OPEN_CNX_ERR_NO_DESTINATION
-> case got accidentally removed in an earlier commit, as it stands, the
-> ts->stat and ts->open_rej_reason are being updated twice for this case
-> which looks incorrect.  Fix this by adding in the missing break
-> statement.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/locking/test-ww_mutex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.12/scsi-queue.
-
-Thank you!
-
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 90d8d8879969..2a977be632dd 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
+ 		if (!cycle->result)
+ 			continue;
+ 
+-		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
++		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
+ 		       n, nthreads, cycle->result);
+ 		ret = -EINVAL;
+ 		break;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
