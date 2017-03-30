@@ -1,29 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 Mar 2017 15:21:30 +0000
-Subject: [PATCH] ftrace: Remove an unneeded condition
-Message-Id: <20170331152130.GA4947@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 30 Mar 2017 21:23:06 +0000
+Subject: Applied "ASoC: Intel: bxtn: fix spelling mistake: "Timout" -> "Timeout"" to the asoc tree
+Message-Id: <E1cthX8-0008Bl-JD@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170330100934.19887-1-colin.king@canonical.com>
+In-Reply-To: <20170330100934.19887-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Jeeja KP <jeeja.kp@intel.com>, Jayachandran B <jayachandran.b@intel.com>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Ramesh Babu <ramesh.babu@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-We know that "mod_matches" is true here so there is no need to check
-again.
+The patch
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: Intel: bxtn: fix spelling mistake: "Timout" -> "Timeout"
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index b9691ee8f6c1..efa396f183d2 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3586,7 +3586,7 @@ ftrace_match_record(struct dyn_ftrace *rec, struct ftrace_glob *func_g,
- 				return 0;
- 		}
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 5f75b19ef99054736aa80b70dbdf2f7a86a22007 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 11:09:34 +0100
+Subject: [PATCH] ASoC: Intel: bxtn: fix spelling mistake: "Timout" ->
+ "Timeout"
+
+trivial fix to spelling mistake in dev_err error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/skylake/bxt-sst.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/skylake/bxt-sst.c b/sound/soc/intel/skylake/bxt-sst.c
+index 600d95891996..268bdaec8042 100644
+--- a/sound/soc/intel/skylake/bxt-sst.c
++++ b/sound/soc/intel/skylake/bxt-sst.c
+@@ -171,7 +171,7 @@ static int sst_bxt_prepare_fw(struct sst_dsp *ctx,
+ 					SKL_ADSP_REG_HIPCIE_DONE,
+ 					BXT_INIT_TIMEOUT, "HIPCIE Done");
+ 	if (ret < 0) {
+-		dev_err(ctx->dev, "Timout for Purge Request%d\n", ret);
++		dev_err(ctx->dev, "Timeout for Purge Request%d\n", ret);
+ 		goto base_fw_load_failed;
+ 	}
  
--		if (mod_matches && exclude_mod)
-+		if (exclude_mod)
- 			return 0;
- 
- func_match:
+-- 
+2.11.0
+
