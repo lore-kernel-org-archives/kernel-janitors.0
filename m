@@ -1,41 +1,102 @@
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Fri, 10 Mar 2017 03:36:52 +0000
-Subject: Re: [PATCH] virtio: remove redundant check on error return err
-Message-Id: <CAJSP0QUEUgxKD51nLt6vEAbGP5Hq1KJ4UPU1Re72-6tR5FsPAw@mail.gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 30 Mar 2017 06:25:17 +0000
+Subject: [PATCH 2/2] staging: atomisp: use local variable to reduce the number of reference
+Message-Id: <20170330062517.GA25231@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170307140821.29689-1-colin.king@canonical.com>
-In-Reply-To: <20170307140821.29689-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Linux Virtualization <virtualization@lists.linux-foundation.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 7, 2017 at 10:08 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> err has previously been checked for a -ve error return so this
-> redundant check can be removed.
->
-> Detected by CoverityScan, CID#1415271 ("Logically Dead Code")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/virtio/virtio_pci_common.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index df548a6..ceb4395 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -173,8 +173,6 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned nvqs,
->                 if (err < 0)
->                         return err;
->         }
-> -       if (err < 0)
-> -               return err;
->
->         vp_dev->msix_vectors = nvectors;
->         vp_dev->msix_names = kmalloc_array(nvectors,
+Define new local variable to reduce the number of reference.
+The new local variable is added to save the addess of dfs
+and used in atomisp_freq_scaling() function.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 37 ++++++++++++----------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index eebfccd..d76a95c 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -251,6 +251,7 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
+ {
+ 	/* FIXME! Only use subdev[0] status yet */
+ 	struct atomisp_sub_device *asd = &isp->asd[0];
++	const struct atomisp_dfs_config *dfs;
+ 	unsigned int new_freq;
+ 	struct atomisp_freq_scaling_rule curr_rules;
+ 	int i, ret;
+@@ -268,20 +269,22 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
+ 	    ATOMISP_USE_YUVPP(asd))
+ 		isp->dfs = &dfs_config_cht_soc;
+ 
+-	if (isp->dfs->lowest_freq = 0 || isp->dfs->max_freq_at_vmin = 0 ||
+-	    isp->dfs->highest_freq = 0 || isp->dfs->dfs_table_size = 0 ||
+-	    !isp->dfs->dfs_table) {
++	dfs = isp->dfs;
++
++	if (dfs->lowest_freq = 0 || dfs->max_freq_at_vmin = 0 ||
++	    dfs->highest_freq = 0 || dfs->dfs_table_size = 0 ||
++	    !dfs->dfs_table) {
+ 		dev_err(isp->dev, "DFS configuration is invalid.\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (mode = ATOMISP_DFS_MODE_LOW) {
+-		new_freq = isp->dfs->lowest_freq;
++		new_freq = dfs->lowest_freq;
+ 		goto done;
+ 	}
+ 
+ 	if (mode = ATOMISP_DFS_MODE_MAX) {
+-		new_freq = isp->dfs->highest_freq;
++		new_freq = dfs->highest_freq;
+ 		goto done;
+ 	}
+ 
+@@ -307,26 +310,26 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
+ 	}
+ 
+ 	/* search for the target frequency by looping freq rules*/
+-	for (i = 0; i < isp->dfs->dfs_table_size; i++) {
+-		if (curr_rules.width != isp->dfs->dfs_table[i].width &&
+-		    isp->dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
++	for (i = 0; i < dfs->dfs_table_size; i++) {
++		if (curr_rules.width != dfs->dfs_table[i].width &&
++		    dfs->dfs_table[i].width != ISP_FREQ_RULE_ANY)
+ 			continue;
+-		if (curr_rules.height != isp->dfs->dfs_table[i].height &&
+-		    isp->dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
++		if (curr_rules.height != dfs->dfs_table[i].height &&
++		    dfs->dfs_table[i].height != ISP_FREQ_RULE_ANY)
+ 			continue;
+-		if (curr_rules.fps != isp->dfs->dfs_table[i].fps &&
+-		    isp->dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
++		if (curr_rules.fps != dfs->dfs_table[i].fps &&
++		    dfs->dfs_table[i].fps != ISP_FREQ_RULE_ANY)
+ 			continue;
+-		if (curr_rules.run_mode != isp->dfs->dfs_table[i].run_mode &&
+-		    isp->dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
++		if (curr_rules.run_mode != dfs->dfs_table[i].run_mode &&
++		    dfs->dfs_table[i].run_mode != ISP_FREQ_RULE_ANY)
+ 			continue;
+ 		break;
+ 	}
+ 
+-	if (i = isp->dfs->dfs_table_size)
+-		new_freq = isp->dfs->max_freq_at_vmin;
++	if (i = dfs->dfs_table_size)
++		new_freq = dfs->max_freq_at_vmin;
+ 	else
+-		new_freq = isp->dfs->dfs_table[i].isp_freq;
++		new_freq = dfs->dfs_table[i].isp_freq;
+ 
+ done:
+ 	dev_dbg(isp->dev, "DFS target frequency=%d.\n", new_freq);
+-- 
+1.9.1
+
