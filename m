@@ -1,27 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 30 Mar 2017 18:07:28 +0000
-Subject: Re: [PATCH][V2] VSOCK: remove unnecessary ternary operator on return value
-Message-Id: <20170330.110728.1080980088987923914.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 30 Mar 2017 09:58:08 +0000
+Subject: [PATCH] block/sed-opal: fix spelling mistake: "Lifcycle" -> "Lifecycle"
+Message-Id: <20170330095808.19574-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170329153355.17525-1-colin.king@canonical.com>
-In-Reply-To: <20170329153355.17525-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhansen@vmware.com, mst@redhat.com, aditr@vmware.com, georgezhang@vmware.com, stefanha@redhat.com, julia.lawall@lip6.fr, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Scott Bauer <scott.bauer@intel.com>, Jonathan Derrick <jonathan.derrick@intel.com>, Rafael Antognolli <rafael.antognolli@intel.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 Mar 2017 16:33:55 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Rather than assign the positive errno values to ret and then
-> checking if it is positive and flip the sign, just return the
-> errno value.
-> 
-> Detected by CoverityScan, CID#986649 ("Logically Dead Code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+trivial fix to spelling mistake in pr_err error message
 
-Applied to net-next, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/sed-opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index 14035f826b5e..6736c7873d4a 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -1831,7 +1831,7 @@ static int get_lsp_lifecycle_cont(struct opal_dev *dev)
+ 	/* 0x08 is Manufacured Inactive */
+ 	/* 0x09 is Manufactured */
+ 	if (lc_status != OPAL_MANUFACTURED_INACTIVE) {
+-		pr_err("Couldn't determine the status of the Lifcycle state\n");
++		pr_err("Couldn't determine the status of the Lifecycle state\n");
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+2.11.0
+
