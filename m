@@ -1,154 +1,55 @@
-From: Ryan Lee <ryans.lee@maximintegrated.com>
-Date: Fri, 03 Mar 2017 14:52:44 +0000
-Subject: [PATCH 06/10] Added mask variable to apply it in one round after the switch
-Message-Id: <1488552768-14901-7-git-send-email-ryans.lee@maximintegrated.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 31 Mar 2017 01:28:54 +0000
+Subject: [PATCH 1/2 V2] staging: atomisp: simplify the if condition in atomisp_freq_scaling()
+Message-Id: <20170331012854.GA15866@jyoun-Latitude-E6530>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
-In-Reply-To: <1488552768-14901-1-git-send-email-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com, arnd@arndb.de, michael@amarulasolutions.com, oder_chiou@realtek.com, yesanishhere@gmail.com, jacob@teenage.engineering, Damien.Horsley@imgtec.com, bardliao@realtek.com, kuninori.morimoto.gx@renesas.com, petr@barix.com, lars@metafoo.de, nh6z@nh6z.net, ryans.lee@maximintegrated.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+The condition line in if-statement is needed to be shorthen to
+improve readability.
+
+Add a new definition to check the CHT with atomisp_device structure.
+
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-Added the mask variable to apply in one round after the switch.
+V2: replace the assigment line with macro to check CHT type.
 
- sound/soc/codecs/max98927.c | 64 ++++++++++++++++++++++-----------------------
- 1 file changed, 31 insertions(+), 33 deletions(-)
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c      | 3 +--
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h | 4 ++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
-index 0abf6d3..9e70883 100755
---- a/sound/soc/codecs/max98927.c
-+++ b/sound/soc/codecs/max98927.c
-@@ -171,34 +171,31 @@ static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
- {
- 	struct snd_soc_codec *codec = codec_dai->codec;
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
-+	unsigned int mode = 0;
- 	unsigned int invert = 0;
- 
- 	dev_dbg(codec->dev, "%s: fmt 0x%08X\n", __func__, fmt);
- 
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0021_PCM_MASTER_MODE,
--			MAX98927_PCM_MASTER_MODE_MASK,
--			MAX98927_PCM_MASTER_MODE_SLAVE);
-+		mode = MAX98927_PCM_MASTER_MODE_SLAVE;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFM:
- 		max98927->master = true;
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0021_PCM_MASTER_MODE,
--			MAX98927_PCM_MASTER_MODE_MASK,
--			MAX98927_PCM_MASTER_MODE_MASTER);
-+		mode = MAX98927_PCM_MASTER_MODE_MASTER;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFM:
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0021_PCM_MASTER_MODE,
--			MAX98927_PCM_MASTER_MODE_MASK,
--			MAX98927_PCM_MASTER_MODE_HYBRID);
-+		mode = MAX98927_PCM_MASTER_MODE_HYBRID;
- 	default:
- 		dev_err(codec->dev, "DAI clock mode unsupported");
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 94bc793..87224d6 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -261,8 +261,7 @@ int atomisp_freq_scaling(struct atomisp_device *isp,
  		return -EINVAL;
  	}
  
-+	regmap_update_bits(max98927->regmap,
-+		MAX98927_R0021_PCM_MASTER_MODE,
-+		MAX98927_PCM_MASTER_MODE_MASK,
-+		mode);
-+
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_NF:
- 		break;
-@@ -210,24 +207,28 @@ static int max98927_dai_set_fmt(struct snd_soc_dai *codec_dai, unsigned int fmt)
- 		return -EINVAL;
- 	}
+-	if ((isp->pdev->device & ATOMISP_PCI_DEVICE_SOC_MASK) =
+-		ATOMISP_PCI_DEVICE_SOC_CHT && ATOMISP_USE_YUVPP(asd))
++	if (ATOMISP_IS_CHT(isp) && ATOMISP_USE_YUVPP(asd))
+ 		isp->dfs = &dfs_config_cht_soc;
  
-+	regmap_update_bits(max98927->regmap,
-+		MAX98927_R0020_PCM_MODE_CFG,
-+		MAX98927_PCM_MODE_CFG_PCM_BCLKEDGE,
-+		invert);
-+
- 	/* interface format */
- 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 	case SND_SOC_DAIFMT_I2S:
- 		max98927->iface |= SND_SOC_DAIFMT_I2S;
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0020_PCM_MODE_CFG,
--			max98927->iface, max98927->iface);
--		break;
-+
-+	break;
- 	case SND_SOC_DAIFMT_LEFT_J:
- 		max98927->iface |= SND_SOC_DAIFMT_LEFT_J;
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0020_PCM_MODE_CFG,
--			max98927->iface, max98927->iface);
--		break;
-+	break;
- 	default:
- 		return -EINVAL;
- 	}
+ 	if (isp->dfs->lowest_freq = 0 || isp->dfs->max_freq_at_vmin = 0 ||
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
+index d366713..97dc5f88 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
+@@ -72,6 +72,10 @@
+ #define ATOMISP_PCI_DEVICE_SOC_ANN	0x1478
+ #define ATOMISP_PCI_DEVICE_SOC_CHT	0x22b8
  
-+	regmap_update_bits(max98927->regmap,
-+		MAX98927_R0020_PCM_MODE_CFG,
-+		max98927->iface, max98927->iface);
++#define ATOMISP_IS_CHT(isp) \
++	(((isp)->pdev->device & ATOMISP_PCI_DEVICE_SOC_MASK) = \
++	ATOMISP_PCI_DEVICE_SOC_CHT)
 +
- 	/* pcm channel configuration */
- 	if (max98927->iface & (SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_LEFT_J)) {
- 		regmap_write(max98927->regmap,
-@@ -301,29 +302,21 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_codec *codec = dai->codec;
- 	struct max98927_priv *max98927 = snd_soc_codec_get_drvdata(codec);
--	int sampling_rate = 0;
-+	unsigned int sampling_rate = 0;
-+	unsigned int chan_sz = 0;
- 
- 	/* pcm mode configuration */
- 	switch (snd_pcm_format_width(params_format(params))) {
- 	case 16:
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0020_PCM_MODE_CFG,
--			MAX98927_PCM_MODE_CFG_CHANSZ_16,
--			MAX98927_PCM_MODE_CFG_CHANSZ_16);
-+		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_16;
- 		max98927->ch_size = 16;
- 		break;
- 	case 24:
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0020_PCM_MODE_CFG,
--			MAX98927_PCM_MODE_CFG_CHANSZ_24,
--			MAX98927_PCM_MODE_CFG_CHANSZ_24);
-+		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_24;
- 		max98927->ch_size = 24;
- 		break;
- 	case 32:
--		regmap_update_bits(max98927->regmap,
--			MAX98927_R0020_PCM_MODE_CFG,
--			MAX98927_PCM_MODE_CFG_CHANSZ_32,
--			MAX98927_PCM_MODE_CFG_CHANSZ_32);
-+		chan_sz = MAX98927_PCM_MODE_CFG_CHANSZ_32;
- 		max98927->ch_size = 32;
- 		break;
- 	default:
-@@ -331,6 +324,11 @@ static int max98927_dai_hw_params(struct snd_pcm_substream *substream,
- 			params_format(params));
- 		goto err;
- 	}
-+
-+	regmap_update_bits(max98927->regmap,
-+		MAX98927_R0020_PCM_MODE_CFG,
-+		MAX98927_PCM_MODE_CFG_CHANSZ_MASK, chan_sz);
-+
- 	dev_dbg(codec->dev, "format supported %d",
- 		params_format(params));
+ #define ATOMISP_PCI_REV_MRFLD_A0_MAX	0
+ #define ATOMISP_PCI_REV_BYT_A0_MAX	4
  
 -- 
 2.7.4
