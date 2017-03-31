@@ -1,52 +1,45 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 15 Mar 2017 22:04:22 +0000
-Subject: Re: [PATCH v2] Staging: iio: cdc: ad7152.c, use octal permissions instead of symbolic
-Message-Id: <870c4b6a-3de0-5c6d-b617-cd52b039f62b@kernel.org>
+From: Stephen Smalley <sds@tycho.nsa.gov>
+Date: Fri, 31 Mar 2017 15:52:21 +0000
+Subject: Re: [PATCH] selinux: Fix an uninitialized variable bug
+Message-Id: <1490975541.31110.12.camel@tycho.nsa.gov>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1489509221-12547-1-git-send-email-miguel.robles@farole.net>
-In-Reply-To: <1489509221-12547-1-git-send-email-miguel.robles@farole.net>
+References: <20170331152118.GA8141@mwanda>
+In-Reply-To: <20170331152118.GA8141@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Miguel Robles <miguel.robles@farole.net>, gregkh@linuxfoundation.org
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org
 
-On 14/03/17 16:33, Miguel Robles wrote:
-> Fix checkpatch warnings:
-> Symbolic permissions are not preferred. Consider using octal permissions.
+On Fri, 2017-03-31 at 18:21 +0300, Dan Carpenter wrote:
+> We removed this initialization as a cleanup but it is probably
+> required.
 > 
-> Signed-off-by: Miguel Robles <miguel.robles@farole.net>
-> ---
-> Changes in v2:
-> - Remove "[Patch]" from the subject.
-While true, probably not worth the repost!
+> The concern is that "nel" can be zero.  I'm not an expert on SELinux
+> code but I think it looks possible to write an SELinux policy which
+> triggers this bug.  GCC doesn't catch this, but my static checker
+> does.
+> 
+> Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable
+> initialisation in range_read()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jonathan
-> 
->  drivers/staging/iio/cdc/ad7152.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
-> index e8609b8..dd0c24c 100644
-> --- a/drivers/staging/iio/cdc/ad7152.c
-> +++ b/drivers/staging/iio/cdc/ad7152.c
-> @@ -155,13 +155,13 @@ static ssize_t ad7152_start_gain_calib(struct device *dev,
->  }
->  
->  static IIO_DEVICE_ATTR(in_capacitance0_calibbias_calibration,
-> -		       S_IWUSR, NULL, ad7152_start_offset_calib, 0);
-> +		       0200, NULL, ad7152_start_offset_calib, 0);
->  static IIO_DEVICE_ATTR(in_capacitance1_calibbias_calibration,
-> -		       S_IWUSR, NULL, ad7152_start_offset_calib, 1);
-> +		       0200, NULL, ad7152_start_offset_calib, 1);
->  static IIO_DEVICE_ATTR(in_capacitance0_calibscale_calibration,
-> -		       S_IWUSR, NULL, ad7152_start_gain_calib, 0);
-> +		       0200, NULL, ad7152_start_gain_calib, 0);
->  static IIO_DEVICE_ATTR(in_capacitance1_calibscale_calibration,
-> -		       S_IWUSR, NULL, ad7152_start_gain_calib, 1);
-> +		       0200, NULL, ad7152_start_gain_calib, 1);
->  
->  /* Values are Update Rate (Hz), Conversion Time (ms) + 1*/
->  static const unsigned char ad7152_filter_rate_table[][2] = {
-> 
+Nice catch, thanks!
 
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+
+> 
+> diff --git a/security/selinux/ss/policydb.c
+> b/security/selinux/ss/policydb.c
+> index 658247f98dc1..0080122760ad 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1832,7 +1832,7 @@ u32 string_to_av_perm(struct policydb *p, u16
+> tclass, const char *name)
+>  
+>  static int range_read(struct policydb *p, void *fp)
+>  {
+> -	struct range_trans *rt;
+> +	struct range_trans *rt = NULL;
+>  	struct mls_range *r = NULL;
+>  	int i, rc;
+>  	__le32 buf[2];
