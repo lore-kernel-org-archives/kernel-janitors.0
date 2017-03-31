@@ -1,33 +1,32 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Wed, 15 Mar 2017 16:23:13 +0000
-Subject: [PATCH 05/14] IB/ocrdma: Remove unneeded conversions to bool
-Message-Id: <20170315162322.12096-5-afd@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Mar 2017 15:21:18 +0000
+Subject: [PATCH] selinux: Fix an uninitialized variable bug
+Message-Id: <20170331152118.GA8141@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-Found with scripts/coccinelle/misc/boolconv.cocci.
+We removed this initialization as a cleanup but it is probably required.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The concern is that "nel" can be zero.  I'm not an expert on SELinux
+code but I think it looks possible to write an SELinux policy which
+triggers this bug.  GCC doesn't catch this, but my static checker does.
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index bc9fb144e57b..dc00924f8a3c 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -463,7 +463,7 @@ static struct ocrdma_pd *_ocrdma_alloc_pd(struct ocrdma_dev *dev,
- static inline int is_ucontext_pd(struct ocrdma_ucontext *uctx,
- 				 struct ocrdma_pd *pd)
- {
--	return (uctx->cntxt_pd = pd ? true : false);
-+	return (uctx->cntxt_pd = pd);
- }
+Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable initialisation in range_read()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 658247f98dc1..0080122760ad 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1832,7 +1832,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
  
- static int _ocrdma_dealloc_pd(struct ocrdma_dev *dev,
--- 
-2.11.0
-
+ static int range_read(struct policydb *p, void *fp)
+ {
+-	struct range_trans *rt;
++	struct range_trans *rt = NULL;
+ 	struct mls_range *r = NULL;
+ 	int i, rc;
+ 	__le32 buf[2];
