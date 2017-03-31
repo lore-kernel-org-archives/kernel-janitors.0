@@ -1,50 +1,48 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Wed, 08 Mar 2017 14:08:23 +0000
-Subject: Re: [PATCH 07/26] IB/ocrdma: Improve another size determination in ocrdma_mbx_get_ctrl_attribs()
-Message-Id: <20170308140822.GF4828@yuval-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Mar 2017 15:21:41 +0000
+Subject: [PATCH 1/2] ALSA: timer: remove some dead code
+Message-Id: <20170331152141.GB8141@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <b00fd477-8e8c-e9d9-4136-5a3f43b84277@users.sourceforge.net>
-In-Reply-To: <b00fd477-8e8c-e9d9-4136-5a3f43b84277@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Takashi Iwai <tiwai@suse.com>, Kangjie Lu <kangjielu@gmail.com>
 
-On Wed, Mar 08, 2017 at 01:55:59PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 7 Mar 2017 20:07:25 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> index 56f29e06dfe4..1f7d88d7569e 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> @@ -1331,7 +1331,7 @@ static int ocrdma_mbx_get_ctrl_attribs(struct ocrdma_dev *dev)
->  	struct ocrdma_get_ctrl_attribs_rsp *ctrl_attr_rsp;
->  	struct mgmt_hba_attribs *hba_attribs;
->  
-> -	mqe = kzalloc(sizeof(struct ocrdma_mqe), GFP_KERNEL);
-> +	mqe = kzalloc(sizeof(*mqe), GFP_KERNEL);
->  	if (!mqe)
->  		return status;
->  
+We just checked "id.card < 0" on the lines before so we know it's not
+true here.  We can delete that check.
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Also checkpatch.pl complains about some extra curly braces so we may as
+well fix that while we're at it.
 
-> -- 
-> 2.12.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 6d4fbc439246..8b9e7943a83b 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -1430,18 +1430,13 @@ static int snd_timer_user_next_device(struct snd_timer_id __user *_tid)
+ 			if (id.card < 0) {
+ 				id.card = 0;
+ 			} else {
+-				if (id.card < 0) {
+-					id.card = 0;
++				if (id.device < 0) {
++					id.device = 0;
+ 				} else {
+-					if (id.device < 0) {
+-						id.device = 0;
+-					} else {
+-						if (id.subdevice < 0) {
+-							id.subdevice = 0;
+-						} else {
+-							id.subdevice++;
+-						}
+-					}
++					if (id.subdevice < 0)
++						id.subdevice = 0;
++					else
++						id.subdevice++;
+ 				}
+ 			}
+ 			list_for_each(p, &snd_timer_list) {
