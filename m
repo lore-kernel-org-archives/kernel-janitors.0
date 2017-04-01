@@ -1,47 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 17:01:27 +0000
-Subject: [PATCH 1/2] tty-ehv_bytechan: Use kcalloc() in ehv_bc_init()
-Message-Id: <8e44e4f8-c6d0-4d7f-97e9-7f9ed62c4bd0@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Sat, 01 Apr 2017 02:10:58 +0000
+Subject: [PATCH 6/9] perf utils: Fix spelling mistake: "Invalud" -> "Invalid"
+Message-Id: <20170401021101.10198-7-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4666b729-217c-ab28-4a3c-25ef703054dd@users.sourceforge.net>
-In-Reply-To: <4666b729-217c-ab28-4a3c-25ef703054dd@users.sourceforge.net>
+References: <20170401021101.10198-1-acme@kernel.org>
+In-Reply-To: <20170401021101.10198-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Krister Johansen <kjlx@templeofstupid.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 18:24:42 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+Trivial fix to spelling mistake in pr_debug message.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin King <colin.king@canonical.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20170330095440.19444-1-colin.king@canonical.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/tty/ehv_bytechan.c | 2 +-
+ tools/perf/util/hist.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
-index 7ac9bcdf1e61..e17b7c765466 100644
---- a/drivers/tty/ehv_bytechan.c
-+++ b/drivers/tty/ehv_bytechan.c
-@@ -757,7 +757,7 @@ static int __init ehv_bc_init(void)
- 	 * array, then you can use pointer math (e.g. "bc - bcs") to get its
- 	 * tty index.
- 	 */
--	bcs = kzalloc(count * sizeof(struct ehv_bc_data), GFP_KERNEL);
-+	bcs = kcalloc(count, sizeof(*bcs), GFP_KERNEL);
- 	if (!bcs)
- 		return -ENOMEM;
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 3c4d4d00cb2c..61bf304206fd 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -2459,7 +2459,7 @@ int parse_filter_percentage(const struct option *opt __maybe_unused,
+ 	else if (!strcmp(arg, "absolute"))
+ 		symbol_conf.filter_relative = false;
+ 	else {
+-		pr_debug("Invalud percentage: %s\n", arg);
++		pr_debug("Invalid percentage: %s\n", arg);
+ 		return -1;
+ 	}
  
 -- 
-2.12.2
+2.9.3
 
