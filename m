@@ -1,49 +1,30 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 30 Apr 2017 07:14:20 +0000
-Subject: [PATCH] cris: nand: fix a leak in error handling path
-Message-Id: <20170430071420.24906-1-christophe.jaillet@wanadoo.fr>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Sat, 01 Apr 2017 22:19:14 +0000
+Subject: Re: [PATCH] NFC: st21nfca: Fix potential memory leak
+Message-Id: <20170401221914.GE22034@zurbaran.ger.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: starvik@axis.com, jesper.nilsson@axis.com
-Cc: linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: christophe.ricard@gmail.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If only 1 of the 2 'ioremap' fails, then there is a small leak.
+Hi Christophe,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On Sun, Feb 19, 2017 at 10:58:47AM +0100, Christophe JAILLET wrote:
+> If all bits of 'dev_mask' are already set, there is a memory leak because
+> 'info' should be freed before returning.
+> 
+> While fixing it, 'return -ENOMEM' directly if the first kzalloc fails.
+> This makes the code more readable.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/nfc/st21nfca/core.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-index a74540514bdb..57622fbd9f25 100644
---- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-+++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-@@ -123,7 +123,7 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
- 	if (!read_cs || !write_cs) {
- 		printk(KERN_ERR "CRISv32 NAND ioremap failed\n");
- 		err = -EIO;
--		goto out_mtd;
-+		goto out_ior;
- 	}
- 
- 	/* Get pointer to private data */
-@@ -162,9 +162,11 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
- 	return crisv32_mtd;
- 
- out_ior:
--	iounmap((void *)read_cs);
--	iounmap((void *)write_cs);
--out_mtd:
-+	if (read_cs)
-+		iounmap((void *)read_cs);
-+	if (write_cs)
-+		iounmap((void *)write_cs);
-+
- 	kfree(wrapper);
- 	return NULL;
- }
--- 
-2.11.0
-
+Cheers,
+Samuel.
