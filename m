@@ -1,26 +1,39 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Fri, 07 Apr 2017 13:48:43 +0000
-Subject: Re: [PATCH 1/3] staging: atomisp: remove enable_isp_irq function and add disable_isp_irq
-Message-Id: <1491572923.3704.84.camel@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Apr 2017 06:40:59 +0000
+Subject: Re: selinux: Fix an uninitialized variable bug in range_read()
+Message-Id: <fb1cb81c-4b03-5b21-f933-ea3e58491a13@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170407055604.GA32049@SEL-JYOUN-D1>
-In-Reply-To: <20170407055604.GA32049@SEL-JYOUN-D1>
+References: <20170331152118.GA8141@mwanda>
+	<1490975541.31110.12.camel@tycho.nsa.gov>
+	<CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
+In-Reply-To: <CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Daeseok Youn <daeseok.youn@gmail.com>, mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-security-module@vger.kernel.org
 
-On Fri, 2017-04-07 at 14:56 +0900, Daeseok Youn wrote:
-> Enable/Disable ISP irq is switched with "enable" parameter of
-> enable_isp_irq(). It would be better splited to two such as
-> enable_isp_irq()/disable_isp_irq().
+>>> We removed this initialization as a cleanup but it is probably
+>>> required.
+>>>
+>>> The concern is that "nel" can be zero.  I'm not an expert on SELinux
+>>> code but I think it looks possible to write an SELinux policy which
+>>> triggers this bug.  GCC doesn't catch this, but my static checker
+>>> does.
+>>>
+>>> Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable
+>>> initialisation in range_read()")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+>> Nice catch, thanks!
+>>
+>> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 > 
-> But the enable_isp_irq() is no use in atomisp_cmd.c file.
-> So remove the enable_isp_irq() function and add
-> disable_isp_irq function only.
+> Yes, indeed.  Thanks Dan, I should have caught this when merging Markus' patch.
 
-All 3 added to my tree - thanks
+How do you think about the possibility to call the function “range_read” only with
+a system configuration where the interface “le32_to_cpu” will be resolved to
+a positive value so that statements in the corresponding for loop will be executed
+at least once?
 
-Alan
-
+Regards,
+Markus
