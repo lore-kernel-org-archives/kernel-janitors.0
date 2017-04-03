@@ -1,42 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:33:09 +0000
-Subject: [PATCH 23/25] skge: Use seq_puts() in skge_debug_show()
-Message-Id: <6eb36737-cad0-34bf-0ac0-c7d176519e05@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 03 Apr 2017 09:47:58 +0000
+Subject: [PATCH][V2] wlcore: fix spelling mistakes in wl1271_warning
+Message-Id: <20170403094758.19397-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:43:08 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+trivial fix to spelling mistakes in wl1271_warning error message, change
+iligal to invalid and opperation to operation.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/marvell/skge.c | 2 +-
+ drivers/net/wireless/ti/wlcore/debugfs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/skge.c b/drivers/net/ethernet/marvell/skge.c
-index edb95271a4f2..90bfdbcfd910 100644
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -3718,7 +3718,7 @@ static int skge_debug_show(struct seq_file *seq, void *v)
- 			   t->csum_offs, t->csum_write, t->csum_start);
+diff --git a/drivers/net/wireless/ti/wlcore/debugfs.c b/drivers/net/wireless/ti/wlcore/debugfs.c
+index 58e148d7bc7b..416080adc181 100644
+--- a/drivers/net/wireless/ti/wlcore/debugfs.c
++++ b/drivers/net/wireless/ti/wlcore/debugfs.c
+@@ -1249,7 +1249,7 @@ static ssize_t fw_logger_write(struct file *file,
  	}
  
--	seq_printf(seq, "\nRx Ring:\n");
-+	seq_puts(seq, "\nRx Ring:\n");
- 	for (e = skge->rx_ring.to_clean; ; e = e->next) {
- 		const struct skge_rx_desc *r = e->desc;
+ 	if (wl->conf.fwlog.output = 0) {
+-		wl1271_warning("iligal opperation - fw logger disabled by default, please change mode via wlconf");
++		wl1271_warning("invalid operation - fw logger disabled by default, please change mode via wlconf");
+ 		return -EINVAL;
+ 	}
  
 -- 
-2.12.2
+2.11.0
 
