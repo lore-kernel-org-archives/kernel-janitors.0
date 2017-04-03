@@ -1,34 +1,57 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 28 Apr 2017 17:02:25 +0000
-Subject: Re: [PATCH] IB/rdmavt: restore IRQs on error path in rvt_create_ah()
-Message-Id: <1493398945.3041.157.camel@redhat.com>
+From: James Morris <jmorris@namei.org>
+Date: Mon, 03 Apr 2017 01:10:42 +0000
+Subject: Re: [PATCH] selinux: Fix an uninitialized variable bug
+Message-Id: <alpine.LRH.2.20.1704031054080.27757@namei.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170427091420.j7kl5tmzqnyami4s@mwanda>
-         <418a9680-c856-5b9c-b3b5-c46aaa367882@intel.com>
-In-Reply-To: <418a9680-c856-5b9c-b3b5-c46aaa367882@intel.com>
+References: <20170331152118.GA8141@mwanda>
+	<1490975541.31110.12.camel@tycho.nsa.gov>
+	<CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
+In-Reply-To: <CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Kamal Heib <kamalh@mellanox.com>
-Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-security-module@vger.kernel.org
 
-On Thu, 2017-04-27 at 13:14 -0400, Dennis Dalessandro wrote:
-> On 04/27/2017 05:14 AM, Dan Carpenter wrote:
-> > 
-> > We need to call spin_unlock_irqrestore() instead of vanilla
-> > spin_unlock() on this error path.
-> > 
-> > Fixes: 119a8e708d16 ("IB/rdmavt: Add AH to rdmavt")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, 31 Mar 2017, Paul Moore wrote:
+
+> On Fri, Mar 31, 2017 at 11:52 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > On Fri, 2017-03-31 at 18:21 +0300, Dan Carpenter wrote:
+> >> We removed this initialization as a cleanup but it is probably
+> >> required.
+> >>
+> >> The concern is that "nel" can be zero.  I'm not an expert on SELinux
+> >> code but I think it looks possible to write an SELinux policy which
+> >> triggers this bug.  GCC doesn't catch this, but my static checker
+> >> does.
+> >>
+> >> Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable
+> >> initialisation in range_read()")
+> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> > Nice catch, thanks!
+> >
+> > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 > 
-> Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+> Yes, indeed.  Thanks Dan, I should have caught this when merging Markus' patch.
 > 
 
-Thanks, applied.
+I'd like to reiterate that I generally don't want to accept cleanup 
+patches into the security tree from Markus (or indeed from others who 
+only do cleanup/whitespace work).
+
+See https://lkml.org/lkml/2017/1/29/172, and please click through and read 
+Dan's comments.
+
+All patches carry risks of introducing new bugs, and kernel "cleanup: 
+patches generally offer a pretty high cost/benefit ratio.  If such patches 
+come from core developers of that code, or from kernel developers with 
+experience in *analyzing and fixing* bugs, that's very different.
+
+Paul, please review all of these patches very carefully before sending 
+your pull request.
+
 
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-   
-Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+James Morris
+<jmorris@namei.org>
 
