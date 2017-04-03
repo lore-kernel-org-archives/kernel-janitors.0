@@ -1,40 +1,34 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Apr 2017 14:11:49 +0000
-Subject: Re: [PATCH] mmc: host: omap_hsmmc: checking for NULL instead of IS_ERR()
-Message-Id: <CAPDyKFooBobLN8p9kH2Tm9KM9HQXuN87PU4PmyNb+EJN1vTNww@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Apr 2017 18:41:47 +0000
+Subject: [PATCH 1/2] drm/amd/powerplay: fix pp_dpm_get_current_power_state()
+Message-Id: <20170403184147.GA22462@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170410135417.GD1918@mwanda>
-In-Reply-To: <20170410135417.GD1918@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Fenkart <afenkart@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Ravikumar Kattekola <rk@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Heiner Kallweit <hkallweit1@gmail.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>
+Cc: Tom St Denis <tom.stdenis-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Eric Huang <JinHuiEric.Huang-5C7GfCeVMHo@public.gmane.org>, Edward O'Callaghan <funfunctor-dczkZgxz+BNUPWh3PAxdjQ@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-On 10 April 2017 at 15:54, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> devm_pinctrl_get() returns error pointers, it never returns NULL.
->
-> Fixes: 455e5cd6f736 ("mmc: omap_hsmmc: Pin remux workaround to support SDIO interrupt on AM335x")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This switch statement is missing breaks.
 
-Thanks, applied for next!
+Fixes: 2a5071056e6a ("drm/amd/powerplay: add global PowerPlay mutex.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kind regards
-Uffe
-
->
-> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-> index bf64cf23aa59..8c39dccacf39 100644
-> --- a/drivers/mmc/host/omap_hsmmc.c
-> +++ b/drivers/mmc/host/omap_hsmmc.c
-> @@ -1761,8 +1761,8 @@ static int omap_hsmmc_configure_wake_irq(struct omap_hsmmc_host *host)
->          */
->         if (host->pdata->controller_flags & OMAP_HSMMC_SWAKEUP_MISSING) {
->                 struct pinctrl *p = devm_pinctrl_get(host->dev);
-> -               if (!p) {
-> -                       ret = -ENODEV;
-> +               if (IS_ERR(p)) {
-> +                       ret = PTR_ERR(p);
->                         goto err_free_irq;
->                 }
->                 if (IS_ERR(pinctrl_lookup_state(p, PINCTRL_STATE_DEFAULT))) {
+diff --git a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+index dfd4fe6f0578..260b732be7c3 100644
+--- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
++++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
+@@ -539,10 +539,13 @@ static enum amd_pm_state_type pp_dpm_get_current_power_state(void *handle)
+ 	switch (state->classification.ui_label) {
+ 	case PP_StateUILabel_Battery:
+ 		pm_type = POWER_STATE_TYPE_BATTERY;
++		break;
+ 	case PP_StateUILabel_Balanced:
+ 		pm_type = POWER_STATE_TYPE_BALANCED;
++		break;
+ 	case PP_StateUILabel_Performance:
+ 		pm_type = POWER_STATE_TYPE_PERFORMANCE;
++		break;
+ 	default:
+ 		if (state->classification.flags & PP_StateClassificationFlag_Boot)
+ 			pm_type = POWER_STATE_TYPE_INTERNAL_BOOT;
