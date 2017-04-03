@@ -1,27 +1,30 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 21 Apr 2017 22:50:55 +0000
-Subject: Re: [PATCH 2/2] lightnvm: don't print a warning for ADDR_EMPTY
-Message-Id: <7db94fa9-302e-50fb-14cc-f8917cfeed5e@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Apr 2017 18:18:27 +0000
+Subject: [PATCH -next] liquidio: clear the correct memory
+Message-Id: <20170403181827.GA6505@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421205437.fom72nbe3rfngdra@mwanda>
-In-Reply-To: <20170421205437.fom72nbe3rfngdra@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Matias Bjorling <mb@lightnvm.io>, =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Prasad Kanneganti <prasad.kanneganti@cavium.com>
+Cc: Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/21/2017 02:54 PM, Dan Carpenter wrote:
-> Reading from ADDR_EMPTY is out of bounds.  The current code generates a
-> static checker warning because we check for out of bounds "lba" before
-> we check for ADDR_EMPTY, so the second check is always false.  It looks
-> like we intended ADDR_EMPTY to be a no-op without printing a warning.
-> 
-> Fixes: a4bd217b4326 ("lightnvm: physical block device (pblk) target")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a cut and paste bug here so we accidentally clear the first
+few bytes of "resp" a second time instead clearing "ctx".
 
-Added, thanks Dan.
+Fixes: 50c0add534d2 ("liquidio: refactor interrupt moderation code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+index fac02ed2c449..dab10c7e4443 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
+@@ -1359,7 +1359,7 @@ static int octnet_get_intrmod_cfg(struct lio *lio,
+ 	memset(resp, 0, sizeof(struct oct_intrmod_resp));
+ 
+ 	ctx = (struct oct_intrmod_context *)sc->ctxptr;
+-	memset(resp, 0, sizeof(struct oct_intrmod_context));
++	memset(ctx, 0, sizeof(struct oct_intrmod_context));
+ 	WRITE_ONCE(ctx->cond, 0);
+ 	ctx->octeon_id = lio_get_device_id(oct_dev);
+ 	init_waitqueue_head(&ctx->wc);
