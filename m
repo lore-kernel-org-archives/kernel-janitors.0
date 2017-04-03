@@ -1,33 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 13:06:15 +0000
-Subject: [PATCH] mtd: spi-nor: Potential oops on error path in quad_enable()
-Message-Id: <20170428130614.w4cmbwvprgzv7sky@mwanda>
+Date: Mon, 03 Apr 2017 18:41:39 +0000
+Subject: [PATCH] drm/amdgpu: Fix a NULL deref in amdgpu_vm_add_prt_cb()
+Message-Id: <20170403184139.GA12398@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Huang Shijie <b32955@freescale.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>, Edward O'Callaghan <funfunctor@folklore1984.net>, Alex Xie <AlexBin.Xie@amd.com>
 
-Before commit cff959958832 ("mtd: spi-nor: introduce SPI 1-2-2 and SPI
-1-4-4 protocols") then we treated 1 as -EINVAL in the caller but after
-that commit we changed to propagate the return.  My static checker
-complains that it's eventually passed to an ERR_PTR() and later
-dereferenced, but I'm not totally certain if that's true.  Regardless,
-returning 1 is wrong.
+We accidentally dereference "cb" if the kmalloc() fails.
 
+Fixes: 451bc8eb8fe6 ("drm/amdgpu: fix PRT teardown on VM fini v3")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 060a59e716be..a05db3371ebb 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1390,7 +1390,7 @@ static int macronix_quad_enable(struct spi_nor *nor)
- 	write_sr(nor, val | SR_QUAD_EN_MX);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index 0235d7933efd..45a1bcfc41f7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -1518,7 +1518,7 @@ static void amdgpu_vm_add_prt_cb(struct amdgpu_device *adev,
+ 		if (fence)
+ 			dma_fence_wait(fence, false);
  
- 	if (spi_nor_wait_till_ready(nor))
--		return 1;
-+		return -EINVAL;
- 
- 	ret = read_sr(nor);
- 	if (!(ret > 0 && (ret & SR_QUAD_EN_MX))) {
+-		amdgpu_vm_prt_put(cb->adev);
++		amdgpu_vm_prt_put(adev);
+ 	} else {
+ 		cb->adev = adev;
+ 		if (!fence || dma_fence_add_callback(fence, &cb->cb,
