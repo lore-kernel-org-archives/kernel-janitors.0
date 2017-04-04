@@ -1,124 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:55:33 +0000
-Subject: [PATCH v2 17/17] IB/mlx5: Less function calls in create_kernel_qp() after error detection
-Message-Id: <6a9ba778-b496-fd09-2fec-c36ba036bf3c@users.sourceforge.net>
+Date: Tue, 04 Apr 2017 11:16:01 +0000
+Subject: [PATCH 3/3] selinux: Use an other error code for an input validation failure in sidtab_insert()
+Message-Id: <38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
+In-Reply-To: <5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 19:19:20 +0200
+Date: Tue, 4 Apr 2017 12:23:41 +0200
 
-The kfree() function was called in up to five cases
-by the create_kernel_qp() function during error handling
-even if the passed data structure member contained a null pointer.
-
-* Adjust jump targets according to the Linux coding style convention.
-
-* Split a condition check for memory allocation failures so that
-  each pointer from these function calls will be checked immediately.
-
-  See also background information:
-  Topic "CWE-754: Improper check for unusual or exceptional conditions"
-  Link: https://cwe.mitre.org/data/definitions/754.html
+The error code "-ENOMEM" was also returned so far when the parameter "s"
+of this function contained a null pointer.
+Now I find that the code "-EINVAL" is more appropriate in this case.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/mlx5/qp.c | 43 ++++++++++++++++++++++++++---------------
- 1 file changed, 27 insertions(+), 16 deletions(-)
+ security/selinux/ss/sidtab.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index 1e98a8c9fab8..c7bfa8ffaf0d 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -934,7 +934,7 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
- 	*in = mlx5_vzalloc(*inlen);
- 	if (!*in) {
- 		err = -ENOMEM;
--		goto err_buf;
-+		goto free_buffer;
- 	}
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index c5f436b15d19..2eb2a54b88d2 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -36,7 +36,7 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
+ 	struct sidtab_node *prev, *cur, *newnode;
  
- 	qpc = MLX5_ADDR_OF(create_qp_in, *in, qpc);
-@@ -956,45 +956,56 @@ static int create_kernel_qp(struct mlx5_ib_dev *dev,
- 	err = mlx5_db_alloc(dev->mdev, &qp->db);
- 	if (err) {
- 		mlx5_ib_dbg(dev, "err %d\n", err);
--		goto err_free;
-+		goto vfree_in;
- 	}
+ 	if (!s)
+-		return -ENOMEM;
++		return -EINVAL;
  
- 	qp->sq.wrid = kmalloc_array(qp->sq.wqe_cnt,
- 				    sizeof(*qp->sq.wrid),
- 				    GFP_KERNEL);
-+	if (!qp->sq.wrid)
-+		goto free_db;
-+
- 	qp->sq.wr_data = kmalloc_array(qp->sq.wqe_cnt,
- 				       sizeof(*qp->sq.wr_data),
- 				       GFP_KERNEL);
-+	if (!qp->sq.wr_data)
-+		goto free_sq_wrid;
-+
- 	qp->rq.wrid = kmalloc_array(qp->rq.wqe_cnt,
- 				    sizeof(*qp->rq.wrid),
- 				    GFP_KERNEL);
-+	if (!qp->rq.wrid)
-+		goto free_sq_wr_data;
-+
- 	qp->sq.w_list = kmalloc_array(qp->sq.wqe_cnt,
- 				      sizeof(*qp->sq.w_list),
- 				      GFP_KERNEL);
-+	if (!qp->sq.w_list)
-+		goto free_rq_wrid;
-+
- 	qp->sq.wqe_head = kmalloc_array(qp->sq.wqe_cnt,
- 					sizeof(*qp->sq.wqe_head),
- 					GFP_KERNEL);
--	if (!qp->sq.wrid || !qp->sq.wr_data || !qp->rq.wrid ||
--	    !qp->sq.w_list || !qp->sq.wqe_head) {
--		err = -ENOMEM;
--		goto err_wrid;
--	}
-+	if (!qp->sq.wqe_head)
-+		goto free_sq_w_list;
-+
- 	qp->create_type = MLX5_QP_KERNEL;
- 
- 	return 0;
--
--err_wrid:
--	kfree(qp->sq.wqe_head);
-+free_sq_w_list:
- 	kfree(qp->sq.w_list);
--	kfree(qp->sq.wrid);
--	kfree(qp->sq.wr_data);
-+free_rq_wrid:
- 	kfree(qp->rq.wrid);
-+free_sq_wr_data:
-+	kfree(qp->sq.wr_data);
-+free_sq_wrid:
-+	kfree(qp->sq.wrid);
-+free_db:
- 	mlx5_db_free(dev->mdev, &qp->db);
--
--err_free:
-+	err = -ENOMEM;
-+vfree_in:
- 	kvfree(*in);
--
--err_buf:
-+free_buffer:
- 	mlx5_buf_free(dev->mdev, &qp->buf);
- 	return err;
- }
+ 	hvalue = SIDTAB_HASH(sid);
+ 	prev = NULL;
 -- 
 2.12.2
 
