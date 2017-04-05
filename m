@@ -1,58 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 20:03:51 +0000
-Subject: [PATCH 3/3] sata_mv: Use devm_kcalloc() in mv_platform_probe()
-Message-Id: <139a8a18-37ae-a87f-9fec-a05670325f66@users.sourceforge.net>
+Date: Wed, 05 Apr 2017 13:54:45 +0000
+Subject: [PATCH 4/5] IB/qib: Use kcalloc() in qib_init_pportdata()
+Message-Id: <e715e921-acef-b406-943c-b61b76d0ff42@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
-In-Reply-To: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
+References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
+In-Reply-To: <c16b18ac-287f-5faf-b79a-c86e2adfa22c-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 21:36:43 +0200
+Date: Wed, 5 Apr 2017 14:20:10 +0200
 
 * Multiplications for the size determination of memory allocations
   indicated that array data structures should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+  Thus use the corresponding function "kcalloc".
 
   This issue was detected by using the Coccinelle software.
 
-* Replace the specification of data types by pointer dereferences
+* Replace the specification of data structures by pointer dereferences
   to make the corresponding size determination a bit safer according to
   the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/ata/sata_mv.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/qib/qib_init.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
-index b66bcda88320..49abe386c7f6 100644
---- a/drivers/ata/sata_mv.c
-+++ b/drivers/ata/sata_mv.c
-@@ -4118,13 +4118,15 @@ static int mv_platform_probe(struct platform_device *pdev)
+diff --git a/drivers/infiniband/hw/qib/qib_init.c b/drivers/infiniband/hw/qib/qib_init.c
+index 9e680ca971e3..101580f0460a 100644
+--- a/drivers/infiniband/hw/qib/qib_init.c
++++ b/drivers/infiniband/hw/qib/qib_init.c
+@@ -258,15 +258,15 @@ int qib_init_pportdata(struct qib_pportdata *ppd, struct qib_devdata *dd,
  
- 	if (!host || !hpriv)
- 		return -ENOMEM;
--	hpriv->port_clks = devm_kzalloc(&pdev->dev,
--					sizeof(struct clk *) * n_ports,
-+	hpriv->port_clks = devm_kcalloc(&pdev->dev,
-+					n_ports,
-+					sizeof(*hpriv->port_clks),
- 					GFP_KERNEL);
- 	if (!hpriv->port_clks)
- 		return -ENOMEM;
--	hpriv->port_phys = devm_kzalloc(&pdev->dev,
--					sizeof(struct phy *) * n_ports,
-+	hpriv->port_phys = devm_kcalloc(&pdev->dev,
-+					n_ports,
-+					sizeof(*hpriv->port_phys),
- 					GFP_KERNEL);
- 	if (!hpriv->port_phys)
- 		return -ENOMEM;
+ 	ppd->cc_max_table_entries  		ppd->cc_supported_table_entries/IB_CCT_ENTRIES;
+-
+-	size = IB_CC_TABLE_CAP_DEFAULT * sizeof(struct ib_cc_table_entry)
+-		* IB_CCT_ENTRIES;
+-	ppd->ccti_entries = kzalloc(size, GFP_KERNEL);
++	ppd->ccti_entries = kcalloc(IB_CC_TABLE_CAP_DEFAULT * IB_CCT_ENTRIES,
++				    sizeof(*ppd->ccti_entries),
++				    GFP_KERNEL);
+ 	if (!ppd->ccti_entries)
+ 		goto bail;
+ 
+-	size = IB_CC_CCS_ENTRIES * sizeof(struct ib_cc_congestion_entry);
+-	ppd->congestion_entries = kzalloc(size, GFP_KERNEL);
++	ppd->congestion_entries = kcalloc(IB_CC_CCS_ENTRIES,
++					  sizeof(*ppd->congestion_entries),
++					  GFP_KERNEL);
+ 	if (!ppd->congestion_entries)
+ 		goto bail_1;
+ 
 -- 
 2.12.2
 
