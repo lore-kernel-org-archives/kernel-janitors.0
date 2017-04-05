@@ -1,33 +1,56 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:48:18 +0000
-Subject: Re: [PATCH 8/8] clk: nomadik: Delete error messages for a failed memory allocation in two functions
-Message-Id: <20170422024818.GO7065@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Apr 2017 13:52:48 +0000
+Subject: [PATCH 2/5] IB/qib: Use kmalloc_array() in qib_init_7322_variables()
+Message-Id: <894a5d6c-882c-0bd9-f3ec-80fc8b7c355c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
-In-Reply-To: <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
+References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
+In-Reply-To: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 10:04:00 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus remove such statements here.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Apr 2017 09:51:33 +0200
 
-Applied to clk-next
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kmalloc_array".
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/qib/qib_iba7322.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/hw/qib/qib_iba7322.c b/drivers/infiniband/hw/qib/qib_iba7322.c
+index e4e4e675c89c..490f432809b8 100644
+--- a/drivers/infiniband/hw/qib/qib_iba7322.c
++++ b/drivers/infiniband/hw/qib/qib_iba7322.c
+@@ -6442,12 +6442,15 @@ static int qib_init_7322_variables(struct qib_devdata *dd)
+ 	sbufcnt = dd->piobcnt2k + dd->piobcnt4k +
+ 		NUM_VL15_BUFS + BITS_PER_LONG - 1;
+ 	sbufcnt /= BITS_PER_LONG;
+-	dd->cspec->sendchkenable = kmalloc(sbufcnt *
+-		sizeof(*dd->cspec->sendchkenable), GFP_KERNEL);
+-	dd->cspec->sendgrhchk = kmalloc(sbufcnt *
+-		sizeof(*dd->cspec->sendgrhchk), GFP_KERNEL);
+-	dd->cspec->sendibchk = kmalloc(sbufcnt *
+-		sizeof(*dd->cspec->sendibchk), GFP_KERNEL);
++	dd->cspec->sendchkenable = kmalloc_array(sbufcnt,
++						 sizeof(*dd->cspec->sendchkenable),
++						 GFP_KERNEL);
++	dd->cspec->sendgrhchk = kmalloc_array(sbufcnt,
++					      sizeof(*dd->cspec->sendgrhchk),
++					      GFP_KERNEL);
++	dd->cspec->sendibchk = kmalloc_array(sbufcnt,
++					     sizeof(*dd->cspec->sendibchk),
++					     GFP_KERNEL);
+ 	if (!dd->cspec->sendchkenable || !dd->cspec->sendgrhchk ||
+ 		!dd->cspec->sendibchk) {
+ 		ret = -ENOMEM;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
+
