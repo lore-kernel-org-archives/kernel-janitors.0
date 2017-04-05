@@ -1,28 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Apr 2017 09:42:48 +0000
-Subject: Re: [PATCH] iwlwifi: pcie: off by one in iwl_trans_pcie_dyn_txq_alloc()
-Message-Id: <20170422094248.4l2cf6bpgbnqtujd@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Apr 2017 15:21:22 +0000
+Subject: Re: IB/qib: Adjust two size determinations in qib_init_pportdata()
+Message-Id: <c3885f83-8239-e21d-74fc-bf4fe03dd5dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421194619.sjc33647odsfkcfl@mwanda>
- <1492804774.19290.5.camel@sipsolutions.net>
- <20170421201200.4y4tzlxmktacskr6@mwanda>
- <1492844542.31741.127.camel@intel.com>
-In-Reply-To: <1492844542.31741.127.camel@intel.com>
+References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
+ <b5bc4160-aace-b919-7fe2-a4742d03c4ba@users.sourceforge.net>
+ <20170405143242.GB5006@yuval-lap>
+ <523b0864-e655-ed1f-8fe5-5995e0b0bde1@users.sourceforge.net>
+ <20170405151525.GA5519@yuval-lap>
+In-Reply-To: <20170405151525.GA5519@yuval-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Coelho, Luciano" <luciano.coelho@intel.com>
-Cc: "johannes@sipsolutions.net" <johannes@sipsolutions.net>, linuxwifi <linuxwifi@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Sharon, Sara" <sara.sharon@intel.com>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Yuval Shaia <yuval.shaia@oracle.com>
+Cc: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 22, 2017 at 07:02:23AM +0000, Coelho, Luciano wrote:
-> On Fri, 2017-04-21 at 23:12 +0300, Dan Carpenter wrote:
-> > Heh.  I raced this one through to see if I could beat you to the punch.
-> 
-> Yeah, this patch is in our internal tree.  But maybe we can take Dan's
-> for upstream for his efforts? :)
+> I found that the fix brings no harm to the existing code.
 
-No no.
+How do you think about to take another look at remaining update candidates
+at other source code places for this Linux module?
 
-regards,
-dan carpenter
-
+Regards,
+Markus
