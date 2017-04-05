@@ -1,92 +1,50 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 27 Apr 2017 06:17:34 +0000
-Subject: Re: [PATCH] iio: hid-sensor: fix return of -EINVAL on invalid values in ret or value
-Message-Id: <fc005c1c-a080-7f9a-240f-d63d19da0ef0@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Apr 2017 13:51:52 +0000
+Subject: [PATCH 1/5] IB/qib: Use kcalloc() in qib_init_iba7322_funcs()
+Message-Id: <5e5e00d3-b6a4-7371-65be-c5fe387d26b3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170419143548.14130-1-colin.king@canonical.com>
- <8b33d431-4c3b-fb94-539c-a35cb3a123cc@kernel.org>
- <1493214945.21220.15.camel@linux.intel.com>
-In-Reply-To: <1493214945.21220.15.camel@linux.intel.com>
+References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
+In-Reply-To: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Colin King <colin.king@canonical.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Song Hongyan <hongyan.song@intel.com>, hock.leong.kweh@intel.com, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 26/04/17 14:55, Srinivas Pandruvada wrote:
-> On Wed, 2017-04-26 at 07:32 +0100, Jonathan Cameron wrote:
->> On 19/04/17 15:35, Colin King wrote:
->>>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Ensure that when an invalid value in ret or value is found -EINVAL
->>> is returned. A previous commit broke the way the return error is
->>> being returned and instead caused the return code in ret to be
->>> re-assigned rather than be returned.
->>>
->>> Fixes: 5d9854eaea776 ("iio: hid-sensor: Store restore poll and
->>> hysteresis on S3")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> Given the 'fun' we have had with this on recently Srinivas, could you
->> sanity check what looks like an obviously correct patch?
-> Sorry for not paying enough attention to this patch.
-> If the set_feature() fails, the get_feature will also fail as only time
-> they will fail if the element is not supported. Invalid values are
-> silently rejected or in some hubs caps to nearest good value.
-> 
-> But patch itself is fine, but not an urgent one. It can go with normal
-> release cycle.
-> 
-> Thanks,
-> Srinivas
-Thanks,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Apr 2017 09:43:54 +0200
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-Jonathan
-> 
->>
->> I'm being overly paranoid for a while ;)
->>
->> Jonathan
->>>
->>> ---
->>>  drivers/iio/common/hid-sensors/hid-sensor-attributes.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c 
->>> b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->>> index 1c0874cdf665..aeb09a85d7a8 100644
->>> --- a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->>> +++ b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->>> @@ -230,7 +230,7 @@ int hid_sensor_write_samp_freq_value(struct
->>> hid_sensor_common *st,
->>>  	ret = sensor_hub_set_feature(st->hsdev, st-
->>>> poll.report_id,
->>>  				     st->poll.index,
->>> sizeof(value), &value);
->>>  	if (ret < 0 || value < 0)
->>> -		ret = -EINVAL;
->>> +		return -EINVAL;
->>>  
->>>  	ret = sensor_hub_get_feature(st->hsdev,
->>>  				     st->poll.report_id,
->>> @@ -283,7 +283,7 @@ int hid_sensor_write_raw_hyst_value(struct
->>> hid_sensor_common *st,
->>>  				     st->sensitivity.index,
->>> sizeof(value),
->>>  				     &value);
->>>  	if (ret < 0 || value < 0)
->>> -		ret = -EINVAL;
->>> +		return -EINVAL;
->>>  
->>>  	ret = sensor_hub_get_feature(st->hsdev,
->>>  				     st->sensitivity.report_id,
->>>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/qib/qib_iba7322.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/qib/qib_iba7322.c b/drivers/infiniband/hw/qib/qib_iba7322.c
+index af9f596bb68b..e4e4e675c89c 100644
+--- a/drivers/infiniband/hw/qib/qib_iba7322.c
++++ b/drivers/infiniband/hw/qib/qib_iba7322.c
+@@ -7324,8 +7324,9 @@ struct qib_devdata *qib_init_iba7322_funcs(struct pci_dev *pdev,
+ 		actual_cnt -= dd->num_pports;
+ 
+ 	tabsize = actual_cnt;
+-	dd->cspec->msix_entries = kzalloc(tabsize *
+-			sizeof(struct qib_msix_entry), GFP_KERNEL);
++	dd->cspec->msix_entries = kcalloc(tabsize,
++					  sizeof(*dd->cspec->msix_entries),
++					  GFP_KERNEL);
+ 	if (!dd->cspec->msix_entries)
+ 		tabsize = 0;
+ 
+-- 
+2.12.2
 
