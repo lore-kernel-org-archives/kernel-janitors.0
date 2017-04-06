@@ -1,44 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:48:55 +0000
-Subject: [PATCH v2 14/17] IB/mlx4: Delete unnecessary braces in mlx4_ib_add()
-Message-Id: <72f1d197-be64-fa7d-bc94-44ce590b78a6@users.sourceforge.net>
+Date: Thu, 06 Apr 2017 20:10:47 +0000
+Subject: [PATCH 2/2] IB/usnic: Use kcalloc() in usnic_vnic_alloc_res_chunk()
+Message-Id: <5d9ef1cc-44c5-b5a3-7ffd-3d94c517f129@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <f0a030a8-2a03-f531-57d8-39c2aeae28a4@users.sourceforge.net>
+In-Reply-To: <f0a030a8-2a03-f531-57d8-39c2aeae28a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Majd Dibbiny <majd-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+To: linux-rdma@vger.kernel.org, Christian Benvenuti <benve@cisco.com>, Dave Goodell <dgoodell@cisco.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:58:43 +0200
+Date: Thu, 6 Apr 2017 21:45:33 +0200
 
-Do not use curly brackets at one source code place
-where a single statement should be sufficient.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 ---
- drivers/infiniband/hw/mlx4/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/infiniband/hw/usnic/usnic_vnic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 67368dea9b6a..7dd5468cd4b8 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2901,9 +2901,8 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 		}
- 		if (dev->caps.flags2 & MLX4_DEV_CAP_FLAG2_ROCE_V1_V2) {
- 			err = mlx4_config_roce_v2_port(dev, ROCE_V2_UDP_DPORT);
--			if (err) {
-+			if (err)
- 				goto err_notif;
--			}
- 		}
+diff --git a/drivers/infiniband/hw/usnic/usnic_vnic.c b/drivers/infiniband/hw/usnic/usnic_vnic.c
+index e7b0030254da..a00bb9940cea 100644
+--- a/drivers/infiniband/hw/usnic/usnic_vnic.c
++++ b/drivers/infiniband/hw/usnic/usnic_vnic.c
+@@ -312,7 +312,7 @@ static int usnic_vnic_alloc_res_chunk(struct usnic_vnic *vnic,
  	}
+ 
+ 	chunk->cnt = chunk->free_cnt = cnt;
+-	chunk->res = kzalloc(sizeof(*(chunk->res))*cnt, GFP_KERNEL);
++	chunk->res = kcalloc(cnt, sizeof(*chunk->res), GFP_KERNEL);
+ 	if (!chunk->res)
+ 		return -ENOMEM;
  
 -- 
 2.12.2
