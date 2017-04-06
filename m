@@ -1,36 +1,27 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:34 +0000
-Subject: Re: [PATCH 3/6] clk: hisilicon: Use devm_kmalloc_array() in hisi_clk_alloc()
-Message-Id: <20170419183134.GS7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Apr 2017 05:21:32 +0000
+Subject: [PATCH] drm: bridge: dw-hdmi: Add a missing break statement
+Message-Id: <20170406052132.GA26605@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <bb46c386-99d2-b96f-a513-35a0d1f87fc2@users.sourceforge.net>
-In-Reply-To: <bb46c386-99d2-b96f-a513-35a0d1f87fc2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Archit Taneja <architt@codeaurora.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 10:15:19 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "devm_kmalloc_array".
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+There was supposed to be a break before the next case statement.
 
-Applied to clk-next
+Fixes: def23aa7e982 ("drm: bridge: dw-hdmi: Switch to V4L bus format and encodings")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 84cc949eae2b..8b605039c613 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1318,6 +1318,7 @@ static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 			frame.colorimetry = HDMI_COLORIMETRY_ITU_601;
+ 		frame.extended_colorimetry  				HDMI_EXTENDED_COLORIMETRY_XV_YCC_601;
++		break;
+ 	case V4L2_YCBCR_ENC_709:
+ 		if (hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_XV709)
+ 			frame.colorimetry = HDMI_COLORIMETRY_EXTENDED;
