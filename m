@@ -1,23 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Apr 2017 16:38:29 +0000
-Subject: Re: [PATCH] net: tc35815: move free after the dereference
-Message-Id: <20170424.123829.2173782188245590052.davem@davemloft.net>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Thu, 06 Apr 2017 18:34:44 +0000
+Subject: Re: [PATCH] HID: sony: remove redundant check for -ve err
+Message-Id: <alpine.LSU.2.20.1704061447230.28004@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421104937.7sxibmruc6pvp26p@mwanda>
-In-Reply-To: <20170421104937.7sxibmruc6pvp26p@mwanda>
+References: <20170327175118.28322-1-colin.king@canonical.com>
+In-Reply-To: <20170327175118.28322-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: anemo@mba.ocn.ne.jp, tremyfr@gmail.com, jarod@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Apr 2017 13:49:37 +0300
+On Mon, 27 Mar 2017, Colin King wrote:
 
-> We dereference "skb" to get "skb->len" so we should probably do that
-> step before freeing the skb.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: eea221ce4880 ("tc35815 driver update (take 2)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> err is being checked for failure each time it is being updated
+> so this err check is totally redundant and can be removed
+> 
+> Detected with CoverityScan, CID#1420665 ("Logically dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks Dan.
+Applied to for-4.12/sony.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
