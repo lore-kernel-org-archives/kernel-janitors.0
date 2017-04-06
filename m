@@ -1,98 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 21 Apr 2017 17:28:27 +0000
-Subject: Applied "ASoC: Intel: Skylake: Fix a couple user after free bugs" to the asoc tree
-Message-Id: <E1d1cM7-0001u9-Ty@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Apr 2017 20:09:45 +0000
+Subject: [PATCH 1/2] IB/usnic: Use kcalloc() in alloc_res_chunk_list()
+Message-Id: <db43dde0-c172-a9e5-1878-1bada275d095@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170414191120.GA30875@mwanda>
-In-Reply-To: <20170414191120.GA30875@mwanda>
+References: <f0a030a8-2a03-f531-57d8-39c2aeae28a4@users.sourceforge.net>
+In-Reply-To: <f0a030a8-2a03-f531-57d8-39c2aeae28a4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, G Kranthi <gudishax.kranthikumar@intel.com>, Mark Brown <broonie@kernel.org>, Hardik T Shah <hardik.t.shah@intel.com>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christian Benvenuti <benve-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Dave Goodell <dgoodell-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 6 Apr 2017 20:32:39 +0200
 
-   ASoC: Intel: Skylake: Fix a couple user after free bugs
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 550b349af0f0e33fedb252aca8dc144299aca308 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Apr 2017 22:11:20 +0300
-Subject: [PATCH] ASoC: Intel: Skylake: Fix a couple user after free bugs
-
-We need to use the _safe() version of list_for_each_entry() here because
-of the kfree(modules).
-
-Fixes: b8c722ddd548 ("ASoC: Intel: Skylake: Add support for deferred DSP module bind")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-pcm.c      | 4 ++--
- sound/soc/intel/skylake/skl-topology.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index 600faad19bd4..d43d1976dd3b 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1323,10 +1323,10 @@ int skl_platform_unregister(struct device *dev)
- {
- 	struct hdac_ext_bus *ebus = dev_get_drvdata(dev);
- 	struct skl *skl = ebus_to_skl(ebus);
--	struct skl_module_deferred_bind *modules;
-+	struct skl_module_deferred_bind *modules, *tmp;
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
+index 092d4e11a633..817f0475d9fe 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
+@@ -545,8 +545,8 @@ alloc_res_chunk_list(struct usnic_vnic *vnic,
+ 		/* Do Nothing */
+ 	}
  
- 	if (!list_empty(&skl->bind_list)) {
--		list_for_each_entry(modules, &skl->bind_list, node) {
-+		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
- 			list_del(&modules->node);
- 			kfree(modules);
- 		}
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 7f285176a074..0e459d3eb17a 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -1091,7 +1091,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
- 	struct skl_module_cfg *src_module = NULL, *dst_module;
- 	struct skl_sst *ctx = skl->skl_sst;
- 	struct skl_pipe *s_pipe = mconfig->pipe;
--	struct skl_module_deferred_bind *modules;
-+	struct skl_module_deferred_bind *modules, *tmp;
+-	res_chunk_list = kzalloc(sizeof(*res_chunk_list)*(res_lst_sz+1),
+-					GFP_ATOMIC);
++	res_chunk_list = kcalloc(res_lst_sz + 1, sizeof(*res_chunk_list),
++				 GFP_ATOMIC);
+ 	if (!res_chunk_list)
+ 		return ERR_PTR(-ENOMEM);
  
- 	if (s_pipe->state = SKL_PIPE_INVALID)
- 		return -EINVAL;
-@@ -1105,7 +1105,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
- 
- 		src_module = w_module->w->priv;
- 
--		list_for_each_entry(modules, &skl->bind_list, node) {
-+		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
- 			/*
- 			 * When the destination module is deleted, Unbind the
- 			 * modules from deferred bind list.
 -- 
-2.11.0
+2.12.2
 
