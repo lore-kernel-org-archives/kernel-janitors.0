@@ -1,27 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Apr 2017 12:32:50 +0000
-Subject: Re: [PATCH 3/3] HSI: omap_ssi: Delete an error message for a failed memory allocation in ssi_add_con
-Message-Id: <20170425123250.ipltfpgcgbtk6h3g@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 21:07:23 +0000
+Subject: [PATCH 7/9] IB/iser: Add spaces for better code readability
+Message-Id: <7e406ba5-f7c8-16a7-9c3e-464e48120088@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
- <e6102bce-0b27-68e6-8247-f87851f7f9b9@users.sourceforge.net>
- <20170425115446.GC7926@amd>
-In-Reply-To: <20170425115446.GC7926@amd>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-1) That allocation will never fail in real life so it's dead code.
-2) kmalloc and friends already have much better builtin in error
-   messages so it's useless.
-3) There is a small memory savings from removing it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 21:37:48 +0200
 
-I'm not saying you should apply the patch, I'm just saying that these
-messages are pointless and detrimental.
+The script "checkpatch.pl" pointed information out like the following.
 
-regards,
-an carpenter
+ERROR: space required after that ',' (ctx:VxV)
 
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/iser/iser_initiator.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
+index 6c48bdc8a64d..fbab1303a740 100644
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@ -422,7 +422,7 @@ int iser_send_command(struct iscsi_conn *conn,
+ 		return 0;
+ 
+ send_command_error:
+-	iser_err("conn %p failed task->itt %d err %d\n",conn, task->itt, err);
++	iser_err("conn %p failed task->itt %d err %d\n", conn, task->itt, err);
+ 	return err;
+ }
+ 
+@@ -448,7 +448,7 @@ int iser_send_data_out(struct iscsi_conn *conn,
+ 	buf_offset   = ntohl(hdr->offset);
+ 
+ 	iser_dbg("%s itt %d dseg_len %d offset %d\n",
+-		 __func__,(int)itt,(int)data_seg_len,(int)buf_offset);
++		 __func__, (int)itt, (int)data_seg_len, (int)buf_offset);
+ 
+ 	tx_desc = kmem_cache_zalloc(ig.desc_cache, GFP_ATOMIC);
+ 	if (tx_desc = NULL) {
+@@ -553,7 +553,7 @@ int iser_send_control(struct iscsi_conn *conn,
+ 		return 0;
+ 
+ send_control_error:
+-	iser_err("conn %p failed err %d\n",conn, err);
++	iser_err("conn %p failed err %d\n", conn, err);
+ 	return err;
+ }
+ 
+-- 
+2.12.2
 
