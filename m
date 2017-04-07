@@ -1,72 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Apr 2017 13:31:20 +0000
-Subject: [PATCH] staging: rtl8723bs: fix spelling mistakes in RT_TRACE messages
-Message-Id: <20170411133120.20908-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 21:08:19 +0000
+Subject: [PATCH 8/9] IB/isert: Use kcalloc() in isert_alloc_rx_descriptors()
+Message-Id: <e4813638-f7d2-156f-89fa-4821ad186524@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411131708.20268-1-colin.king@canonical.com>
-In-Reply-To: <20170411131708.20268-1-colin.king@canonical.com>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Ahern <dsa-qUQiAmfTcIp+XZJcv9eMoEEOCMrvLtNR@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Erez Shitrit <erezsh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Feras Daoud <ferasda-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Paolo Abeni <pabeni-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagi-NQWnxTmZq1alnMjI0IkVqw@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zhu Yanjun <yanjun.zhu-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 22:00:43 +0200
 
-Fix a few spelling mistakes in RT_TRACE messages and split up
-wide lines to span multiple lines
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8723bs/core/rtw_ioctl_set.c | 4 +++-
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c  | 4 +++-
- drivers/staging/rtl8723bs/os_dep/os_intfs.c    | 3 ++-
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/isert/ib_isert.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-index 073b0875fdca..e0793f8d329d 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-@@ -622,7 +622,9 @@ u8 rtw_set_802_11_add_wep(struct adapter *padapter, struct ndis_802_11_wep *wep)
- 		break;
- 	}
+diff --git a/drivers/infiniband/ulp/isert/ib_isert.c b/drivers/infiniband/ulp/isert/ib_isert.c
+index 91cbe86b25c8..c56af6183082 100644
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -181,8 +181,9 @@ isert_alloc_rx_descriptors(struct isert_conn *isert_conn)
+ 	u64 dma_addr;
+ 	int i, j;
  
--	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("rtw_set_802_11_add_wep:befor memcpy, wep->KeyLength = 0x%x wep->KeyIndex = 0x%x  keyid =%x\n", wep->KeyLength, wep->KeyIndex, keyid));
-+	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_,
-+		 ("rtw_set_802_11_add_wep:before memcpy, wep->KeyLength = 0x%x wep->KeyIndex = 0x%x  keyid =%x\n",
-+		  wep->KeyLength, wep->KeyIndex, keyid));
- 
- 	memcpy(&(psecuritypriv->dot11DefKey[keyid].skey[0]), &(wep->KeyMaterial), wep->KeyLength);
- 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 18e78d5198c3..0de56ec9ecc9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -6677,7 +6677,9 @@ u8 mlme_evt_hdl(struct adapter *padapter, unsigned char *pbuf)
- 	#ifdef CHECK_EVENT_SEQ
- 	/*  checking event sequence... */
- 	if (evt_seq != (atomic_read(&pevt_priv->event_seq) & 0x7f)) {
--		RT_TRACE(_module_rtl871x_cmd_c_, _drv_info_, ("Evetn Seq Error! %d vs %d\n", (evt_seq & 0x7f), (atomic_read(&pevt_priv->event_seq) & 0x7f)));
-+		RT_TRACE(_module_rtl871x_cmd_c_, _drv_info_,
-+			 ("Event Seq Error! %d vs %d\n", (evt_seq & 0x7f),
-+			  (atomic_read(&pevt_priv->event_seq) & 0x7f)));
- 
- 		pevt_priv->event_seq = (evt_seq+1)&0x7f;
- 
-diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-index 843be2cc6c10..f83cfc76505c 100644
---- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-+++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-@@ -1275,7 +1275,8 @@ void rtw_dev_unload(struct adapter *padapter)
- 			}
- 			padapter->bSurpriseRemoved = true;
- 		}
--		RT_TRACE(_module_hci_intfs_c_, _drv_notice_, ("@ %s: deinit hal complelt!\n", __func__));
-+		RT_TRACE(_module_hci_intfs_c_, _drv_notice_,
-+			 ("@ %s: deinit hal complete!\n", __func__));
- 
- 		padapter->bup = false;
+-	isert_conn->rx_descs = kzalloc(ISERT_QP_MAX_RECV_DTOS *
+-				sizeof(struct iser_rx_desc), GFP_KERNEL);
++	isert_conn->rx_descs = kcalloc(ISERT_QP_MAX_RECV_DTOS,
++				       sizeof(*isert_conn->rx_descs),
++				       GFP_KERNEL);
+ 	if (!isert_conn->rx_descs)
+ 		return -ENOMEM;
  
 -- 
-2.11.0
+2.12.2
 
