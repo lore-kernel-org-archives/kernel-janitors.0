@@ -1,29 +1,68 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 08 Apr 2017 14:50:25 +0000
-Subject: Re: [PATCH 2/3] IB/srp: Enclose 14 expressions for the sizeof operator by parentheses
-Message-Id: <1491663025.3250.39.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 21:05:23 +0000
+Subject: [PATCH 5/9] IB/IPoIB: Combine substrings for three messages
+Message-Id: <8267b19e-d6a6-ac77-6b0e-e184e690db9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50db1f1d-b689-1a9d-f6dd-a0f55169c75a@users.sourceforge.net>
-         <a7bdda64-7cd8-1107-9669-6ab0f70e16ad@users.sourceforge.net>
-In-Reply-To: <a7bdda64-7cd8-1107-9669-6ab0f70e16ad-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bart Van Assche <bart.vanassche-XdAiOPVOjttBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2017-04-08 at 14:12 +0200, SF Markus Elfring wrote:
-[]
-> diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
-[]
-> @@ -3308,7 +3308,7 @@ static ssize_t srp_create_target(struct device *dev,
->  	target_host->max_channel = 0;
->  	target_host->max_id      = 1;
->  	target_host->max_lun     = -1LL;
-> -	target_host->max_cmd_len = sizeof ((struct srp_cmd *) (void *) 0L)->cdb;
-> +	target_host->max_cmd_len = sizeof(((struct srp_cmd *)(void *)0L)->cdb);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 21:06:08 +0200
 
-Maybe better as:
+The script "checkpatch.pl" pointed information out like the following.
 
-	target_host->max_cmd_len = FIELD_SIZEOF(struct srp_cmd, cdb);
+WARNING: quoted string split across lines
+
+Thus fix affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 55581417eb43..43aef0ca53ad 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -226,8 +226,9 @@ static int ipoib_change_mtu(struct net_device *dev, int new_mtu)
+ 	priv->admin_mtu = new_mtu;
+ 
+ 	if (priv->mcast_mtu < priv->admin_mtu)
+-		ipoib_dbg(priv, "MTU must be smaller than the underlying "
+-				"link layer MTU - 4 (%u)\n", priv->mcast_mtu);
++		ipoib_dbg(priv,
++			  "MTU must be smaller than the underlying link layer MTU - 4 (%u)\n",
++			  priv->mcast_mtu);
+ 
+ 	dev->mtu = min(priv->mcast_mtu, priv->admin_mtu);
+ 
+@@ -480,8 +481,8 @@ int ipoib_set_mode(struct net_device *dev, const char *buf)
+ 	/* flush paths if we switch modes so that connections are restarted */
+ 	if (IPOIB_CM_SUPPORTED(dev->dev_addr) && !strcmp(buf, "connected\n")) {
+ 		set_bit(IPOIB_FLAG_ADMIN_CM, &priv->flags);
+-		ipoib_warn(priv, "enabling connected mode "
+-			   "will cause multicast packet drops\n");
++		ipoib_warn(priv,
++			   "enabling connected mode will cause multicast packet drops\n");
+ 		netdev_update_features(dev);
+ 		dev_set_mtu(dev, ipoib_cm_max_mtu(dev));
+ 		rtnl_unlock();
+@@ -1855,8 +1856,8 @@ void ipoib_set_umcast(struct net_device *ndev, int umcast_val)
+ 
+ 	if (umcast_val > 0) {
+ 		set_bit(IPOIB_FLAG_UMCAST, &priv->flags);
+-		ipoib_warn(priv, "ignoring multicast groups joined directly "
+-				"by userspace\n");
++		ipoib_warn(priv,
++			   "ignoring multicast groups joined directly by userspace\n");
+ 	} else
+ 		clear_bit(IPOIB_FLAG_UMCAST, &priv->flags);
+ }
+-- 
+2.12.2
 
