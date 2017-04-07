@@ -1,43 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:30:12 +0000
-Subject: [PATCH 20/25] net: mvpp2: Adjust a null pointer check in mvpp2_egress_enable()
-Message-Id: <54acb3f4-8a0c-90ba-4267-f62e10baa252@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Apr 2017 23:22:03 +0000
+Subject: [PATCH] ubifs: fix cut and paste error on sb type comparisons
+Message-Id: <20170407232203.9100-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 14:07:52 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The check for the bad node type of sb->type is checking sa->type
+and not sb-type. This looks like a cut and paste error. Fix this.
 
-Comparison to NULL could be written "txq->descs".
+Detected by PVS-Studio, warning: V581
 
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ubifs/debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 3bdd3f1fe34e..9b875d776b29 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -4415,7 +4415,7 @@ static void mvpp2_egress_enable(struct mvpp2_port *port)
- 	for (queue = 0; queue < txq_number; queue++) {
- 		struct mvpp2_tx_queue *txq = port->txqs[queue];
- 
--		if (txq->descs != NULL)
-+		if (txq->descs)
- 			qmap |= (1 << queue);
- 	}
- 
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 1e712a364680..cb687733136d 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -2387,8 +2387,8 @@ int dbg_check_nondata_nodes_order(struct ubifs_info *c, struct list_head *head)
+ 			ubifs_dump_node(c, sa->node);
+ 			return -EINVAL;
+ 		}
+-		if (sa->type != UBIFS_INO_NODE && sa->type != UBIFS_DENT_NODE &&
+-		    sa->type != UBIFS_XENT_NODE) {
++		if (sb->type != UBIFS_INO_NODE && sb->type != UBIFS_DENT_NODE &&
++		    sb->type != UBIFS_XENT_NODE) {
+ 			ubifs_err(c, "bad node type %d", sb->type);
+ 			ubifs_dump_node(c, sb->node);
+ 			return -EINVAL;
 -- 
-2.12.2
+2.11.0
 
