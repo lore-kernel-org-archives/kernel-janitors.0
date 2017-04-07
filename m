@@ -1,52 +1,90 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Tue, 18 Apr 2017 08:00:59 +0000
-Subject: Re: [PATCH] drm: atmel-hlcdc: Uninitialized return in atmel_hlcdc_create_outputs()
-Message-Id: <20170418100059.790c5d0f@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 21:03:35 +0000
+Subject: [PATCH 4/9] IB/IPoIB: Delete unwanted spaces behind usages of the sizeof operator
+Message-Id: <3e97b74c-26fa-2965-fa3c-e0f96c62e46e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170415192142.GA6416@mwanda>
-In-Reply-To: <20170415192142.GA6416@mwanda>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Ahern <dsa-qUQiAmfTcIp+XZJcv9eMoEEOCMrvLtNR@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Erez Shitrit <erezsh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Feras Daoud <ferasda-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Paolo Abeni <pabeni-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagi-NQWnxTmZq1alnMjI0IkVqw@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zhu Yanjun <yanjun.zhu-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat, 15 Apr 2017 22:21:42 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 20:10:45 +0200
 
-> It's not possible for endpoint to be zero so the test doesn't work.  If
-> we break on the first iteration through the loop then endpoint is 1 and
-> "ret" is uninitialized.
-> 
-> Fixes: ebc944613567 ("drm: convert drivers to use drm_of_find_panel_or_bridge")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Replace the source code "sizeof (" by "sizeof("
+  according to the Linux coding style convention.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+* Adjust indentation at a few places.
 
-Daniel, should I directly apply this patch to drm-misc-next-fixes or
-should I wait for someone else to take it?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-> 
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> index f987b4572d4a..65a3bd7a0c00 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> @@ -221,7 +221,8 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev,
->  int atmel_hlcdc_create_outputs(struct drm_device *dev)
->  {
->  	struct device_node *remote;
-> -	int ret, endpoint = 0;
-> +	int ret = -ENODEV;
-> +	int endpoint = 0;
->  
->  	while (true) {
->  		/* Loop thru possible multiple connections to the output */
-> @@ -236,7 +237,5 @@ int atmel_hlcdc_create_outputs(struct drm_device *dev)
->  			return ret;
->  	}
->  
-> -	if (!endpoint)
-> -		return -ENODEV;
->  	return ret;
->  }
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 446af4ec3d86..55581417eb43 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -514,8 +514,7 @@ struct ipoib_path *__path_find(struct net_device *dev, void *gid)
+ 		path = rb_entry(n, struct ipoib_path, rb_node);
+ 
+ 		ret = memcmp(gid, path->pathrec.dgid.raw,
+-			     sizeof (union ib_gid));
+-
++			     sizeof(union ib_gid));
+ 		if (ret < 0)
+ 			n = n->rb_left;
+ 		else if (ret > 0)
+@@ -540,7 +539,7 @@ static int __path_add(struct net_device *dev, struct ipoib_path *path)
+ 		tpath = rb_entry(pn, struct ipoib_path, rb_node);
+ 
+ 		ret = memcmp(path->pathrec.dgid.raw, tpath->pathrec.dgid.raw,
+-			     sizeof (union ib_gid));
++			     sizeof(union ib_gid));
+ 		if (ret < 0)
+ 			n = &pn->rb_left;
+ 		else if (ret > 0)
+@@ -611,7 +610,7 @@ int ipoib_path_iter_next(struct ipoib_path_iter *iter)
+ 		path = rb_entry(n, struct ipoib_path, rb_node);
+ 
+ 		if (memcmp(iter->path.pathrec.dgid.raw, path->pathrec.dgid.raw,
+-			   sizeof (union ib_gid)) < 0) {
++			   sizeof(union ib_gid)) < 0) {
+ 			iter->path = *path;
+ 			ret = 0;
+ 			break;
+@@ -874,7 +873,7 @@ static struct ipoib_path *path_rec_create(struct net_device *dev, void *gid)
+ 
+ 	INIT_LIST_HEAD(&path->neigh_list);
+ 
+-	memcpy(path->pathrec.dgid.raw, gid, sizeof (union ib_gid));
++	memcpy(path->pathrec.dgid.raw, gid, sizeof(union ib_gid));
+ 	path->pathrec.sgid	    = priv->local_gid;
+ 	path->pathrec.pkey	    = cpu_to_be16(priv->pkey);
+ 	path->pathrec.numb_path     = 1;
+@@ -1541,7 +1540,8 @@ void ipoib_del_neighs_by_gid(struct net_device *dev, u8 *gid)
+ 		while ((neigh = rcu_dereference_protected(*np,
+ 							  lockdep_is_held(&priv->lock))) != NULL) {
+ 			/* delete neighs belong to this parent */
+-			if (!memcmp(gid, neigh->daddr + 4, sizeof (union ib_gid))) {
++			if (!memcmp(gid, neigh->daddr + 4,
++				    sizeof(union ib_gid))) {
+ 				rcu_assign_pointer(*np,
+ 						   rcu_dereference_protected(neigh->hnext,
+ 									     lockdep_is_held(&priv->lock)));
+@@ -2060,7 +2060,8 @@ static struct net_device *ipoib_add_port(const char *format,
+ 		       hca->name, port, result);
+ 		goto device_init_failed;
+ 	} else
+-		memcpy(priv->dev->dev_addr + 4, priv->local_gid.raw, sizeof (union ib_gid));
++		memcpy(priv->dev->dev_addr + 4, priv->local_gid.raw,
++		       sizeof(union ib_gid));
+ 	set_bit(IPOIB_FLAG_DEV_ADDR_SET, &priv->flags);
+ 
+ 	result = ipoib_dev_init(priv->dev, hca, port);
+-- 
+2.12.2
 
