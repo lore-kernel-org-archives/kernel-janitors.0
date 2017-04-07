@@ -1,36 +1,88 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:29 +0000
-Subject: Re: [PATCH 1/6] clk: hisilicon: Use kcalloc() in hisi_clk_init()
-Message-Id: <20170419183129.GQ7065@codeaurora.org>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 07 Apr 2017 05:56:04 +0000
+Subject: [PATCH 1/3] staging: atomisp: remove enable_isp_irq function and add disable_isp_irq
+Message-Id: <20170407055604.GA32049@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <26e4342d-2292-adbf-5eb1-9ee172685498@users.sourceforge.net>
-In-Reply-To: <26e4342d-2292-adbf-5eb1-9ee172685498@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 09:25:47 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kcalloc".
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Enable/Disable ISP irq is switched with "enable" parameter of
+enable_isp_irq(). It would be better splited to two such as
+enable_isp_irq()/disable_isp_irq().
 
-Applied to clk-next
+But the enable_isp_irq() is no use in atomisp_cmd.c file.
+So remove the enable_isp_irq() function and add
+disable_isp_irq function only.
 
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+This series of patches are related to previous patches:
+[1] https://lkml.org/lkml/2017/3/27/159
+[2] https://lkml.org/lkml/2017/3/30/1068
+[3] https://lkml.org/lkml/2017/3/30/1069
+
+ .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 36 ++++++----------------
+ 1 file changed, 9 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 0ba5d8b..c3d0596 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -375,34 +375,16 @@ int atomisp_reset(struct atomisp_device *isp)
+ }
+ 
+ /*
+- * interrupt enable/disable functions
++ * interrupt disable functions
+  */
+-static void enable_isp_irq(enum hrt_isp_css_irq irq, bool enable)
+-{
+-	if (enable) {
+-		irq_enable_channel(IRQ0_ID, irq);
+-		/*sh_css_hrt_irq_enable(irq, true, false);*/
+-		switch (irq) { /*We only have sp interrupt right now*/
+-		case hrt_isp_css_irq_sp:
+-			/*sh_css_hrt_irq_enable_sp(true);*/
+-			cnd_sp_irq_enable(SP0_ID, true);
+-			break;
+-		default:
+-			break;
+-		}
++static void disable_isp_irq(enum hrt_isp_css_irq irq)
++{
++	irq_disable_channel(IRQ0_ID, irq);
+ 
+-	} else {
+-		/*sh_css_hrt_irq_disable(irq);*/
+-		irq_disable_channel(IRQ0_ID, irq);
+-		switch (irq) {
+-		case hrt_isp_css_irq_sp:
+-			/*sh_css_hrt_irq_enable_sp(false);*/
+-			cnd_sp_irq_enable(SP0_ID, false);
+-			break;
+-		default:
+-			break;
+-		}
+-	}
++	if (irq != hrt_isp_css_irq_sp)
++		return;
++
++	cnd_sp_irq_enable(SP0_ID, false);
+ }
+ 
+ /*
+@@ -1415,7 +1397,7 @@ static void __atomisp_css_recover(struct atomisp_device *isp, bool isp_timeout)
+ 	}
+ 
+ 	/* clear irq */
+-	enable_isp_irq(hrt_isp_css_irq_sp, false);
++	disable_isp_irq(hrt_isp_css_irq_sp);
+ 	clear_isp_irq(hrt_isp_css_irq_sp);
+ 
+ 	/* Set the SRSE to 3 before resetting */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
