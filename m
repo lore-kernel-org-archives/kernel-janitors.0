@@ -1,33 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Apr 2017 12:57:23 +0000
-Subject: Re: [PATCH 1/2] [media] vb2: Fix an off by one error in 'vb2_plane_vaddr'
-Message-Id: <20170425125723.6otfxmhkh3igtaqm@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 07 Apr 2017 07:57:23 +0000
+Subject: [PATCH] RDS: IB: ensure an initialized ret is printed in pr_warn message
+Message-Id: <20170407075723.9669-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170423213257.14773-1-christophe.jaillet@wanadoo.fr>
- <20170424141655.GQ7456@valkosipuli.retiisi.org.uk>
- <9aab41eb-5543-58d2-211f-95fb00f5176c@wanadoo.fr>
- <20170424202906.GW7456@valkosipuli.retiisi.org.uk>
- <09a88460-39fc-7d80-e213-15e47499319d@wanadoo.fr>
-In-Reply-To: <09a88460-39fc-7d80-e213-15e47499319d@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "David S . Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rds-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Gar... No.  The 3.6+ from a9ae4692eda4 ("[media] vb2: fix plane index
-sanity check in vb2_plane_cookie()") feels totally arbitrary to me.  No
-need to be consistent.
+From: Colin Ian King <colin.king@canonical.com>
 
-Just do:
+There is a path where ibmr is null and ret has not been initialized
+and hence a pr_warn message is printing an uninitialized value in
+ret.  Fix this by initializing ret to zero.
 
-Cc: stable@vger.kernel.org
-Fixes: e23ccc0ad925 ("[media] v4l: add videobuf2 Video for Linux 2 driver framework")
+Detected by CoverityScan, CID#1357946 ("Uninitialized scalar variable")
 
-Fixes tags are always good too have btw.  You should be adding them
-by default to everything even if it doesn't get backported to stable.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rds/ib_rdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
-
+diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+index 977f69886c00..4fd637491dd5 100644
+--- a/net/rds/ib_rdma.c
++++ b/net/rds/ib_rdma.c
+@@ -542,7 +542,7 @@ void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
+ 	struct rds_ib_device *rds_ibdev;
+ 	struct rds_ib_mr *ibmr = NULL;
+ 	struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
+-	int ret;
++	int ret = 0;
+ 
+ 	rds_ibdev = rds_ib_get_device(rs->rs_bound_addr);
+ 	if (!rds_ibdev) {
+-- 
+2.11.0
 
