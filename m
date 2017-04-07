@@ -1,61 +1,52 @@
-From: Mark Greer <mgreer@animalcreek.com>
-Date: Wed, 26 Apr 2017 17:04:43 +0000
-Subject: Re: [PATCH] NFC: trf7970a: Correct register settings for 27MHz clock
-Message-Id: <20170426170443.GB11522@animalcreek.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 20:57:07 +0000
+Subject: [PATCH 1/9] IB/IPoIB: Use kcalloc() in two functions
+Message-Id: <b6829c25-7c8b-858d-5cad-0322d6536f44@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493214513-12245-1-git-send-email-geoff@kuvee.com>
-In-Reply-To: <1493214513-12245-1-git-send-email-geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geoff Lansberry <geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>, g@animalcreek.com
-Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfc-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mgreer-luAo+O/VEmrlveNOaEYElw@public.gmane.org, justin-R+k406RtEhcAvxtiuMwx3w@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org
+To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagi@grimberg.me>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 26, 2017 at 09:48:33AM -0400, Geoff Lansberry wrote:
-> In prior commits the selected clock frequency does not propagate
-> correctly to what is written the the TRF7970A_MODULATOR_SYS_CLK_CTRL
-> register.
-> Also fixes a bug that causes the device tree property check to always
-> pass.
-> 
-> Signed-off-by: Geoff Lansberry <geoff@kuvee.com>
-> ---
->  drivers/nfc/trf7970a.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
-> index 2d1c8ca..c278b0e 100644
-> --- a/drivers/nfc/trf7970a.c
-> +++ b/drivers/nfc/trf7970a.c
-> @@ -2071,7 +2071,7 @@ static int trf7970a_probe(struct spi_device *spi)
->  	}
->  
->  	of_property_read_u32(np, "clock-frequency", &clk_freq);
-> -	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
-> +	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) &&
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 17:43:51 +0200
 
-There is already a patch submitted to fix this issue so no need to fix
-it again.  For the record, it should have been in a separate patch
-since it fixes a different issue than what is fixed below.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kcalloc".
 
->  		(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
->  		dev_err(trf->dev,
->  			"clock-frequency (%u Hz) unsupported\n",
-> @@ -2079,6 +2079,13 @@ static int trf7970a_probe(struct spi_device *spi)
->  		return -EINVAL;
->  	}
->  
-> +	if (clk_freq = TRF7970A_27MHZ_CLOCK_FREQUENCY) {
-> +		trf->modulator_sys_clk_ctrl = TRF7970A_MODULATOR_27MHZ;
-> +		dev_dbg(trf->dev, "trf7970a configured for 27MHz crystal\n");
-> +	} else {
-> +		trf->modulator_sys_clk_ctrl = 0;
-> +	}
-> +
->  	if (of_property_read_bool(np, "en2-rf-quirk"))
->  		trf->quirks |= TRF7970A_QUIRK_EN2_MUST_STAY_LOW;
+This issue was detected by using the Coccinelle software.
 
-This part looks okay to me but I like Walter's suggestion too.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Mark
---
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index d1d3fb7a6127..3d3e49fb15b7 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1484,7 +1484,7 @@ static int ipoib_neigh_hash_init(struct ipoib_dev_priv *priv)
+ 		return -ENOMEM;
+ 	set_bit(IPOIB_STOP_NEIGH_GC, &priv->flags);
+ 	size = roundup_pow_of_two(arp_tbl.gc_thresh3);
+-	buckets = kzalloc(size * sizeof(*buckets), GFP_KERNEL);
++	buckets = kcalloc(size, sizeof(*buckets), GFP_KERNEL);
+ 	if (!buckets) {
+ 		kfree(htbl);
+ 		return -ENOMEM;
+@@ -1628,7 +1628,7 @@ int ipoib_dev_init(struct net_device *dev, struct ib_device *ca, int port)
+ 	struct ipoib_dev_priv *priv = netdev_priv(dev);
+ 
+ 	/* Allocate RX/TX "rings" to hold queued skbs */
+-	priv->rx_ring =	kzalloc(ipoib_recvq_size * sizeof *priv->rx_ring,
++	priv->rx_ring =	kcalloc(ipoib_recvq_size, sizeof(*priv->rx_ring),
+ 				GFP_KERNEL);
+ 	if (!priv->rx_ring)
+ 		goto out;
+-- 
+2.12.2
+
