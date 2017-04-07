@@ -1,48 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 04 Apr 2017 09:13:11 +0000
-Subject: [bug report] A Sample of using socket cookie and uid for traffic monitoring
-Message-Id: <20170404091310.GA4061@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 07 Apr 2017 05:57:23 +0000
+Subject: [PATCH 3/3] staging: atomisp: move mipi_info assignment to next line in __get_asd_from_port()
+Message-Id: <20170407055702.GA32406@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Chenbo Feng,
+The line which is initializing mipi_info variable is too long
+to read. It would be placed in next line.
 
-The patch 51570a5ab2b7: "A Sample of using socket cookie and uid for
-traffic monitoring" from Mar 22, 2017, leads to the following static
-checker warning:
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+This series of patches are related to previous patches:
+[1] https://lkml.org/lkml/2017/3/27/159
+[2] https://lkml.org/lkml/2017/3/30/1068
+[3] https://lkml.org/lkml/2017/3/30/1069
 
-	./samples/bpf/cookie_uid_helper_example.c:185 print_table()
-	warn: unsigned 'res' is never less than zero.
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-samples/bpf/cookie_uid_helper_example.c
-   176  static void print_table(void)
-   177  {
-   178          struct stats curEntry;
-   179          uint32_t curN = UINT32_MAX;
-   180          uint32_t nextN, res;
-                                ^^^
-Unsigned.
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index 4af76b5..2208477 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -532,9 +532,11 @@ static void clear_irq_reg(struct atomisp_device *isp)
+ 	/* Check which isp subdev to send eof */
+ 	for (i = 0; i < isp->num_of_streams; i++) {
+ 		struct atomisp_sub_device *asd = &isp->asd[i];
+-		struct camera_mipi_info *mipi_info -				atomisp_to_sensor_mipi_info(
+-					isp->inputs[asd->input_curr].camera);
++		struct camera_mipi_info *mipi_info;
++
++		mipi_info = atomisp_to_sensor_mipi_info(
++				isp->inputs[asd->input_curr].camera);
++
+ 		if (asd->streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
+ 		    __get_mipi_port(isp, mipi_info->port) = port) {
+ 			return asd;
+-- 
+1.9.1
 
-   181  
-   182          while (bpf_map_get_next_key(map_fd, &curN, &nextN) > -1) {
-   183                  curN = nextN;
-   184                  res = bpf_map_lookup_elem(map_fd, &curN, &curEntry);
-   185                  if (res < 0) {
-                            ^^^^^^^
-Not possible.
-
-   186                          error(1, errno, "fail to get entry value of Key: %u\n",
-   187                                  curN);
-   188                  } else {
-   189                          printf("cookie: %u, uid: 0x%x, Packet Count: %lu,"
-   190                                  " Bytes Count: %lu\n", curN, curEntry.uid,
-   191                                  curEntry.packets, curEntry.bytes);
-   192                  }
-   193          }
-   194  }
-
-regards,
-dan carpenter
