@@ -1,37 +1,48 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Tue, 25 Apr 2017 09:42:44 +0000
-Subject: Re: [PATCH] mtd: oxnas_nand: Allocating more than necessary in probe()
-Message-Id: <26f3dff2-274c-0b5f-cbfb-a95a23a2131a@baylibre.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Apr 2017 21:06:25 +0000
+Subject: [PATCH 6/9] IB/iser: Use kmalloc_array() in iser_alloc_rx_descriptors()
+Message-Id: <75e5726b-d75f-1b79-1242-08f6440e1691@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170425091949.uindhaxmbtsksqc7@mwanda>
-In-Reply-To: <20170425091949.uindhaxmbtsksqc7@mwanda>
+References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
+In-Reply-To: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-oxnas@lists.tuxfamily.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Ahern <dsa-qUQiAmfTcIp+XZJcv9eMoEEOCMrvLtNR@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Erez Shitrit <erezsh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Feras Daoud <ferasda-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Paolo Abeni <pabeni-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagi-NQWnxTmZq1alnMjI0IkVqw@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zhu Yanjun <yanjun.zhu-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 04/25/2017 11:19 AM, Dan Carpenter wrote:
-> We only need to allocate sizeof(struct oxnas_nand_ctrl) which is 192
-> bytes and not sizeof(struct nand_chip) which is a much larger 3056
-> bytes.
-> 
-> Fixes: 668592492409 ("mtd: nand: Add OX820 NAND Support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/mtd/nand/oxnas_nand.c b/drivers/mtd/nand/oxnas_nand.c
-> index 3e3bf3b364d2..1b207aac840c 100644
-> --- a/drivers/mtd/nand/oxnas_nand.c
-> +++ b/drivers/mtd/nand/oxnas_nand.c
-> @@ -91,7 +91,7 @@ static int oxnas_nand_probe(struct platform_device *pdev)
->  	int err = 0;
->  
->  	/* Allocate memory for the device structure (and zero it) */
-> -	oxnas = devm_kzalloc(&pdev->dev, sizeof(struct nand_chip),
-> +	oxnas = devm_kzalloc(&pdev->dev, sizeof(*oxnas),
->  			     GFP_KERNEL);
->  	if (!oxnas)
->  		return -ENOMEM;
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 7 Apr 2017 21:23:29 +0200
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/iser/iser_initiator.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
+index 81ae2e30dd12..6c48bdc8a64d 100644
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@ -257,8 +257,9 @@ int iser_alloc_rx_descriptors(struct iser_conn *iser_conn,
+ 		goto alloc_login_buf_fail;
+ 
+ 	iser_conn->num_rx_descs = session->cmds_max;
+-	iser_conn->rx_descs = kmalloc(iser_conn->num_rx_descs *
+-				sizeof(struct iser_rx_desc), GFP_KERNEL);
++	iser_conn->rx_descs = kmalloc_array(iser_conn->num_rx_descs,
++					    sizeof(*iser_conn->rx_descs),
++					    GFP_KERNEL);
+ 	if (!iser_conn->rx_descs)
+ 		goto rx_desc_alloc_fail;
+ 
+-- 
+2.12.2
+
