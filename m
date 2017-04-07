@@ -1,88 +1,26 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 07 Apr 2017 05:56:04 +0000
-Subject: [PATCH 1/3] staging: atomisp: remove enable_isp_irq function and add disable_isp_irq
-Message-Id: <20170407055604.GA32049@SEL-JYOUN-D1>
+From: Alan Cox <alan@linux.intel.com>
+Date: Fri, 07 Apr 2017 13:48:43 +0000
+Subject: Re: [PATCH 1/3] staging: atomisp: remove enable_isp_irq function and add disable_isp_irq
+Message-Id: <1491572923.3704.84.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170407055604.GA32049@SEL-JYOUN-D1>
+In-Reply-To: <20170407055604.GA32049@SEL-JYOUN-D1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daeseok Youn <daeseok.youn@gmail.com>, mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Enable/Disable ISP irq is switched with "enable" parameter of
-enable_isp_irq(). It would be better splited to two such as
-enable_isp_irq()/disable_isp_irq().
+On Fri, 2017-04-07 at 14:56 +0900, Daeseok Youn wrote:
+> Enable/Disable ISP irq is switched with "enable" parameter of
+> enable_isp_irq(). It would be better splited to two such as
+> enable_isp_irq()/disable_isp_irq().
+> 
+> But the enable_isp_irq() is no use in atomisp_cmd.c file.
+> So remove the enable_isp_irq() function and add
+> disable_isp_irq function only.
 
-But the enable_isp_irq() is no use in atomisp_cmd.c file.
-So remove the enable_isp_irq() function and add
-disable_isp_irq function only.
+All 3 added to my tree - thanks
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-This series of patches are related to previous patches:
-[1] https://lkml.org/lkml/2017/3/27/159
-[2] https://lkml.org/lkml/2017/3/30/1068
-[3] https://lkml.org/lkml/2017/3/30/1069
-
- .../media/atomisp/pci/atomisp2/atomisp_cmd.c       | 36 ++++++----------------
- 1 file changed, 9 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index 0ba5d8b..c3d0596 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -375,34 +375,16 @@ int atomisp_reset(struct atomisp_device *isp)
- }
- 
- /*
-- * interrupt enable/disable functions
-+ * interrupt disable functions
-  */
--static void enable_isp_irq(enum hrt_isp_css_irq irq, bool enable)
--{
--	if (enable) {
--		irq_enable_channel(IRQ0_ID, irq);
--		/*sh_css_hrt_irq_enable(irq, true, false);*/
--		switch (irq) { /*We only have sp interrupt right now*/
--		case hrt_isp_css_irq_sp:
--			/*sh_css_hrt_irq_enable_sp(true);*/
--			cnd_sp_irq_enable(SP0_ID, true);
--			break;
--		default:
--			break;
--		}
-+static void disable_isp_irq(enum hrt_isp_css_irq irq)
-+{
-+	irq_disable_channel(IRQ0_ID, irq);
- 
--	} else {
--		/*sh_css_hrt_irq_disable(irq);*/
--		irq_disable_channel(IRQ0_ID, irq);
--		switch (irq) {
--		case hrt_isp_css_irq_sp:
--			/*sh_css_hrt_irq_enable_sp(false);*/
--			cnd_sp_irq_enable(SP0_ID, false);
--			break;
--		default:
--			break;
--		}
--	}
-+	if (irq != hrt_isp_css_irq_sp)
-+		return;
-+
-+	cnd_sp_irq_enable(SP0_ID, false);
- }
- 
- /*
-@@ -1415,7 +1397,7 @@ static void __atomisp_css_recover(struct atomisp_device *isp, bool isp_timeout)
- 	}
- 
- 	/* clear irq */
--	enable_isp_irq(hrt_isp_css_irq_sp, false);
-+	disable_isp_irq(hrt_isp_css_irq_sp);
- 	clear_isp_irq(hrt_isp_css_irq_sp);
- 
- 	/* Set the SRSE to 3 before resetting */
--- 
-1.9.1
+Alan
 
