@@ -1,75 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 20:26:29 +0000
-Subject: [PATCH 1/2] firewire: ohci: Use kcalloc() in pci_probe()
-Message-Id: <8d17e44a-054c-f7e2-ada2-db80ec148287@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 07 Apr 2017 05:56:39 +0000
+Subject: [PATCH 2/3] staging: atomisp: replace "&isp->asd[i]" with "asd" in __get_asd_from_port()
+Message-Id: <20170407055639.GA32374@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1139a329-f084-c4f3-d9af-19ad15445017@users.sourceforge.net>
-In-Reply-To: <1139a329-f084-c4f3-d9af-19ad15445017@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org
+Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 21:50:19 +0200
+The address of isp->asd[i] is already assigned to
+local "asd" variable. "&isp->asd[i]" would be replaced with
+just "asd".
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-* Delete the local variable "size" which became unnecessary
-  with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/firewire/ohci.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+This series of patches are related to previous patches:
+[1] https://lkml.org/lkml/2017/3/27/159
+[2] https://lkml.org/lkml/2017/3/30/1068
+[3] https://lkml.org/lkml/2017/3/30/1069
 
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 8bf89267dc25..30be5dbd5b09 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -3565,7 +3565,6 @@ static int pci_probe(struct pci_dev *dev,
- 	u32 bus_options, max_receive, link_speed, version;
- 	u64 guid;
- 	int i, err;
--	size_t size;
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+index c3d0596..4af76b5 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
+@@ -535,9 +535,9 @@ static void clear_irq_reg(struct atomisp_device *isp)
+ 		struct camera_mipi_info *mipi_info  				atomisp_to_sensor_mipi_info(
+ 					isp->inputs[asd->input_curr].camera);
+-		if (isp->asd[i].streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
++		if (asd->streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
+ 		    __get_mipi_port(isp, mipi_info->port) = port) {
+-			return &isp->asd[i];
++			return asd;
+ 		}
+ 	}
  
- 	if (dev->vendor = PCI_VENDOR_ID_PINNACLE_SYSTEMS) {
- 		dev_err(&dev->dev, "Pinnacle MovieBoard is not yet supported\n");
-@@ -3671,9 +3670,9 @@ static int pci_probe(struct pci_dev *dev,
- 	reg_write(ohci, OHCI1394_IsoRecvIntMaskClear, ~0);
- 	ohci->ir_context_mask = ohci->ir_context_support;
- 	ohci->n_ir = hweight32(ohci->ir_context_mask);
--	size = sizeof(struct iso_context) * ohci->n_ir;
--	ohci->ir_context_list = kzalloc(size, GFP_KERNEL);
--
-+	ohci->ir_context_list = kcalloc(ohci->n_ir,
-+					sizeof(*ohci->ir_context_list),
-+					GFP_KERNEL);
- 	reg_write(ohci, OHCI1394_IsoXmitIntMaskSet, ~0);
- 	ohci->it_context_support = reg_read(ohci, OHCI1394_IsoXmitIntMaskSet);
- 	/* JMicron JMB38x often shows 0 at first read, just ignore it */
-@@ -3684,9 +3683,9 @@ static int pci_probe(struct pci_dev *dev,
- 	reg_write(ohci, OHCI1394_IsoXmitIntMaskClear, ~0);
- 	ohci->it_context_mask = ohci->it_context_support;
- 	ohci->n_it = hweight32(ohci->it_context_mask);
--	size = sizeof(struct iso_context) * ohci->n_it;
--	ohci->it_context_list = kzalloc(size, GFP_KERNEL);
--
-+	ohci->it_context_list = kcalloc(ohci->n_it,
-+					sizeof(*ohci->it_context_list),
-+					GFP_KERNEL);
- 	if (ohci->it_context_list = NULL || ohci->ir_context_list = NULL) {
- 		err = -ENOMEM;
- 		goto fail_contexts;
 -- 
-2.12.2
+1.9.1
 
