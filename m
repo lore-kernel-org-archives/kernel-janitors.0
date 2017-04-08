@@ -1,43 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:23:51 +0000
-Subject: [PATCH 10/10] pinctrl: mxs: Use kcalloc() in mxs_dt_node_to_map()
-Message-Id: <ed0b8015-20c7-c766-624b-d34b54444d1e@users.sourceforge.net>
+Date: Sat, 08 Apr 2017 12:10:10 +0000
+Subject: [PATCH 0/3] InfiniBand-SRP: Fine-tuning for some function implementations
+Message-Id: <50db1f1d-b689-1a9d-f6dd-a0f55169c75a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bart Van Assche <bart.vanassche-XdAiOPVOjttBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 10:32:29 +0200
+Date: Sat, 8 Apr 2017 14:04:04 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus reuse the corresponding function "kcalloc".
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Use kmalloc_array() in srp_alloc_req_data()
+  Enclose 14 expressions for the sizeof operator by parentheses
+  Delete unwanted spaces behind usages of the sizeof operator
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/freescale/pinctrl-mxs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/srp/ib_srp.c | 59 +++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
-index 9e6dc0038c35..1479610091d5 100644
---- a/drivers/pinctrl/freescale/pinctrl-mxs.c
-+++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
-@@ -96,7 +96,7 @@ static int mxs_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (!purecfg && config)
- 		new_num = 2;
- 
--	new_map = kzalloc(sizeof(*new_map) * new_num, GFP_KERNEL);
-+	new_map = kcalloc(new_num, sizeof(*new_map), GFP_KERNEL);
- 	if (!new_map)
- 		return -ENOMEM;
- 
 -- 
 2.12.2
 
