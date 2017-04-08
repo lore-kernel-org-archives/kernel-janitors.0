@@ -1,31 +1,36 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Date: Wed, 19 Apr 2017 13:04:24 +0000
-Subject: Re: [PATCH] bus: arm-ccn: Use devm_kcalloc() in arm_ccn_probe()
-Message-Id: <1492607064.2768.1.camel@arm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 08 Apr 2017 17:18:58 +0000
+Subject: [PATCH] Input: omap-keypad - fix error handling code
+Message-Id: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3458009f-6489-da7f-c1c1-c834d5b9d41d@users.sourceforge.net>
-In-Reply-To: <3458009f-6489-da7f-c1c1-c834d5b9d41d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, IngoMolnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Suzuki K. Poulose" <suzuki.poulose@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+To: dmitry.torokhov@gmail.com, linux@roeck-us.net
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 2017-04-19 at 09:29 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 09:12:43 +0200
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "devm_kcalloc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+According to the previous error handling code, it is likely that
+'goto err_free_keymap' is expected here in order to avoid a memory leak
+in error handling path.
 
-Fine with me. I'll queue it with a couple other CCN driver changes.
-Will probably get into 4.13.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/input/keyboard/omap4-keypad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards!
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index ebc67ba41fe2..940d38b08e6b 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -358,7 +358,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+ 				     "omap4-keypad", keypad_data);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register interrupt\n");
+-		goto err_free_input;
++		goto err_free_keymap;
+ 	}
+ 
+ 	device_init_wakeup(&pdev->dev, true);
+-- 
+2.11.0
 
-Pawel
