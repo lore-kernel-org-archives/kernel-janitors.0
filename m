@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 20 Apr 2017 20:28:52 +0000
-Subject: Re: [PATCH net-next] net/mlx5e: IPoIB, Fix error handling in mlx5_rdma_netdev_alloc()
-Message-Id: <20170420.162852.296854885919530460.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 08 Apr 2017 17:28:42 +0000
+Subject: [PATCH] [SCSI] aic7xxx: fix order of arguments in function prototype
+Message-Id: <20170408172842.20226-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170419095914.GB4266@mwanda>
-In-Reply-To: <20170419095914.GB4266@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
-Cc: saeedm-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Apr 2017 12:59:15 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> The labels were out of order, so it either could result in an Oops or a
-> leak.
-> 
-> Fixes: 48935bbb7ae8 ("net/mlx5e: IPoIB, Add netdevice profile skeleton")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The vendor/device and subvendor/subdevice arguments to the function
+prototype ahc_9005_subdevinfo_valid are in the wrong order and
+need to be swapped to fix this.  Detected with PVS-Studio studio.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aic7xxx/aic7xxx_pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_pci.c b/drivers/scsi/aic7xxx/aic7xxx_pci.c
+index 22d5a949ec83..673e826d7adb 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_pci.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_pci.c
+@@ -601,8 +601,8 @@ static const u_int ahc_num_pci_devs = ARRAY_SIZE(ahc_pci_ident_table);
+ #define STA	0x08
+ #define DPR	0x01
+ 
+-static int ahc_9005_subdevinfo_valid(uint16_t vendor, uint16_t device,
+-				     uint16_t subvendor, uint16_t subdevice);
++static int ahc_9005_subdevinfo_valid(uint16_t device, uint16_t vendor,
++				     uint16_t subdevice, uint16_t subvendor);
+ static int ahc_ext_scbram_present(struct ahc_softc *ahc);
+ static void ahc_scbram_config(struct ahc_softc *ahc, int enable,
+ 				  int pcheck, int fast, int large);
+-- 
+2.11.0
+
