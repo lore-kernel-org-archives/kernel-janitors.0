@@ -1,78 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:33:31 +0000
-Subject: [PATCH v2 05/17] IB/mlx4: Delete four unnecessary return statements
-Message-Id: <c7dc6218-7cab-06ea-bca9-d534c607bbea@users.sourceforge.net>
+Date: Sun, 09 Apr 2017 19:51:43 +0000
+Subject: [PATCH 4/5] target: Use kmalloc_array() in compare_and_write_callback()
+Message-Id: <4629f13b-fd09-8d27-8cd4-3440f13207b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 13:10:14 +0200
+Date: Sun, 9 Apr 2017 20:25:11 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-WARNING: void function return statements are not generally useful
+  This issue was detected by using the Coccinelle software.
 
-Thus remove such a statement in the affected functions.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/target/target_core_sbc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2:
-Changes were rebased on source files from Linux next-20170421.
-These were recombined as requested by Doug Ledford.
-
- drivers/infiniband/hw/mlx4/mad.c  | 3 ---
- drivers/infiniband/hw/mlx4/main.c | 1 -
- 2 files changed, 4 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index d8c27e3ed69a..cf33efce69d2 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1173,7 +1173,6 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
- out:
- 	kfree(in_mad);
- 	kfree(out_mad);
--	return;
- }
- 
- void handle_port_mgmt_change_event(struct work_struct *work)
-@@ -2140,7 +2139,6 @@ void mlx4_ib_tunnels_update_work(struct work_struct *work)
- 	mlx4_ib_tunnels_update(dmxw->dev, dmxw->slave, (int) dmxw->port,
- 			       dmxw->do_init);
- 	kfree(dmxw);
--	return;
- }
- 
- static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
-@@ -2268,7 +2266,6 @@ static void mlx4_ib_master_tunnels(struct mlx4_ib_dev *dev, int do_init)
- 	/* initialize or tear down tunnel QPs for the master */
- 	for (i = 0; i < dev->dev->caps.num_ports; i++)
- 		mlx4_ib_tunnels_update(dev, mlx4_master_func_num(dev->dev), i + 1, do_init);
--	return;
- }
- 
- int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 0ac670765466..232f556b1121 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -3109,7 +3109,6 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+diff --git a/drivers/target/target_core_sbc.c b/drivers/target/target_core_sbc.c
+index ee35c90e3b8d..a7fa4a7339db 100644
+--- a/drivers/target/target_core_sbc.c
++++ b/drivers/target/target_core_sbc.c
+@@ -519,8 +519,8 @@ static sense_reason_t compare_and_write_callback(struct se_cmd *cmd, bool succes
+ 		goto out;
  	}
- out:
- 	kfree(dm);
--	return;
- }
  
- static void mlx4_ib_handle_catas_error(struct mlx4_ib_dev *ibdev)
+-	write_sg = kmalloc(sizeof(struct scatterlist) * cmd->t_data_nents,
+-			   GFP_KERNEL);
++	write_sg = kmalloc_array(cmd->t_data_nents, sizeof(*write_sg),
++				 GFP_KERNEL);
+ 	if (!write_sg) {
+ 		pr_err("Unable to allocate compare_and_write sg\n");
+ 		ret = TCM_OUT_OF_RESOURCES;
 -- 
 2.12.2
 
