@@ -1,46 +1,70 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 14:40:19 +0000
-Subject: [PATCH v2 04/12] IB/ocrdma: Delete unnecessary variable initialisations in ocrdma_mbx_get_dcbx_confi
-Message-Id: <518c3609-4539-9a9a-b441-d3f3538984c0@users.sourceforge.net>
+Date: Sun, 09 Apr 2017 14:28:42 +0000
+Subject: [PATCH 3/3] iscsi-target: Improve size determinations in four functions
+Message-Id: <b2f306db-d191-67bb-1e9b-0e91cd540481@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <1492720999.3041.18.camel@redhat.com>
- <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
-In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+References: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
+In-Reply-To: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Hannes Reinecke <hare@suse.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 13:38:33 +0200
+Date: Sun, 9 Apr 2017 16:00:39 +0200
 
-The local variables "req" and "rsp" will be set to appropriate pointers
-a bit later. Thus omit the explicit initialisations at the beginning.
+Replace the specification of four data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determinations a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/target/iscsi/iscsi_target.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index 7e58a74102f6..aa32bc9f323d 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -2894,9 +2894,8 @@ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
- 	int status;
- 	dma_addr_t pa;
- 	struct ocrdma_mqe cmd;
--
--	struct ocrdma_get_dcbx_cfg_req *req = NULL;
--	struct ocrdma_get_dcbx_cfg_rsp *rsp = NULL;
-+	struct ocrdma_get_dcbx_cfg_req *req;
-+	struct ocrdma_get_dcbx_cfg_rsp *rsp;
- 	struct pci_dev *pdev = dev->nic_info.pdev;
- 	struct ocrdma_mqe_sge *mqe_sge = cmd.u.nonemb_req.sge;
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index 196e9dd138ca..5ef6eb238174 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -128,7 +128,7 @@ struct iscsi_tiqn *iscsit_add_tiqn(unsigned char *buf)
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
+-	tiqn = kzalloc(sizeof(struct iscsi_tiqn), GFP_KERNEL);
++	tiqn = kzalloc(sizeof(*tiqn), GFP_KERNEL);
+ 	if (!tiqn)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -360,7 +360,7 @@ struct iscsi_np *iscsit_add_np(
+ 		return np;
+ 	}
+ 
+-	np = kzalloc(sizeof(struct iscsi_np), GFP_KERNEL);
++	np = kzalloc(sizeof(*np), GFP_KERNEL);
+ 	if (!np) {
+ 		mutex_unlock(&np_lock);
+ 		return ERR_PTR(-ENOMEM);
+@@ -694,8 +694,7 @@ static int __init iscsi_target_init_module(void)
+ 	int ret = 0, size;
+ 
+ 	pr_debug("iSCSI-Target "ISCSIT_VERSION"\n");
+-
+-	iscsit_global = kzalloc(sizeof(struct iscsit_global), GFP_KERNEL);
++	iscsit_global = kzalloc(sizeof(*iscsit_global), GFP_KERNEL);
+ 	if (!iscsit_global)
+ 		return -1;
+ 
+@@ -1987,8 +1986,7 @@ iscsit_handle_task_mgt_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
+ 		hdr->refcmdsn = cpu_to_be32(ISCSI_RESERVED_TAG);
+ 
+ 	cmd->data_direction = DMA_NONE;
+-
+-	cmd->tmr_req = kzalloc(sizeof(struct iscsi_tmr_req), GFP_KERNEL);
++	cmd->tmr_req = kzalloc(sizeof(*cmd->tmr_req), GFP_KERNEL);
+ 	if (!cmd->tmr_req)
+ 		return iscsit_add_reject_cmd(cmd,
+ 					     ISCSI_REASON_BOOKMARK_NO_RESOURCES,
 -- 
 2.12.2
 
