@@ -1,26 +1,35 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Date: Tue, 04 Apr 2017 09:27:02 +0000
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Sun, 09 Apr 2017 14:33:22 +0000
 Subject: Re: [patch] mtd: nand: Fix a couple error codes
-Message-Id: <88d42f4b-e5fd-f2b2-c1e3-8d77b18e93d8@gmail.com>
+Message-Id: <20170409163322.3da06acd@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170404081545.GA25533@mwanda>
 In-Reply-To: <20170404081545.GA25533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Wenyou Yang <wenyou.yang@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On 04/04/2017 10:15 AM, Dan Carpenter wrote:
+Hi Dan,
+
+On Tue, 4 Apr 2017 11:15:46 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
 > We accidentally return 1 on error instead of proper error codes.
+
+These bugs have not reached Linus' tree yet and I'll have to force push
+my nand/next branch because of regressions introduced by other patches
+(not related to the Atmel NAND driver rework). Do you mind if I squash
+the changes in the original commit?
+
+Thanks,
+
+Boris
+
 > 
 > Fixes: 07b23e3db9ed ("mtd: nand: Cleanup/rework the atmel_nand driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Nice, thanks!
-
-Acked-by: Marek Vasut <marek.vasut@gmail.com>
-
 > 
 > diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
 > index 27301603f394..b8d17a024dbd 100644
@@ -44,9 +53,4 @@ Acked-by: Marek Vasut <marek.vasut@gmail.com>
 >  		dev_err(dev, "Could not get Matrix regmap (err = %d)\n", ret);
 >  		return ret;
 >  	}
-> 
 
-
--- 
-Best regards,
-Marek Vasut
