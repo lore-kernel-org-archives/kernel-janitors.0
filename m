@@ -1,44 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 08:28:42 +0000
-Subject: [PATCH 5/8] clk: Combine two seq_puts() calls into one call in clk_summary_show()
-Message-Id: <2e58deaf-4279-df4e-5678-df459791708c@users.sourceforge.net>
+Date: Sun, 09 Apr 2017 19:50:12 +0000
+Subject: [PATCH 3/5] target: Improve size determinations in two functions
+Message-Id: <166debca-20eb-9540-5fd3-e984cc1f8098@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 09:12:35 +0200
+Date: Sun, 9 Apr 2017 20:15:12 +0200
 
-Some text was put into a sequence by two separate function calls.
-Print the same data by a single function call instead.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determinations a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/clk.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/target/target_core_rd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4c72a10a9a33..684642ab4212 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2030,9 +2030,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 	struct clk_core *c;
- 	struct hlist_head **lists = (struct hlist_head **)s->private;
+diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
+index 838dc128d494..20253d04103f 100644
+--- a/drivers/target/target_core_rd.c
++++ b/drivers/target/target_core_rd.c
+@@ -47,7 +47,7 @@ static int rd_attach_hba(struct se_hba *hba, u32 host_id)
+ {
+ 	struct rd_host *rd_host;
  
--	seq_puts(s, "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
--	seq_puts(s, "----------------------------------------------------------------------------------------\n");
--
-+	seq_puts(s,
-+		 "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n"
-+		 "----------------------------------------------------------------------------------------\n");
- 	clk_prepare_lock();
+-	rd_host = kzalloc(sizeof(struct rd_host), GFP_KERNEL);
++	rd_host = kzalloc(sizeof(*rd_host), GFP_KERNEL);
+ 	if (!rd_host)
+ 		return -ENOMEM;
  
- 	for (; *lists; lists++)
+@@ -285,7 +285,7 @@ static struct se_device *rd_alloc_device(struct se_hba *hba, const char *name)
+ 	struct rd_dev *rd_dev;
+ 	struct rd_host *rd_host = hba->hba_ptr;
+ 
+-	rd_dev = kzalloc(sizeof(struct rd_dev), GFP_KERNEL);
++	rd_dev = kzalloc(sizeof(*rd_dev), GFP_KERNEL);
+ 	if (!rd_dev)
+ 		return NULL;
+ 
 -- 
 2.12.2
 
