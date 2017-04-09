@@ -1,72 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 24 Apr 2017 18:20:45 +0000
-Subject: Applied "ASoC: wm5100: fix spelling mistake: "micropone" -> "microphone"" to the asoc tree
-Message-Id: <E1d2ibN-0000gR-Nt@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 09 Apr 2017 19:53:17 +0000
+Subject: [PATCH 5/5] target: Use kmalloc_array() in transport_kmap_data_sg()
+Message-Id: <0e590666-0658-dbfc-1438-b378cb45cfce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170422122842.8282-1-colin.king@canonical.com>
-In-Reply-To: <20170422122842.8282-1-colin.king@canonical.com>
+References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 9 Apr 2017 21:07:14 +0200
 
-   ASoC: wm5100: fix spelling mistake: "micropone" -> "microphone"
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From fd9f069d876d6a96eb0f731b1e293145352d5f4f Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 22 Apr 2017 13:28:42 +0100
-Subject: [PATCH] ASoC: wm5100: fix spelling mistake: "micropone" ->
- "microphone"
-
-Trivial fix to spelling mistake in dev_err message
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/wm5100.c | 2 +-
+ drivers/target/target_core_transport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
-index 560575000cc5..138a84efdd54 100644
---- a/sound/soc/codecs/wm5100.c
-+++ b/sound/soc/codecs/wm5100.c
-@@ -2014,7 +2014,7 @@ static void wm5100_micd_irq(struct wm5100_priv *wm5100)
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index b1a3cdb29468..3ef1cadd3c32 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -2280,7 +2280,7 @@ void *transport_kmap_data_sg(struct se_cmd *cmd)
+ 		return kmap(sg_page(sg)) + sg->offset;
  
- 	ret = regmap_read(wm5100->regmap, WM5100_MIC_DETECT_3, &val);
- 	if (ret != 0) {
--		dev_err(wm5100->dev, "Failed to read micropone status: %d\n",
-+		dev_err(wm5100->dev, "Failed to read microphone status: %d\n",
- 			ret);
- 		return;
- 	}
+ 	/* >1 page. use vmap */
+-	pages = kmalloc(sizeof(*pages) * cmd->t_data_nents, GFP_KERNEL);
++	pages = kmalloc_array(cmd->t_data_nents, sizeof(*pages), GFP_KERNEL);
+ 	if (!pages)
+ 		return NULL;
+ 
 -- 
-2.11.0
+2.12.2
 
