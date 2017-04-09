@@ -1,43 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 12:45:04 +0000
-Subject: [PATCH 1/2] HSI: Use kcalloc() in hsi_register_board_info()
-Message-Id: <7c7f7b19-d3f3-6653-6830-5b00660fa2b1@users.sourceforge.net>
+Date: Sun, 09 Apr 2017 19:43:58 +0000
+Subject: [PATCH 0/5] target: Fine-tuning for some function implementations
+Message-Id: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52f7db50-a3a0-6bc5-a39f-1d235a5945cd@users.sourceforge.net>
-In-Reply-To: <52f7db50-a3a0-6bc5-a39f-1d235a5945cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Carlos Chinea <carlos.chinea@nokia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 13:56:08 +0200
+Date: Sun, 9 Apr 2017 21:33:21 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kcalloc".
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (5):
+  rd: Use kcalloc() in two functions
+  rd: Delete error messages for failed memory allocations
+  rd: Improve size determinations in two functions
+  sbc: Use kmalloc_array() in compare_and_write_callback()
+  transport: Use kmalloc_array() in transport_kmap_data_sg()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hsi/hsi_boardinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_rd.c        | 33 +++++++++------------------------
+ drivers/target/target_core_sbc.c       |  4 ++--
+ drivers/target/target_core_transport.c |  2 +-
+ 3 files changed, 12 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/hsi/hsi_boardinfo.c b/drivers/hsi/hsi_boardinfo.c
-index e56bc6da5f98..e381cb4c962e 100644
---- a/drivers/hsi/hsi_boardinfo.c
-+++ b/drivers/hsi/hsi_boardinfo.c
-@@ -49,7 +49,7 @@ int __init hsi_register_board_info(struct hsi_board_info const *info,
- {
- 	struct hsi_cl_info *cl_info;
- 
--	cl_info = kzalloc(sizeof(*cl_info) * len, GFP_KERNEL);
-+	cl_info = kcalloc(len, sizeof(*cl_info), GFP_KERNEL);
- 	if (!cl_info)
- 		return -ENOMEM;
- 
 -- 
 2.12.2
 
