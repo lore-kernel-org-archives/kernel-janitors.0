@@ -1,31 +1,36 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:14:55 +0000
-Subject: Re: [PATCH] clk: at91: Use kcalloc() in of_at91_clk_pll_get_characteristics()
-Message-Id: <20170422021455.GH7065@codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 09 Apr 2017 07:33:52 +0000
+Subject: [PATCH] cpufreq: imx6q: Fix error handling code
+Message-Id: <20170409073352.8227-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2b5c3954-dc45-4f1b-5d94-397f688b23cb@users.sourceforge.net>
-In-Reply-To: <2b5c3954-dc45-4f1b-5d94-397f688b23cb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 04/19, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 19:43:03 +0200
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kcalloc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+According to the previous error handling code, it is likely that
+'goto out_free_opp' is expected here in order to avoid a memory leak in
+error handling path.
 
-Applied to clk-next
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/cpufreq/imx6q-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 7719b02e04f5..b14117dcfff5 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -255,7 +255,7 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
+-		goto put_reg;
++		goto out_free_opp;
+ 	}
+ 
+ 	/* Make imx6_soc_volt array's size same as arm opp number */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
+
