@@ -1,25 +1,44 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 24 Apr 2017 10:22:06 +0000
-Subject: Re: [PATCH] crypto: crypto4xx: rename ce_ring_contol to ce_ring_control
-Message-Id: <20170424102206.GB20943@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 15:12:06 +0000
+Subject: [PATCH] thermal: cpu_cooling: Use kmalloc_array() in __cpufreq_cooling_register()
+Message-Id: <d45b0bbb-0893-906d-edfc-44b712e55b14@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421111349.4060-1-colin.king@canonical.com>
-In-Reply-To: <20170421111349.4060-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Javi Merino <javi.merino@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 21, 2017 at 12:13:49PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> trivial spelling mistake, missing r, rename to ce_ring_control
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 17:00:13 +0200
 
-Patch applied.  Thanks.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thermal/cpu_cooling.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index 69d0f430b2d1..273d9d5dbe0f 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -823,8 +823,9 @@ __cpufreq_cooling_register(struct device_node *np,
+ 	cpufreq_for_each_valid_entry(pos, table)
+ 		cpufreq_dev->max_level++;
+ 
+-	cpufreq_dev->freq_table = kmalloc(sizeof(*cpufreq_dev->freq_table) *
+-					  cpufreq_dev->max_level, GFP_KERNEL);
++	cpufreq_dev->freq_table = kmalloc_array(cpufreq_dev->max_level,
++						sizeof(*cpufreq_dev->freq_table),
++						GFP_KERNEL);
+ 	if (!cpufreq_dev->freq_table) {
+ 		cool_dev = ERR_PTR(-ENOMEM);
+ 		goto free_time_in_idle_timestamp;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.12.2
+
