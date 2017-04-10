@@ -1,47 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:30:41 +0000
-Subject: [PATCH v2 04/17] IB/mlx4: Fix a typo in a comment line
-Message-Id: <c5cae195-ad8e-6f36-726f-7245ca7ff0a1@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 20:18:20 +0000
+Subject: [PATCH 1/3] ACPI/int340x_thermal: Use kcalloc() in two functions
+Message-Id: <55405e33-2a1a-ea40-743f-eb8e53a1a399@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
+In-Reply-To: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 12:28:35 +0200
+Date: Mon, 10 Apr 2017 21:30:47 +0200
 
-Add a missing character in this description and adjust
-the comment formatting.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 ---
- drivers/infiniband/hw/mlx4/mad.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/thermal/int340x_thermal/acpi_thermal_rel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index ea4892b0f39e..d8c27e3ed69a 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1559,8 +1559,10 @@ static void mlx4_ib_multiplex_mad(struct mlx4_ib_demux_pv_ctx *ctx, struct ib_wc
- 		}
+diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
+index 2c2ec7666eb1..52a5fe0f81e8 100644
+--- a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
++++ b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
+@@ -96,7 +96,7 @@ int acpi_parse_trt(acpi_handle handle, int *trt_count, struct trt **trtp,
  	}
  
--	/* We are using standard ib_core services to send the mad, so generate a
--	 * stadard address handle by decoding the tunnelled mlx4_ah fields */
-+	/*
-+	 * We are using standard ib_core services to send the mad, so generate
-+	 * a standard address handle by decoding the tunnelled mlx4_ah fields.
-+	 */
- 	memcpy(&ah.av, &tunnel->hdr.av, sizeof (struct mlx4_av));
- 	ah.ibah.device = ctx->ib_dev;
+ 	*trt_count = p->package.count;
+-	trts = kzalloc(*trt_count * sizeof(struct trt), GFP_KERNEL);
++	trts = kcalloc(*trt_count, sizeof(*trts), GFP_KERNEL);
+ 	if (!trts) {
+ 		result = -ENOMEM;
+ 		goto end;
+@@ -178,7 +178,7 @@ int acpi_parse_art(acpi_handle handle, int *art_count, struct art **artp,
  
+ 	/* ignore p->package.elements[0], as this is _ART Revision field */
+ 	*art_count = p->package.count - 1;
+-	arts = kzalloc(*art_count * sizeof(struct art), GFP_KERNEL);
++	arts = kcalloc(*art_count, sizeof(*arts), GFP_KERNEL);
+ 	if (!arts) {
+ 		result = -ENOMEM;
+ 		goto end;
 -- 
 2.12.2
 
