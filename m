@@ -1,59 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 05 Apr 2017 13:54:45 +0000
-Subject: [PATCH 4/5] IB/qib: Use kcalloc() in qib_init_pportdata()
-Message-Id: <e715e921-acef-b406-943c-b61b76d0ff42@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 20:20:39 +0000
+Subject: [PATCH 3/3] thermal: int340x: Use kcalloc() in int340x_thermal_zone_add()
+Message-Id: <26087e0f-74a0-3eb1-7e54-2dafe45d633f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
-In-Reply-To: <c16b18ac-287f-5faf-b79a-c86e2adfa22c-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
+In-Reply-To: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Apr 2017 14:20:10 +0200
+Date: Mon, 10 Apr 2017 21:56:58 +0200
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/qib/qib_init.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/thermal/int340x_thermal/int340x_thermal_zone.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/qib/qib_init.c b/drivers/infiniband/hw/qib/qib_init.c
-index 9e680ca971e3..101580f0460a 100644
---- a/drivers/infiniband/hw/qib/qib_init.c
-+++ b/drivers/infiniband/hw/qib/qib_init.c
-@@ -258,15 +258,15 @@ int qib_init_pportdata(struct qib_pportdata *ppd, struct qib_devdata *dd,
- 
- 	ppd->cc_max_table_entries  		ppd->cc_supported_table_entries/IB_CCT_ENTRIES;
--
--	size = IB_CC_TABLE_CAP_DEFAULT * sizeof(struct ib_cc_table_entry)
--		* IB_CCT_ENTRIES;
--	ppd->ccti_entries = kzalloc(size, GFP_KERNEL);
-+	ppd->ccti_entries = kcalloc(IB_CC_TABLE_CAP_DEFAULT * IB_CCT_ENTRIES,
-+				    sizeof(*ppd->ccti_entries),
-+				    GFP_KERNEL);
- 	if (!ppd->ccti_entries)
- 		goto bail;
- 
--	size = IB_CC_CCS_ENTRIES * sizeof(struct ib_cc_congestion_entry);
--	ppd->congestion_entries = kzalloc(size, GFP_KERNEL);
-+	ppd->congestion_entries = kcalloc(IB_CC_CCS_ENTRIES,
-+					  sizeof(*ppd->congestion_entries),
-+					  GFP_KERNEL);
- 	if (!ppd->congestion_entries)
- 		goto bail_1;
- 
+diff --git a/drivers/thermal/int340x_thermal/int340x_thermal_zone.c b/drivers/thermal/int340x_thermal/int340x_thermal_zone.c
+index 145a5c53ff5c..a611f3367168 100644
+--- a/drivers/thermal/int340x_thermal/int340x_thermal_zone.c
++++ b/drivers/thermal/int340x_thermal/int340x_thermal_zone.c
+@@ -239,9 +239,10 @@ struct int34x_thermal_zone *int340x_thermal_zone_add(struct acpi_device *adev,
+ 	if (ACPI_FAILURE(status))
+ 		trip_cnt = 0;
+ 	else {
+-		int34x_thermal_zone->aux_trips = kzalloc(
+-				sizeof(*int34x_thermal_zone->aux_trips) *
+-				trip_cnt, GFP_KERNEL);
++		int34x_thermal_zone->aux_trips
++			= kcalloc(trip_cnt,
++				  sizeof(*int34x_thermal_zone->aux_trips),
++				  GFP_KERNEL);
+ 		if (!int34x_thermal_zone->aux_trips) {
+ 			ret = -ENOMEM;
+ 			goto err_trip_alloc;
 -- 
 2.12.2
 
