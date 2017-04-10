@@ -1,23 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 04 Apr 2017 17:05:01 +0000
-Subject: Re: [PATCH] bnx2x: fix spelling mistake in macros HW_INTERRUT_ASSERT_SET_*
-Message-Id: <20170404.100501.1641679451321837920.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Apr 2017 13:54:17 +0000
+Subject: [PATCH] mmc: host: omap_hsmmc: checking for NULL instead of IS_ERR()
+Message-Id: <20170410135417.GD1918@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170403101910.27480-1-colin.king@canonical.com>
-In-Reply-To: <20170403101910.27480-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Yuval.Mintz@cavium.com, ariel.elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Andreas Fenkart <afenkart@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Ravikumar Kattekola <rk@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Heiner Kallweit <hkallweit1@gmail.com>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  3 Apr 2017 11:19:10 +0100
+devm_pinctrl_get() returns error pointers, it never returns NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trival fix, rename HW_INTERRUT_ASSERT_SET_* to HW_INTERRUPT_ASSERT_SET_*
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 455e5cd6f736 ("mmc: omap_hsmmc: Pin remux workaround to support SDIO interrupt on AM335x")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index bf64cf23aa59..8c39dccacf39 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -1761,8 +1761,8 @@ static int omap_hsmmc_configure_wake_irq(struct omap_hsmmc_host *host)
+ 	 */
+ 	if (host->pdata->controller_flags & OMAP_HSMMC_SWAKEUP_MISSING) {
+ 		struct pinctrl *p = devm_pinctrl_get(host->dev);
+-		if (!p) {
+-			ret = -ENODEV;
++		if (IS_ERR(p)) {
++			ret = PTR_ERR(p);
+ 			goto err_free_irq;
+ 		}
+ 		if (IS_ERR(pinctrl_lookup_state(p, PINCTRL_STATE_DEFAULT))) {
