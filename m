@@ -1,37 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Apr 2017 13:44:19 +0000
-Subject: [PATCH] drm/mediatek: re-phrase DRM_INFO error message
-Message-Id: <20170411134419.21277-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 20:15:52 +0000
+Subject: [PATCH 0/3] Thermal/int340x: Fine-tuning for five function implementations
+Message-Id: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 10 Apr 2017 22:08:11 +0200
 
-The current message contains a spelling mistake and is not easily
-parsable. Re-phrase it to be more understandable.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (3):
+  Use kcalloc() in two functions
+  Improve size determinations in two functions
+  Use kcalloc() in int340x_thermal_zone_add()
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 808b995a990f..79d240ff1331 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -933,7 +933,7 @@ static u32 mtk_dsi_recv_cnt(u8 type, u8 *read_data)
- 		DRM_INFO("type is 0x02, try again\n");
- 		break;
- 	default:
--		DRM_INFO("type(0x%x) cannot be non-recognite\n", type);
-+		DRM_INFO("type(0x%x) not recognized\n", type);
- 		break;
- 	}
- 
+ drivers/thermal/int340x_thermal/acpi_thermal_rel.c     | 8 ++++----
+ drivers/thermal/int340x_thermal/int340x_thermal_zone.c | 7 ++++---
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
 -- 
-2.11.0
+2.12.2
 
