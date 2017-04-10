@@ -1,44 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 15 Apr 2017 17:49:54 +0000
-Subject: [PATCH] ASoC: topology: use j for internal loop counter
-Message-Id: <20170415174954.90707-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Apr 2017 13:49:31 +0000
+Subject: [PATCH] cifs: small underflow in cnvrtDosUnixTm()
+Message-Id: <20170410134931.GC1918@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
+January is month 1.  There is no zero-th month.  We don't care very much
+if the days are invalid but for months, we use it to read from an array
+so this bug means we read one space before the start of the
+total_days_of_prev_months[] array.
 
-Currently variable i is being for 2 nested for loops. Fix this by
-using integer loop counter j for the inside for loop.
+Fixes: 1bd5bbcb6531 ("[CIFS] Legacy time handling for Win9x and OS/2 part 1")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 1a7dd6e2f1929 ("ASoC: topology: Allow a widget to have multiple enum controls")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/soc-topology.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 058bc99c6c34..002772e3ba2c 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -495,12 +495,13 @@ static void remove_widget(struct snd_soc_component *comp,
- 			struct snd_kcontrol *kcontrol = w->kcontrols[i];
- 			struct soc_enum *se  				(struct soc_enum *)kcontrol->private_value;
-+			int j;
- 
- 			snd_ctl_remove(card, kcontrol);
- 
- 			kfree(se->dobj.control.dvalues);
--			for (i = 0; i < se->items; i++)
--				kfree(se->dobj.control.dtexts[i]);
-+			for (j = 0; j < se->items; j++)
-+				kfree(se->dobj.control.dtexts[j]);
- 
- 			kfree(se);
- 		}
--- 
-2.11.0
-
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index abae6dd2c6b9..f1f64a15215a 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -980,8 +980,10 @@ struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
+ 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
+ 	days = sd->Day;
+ 	month = sd->Month;
+-	if ((days > 31) || (month > 12)) {
++	if (days > 31 || month < 1 || month > 12) {
+ 		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
++		if (month < 1)
++			month = 1;
+ 		if (month > 12)
+ 			month = 12;
+ 	}
