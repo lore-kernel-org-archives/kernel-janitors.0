@@ -1,56 +1,34 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sun, 09 Apr 2017 14:33:22 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Apr 2017 07:09:43 +0000
 Subject: Re: [patch] mtd: nand: Fix a couple error codes
-Message-Id: <20170409163322.3da06acd@bbrezillon>
+Message-Id: <20170410070943.GA4366@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170404081545.GA25533@mwanda>
-In-Reply-To: <20170404081545.GA25533@mwanda>
+ <20170409163322.3da06acd@bbrezillon>
+In-Reply-To: <20170409163322.3da06acd@bbrezillon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
 Cc: Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
-
-On Tue, 4 Apr 2017 11:15:46 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> We accidentally return 1 on error instead of proper error codes.
-
-These bugs have not reached Linus' tree yet and I'll have to force push
-my nand/next branch because of regressions introduced by other patches
-(not related to the Atmel NAND driver rework). Do you mind if I squash
-the changes in the original commit?
-
-Thanks,
-
-Boris
-
+On Sun, Apr 09, 2017 at 04:33:22PM +0200, Boris Brezillon wrote:
+> Hi Dan,
 > 
-> Fixes: 07b23e3db9ed ("mtd: nand: Cleanup/rework the atmel_nand driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> On Tue, 4 Apr 2017 11:15:46 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
-> index 27301603f394..b8d17a024dbd 100644
-> --- a/drivers/mtd/nand/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/atmel/nand-controller.c
-> @@ -1686,7 +1686,7 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
->  	nc->smc = syscon_node_to_regmap(np);
->  	of_node_put(np);
->  	if (IS_ERR(nc->smc)) {
-> -		ret = IS_ERR(nc->smc);
-> +		ret = PTR_ERR(nc->smc);
->  		dev_err(dev, "Could not get SMC regmap (err = %d)\n", ret);
->  		return ret;
->  	}
-> @@ -1719,7 +1719,7 @@ atmel_smc_nand_controller_init(struct atmel_smc_nand_controller *nc)
->  	nc->matrix = syscon_node_to_regmap(np);
->  	of_node_put(np);
->  	if (IS_ERR(nc->matrix)) {
-> -		ret = IS_ERR(nc->matrix);
-> +		ret = PTR_ERR(nc->matrix);
->  		dev_err(dev, "Could not get Matrix regmap (err = %d)\n", ret);
->  		return ret;
->  	}
+> > We accidentally return 1 on error instead of proper error codes.
+> 
+> These bugs have not reached Linus' tree yet and I'll have to force push
+> my nand/next branch because of regressions introduced by other patches
+> (not related to the Atmel NAND driver rework). Do you mind if I squash
+> the changes in the original commit?
+> 
+
+No problem.  I'm lobying for a Fixes-from: tag for this, (which would
+not cover style issues), but it's not an official tag yet.
+
+regards,
+dan carpenter
 
