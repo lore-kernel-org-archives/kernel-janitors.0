@@ -1,29 +1,37 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Wed, 26 Apr 2017 08:01:47 +0000
-Subject: Re: extcon: arizona: Use devm_kcalloc() in arizona_extcon_get_micd_configs()
-Message-Id: <20170426080147.GH1594@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Apr 2017 13:37:43 +0000
+Subject: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
+Message-Id: <20170411133743.21073-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
- <1a203761-76b9-bf3c-c034-0bb81fe6006a@users.sourceforge.net>
- <20170424130039.GG1594@localhost.localdomain>
- <b5bb4d25-6cfd-5019-bfbd-dff90c1f9bc1@users.sourceforge.net>
-In-Reply-To: <b5bb4d25-6cfd-5019-bfbd-dff90c1f9bc1@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: patches@opensource.wolfsonmicro.com, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Ulf Hansson <ulf.hansson@linaro.org>, Russell King <rmk+kernel@armlinux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>, Konstantin Porotchkin <kostap@marvell.com>, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 24, 2017 at 03:34:07PM +0200, SF Markus Elfring wrote:
-> > Actually fixes a bug on the alloc as well looks like the type was
-> > wrong before.
-> 
-> Does your feedback mean that the tag “Fixes” should be added
-> to this update suggestion?
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-I am happy with it as is, but there would certainly be nothing
-wrong with a fixes tag.
+trivial fix to spelling mistake in dev_warn message
 
-Thanks,
-Charles
+Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 103fe18a3c29..8155baccc98e 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 					  4, &name)) {
+ 		ap806_clk_data.clk_num--;
+ 		dev_warn(&pdev->dev,
+-			 "eMMC clock mising: update the device tree!\n");
++			 "eMMC clock missing: update the device tree!\n");
+ 	} else {
+ 		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+ 							  fixedclk_name,
+-- 
+2.11.0
+
