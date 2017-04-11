@@ -1,38 +1,36 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 12 Apr 2017 14:04:13 +0000
-Subject: [PATCH] [media] xc5000: fix spelling mistake: "calibration"
-Message-Id: <20170412140413.17823-1-colin.king@canonical.com>
+Date: Tue, 11 Apr 2017 13:44:19 +0000
+Subject: [PATCH] drm/mediatek: re-phrase DRM_INFO error message
+Message-Id: <20170411134419.21277-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>, Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake on calibration, make Self lowercase
-and re-join multiple lined printk since checkpatch allows this
-coding style.
+The current message contains a spelling mistake and is not easily
+parsable. Re-phrase it to be more understandable.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/tuners/xc5000.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/xc5000.c b/drivers/media/tuners/xc5000.c
-index 91947cf1950e..e823aafce276 100644
---- a/drivers/media/tuners/xc5000.c
-+++ b/drivers/media/tuners/xc5000.c
-@@ -1184,8 +1184,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe, int force)
- 		/* Start the tuner self-calibration process */
- 		ret = xc_initialize(priv);
- 		if (ret) {
--			printk(KERN_ERR
--			       "xc5000: Can't request Self-callibration.");
-+			printk(KERN_ERR "xc5000: Can't request self-calibration.");
- 			continue;
- 		}
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 808b995a990f..79d240ff1331 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -933,7 +933,7 @@ static u32 mtk_dsi_recv_cnt(u8 type, u8 *read_data)
+ 		DRM_INFO("type is 0x02, try again\n");
+ 		break;
+ 	default:
+-		DRM_INFO("type(0x%x) cannot be non-recognite\n", type);
++		DRM_INFO("type(0x%x) not recognized\n", type);
+ 		break;
+ 	}
  
 -- 
 2.11.0
