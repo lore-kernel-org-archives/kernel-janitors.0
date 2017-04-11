@@ -1,28 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 20:24:16 +0000
-Subject: [PATCH 0/3] SCSI-UFSHCD: Fine-tuning for two function implementations
-Message-Id: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Apr 2017 08:59:49 +0000
+Subject: [PATCH] perf/core: Remove some dead code
+Message-Id: <20170411085949.GB24157@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 22:20:02 +0200
+perf_init_event() never returns NULL, only error pointer.  The check for
+NULL causes a static checker warning and it seems slightly buggy to do
+a goto err_ns without setting the error code so those are two other
+reasons to delete this.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (3):
-  Use devm_kcalloc() in ufshcd_memory_alloc()
-  Delete an error message for a failed memory allocation in ufshcd_memory_alloc()
-  Delete an unnecessary return statement in ufshcd_exception_event_handler()
-
- drivers/scsi/ufs/ufshcd.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
--- 
-2.12.2
-
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 6e75a5c9412d..0028efa0abc3 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9172,7 +9172,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 
+ static struct pmu *perf_init_event(struct perf_event *event)
+ {
+-	struct pmu *pmu = NULL;
++	struct pmu *pmu;
+ 	int idx;
+ 	int ret;
+ 
+@@ -9456,9 +9456,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	}
+ 
+ 	pmu = perf_init_event(event);
+-	if (!pmu)
+-		goto err_ns;
+-	else if (IS_ERR(pmu)) {
++	if (IS_ERR(pmu)) {
+ 		err = PTR_ERR(pmu);
+ 		goto err_ns;
+ 	}
