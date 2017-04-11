@@ -1,36 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 08 Apr 2017 17:18:58 +0000
-Subject: [PATCH] Input: omap-keypad - fix error handling code
-Message-Id: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Tue, 11 Apr 2017 03:48:48 +0000
+Subject: Re: [PATCH] Input: omap-keypad - fix error handling code
+Message-Id: <20170411034848.GF4346@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitry.torokhov@gmail.com, linux@roeck-us.net
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux@roeck-us.net, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-According to the previous error handling code, it is likely that
-'goto err_free_keymap' is expected here in order to avoid a memory leak
-in error handling path.
+On Sat, Apr 08, 2017 at 07:18:58PM +0200, Christophe JAILLET wrote:
+> According to the previous error handling code, it is likely that
+> 'goto err_free_keymap' is expected here in order to avoid a memory leak
+> in error handling path.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/input/keyboard/omap4-keypad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thank you.
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index ebc67ba41fe2..940d38b08e6b 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -358,7 +358,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 				     "omap4-keypad", keypad_data);
- 	if (error) {
- 		dev_err(&pdev->dev, "failed to register interrupt\n");
--		goto err_free_input;
-+		goto err_free_keymap;
- 	}
- 
- 	device_init_wakeup(&pdev->dev, true);
+> ---
+>  drivers/input/keyboard/omap4-keypad.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+> index ebc67ba41fe2..940d38b08e6b 100644
+> --- a/drivers/input/keyboard/omap4-keypad.c
+> +++ b/drivers/input/keyboard/omap4-keypad.c
+> @@ -358,7 +358,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+>  				     "omap4-keypad", keypad_data);
+>  	if (error) {
+>  		dev_err(&pdev->dev, "failed to register interrupt\n");
+> -		goto err_free_input;
+> +		goto err_free_keymap;
+>  	}
+>  
+>  	device_init_wakeup(&pdev->dev, true);
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.11.0
-
+Dmitry
