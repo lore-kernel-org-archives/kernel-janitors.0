@@ -1,36 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Apr 2017 11:05:57 +0000
-Subject: [PATCH] powerpc/xive: fix spelling mistake: "initialize"
-Message-Id: <20170418110557.5934-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 18:28:37 +0000
+Subject: [PATCH 1/2] tty-goldfish: Use kcalloc() in goldfish_tty_create_driver()
+Message-Id: <3778b45c-f58c-b38a-51c3-5acb6bc55f68@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
+In-Reply-To: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 20:00:23 +0200
 
-Trivial fix to spelling mistake in pr_info message.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/sysdev/xive/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/goldfish.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
-index d9cd7f705f21..480364c1293c 100644
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -1287,7 +1287,7 @@ bool xive_core_init(const struct xive_ops *ops, void __iomem *area, u32 offset,
- 	/* Get ready for interrupts */
- 	xive_setup_cpu();
+diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
+index 996bd473dd03..b92c3312ecd2 100644
+--- a/drivers/tty/goldfish.c
++++ b/drivers/tty/goldfish.c
+@@ -180,8 +180,8 @@ static int goldfish_tty_create_driver(void)
+ 	int ret;
+ 	struct tty_driver *tty;
  
--	pr_info("Interrupt handling intialized with %s backend\n",
-+	pr_info("Interrupt handling initialized with %s backend\n",
- 		xive_ops->name);
- 	pr_info("Using priority %d for all interrupts\n", max_prio);
- 
+-	goldfish_ttys = kzalloc(sizeof(*goldfish_ttys) *
+-				goldfish_tty_line_count, GFP_KERNEL);
++	goldfish_ttys = kcalloc(goldfish_tty_line_count, sizeof(*goldfish_ttys),
++				GFP_KERNEL);
+ 	if (goldfish_ttys = NULL) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc_goldfish_ttys_failed;
 -- 
-2.11.0
+2.12.2
 
