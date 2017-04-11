@@ -1,50 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Apr 2017 13:23:16 +0000
-Subject: Re: hwmon-NCT: Fine-tuning for four function implementations
-Message-Id: <e760b938-fe40-c603-bd6d-26dba0103c55@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 17:02:42 +0000
+Subject: [PATCH 2/2] tty-ehv_bytechan: Fix a typo in two comment lines
+Message-Id: <2fe7eb2e-b476-8f68-86d4-6d2c0564c28a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
- <20170427145030.5507a32e@endymion>
-In-Reply-To: <20170427145030.5507a32e@endymion>
+References: <4666b729-217c-ab28-4a3c-25ef703054dd@users.sourceforge.net>
+In-Reply-To: <4666b729-217c-ab28-4a3c-25ef703054dd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, trivial@kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 18:40:37 +0200
 
+Add a missing character in function descriptions.
 
-Am 27.04.2017 um 14:50 schrieb Jean Delvare:
-> On Thu, 27 Apr 2017 11:27:21 +0200, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Thu, 27 Apr 2017 11:18:22 +0200
->>
->> A few update suggestions were taken into account
->> from static source code analysis.
->>
->> Markus Elfring (4):
->>   Use devm_kcalloc() in nct6683_create_attr_group()
->>   Adjust five checks for null pointers
->>   Use devm_kcalloc() in nct6775_create_attr_group()
->>   Adjust seven checks for null pointers
->>
->>  drivers/hwmon/nct6683.c | 15 +++++++--------
->>  drivers/hwmon/nct6775.c | 19 +++++++++----------
->>  2 files changed, 16 insertions(+), 18 deletions(-)
-> 
-> You have proven in the past on various lists that 1* you have no
-> understanding about the changes you are proposing
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/tty/ehv_bytechan.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-You are right in the sense that my knowledge is still incomplete
-in some areas.
+diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
+index e17b7c765466..3dcd59cfffe9 100644
+--- a/drivers/tty/ehv_bytechan.c
++++ b/drivers/tty/ehv_bytechan.c
+@@ -328,7 +328,7 @@ console_initcall(ehv_bc_console_init);
+ /******************************** TTY DRIVER ********************************/
+ 
+ /*
+- * byte channel receive interupt handler
++ * byte channel receive interrupt handler
+  *
+  * This ISR is called whenever data is available on a byte channel.
+  */
+@@ -428,7 +428,7 @@ static void ehv_bc_tx_dequeue(struct ehv_bc_data *bc)
+ }
+ 
+ /*
+- * byte channel transmit interupt handler
++ * byte channel transmit interrupt handler
+  *
+  * This ISR is called whenever space becomes available for transmitting
+  * characters on a byte channel.
+-- 
+2.12.2
 
-
-> and 2* you have no skills to discuss any problem that could be found
-> in your patches.
-
-But I disagree to this view. My skills might not fit to your expectations
-at the moment. But I hope that there are further opportunities to resolve
-remaining software development concerns.
-
-Regards,
-Markus
