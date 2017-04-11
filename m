@@ -1,41 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Apr 2017 13:29:21 +0000
-Subject: Re: [PATCH] NFC: nfcmrvl: double free on error path
-Message-Id: <20170419132921.xkbj3bbumusxc2hx@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Apr 2017 12:51:02 +0000
+Subject: [PATCH] mm/migrate: check for null vma before dereferencing it
+Message-Id: <20170411125102.19497-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170308052237.GA14542@mwanda>
- <20170401221117.GD22034@zurbaran.ger.intel.com>
- <20170419113354.6j7co2yuusdqsubl@mwanda>
- <20170419125229.GE13724@zurbaran.ger.intel.com>
-In-Reply-To: <20170419125229.GE13724@zurbaran.ger.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Vincent Cuissard <cuissard@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@techsingularity.net>, Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 19, 2017 at 02:52:29PM +0200, Samuel Ortiz wrote:
-> On Wed, Apr 19, 2017 at 02:47:34PM +0300, Dan Carpenter wrote:
-> > On Sun, Apr 02, 2017 at 12:11:17AM +0200, Samuel Ortiz wrote:
-> > > Hi Dan,
-> > > 
-> > > On Wed, Mar 08, 2017 at 08:22:37AM +0300, Dan Carpenter wrote:
-> > > > The nci_spi_send() function calls kfree_skb(skb) on both error and
-> > > > success so this extra kfree_skb() is a double free.
-> > > > 
-> > > > Fixes: caf6e49bf6d0 ("NFC: nfcmrvl: add spi driver")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > ---
-> > > > Static analysis.  Not tested.
-> > > Applied to nfc-next, thanks.
-> > > 
-> > 
-> > This is still not showing up in linux-next.
-> I sent a pending pull request containing it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah.  Sorry for the noise.  I didn't realize your tree didn't feed into
-linux-next directly.  Perhaps it should, though?
+check if vma is null before dereferencing it, this avoiding any
+potential null pointer dereferences on vma via the is_vm_hugetlb_page
+call or the direct vma->vm_flags reference.
 
-regards,
-dan carpenter
+Detected with CoverityScan, CID#1427995 ("Dereference before null check")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/migrate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 7958dfa01b16..039f7bc3b9ee 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2757,10 +2757,10 @@ int migrate_vma(const struct migrate_vma_ops *ops,
+ 	/* Sanity check the arguments */
+ 	start &= PAGE_MASK;
+ 	end &= PAGE_MASK;
+-	if (is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_SPECIAL))
+-		return -EINVAL;
+ 	if (!vma || !ops || !src || !dst || start >= end)
+ 		return -EINVAL;
++	if (is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_SPECIAL))
++		return -EINVAL;
+ 	if (start < vma->vm_start || start >= vma->vm_end)
+ 		return -EINVAL;
+ 	if (end <= vma->vm_start || end > vma->vm_end)
+-- 
+2.11.0
 
