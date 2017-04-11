@@ -1,39 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 07 Apr 2017 23:33:36 +0000
-Subject: [PATCH] power: supply: lp8788: add missing comma between literal strings
-Message-Id: <20170407233336.9583-1-colin.king@canonical.com>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Tue, 11 Apr 2017 14:47:29 +0000
+Subject: Re: [PATCH] power: supply: lp8788: add missing comma between literal strings
+Message-Id: <20170411144729.qj3e4o3m2wyjko5c@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="htkhr4kxo3pxwybi"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Milo Kim <milo.kim@ti.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20170407233336.9583-1-colin.king@canonical.com>
+In-Reply-To: <20170407233336.9583-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Milo Kim <milo.kim@ti.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a missing comma between the last two literal strings in
-array stime, so add it in.
+--htkhr4kxo3pxwybi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Detected by PVS-Studio, warning: V653
+Hi,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/lp8788-charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Apr 08, 2017 at 12:33:36AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is a missing comma between the last two literal strings in
+> array stime, so add it in.
+>=20
+> Detected by PVS-Studio, warning: V653
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply/lp8788-charger.c
-index 509e2b341bd6..677f7c40b25a 100644
---- a/drivers/power/supply/lp8788-charger.c
-+++ b/drivers/power/supply/lp8788-charger.c
-@@ -651,7 +651,7 @@ static ssize_t lp8788_show_eoc_time(struct device *dev,
- {
- 	struct lp8788_charger *pchg = dev_get_drvdata(dev);
- 	char *stime[] = { "400ms", "5min", "10min", "15min",
--			"20min", "25min", "30min" "No timeout" };
-+			"20min", "25min", "30min", "No timeout" };
- 	u8 val;
- 
- 	lp8788_read_byte(pchg->lp, LP8788_CHG_EOC, &val);
--- 
-2.11.0
+Giedrius Statkevi=C4=8Dius sent this patch two weeks ago, I
+already applied his patch.
 
+-- Sebastian
+
+--htkhr4kxo3pxwybi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAljs7IEACgkQ2O7X88g7
++pqmXRAAjFZDf6AIXN/SbnTn66FZuuMebNAwrq7r0XaZ5qLdA2zyXidQjBdswdEZ
+MotbauICLbCNM9yvtInErT+zAqQZ7JHuzsF49fg2z/Vet0klfcf06JL/7xsqFBRK
+ecOXTH3tCPEHGIxWXn2vUFqIbORAbMuZMQOOPX88pzIFtPb9bu+j+URTqLdGn9Vt
+PB0ZxuhoLz5kLbWlaHu84dQ2sXaBrcT15cfSBFmnE/RkD7rimXDhgfhW05norEWk
+vS5Wys5JZ7wDeFZx2Erv2tCdefurGBPu/dI8KYavqctiJivt3frI3KPd8uPbn+R+
+eIu4cQTQYum5+BEUkOiEbC/aD/5o/daX69PnzDKeKSzgYG/N/F4wd5iRb1JUgZLP
+gzyB5mTnshw7iat3ZJLCMozcYQyzJPJGAdLs3MpGqSvYZEkbBvSpTlu7PLjGzHh5
+R65cBXnNm0Y0LM3/taJwtaEPPt7PUgUKXPXh0jYaByWqChsF4Yt74CiMKHErPj9u
+PxCs8uiEClMCeZMNABGxEuLZB71A8P/6Exd7RM29CAuN1hBZoP+KgpunxK7JV3rE
+IsUT41VyTrdYNsmH/kPr+/+Cq74RjOKzpB/0LtO1vG9HbIrXVunfHUA0J/yGhFJT
+qWEk1r48nIrjshXv0cLTees4jZ1IUce9L5hTWI5PJ2B3AuZ1MLE=
+=Krfu
+-----END PGP SIGNATURE-----
+
+--htkhr4kxo3pxwybi--
