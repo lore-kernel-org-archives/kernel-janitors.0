@@ -1,16 +1,75 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Thu, 20 Apr 2017 10:19:34 +0000
-Subject: Re: [PATCH block-tree] net: off by one in inet6_pton()
-Message-Id: <497467a5-79d7-52e9-92d7-1d5cc0f89473@grimberg.me>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 13:15:32 +0000
+Subject: [PATCH] staging: ks7010: Adjust dev_err() calls in ks7010_sdio_probe()
+Message-Id: <12095569-1d23-7676-adef-b89ebc3a229b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413194231.GD591@mwanda>
-In-Reply-To: <20170413194231.GD591@mwanda>
+References: <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <901acc3c-ff1b-6f0c-b744-2bfb36de18d8@users.sourceforge.net>
+ <1468787163.1900.1.camel@perches.com> <20160720155500.GG1688@katana>
+In-Reply-To: <20160720155500.GG1688@katana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@fb.com>
-Cc: Wei Tang <tangwei@cmss.chinamobile.com>, Alexey Dobriyan <adobriyan@gmail.com>, netdev@vger.kernel.org, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sabitha George <sabitha.george@gmail.com>, sayli karnik <karniksayli1995@gmail.com>, "Tobin C. Harding" <me@tobin.cc>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
 
-Thanks Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 14:54:35 +0200
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+The use of the logging function "dev_err" was introduced here on 2016-09-26.
+
+I find the following implementation details worth for another look.
+* Reduce expressions for the first input parameter "dev".
+
+* Omit an extra module prefix in passed error messages because the device name
+  will be displayed by the function "__dev_printk".
+
+Fixes: 9887b5e51fafaf919601ccb8bdae1e0ad749032f ("staging: ks7010: Fix warnings on printk() usage")
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/ks7010/ks7010_sdio.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index b16618b41253..85feb170869b 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -955,12 +955,11 @@ static int ks7010_sdio_probe(struct sdio_func *func,
+ 	/* private memory allocate */
+ 	netdev = alloc_etherdev(sizeof(*priv));
+ 	if (!netdev) {
+-		dev_err(&card->func->dev, "ks7010 : Unable to alloc new net device\n");
++		dev_err(&func->dev, "Unable to alloc new net device\n");
+ 		goto err_release_irq;
+ 	}
+ 	if (dev_alloc_name(netdev, "wlan%d") < 0) {
+-		dev_err(&card->func->dev,
+-			"ks7010 :  Couldn't get name!\n");
++		dev_err(&func->dev, "Couldn't get name!\n");
+ 		goto err_free_netdev;
+ 	}
+ 
+@@ -1000,9 +999,9 @@ static int ks7010_sdio_probe(struct sdio_func *func,
+ 	/* Upload firmware */
+ 	ret = ks7010_upload_firmware(priv, card);	/* firmware load */
+ 	if (ret) {
+-		dev_err(&card->func->dev,
+-			"ks7010: firmware load failed !! return code = %d\n",
+-			 ret);
++		dev_err(&func->dev,
++			"firmware load failed! return code = %d\n",
++			ret);
+ 		goto err_free_read_buf;
+ 	}
+ 
+-- 
+2.12.2
+
