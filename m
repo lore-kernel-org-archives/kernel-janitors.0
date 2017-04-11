@@ -1,70 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 14:28:42 +0000
-Subject: [PATCH 3/3] iscsi-target: Improve size determinations in four functions
-Message-Id: <b2f306db-d191-67bb-1e9b-0e91cd540481@users.sourceforge.net>
+Date: Tue, 11 Apr 2017 18:30:13 +0000
+Subject: [PATCH 2/2] tty-goldfish: Adjust five checks for null pointers
+Message-Id: <dc16bfba-ba55-c478-aada-7bed4c3ece51@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
-In-Reply-To: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
+References: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
+In-Reply-To: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Hannes Reinecke <hare@suse.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 16:00:39 +0200
+Date: Tue, 11 Apr 2017 20:15:30 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Replace the specification of four data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determinations a bit safer according to the Linux coding style convention.
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/iscsi_target.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/tty/goldfish.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-index 196e9dd138ca..5ef6eb238174 100644
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -128,7 +128,7 @@ struct iscsi_tiqn *iscsit_add_tiqn(unsigned char *buf)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
+index b92c3312ecd2..a07e5b01c279 100644
+--- a/drivers/tty/goldfish.c
++++ b/drivers/tty/goldfish.c
+@@ -182,12 +182,12 @@ static int goldfish_tty_create_driver(void)
+ 
+ 	goldfish_ttys = kcalloc(goldfish_tty_line_count, sizeof(*goldfish_ttys),
+ 				GFP_KERNEL);
+-	if (goldfish_ttys = NULL) {
++	if (!goldfish_ttys) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc_goldfish_ttys_failed;
  	}
- 
--	tiqn = kzalloc(sizeof(struct iscsi_tiqn), GFP_KERNEL);
-+	tiqn = kzalloc(sizeof(*tiqn), GFP_KERNEL);
- 	if (!tiqn)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -360,7 +360,7 @@ struct iscsi_np *iscsit_add_np(
- 		return np;
+ 	tty = alloc_tty_driver(goldfish_tty_line_count);
+-	if (tty = NULL) {
++	if (!tty) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc_tty_driver_failed;
  	}
+@@ -235,15 +235,15 @@ static int goldfish_tty_probe(struct platform_device *pdev)
+ 	unsigned int line;
  
--	np = kzalloc(sizeof(struct iscsi_np), GFP_KERNEL);
-+	np = kzalloc(sizeof(*np), GFP_KERNEL);
- 	if (!np) {
- 		mutex_unlock(&np_lock);
- 		return ERR_PTR(-ENOMEM);
-@@ -694,8 +694,7 @@ static int __init iscsi_target_init_module(void)
- 	int ret = 0, size;
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (r = NULL)
++	if (!r)
+ 		return -EINVAL;
  
- 	pr_debug("iSCSI-Target "ISCSIT_VERSION"\n");
--
--	iscsit_global = kzalloc(sizeof(struct iscsit_global), GFP_KERNEL);
-+	iscsit_global = kzalloc(sizeof(*iscsit_global), GFP_KERNEL);
- 	if (!iscsit_global)
- 		return -1;
+ 	base = ioremap(r->start, 0x1000);
+-	if (base = NULL)
++	if (!base)
+ 		pr_err("goldfish_tty: unable to remap base\n");
  
-@@ -1987,8 +1986,7 @@ iscsit_handle_task_mgt_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
- 		hdr->refcmdsn = cpu_to_be32(ISCSI_RESERVED_TAG);
+ 	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (r = NULL)
++	if (!r)
+ 		goto err_unmap;
  
- 	cmd->data_direction = DMA_NONE;
--
--	cmd->tmr_req = kzalloc(sizeof(struct iscsi_tmr_req), GFP_KERNEL);
-+	cmd->tmr_req = kzalloc(sizeof(*cmd->tmr_req), GFP_KERNEL);
- 	if (!cmd->tmr_req)
- 		return iscsit_add_reject_cmd(cmd,
- 					     ISCSI_REASON_BOOKMARK_NO_RESOURCES,
+ 	irq = r->start;
 -- 
 2.12.2
 
