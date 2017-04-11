@@ -1,35 +1,37 @@
-From: Joel Stanley <joel@jms.id.au>
-Date: Wed, 12 Apr 2017 10:39:08 +0000
-Subject: Re: [PATCH 2/2] hwmon: (tacho) Remove an unused variable
-Message-Id: <CACPK8XcBAibmvN+xKqSWpP_benEYx7QRR8KgAdWsxszwY5n0hg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 11 Apr 2017 04:32:04 +0000
+Subject: [PATCH] switchtec: Fix an error handling
+Message-Id: <20170411043204.19343-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170410134703.GB1918@mwanda>
-In-Reply-To: <20170410134703.GB1918@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kurt.schwemmer@microsemi.com, stephen.bates@microsemi.com, logang@deltatee.com, bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Apr 10, 2017 at 11:17 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> We never use this global variable.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+'stuser_create' returns an error pointer in case of error, not NULL.
+So test its return value with IS_ERR.
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+Fixes: 74004262f329 ("MicroSemi Switchtec management interface driver")
 
->
-> diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
-> index 2f22add5c73b..b96fff50a3ee 100644
-> --- a/drivers/hwmon/aspeed-pwm-tacho.c
-> +++ b/drivers/hwmon/aspeed-pwm-tacho.c
-> @@ -153,8 +153,6 @@
->  #define M_TACH_UNIT 0x1000
->  #define INIT_FAN_CTRL 0xFF
->
-> -void __iomem *regs;
-> -
->  struct aspeed_pwm_tacho_data {
->         struct regmap *regmap;
->         unsigned long clk_freq;
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/switch/switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index fcde98161d9a..cc6e085008fb 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -608,7 +608,7 @@ static int switchtec_dev_open(struct inode *inode, struct file *filp)
+ 	stdev = container_of(inode->i_cdev, struct switchtec_dev, cdev);
+ 
+ 	stuser = stuser_create(stdev);
+-	if (!stuser)
++	if (IS_ERR(stuser))
+ 		return PTR_ERR(stuser);
+ 
+ 	filp->private_data = stuser;
+-- 
+2.11.0
+
