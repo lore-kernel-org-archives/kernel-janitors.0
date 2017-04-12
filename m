@@ -1,15 +1,31 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Sun, 09 Apr 2017 09:02:27 +0000
-Subject: Re: [PATCH 9/9] IB/isert: Improve size determinations in three functions
-Message-Id: <ed4d2c3c-a897-7a1a-ae24-580708b59399@grimberg.me>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Apr 2017 08:33:21 +0000
+Subject: [PATCH] c2port: checking for NULL instead of IS_ERR()
+Message-Id: <20170412083321.GC3250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
- <a19efeb8-fd7c-274b-bd59-adbc3a473cfb@users.sourceforge.net>
-In-Reply-To: <a19efeb8-fd7c-274b-bd59-adbc3a473cfb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Rodolfo Giometti <giometti@linux.it>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Acked-by: Sagi Grimberg <sagi@grimberg.me>
+c2port_device_register() never returns NULL, it uses error pointers.
+
+Fixes: 65131cd52b9e ("c2port: add c2port support for Eurotech Duramar 2150")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/misc/c2port/c2port-duramar2150.c b/drivers/misc/c2port/c2port-duramar2150.c
+index 5484301d57d9..3dc61ea7dc64 100644
+--- a/drivers/misc/c2port/c2port-duramar2150.c
++++ b/drivers/misc/c2port/c2port-duramar2150.c
+@@ -129,8 +129,8 @@ static int __init duramar2150_c2port_init(void)
+ 
+ 	duramar2150_c2port_dev = c2port_device_register("uc",
+ 					&duramar2150_c2port_ops, NULL);
+-	if (!duramar2150_c2port_dev) {
+-		ret = -ENODEV;
++	if (IS_ERR(duramar2150_c2port_dev)) {
++		ret = PTR_ERR(duramar2150_c2port_dev);
+ 		goto free_region;
+ 	}
+ 
