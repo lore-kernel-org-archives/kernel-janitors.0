@@ -1,34 +1,45 @@
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 18 Apr 2017 03:01:49 +0000
-Subject: Re: [PATCH] ringtest: fix an assert statement
-Message-Id: <e6715605-242b-bf8f-855b-ba443054c87d@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 12 Apr 2017 16:27:22 +0000
+Subject: [PATCH] drm: fix spelling mistake: "committing"
+Message-Id: <20170412162722.25087-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170415192214.GB6416@mwanda>
-In-Reply-To: <20170415192214.GB6416@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in DRM_DEBUG_ATOMIC debug message
 
-On 2017年04月16日 03:22, Dan Carpenter wrote:
-> There is an || vs && typo so the assert can never be triggered.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/tools/virtio/ringtest/main.c b/tools/virtio/ringtest/main.c
-> index 022ae95a06bd..453ca3c21193 100644
-> --- a/tools/virtio/ringtest/main.c
-> +++ b/tools/virtio/ringtest/main.c
-> @@ -87,7 +87,7 @@ void set_affinity(const char *arg)
->   	cpu = strtol(arg, &endptr, 0);
->   	assert(!*endptr);
->   
-> -	assert(cpu >= 0 || cpu < CPU_SETSIZE);
-> +	assert(cpu >= 0 && cpu < CPU_SETSIZE);
->   
->   	self = pthread_self();
->   	CPU_ZERO(&cpuset);
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_atomic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index f32506a7c1d6..30229ab719c0 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1618,7 +1618,7 @@ int drm_atomic_commit(struct drm_atomic_state *state)
+ 	if (ret)
+ 		return ret;
+ 
+-	DRM_DEBUG_ATOMIC("commiting %p\n", state);
++	DRM_DEBUG_ATOMIC("committing %p\n", state);
+ 
+ 	return config->funcs->atomic_commit(state->dev, state, false);
+ }
+@@ -1647,7 +1647,7 @@ int drm_atomic_nonblocking_commit(struct drm_atomic_state *state)
+ 	if (ret)
+ 		return ret;
+ 
+-	DRM_DEBUG_ATOMIC("commiting %p nonblocking\n", state);
++	DRM_DEBUG_ATOMIC("committing %p nonblocking\n", state);
+ 
+ 	return config->funcs->atomic_commit(state->dev, state, true);
+ }
+-- 
+2.11.0
+
