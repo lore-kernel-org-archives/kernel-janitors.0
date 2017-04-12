@@ -1,44 +1,37 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Apr 2017 21:29:38 +0000
-Subject: [PATCH] xen/9pfs: use %d format specifier instead of %u for a signed int
-Message-Id: <20170411212938.5901-1-colin.king@canonical.com>
+Date: Wed, 12 Apr 2017 14:12:35 +0000
+Subject: [PATCH] snic: fix spelling mistake: "Cann't" -> "Cannot"
+Message-Id: <20170412141235.18094-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, "David S . Miller" <davem@davemloft.net>, v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
+To: Karan Tilak Kumar <kartilak@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-variable i is a signed int, so use the %d print format specifier instead of
-%u. Fixes two warnings by cppcheck.
+Trivial fix to spelling mistake in SNIC_ERR error message text,
+one cannot have "Cann't".
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/9p/trans_xen.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/snic/snic_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
-index 47864245c0d4..9b66087bbc91 100644
---- a/net/9p/trans_xen.c
-+++ b/net/9p/trans_xen.c
-@@ -441,13 +441,13 @@ static int xen_9pfs_front_probe(struct xenbus_device *dev,
- 		char str[16];
+diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_debugfs.c
+index d30280326bde..269ddf791a73 100644
+--- a/drivers/scsi/snic/snic_debugfs.c
++++ b/drivers/scsi/snic/snic_debugfs.c
+@@ -548,7 +548,7 @@ snic_trc_debugfs_init(void)
+ 				 &snic_trc_fops);
  
- 		BUILD_BUG_ON(XEN_9PFS_NUM_RINGS > 9);
--		sprintf(str, "ring-ref%u", i);
-+		sprintf(str, "ring-ref%d", i);
- 		ret = xenbus_printf(xbt, dev->nodename, str, "%d",
- 				    priv->rings[i].ref);
- 		if (ret)
- 			goto error_xenbus;
+ 	if (!de) {
+-		SNIC_ERR("Cann't create trace file.\n");
++		SNIC_ERR("Cannot create trace file.\n");
  
--		sprintf(str, "event-channel-%u", i);
-+		sprintf(str, "event-channel-%d", i);
- 		ret = xenbus_printf(xbt, dev->nodename, str, "%u",
- 				    priv->rings[i].evtchn);
- 		if (ret)
+ 		return ret;
+ 	}
 -- 
 2.11.0
 
