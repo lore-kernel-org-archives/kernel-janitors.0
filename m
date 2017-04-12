@@ -1,49 +1,43 @@
-From: Subhash Jadavani <subhashj@codeaurora.org>
-Date: Wed, 26 Apr 2017 17:59:43 +0000
-Subject: Re: [PATCH 3/3] scsi: ufs: Delete an unnecessary return statement in ufshcd_exception_event_handler(
-Message-Id: <6c360ac6f9b5a9a1591757a35b8d5036@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Apr 2017 19:49:46 +0000
+Subject: [bug report] net: stmmac: adding multiple buffers for rx
+Message-Id: <20170412194946.GA28352@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
- <9fc152fd-0881-85f6-a4d0-3db27dc364f5@users.sourceforge.net>
-In-Reply-To: <9fc152fd-0881-85f6-a4d0-3db27dc364f5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-scsi-owner@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 2017-04-25 13:30, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 25 Apr 2017 22:00:05 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: void function return statements are not generally useful
-> 
-> Thus remove such a statement here.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 5216e33e61a3..9018f26a5667 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -4966,7 +4966,6 @@ static void
-> ufshcd_exception_event_handler(struct work_struct *work)
-> 
->  out:
->  	pm_runtime_put_sync(hba->dev);
-> -	return;
->  }
-> 
->  /* Complete requests that have door-bell cleared */
+Hello Joao Pinto,
 
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+The patch 54139cf3bb33: "net: stmmac: adding multiple buffers for rx"
+from Apr 6, 2017, leads to the following static checker warning:
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:1274 init_dma_rx_desc_rings()
+	warn: always true condition '(queue >= 0) => (0-u32max >= 0)'
+
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+  1270  
+  1271          return 0;
+  1272  
+  1273  err_init_rx_buffers:
+  1274          while (queue >= 0) {
+                       ^^^^^^^^^^
+This is harmless because of the break statement later, but slightly
+annoying because of the static checker warning.
+
+  1275                  while (--i >= 0)
+  1276                          stmmac_free_rx_buffer(priv, queue, i);
+  1277  
+  1278                  if (queue = 0)
+  1279                          break;
+  1280  
+  1281                  i = DMA_RX_SIZE;
+  1282                  queue--;
+  1283          }
+  1284  
+  1285          return ret;
+  1286  }
+
+regards,
+dan carpenter
