@@ -1,32 +1,32 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:44:44 +0000
-Subject: Re: [PATCH 1/8] clk: si5351: Use devm_kcalloc() in si5351_i2c_probe()
-Message-Id: <20170422024444.GK7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Apr 2017 08:32:53 +0000
+Subject: [PATCH] rtc: hid-sensor-time: remove some dead code
+Message-Id: <20170412083253.GB3250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <b72a7329-0920-385d-008d-37dfc258f24d@users.sourceforge.net>
-In-Reply-To: <b72a7329-0920-385d-008d-37dfc258f24d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, rtc-linux@googlegroups.com, kernel-janitors@vger.kernel.org
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 22:37:30 +0200
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "devm_kcalloc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+devm_rtc_device_register() doesn't ever return NULL so there is no need
+to check.
 
-Applied to clk-next
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/rtc/rtc-hid-sensor-time.c b/drivers/rtc/rtc-hid-sensor-time.c
+index c398f74234c6..2751dba850c6 100644
+--- a/drivers/rtc/rtc-hid-sensor-time.c
++++ b/drivers/rtc/rtc-hid-sensor-time.c
+@@ -291,9 +291,9 @@ static int hid_time_probe(struct platform_device *pdev)
+ 					"hid-sensor-time", &hid_time_rtc_ops,
+ 					THIS_MODULE);
+ 
+-	if (IS_ERR_OR_NULL(time_state->rtc)) {
++	if (IS_ERR(time_state->rtc)) {
+ 		hid_device_io_stop(hsdev->hdev);
+-		ret = time_state->rtc ? PTR_ERR(time_state->rtc) : -ENODEV;
++		ret = PTR_ERR(time_state->rtc);
+ 		time_state->rtc = NULL;
+ 		dev_err(&pdev->dev, "rtc device register failed!\n");
+ 		goto err_rtc;
