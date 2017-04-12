@@ -1,27 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 17:00:07 +0000
-Subject: [PATCH 0/2] TTY: small adjustments for the ePAPR hypervisor byte channel device driver
-Message-Id: <4666b729-217c-ab28-4a3c-25ef703054dd@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Apr 2017 08:31:53 +0000
+Subject: [PATCH] staging: lustre: checking for NULL instead if IS_ERR
+Message-Id: <20170412083153.GA3250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lustre-devel@lists.lustre.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 18:54:03 +0200
+lustre_cfg_new() returns error pointers and never NULL.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (2):
-  Use kcalloc() in ehv_bc_init()
-  Fix a typo in two comment lines
-
- drivers/tty/ehv_bytechan.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
--- 
-2.12.2
-
+diff --git a/drivers/staging/lustre/lustre/obdclass/obd_config.c b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+index 8fce88f69039..6a7e7a7d2af1 100644
+--- a/drivers/staging/lustre/lustre/obdclass/obd_config.c
++++ b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+@@ -1427,8 +1427,8 @@ int class_manual_cleanup(struct obd_device *obd)
+ 	lustre_cfg_bufs_reset(&bufs, obd->obd_name);
+ 	lustre_cfg_bufs_set_string(&bufs, 1, flags);
+ 	lcfg = lustre_cfg_new(LCFG_CLEANUP, &bufs);
+-	if (!lcfg)
+-		return -ENOMEM;
++	if (IS_ERR(lcfg))
++		return PTR_ERR(lcfg);
+ 
+ 	rc = class_process_config(lcfg);
+ 	if (rc) {
