@@ -1,29 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 08 Apr 2017 15:14:59 +0000
-Subject: Re: [PATCH][-next] nfp: don't dereference a null nn->eth_port to print a warning
-Message-Id: <20170408.081459.254155739436767702.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Apr 2017 08:35:25 +0000
+Subject: [PATCH] switchtec: checking for NULL instead of IS_ERR()
+Message-Id: <20170412083525.GF3250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170406125435.18898-1-colin.king@canonical.com>
-In-Reply-To: <20170406125435.18898-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jakub.kicinski@netronome.com, simon.horman@netronome.com, oss-drivers@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>
+Cc: Stephen Bates <stephen.bates@microsemi.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  6 Apr 2017 13:54:35 +0100
+stuser_create() uses error pointers, it never returns NULL.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> On the case where nn->eth_port is null the warning message
-> is printing the port by dereferencing this null pointer.
-> Remove the deference to avoid a crash when printing the
-> warning message.
-> 
-> Detected by CoverityScan, CID#1426198 ("Dereference after null check")
-> 
-> Fixes: ce22f5a2cbe3c627 ("nfp: separate high level and low level NSP headers")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 74004262f329 ("MicroSemi Switchtec management interface driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index fcde98161d9a..cc6e085008fb 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -608,7 +608,7 @@ static int switchtec_dev_open(struct inode *inode, struct file *filp)
+ 	stdev = container_of(inode->i_cdev, struct switchtec_dev, cdev);
+ 
+ 	stuser = stuser_create(stdev);
+-	if (!stuser)
++	if (IS_ERR(stuser))
+ 		return PTR_ERR(stuser);
+ 
+ 	filp->private_data = stuser;
