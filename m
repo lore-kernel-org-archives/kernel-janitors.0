@@ -1,46 +1,40 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 26 Apr 2017 06:25:24 +0000
-Subject: Re: [PATCH] iio: adc: Max9611: checking for ERR_PTR instead of NULL in probe
-Message-Id: <1c0a27bd-7de6-aa02-189d-7d3fb2343b06@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 13 Apr 2017 12:14:19 +0000
+Subject: [PATCH 1/2] crypto: chcr - Improve error checking
+Message-Id: <71c63ef360ba033c1321e9792228b1e7b728c88e.1492085165.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170420102618.z6xqguj5rnob67if@mwanda>
-In-Reply-To: <20170420102618.z6xqguj5rnob67if@mwanda>
+References: <cover.1492085165.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1492085165.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, harsh@chelsio.com, hariprasad@chelsio.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 20/04/17 11:26, Dan Carpenter wrote:
-> devm_iio_device_alloc() doesn't return ERR_PTRs, it returns NULLs.
-> 
-> Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Applied to the fixes-togreg branch of iio.git.  Will get this to
-Greg soon after the merge window closes.
+'chcr_alloc_shash()' can return NULL. Here it is not possible because this
+code is reached only if 'get_alg_config()' a few lines above has succeeded.
+So we are garanteed that the value of 'max_authsize' is a correct
+parameter.
+Anyway, this is harmless to add a check for NULL.
 
-Thanks,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/chelsio/chcr_algo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonathan
-> diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-> index ec82106480e1..dc3869bf3248 100644
-> --- a/drivers/iio/adc/max9611.c
-> +++ b/drivers/iio/adc/max9611.c
-> @@ -536,8 +536,8 @@ static int max9611_probe(struct i2c_client *client,
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*max9611));
-> -	if (IS_ERR(indio_dev))
-> -		return PTR_ERR(indio_dev);
-> +	if (!indio_dev)
-> +		return -ENOMEM;
->  
->  	i2c_set_clientdata(client, indio_dev);
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 41bc7f4f58cd..f19590ac8775 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -2294,7 +2294,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
+ 			    aeadctx->enckey_len << 3);
+ 
+ 	base_hash  = chcr_alloc_shash(max_authsize);
+-	if (IS_ERR(base_hash)) {
++	if (IS_ERR_OR_NULL(base_hash)) {
+ 		pr_err("chcr : Base driver cannot be loaded\n");
+ 		goto out;
+ 	}
+-- 
+2.11.0
 
