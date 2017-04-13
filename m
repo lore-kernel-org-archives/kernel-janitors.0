@@ -1,29 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Apr 2017 19:52:17 +0000
-Subject: [PATCH] drm/i915: checking for NULL instead of IS_ERR() in mock selftests
-Message-Id: <20170413195217.GA26108@mwanda>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Thu, 13 Apr 2017 20:26:51 +0000
+Subject: Re: [PATCH] drm/i915: checking for NULL instead of IS_ERR() in mock selftests
+Message-Id: <20170413202651.GX12532@nuc-i3427.alporthouse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170413195217.GA26108@mwanda>
+In-Reply-To: <20170413195217.GA26108@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel.vetter@intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
-Cc: dri-devel@lists.freedesktop.org, Arnd Bergmann <arnd@arndb.de>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, intel-gfx@lists.freedesktop.org, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, kernel-janitors@vger.kernel.org, Matthew Auld <matthew.auld@intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Matthew Auld <matthew.auld@intel.com>, Arnd Bergmann <arnd@arndb.de>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-i915_gem_request_alloc() uses error pointers.  It never returns NULLs.
+On Thu, Apr 13, 2017 at 10:52:17PM +0300, Dan Carpenter wrote:
+> i915_gem_request_alloc() uses error pointers.  It never returns NULLs.
+> 
+> Fixes: 0daf0113cff6 ("drm/i915: Mock infrastructure for request emission")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 0daf0113cff6 ("drm/i915: Mock infrastructure for request emission")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_request.c b/drivers/gpu/drm/i915/selftests/mock_request.c
-index 0e8d2e7f8c70..8097e3693ec4 100644
---- a/drivers/gpu/drm/i915/selftests/mock_request.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_request.c
-@@ -35,7 +35,7 @@ mock_request(struct intel_engine_cs *engine,
- 
- 	/* NB the i915->requests slab cache is enlarged to fit mock_request */
- 	request = i915_gem_request_alloc(engine, context);
--	if (!request)
-+	if (IS_ERR(request))
- 		return NULL;
- 
- 	mock = container_of(request, typeof(*mock), base);
+Thanks for the catch.
+-Chris
+
+-- 
+Chris Wilson, Intel Open Source Technology Centre
