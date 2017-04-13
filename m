@@ -1,57 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:25:23 +0000
-Subject: [PATCH 15/25] net: mvpp2: Adjust three error messages
-Message-Id: <06441317-68c3-f48e-33ea-638c80c1f17f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 13 Apr 2017 12:13:56 +0000
+Subject: [PATCH 0/2] Fix/improve some error handling related to 'chcr_alloc_shash'
+Message-Id: <cover.1492085165.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net, harsh@chelsio.com, hariprasad@chelsio.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 11:20:41 +0200
+This serie is divided into 2 patches. They are more or less related to the
+same issue, but the first patch is not a bug in itself, just a clean-up
+(IMHO).
+If I'm correct, the 2nd one, is a real (unlikely) issue.
 
-Use the word "failed" in the string for three function calls.
+Christophe JAILLET (2):
+  crypto: chcr - Improve error checking
+  crypto: chcr - Fix error checking
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/marvell/mvpp2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/crypto/chelsio/chcr_algo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 89237abf386d..717d79dcb6aa 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -6094,7 +6094,7 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
- 	mvpp2_ingress_enable(port);
- 	return 0;
- log_error:
--	netdev_err(dev, "fail to change MAC address\n");
-+	netdev_err(dev, "failed to change MAC address\n");
- 	return err;
- }
- 
-@@ -6142,7 +6142,7 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
- 
- 	return 0;
- log_error:
--	netdev_err(dev, "fail to change MTU\n");
-+	netdev_err(dev, "failed to change MTU\n");
- 	return err;
- }
- 
-@@ -6311,7 +6311,7 @@ static int mvpp2_ethtool_set_ringparam(struct net_device *dev,
- err_clean_rxqs:
- 	mvpp2_cleanup_rxqs(port);
- err_out:
--	netdev_err(dev, "fail to change ring parameters");
-+	netdev_err(dev, "failed to change ring parameters");
- 	return err;
- }
- 
 -- 
-2.12.2
+2.11.0
 
