@@ -1,15 +1,28 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Sun, 09 Apr 2017 12:26:35 +0000
-Subject: Re: [PATCH 2/9] IB/IPoIB: Delete an error message for a failed memory allocation
-Message-Id: <da7bb745-7514-37ba-a410-3ab22176a555@grimberg.me>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Apr 2017 19:53:11 +0000
+Subject: [PATCH] drm/i915: uninitialized value on error path
+Message-Id: <20170413195311.GB26108@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
- <bb64e4e8-1ebd-c4dd-1da4-1041eb2bc63d@users.sourceforge.net>
-In-Reply-To: <bb64e4e8-1ebd-c4dd-1da4-1041eb2bc63d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+"ret" isn't initialized on this error path.  It doesn't really cause
+any problems unless it's randomly set to -EDEADLK which is not likely.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 48a546210d8b..d0e9578952d5 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -9563,6 +9563,7 @@ int intel_get_load_detect_pipe(struct drm_connector *connector,
+ 	 */
+ 	if (!crtc) {
+ 		DRM_DEBUG_KMS("no pipe available for load-detect\n");
++		ret = -ENODEV;
+ 		goto fail;
+ 	}
+ 
