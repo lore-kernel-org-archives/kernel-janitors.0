@@ -1,31 +1,79 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:46:17 +0000
-Subject: Re: [PATCH 4/8] clk: Replace four seq_printf() calls by seq_putc()
-Message-Id: <20170422024617.GM7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Apr 2017 19:36:37 +0000
+Subject: [PATCH] lightnvm: fix some WARN() messages
+Message-Id: <20170413193636.GC591@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
-In-Reply-To: <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Matias Bjorling <mb@lightnvm.io>, Javier =?iso-8859-1?Q?Gonz=E1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 08:45:43 +0200
-> 
-> Four single characters should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+WARN_ON() takes a condition, not an error message.  I slightly tweaked
+some conditions so hopefully it's more clear.
 
-Applied to clk-next
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index eff0982c076f..bce7ed5fc73f 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -49,8 +49,8 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	int i, j = 0;
+ 
+ 	/* logic error: lba out-of-bounds. Ignore read request */
+-	if (!(blba + nr_secs < pblk->rl.nr_secs)) {
+-		WARN_ON("pblk: read lbas out of bounds\n");
++	if (blba + nr_secs >= pblk->rl.nr_secs) {
++		WARN(1, "pblk: read lbas out of bounds\n");
+ 		return;
+ 	}
+ 
+@@ -254,8 +254,8 @@ static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	sector_t lba = pblk_get_lba(bio);
+ 
+ 	/* logic error: lba out-of-bounds. Ignore read request */
+-	if (!(lba < pblk->rl.nr_secs)) {
+-		WARN_ON("pblk: read lba out of bounds\n");
++	if (lba >= pblk->rl.nr_secs) {
++		WARN(1, "pblk: read lba out of bounds\n");
+ 		return;
+ 	}
+ 
+@@ -411,8 +411,8 @@ static int read_rq_gc(struct pblk *pblk, struct nvm_rq *rqd,
+ 	int valid_secs = 0;
+ 
+ 	/* logic error: lba out-of-bounds */
+-	if (!(lba < pblk->rl.nr_secs)) {
+-		WARN_ON("pblk: read lba out of bounds\n");
++	if (lba >= pblk->rl.nr_secs) {
++		WARN(1, "pblk: read lba out of bounds\n");
+ 		goto out;
+ 	}
+ 
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 02c415b957d4..56547ca87926 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -141,7 +141,7 @@ static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
+ 
+ 		/* Logic error */
+ 		if (bit > c_ctx->nr_valid) {
+-			WARN_ON_ONCE("pblk: corrupted write request\n");
++			WARN_ONCE(1, "pblk: corrupted write request\n");
+ 			goto out;
+ 		}
+ 
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 0d50f415cfde..f8f85087cd3c 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -167,7 +167,7 @@ static int pblk_recov_l2p_from_emeta(struct pblk *pblk, struct pblk_line *line)
+ 		if (le64_to_cpu(lba_list[i]) = ADDR_EMPTY) {
+ 			spin_lock(&line->lock);
+ 			if (test_and_set_bit(i, line->invalid_bitmap))
+-				WARN_ON_ONCE("pblk: rec. double invalidate:\n");
++				WARN_ONCE(1, "pblk: rec. double invalidate:\n");
+ 			else
+ 				line->vsc--;
+ 			spin_unlock(&line->lock);
