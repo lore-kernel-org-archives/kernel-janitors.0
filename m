@@ -1,33 +1,32 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:46 +0000
-Subject: Re: [PATCH 5/6] clk: hi3620: Delete error messages for a failed memory allocation in two functions
-Message-Id: <20170419183146.GU7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Apr 2017 19:42:31 +0000
+Subject: [PATCH block-tree] net: off by one in inet6_pton()
+Message-Id: <20170413194231.GD591@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
-In-Reply-To: <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: Wei Tang <tangwei@cmss.chinamobile.com>, Alexey Dobriyan <adobriyan@gmail.com>, netdev@vger.kernel.org, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 10:50:53 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus remove such statements here.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+If "scope_len" is sizeof(scope_id) then we would put the NUL terminator
+one space beyond the end of the buffer.
 
-Applied to clk-next
+Fixes: b1a951fe469e ("net/utils: generic inet_pton_with_scope helper")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This one goes through Jens' tree not through net-dev.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/net/core/utils.c b/net/core/utils.c
+index da1089ea5389..93066bd0305a 100644
+--- a/net/core/utils.c
++++ b/net/core/utils.c
+@@ -339,7 +339,7 @@ static int inet6_pton(struct net *net, const char *src, u16 port_num,
+ 	    src + srclen != scope_delim && *scope_delim = '%') {
+ 		struct net_device *dev;
+ 		char scope_id[16];
+-		size_t scope_len = min_t(size_t, sizeof(scope_id),
++		size_t scope_len = min_t(size_t, sizeof(scope_id) - 1,
+ 					 src + srclen - scope_delim - 1);
+ 
+ 		memcpy(scope_id, scope_delim + 1, scope_len);
