@@ -1,15 +1,42 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Sun, 09 Apr 2017 12:26:46 +0000
-Subject: Re: [PATCH 3/9] IB/IPoIB: Enclose six expressions for the sizeof operator by parentheses
-Message-Id: <1b8a81c9-bf16-6625-a3f4-51ba7c508985@grimberg.me>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Apr 2017 19:54:25 +0000
+Subject: [PATCH v2] drm/i915: set "ret" correctly on error paths
+Message-Id: <20170414195425.GA8144@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
- <acd5a60c-cf71-e802-94c7-8b85ebe020ef@users.sourceforge.net>
-In-Reply-To: <acd5a60c-cf71-e802-94c7-8b85ebe020ef@users.sourceforge.net>
+References: <20170413202924.GY12532@nuc-i3427.alporthouse.com>
+In-Reply-To: <20170413202924.GY12532@nuc-i3427.alporthouse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+If "crtc" is NULL, then my static checker complains that "ret" isn't
+initialized on that path.  It doesn't really cause a problem unless
+"ret" is somehow set to -EDEADLK which is not likely.
+
+Chris Wilson also noticed another error path where "ret" isn't set
+correctly.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 48a546210d8b..2c66de875d3d 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -9563,6 +9563,7 @@ int intel_get_load_detect_pipe(struct drm_connector *connector,
+ 	 */
+ 	if (!crtc) {
+ 		DRM_DEBUG_KMS("no pipe available for load-detect\n");
++		ret = -ENODEV;
+ 		goto fail;
+ 	}
+ 
+@@ -9619,6 +9620,7 @@ int intel_get_load_detect_pipe(struct drm_connector *connector,
+ 		DRM_DEBUG_KMS("reusing fbdev for load-detection framebuffer\n");
+ 	if (IS_ERR(fb)) {
+ 		DRM_DEBUG_KMS("failed to allocate framebuffer for load-detection\n");
++		ret = PTR_ERR(fb);
+ 		goto fail;
+ 	}
+ 
