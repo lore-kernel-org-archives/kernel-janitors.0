@@ -1,37 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 27 Apr 2017 09:12:56 +0000
-Subject: [PATCH] drm/nouveau/fifo/gk104-: Silence a locking warning
-Message-Id: <20170427091256.z3l3rp4fxjxcatnv@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:11:31 +0000
+Subject: [PATCH 03/10] pinctrl: imx: Return directly after a failed devm_kcalloc() in imx_pinctrl_parse_funct
+Message-Id: <786ef7b5-f889-7951-7479-e9e1f901f041@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>
-Cc: nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Presumably we can never actually hit this return, but static checkers
-complain that we should unlock before we return.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Apr 2017 15:12:20 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a check for a null pointer and return an error code
+after a memory allocation failure was detected.
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
-index 3a24788c3185..a7e55c422501 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
-@@ -148,7 +148,7 @@ gk104_fifo_runlist_commit(struct gk104_fifo *fifo, int runl)
- 	case NVKM_MEM_TARGET_NCOH: target = 3; break;
- 	default:
- 		WARN_ON(1);
--		return;
-+		goto unlock;
- 	}
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 975ed40cb774..f835e8210ace 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -585,6 +585,8 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 					 func->num_group_names,
+ 					 sizeof(*func->group_names),
+ 					 GFP_KERNEL);
++	if (!func->group_names)
++		return -ENOMEM;
  
- 	nvkm_wr32(device, 0x002270, (nvkm_memory_addr(mem) >> 12) |
-@@ -160,6 +160,7 @@ gk104_fifo_runlist_commit(struct gk104_fifo *fifo, int runl)
- 				       & 0x00100000),
- 			       msecs_to_jiffies(2000)) = 0)
- 		nvkm_error(subdev, "runlist %d update timeout\n", runl);
-+unlock:
- 	mutex_unlock(&subdev->mutex);
- }
- 
+ 	for_each_child_of_node(np, child) {
+ 		func->group_names[i] = child->name;
+-- 
+2.12.2
+
