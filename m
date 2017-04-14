@@ -1,49 +1,74 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 11:15:33 +0000
-Subject: [PATCH 1/3] HSI: omap_ssi: Use devm_kcalloc() in ssi_add_controller()
-Message-Id: <0c285b86-6fe8-2f36-8442-474ded5edc61@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:22:24 +0000
+Subject: [PATCH 09/10] pinctrl: mxs: Use devm_kcalloc() in two functions
+Message-Id: <6b3abc7c-7fae-ce75-585c-8944153a9627@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
-In-Reply-To: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 11:20:41 +0200
+Date: Thu, 13 Apr 2017 16:28:48 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hsi/controllers/omap_ssi_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-mxs.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
-index 9a29b34ed2c8..464db6d33afb 100644
---- a/drivers/hsi/controllers/omap_ssi_core.c
-+++ b/drivers/hsi/controllers/omap_ssi_core.c
-@@ -421,8 +421,8 @@ static int ssi_add_controller(struct hsi_controller *ssi,
- 		goto out_err;
+diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
+index 41b5b07d5a2b..9e6dc0038c35 100644
+--- a/drivers/pinctrl/freescale/pinctrl-mxs.c
++++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
+@@ -369,12 +369,12 @@ static int mxs_pinctrl_parse_group(struct platform_device *pdev,
+ 		return -EINVAL;
+ 	g->npins = length / sizeof(u32);
+ 
+-	g->pins = devm_kzalloc(&pdev->dev, g->npins * sizeof(*g->pins),
++	g->pins = devm_kcalloc(&pdev->dev, g->npins, sizeof(*g->pins),
+ 			       GFP_KERNEL);
+ 	if (!g->pins)
+ 		return -ENOMEM;
+ 
+-	g->muxsel = devm_kzalloc(&pdev->dev, g->npins * sizeof(*g->muxsel),
++	g->muxsel = devm_kcalloc(&pdev->dev, g->npins, sizeof(*g->muxsel),
+ 				 GFP_KERNEL);
+ 	if (!g->muxsel)
+ 		return -ENOMEM;
+@@ -425,12 +425,12 @@ static int mxs_pinctrl_probe_dt(struct platform_device *pdev,
+ 		}
  	}
  
--	omap_ssi->port = devm_kzalloc(&ssi->device,
--		sizeof(struct omap_ssi_port *) * ssi->num_ports, GFP_KERNEL);
-+	omap_ssi->port = devm_kcalloc(&ssi->device, ssi->num_ports,
-+				      sizeof(*omap_ssi->port), GFP_KERNEL);
- 	if (!omap_ssi->port) {
- 		err = -ENOMEM;
- 		goto out_err;
+-	soc->functions = devm_kzalloc(&pdev->dev, soc->nfunctions *
++	soc->functions = devm_kcalloc(&pdev->dev, soc->nfunctions,
+ 				      sizeof(*soc->functions), GFP_KERNEL);
+ 	if (!soc->functions)
+ 		return -ENOMEM;
+ 
+-	soc->groups = devm_kzalloc(&pdev->dev, soc->ngroups *
++	soc->groups = devm_kcalloc(&pdev->dev, soc->ngroups,
+ 				   sizeof(*soc->groups), GFP_KERNEL);
+ 	if (!soc->groups)
+ 		return -ENOMEM;
+@@ -491,7 +491,8 @@ static int mxs_pinctrl_probe_dt(struct platform_device *pdev,
+ 
+ 		if (strcmp(fn, child->name)) {
+ 			f = &soc->functions[idxf++];
+-			f->groups = devm_kzalloc(&pdev->dev, f->ngroups *
++			f->groups = devm_kcalloc(&pdev->dev,
++						 f->ngroups,
+ 						 sizeof(*f->groups),
+ 						 GFP_KERNEL);
+ 			if (!f->groups)
 -- 
 2.12.2
 
