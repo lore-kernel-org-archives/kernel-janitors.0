@@ -1,44 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 13:06:58 +0000
-Subject: [PATCH 3/3] ASoC: simple-scu-card: Use devm_kcalloc() in asoc_simple_card_probe()
-Message-Id: <5ccce752-8b67-ca22-0883-3a3628458fb6@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:23:51 +0000
+Subject: [PATCH 10/10] pinctrl: mxs: Use kcalloc() in mxs_dt_node_to_map()
+Message-Id: <ed0b8015-20c7-c766-624b-d34b54444d1e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
-In-Reply-To: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 14:40:40 +0200
+Date: Fri, 14 Apr 2017 10:32:29 +0200
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "devm_kcalloc".
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kcalloc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/generic/simple-scu-card.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-mxs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index dcbcab230d1b..530a7aa387c5 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -270,9 +270,8 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
+index 9e6dc0038c35..1479610091d5 100644
+--- a/drivers/pinctrl/freescale/pinctrl-mxs.c
++++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
+@@ -96,7 +96,7 @@ static int mxs_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!purecfg && config)
+ 		new_num = 2;
  
- 	num = of_get_child_count(np);
--
--	dai_props = devm_kzalloc(dev, sizeof(*dai_props) * num, GFP_KERNEL);
--	dai_link  = devm_kzalloc(dev, sizeof(*dai_link)  * num, GFP_KERNEL);
-+	dai_props = devm_kcalloc(dev, num, sizeof(*dai_props), GFP_KERNEL);
-+	dai_link  = devm_kcalloc(dev, num, sizeof(*dai_link), GFP_KERNEL);
- 	if (!dai_props || !dai_link)
+-	new_map = kzalloc(sizeof(*new_map) * new_num, GFP_KERNEL);
++	new_map = kcalloc(new_num, sizeof(*new_map), GFP_KERNEL);
+ 	if (!new_map)
  		return -ENOMEM;
  
 -- 
