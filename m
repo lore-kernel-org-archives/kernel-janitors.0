@@ -1,63 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 20:17:54 +0000
-Subject: [PATCH 2/7] HID: sensor-hub: Delete error messages for failed memory allocations in sensor_hub_probe
-Message-Id: <7f9e0982-90b9-0e74-4732-7e3153813b2b@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Apr 2017 19:11:20 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: Fix a couple user after free bugs
+Message-Id: <20170414191120.GA30875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
-In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jeeja KP <jeeja.kp@intel.com>
+Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, G Kranthi <gudishax.kranthikumar@intel.com>, Mark Brown <broonie@kernel.org>, Hardik T Shah <hardik.t.shah@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 19:45:25 +0200
+We need to use the _safe() version of list_for_each_entry() here because
+of the kfree(modules).
 
-The script "checkpatch.pl" pointed information out like the following.
+Fixes: b8c722ddd548 ("ASoC: Intel: Skylake: Add support for deferred DSP module bind")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-WARNING: Possible unnecessary 'out of memory' message
-
-Thus remove such statements here.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hid/hid-sensor-hub.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
-index 349494fc8def..feb4bb8ee3ec 100644
---- a/drivers/hid/hid-sensor-hub.c
-+++ b/drivers/hid/hid-sensor-hub.c
-@@ -640,10 +640,8 @@ static int sensor_hub_probe(struct hid_device *hdev,
- 	struct hid_sensor_hub_device *collection_hsdev = NULL;
+diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
+index 600faad19bd4..d43d1976dd3b 100644
+--- a/sound/soc/intel/skylake/skl-pcm.c
++++ b/sound/soc/intel/skylake/skl-pcm.c
+@@ -1323,10 +1323,10 @@ int skl_platform_unregister(struct device *dev)
+ {
+ 	struct hdac_ext_bus *ebus = dev_get_drvdata(dev);
+ 	struct skl *skl = ebus_to_skl(ebus);
+-	struct skl_module_deferred_bind *modules;
++	struct skl_module_deferred_bind *modules, *tmp;
  
- 	sd = devm_kzalloc(&hdev->dev, sizeof(*sd), GFP_KERNEL);
--	if (!sd) {
--		hid_err(hdev, "cannot allocate Sensor data\n");
-+	if (!sd)
- 		return -ENOMEM;
--	}
+ 	if (!list_empty(&skl->bind_list)) {
+-		list_for_each_entry(modules, &skl->bind_list, node) {
++		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
+ 			list_del(&modules->node);
+ 			kfree(modules);
+ 		}
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index 74b3acf3bb07..aea7917e791c 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -1091,7 +1091,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
+ 	struct skl_module_cfg *src_module = NULL, *dst_module;
+ 	struct skl_sst *ctx = skl->skl_sst;
+ 	struct skl_pipe *s_pipe = mconfig->pipe;
+-	struct skl_module_deferred_bind *modules;
++	struct skl_module_deferred_bind *modules, *tmp;
  
- 	hid_set_drvdata(hdev, sd);
- 	sd->quirks = id->driver_data;
-@@ -678,7 +676,6 @@ static int sensor_hub_probe(struct hid_device *hdev,
- 			       sizeof(*sd->hid_sensor_hub_client_devs),
- 			       GFP_KERNEL);
- 	if (sd->hid_sensor_hub_client_devs = NULL) {
--		hid_err(hdev, "Failed to allocate memory for mfd cells\n");
- 		ret = -ENOMEM;
- 		goto err_stop_hw;
- 	}
-@@ -692,7 +689,6 @@ static int sensor_hub_probe(struct hid_device *hdev,
- 			hsdev = devm_kzalloc(&hdev->dev, sizeof(*hsdev),
- 					     GFP_KERNEL);
- 			if (!hsdev) {
--				hid_err(hdev, "cannot allocate hid_sensor_hub_device\n");
- 				ret = -ENOMEM;
- 				goto err_stop_hw;
- 			}
--- 
-2.12.2
-
+ 	if (s_pipe->state = SKL_PIPE_INVALID)
+ 		return -EINVAL;
+@@ -1105,7 +1105,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
+ 
+ 		src_module = w_module->w->priv;
+ 
+-		list_for_each_entry(modules, &skl->bind_list, node) {
++		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
+ 			/*
+ 			 * When the destination module is deleted, Unbind the
+ 			 * modules from deferred bind list.
