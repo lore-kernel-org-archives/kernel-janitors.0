@@ -1,38 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 26 Apr 2017 15:05:39 +0000
-Subject: [PATCH] gpio: f7188x: add missing break in switch statement
-Message-Id: <20170426150539.11261-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:14:13 +0000
+Subject: [PATCH 04/10] pinctrl: imx: Improve another size determination in imx_pinctrl_parse_functions()
+Message-Id: <d9923862-efac-949d-9915-de19d3f13fa5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marty Plummer <netz.kernel@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Apr 2017 15:20:43 +0200
 
-The case statement for f71889a is missing a break statement, add it.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected with CoverityScan, CID#1431861 ("Missig break in switch")
-
-Fixes: d69843e416d31 ("gpio: f7188x: Add F71889A GPIO support.")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpio/gpio-f7188x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/freescale/pinctrl-imx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index c013ff5deb70..13350c9d7f5e 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -398,6 +398,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
- 	case f71889a:
- 		data->nr_bank = ARRAY_SIZE(f71889a_gpio_bank);
- 		data->bank = f71889a_gpio_bank;
-+		break;
- 	case f71889f:
- 		data->nr_bank = ARRAY_SIZE(f71889_gpio_bank);
- 		data->bank = f71889_gpio_bank;
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index f835e8210ace..44dbf6e38d79 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -590,9 +590,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 
+ 	for_each_child_of_node(np, child) {
+ 		func->group_names[i] = child->name;
+-
+-		grp = devm_kzalloc(info->dev, sizeof(struct group_desc),
+-				   GFP_KERNEL);
++		grp = devm_kzalloc(info->dev, sizeof(*grp), GFP_KERNEL);
+ 		if (!grp)
+ 			return -ENOMEM;
+ 
 -- 
-2.11.0
+2.12.2
 
