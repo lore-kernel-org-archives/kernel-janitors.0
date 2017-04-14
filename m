@@ -1,23 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Apr 2017 14:20:33 +0000
-Subject: MIPS: Lantiq: Completion of error handling around clkdev_add_clkout()
-Message-Id: <b27c5b95-747b-e83a-84e8-01fd7a1ae04e@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Apr 2017 19:11:53 +0000
+Subject: [PATCH] orangefs: handle zero size write in debugfs
+Message-Id: <20170414191153.GB30875@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-mips@linux-mips.org, Arnd Bergmann <arnd@arndb.de>, Felix Fietkau <nbd@nbd.name>, Hauke Mehrtens <hauke@hauke-m.de>, James Hogan <james.hogan@imgtec.com>, John Crispin <john@phrozen.org>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Pan Bian <bianpan2016@163.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mike Marshall <hubcap@omnibond.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+If we write zero bytes to this debugfs file, then it will cause an
+underflow when we do copy_from_user(buf, ubuf, count - 1).  Debugfs can
+normally only be written to by root so the impact of this is low.
 
-I have noticed by execution of another script for the semantic patch language
-(Coccinelle software) that the function “clkdev_add_clkout” does not contain
-null pointer checks after calls of the function “kzalloc”.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/mips/lantiq/xway/sysctrl.c?h=v4.10#n403
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-How do you think about to add corresponding checks and adjust the function
-return type there?
-
-Regards,
-Markus
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index 791912da97d7..716ed337f166 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -440,6 +440,9 @@ static ssize_t orangefs_debug_write(struct file *file,
+ 		"orangefs_debug_write: %pD\n",
+ 		file);
+ 
++	if (count = 0)
++		return 0;
++
+ 	/*
+ 	 * Thwart users who try to jamb a ridiculous number
+ 	 * of bytes into the debug file...
