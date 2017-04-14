@@ -1,56 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Apr 2017 19:11:20 +0000
-Subject: [PATCH] ASoC: Intel: Skylake: Fix a couple user after free bugs
-Message-Id: <20170414191120.GA30875@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 21:02:55 +0000
+Subject: [PATCH 2/2] regulator: s2mps11: Use devm_kmalloc_array() in s2mps11_pmic_probe()
+Message-Id: <57e9c3a5-3751-41ee-3b70-f532fb928571@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
+In-Reply-To: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Jeeja KP <jeeja.kp@intel.com>
-Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, G Kranthi <gudishax.kranthikumar@intel.com>, Mark Brown <broonie@kernel.org>, Hardik T Shah <hardik.t.shah@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We need to use the _safe() version of list_for_each_entry() here because
-of the kfree(modules).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 22:40:19 +0200
 
-Fixes: b8c722ddd548 ("ASoC: Intel: Skylake: Add support for deferred DSP module bind")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "devm_kmalloc_array".
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index 600faad19bd4..d43d1976dd3b 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1323,10 +1323,10 @@ int skl_platform_unregister(struct device *dev)
- {
- 	struct hdac_ext_bus *ebus = dev_get_drvdata(dev);
- 	struct skl *skl = ebus_to_skl(ebus);
--	struct skl_module_deferred_bind *modules;
-+	struct skl_module_deferred_bind *modules, *tmp;
- 
- 	if (!list_empty(&skl->bind_list)) {
--		list_for_each_entry(modules, &skl->bind_list, node) {
-+		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
- 			list_del(&modules->node);
- 			kfree(modules);
- 		}
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 74b3acf3bb07..aea7917e791c 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -1091,7 +1091,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
- 	struct skl_module_cfg *src_module = NULL, *dst_module;
- 	struct skl_sst *ctx = skl->skl_sst;
- 	struct skl_pipe *s_pipe = mconfig->pipe;
--	struct skl_module_deferred_bind *modules;
-+	struct skl_module_deferred_bind *modules, *tmp;
- 
- 	if (s_pipe->state = SKL_PIPE_INVALID)
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/regulator/s2mps11.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index b4e588cce03d..b397a2e0bcd1 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1139,9 +1139,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
  		return -EINVAL;
-@@ -1105,7 +1105,7 @@ static int skl_tplg_mixer_dapm_post_pmd_event(struct snd_soc_dapm_widget *w,
+ 	}
  
- 		src_module = w_module->w->priv;
- 
--		list_for_each_entry(modules, &skl->bind_list, node) {
-+		list_for_each_entry_safe(modules, tmp, &skl->bind_list, node) {
- 			/*
- 			 * When the destination module is deleted, Unbind the
- 			 * modules from deferred bind list.
+-	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
+-			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
+-			GFP_KERNEL);
++	s2mps11->ext_control_gpio
++		= devm_kmalloc_array(&pdev->dev,
++				     rdev_num,
++				     sizeof(*s2mps11->ext_control_gpio),
++				     GFP_KERNEL);
+ 	if (!s2mps11->ext_control_gpio)
+ 		return -ENOMEM;
+ 	/*
+-- 
+2.12.2
+
+
