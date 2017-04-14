@@ -1,45 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 15:34:45 +0000
-Subject: [PATCH 1/3] ti-soc-thermal: Use devm_kcalloc() in ti_bandgap_build()
-Message-Id: <071d2e92-0bcc-5ccc-ad28-b05a72538d6b@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:20:55 +0000
+Subject: [PATCH 08/10] pinctrl: imx1-core: Use kmalloc_array() in imx_dt_node_to_map()
+Message-Id: <7e8a5c9c-aa4c-0675-3690-dfe1fed56915@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
-In-Reply-To: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 16:45:25 +0200
+Date: Thu, 13 Apr 2017 16:10:33 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "devm_kcalloc".
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/ti-soc-thermal/ti-bandgap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-index ba9c302454fb..f19cb7612a65 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-@@ -1224,8 +1224,8 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
- 		bgp->conf = of_id->data;
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+index a4e9f430d452..5a0d221ed09d 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+@@ -246,7 +246,7 @@ static int imx1_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	for (i = 0; i < grp->npins; i++)
+ 		map_num++;
  
- 	/* register shadow for context save and restore */
--	bgp->regval = devm_kzalloc(&pdev->dev, sizeof(*bgp->regval) *
--				   bgp->conf->sensor_count, GFP_KERNEL);
-+	bgp->regval = devm_kcalloc(&pdev->dev, bgp->conf->sensor_count,
-+				   sizeof(*bgp->regval), GFP_KERNEL);
- 	if (!bgp->regval) {
- 		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
- 		return ERR_PTR(-ENOMEM);
+-	new_map = kmalloc(sizeof(struct pinctrl_map) * map_num, GFP_KERNEL);
++	new_map = kmalloc_array(map_num, sizeof(*new_map), GFP_KERNEL);
+ 	if (!new_map)
+ 		return -ENOMEM;
+ 
 -- 
 2.12.2
 
