@@ -1,58 +1,38 @@
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 27 Apr 2017 14:34:04 +0000
-Subject: Re: [PATCH] fpga: region: Fix some error handling
-Message-Id: <CANk1AXRwS_zBoPHf7YRAtu1Dje0_gVxYXrP718bA3-grUJgyQQ@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 14 Apr 2017 06:08:03 +0000
+Subject: [PATCH] md-cluster: Fix a memleak in an error handling path
+Message-Id: <20170414060803.12472-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170427091345.a6vpeapnesey7k6d@mwanda>
-In-Reply-To: <20170427091345.a6vpeapnesey7k6d@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: shli@kernel.org, gqjiang@suse.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Apr 27, 2017 at 4:13 AM, Dan Carpenter <dan.carpenter@oracle.com> w=
-rote:
+We know that 'bm_lockres' is NULL here, so 'lockres_free(bm_lockres)' is a
+no-op. According to resource handling in case of error a few lines below,
+it is likely that 'bitmap_free(bitmap)' was expected instead.
 
-Hi Dan,
+Fixes: b98938d16a10 ("md-cluster: introduce cluster_check_sync_size")
 
-Thanks but this fix is already in linux-next:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/md/md-cluster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?=
-id=E73bbf64907c88d3bb811756fc25548131524035
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index b21ef58819f6..7299ce2f08a8 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -1127,7 +1127,7 @@ int cluster_check_sync_size(struct mddev *mddev)
+ 		bm_lockres = lockres_init(mddev, str, NULL, 1);
+ 		if (!bm_lockres) {
+ 			pr_err("md-cluster: Cannot initialize %s\n", str);
+-			lockres_free(bm_lockres);
++			bitmap_free(bitmap);
+ 			return -1;
+ 		}
+ 		bm_lockres->flags |= DLM_LKF_NOQUEUE;
+-- 
+2.11.0
 
-Alan
-
-> We need to release some resources if fpga_region_get_manager() fails.
->
-> Fixes: 0fa20cdfcc1f ("fpga: fpga-region: device tree control for FPGA")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-> index ae4c61aada99..3b6b2f4182a1 100644
-> --- a/drivers/fpga/fpga-region.c
-> +++ b/drivers/fpga/fpga-region.c
-> @@ -245,7 +245,8 @@ static int fpga_region_program_fpga(struct fpga_regio=
-n *region,
->         mgr =3D fpga_region_get_manager(region);
->         if (IS_ERR(mgr)) {
->                 pr_err("failed to get fpga region manager\n");
-> -               return PTR_ERR(mgr);
-> +               ret =3D PTR_ERR(mgr);
-> +               goto err_put_region;
->         }
->
->         ret =3D fpga_region_get_bridges(region, overlay);
-> @@ -281,6 +282,7 @@ static int fpga_region_program_fpga(struct fpga_regio=
-n *region,
->         fpga_bridges_put(&region->bridge_list);
->  err_put_mgr:
->         fpga_mgr_put(mgr);
-> +err_put_region:
->         fpga_region_put(region);
->
->         return ret;
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
