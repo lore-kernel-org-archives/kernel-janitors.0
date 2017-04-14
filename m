@@ -1,28 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Apr 2017 20:08:20 +0000
-Subject: [PATCH 0/2] IB/usnic: Fine-tuning for two function implementations
-Message-Id: <f0a030a8-2a03-f531-57d8-39c2aeae28a4@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:03:02 +0000
+Subject: [PATCH 1/10] pinctrl: imx: Use kmalloc_array() in imx_dt_node_to_map()
+Message-Id: <7f118f52-1f64-36b2-c4f8-d5a6bf65b494@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christian Benvenuti <benve-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Dave Goodell <dgoodell-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 6 Apr 2017 22:00:10 +0200
+Date: Thu, 13 Apr 2017 10:50:11 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-Markus Elfring (2):
-  Use kcalloc() in alloc_res_chunk_list()
-  Use kcalloc() in usnic_vnic_alloc_res_chunk()
+  This issue was detected by using the Coccinelle software.
 
- drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c | 4 ++--
- drivers/infiniband/hw/usnic/usnic_vnic.c      | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index a7ace9e1ad81..563d24e7989d 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -98,7 +98,7 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 			map_num++;
+ 	}
+ 
+-	new_map = kmalloc(sizeof(struct pinctrl_map) * map_num, GFP_KERNEL);
++	new_map = kmalloc_array(map_num, sizeof(*new_map), GFP_KERNEL);
+ 	if (!new_map)
+ 		return -ENOMEM;
+ 
 -- 
 2.12.2
 
