@@ -1,62 +1,62 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Date: Sun, 23 Apr 2017 09:59:05 +0000
-Subject: Re: [PATCH 1/2] dmaengine: s3c24xx: Use devm_kcalloc() in s3c24xx_dma_probe()
-Message-Id: <f1257887-ca14-6415-b1ff-d57190a1810f@math.uni-bielefeld.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 16:58:25 +0000
+Subject: [PATCH] pinctrl-armada-xp: Use devm_kmalloc_array() in armada_xp_pinctrl_probe()
+Message-Id: <d109d375-6e91-420d-eb9a-fcaea4fbc5f7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <930f0a6c-bc5c-3d01-6814-563780fc90ef@users.sourceforge.net>
- <9c10b823-f49b-8c73-2bf8-0fd2b0ba0231@users.sourceforge.net>
-In-Reply-To: <9c10b823-f49b-8c73-2bf8-0fd2b0ba0231@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Chris Packham <chris.packham@alliedtelesis.co.nz>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh@kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 18:48:15 +0200
 
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kmalloc_array".
 
-SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 22 Apr 2017 23:00:23 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "devm_kcalloc".
-I have trouble parsing that sentences. This looks like the typical
-approach of native german speakers to directly transfer sentence
-constructions from German to English. Which, in most cases, doesn't work
-or is just plain confusing.
+  This issue was detected by using the Coccinelle software.
 
-With best wishes,
-Tobias
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
+* Delete the local variable "nregs" which became unnecessary with
+  this refactoring.
 
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/dma/s3c24xx-dma.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-> index f04c4702d98b..967229829683 100644
-> --- a/drivers/dma/s3c24xx-dma.c
-> +++ b/drivers/dma/s3c24xx-dma.c
-> @@ -1216,10 +1216,10 @@ static int s3c24xx_dma_probe(struct platform_device *pdev)
->  	if (IS_ERR(s3cdma->base))
->  		return PTR_ERR(s3cdma->base);
->  
-> -	s3cdma->phy_chans = devm_kzalloc(&pdev->dev,
-> -					      sizeof(struct s3c24xx_dma_phy) *
-> -							pdata->num_phy_channels,
-> -					      GFP_KERNEL);
-> +	s3cdma->phy_chans = devm_kcalloc(&pdev->dev,
-> +					 pdata->num_phy_channels,
-> +					 sizeof(*s3cdma->phy_chans),
-> +					 GFP_KERNEL);
->  	if (!s3cdma->phy_chans)
->  		return -ENOMEM;
->  
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index b854f1ee5de5..457c54c8fed3 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -574,7 +574,6 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 	struct mvebu_pinctrl_soc_info *soc = &armada_xp_pinctrl_info;
+ 	const struct of_device_id *match  		of_match_device(armada_xp_pinctrl_of_match, &pdev->dev);
+-	int nregs;
+ 
+ 	if (!match)
+ 		return -ENODEV;
+@@ -628,10 +627,11 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 		break;
+ 	}
+ 
+-	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
+-
+-	mpp_saved_regs = devm_kmalloc(&pdev->dev, nregs * sizeof(u32),
+-				      GFP_KERNEL);
++	mpp_saved_regs = devm_kmalloc_array(&pdev->dev,
++					    DIV_ROUND_UP(soc->nmodes,
++							 MVEBU_MPPS_PER_REG),
++					    sizeof(*mpp_saved_regs),
++					    GFP_KERNEL);
+ 	if (!mpp_saved_regs)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
 
