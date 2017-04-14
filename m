@@ -1,57 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 15:13:55 +0000
-Subject: [PATCH 1/3] HID: Wacom: Use devm_kcalloc() in two functions
-Message-Id: <d0224def-26ba-d33b-e9be-a6218259c8e4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Apr 2017 14:25:40 +0000
+Subject: [PATCH] staging: media: atomisp: fix range checking on clk_num
+Message-Id: <20170414142540.8465-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
-In-Reply-To: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?= <jeremy.lefaure@lse.epita.fr>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 16:06:08 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+The range checking on clk_num is incorrect; fix these so that invalid
+clk_num values are detected correctly.
 
-  This issue was detected by using the Coccinelle software.
+Detected by static analysis with by PVS-Studio
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/wacom_sys.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-index 0022c0dac88a..550faf8819ea 100644
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -1245,7 +1245,7 @@ static int wacom_led_groups_alloc_and_register_one(struct device *dev,
- 	if (!devres_open_group(dev, &wacom->led.groups[group_id], GFP_KERNEL))
- 		return -ENOMEM;
+diff --git a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
+index 25e939c50aef..9efdf5790f90 100644
+--- a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
++++ b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
+@@ -67,7 +67,7 @@ int vlv2_plat_set_clock_freq(int clk_num, int freq_type)
+ {
+ 	void __iomem *addr;
  
--	leds = devm_kzalloc(dev, sizeof(struct wacom_led) * count, GFP_KERNEL);
-+	leds = devm_kcalloc(dev, count, sizeof(*leds), GFP_KERNEL);
- 	if (!leds) {
- 		error = -ENOMEM;
- 		goto err;
-@@ -1345,8 +1345,7 @@ static int wacom_led_groups_allocate(struct wacom *wacom, int count)
- 	struct wacom_group_leds *groups;
- 	int error;
+-	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
++	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
+ 		pr_err("Clock number out of range (%d)\n", clk_num);
+ 		return -EINVAL;
+ 	}
+@@ -103,7 +103,7 @@ int vlv2_plat_get_clock_freq(int clk_num)
+ {
+ 	u32 ret;
  
--	groups = devm_kzalloc(dev, sizeof(struct wacom_group_leds) * count,
--			      GFP_KERNEL);
-+	groups = devm_kcalloc(dev, count, sizeof(*groups), GFP_KERNEL);
- 	if (!groups)
- 		return -ENOMEM;
+-	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
++	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
+ 		pr_err("Clock number out of range (%d)\n", clk_num);
+ 		return -EINVAL;
+ 	}
+@@ -133,7 +133,7 @@ int vlv2_plat_configure_clock(int clk_num, u32 conf)
+ {
+ 	void __iomem *addr;
  
+-	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
++	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
+ 		pr_err("Clock number out of range (%d)\n", clk_num);
+ 		return -EINVAL;
+ 	}
+@@ -169,7 +169,7 @@ int vlv2_plat_get_clock_status(int clk_num)
+ {
+ 	int ret;
+ 
+-	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
++	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
+ 		pr_err("Clock number out of range (%d)\n", clk_num);
+ 		return -EINVAL;
+ 	}
 -- 
-2.12.2
+2.11.0
 
