@@ -1,56 +1,42 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Wed, 19 Apr 2017 19:01:22 +0000
-Subject: Re: [PATCH] i2c: designware-baytrail: fix potential null pointer dereference on dev
-Message-Id: <20170419190122.qoudvukbgioxoy3l@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xczzx5lpioxvfs35"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2017 09:19:17 +0000
+Subject: [PATCH 07/10] pinctrl: imx: Use seq_puts() in imx_pinconf_dbg_show()
+Message-Id: <58b499ad-a6c3-5f67-5113-e80cf87aaf24@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170320115123.31536-1-colin.king@canonical.com>
-In-Reply-To: <20170320115123.31536-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Apr 2017 15:50:58 +0200
 
---xczzx5lpioxvfs35
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-On Mon, Mar 20, 2017 at 11:51:23AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The assignment to addr requires a call to get_sem_addr that dereferences
-> dev, however, this dereference occurs before a null pointer check on dev.
-> Move this assignment after the null check on dev to avoid a potential null
-> pointer dereference.
->=20
-> Detected by CoverityScan, CID#1419700 ("Dereference before null check")
->=20
-> Fixes: fd476fa22a1f432 ("i2c: designware-baytrail: Add support for cherry=
-trail")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
 
-Applied to for-next, thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 71dbba892e70..c6bfabcd577a 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -424,7 +424,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	unsigned long config;
+ 
+ 	if (!pin_reg || pin_reg->conf_reg = -1) {
+-		seq_printf(s, "N/A");
++		seq_puts(s, "N/A");
+ 		return;
+ 	}
+ 
+-- 
+2.12.2
 
---xczzx5lpioxvfs35
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlj3tAIACgkQFA3kzBSg
-KbbBnA//dmRxxbvYcLgi3+Wfvb/MRmrvZKnT1w81f0gjnIbWZWcCWab2z/1vJX9Z
-s2i8OVHJpHOYuzY6fqhpwd11GGscUM6lRI7Sh6gFb/vDaEwXMIijoI1bf4pNhLvF
-S/jLEuMToEwEZBxrtOO4HHnqouYwZDnYlPZf6bYGVIFE7V6A6j0Gv6lTqty89Olv
-EOKF5obOZ1SVyN7eNKHJbcW/5CidUcYSxEpnyzxNPb1g7tzbACjO4s5vYPRhVh9T
-XSUyDOu4xll0nD0p3dYCLQolHEsXslZdCq2NBG8juMWA2LZpAAYeqfI9gAGLDhKL
-y1wF2UlJASHAzSA8ivWL99IMk+G29/+FQ3jCkD86JErhspFfVl8tDowDptFaEtGZ
-uvM6ss1YnkGiz5EcSiyDv0QS+9ovgp8/KERVRKTgk7pHCZedHGxseOJaa3ewNTM5
-1ah66SImJt/Bz2o4ReMkY3SYItqZmvYQf2GAC+Z3lwOzYtcCJ0fuA6ngOzk+4ytf
-Xp77N/ua8/amju4ze6/2z2+0dso/T4ZNANtibazGxnr/dcFbV9HzvOl52u8i1uZ9
-LPc5RnPxmcVO8z9C6nx+S392sDx74k8ocp12aBqATVmNVXgz5y0M6ycemVWFu1ZY
-r7mjSGTb0YL2QLBwNATks2aaOcORLtM3H82RMO3dYTpcXAsrVik=
-=OWFp
------END PGP SIGNATURE-----
-
---xczzx5lpioxvfs35--
