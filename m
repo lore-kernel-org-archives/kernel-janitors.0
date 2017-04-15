@@ -1,47 +1,24 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 09:20:07 +0000
-Subject: [PATCH] omapfb: Use devm_kcalloc() in vrfb_probe()
-Message-Id: <4a7b1751-4319-4bde-cf26-2de2a4096c68@users.sourceforge.net>
+Date: Sat, 15 Apr 2017 19:55:19 +0000
+Subject: pinctrl: imx: Checking reuse of grouping functionality
+Message-Id: <60eb8e84-7914-4e25-4822-7e1d8fd8afcb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-gpio@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Fabio Estevam <fabio.estevam@nxp.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 11:08:30 +0200
+Hello,
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+A preprocessor symbol like “CONFIG_GENERIC_PINCTRL_GROUPS” was introduced
+by the commit c033a718f615b6b3ddc83ce3e0a217c30bd09cb5 (“pinctrl: stricten up
+generic group code”) on 2017-01-03. Some functions are only available then
+when this macro is defined.
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+I have got the impression that the corresponding programming interface is used
+by the source file “drivers/pinctrl/freescale/pinctrl-imx.c” unconditionally.
+How do you think about to extend specifications for conditional compilation there?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/video/fbdev/omap2/omapfb/vrfb.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap2/omapfb/vrfb.c b/drivers/video/fbdev/omap2/omapfb/vrfb.c
-index f346b02eee1d..54b51a7a290a 100644
---- a/drivers/video/fbdev/omap2/omapfb/vrfb.c
-+++ b/drivers/video/fbdev/omap2/omapfb/vrfb.c
-@@ -358,11 +358,7 @@ static int __init vrfb_probe(struct platform_device *pdev)
- 		return PTR_ERR(vrfb_base);
- 
- 	num_ctxs = pdev->num_resources - 1;
--
--	ctxs = devm_kzalloc(&pdev->dev,
--			sizeof(struct vrfb_ctx) * num_ctxs,
--			GFP_KERNEL);
--
-+	ctxs = devm_kcalloc(&pdev->dev, num_ctxs, sizeof(*ctxs), GFP_KERNEL);
- 	if (!ctxs)
- 		return -ENOMEM;
- 
--- 
-2.12.2
-
+Regards,
+Markus
