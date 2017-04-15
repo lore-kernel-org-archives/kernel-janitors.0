@@ -1,55 +1,40 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 03 Apr 2017 20:33:03 +0000
-Subject: Re: [PATCH 2/2] drm/amd/powerplay: fix a couple locking issues
-Message-Id: <CADnq5_MBCPEqt-apH8qbBT4B7xDxDqzDzmFtNqXTrTPh70-Uiw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 15 Apr 2017 19:21:42 +0000
+Subject: [PATCH] drm: atmel-hlcdc: Uninitialized return in atmel_hlcdc_create_outputs()
+Message-Id: <20170415192142.GA6416@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170403184242.GB22462@mwanda>
-In-Reply-To: <20170403184242.GB22462@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tom St Denis <tom.stdenis@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Eric Huang <JinHuiEric.Huang@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Monk Liu <Monk.Liu@amd.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Rob Herring <robh@kernel.org>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 3, 2017 at 2:42 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We should return unlock on the error path in pp_dpm_dispatch_tasks()
-> and there is a double lock bug in pp_dpm_set_sclk_od().
->
-> Fixes: 2a5071056e6a ("drm/amd/powerplay: add global PowerPlay mutex.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's not possible for endpoint to be zero so the test doesn't work.  If
+we break on the first iteration through the loop then endpoint is 1 and
+"ret" is uninitialized.
 
-Applied. thanks!
+Fixes: ebc944613567 ("drm: convert drivers to use drm_of_find_panel_or_bridge")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Alex
-
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> index 260b732be7c3..e59b5627d543 100644
-> --- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> +++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-> @@ -493,8 +493,10 @@ static int pp_dpm_dispatch_tasks(void *handle, enum amd_pp_event event_id,
->         {
->                 enum amd_pm_state_type  ps;
->
-> -               if (input = NULL)
-> -                       return -EINVAL;
-> +               if (input = NULL) {
-> +                       ret = -EINVAL;
-> +                       break;
-> +               }
->                 ps = *(unsigned long *)input;
->
->                 data.requested_ui_label = power_state_convert(ps);
-> @@ -897,7 +899,7 @@ static int pp_dpm_set_sclk_od(void *handle, uint32_t value)
->
->         mutex_lock(&pp_handle->pp_lock);
->         ret = hwmgr->hwmgr_func->set_sclk_od(hwmgr, value);
-> -       mutex_lock(&pp_handle->pp_lock);
-> +       mutex_unlock(&pp_handle->pp_lock);
->         return ret;
->  }
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+index f987b4572d4a..65a3bd7a0c00 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+@@ -221,7 +221,8 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev,
+ int atmel_hlcdc_create_outputs(struct drm_device *dev)
+ {
+ 	struct device_node *remote;
+-	int ret, endpoint = 0;
++	int ret = -ENODEV;
++	int endpoint = 0;
+ 
+ 	while (true) {
+ 		/* Loop thru possible multiple connections to the output */
+@@ -236,7 +237,5 @@ int atmel_hlcdc_create_outputs(struct drm_device *dev)
+ 			return ret;
+ 	}
+ 
+-	if (!endpoint)
+-		return -ENODEV;
+ 	return ret;
+ }
