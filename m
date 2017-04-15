@@ -1,31 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 04 Apr 2017 11:10:07 +0000
-Subject: [PATCH 0/3] SELinux: Fine-tuning for two function implementations
-Message-Id: <5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 15 Apr 2017 17:49:54 +0000
+Subject: [PATCH] ASoC: topology: use j for internal loop counter
+Message-Id: <20170415174954.90707-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Apr 2017 13:02:03 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+Currently variable i is being for 2 nested for loops. Fix this by
+using integer loop counter j for the inside for loop.
 
-Markus Elfring (3):
-  Return directly after a failed memory allocation in policydb_index()
-  Return an error code only as a constant in sidtab_insert()
-  Use an other error code for an input validation failure in sidtab_insert()
+Fixes: 1a7dd6e2f1929 ("ASoC: topology: Allow a widget to have multiple enum controls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/soc-topology.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- security/selinux/ss/policydb.c | 15 +++++----------
- security/selinux/ss/sidtab.c   | 27 ++++++++++-----------------
- 2 files changed, 15 insertions(+), 27 deletions(-)
-
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 058bc99c6c34..002772e3ba2c 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -495,12 +495,13 @@ static void remove_widget(struct snd_soc_component *comp,
+ 			struct snd_kcontrol *kcontrol = w->kcontrols[i];
+ 			struct soc_enum *se  				(struct soc_enum *)kcontrol->private_value;
++			int j;
+ 
+ 			snd_ctl_remove(card, kcontrol);
+ 
+ 			kfree(se->dobj.control.dvalues);
+-			for (i = 0; i < se->items; i++)
+-				kfree(se->dobj.control.dtexts[i]);
++			for (j = 0; j < se->items; j++)
++				kfree(se->dobj.control.dtexts[j]);
+ 
+ 			kfree(se);
+ 		}
 -- 
-2.12.2
-
+2.11.0
 
