@@ -1,55 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 16:51:44 +0000
-Subject: [PATCH 2/6] ACPI-fan: Delete error messages for a failed memory allocation in two functions
-Message-Id: <261224e0-8a1a-fc1e-eb1c-9b6ac96a9cab@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:15:26 +0000
+Subject: [PATCH 05/25] net: mvpp2: Use kmalloc_array() in mvpp2_txq_init()
+Message-Id: <f9948035-e150-d622-e702-a59256d7d5e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
-In-Reply-To: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@suse.de>, Chun-Yi Lee <joeyli.kernel@gmail.com>, Colin Ian King <colin.king@canonical.com>, Dan Williams <dan.j.williams@intel.com>, Len Brown <lenb@kernel.org>, Linda Knippers <linda.knippers@hpe.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tony Luck <tony.luck@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 17:10:40 +0200
+Date: Mon, 17 Apr 2017 08:09:07 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-WARNING: Possible unnecessary 'out of memory' message
+  This issue was detected by using the Coccinelle software.
 
-Thus remove such statements here.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/fan.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/fan.c b/drivers/acpi/fan.c
-index 92878c7c523b..daa8f28a4b0e 100644
---- a/drivers/acpi/fan.c
-+++ b/drivers/acpi/fan.c
-@@ -301,7 +301,6 @@ static int acpi_fan_get_fps(struct acpi_device *device)
- 	fan->fps = devm_kcalloc(&device->dev, fan->fps_count, sizeof(*fan->fps),
- 				GFP_KERNEL);
- 	if (!fan->fps) {
--		dev_err(&device->dev, "Not enough memory\n");
- 		status = -ENOMEM;
- 		goto err;
- 	}
-@@ -334,10 +333,9 @@ static int acpi_fan_probe(struct platform_device *pdev)
- 	char *name;
- 
- 	fan = devm_kzalloc(&pdev->dev, sizeof(*fan), GFP_KERNEL);
--	if (!fan) {
--		dev_err(&device->dev, "No memory for fan\n");
-+	if (!fan)
- 		return -ENOMEM;
--	}
-+
- 	device->driver_data = fan;
- 	platform_set_drvdata(pdev, fan);
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index af5bfa13d976..a86d9111c476 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -5083,9 +5083,9 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
+ 	for_each_present_cpu(cpu) {
+ 		txq_pcpu = per_cpu_ptr(txq->pcpu, cpu);
+ 		txq_pcpu->size = txq->size;
+-		txq_pcpu->buffs = kmalloc(txq_pcpu->size *
+-					  sizeof(struct mvpp2_txq_pcpu_buf),
+-					  GFP_KERNEL);
++		txq_pcpu->buffs = kmalloc_array(txq_pcpu->size,
++						sizeof(*txq_pcpu->buffs),
++						GFP_KERNEL);
+ 		if (!txq_pcpu->buffs)
+ 			goto error;
  
 -- 
 2.12.2
