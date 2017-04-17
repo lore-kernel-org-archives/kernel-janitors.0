@@ -1,36 +1,51 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:39 +0000
-Subject: Re: [PATCH 4/6] clk: hi3620: Use kcalloc() in hi3620_mmc_clk_init()
-Message-Id: <20170419183139.GT7065@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 20:55:16 +0000
+Subject: [PATCH] hidma_mgmt_sys: Use devm_kmalloc_array() in hidma_mgmt_init_sys()
+Message-Id: <89811982-af2d-3ab3-0ab3-ddb6e4ca369f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <9c35e91c-36c6-f33e-a283-4304ad118a22@users.sourceforge.net>
-In-Reply-To: <9c35e91c-36c6-f33e-a283-4304ad118a22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dmaengine@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Dan Williams <dan.j.williams@intel.com>, David Brown <david.brown@linaro.org>, Sinan Kaya <okaya@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 10:30:04 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kcalloc".
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 22:42:40 +0200
 
-Applied to clk-next
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kmalloc_array".
 
+  This issue was detected by using the Coccinelle software.
+
+* Delete the local variable "required" which became unnecessary
+  with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/qcom/hidma_mgmt_sys.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma/qcom/hidma_mgmt_sys.c b/drivers/dma/qcom/hidma_mgmt_sys.c
+index d61f1068a34b..e7222a0e9ba4 100644
+--- a/drivers/dma/qcom/hidma_mgmt_sys.c
++++ b/drivers/dma/qcom/hidma_mgmt_sys.c
+@@ -245,11 +245,12 @@ int hidma_mgmt_init_sys(struct hidma_mgmt_dev *mdev)
+ {
+ 	unsigned int i;
+ 	int rc;
+-	int required;
+ 	struct kobject *chanops;
+ 
+-	required = sizeof(*mdev->chroots) * mdev->dma_channels;
+-	mdev->chroots = devm_kmalloc(&mdev->pdev->dev, required, GFP_KERNEL);
++	mdev->chroots = devm_kmalloc_array(&mdev->pdev->dev,
++					   mdev->dma_channels,
++					   sizeof(*mdev->chroots),
++					   GFP_KERNEL);
+ 	if (!mdev->chroots)
+ 		return -ENOMEM;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
+
