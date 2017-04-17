@@ -1,30 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 05 Apr 2017 12:46:25 +0000
-Subject: Re: [V2] wlcore: fix spelling mistakes in wl1271_warning
-Message-Id: <20170405124625.209C760DCE@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:23:21 +0000
+Subject: [PATCH 13/25] net: mvpp2: Fix a jump label position in mvpp2_rx()
+Message-Id: <26d7b00f-85bb-5123-7334-a75542d86449@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170403094758.19397-1-colin.king@canonical.com>
-In-Reply-To: <20170403094758.19397-1-colin.king@canonical.com>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> trivial fix to spelling mistakes in wl1271_warning error message, change
-> iligal to invalid and opperation to operation.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 10:52:02 +0200
 
-Patch applied to wireless-drivers-next.git, thanks.
+The script "checkpatch.pl" pointed out that labels should not be indented.
+Thus delete two horizontal tabs before the jump label "err_drop_frame"
+in the function "mvpp2_rx".
 
-5ea807896160 wlcore: fix spelling mistakes in wl1271_warning
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 3bddb8fcd595..4f4b659d7297 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -5515,7 +5515,7 @@ static int mvpp2_rx(struct mvpp2_port *port, int rx_todo,
+ 		 * comprised by the RX descriptor.
+ 		 */
+ 		if (rx_status & MVPP2_RXD_ERR_SUMMARY) {
+-		err_drop_frame:
++err_drop_frame:
+ 			dev->stats.rx_errors++;
+ 			mvpp2_rx_error(port, rx_desc);
+ 			/* Return the buffer to the pool */
 -- 
-https://patchwork.kernel.org/patch/9659173/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.12.2
 
