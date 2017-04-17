@@ -1,43 +1,49 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 07 Apr 2017 05:56:39 +0000
-Subject: [PATCH 2/3] staging: atomisp: replace "&isp->asd[i]" with "asd" in __get_asd_from_port()
-Message-Id: <20170407055639.GA32374@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:29:04 +0000
+Subject: [PATCH 19/25] net: mvpp2: Rename a jump label in mvpp2_prs_vlan_add()
+Message-Id: <949a3bd7-7b65-8a9e-c535-6fafeb06f1a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The address of isp->asd[i] is already assigned to
-local "asd" variable. "&isp->asd[i]" would be replaced with
-just "asd".
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 13:50:35 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Adjust jump labels according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This series of patches are related to previous patches:
-[1] https://lkml.org/lkml/2017/3/27/159
-[2] https://lkml.org/lkml/2017/3/30/1068
-[3] https://lkml.org/lkml/2017/3/30/1069
+ drivers/net/ethernet/marvell/mvpp2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index c3d0596..4af76b5 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -535,9 +535,9 @@ static void clear_irq_reg(struct atomisp_device *isp)
- 		struct camera_mipi_info *mipi_info  				atomisp_to_sensor_mipi_info(
- 					isp->inputs[asd->input_curr].camera);
--		if (isp->asd[i].streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
-+		if (asd->streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
- 		    __get_mipi_port(isp, mipi_info->port) = port) {
--			return &isp->asd[i];
-+			return asd;
- 		}
- 	}
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 0c190bd003b1..3bdd3f1fe34e 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -2021,7 +2021,7 @@ static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
  
+ 		if (tid <= tid_aux) {
+ 			ret = -EINVAL;
+-			goto error;
++			goto free_pe;
+ 		}
+ 
+ 		memset(pe, 0, sizeof(*pe));
+@@ -2053,8 +2053,7 @@ static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
+ 	mvpp2_prs_tcam_port_map_set(pe, port_map);
+ 
+ 	mvpp2_prs_hw_write(priv, pe);
+-
+-error:
++free_pe:
+ 	kfree(pe);
+ 
+ 	return ret;
 -- 
-1.9.1
+2.12.2
 
