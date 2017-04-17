@@ -1,93 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 08 Apr 2017 12:13:45 +0000
-Subject: [PATCH 3/3] IB/srp: Delete unwanted spaces behind usages of the sizeof operator
-Message-Id: <8ce69cd6-d8fb-3468-1629-611f2fa76eff@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:27:13 +0000
+Subject: [PATCH 17/25] net: mvpp2: Rename a jump label in mvpp2_txq_init()
+Message-Id: <1f79b52d-673f-63bb-0bd8-713139a322ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50db1f1d-b689-1a9d-f6dd-a0f55169c75a@users.sourceforge.net>
-In-Reply-To: <50db1f1d-b689-1a9d-f6dd-a0f55169c75a@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 8 Apr 2017 13:56:33 +0200
+Date: Mon, 17 Apr 2017 12:58:33 +0200
 
-Replace the source code "sizeof (" by "sizeof("
-according to the Linux coding style convention.
+Adjust jump labels according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/ulp/srp/ib_srp.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
-index bc934c5f1e36..0229328e65e3 100644
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -1628,7 +1628,7 @@ static int srp_map_data(struct scsi_cmnd *scmnd, struct srp_rdma_ch *ch,
- 	u8 fmt;
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 8f4348316d28..a5cd1036012a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -5087,7 +5087,7 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
+ 						sizeof(*txq_pcpu->buffs),
+ 						GFP_KERNEL);
+ 		if (!txq_pcpu->buffs)
+-			goto error;
++			goto cleanup;
  
- 	if (!scsi_sglist(scmnd) || scmnd->sc_data_direction = DMA_NONE)
--		return sizeof (struct srp_cmd);
-+		return sizeof(struct srp_cmd);
- 
- 	if (scmnd->sc_data_direction != DMA_FROM_DEVICE &&
- 	    scmnd->sc_data_direction != DMA_TO_DEVICE) {
-@@ -1649,7 +1649,7 @@ static int srp_map_data(struct scsi_cmnd *scmnd, struct srp_rdma_ch *ch,
- 		return -EIO;
- 
- 	fmt = SRP_DATA_DESC_DIRECT;
--	len = sizeof (struct srp_cmd) +	sizeof (struct srp_direct_buf);
-+	len = sizeof(struct srp_cmd) + sizeof(struct srp_direct_buf);
- 
- 	if (count = 1 && (pd->flags & IB_PD_UNSAFE_GLOBAL_RKEY)) {
- 		/*
-@@ -1722,15 +1722,15 @@ static int srp_map_data(struct scsi_cmnd *scmnd, struct srp_rdma_ch *ch,
+ 		txq_pcpu->count = 0;
+ 		txq_pcpu->reserved_num = 0;
+@@ -5096,8 +5096,7 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
  	}
  
- 	count = min(state.ndesc, target->cmd_sg_cnt);
--	table_len = state.ndesc * sizeof (struct srp_direct_buf);
-+	table_len = state.ndesc * sizeof(struct srp_direct_buf);
- 	idb_len = sizeof(struct srp_indirect_buf) + table_len;
- 
- 	fmt = SRP_DATA_DESC_INDIRECT;
--	len = sizeof(struct srp_cmd) + sizeof (struct srp_indirect_buf);
--	len += count * sizeof (struct srp_direct_buf);
-+	len = sizeof(struct srp_cmd) + sizeof(struct srp_indirect_buf);
-+	len += count * sizeof(struct srp_direct_buf);
- 
- 	memcpy(indirect_hdr->desc_list, req->indirect_desc,
--	       count * sizeof (struct srp_direct_buf));
-+	       count * sizeof(struct srp_direct_buf));
- 
- 	if (!(pd->flags & IB_PD_UNSAFE_GLOBAL_RKEY)) {
- 		ret = srp_map_idb(ch, req, state.gen.next, state.gen.end,
-@@ -3300,7 +3300,7 @@ static ssize_t srp_create_target(struct device *dev,
- 	bool multich = false;
- 
- 	target_host = scsi_host_alloc(&srp_template,
--				      sizeof (struct srp_target_port));
-+				      sizeof(struct srp_target_port));
- 	if (!target_host)
- 		return -ENOMEM;
- 
-@@ -3383,10 +3383,10 @@ static ssize_t srp_create_target(struct device *dev,
- 	target->mr_pool_size = target->scsi_host->can_queue * mr_per_cmd;
- 	target->mr_per_cmd = mr_per_cmd;
- 	target->indirect_size = target->sg_tablesize *
--				sizeof (struct srp_direct_buf);
--	target->max_iu_len = sizeof (struct srp_cmd) +
--			     sizeof (struct srp_indirect_buf) +
--			     target->cmd_sg_cnt * sizeof (struct srp_direct_buf);
-+				sizeof(struct srp_direct_buf);
-+	target->max_iu_len = sizeof(struct srp_cmd) +
-+			     sizeof(struct srp_indirect_buf) +
-+			     target->cmd_sg_cnt * sizeof(struct srp_direct_buf);
- 
- 	INIT_WORK(&target->tl_err_work, srp_tl_err_work);
- 	INIT_WORK(&target->remove_work, srp_remove_work);
+ 	return 0;
+-
+-error:
++cleanup:
+ 	for_each_present_cpu(cpu) {
+ 		txq_pcpu = per_cpu_ptr(txq->pcpu, cpu);
+ 		kfree(txq_pcpu->buffs);
 -- 
 2.12.2
 
