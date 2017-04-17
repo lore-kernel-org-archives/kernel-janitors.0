@@ -1,49 +1,54 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 11 Apr 2017 06:22:27 +0000
-Subject: Re: [PATCH] thermal: cpu_cooling: Use kmalloc_array() in __cpufreq_cooling_register()
-Message-Id: <20170411061027.GB3670@vireshk-i7>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:03:33 +0000
+Subject: [PATCH 00/25] Ethernet-Marvell: Fine-tuning for several function implementations
+Message-Id: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d45b0bbb-0893-906d-edfc-44b712e55b14@users.sourceforge.net>
-In-Reply-To: <d45b0bbb-0893-906d-edfc-44b712e55b14@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pm@vger.kernel.org, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Javi Merino <javi.merino@kernel.org>, Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 10-04-17, 17:12, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 10 Apr 2017 17:00:13 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thermal/cpu_cooling.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index 69d0f430b2d1..273d9d5dbe0f 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -823,8 +823,9 @@ __cpufreq_cooling_register(struct device_node *np,
->  	cpufreq_for_each_valid_entry(pos, table)
->  		cpufreq_dev->max_level++;
->  
-> -	cpufreq_dev->freq_table = kmalloc(sizeof(*cpufreq_dev->freq_table) *
-> -					  cpufreq_dev->max_level, GFP_KERNEL);
-> +	cpufreq_dev->freq_table = kmalloc_array(cpufreq_dev->max_level,
-> +						sizeof(*cpufreq_dev->freq_table),
-> +						GFP_KERNEL);
->  	if (!cpufreq_dev->freq_table) {
->  		cool_dev = ERR_PTR(-ENOMEM);
->  		goto free_time_in_idle_timestamp;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 16:44:32 +0200
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Several update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (25):
+  Use devm_kmalloc_array() in mvneta_init()
+  Improve two size determinations in mvneta_init()
+  Use kmalloc_array() in mvneta_txq_init()
+  Adjust six checks for null pointers
+  Use kmalloc_array() in mvpp2_txq_init()
+  Improve two size determinations in mvpp2_probe()
+  Improve another size determination in mvpp2_init()
+  Improve another size determination in mvpp2_port_probe()
+  Improve another size determination in mvpp2_bm_init()
+  Improve another size determination in mvpp2_prs_default_init()
+  Improve 27 size determinations
+  Improve a size determination in two functions
+  Fix a jump label position in mvpp2_rx()
+  Rename a jump label in two functions
+  Adjust three error messages
+  Rename a jump label in mvpp2_tx_frag_process()
+  Rename a jump label in mvpp2_txq_init()
+  Rename a jump label in mvpp2_prs_double_vlan_add()
+  Rename a jump label in mvpp2_prs_vlan_add()
+  Adjust a null pointer check in mvpp2_egress_enable()
+  Use kcalloc() in two functions
+  Adjust four checks for null pointers
+  Use seq_puts() in skge_debug_show()
+  Adjust a null pointer check in skge_down()
+  Use seq_puts() in sky2_debug_show()
+
+ drivers/net/ethernet/marvell/mvneta.c     |  29 +++----
+ drivers/net/ethernet/marvell/mvpp2.c      | 127 ++++++++++++++----------------
+ drivers/net/ethernet/marvell/pxa168_eth.c |  14 ++--
+ drivers/net/ethernet/marvell/skge.c       |   4 +-
+ drivers/net/ethernet/marvell/sky2.c       |   2 +-
+ 5 files changed, 84 insertions(+), 92 deletions(-)
 
 -- 
-viresh
+2.12.2
+
