@@ -1,56 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Apr 2017 13:08:07 +0000
-Subject: [bug report] lwt: Add support to redirect dst.input
-Message-Id: <20170419130807.6b4ydlz3npfafb4s@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:17:13 +0000
+Subject: [PATCH 07/25] net: mvpp2: Improve another size determination in mvpp2_init()
+Message-Id: <9efcf14a-9531-084a-f26f-c9e5eb767f9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Tom,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 08:48:23 +0200
 
-I was reviewing static checker warnings and I had a question about
-commit 2536862311d2: "lwt: Add support to redirect dst.input".
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-net/core/lwtunnel.c
-   358  int lwtunnel_input(struct sk_buff *skb)
-   359  {
-   360          struct dst_entry *dst = skb_dst(skb);
-   361          const struct lwtunnel_encap_ops *ops;
-   362          struct lwtunnel_state *lwtstate;
-   363          int ret = -EINVAL;
-   364  
-   365          if (!dst)
-   366                  goto drop;
-   367          lwtstate = dst->lwtstate;
-   368  
-   369          if (lwtstate->type = LWTUNNEL_ENCAP_NONE ||
-   370              lwtstate->type > LWTUNNEL_ENCAP_MAX)
-   371                  return 0;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We should probably do a kfree_skb(skb) before returning, right?  It
-looks like all the other paths through this function do that.  Probably
-the same thing with the other output and xmit functions as well.
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 04aba2307b60..e35c4d0b112a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6806,7 +6806,7 @@ static int mvpp2_init(struct platform_device *pdev, struct mvpp2 *priv)
+ 
+ 	/* Allocate and initialize aggregated TXQs */
+ 	priv->aggr_txqs = devm_kcalloc(&pdev->dev, num_present_cpus(),
+-				       sizeof(struct mvpp2_tx_queue),
++				       sizeof(*priv->aggr_txqs),
+ 				       GFP_KERNEL);
+ 	if (!priv->aggr_txqs)
+ 		return -ENOMEM;
+-- 
+2.12.2
 
-   372  
-   373          ret = -EOPNOTSUPP;
-   374          rcu_read_lock();
-   375          ops = rcu_dereference(lwtun_encaps[lwtstate->type]);
-   376          if (likely(ops && ops->input))
-   377                  ret = ops->input(skb);
-   378          rcu_read_unlock();
-   379  
-   380          if (ret = -EOPNOTSUPP)
-   381                  goto drop;
-   382  
-   383          return ret;
-   384  
-   385  drop:
-   386          kfree_skb(skb);
-   387  
-   388          return ret;
-   389  }
-
-regards,
-dan carpenter
