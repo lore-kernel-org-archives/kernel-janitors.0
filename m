@@ -1,61 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 14:51:50 +0000
-Subject: [PATCH v2 11/12] IB/ocrdma: Delete an unnecessary variable in ocrdma_dealloc_pd()
-Message-Id: <723017f3-4a6e-5f4d-5431-4caf8af90c2d@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:26:18 +0000
+Subject: [PATCH 16/25] net: mvpp2: Rename a jump label in mvpp2_tx_frag_process()
+Message-Id: <0253300e-221d-49b8-6dae-6fd1fd738261@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <1492720999.3041.18.camel@redhat.com>
- <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
-In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 15:32:05 +0200
+Date: Mon, 17 Apr 2017 11:36:34 +0200
 
-1. Return zero in one case directly.
-
-2. Return the value from a call of the function "_ocrdma_dealloc_pd"
-   without using an extra assignment for the local variable.
-
-3. Remove the variable "status" in this function then.
+Adjust jump labels according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Devesh Sharma <devesh.sharma@broadcom.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 60b8813aff42..712c0dc9c980 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -754,7 +754,6 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 	struct ocrdma_pd *pd = get_ocrdma_pd(ibpd);
- 	struct ocrdma_dev *dev = get_ocrdma_dev(ibpd->device);
- 	struct ocrdma_ucontext *uctx = NULL;
--	int status = 0;
- 	u64 usr_db;
- 
- 	uctx = pd->uctx;
-@@ -768,11 +767,10 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 
- 		if (is_ucontext_pd(uctx, pd)) {
- 			ocrdma_release_ucontext_pd(uctx);
--			return status;
-+			return 0;
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 717d79dcb6aa..8f4348316d28 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -5606,7 +5606,7 @@ static int mvpp2_tx_frag_process(struct mvpp2_port *port, struct sk_buff *skb,
+ 					       DMA_TO_DEVICE);
+ 		if (dma_mapping_error(port->dev->dev.parent, buf_dma_addr)) {
+ 			mvpp2_txq_desc_put(txq);
+-			goto error;
++			goto cleanup;
  		}
- 	}
--	status = _ocrdma_dealloc_pd(dev, pd);
--	return status;
-+	return _ocrdma_dealloc_pd(dev, pd);
- }
  
- static int ocrdma_alloc_lkey(struct ocrdma_dev *dev, struct ocrdma_mr *mr,
+ 		mvpp2_txdesc_offset_set(port, tx_desc,
+@@ -5627,8 +5627,7 @@ static int mvpp2_tx_frag_process(struct mvpp2_port *port, struct sk_buff *skb,
+ 	}
+ 
+ 	return 0;
+-
+-error:
++cleanup:
+ 	/* Release all descriptors that were used to map fragments of
+ 	 * this packet, as well as the corresponding DMA mappings
+ 	 */
 -- 
 2.12.2
 
