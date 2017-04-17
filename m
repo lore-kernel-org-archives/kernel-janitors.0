@@ -1,42 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Apr 2017 08:59:49 +0000
-Subject: [PATCH] perf/core: Remove some dead code
-Message-Id: <20170411085949.GB24157@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:35:05 +0000
+Subject: [PATCH 25/25] sky2: Use seq_puts() in sky2_debug_show()
+Message-Id: <32a994ea-00cf-75e8-d816-b6bdc04d5ab6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-perf_init_event() never returns NULL, only error pointer.  The check for
-NULL causes a static checker warning and it seems slightly buggy to do
-a goto err_ns without setting the error code so those are two other
-reasons to delete this.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 16:15:12 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 6e75a5c9412d..0028efa0abc3 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9172,7 +9172,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/marvell/sky2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index 2b2cc3f3ca10..1145cde2274a 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -4544,7 +4544,7 @@ static int sky2_debug_show(struct seq_file *seq, void *v)
+ 		   sky2_read32(hw, B0_Y2_SP_ICR));
  
- static struct pmu *perf_init_event(struct perf_event *event)
- {
--	struct pmu *pmu = NULL;
-+	struct pmu *pmu;
- 	int idx;
- 	int ret;
- 
-@@ -9456,9 +9456,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	if (!netif_running(dev)) {
+-		seq_printf(seq, "network not running\n");
++		seq_puts(seq, "network not running\n");
+ 		return 0;
  	}
  
- 	pmu = perf_init_event(event);
--	if (!pmu)
--		goto err_ns;
--	else if (IS_ERR(pmu)) {
-+	if (IS_ERR(pmu)) {
- 		err = PTR_ERR(pmu);
- 		goto err_ns;
- 	}
+-- 
+2.12.2
+
