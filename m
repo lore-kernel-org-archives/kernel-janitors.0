@@ -1,66 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 14 Apr 2017 14:25:40 +0000
-Subject: [PATCH] staging: media: atomisp: fix range checking on clk_num
-Message-Id: <20170414142540.8465-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:33:09 +0000
+Subject: [PATCH 23/25] skge: Use seq_puts() in skge_debug_show()
+Message-Id: <6eb36737-cad0-34bf-0ac0-c7d176519e05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?= <jeremy.lefaure@lse.epita.fr>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:43:08 +0200
 
-The range checking on clk_num is incorrect; fix these so that invalid
-clk_num values are detected correctly.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Detected by static analysis with by PVS-Studio
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/skge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-index 25e939c50aef..9efdf5790f90 100644
---- a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-+++ b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-@@ -67,7 +67,7 @@ int vlv2_plat_set_clock_freq(int clk_num, int freq_type)
- {
- 	void __iomem *addr;
- 
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
+diff --git a/drivers/net/ethernet/marvell/skge.c b/drivers/net/ethernet/marvell/skge.c
+index edb95271a4f2..90bfdbcfd910 100644
+--- a/drivers/net/ethernet/marvell/skge.c
++++ b/drivers/net/ethernet/marvell/skge.c
+@@ -3718,7 +3718,7 @@ static int skge_debug_show(struct seq_file *seq, void *v)
+ 			   t->csum_offs, t->csum_write, t->csum_start);
  	}
-@@ -103,7 +103,7 @@ int vlv2_plat_get_clock_freq(int clk_num)
- {
- 	u32 ret;
  
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
-@@ -133,7 +133,7 @@ int vlv2_plat_configure_clock(int clk_num, u32 conf)
- {
- 	void __iomem *addr;
+-	seq_printf(seq, "\nRx Ring:\n");
++	seq_puts(seq, "\nRx Ring:\n");
+ 	for (e = skge->rx_ring.to_clean; ; e = e->next) {
+ 		const struct skge_rx_desc *r = e->desc;
  
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
-@@ -169,7 +169,7 @@ int vlv2_plat_get_clock_status(int clk_num)
- {
- 	int ret;
- 
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num >= MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
 -- 
-2.11.0
+2.12.2
 
