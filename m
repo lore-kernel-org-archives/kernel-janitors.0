@@ -1,42 +1,41 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Wed, 19 Apr 2017 13:58:07 +0000
-Subject: Re: ath9k: off by one in ath9k_hw_nvram_read_array()
-Message-Id: <939efb73b7f14d82ac204871395d3b4b@euamsexm01a.eu.qualcomm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:19:03 +0000
+Subject: [PATCH 09/25] net: mvpp2: Improve another size determination in mvpp2_bm_init()
+Message-Id: <a82c7a3f-a9ca-a454-a6fa-febe335e6ea0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170406051220.GA23650@mwanda>
-In-Reply-To: <20170406051220.GA23650@mwanda>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Gabor Juhos <juhosg@openwrt.org>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The > should be >= or we read one space beyond the end of the array.
-> 
-> Fixes: ab5c4f71d8c7 ("ath9k: allow to load EEPROM content via firmware API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/ath/ath9k/eeprom.c b/drivers/net/wireless/ath/ath9k/eeprom.c
-> index fb80ec86e53d..6ccf24814514 100644
-> --- a/drivers/net/wireless/ath/ath9k/eeprom.c
-> +++ b/drivers/net/wireless/ath/ath9k/eeprom.c
-> @@ -112,7 +112,7 @@ void ath9k_hw_usb_gen_fill_eeprom(struct ath_hw *ah, u16 *eep_data,
->  static bool ath9k_hw_nvram_read_array(u16 *blob, size_t blob_size,
->  				      off_t offset, u16 *data)
->  {
-> -	if (offset > blob_size)
-> +	if (offset >= blob_size)
->  		return false;
->  
->  	*data =  blob[offset];
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 09:06:33 +0200
 
-Patch applied to ath-next branch of ath.git, thanks.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-b7dcf68f383a ath9k: off by one in ath9k_hw_nvram_read_array()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 8f1fec2986f9..8fb039b2073e 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -3833,7 +3833,7 @@ static int mvpp2_bm_init(struct platform_device *pdev, struct mvpp2 *priv)
+ 
+ 	/* Allocate and initialize BM pools */
+ 	priv->bm_pools = devm_kcalloc(&pdev->dev, MVPP2_BM_POOLS_NUM,
+-				     sizeof(struct mvpp2_bm_pool), GFP_KERNEL);
++				      sizeof(*priv->bm_pools), GFP_KERNEL);
+ 	if (!priv->bm_pools)
+ 		return -ENOMEM;
+ 
 -- 
-https://patchwork.kernel.org/patch/9666031/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.12.2
 
