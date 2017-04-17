@@ -1,56 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Apr 2017 20:18:20 +0000
-Subject: [PATCH 1/3] ACPI/int340x_thermal: Use kcalloc() in two functions
-Message-Id: <55405e33-2a1a-ea40-743f-eb8e53a1a399@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:30:12 +0000
+Subject: [PATCH 20/25] net: mvpp2: Adjust a null pointer check in mvpp2_egress_enable()
+Message-Id: <54acb3f4-8a0c-90ba-4267-f62e10baa252@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
-In-Reply-To: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Apr 2017 21:30:47 +0200
+Date: Mon, 17 Apr 2017 14:07:52 +0200
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written "txq->descs".
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/int340x_thermal/acpi_thermal_rel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-index 2c2ec7666eb1..52a5fe0f81e8 100644
---- a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-+++ b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-@@ -96,7 +96,7 @@ int acpi_parse_trt(acpi_handle handle, int *trt_count, struct trt **trtp,
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 3bdd3f1fe34e..9b875d776b29 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -4415,7 +4415,7 @@ static void mvpp2_egress_enable(struct mvpp2_port *port)
+ 	for (queue = 0; queue < txq_number; queue++) {
+ 		struct mvpp2_tx_queue *txq = port->txqs[queue];
+ 
+-		if (txq->descs != NULL)
++		if (txq->descs)
+ 			qmap |= (1 << queue);
  	}
  
- 	*trt_count = p->package.count;
--	trts = kzalloc(*trt_count * sizeof(struct trt), GFP_KERNEL);
-+	trts = kcalloc(*trt_count, sizeof(*trts), GFP_KERNEL);
- 	if (!trts) {
- 		result = -ENOMEM;
- 		goto end;
-@@ -178,7 +178,7 @@ int acpi_parse_art(acpi_handle handle, int *art_count, struct art **artp,
- 
- 	/* ignore p->package.elements[0], as this is _ART Revision field */
- 	*art_count = p->package.count - 1;
--	arts = kzalloc(*art_count * sizeof(struct art), GFP_KERNEL);
-+	arts = kcalloc(*art_count, sizeof(*arts), GFP_KERNEL);
- 	if (!arts) {
- 		result = -ENOMEM;
- 		goto end;
 -- 
 2.12.2
 
