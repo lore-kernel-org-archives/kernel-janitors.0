@@ -1,91 +1,93 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:14:25 +0000
-Subject: [PATCH 04/25] net: mvneta: Adjust six checks for null pointers
-Message-Id: <6b0f9c85-0a3e-4f4f-9790-05436bb31d2d@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:24:11 +0000
+Subject: [PATCH 14/25] net: mvpp2: Rename a jump label in two functions
+Message-Id: <77376169-1cc0-c138-216e-c409948b8eb0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Apr 2017 22:45:33 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 17 Apr 2017 11:10:47 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+Adjust jump labels according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 9c2ddd22a86f..6f436db8b01e 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1107,7 +1107,7 @@ static void mvneta_port_up(struct mvneta_port *pp)
- 	q_map = 0;
- 	for (queue = 0; queue < txq_number; queue++) {
- 		struct mvneta_tx_queue *txq = &pp->txqs[queue];
--		if (txq->descs != NULL)
-+		if (txq->descs)
- 			q_map |= (1 << queue);
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 4f4b659d7297..89237abf386d 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6065,7 +6065,7 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+ 
+ 	if (!is_valid_ether_addr(addr->sa_data)) {
+ 		err = -EADDRNOTAVAIL;
+-		goto error;
++		goto log_error;
  	}
- 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
-@@ -1116,7 +1116,7 @@ static void mvneta_port_up(struct mvneta_port *pp)
- 	for (queue = 0; queue < rxq_number; queue++) {
- 		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
  
--		if (rxq->descs != NULL)
-+		if (rxq->descs)
- 			q_map |= (1 << queue);
+ 	if (!netif_running(dev)) {
+@@ -6075,7 +6075,7 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+ 		/* Reconfigure parser to accept the original MAC address */
+ 		err = mvpp2_prs_update_mac_da(dev, dev->dev_addr);
+ 		if (err)
+-			goto error;
++			goto log_error;
  	}
- 	mvreg_write(pp, MVNETA_RXQ_CMD, q_map);
-@@ -2850,7 +2850,7 @@ static int mvneta_rxq_init(struct mvneta_port *pp,
- 	rxq->descs = dma_alloc_coherent(pp->dev->dev.parent,
- 					rxq->size * MVNETA_DESC_ALIGNED_SIZE,
- 					&rxq->descs_phys, GFP_KERNEL);
--	if (rxq->descs = NULL)
-+	if (!rxq->descs)
- 		return -ENOMEM;
  
- 	rxq->last_desc = rxq->size - 1;
-@@ -2920,7 +2920,7 @@ static int mvneta_txq_init(struct mvneta_port *pp,
- 	txq->descs = dma_alloc_coherent(pp->dev->dev.parent,
- 					txq->size * MVNETA_DESC_ALIGNED_SIZE,
- 					&txq->descs_phys, GFP_KERNEL);
--	if (txq->descs = NULL)
-+	if (!txq->descs)
- 		return -ENOMEM;
+ 	mvpp2_stop_dev(port);
+@@ -6087,14 +6087,13 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+ 	/* Reconfigure parser accept the original MAC address */
+ 	err = mvpp2_prs_update_mac_da(dev, dev->dev_addr);
+ 	if (err)
+-		goto error;
++		goto log_error;
+ out_start:
+ 	mvpp2_start_dev(port);
+ 	mvpp2_egress_enable(port);
+ 	mvpp2_ingress_enable(port);
+ 	return 0;
+-
+-error:
++log_error:
+ 	netdev_err(dev, "fail to change MAC address\n");
+ 	return err;
+ }
+@@ -6120,7 +6119,7 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+ 		/* Reconfigure BM to the original MTU */
+ 		err = mvpp2_bm_update_mtu(dev, dev->mtu);
+ 		if (err)
+-			goto error;
++			goto log_error;
+ 	}
  
- 	txq->last_desc = txq->size - 1;
-@@ -2935,7 +2935,7 @@ static int mvneta_txq_init(struct mvneta_port *pp,
+ 	mvpp2_stop_dev(port);
+@@ -6134,7 +6133,7 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+ 	/* Reconfigure BM to the original MTU */
+ 	err = mvpp2_bm_update_mtu(dev, dev->mtu);
+ 	if (err)
+-		goto error;
++		goto log_error;
  
- 	txq->tx_skb = kmalloc_array(txq->size, sizeof(*txq->tx_skb),
- 				    GFP_KERNEL);
--	if (txq->tx_skb = NULL) {
-+	if (!txq->tx_skb) {
- 		dma_free_coherent(pp->dev->dev.parent,
- 				  txq->size * MVNETA_DESC_ALIGNED_SIZE,
- 				  txq->descs, txq->descs_phys);
-@@ -2946,7 +2946,7 @@ static int mvneta_txq_init(struct mvneta_port *pp,
- 	txq->tso_hdrs = dma_alloc_coherent(pp->dev->dev.parent,
- 					   txq->size * TSO_HEADER_SIZE,
- 					   &txq->tso_hdrs_phys, GFP_KERNEL);
--	if (txq->tso_hdrs = NULL) {
-+	if (!txq->tso_hdrs) {
- 		kfree(txq->tx_skb);
- 		dma_free_coherent(pp->dev->dev.parent,
- 				  txq->size * MVNETA_DESC_ALIGNED_SIZE,
+ out_start:
+ 	mvpp2_start_dev(port);
+@@ -6142,8 +6141,7 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+ 	mvpp2_ingress_enable(port);
+ 
+ 	return 0;
+-
+-error:
++log_error:
+ 	netdev_err(dev, "fail to change MTU\n");
+ 	return err;
+ }
 -- 
 2.12.2
 
