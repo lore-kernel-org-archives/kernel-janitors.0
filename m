@@ -1,74 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:22:24 +0000
-Subject: [PATCH 09/10] pinctrl: mxs: Use devm_kcalloc() in two functions
-Message-Id: <6b3abc7c-7fae-ce75-585c-8944153a9627@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:18:09 +0000
+Subject: [PATCH 08/25] net: mvpp2: Improve another size determination in mvpp2_port_probe()
+Message-Id: <b7882f0e-30b8-9851-131d-3d5a4cb2f89c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 16:28:48 +0200
+Date: Mon, 17 Apr 2017 08:55:42 +0200
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "devm_kcalloc".
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/freescale/pinctrl-mxs.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
-index 41b5b07d5a2b..9e6dc0038c35 100644
---- a/drivers/pinctrl/freescale/pinctrl-mxs.c
-+++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
-@@ -369,12 +369,12 @@ static int mxs_pinctrl_parse_group(struct platform_device *pdev,
- 		return -EINVAL;
- 	g->npins = length / sizeof(u32);
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index e35c4d0b112a..8f1fec2986f9 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6487,8 +6487,7 @@ static int mvpp2_port_probe(struct platform_device *pdev,
+ 	int phy_mode;
+ 	int err, i, cpu;
  
--	g->pins = devm_kzalloc(&pdev->dev, g->npins * sizeof(*g->pins),
-+	g->pins = devm_kcalloc(&pdev->dev, g->npins, sizeof(*g->pins),
- 			       GFP_KERNEL);
- 	if (!g->pins)
+-	dev = alloc_etherdev_mqs(sizeof(struct mvpp2_port), txq_number,
+-				 rxq_number);
++	dev = alloc_etherdev_mqs(sizeof(*port), txq_number, rxq_number);
+ 	if (!dev)
  		return -ENOMEM;
  
--	g->muxsel = devm_kzalloc(&pdev->dev, g->npins * sizeof(*g->muxsel),
-+	g->muxsel = devm_kcalloc(&pdev->dev, g->npins, sizeof(*g->muxsel),
- 				 GFP_KERNEL);
- 	if (!g->muxsel)
- 		return -ENOMEM;
-@@ -425,12 +425,12 @@ static int mxs_pinctrl_probe_dt(struct platform_device *pdev,
- 		}
- 	}
- 
--	soc->functions = devm_kzalloc(&pdev->dev, soc->nfunctions *
-+	soc->functions = devm_kcalloc(&pdev->dev, soc->nfunctions,
- 				      sizeof(*soc->functions), GFP_KERNEL);
- 	if (!soc->functions)
- 		return -ENOMEM;
- 
--	soc->groups = devm_kzalloc(&pdev->dev, soc->ngroups *
-+	soc->groups = devm_kcalloc(&pdev->dev, soc->ngroups,
- 				   sizeof(*soc->groups), GFP_KERNEL);
- 	if (!soc->groups)
- 		return -ENOMEM;
-@@ -491,7 +491,8 @@ static int mxs_pinctrl_probe_dt(struct platform_device *pdev,
- 
- 		if (strcmp(fn, child->name)) {
- 			f = &soc->functions[idxf++];
--			f->groups = devm_kzalloc(&pdev->dev, f->ngroups *
-+			f->groups = devm_kcalloc(&pdev->dev,
-+						 f->ngroups,
- 						 sizeof(*f->groups),
- 						 GFP_KERNEL);
- 			if (!f->groups)
 -- 
 2.12.2
 
