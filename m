@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:19:03 +0000
-Subject: [PATCH 09/25] net: mvpp2: Improve another size determination in mvpp2_bm_init()
-Message-Id: <a82c7a3f-a9ca-a454-a6fa-febe335e6ea0@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:22:15 +0000
+Subject: [PATCH 12/25] net: mvpp2: Improve a size determination in two functions
+Message-Id: <954d79a6-02a5-33ef-6c61-6854da35d3a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
@@ -12,29 +12,38 @@ To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fai
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 09:06:33 +0200
+Date: Mon, 17 Apr 2017 10:40:32 +0200
 
-Replace the specification of a data structure by a pointer dereference
+Replace the specification of two data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 8f1fec2986f9..8fb039b2073e 100644
+index 61fd87d0a4ec..3bddb8fcd595 100644
 --- a/drivers/net/ethernet/marvell/mvpp2.c
 +++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -3833,7 +3833,7 @@ static int mvpp2_bm_init(struct platform_device *pdev, struct mvpp2 *priv)
+@@ -2024,7 +2024,7 @@ static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
+ 			goto error;
+ 		}
  
- 	/* Allocate and initialize BM pools */
- 	priv->bm_pools = devm_kcalloc(&pdev->dev, MVPP2_BM_POOLS_NUM,
--				     sizeof(struct mvpp2_bm_pool), GFP_KERNEL);
-+				      sizeof(*priv->bm_pools), GFP_KERNEL);
- 	if (!priv->bm_pools)
- 		return -ENOMEM;
+-		memset(pe, 0 , sizeof(struct mvpp2_prs_entry));
++		memset(pe, 0, sizeof(*pe));
+ 		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
+ 		pe->index = tid;
+ 
+@@ -2165,7 +2165,7 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
+ 			goto error;
+ 		}
+ 
+-		memset(pe, 0, sizeof(struct mvpp2_prs_entry));
++		memset(pe, 0, sizeof(*pe));
+ 		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
+ 		pe->index = tid;
  
 -- 
 2.12.2
