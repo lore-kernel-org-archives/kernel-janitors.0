@@ -1,63 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:42:14 +0000
-Subject: [PATCH v2 10/17] IB/mlx4: Delete an unnecessary variable in __mlx4_ib_query_gid()
-Message-Id: <823e7d21-4d14-dbab-0499-80ca965dee31@users.sourceforge.net>
+Date: Mon, 17 Apr 2017 15:16:20 +0000
+Subject: [PATCH 06/25] net: mvpp2: Improve two size determinations in mvpp2_probe()
+Message-Id: <c745ed5e-9b8e-6aeb-9faf-27a8ddd7544a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:22:42 +0200
+Date: Mon, 17 Apr 2017 08:38:32 +0200
 
-* Call the function "memset" directly in an if branch without using
-  an intermediate variable.
-
-* Delete the local variable "clear" which became unnecessary with
-  this refactoring.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/mlx4/main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index e18e46a68809..a54e2f04929b 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -780,7 +780,6 @@ int __mlx4_ib_query_gid(struct ib_device *ibdev, u8 port, int index,
- 	struct ib_smp *out_mad;
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index a86d9111c476..04aba2307b60 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6873,7 +6873,7 @@ static int mvpp2_probe(struct platform_device *pdev)
+ 	int port_count, cpu;
  	int err;
- 	struct mlx4_ib_dev *dev = to_mdev(ibdev);
--	int clear = 0;
- 	int mad_ifc_flags = MLX4_MAD_IFC_IGNORE_KEYS;
  
- 	in_mad  = kzalloc(sizeof(*in_mad), GFP_KERNEL);
-@@ -809,8 +808,8 @@ int __mlx4_ib_query_gid(struct ib_device *ibdev, u8 port, int index,
- 	if (mlx4_is_mfunc(dev->dev) && !netw_view) {
- 		if (index) {
- 			/* For any index > 0, return the null guid */
-+			memset(gid->raw + 8, 0, 8);
- 			err = 0;
--			clear = 1;
- 			goto out;
- 		}
+-	priv = devm_kzalloc(&pdev->dev, sizeof(struct mvpp2), GFP_KERNEL);
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+@@ -6970,8 +6970,8 @@ static int mvpp2_probe(struct platform_device *pdev)
  	}
-@@ -827,8 +826,6 @@ int __mlx4_ib_query_gid(struct ib_device *ibdev, u8 port, int index,
- 	memcpy(gid->raw + 8, out_mad->data + (index % 8) * 8, 8);
  
- out:
--	if (clear)
--		memset(gid->raw + 8, 0, 8);
- 	kfree(out_mad);
- free_in_mad:
- 	kfree(in_mad);
+ 	priv->port_list = devm_kcalloc(&pdev->dev, port_count,
+-				      sizeof(struct mvpp2_port *),
+-				      GFP_KERNEL);
++				       sizeof(*priv->port_list),
++				       GFP_KERNEL);
+ 	if (!priv->port_list) {
+ 		err = -ENOMEM;
+ 		goto err_mg_clk;
 -- 
 2.12.2
 
