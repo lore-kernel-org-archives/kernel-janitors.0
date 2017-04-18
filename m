@@ -1,25 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 19:14:45 +0000
-Subject: Re: Checking error messages for failed memory allocations
-Message-Id: <16e0c970-1071-ae4b-84fc-952b1fc700f4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Apr 2017 14:06:53 +0000
+Subject: [PATCH][net-next] esp6: fix incorrect null pointer check on xo
+Message-Id: <20170418140653.8839-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
- <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
- <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
- <1493231242.18659.28.camel@perches.com>
- <f6da1799-02a1-b1dc-edcb-a2ea5563b51a@users.sourceforge.net>
- <1493233549.18659.33.camel@perches.com>
-In-Reply-To: <1493233549.18659.33.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Subhash Jadavani <subhashj@codeaurora.org>, linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-scsi-owner@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Feel free to submit documentation patches.
+From: Colin Ian King <colin.king@canonical.com>
 
-Do involved software developers agree on the functionality for
-stack dumps because of out of memory situations?
+The check for xo being null is incorrect, currently it is checking
+for non-null, it should be checking for null.
 
-Regards,
-Markus
+Detected with CoverityScan, CID#1429349 ("Dereference after null check")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/esp6_offload.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/esp6_offload.c b/net/ipv6/esp6_offload.c
+index 1cceeee7cc33..95f10728abaa 100644
+--- a/net/ipv6/esp6_offload.c
++++ b/net/ipv6/esp6_offload.c
+@@ -120,7 +120,7 @@ static struct sk_buff *esp6_gso_segment(struct sk_buff *skb,
+ 	netdev_features_t esp_features = features;
+ 	struct xfrm_offload *xo = xfrm_offload(skb);
+ 
+-	if (xo)
++	if (!xo)
+ 		goto out;
+ 
+ 	seq = xo->seq.low;
+-- 
+2.11.0
+
