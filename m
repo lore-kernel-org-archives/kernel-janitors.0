@@ -1,24 +1,38 @@
-From: David Ahern <dsa@cumulusnetworks.com>
-Date: Sat, 29 Apr 2017 13:03:07 +0000
-Subject: Re: [PATCH net-next] lwtunnel: fix error path in lwtunnel_fill_encap()
-Message-Id: <8e97609b-732b-9a84-b088-ba7f4384a1eb@cumulusnetworks.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Apr 2017 19:14:26 +0000
+Subject: [PATCH] dp83640: don't recieve time stamps twice
+Message-Id: <20170418191426.GA17838@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428130347.53hagk77wh6scmcs@mwanda>
-In-Reply-To: <20170428130347.53hagk77wh6scmcs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Pan Bian <bianpan2016@163.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>, Robert Shearman <rshearma@brocade.com>, Tom Herbert <tom@herbertland.com>, David Lebrun <david.lebrun@uclouvain.be>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>, Stefan =?iso-8859-1?Q?S=F8rensen?= <stefan.sorensen@spectralink.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 4/28/17 7:03 AM, Dan Carpenter wrote:
-> We recently added a check to see if nla_nest_start() fails.  There are
-> two issues with that.  First, if it fails then I don't think we should
-> call nla_nest_cancel().  Second, it's slightly convoluted but the
-> current code returns success but we should return -EMSGSIZE instead.
-> 
-> Fixes: a50fe0ffd76f ("lwtunnel: check return value of nla_nest_start")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+This patch is prompted by a static checker warning about a potential
+use after free.  The concern is that netif_rx_ni() can free "skb" and we
+call it twice.
 
-Acked-by: David Ahern <dsa@cumulusnetworks.com>
+When I look at the commit that added this, it looks like some stray
+lines were added accidentally.  It doesn't make sense to me that we
+would recieve the same data two times.  I asked the author but never
+recieved a response.
+
+I can't test this code, but I'm pretty sure my patch is correct.
+
+Fixes: 4b063258ab93 ("dp83640: Delay scheduled work.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
+index e2460a57e4b1..ed0d10f54f26 100644
+--- a/drivers/net/phy/dp83640.c
++++ b/drivers/net/phy/dp83640.c
+@@ -1438,8 +1438,6 @@ static bool dp83640_rxtstamp(struct phy_device *phydev,
+ 		skb_info->tmo = jiffies + SKB_TIMESTAMP_TIMEOUT;
+ 		skb_queue_tail(&dp83640->rx_queue, skb);
+ 		schedule_delayed_work(&dp83640->ts_work, SKB_TIMESTAMP_TIMEOUT);
+-	} else {
+-		netif_rx_ni(skb);
+ 	}
+ 
+ 	return true;
