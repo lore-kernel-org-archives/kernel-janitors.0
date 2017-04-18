@@ -1,32 +1,48 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 12 Apr 2017 17:28:12 +0000
-Subject: Re: [PATCH] switchtec: Fix an error handling
-Message-Id: <eb5a4cbf-4059-6ef1-5a3c-83327442312b@deltatee.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 09:37:26 +0000
+Subject: [PATCH 1/6] clk: hisilicon: Use kcalloc() in hisi_clk_init()
+Message-Id: <26e4342d-2292-adbf-5eb1-9ee172685498@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411043204.19343-1-christophe.jaillet@wanadoo.fr>
- <20170412172736.GF25197@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20170412172736.GF25197@bhelgaas-glaptop.roam.corp.google.com>
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+In-Reply-To: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <helgaas@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kurt.schwemmer@microsemi.com, stephen.bates@microsemi.com, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 09:25:47 +0200
 
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-On 12/04/17 11:27 AM, Bjorn Helgaas wrote:
-> On Tue, Apr 11, 2017 at 06:32:04AM +0200, Christophe JAILLET wrote:
->> 'stuser_create' returns an error pointer in case of error, not NULL.
->> So test its return value with IS_ERR.
->>
->> Fixes: 74004262f329 ("MicroSemi Switchtec management interface driver")
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Since this hasn't been merged to Linus' tree yet, I folded the fix
-> into the original commit on pci/switchtec and added attribution to
-> Christophe.
+  This issue was detected by using the Coccinelle software.
 
-Thanks Bjorn.
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-Logan
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/hisilicon/clk.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 9ba2d91f4d3a..9268e80b7566 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -85,8 +85,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 		goto err;
+ 	}
+ 	clk_data->base = base;
+-
+-	clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
++	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
+ 	if (!clk_table) {
+ 		pr_err("%s: could not allocate clock lookup table\n", __func__);
+ 		goto err_data;
+-- 
+2.12.2
+
