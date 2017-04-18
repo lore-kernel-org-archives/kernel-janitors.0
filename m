@@ -1,84 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 04 Apr 2017 11:12:46 +0000
-Subject: [PATCH 1/3] selinux: Return directly after a failed memory allocation in policydb_index()
-Message-Id: <8a517289-e5a7-8dde-0f5f-9e57f3e270c7@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 18 Apr 2017 18:00:01 +0000
+Subject: Applied "ASoC: topology: use j for internal loop counter" to the asoc tree
+Message-Id: <E1d0XQ1-0007AX-G3@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-In-Reply-To: <5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
+References: <20170415174954.90707-1-colin.king@canonical.com>
+In-Reply-To: <20170415174954.90707-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Apr 2017 10:20:46 +0200
+The patch
 
-Replace five goto statements (and previous variable assignments) by
-direct returns after a memory allocation failure in this function.
+   ASoC: topology: use j for internal loop counter
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From d7766aa57ab0084498add21ddbf99547116f6b71 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 15 Apr 2017 18:49:54 +0100
+Subject: [PATCH] ASoC: topology: use j for internal loop counter
+
+Currently variable i is being for 2 nested for loops. Fix this by
+using integer loop counter j for the inside for loop.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- security/selinux/ss/policydb.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ sound/soc/soc-topology.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 0080122760ad..87d645d3a39f 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -538,34 +538,30 @@ static int policydb_index(struct policydb *p)
- 	symtab_hash_eval(p->symtab);
- #endif
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 8e3df8ba9b68..3a5818829e6c 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -495,12 +495,13 @@ static void remove_widget(struct snd_soc_component *comp,
+ 			struct snd_kcontrol *kcontrol = w->kcontrols[i];
+ 			struct soc_enum *se  				(struct soc_enum *)kcontrol->private_value;
++			int j;
  
--	rc = -ENOMEM;
- 	p->class_val_to_struct = kcalloc(p->p_classes.nprim,
- 					 sizeof(*p->class_val_to_struct),
- 					 GFP_KERNEL);
- 	if (!p->class_val_to_struct)
--		goto out;
-+		return -ENOMEM;
+ 			snd_ctl_remove(card, kcontrol);
  
--	rc = -ENOMEM;
- 	p->role_val_to_struct = kcalloc(p->p_roles.nprim,
- 					sizeof(*p->role_val_to_struct),
- 					GFP_KERNEL);
- 	if (!p->role_val_to_struct)
--		goto out;
-+		return -ENOMEM;
+ 			kfree(se->dobj.control.dvalues);
+-			for (i = 0; i < se->items; i++)
+-				kfree(se->dobj.control.dtexts[i]);
++			for (j = 0; j < se->items; j++)
++				kfree(se->dobj.control.dtexts[j]);
  
--	rc = -ENOMEM;
- 	p->user_val_to_struct = kcalloc(p->p_users.nprim,
- 					sizeof(*p->user_val_to_struct),
- 					GFP_KERNEL);
- 	if (!p->user_val_to_struct)
--		goto out;
-+		return -ENOMEM;
- 
- 	/* Yes, I want the sizeof the pointer, not the structure */
--	rc = -ENOMEM;
- 	p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
- 						       p->p_types.nprim,
- 						       GFP_KERNEL | __GFP_ZERO);
- 	if (!p->type_val_to_struct_array)
--		goto out;
-+		return -ENOMEM;
- 
- 	rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
- 				 p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
-@@ -577,12 +573,11 @@ static int policydb_index(struct policydb *p)
- 		goto out;
- 
- 	for (i = 0; i < SYM_NUM; i++) {
--		rc = -ENOMEM;
- 		p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
- 							 p->symtab[i].nprim,
- 							 GFP_KERNEL | __GFP_ZERO);
- 		if (!p->sym_val_to_name[i])
--			goto out;
-+			return -ENOMEM;
- 
- 		rc = flex_array_prealloc(p->sym_val_to_name[i],
- 					 0, p->symtab[i].nprim,
+ 			kfree(se);
+ 		}
 -- 
-2.12.2
+2.11.0
 
