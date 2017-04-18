@@ -1,31 +1,29 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:48:31 +0000
-Subject: Re: [PATCH 7/8] clk: nomadik: Use seq_puts() in nomadik_src_clk_show()
-Message-Id: <20170422024831.GP7065@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 20:00:37 +0000
+Subject: [PATCH 0/3] SATA: Fine-tuning for two function implementations
+Message-Id: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <d3be1f2b-f3c4-0d1b-4fa0-84589bfc3f70@users.sourceforge.net>
-In-Reply-To: <d3be1f2b-f3c4-0d1b-4fa0-84589bfc3f70@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 09:45:04 +0200
-> 
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function "seq_puts".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 21:54:32 +0200
 
-Applied to clk-next
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (3):
+  Use kcalloc() in ahci_platform_get_resources()
+  Use devm_kcalloc() in ahci_platform_get_resources()
+  Use devm_kcalloc() in mv_platform_probe()
+
+ drivers/ata/libahci_platform.c | 11 ++++++-----
+ drivers/ata/sata_mv.c          | 10 ++++++----
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
+
