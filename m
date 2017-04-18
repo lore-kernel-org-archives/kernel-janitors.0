@@ -1,39 +1,20 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 18 Apr 2017 14:06:53 +0000
-Subject: [PATCH][net-next] esp6: fix incorrect null pointer check on xo
-Message-Id: <20170418140653.8839-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Apr 2017 20:11:20 +0000
+Subject: Re: [PATCH][net-next] esp6: fix incorrect null pointer check on xo
+Message-Id: <20170418201119.72la2hstf47dpply@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170418140653.8839-1-colin.king@canonical.com>
+In-Reply-To: <20170418140653.8839-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+It's in Steffen's tree, not the networking tree and he's not CC'd.  You
+should really be adding Fixes tags because it helps to ensure you CC the
+guilty parties.
 
-The check for xo being null is incorrect, currently it is checking
-for non-null, it should be checking for null.
-
-Detected with CoverityScan, CID#1429349 ("Dereference after null check")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/ipv6/esp6_offload.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv6/esp6_offload.c b/net/ipv6/esp6_offload.c
-index 1cceeee7cc33..95f10728abaa 100644
---- a/net/ipv6/esp6_offload.c
-+++ b/net/ipv6/esp6_offload.c
-@@ -120,7 +120,7 @@ static struct sk_buff *esp6_gso_segment(struct sk_buff *skb,
- 	netdev_features_t esp_features = features;
- 	struct xfrm_offload *xo = xfrm_offload(skb);
- 
--	if (xo)
-+	if (!xo)
- 		goto out;
- 
- 	seq = xo->seq.low;
--- 
-2.11.0
+regards,
+dan carpenter
 
