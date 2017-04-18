@@ -1,51 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:15:26 +0000
-Subject: [PATCH 05/25] net: mvpp2: Use kmalloc_array() in mvpp2_txq_init()
-Message-Id: <f9948035-e150-d622-e702-a59256d7d5e6@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 09:34:52 +0000
+Subject: [PATCH 0/6] clk-Hisilicon: Fine-tuning for some function implementations
+Message-Id: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 08:09:07 +0200
+Date: Tue, 18 Apr 2017 11:27:32 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+A few update suggestions were taken into account
+from static source code analysis.
 
-  This issue was detected by using the Coccinelle software.
+Markus Elfring (6):
+  Use kcalloc() in hisi_clk_init()
+  Delete error messages for failed memory allocations in hisi_clk_init()
+  Use devm_kmalloc_array() in hisi_clk_alloc()
+  Use kcalloc() in hi3620_mmc_clk_init()
+  Delete error messages for a failed memory allocation in two functions
+  Fix a typo in one variable name
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+ drivers/clk/hisilicon/clk-hi3620.c | 16 ++++++----------
+ drivers/clk/hisilicon/clk.c        | 18 ++++++++----------
+ 2 files changed, 14 insertions(+), 20 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/marvell/mvpp2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index af5bfa13d976..a86d9111c476 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -5083,9 +5083,9 @@ static int mvpp2_txq_init(struct mvpp2_port *port,
- 	for_each_present_cpu(cpu) {
- 		txq_pcpu = per_cpu_ptr(txq->pcpu, cpu);
- 		txq_pcpu->size = txq->size;
--		txq_pcpu->buffs = kmalloc(txq_pcpu->size *
--					  sizeof(struct mvpp2_txq_pcpu_buf),
--					  GFP_KERNEL);
-+		txq_pcpu->buffs = kmalloc_array(txq_pcpu->size,
-+						sizeof(*txq_pcpu->buffs),
-+						GFP_KERNEL);
- 		if (!txq_pcpu->buffs)
- 			goto error;
- 
 -- 
 2.12.2
 
