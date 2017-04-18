@@ -1,42 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:35:05 +0000
-Subject: [PATCH 25/25] sky2: Use seq_puts() in sky2_debug_show()
-Message-Id: <32a994ea-00cf-75e8-d816-b6bdc04d5ab6@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 16:56:36 +0000
+Subject: [PATCH 6/6] ACPI-proc: Replace two seq_printf() calls by seq_puts() in acpi_system_wakeup_device_seq
+Message-Id: <fabd4849-37ab-948c-6a23-76b7b1e24390@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+References: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
+In-Reply-To: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@suse.de>, Chun-Yi Lee <joeyli.kernel@gmail.com>, Colin Ian King <colin.king@canonical.com>, Dan Williams <dan.j.williams@intel.com>, Len Brown <lenb@kernel.org>, Linda Knippers <linda.knippers@hpe.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tony Luck <tony.luck@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Zhang Rui <rui.zhang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 16:15:12 +0200
+Date: Tue, 18 Apr 2017 18:13:55 +0200
 
-A string which did not contain a data format specification should be put
+Strings which did not contain data format specifications should be put
 into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/marvell/sky2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/proc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 2b2cc3f3ca10..1145cde2274a 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -4544,7 +4544,7 @@ static int sky2_debug_show(struct seq_file *seq, void *v)
- 		   sky2_read32(hw, B0_Y2_SP_ICR));
+diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
+index a34669cc823b..f17d5eb29609 100644
+--- a/drivers/acpi/proc.c
++++ b/drivers/acpi/proc.c
+@@ -23,7 +23,7 @@ acpi_system_wakeup_device_seq_show(struct seq_file *seq, void *offset)
+ {
+ 	struct list_head *node, *next;
  
- 	if (!netif_running(dev)) {
--		seq_printf(seq, "network not running\n");
-+		seq_puts(seq, "network not running\n");
- 		return 0;
- 	}
+-	seq_printf(seq, "Device\tS-state\t  Status   Sysfs node\n");
++	seq_puts(seq, "Device\tS-state\t  Status   Sysfs node\n");
  
+ 	mutex_lock(&acpi_device_lock);
+ 	list_for_each_safe(node, next, &acpi_wakeup_device_list) {
+@@ -55,7 +55,7 @@ acpi_system_wakeup_device_seq_show(struct seq_file *seq, void *offset)
+ 
+ 				if (&entry->node ! 						dev->physical_node_list.next)
+-					seq_printf(seq, "\t\t");
++					seq_puts(seq, "\t\t");
+ 
+ 				seq_printf(seq, "%c%-8s  %s:%s\n",
+ 					dev->wakeup.flags.run_wake ? '*' : ' ',
 -- 
 2.12.2
+
 
