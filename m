@@ -1,46 +1,57 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Sat, 01 Apr 2017 02:10:58 +0000
-Subject: [PATCH 6/9] perf utils: Fix spelling mistake: "Invalud" -> "Invalid"
-Message-Id: <20170401021101.10198-7-acme@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 20:02:45 +0000
+Subject: [PATCH 2/3] ata: libahci: Use devm_kcalloc() in ahci_platform_get_resources()
+Message-Id: <75fcbbf1-5011-e6fe-7999-7286ffe742a0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170401021101.10198-1-acme@kernel.org>
-In-Reply-To: <20170401021101.10198-1-acme@kernel.org>
+References: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
+In-Reply-To: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Krister Johansen <kjlx@templeofstupid.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 21:15:48 +0200
 
-Trivial fix to spelling mistake in pr_debug message.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
-Signed-off-by: Colin King <colin.king@canonical.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170330095440.19444-1-colin.king@canonical.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  This issue was detected by using the Coccinelle software.
+
+* Delete the local variable "sz" which became unnecessary
+  with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/perf/util/hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libahci_platform.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 3c4d4d00cb2c..61bf304206fd 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -2459,7 +2459,7 @@ int parse_filter_percentage(const struct option *opt __maybe_unused,
- 	else if (!strcmp(arg, "absolute"))
- 		symbol_conf.filter_relative = false;
- 	else {
--		pr_debug("Invalud percentage: %s\n", arg);
-+		pr_debug("Invalid percentage: %s\n", arg);
- 		return -1;
- 	}
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index c68ea903b5bf..2bce61f7482f 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -350,7 +350,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
+ 	struct ahci_host_priv *hpriv;
+ 	struct clk *clk;
+ 	struct device_node *child;
+-	int i, sz, enabled_ports = 0, rc = -ENOMEM, child_nodes;
++	int i, enabled_ports = 0, rc = -ENOMEM, child_nodes;
+ 	u32 mask_port_map = 0;
  
+ 	if (!devres_open_group(dev, NULL, GFP_KERNEL))
+@@ -402,8 +402,8 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
+ 	if (!child_nodes)
+ 		hpriv->nports = 1;
+ 
+-	sz = hpriv->nports * sizeof(*hpriv->phys);
+-	hpriv->phys = devm_kzalloc(dev, sz, GFP_KERNEL);
++	hpriv->phys = devm_kcalloc(dev, hpriv->nports, sizeof(*hpriv->phys),
++				   GFP_KERNEL);
+ 	if (!hpriv->phys) {
+ 		rc = -ENOMEM;
+ 		goto err_out;
 -- 
-2.9.3
+2.12.2
 
