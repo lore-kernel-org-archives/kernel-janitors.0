@@ -1,79 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 12:53:31 +0000
-Subject: [PATCH 2/2] [media] dib0700: fix error handling in dib0700_i2c_xfer_legacy()
-Message-Id: <20170428125331.hjosazb5hs5nzynl@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 16:50:10 +0000
+Subject: [PATCH 1/6] ACPI-fan: Use devm_kcalloc() in acpi_fan_get_fps()
+Message-Id: <930132d9-b878-e787-a67d-71113e5c211e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
+In-Reply-To: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Patrick Boettcher <patrick.boettcher@posteo.de>, Wolfram Sang <wsa-dev@sang-engineering.com>, Sean Young <sean@mess.org>, Johan Hovold <johan@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@suse.de>, Chun-Yi Lee <joeyli.kernel@gmail.com>, Colin Ian King <colin.king@canonical.com>, Dan Williams <dan.j.williams@intel.com>, Len Brown <lenb@kernel.org>, Linda Knippers <linda.knippers@hpe.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tony Luck <tony.luck@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Mostly this adds some unlocks to error paths.  But, if you see where
-there were "break;" statements before, I changed those paths to return
-error codes instead of returning success.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 17:00:39 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
-diff --git a/drivers/media/usb/dvb-usb/dib0700_core.c b/drivers/media/usb/dvb-usb/dib0700_core.c
-index 4dea79718827..bea1b4764a66 100644
---- a/drivers/media/usb/dvb-usb/dib0700_core.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_core.c
-@@ -287,7 +287,7 @@ static int dib0700_i2c_xfer_legacy(struct i2c_adapter *adap,
- {
- 	struct dvb_usb_device *d = i2c_get_adapdata(adap);
- 	struct dib0700_state *st = d->priv;
--	int i,len;
-+	int i, len, result;
- 
- 	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
- 		return -EINTR;
-@@ -304,7 +304,8 @@ static int dib0700_i2c_xfer_legacy(struct i2c_adapter *adap,
- 		if (msg[i].len > sizeof(st->buf) - 2) {
- 			deb_info("i2c xfer to big: %d\n",
- 				msg[i].len);
--			return -EIO;
-+			result = -EIO;
-+			goto unlock;
- 		}
- 		memcpy(&st->buf[2], msg[i].buf, msg[i].len);
- 
-@@ -319,13 +320,15 @@ static int dib0700_i2c_xfer_legacy(struct i2c_adapter *adap,
- 			if (len <= 0) {
- 				deb_info("I2C read failed on address 0x%02x\n",
- 						msg[i].addr);
--				break;
-+				result = -EIO;
-+				goto unlock;
- 			}
- 
- 			if (msg[i + 1].len > sizeof(st->buf)) {
- 				deb_info("i2c xfer buffer to small for %d\n",
- 					msg[i].len);
--				return -EIO;
-+				result = -EIO;
-+				goto unlock;
- 			}
- 			memcpy(msg[i + 1].buf, st->buf, msg[i + 1].len);
- 
-@@ -334,14 +337,17 @@ static int dib0700_i2c_xfer_legacy(struct i2c_adapter *adap,
- 			i++;
- 		} else {
- 			st->buf[0] = REQUEST_I2C_WRITE;
--			if (dib0700_ctrl_wr(d, st->buf, msg[i].len + 2) < 0)
--				break;
-+			result = dib0700_ctrl_wr(d, st->buf, msg[i].len + 2);
-+			if (result < 0)
-+				goto unlock;
- 		}
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/fan.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/fan.c b/drivers/acpi/fan.c
+index 6cf4988206f2..92878c7c523b 100644
+--- a/drivers/acpi/fan.c
++++ b/drivers/acpi/fan.c
+@@ -298,8 +298,7 @@ static int acpi_fan_get_fps(struct acpi_device *device)
  	}
-+	result = i;
-+unlock:
- 	mutex_unlock(&d->usb_mutex);
- 	mutex_unlock(&d->i2c_mutex);
  
--	return i;
-+	return result;
- }
- 
- static int dib0700_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msg,
+ 	fan->fps_count = obj->package.count - 1; /* minus revision field */
+-	fan->fps = devm_kzalloc(&device->dev,
+-				fan->fps_count * sizeof(struct acpi_fan_fps),
++	fan->fps = devm_kcalloc(&device->dev, fan->fps_count, sizeof(*fan->fps),
+ 				GFP_KERNEL);
+ 	if (!fan->fps) {
+ 		dev_err(&device->dev, "Not enough memory\n");
+-- 
+2.12.2
+
+
