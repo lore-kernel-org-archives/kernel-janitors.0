@@ -1,26 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 11:00:04 +0000
-Subject: Re: reset: Use devm_kcalloc() in ti_syscon_reset_probe()?
-Message-Id: <5a59a0ca-488a-8d19-2681-ff516c3622e6@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 16:51:44 +0000
+Subject: [PATCH 2/6] ACPI-fan: Delete error messages for a failed memory allocation in two functions
+Message-Id: <261224e0-8a1a-fc1e-eb1c-9b6ac96a9cab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e10a20a2-cfea-5b42-db3a-41b6eb08d7e4@users.sourceforge.net>
- <1493198391.3653.4.camel@pengutronix.de>
-In-Reply-To: <1493198391.3653.4.camel@pengutronix.de>
+References: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
+In-Reply-To: <077115e4-8ec3-9c6d-0374-8ffc5e0f85c0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@suse.de>, Chun-Yi Lee <joeyli.kernel@gmail.com>, Colin Ian King <colin.king@canonical.com>, Dan Williams <dan.j.williams@intel.com>, Len Brown <lenb@kernel.org>, Linda Knippers <linda.knippers@hpe.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tony Luck <tony.luck@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-> Thank you, I have applied this to the reset/next branch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 17:10:40 +0200
 
-Thanks for your acceptance.
+The script "checkpatch.pl" pointed information out like the following.
 
+WARNING: Possible unnecessary 'out of memory' message
 
-> The same change could be made in the ti-syscon reset driver.
+Thus remove such statements here.
 
-I was unsure if a similar source code adjustments would be worthwhile there.
-If you would like to be more strict with consistent usage of Linux functions
-for array allocations, there are various further update candidates to consider.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/fan.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/acpi/fan.c b/drivers/acpi/fan.c
+index 92878c7c523b..daa8f28a4b0e 100644
+--- a/drivers/acpi/fan.c
++++ b/drivers/acpi/fan.c
+@@ -301,7 +301,6 @@ static int acpi_fan_get_fps(struct acpi_device *device)
+ 	fan->fps = devm_kcalloc(&device->dev, fan->fps_count, sizeof(*fan->fps),
+ 				GFP_KERNEL);
+ 	if (!fan->fps) {
+-		dev_err(&device->dev, "Not enough memory\n");
+ 		status = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -334,10 +333,9 @@ static int acpi_fan_probe(struct platform_device *pdev)
+ 	char *name;
+ 
+ 	fan = devm_kzalloc(&pdev->dev, sizeof(*fan), GFP_KERNEL);
+-	if (!fan) {
+-		dev_err(&device->dev, "No memory for fan\n");
++	if (!fan)
+ 		return -ENOMEM;
+-	}
++
+ 	device->driver_data = fan;
+ 	platform_set_drvdata(pdev, fan);
+ 
+-- 
+2.12.2
+
