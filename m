@@ -1,57 +1,54 @@
-From: Jens Axboe <axboe@fb.com>
-Date: Fri, 21 Apr 2017 19:39:54 +0000
-Subject: Re: [PATCH] mtip32xx: Uninitialized variable in mtip_no_dev_cleanup()
-Message-Id: <0bb97411-d1bd-5c6c-69d0-a7bceb69efa7@fb.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 09:44:32 +0000
+Subject: [PATCH 6/6] clk: hi3620: Fix a typo in one variable name
+Message-Id: <6034a36d-a1a2-e942-0651-61f08475d8c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421193717.u2cxdq2jyithqqxi@mwanda>
-In-Reply-To: <20170421193717.u2cxdq2jyithqqxi@mwanda>
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+In-Reply-To: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Christoph Hellwig <hch@lst.de>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>, Hannes Reinecke <hare@suse.com>, Bart Van Assche <Bart.VanAssche@sandisk.com>, Sachin Shukla <sachin.s5@samsung.com>, Pan Bian <bianpan2016@163.com>, Ming Lei <tom.leiming@gmail.com>, Eric Biggers <ebiggers@google.com>, Mike Christie <mchristi@redhat.com>, Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 04/21/2017 01:37 PM, Dan Carpenter wrote:
-> We set "cmd->state =3D -ENODEV;" but "cmd" hasn't been initialized yet.
-> It's weird that GCC doesn't catch this.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 11:15:56 +0200
 
-That is weird...
+The script "checkpatch.pl" pointed information out like the following.
 
-> diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
-tip32xx.c
-> index 66a6bd83faae..bd4bf70a5bcd 100644
-> --- a/drivers/block/mtip32xx/mtip32xx.c
-> +++ b/drivers/block/mtip32xx/mtip32xx.c
-> @@ -4105,14 +4105,12 @@ static int mtip_block_initialize(struct driver_da=
-ta *dd)
->  static void mtip_no_dev_cleanup(struct request *rq, void *data, bool res=
-erv)
->  {
->  	struct driver_data *dd =3D (struct driver_data *)data;
-> -	struct mtip_cmd *cmd;
-> +	struct mtip_cmd *cmd =3D mtip_cmd_from_tag(dd, MTIP_TAG_INTERNAL);
-> =20
->  	if (likely(!reserv)) {
->  		cmd->status =3D -ENODEV;
->  		blk_mq_complete_request(rq);
->  	} else if (test_bit(MTIP_PF_IC_ACTIVE_BIT, &dd->port->flags)) {
-> -
-> -		cmd =3D mtip_cmd_from_tag(dd, MTIP_TAG_INTERNAL);
->  		if (cmd->comp_func)
->  			cmd->comp_func(dd->port, MTIP_TAG_INTERNAL,
->  					cmd, -ENODEV);
+CHECK: 'seperated' may be misspelled - perhaps 'separated'?
 
-This is wrong, you can't use the internal tag bit for both cases. A proper
-fix was already merged earlier today:
+Thus rename the affected variable.
 
-http://git.kernel.dk/cgit/linux-block/commit/?h=3Dfor-4.12/block&id=95c55ff=
-425faa190fd8ba55090fbdf33d8b2f0ae
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/hisilicon/clk-hi3620.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---=20
-Jens Axboe
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index 33a713ac8fe6..fa0fba653898 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -144,7 +144,7 @@ static struct hisi_divider_clock hi3620_div_clks[] __initdata = {
+ 	{ HI3620_MMC3_DIV,     "mmc3_div",   "mmc3_mux",  0, 0x140, 5, 4, CLK_DIVIDER_HIWORD_MASK, NULL, },
+ };
+ 
+-static struct hisi_gate_clock hi3620_seperated_gate_clks[] __initdata = {
++static struct hisi_gate_clock hi3620_separated_gate_clks[] __initdata = {
+ 	{ HI3620_TIMERCLK01,   "timerclk01",   "timer_rclk01", CLK_SET_RATE_PARENT, 0x20, 0, 0, },
+ 	{ HI3620_TIMER_RCLK01, "timer_rclk01", "rclk_tcxo",    CLK_SET_RATE_PARENT, 0x20, 1, 0, },
+ 	{ HI3620_TIMERCLK23,   "timerclk23",   "timer_rclk23", CLK_SET_RATE_PARENT, 0x20, 2, 0, },
+@@ -224,8 +224,8 @@ static void __init hi3620_clk_init(struct device_node *np)
+ 			      clk_data);
+ 	hisi_clk_register_divider(hi3620_div_clks, ARRAY_SIZE(hi3620_div_clks),
+ 				  clk_data);
+-	hisi_clk_register_gate_sep(hi3620_seperated_gate_clks,
+-				   ARRAY_SIZE(hi3620_seperated_gate_clks),
++	hisi_clk_register_gate_sep(hi3620_separated_gate_clks,
++				   ARRAY_SIZE(hi3620_separated_gate_clks),
+ 				   clk_data);
+ }
+ CLK_OF_DECLARE(hi3620_clk, "hisilicon,hi3620-clock", hi3620_clk_init);
+-- 
+2.12.2
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
