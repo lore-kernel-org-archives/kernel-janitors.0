@@ -1,32 +1,40 @@
-From: <auli.harju@uta.fi>
-Date: Tue, 18 Apr 2017 18:50:23 +0000
-Subject: 
-Message-Id: <149254142315.20066.10889978229864149273@mgn.ru>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:57:21 +0000
+Subject: [PATCH 5/5] clk: mvebu: Delete an unnecessary variable initialisation in kirkwood_fix_sscg_deviation
+Message-Id: <adc65587-9ae6-96ad-51fc-ee8a2bedeef0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-UEsDBAoAAAAAAAGVkkonp0fEPgQAAD4EAAAJAAAAMTYzOTguemlwUEsDBBQAAAAIAAGVkkrTwbHt
-qAMAAIIHAAAIAAAAMTYzOTguanOFVW1v2jAQ/l6p/yGONBW0ibIwti5TPyQhlKkFWghiPeWLmwTI
-FpIsdgls2n/f2U5S2m2aFB/ne3nuubMTdrTQ2K01tEeFdqmlUalZAY930Zfpw9co4C2dObPPOY/T
-dWcVJy47MO5ulU9vfzo9iVdaq8rvDLMkjAp3HzPOWnqgv9ZN31/iT4xrgmswLZne1i4vNV48Rm3t
-5+mJqF/k1vfkYb/4O4Elcwpk0GEbN7nBmipn6f4Yf7tz/sF5EyVJh+Z5EgeUx9mkSbu+ogOrjO4x
-7/RE11+jIDuatB5TwgKak5avY5hpdEu2QWn2BihTUqKUNYioQQJuGhemYZQsKOIcNy7bkCRBi2l8
-NHsS1ja7A7NrKbT/g8kcw6hw3CfuaY1qy5Bj1JHn3f6JK8NeMh3PpfnL+MbsGYiPishusI9h57xQ
-g6Fb878jsAbTgY2AmITxL7hKeYScU14NQk1Y5OUkUIxpIu4PKZgC9sg2TyhXTFgFbNioKOy+Y/al
-5kifLbMuxtIky7gFTcNsi0aZaZm9jy8ehfjM8sFRpHtd6ZS6akZWccmeoNIMTM3QneYkVayvXE8G
-OtggKhvOc7NnmcYQnx9xSsIVZaqnbxQTeZajg4bbOMVdLh0bzBiuxIx678xeF2WDuKIJUwNRU0aT
-3FY05iQNkUbji1co0CDdMlCcE+WPTB0CPlIxRBnZsdh+sI/OrTrWpxafTlfcFKnUId4hJxJPWhX0
-W6krOg3Wsog5EbykU3GfEblheZYyYmfhoelCTfp5qduMxerd6NZNdF8UmdMd8bJhnIhK6uJVZyui
-n137JsdJMkaOJ6iuqHgn3b0iGDzyGrA55eMTr++nMtQ3J8PpqShpUaN56vDDwNfb7U969ZFaxPdL
-Nnqg6iM1smzn+mbs+wyVKa4VLm9poZxFvj+OFa9CuOZVyNDz/fIzKimuMENR4hIAmjBy33fwd4Gr
-qFZUBXs7sREWFqPIJqruQSBzXC6ucSE8Ga/5DtLN1XBbhsj3DHaAljOkdAbh1S0UUMIB7gB9UOSA
-H3p4gD0soAOzCNa4ZCwNoQWLGO5hqQyi/w4UEeSQAA2UMWqd+xbYzvka3oAGOuhtaHcC2ADFQhaH
-Vu9dF/rwFi7678978A5wJzPfXkD/PbQ/nVWUJ1N7Zl17HGlF4vtft9ApIvzqBKIQnK/faDqeS5Uy
-Gk+K/Xd2V6e06v+SJmcWrd193sK2i/Jwh8lrvY3yFWIc4RKJGyngX6cnvwFQSwECPwAUAAAACAAB
-lZJK08Gx7agDAACCBwAACAAkAAAAAAAAACAAAAAAAAAAMTYzOTguanMKACAAAAAAAAEAGADxuLXb
-rbjSAfG4tdutuNIB8bi126240gFQSwUGAAAAAAEAAQBaAAAAzgMAAAAAUEsBAj8ACgAAAAAAAZWS
-SienR8Q+BAAAPgQAAAkAJAAAAAAAAAAgAAAAAAAAADE2Mzk4LnppcAoAIAAAAAAAAQAYAKccuNut
-uNIBpxy426240gGnHLjbrbjSAVBLBQYAAAAAAQABAFsAAABlBAAAAAA
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:31:43 +0200
+
+A pointer is immediately assigned to the local variable "sscg_np".
+Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mvebu/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index 659d534a137b..6cfa38566e19 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -44,7 +44,7 @@ static struct clk_onecell_data clk_data;
+  */
+ u32 kirkwood_fix_sscg_deviation(u32 system_clk)
+ {
+-	struct device_node *sscg_np = NULL;
++	struct device_node *sscg_np;
+ 	void __iomem *sscg_map;
+ 	u32 sscg_reg;
+ 	s32 low_bound, high_bound;
+-- 
+2.12.2
+
