@@ -1,29 +1,47 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 28 Apr 2017 21:53:34 +0000
-Subject: Re: [PATCH 0/3] SATA: Fine-tuning for two function implementations
-Message-Id: <20170428215334.GH22354@htj.duckdns.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 07:29:24 +0000
+Subject: [PATCH] bus: arm-ccn: Use devm_kcalloc() in arm_ccn_probe()
+Message-Id: <3458009f-6489-da7f-c1c1-c834d5b9d41d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
-In-Reply-To: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Suzuki K. Poulose" <suzuki.poulose@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 09:12:43 +0200
 
-On Tue, Apr 18, 2017 at 10:00:37PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 21:54:32 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-Hmmm, allocs -> callocs.  Are these actually beneficial?  If so, why?
-Because one multiplication is rolled into the call?
+This issue was detected by using the Coccinelle software.
 
-Thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/bus/arm-ccn.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
+index 4d6a2b7e4d3f..6375bda0b2a1 100644
+--- a/drivers/bus/arm-ccn.c
++++ b/drivers/bus/arm-ccn.c
+@@ -1520,10 +1520,10 @@ static int arm_ccn_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	ccn->node = devm_kzalloc(ccn->dev, sizeof(*ccn->node) * ccn->num_nodes,
+-		GFP_KERNEL);
+-	ccn->xp = devm_kzalloc(ccn->dev, sizeof(*ccn->node) * ccn->num_xps,
+-		GFP_KERNEL);
++	ccn->node = devm_kcalloc(ccn->dev, ccn->num_nodes, sizeof(*ccn->node),
++				 GFP_KERNEL);
++	ccn->xp = devm_kcalloc(ccn->dev, ccn->num_xps, sizeof(*ccn->node),
++			       GFP_KERNEL);
+ 	if (!ccn->node || !ccn->xp)
+ 		return -ENOMEM;
+ 
 -- 
-tejun
+2.12.2
+
