@@ -1,43 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 08:26:01 +0000
-Subject: [PATCH 3/8] clk: si5351: Adjust a null pointer check in si5351_dt_parse()
-Message-Id: <faed4e9c-ebd0-8c00-77f4-72820ba464f3@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:56:21 +0000
+Subject: [PATCH 4/5] clk: mvebu: Adjust two checks for null pointers in kirkwood_fix_sscg_deviation()
+Message-Id: <8c5bdefb-896b-cd96-7e69-77ccb4a9286e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 07:47:04 +0200
+Date: Wed, 19 Apr 2017 21:17:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The script "checkpatch.pl" pointed information out like the following.
+The script “checkpatch.pl” pointed information out like the following.
 
-Comparison to NULL could be written "!np".
+Comparison to NULL could be written !…
 
-Thus adjust this expression.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/clk-si5351.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 2492442eea77..a0acea67b571 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1140,7 +1140,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	int num = 0;
- 	u32 val;
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index 472c88b90256..659d534a137b 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -51,13 +51,13 @@ u32 kirkwood_fix_sscg_deviation(u32 system_clk)
+ 	u64 freq_swing_half;
  
--	if (np = NULL)
-+	if (!np)
- 		return 0;
+ 	sscg_np = of_find_node_by_name(NULL, "sscg");
+-	if (sscg_np = NULL) {
++	if (!sscg_np) {
+ 		pr_err("cannot get SSCG register node\n");
+ 		return system_clk;
+ 	}
  
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+ 	sscg_map = of_iomap(sscg_np, 0);
+-	if (sscg_map = NULL) {
++	if (!sscg_map) {
+ 		pr_err("cannot map SSCG register\n");
+ 		goto out;
+ 	}
 -- 
 2.12.2
 
