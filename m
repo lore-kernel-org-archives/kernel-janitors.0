@@ -1,15 +1,44 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Sun, 09 Apr 2017 09:01:44 +0000
-Subject: Re: [PATCH 6/9] IB/iser: Use kmalloc_array() in iser_alloc_rx_descriptors()
-Message-Id: <a72ad270-312d-45f0-7b4f-eb01619865e3@grimberg.me>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Apr 2017 14:25:36 +0000
+Subject: [bug report] net/hsr: Added support for HSR v1
+Message-Id: <20170419142535.2lxzzqabh2amfyh6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
- <75e5726b-d75f-1b79-1242-08f6440e1691@users.sourceforge.net>
-In-Reply-To: <75e5726b-d75f-1b79-1242-08f6440e1691-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Ahern <dsa-qUQiAmfTcIp+XZJcv9eMoEEOCMrvLtNR@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Erez Shitrit <erezsh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Feras Daoud <ferasda-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Paolo Abeni <pabeni-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zhu Yanjun <yanjun.zhu-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-Acked-by: Sagi Grimberg <sagi@grimberg.me>
+Hello Peter Heise,
+
+The patch ee1c27977284: "net/hsr: Added support for HSR v1" from Apr
+13, 2016, leads to the following static checker warning:
+
+	net/hsr/hsr_device.c:319 send_hsr_supervision_frame()
+	warn: passing freed memory 'skb'
+
+net/hsr/hsr_device.c
+   308  
+   309          hsr_stag->HSR_TLV_Type = type;
+   310          /* TODO: Why 12 in HSRv0? */
+   311          hsr_stag->HSR_TLV_Length = hsrVer ? sizeof(struct hsr_sup_payload) : 12;
+   312  
+   313          /* Payload: MacAddressA */
+   314          hsr_sp = (typeof(hsr_sp)) skb_put(skb, sizeof(struct hsr_sup_payload));
+   315          ether_addr_copy(hsr_sp->MacAddressA, master->dev->dev_addr);
+   316  
+   317          skb_put_padto(skb, ETH_ZLEN + HSR_HLEN);
+                              ^^^
+The skb_put_padto() function frees skb() on error.  Maybe that's not
+possible?
+
+   318  
+   319          hsr_forward_skb(skb, master);
+   320          return;
+   321  
+   322  out:
+   323          WARN_ONCE(1, "HSR: Could not send supervision frame\n");
+   324          kfree_skb(skb);
+   325  }
+
+regards,
+dan carpenter
