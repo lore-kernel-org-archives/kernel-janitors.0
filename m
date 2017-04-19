@@ -1,57 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 13:51:14 +0000
-Subject: [PATCH] staging/atomisp: fix && vs || typos
-Message-Id: <20170428135114.w33djgm6tt7rvioi@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:54:12 +0000
+Subject: [PATCH 2/5] clk: mvebu: Adjust two checks for null pointers in of_cpu_clk_setup()
+Message-Id: <5b8ea228-917f-cfde-7000-5d8204b24bc1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?iso-8859-1?B?Suly6W15?= Lefaure <jeremy.lefaure@lse.epita.fr>, kbuild test robot <fengguang.wu@intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These sanity checks don't work because they use && instead of ||.  It's
-impossible to be both negative and greater than 5.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 20:25:59 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The script “checkpatch.pl” pointed information out like the following.
 
-diff --git a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-index a322539d2621..4b1fa9c7bb81 100644
---- a/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-+++ b/drivers/staging/media/atomisp/platform/clock/vlv2_plat_clock.c
-@@ -67,7 +67,7 @@ int vlv2_plat_set_clock_freq(int clk_num, int freq_type)
- {
- 	void __iomem *addr;
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mvebu/clk-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 072aa38374ce..8162833d2041 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -173,13 +173,13 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 	int ncpus = 0;
+ 	struct device_node *dn;
  
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num > MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
+-	if (clock_complex_base = NULL) {
++	if (!clock_complex_base) {
+ 		pr_err("%s: clock-complex base register not set\n",
+ 			__func__);
+ 		return;
  	}
-@@ -103,7 +103,7 @@ int vlv2_plat_get_clock_freq(int clk_num)
- {
- 	u32 ret;
  
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num > MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
-@@ -133,7 +133,7 @@ int vlv2_plat_configure_clock(int clk_num, u32 conf)
- {
- 	void __iomem *addr;
+-	if (pmu_dfs_base = NULL)
++	if (!pmu_dfs_base)
+ 		pr_warn("%s: pmu-dfs base register not set, dynamic frequency scaling not available\n",
+ 			__func__);
  
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num > MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
-@@ -169,7 +169,7 @@ int vlv2_plat_get_clock_status(int clk_num)
- {
- 	int ret;
- 
--	if (clk_num < 0 && clk_num > MAX_CLK_COUNT) {
-+	if (clk_num < 0 || clk_num > MAX_CLK_COUNT) {
- 		pr_err("Clock number out of range (%d)\n", clk_num);
- 		return -EINVAL;
- 	}
+-- 
+2.12.2
+
