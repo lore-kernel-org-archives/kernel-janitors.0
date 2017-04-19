@@ -1,60 +1,55 @@
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Date: Tue, 25 Apr 2017 17:37:44 +0000
-Subject: Re: [PATCH] crypto: sha512-mb - add some missing unlock on error
-Message-Id: <1493141864.3209.94.camel@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 09:11:35 +0000
+Subject: [PATCH 2/2] n2rng: Combine substrings for two messages in n2rng_probe()
+Message-Id: <fef1883c-4338-5f8a-5dfe-e970b424fbc5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170425091854.6fryhkc2v4tf4dnl@mwanda>
-In-Reply-To: <20170425091854.6fryhkc2v4tf4dnl@mwanda>
+References: <4d9fbb01-e12f-eb5c-7ecd-5a2a10fd5110@users.sourceforge.net>
+In-Reply-To: <4d9fbb01-e12f-eb5c-7ecd-5a2a10fd5110@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Megha Dey <megha.dey@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Greg Tucker <greg.b.tucker@intel.com>, Xiaodong Liu <xiaodong.liu@intel.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, Shannon Nelson <shannon.nelson@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 2017-04-25 at 12:18 +0300, Dan Carpenter wrote:
-> We recently added some new locking but missed the unlocks on these
-> error paths in sha512_ctx_mgr_submit().
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 10:50:04 +0200
 
-Thanks for catching this issue.
+The script "checkpatch.pl" pointed information out like the following.
 
-Acked-by: Tim Chen <tim.c.chen@linux.intel.com>
+WARNING: quoted string split across lines
 
-> 
-> Fixes: c459bd7beda0 ("crypto: sha512-mb - Protect sha512 mb ctx mgr access")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/x86/crypto/sha512-mb/sha512_mb.c b/arch/x86/crypto/sha512-mb/sha512_mb.c
-> index 2dd3674b5a1e..458409b7568d 100644
-> --- a/arch/x86/crypto/sha512-mb/sha512_mb.c
-> +++ b/arch/x86/crypto/sha512-mb/sha512_mb.c
-> @@ -269,19 +269,19 @@ static struct sha512_hash_ctx
->  		 * LAST
->  		 */
->  		ctx->error = HASH_CTX_ERROR_INVALID_FLAGS;
-> -		return ctx;
-> +		goto unlock;
->  	}
->  
->  	if (ctx->status & HASH_CTX_STS_PROCESSING) {
->  		/* Cannot submit to a currently processing job. */
->  		ctx->error = HASH_CTX_ERROR_ALREADY_PROCESSING;
-> -		return ctx;
-> +		goto unlock;
->  	}
->  
->  	if ((ctx->status & HASH_CTX_STS_COMPLETE) && !(flags & HASH_FIRST)) {
->  		/* Cannot update a finished job. */
->  		ctx->error = HASH_CTX_ERROR_ALREADY_COMPLETED;
-> -		return ctx;
-> +		goto unlock;
->  	}
->  
->  
-> @@ -363,6 +363,7 @@ static struct sha512_hash_ctx
->  	}
->  
->  	ctx = sha512_ctx_mgr_resubmit(mgr, ctx);
-> +unlock:
->  	spin_unlock_irqrestore(&cstate->work_lock, irqflags);
->  	return ctx;
->  }
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/hw_random/n2-drv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
+index 92dd4e925315..f3e67c768101 100644
+--- a/drivers/char/hw_random/n2-drv.c
++++ b/drivers/char/hw_random/n2-drv.c
+@@ -723,16 +723,16 @@ static int n2rng_probe(struct platform_device *op)
+ 		if (sun4v_hvapi_register(HV_GRP_RNG,
+ 					 np->hvapi_major,
+ 					 &np->hvapi_minor)) {
+-			dev_err(&op->dev, "Cannot register suitable "
+-				"HVAPI version.\n");
++			dev_err(&op->dev,
++				"Cannot register suitable HVAPI version.\n");
+ 			goto out;
+ 		}
+ 	}
+ 
+ 	if (np->flags & N2RNG_FLAG_MULTI) {
+ 		if (np->hvapi_major < 2) {
+-			dev_err(&op->dev, "multi-unit-capable RNG requires "
+-				"HVAPI major version 2 or later, got %lu\n",
++			dev_err(&op->dev,
++				"multi-unit-capable RNG requires HVAPI major version 2 or later, got %lu\n",
+ 				np->hvapi_major);
+ 			goto out_hvapi_unregister;
+ 		}
+-- 
+2.12.2
+
