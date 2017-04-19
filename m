@@ -1,68 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 03 Apr 2017 18:59:32 +0000
-Subject: [bug report] net: dsa: Mock-up driver
-Message-Id: <20170403185932.GA24017@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 09:10:07 +0000
+Subject: [PATCH 1/2] n2rng: Use devm_kcalloc() in n2rng_probe()
+Message-Id: <38c41219-7e7f-3a3e-29dd-04ae2d57beaa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170403185552.GA10603@mwanda>
-In-Reply-To: <20170403185552.GA10603@mwanda>
+References: <4d9fbb01-e12f-eb5c-7ecd-5a2a10fd5110@users.sourceforge.net>
+In-Reply-To: <4d9fbb01-e12f-eb5c-7ecd-5a2a10fd5110@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, Shannon Nelson <shannon.nelson@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello Florian Fainelli,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 10:30:47 +0200
 
-The patch 98cd1552ea27: "net: dsa: Mock-up driver" from Mar 30, 2017,
-leads to the following static checker warning:
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
-	drivers/net/dsa/dsa_loop.c:223 dsa_loop_port_vlan_dump()
-	error: uninitialized symbol 'err'.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-drivers/net/dsa/dsa_loop.c
-   189  static int dsa_loop_port_vlan_dump(struct dsa_switch *ds, int port,
-   190                                     struct switchdev_obj_port_vlan *vlan,
-   191                                     int (*cb)(struct switchdev_obj *obj))
-   192  {
-   193          struct dsa_loop_priv *ps = ds->priv;
-   194          struct mii_bus *bus = ps->bus;
-   195          struct dsa_loop_vlan *vl;
-   196          u16 vid, vid_start = 0;
-   197          int err;
-   198  
-   199          dev_dbg(ds->dev, "%s\n", __func__);
-   200  
-   201          /* Just do a sleeping operation to make lockdep checks effective */
-   202          mdiobus_read(bus, ps->port_base + port, MII_BMSR);
-   203  
-   204          for (vid = vid_start; vid < DSA_LOOP_VLANS; vid++) {
-   205                  vl = &ps->vlans[vid];
-   206  
-   207                  if (!(vl->members & BIT(port)))
-   208                          continue;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/hw_random/n2-drv.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-This one probably is not as serious a concern but the static checker is
-whining that we could hit this continue on every iteration through the
-loop.
+diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
+index 31cbdbbaebfc..92dd4e925315 100644
+--- a/drivers/char/hw_random/n2-drv.c
++++ b/drivers/char/hw_random/n2-drv.c
+@@ -748,9 +748,7 @@ static int n2rng_probe(struct platform_device *op)
+ 
+ 	dev_info(&op->dev, "Registered RNG HVAPI major %lu minor %lu\n",
+ 		 np->hvapi_major, np->hvapi_minor);
+-
+-	np->units = devm_kzalloc(&op->dev,
+-				 sizeof(struct n2rng_unit) * np->num_units,
++	np->units = devm_kcalloc(&op->dev, np->num_units, sizeof(*np->units),
+ 				 GFP_KERNEL);
+ 	err = -ENOMEM;
+ 	if (!np->units)
+-- 
+2.12.2
 
-   209  
-   210                  vlan->vid_begin = vlan->vid_end = vid;
-   211                  vlan->flags = 0;
-   212  
-   213                  if (vl->untagged & BIT(port))
-   214                          vlan->flags |= BRIDGE_VLAN_INFO_UNTAGGED;
-   215                  if (ps->pvid = vid)
-   216                          vlan->flags |= BRIDGE_VLAN_INFO_PVID;
-   217  
-   218                  err = cb(&vlan->obj);
-   219                  if (err)
-   220                          break;
-   221          }
-   222  
-   223          return err;
-
-And then return an uninitialized value.
-
-   224  }
-
-regards,
-dan carpenter
