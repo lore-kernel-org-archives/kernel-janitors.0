@@ -1,30 +1,34 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Sat, 22 Apr 2017 02:47:04 +0000
-Subject: Re: [PATCH 6/8] clk: Improve a size determination in two functions
-Message-Id: <20170422024704.GN7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Apr 2017 09:54:33 +0000
+Subject: [PATCH net-next] qede: allocate enough data for ->arfs_fltr_bmap
+Message-Id: <20170419095432.GA4266@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <599640c0-d9a1-f1a4-47f3-edaf98f407c1@users.sourceforge.net>
-In-Reply-To: <599640c0-d9a1-f1a4-47f3-edaf98f407c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@cavium.com>, Chopra@mwanda, Manish <Manish.Chopra@cavium.com>
+Cc: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 09:30:52 +0200
-> 
-> Replace the specification of two data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+We've got the number of longs, yes, but we should multiply by
+sizeof(long) to get the number of bytes needed.
 
-Applied to clk-next
+Fixes: e4917d46a653 ("qede: Add aRFS support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Btw, this driver use vmalloc() all over the place but kmalloc() is more
+appropriate when you're allocating tiny ammounts.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+index 8c594a3ca63b..34473fbac798 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+@@ -267,7 +267,8 @@ int qede_alloc_arfs(struct qede_dev *edev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	edev->arfs->arfs_fltr_bmap = vzalloc(BITS_TO_LONGS(QEDE_RFS_MAX_FLTR));
++	edev->arfs->arfs_fltr_bmap = vzalloc(BITS_TO_LONGS(QEDE_RFS_MAX_FLTR) *
++					     sizeof(long));
+ 	if (!edev->arfs->arfs_fltr_bmap) {
+ 		free_irq_cpu_rmap(edev->ndev->rx_cpu_rmap);
+ 		edev->ndev->rx_cpu_rmap = NULL;
