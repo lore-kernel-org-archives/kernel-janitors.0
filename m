@@ -1,46 +1,40 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Date: Fri, 28 Apr 2017 08:18:07 +0000
-Subject: Re: [PATCH v2] [media] vb2: Fix an off by one error in 'vb2_plane_vaddr'
-Message-Id: <20170428081807.GE7456@valkosipuli.retiisi.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Apr 2017 13:55:01 +0000
+Subject: [bug report] ipv6: implement dataplane support for rthdr type 4 (Segment Routing Header)
+Message-Id: <20170419135500.ntv67xcc3wnkkzr6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428045140.20870-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170428045140.20870-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 28, 2017 at 06:51:40AM +0200, Christophe JAILLET wrote:
-> We should ensure that 'plane_no' is '< vb->num_planes' as done in
-> 'vb2_plane_cookie' just a few lines below.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e23ccc0ad925 ("[media] v4l: add videobuf2 Video for Linux 2 driver framework")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: add CC and Fixes tags
-> ---
->  drivers/media/v4l2-core/videobuf2-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-> index 94afbbf92807..c0175ea7e7ad 100644
-> --- a/drivers/media/v4l2-core/videobuf2-core.c
-> +++ b/drivers/media/v4l2-core/videobuf2-core.c
-> @@ -868,7 +868,7 @@ EXPORT_SYMBOL_GPL(vb2_core_create_bufs);
->  
->  void *vb2_plane_vaddr(struct vb2_buffer *vb, unsigned int plane_no)
->  {
-> -	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
-> +	if (plane_no >= vb->num_planes || !vb->planes[plane_no].mem_priv)
->  		return NULL;
->  
->  	return call_ptr_memop(vb, vaddr, vb->planes[plane_no].mem_priv);
+Hello David Lebrun,
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+The patch 1ababeba4a21: "ipv6: implement dataplane support for rthdr
+type 4 (Segment Routing Header)" from Nov 8, 2016, leads to the
+following static checker warning:
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+	net/ipv6/exthdrs.c:391 ipv6_srh_rcv()
+	error: double free of 'skb'
+
+net/ipv6/exthdrs.c
+   384  
+   385          if (hdr->segments_left >= (hdr->hdrlen >> 1)) {
+   386                  __IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
+   387                                  IPSTATS_MIB_INHDRERRORS);
+   388                  icmpv6_param_prob(skb, ICMPV6_HDR_FIELD,
+                                          ^^^
+Freed here.
+
+   389                                    ((&hdr->segments_left) -
+   390                                     skb_network_header(skb)));
+   391                  kfree_skb(skb);
+                                  ^^^
+And again here.
+
+   392                  return -1;
+   393          }
+   394  
+
+regards,
+dan carpenter
