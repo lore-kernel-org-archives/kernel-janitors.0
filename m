@@ -1,42 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:17:19 +0000
-Subject: [PATCH 06/10] pinctrl: imx: Use seq_putc() in imx_pinconf_group_dbg_show()
-Message-Id: <03221724-642c-cf80-aebb-cdffe1afc826@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 09:08:21 +0000
+Subject: [PATCH 0/2] n2rng: Fine-tuning for n2rng_probe()
+Message-Id: <4d9fbb01-e12f-eb5c-7ecd-5a2a10fd5110@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, Shannon Nelson <shannon.nelson@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 15:43:55 +0200
+Date: Wed, 19 Apr 2017 11:00:11 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Use devm_kcalloc()
+  Combine substrings for two messages
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/hw_random/n2-drv.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 078875361d76..71dbba892e70 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -443,7 +443,7 @@ static void imx_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
- 	if (group > pctldev->num_groups)
- 		return;
- 
--	seq_printf(s, "\n");
-+	seq_putc(s, '\n');
- 	grp = pinctrl_generic_get_group(pctldev, group);
- 	if (!grp)
- 		return;
 -- 
 2.12.2
 
