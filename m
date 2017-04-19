@@ -1,15 +1,48 @@
-From: Sagi Grimberg <sagi@grimberg.me>
-Date: Sun, 09 Apr 2017 12:26:15 +0000
-Subject: Re: [PATCH 1/9] IB/IPoIB: Use kcalloc() in two functions
-Message-Id: <bca2f74e-3e48-77ca-c173-9f8dec467118@grimberg.me>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:52:55 +0000
+Subject: [PATCH 1/5] clk: mvebu: Use kcalloc() in of_cpu_clk_setup()
+Message-Id: <9377530b-9b07-bfc6-848c-b0c1994e33f7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce4249f2-c7e7-0282-2cff-3f9c3991efa3@users.sourceforge.net>
- <b6829c25-7c8b-858d-5cad-0322d6536f44@users.sourceforge.net>
-In-Reply-To: <b6829c25-7c8b-858d-5cad-0322d6536f44@users.sourceforge.net>
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Roi Dayan <roid@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yuval Shaia <yuval.shaia@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 20:15:21 +0200
+
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mvebu/clk-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 044892b6534d..072aa38374ce 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -186,11 +186,11 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 	for_each_node_by_type(dn, "cpu")
+ 		ncpus++;
+ 
+-	cpuclk = kzalloc(ncpus * sizeof(*cpuclk), GFP_KERNEL);
++	cpuclk = kcalloc(ncpus, sizeof(*cpuclk), GFP_KERNEL);
+ 	if (WARN_ON(!cpuclk))
+ 		goto cpuclk_out;
+ 
+-	clks = kzalloc(ncpus * sizeof(*clks), GFP_KERNEL);
++	clks = kcalloc(ncpus, sizeof(*clks), GFP_KERNEL);
+ 	if (WARN_ON(!clks))
+ 		goto clks_out;
+ 
+-- 
+2.12.2
+
