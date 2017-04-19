@@ -1,33 +1,49 @@
-From: "Coelho, Luciano" <luciano.coelho@intel.com>
-Date: Fri, 21 Apr 2017 10:43:40 +0000
-Subject: Re: [PATCH] iwlwifi: pcie: missing unlock on error path
-Message-Id: <1492771419.31741.124.camel@intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Apr 2017 14:35:48 +0000
+Subject: [PATCH] iio: hid-sensor: fix return of -EINVAL on invalid values in ret or value
+Message-Id: <20170419143548.14130-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170421103937.jko3eguvfn3i6r3v@mwanda>
-In-Reply-To: <20170421103937.jko3eguvfn3i6r3v@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Sharon, Sara" <sara.sharon@intel.com>, "Berg, Johannes" <johannes.berg@intel.com>
-Cc: linuxwifi <linuxwifi@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Song Hongyan <hongyan.song@intel.com>, hock.leong.kweh@intel.com, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgRGFuDQoNCk9uIEZyaSwgMjAxNy0wNC0yMSBhdCAxMzozOSArMDMwMCwgRGFuIENhcnBlbnRl
-ciB3cm90ZToNCj4gV2Ugc2hvdWxkIHVubG9jayBiZWZvcmUgcmV0dXJuaW5nLg0KPiANCj4gRml4
-ZXM6IGVkYTUwY2RlNThkZSAoIml3bHdpZmk6IHBjaWU6IGFkZCBjb250ZXh0IGluZm9ybWF0aW9u
-IHN1cHBvcnQiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVy
-QG9yYWNsZS5jb20+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvaW50
-ZWwvaXdsd2lmaS9wY2llL3RyYW5zLWdlbjIuYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2ludGVs
-L2l3bHdpZmkvcGNpZS90cmFucy1nZW4yLmMNCj4gaW5kZXggMzAyMzEwZGZlZjllLi40ZTg0OTU1
-ZDU1YzggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL2ludGVsL2l3bHdpZmkv
-cGNpZS90cmFucy1nZW4yLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvaW50ZWwvaXds
-d2lmaS9wY2llL3RyYW5zLWdlbjIuYw0KPiBAQCAtMjEyLDggKzIxMiwxMCBAQCBpbnQgaXdsX3Ry
-YW5zX3BjaWVfZ2VuMl9zdGFydF9mdyhzdHJ1Y3QgaXdsX3RyYW5zICp0cmFucywNCj4gIAkJZ290
-byBvdXQ7DQo+ICAJfQ0KPiAgDQo+IC0JaWYgKGl3bF9wY2llX2N0eHRfaW5mb19pbml0KHRyYW5z
-LCBmdykpDQo+IC0JCXJldHVybiAtRU5PTUVNOw0KPiArCWlmIChpd2xfcGNpZV9jdHh0X2luZm9f
-aW5pdCh0cmFucywgZncpKSB7DQo+ICsJCXJldCA9IC1FTk9NRU07DQo+ICsJCWdvdG8gb3V0Ow0K
-PiArCX0NCj4gIA0KPiAgCS8qIHJlLWNoZWNrIFJGLUtpbGwgc3RhdGUgc2luY2Ugd2UgbWF5IGhh
-dmUgbWlzc2VkIHRoZSBpbnRlcnJ1cHQgKi8NCj4gIAlod19yZmtpbGwgPSBpd2xfdHJhbnNfY2hl
-Y2tfaHdfcmZfa2lsbCh0cmFucyk7DQoNClRoYW5rcyBmb3IgeW91ciBwYXRjaCEgQnV0IHRoaXMg
-aGFzIGFscmVhZHkgYmVlbiBmaXhlZCBieSBKb2hhbm5lcyBpbg0KdGhlIHBhdGNoIEkgc2VudCBv
-dXQgeWVzdGVyZGF5WzFdLg0KDQpbMV0gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGlu
-dXgtd2lyZWxlc3MvbXNnMTYxNTgyLmh0bWwNCg0KLS0NCkNoZWVycywNCkx1Y2Eu
+From: Colin Ian King <colin.king@canonical.com>
+
+Ensure that when an invalid value in ret or value is found -EINVAL
+is returned. A previous commit broke the way the return error is
+being returned and instead caused the return code in ret to be
+re-assigned rather than be returned.
+
+Fixes: 5d9854eaea776 ("iio: hid-sensor: Store restore poll and hysteresis on S3")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/common/hid-sensors/hid-sensor-attributes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
+index 1c0874cdf665..aeb09a85d7a8 100644
+--- a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
+@@ -230,7 +230,7 @@ int hid_sensor_write_samp_freq_value(struct hid_sensor_common *st,
+ 	ret = sensor_hub_set_feature(st->hsdev, st->poll.report_id,
+ 				     st->poll.index, sizeof(value), &value);
+ 	if (ret < 0 || value < 0)
+-		ret = -EINVAL;
++		return -EINVAL;
+ 
+ 	ret = sensor_hub_get_feature(st->hsdev,
+ 				     st->poll.report_id,
+@@ -283,7 +283,7 @@ int hid_sensor_write_raw_hyst_value(struct hid_sensor_common *st,
+ 				     st->sensitivity.index, sizeof(value),
+ 				     &value);
+ 	if (ret < 0 || value < 0)
+-		ret = -EINVAL;
++		return -EINVAL;
+ 
+ 	ret = sensor_hub_get_feature(st->hsdev,
+ 				     st->sensitivity.report_id,
+-- 
+2.11.0
+
