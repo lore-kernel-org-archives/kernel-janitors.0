@@ -1,39 +1,46 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 12 Apr 2017 16:59:36 +0000
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 20 Apr 2017 14:11:15 +0000
 Subject: Re: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
-Message-Id: <20170412165936.GQ7065@codeaurora.org>
+Message-Id: <CAPDyKFrT3XfMqE7_f3x=7hztATXTsGt-oUe=ehrNLcb33WkBdg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170411133743.21073-1-colin.king@canonical.com>
- <877f2qgdzh.fsf@free-electrons.com>
-In-Reply-To: <877f2qgdzh.fsf@free-electrons.com>
+In-Reply-To: <20170411133743.21073-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Colin King <colin.king@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Ulf Hansson <ulf.hansson@linaro.org>, Russell King <rmk+kernel@armlinux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>, Konstantin Porotchkin <kostap@marvell.com>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Russell King <rmk+kernel@armlinux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>, Konstantin Porotchkin <kostap@marvell.com>, linux-clk <linux-clk@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 04/12, Gregory CLEMENT wrote:
-> Hi Colin,
->  
->  On mar., avril 11 2017, Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > trivial fix to spelling mistake in dev_warn message
-> >
-> > Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> 
-> The intial patch was merged through the mmc subsystem while it modifies
-> a clk driver. So I would suggest either Ulf applying it or waiting for
-> v4.12-rc1 to apply the patch through the clk subsystem.
-> 
+On 11 April 2017 at 15:37, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> trivial fix to spelling mistake in dev_warn message
+>
+> Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-In case Ulf wants to take it now
+Thanks, applied for next at mmc tree!
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Kind regards
+Uffe
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ---
+>  drivers/clk/mvebu/ap806-system-controller.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+> index 103fe18a3c29..8155baccc98e 100644
+> --- a/drivers/clk/mvebu/ap806-system-controller.c
+> +++ b/drivers/clk/mvebu/ap806-system-controller.c
+> @@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+>                                           4, &name)) {
+>                 ap806_clk_data.clk_num--;
+>                 dev_warn(&pdev->dev,
+> -                        "eMMC clock mising: update the device tree!\n");
+> +                        "eMMC clock missing: update the device tree!\n");
+>         } else {
+>                 ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+>                                                           fixedclk_name,
+> --
+> 2.11.0
+>
