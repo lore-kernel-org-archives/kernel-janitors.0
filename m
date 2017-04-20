@@ -1,29 +1,31 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Wed, 19 Apr 2017 11:54:28 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 20 Apr 2017 20:02:27 +0000
 Subject: Re: [PATCH] dp83640: don't recieve time stamps twice
-Message-Id: <20170419115428.GB3444@localhost.localdomain>
+Message-Id: <20170420.160227.1855463512293087492.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170418191426.GA17838@mwanda>
- <1492593414.3108.1.camel@spectralink.com>
- <20170419103135.GA1670@localhost.localdomain>
- <1492601312.3108.3.camel@spectralink.com>
-In-Reply-To: <1492601312.3108.3.camel@spectralink.com>
+        <1492593414.3108.1.camel@spectralink.com>
+        <20170419103135.GA1670@localhost.localdomain>
+In-Reply-To: <20170419103135.GA1670@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: =?iso-8859-1?B?U/hyZW5zZW4s?= Stefan <Stefan.Sorensen@spectralink.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, "andrew@lunn.ch" <andrew@lunn.ch>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: richardcochran@gmail.com
+Cc: Stefan.Sorensen@spectralink.com, dan.carpenter@oracle.com, netdev@vger.kernel.org, f.fainelli@gmail.com, andrew@lunn.ch, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 19, 2017 at 11:28:34AM +0000, S=F8rensen, Stefan wrote:
-> Here we still hold rx_lock while during the callback, wouldn't it be
-> beneficial to release that first?
+From: Richard Cochran <richardcochran@gmail.com>
+Date: Wed, 19 Apr 2017 12:31:35 +0200
 
-Yes, your are right.
+> On Wed, Apr 19, 2017 at 09:16:56AM +0000, S=F8rensen, Stefan wrote:
+>> You are correct that these lines was added accidentally.
+>=20
+> Can we please fix this in another way?  There is no need to hold the
+> spin lock during the callback into the networking stack.  Instead, how
+> about the following diff, which also fixes the other call site...
 
-Do you want to post a fix?  If not, I will, but later on this week.
+Oops, I read this too late.
 
-Thanks,
-Richard
+I already applied and pushed out Dan's fix.
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
