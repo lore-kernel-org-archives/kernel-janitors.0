@@ -1,41 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:23:21 +0000
-Subject: [PATCH 13/25] net: mvpp2: Fix a jump label position in mvpp2_rx()
-Message-Id: <26d7b00f-85bb-5123-7334-a75542d86449@users.sourceforge.net>
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 20 Apr 2017 20:32:22 +0000
+Subject: Re: [PATCH 0/2] IB/hns: Fine-tuning for two function implementations
+Message-Id: <1492720342.3041.11.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+References: <4863af1d-ca80-1818-213e-7eadda35e8a1@users.sourceforge.net>
+In-Reply-To: <4863af1d-ca80-1818-213e-7eadda35e8a1@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Wei Hu <xavier.huwei@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 10:52:02 +0200
+On Thu, 2017-02-16 at 10:00 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 16 Feb 2017 09:55:43 +0100
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (2):
+>   Use kmalloc_array() in hns_roce_cmd_use_events()
+>   Use kcalloc() in hns_roce_buddy_init()
+> 
+>  drivers/infiniband/hw/hns/hns_roce_cmd.c |  6 +++---
+>  drivers/infiniband/hw/hns/hns_roce_mr.c  | 11 ++++++-----
+>  2 files changed, 9 insertions(+), 8 deletions(-)
 
-The script "checkpatch.pl" pointed out that labels should not be indented.
-Thus delete two horizontal tabs before the jump label "err_drop_frame"
-in the function "mvpp2_rx".
+Series applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/marvell/mvpp2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 3bddb8fcd595..4f4b659d7297 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -5515,7 +5515,7 @@ static int mvpp2_rx(struct mvpp2_port *port, int rx_todo,
- 		 * comprised by the RX descriptor.
- 		 */
- 		if (rx_status & MVPP2_RXD_ERR_SUMMARY) {
--		err_drop_frame:
-+err_drop_frame:
- 			dev->stats.rx_errors++;
- 			mvpp2_rx_error(port, rx_desc);
- 			/* Return the buffer to the pool */
 -- 
-2.12.2
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+   
+Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
