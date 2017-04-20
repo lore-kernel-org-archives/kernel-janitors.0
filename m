@@ -1,47 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:03:02 +0000
-Subject: [PATCH 1/10] pinctrl: imx: Use kmalloc_array() in imx_dt_node_to_map()
-Message-Id: <7f118f52-1f64-36b2-c4f8-d5a6bf65b494@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 08:28:42 +0000
+Subject: [PATCH 5/8] clk: Combine two seq_puts() calls into one call in clk_summary_show()
+Message-Id: <2e58deaf-4279-df4e-5678-df459791708c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 10:50:11 +0200
+Date: Thu, 20 Apr 2017 09:12:35 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Some text was put into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index a7ace9e1ad81..563d24e7989d 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -98,7 +98,7 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
- 			map_num++;
- 	}
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4c72a10a9a33..684642ab4212 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2030,9 +2030,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
  
--	new_map = kmalloc(sizeof(struct pinctrl_map) * map_num, GFP_KERNEL);
-+	new_map = kmalloc_array(map_num, sizeof(*new_map), GFP_KERNEL);
- 	if (!new_map)
- 		return -ENOMEM;
+-	seq_puts(s, "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
+-	seq_puts(s, "----------------------------------------------------------------------------------------\n");
+-
++	seq_puts(s,
++		 "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n"
++		 "----------------------------------------------------------------------------------------\n");
+ 	clk_prepare_lock();
  
+ 	for (; *lists; lists++)
 -- 
 2.12.2
 
