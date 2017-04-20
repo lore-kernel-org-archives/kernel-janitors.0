@@ -1,39 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 15:39:19 +0000
-Subject: [PATCH 3/3] ti-soc-thermal: Fix a typo in a comment line
-Message-Id: <f1b47bde-bd8a-2a5d-a6b3-4c721628b243@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Apr 2017 10:21:30 +0000
+Subject: [PATCH] net: qrtr: potential use after free in qrtr_sendmsg()
+Message-Id: <20170420102130.jhafz7e532y5iqd4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
-In-Reply-To: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Courtney Cavin <courtney.cavin@sonymobile.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, David Ahern <dsa@cumulusnetworks.com>, Stephen Boyd <sboyd@codeaurora.org>, Johannes Berg <johannes.berg@intel.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 17:11:28 +0200
+If skb_pad() fails then it frees the skb so we should check for errors.
 
-Add a missing character in this description for a function.
+Fixes: bdabad3e363d ("net: Add Qualcomm IPC router")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/thermal/ti-soc-thermal/ti-bandgap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-index 109fb0a5f19f..696ab3046b87 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-@@ -1010,7 +1010,7 @@ ti_bandgap_force_single_read(struct ti_bandgap *bgp, int id)
- }
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index c36b0ec364a4..a9a8c7d5a4a9 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -658,7 +658,9 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+ 	}
  
- /**
-- * ti_bandgap_set_continous_mode() - One time enabling of continuous mode
-+ * ti_bandgap_set_continuous_mode() - One time enabling of continuous mode
-  * @bgp: pointer to struct ti_bandgap
-  *
-  * Call this function only if HAS(MODE_CONFIG) is set. As this driver may
--- 
-2.12.2
-
+ 	if (plen != len) {
+-		skb_pad(skb, plen - len);
++		rc = skb_pad(skb, plen - len);
++		if (rc)
++			goto out_node;
+ 		skb_put(skb, plen - len);
+ 	}
+ 
