@@ -1,59 +1,46 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Fri, 14 Apr 2017 12:15:32 +0000
-Subject: Re: [PATCH] staging: rtl8723bs: clean up identical code on an if statement
-Message-Id: <560665f3-45cb-0d34-aac1-04f3fe6d4b59@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 08:22:10 +0000
+Subject: [PATCH 1/8] clk: si5351: Use devm_kcalloc() in si5351_i2c_probe()
+Message-Id: <b72a7329-0920-385d-008d-37dfc258f24d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413154636.11713-1-colin.king@canonical.com>
-In-Reply-To: <20170413154636.11713-1-colin.king@canonical.com>
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 22:37:30 +0200
 
-On 13-04-17 17:46, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The two different paths for an if statement are identical and hence
-> we can just replace it with the single statement.
->
-> Detected by CoverityScan, CID#1428443 ("Identical code for
-> different branches")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-Patch looks good to me:
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-si5351.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index b051db43fae1..a4c009e1e70d 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1535,9 +1535,9 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 	else
+ 		parent_names[1] = si5351_pll_names[1];
+ 
+-	drvdata->msynth = devm_kzalloc(&client->dev, num_clocks *
++	drvdata->msynth = devm_kcalloc(&client->dev, num_clocks,
+ 				       sizeof(*drvdata->msynth), GFP_KERNEL);
+-	drvdata->clkout = devm_kzalloc(&client->dev, num_clocks *
++	drvdata->clkout = devm_kcalloc(&client->dev, num_clocks,
+ 				       sizeof(*drvdata->clkout), GFP_KERNEL);
+ 	drvdata->num_clkout = num_clocks;
+ 
+-- 
+2.12.2
 
-Hans
-
-
-
-
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 53755e5b97a6..9e355734f0c0 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -1093,11 +1093,7 @@ void rtw_free_assoc_resources(struct adapter *adapter, int lock_scanned_queue)
->  		rtw_init_bcmc_stainfo(adapter);
->  	}
->
-> -	if (lock_scanned_queue) {
-> -		find_network(adapter);
-> -	} else {
-> -		find_network(adapter);
-> -	}
-> +	find_network(adapter);
->
->  	if (lock_scanned_queue)
->  		adapter->securitypriv.key_mask = 0;
->
