@@ -1,54 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 14:50:51 +0000
-Subject: [PATCH v2 10/12] IB/ocrdma: Returning only value constants in ocrdma_resize_cq()
-Message-Id: <0ecccc12-7340-927b-3745-8b84a7e137f8@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 20:26:29 +0000
+Subject: [PATCH 1/2] firewire: ohci: Use kcalloc() in pci_probe()
+Message-Id: <8d17e44a-054c-f7e2-ada2-db80ec148287@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <1492720999.3041.18.camel@redhat.com>
- <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
-In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+References: <1139a329-f084-c4f3-d9af-19ad15445017@users.sourceforge.net>
+In-Reply-To: <1139a329-f084-c4f3-d9af-19ad15445017@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 15:15:09 +0200
+Date: Thu, 20 Apr 2017 21:50:19 +0200
 
-Return constant integer values without storing them in the local
-variable "status".
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+* Delete the local variable "size" which became unnecessary
+  with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Devesh Sharma <devesh.sharma@broadcom.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/firewire/ohci.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 2dc399eeeefd..60b8813aff42 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -1122,15 +1122,12 @@ struct ib_cq *ocrdma_create_cq(struct ib_device *ibdev,
- int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
- 		     struct ib_udata *udata)
- {
--	int status = 0;
- 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
+diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
+index 8bf89267dc25..30be5dbd5b09 100644
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -3565,7 +3565,6 @@ static int pci_probe(struct pci_dev *dev,
+ 	u32 bus_options, max_receive, link_speed, version;
+ 	u64 guid;
+ 	int i, err;
+-	size_t size;
  
--	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
--		status = -EINVAL;
--		return status;
--	}
-+	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
-+		return -EINVAL;
- 	ibcq->cqe = new_cnt;
--	return status;
-+	return 0;
- }
- 
- static void ocrdma_flush_cq(struct ocrdma_cq *cq)
+ 	if (dev->vendor = PCI_VENDOR_ID_PINNACLE_SYSTEMS) {
+ 		dev_err(&dev->dev, "Pinnacle MovieBoard is not yet supported\n");
+@@ -3671,9 +3670,9 @@ static int pci_probe(struct pci_dev *dev,
+ 	reg_write(ohci, OHCI1394_IsoRecvIntMaskClear, ~0);
+ 	ohci->ir_context_mask = ohci->ir_context_support;
+ 	ohci->n_ir = hweight32(ohci->ir_context_mask);
+-	size = sizeof(struct iso_context) * ohci->n_ir;
+-	ohci->ir_context_list = kzalloc(size, GFP_KERNEL);
+-
++	ohci->ir_context_list = kcalloc(ohci->n_ir,
++					sizeof(*ohci->ir_context_list),
++					GFP_KERNEL);
+ 	reg_write(ohci, OHCI1394_IsoXmitIntMaskSet, ~0);
+ 	ohci->it_context_support = reg_read(ohci, OHCI1394_IsoXmitIntMaskSet);
+ 	/* JMicron JMB38x often shows 0 at first read, just ignore it */
+@@ -3684,9 +3683,9 @@ static int pci_probe(struct pci_dev *dev,
+ 	reg_write(ohci, OHCI1394_IsoXmitIntMaskClear, ~0);
+ 	ohci->it_context_mask = ohci->it_context_support;
+ 	ohci->n_it = hweight32(ohci->it_context_mask);
+-	size = sizeof(struct iso_context) * ohci->n_it;
+-	ohci->it_context_list = kzalloc(size, GFP_KERNEL);
+-
++	ohci->it_context_list = kcalloc(ohci->n_it,
++					sizeof(*ohci->it_context_list),
++					GFP_KERNEL);
+ 	if (ohci->it_context_list = NULL || ohci->ir_context_list = NULL) {
+ 		err = -ENOMEM;
+ 		goto fail_contexts;
 -- 
 2.12.2
 
