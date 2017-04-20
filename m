@@ -1,65 +1,86 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Wed, 05 Apr 2017 14:21:47 +0000
-Subject: Re: [PATCH 2/5] IB/qib: Use kmalloc_array() in qib_init_7322_variables()
-Message-Id: <20170405142146.GA5006@yuval-lap>
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 20 Apr 2017 20:37:34 +0000
+Subject: Re: [PATCH 00/29] IB/mlx: Fine-tuning for several function implementations
+Message-Id: <1492720654.3041.16.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
- <894a5d6c-882c-0bd9-f3ec-80fc8b7c355c@users.sourceforge.net>
-In-Reply-To: <894a5d6c-882c-0bd9-f3ec-80fc8b7c355c@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+In-Reply-To: <1935365a-bd7c-461e-6a84-0c5d3a501fff-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Apr 05, 2017 at 03:52:48PM +0200, SF Markus Elfring wrote:
+On Sat, 2017-02-18 at 21:45 +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Apr 2017 09:51:33 +0200
+> Date: Sat, 18 Feb 2017 21:34:32 +0100
 > 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/qib/qib_iba7322.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/qib/qib_iba7322.c b/drivers/infiniband/hw/qib/qib_iba7322.c
-> index e4e4e675c89c..490f432809b8 100644
-> --- a/drivers/infiniband/hw/qib/qib_iba7322.c
-> +++ b/drivers/infiniband/hw/qib/qib_iba7322.c
-> @@ -6442,12 +6442,15 @@ static int qib_init_7322_variables(struct qib_devdata *dd)
->  	sbufcnt = dd->piobcnt2k + dd->piobcnt4k +
->  		NUM_VL15_BUFS + BITS_PER_LONG - 1;
->  	sbufcnt /= BITS_PER_LONG;
-> -	dd->cspec->sendchkenable = kmalloc(sbufcnt *
-> -		sizeof(*dd->cspec->sendchkenable), GFP_KERNEL);
-> -	dd->cspec->sendgrhchk = kmalloc(sbufcnt *
-> -		sizeof(*dd->cspec->sendgrhchk), GFP_KERNEL);
-> -	dd->cspec->sendibchk = kmalloc(sbufcnt *
-> -		sizeof(*dd->cspec->sendibchk), GFP_KERNEL);
-> +	dd->cspec->sendchkenable = kmalloc_array(sbufcnt,
-> +						 sizeof(*dd->cspec->sendchkenable),
-> +						 GFP_KERNEL);
-> +	dd->cspec->sendgrhchk = kmalloc_array(sbufcnt,
-> +					      sizeof(*dd->cspec->sendgrhchk),
-> +					      GFP_KERNEL);
-> +	dd->cspec->sendibchk = kmalloc_array(sbufcnt,
-> +					     sizeof(*dd->cspec->sendibchk),
-> +					     GFP_KERNEL);
->  	if (!dd->cspec->sendchkenable || !dd->cspec->sendgrhchk ||
->  		!dd->cspec->sendibchk) {
->  		ret = -ENOMEM;
+> Several update suggestions were taken into account
+> from static source code analysis.
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+I've dropped this entire series.  If you want me to consider it, you
+need to respin it with the following changes:
 
-> -- 
-> 2.12.2
+1) Put all similar corrections in a single patch.  If you are replacing
+a sizeof() usage with a safer sizeof() usage, then I don't want one
+patch per replacement, I want one patch for all replacements.
+
+2) Use reasonable git commit messages.  "Improve another" is never a
+reasonable commit message because it implicitly refereces another git
+commit message.  Unless this is a fix for a previous commit, all commit
+messages should be standalone.
+
+3) Keep your git commit message subject lines within the recommended
+size.  You have many that are too long.  As trivial as all of these
+changes are, I'm not going to go fixup 29 commit messages to take them.
+
+4) Make sure to preserve the reviewed-by tags on the resubmission.
+
+> Markus Elfring (29):
+>   Use kcalloc() in mlx4_ib_alloc_pv_bufs()
+>   Improve another size determination in mlx4_ib_alloc_pv_bufs()
+>   Improve another size determination in mlx4_ib_alloc_demux_ctx()
+>   Improve another size determination in alloc_pv_object()
+>   Fix a typo in a comment line
+>   Delete three unnecessary return statements
+>   Split a condition check in handle_slaves_guid_change()
+>   Delete an unnecessary check before the function call "kfree" in
+> free_pv_object()
+>   Move an assignment out of a check in forward_trap()
+>   Enclose 15 expressions for the sizeof operator by parentheses
+>   Use kmalloc_array() in three functions
+>   Enclose 17 expressions for the sizeof operator by parentheses
+>   Split a condition check in five functions
+>   Delete an unnecessary variable in __mlx4_ib_query_gid()
+>   Delete an unnecessary return statement in do_slave_init()
+>   Improve another size determination in do_slave_init()
+>   Improve another size determination in mlx4_ib_add()
+>   Delete an unnecessary variable initialisation in mlx4_ib_add()
+>   Delete an unnecessary variable assignment in mlx4_ib_add()
+>   Delete an error message for a failed memory allocation in
+> mlx4_ib_add()
+>   Delete unnecessary braces in mlx4_ib_add()
+>   Use kmalloc_array() in alloc_proxy_bufs()
+>   Improve size determinations in create_qp_common()
+>   Delete unwanted spaces behind usages of the sizeof operator
+>   Add spaces for better code readability
+>   Enclose 14 expressions for the sizeof operator by parentheses
+>   Use kmalloc_array() in create_kernel_qp()
+>   Less function calls in create_kernel_qp() after error detection
+>   Use kmalloc_array() in create_srq_kernel()
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
+>  drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++------
+> ----------
+>  drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++---------
+> ----------
+>  drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
+>  drivers/infiniband/hw/mlx5/srq.c  |   5 +-
+>  5 files changed, 261 insertions(+), 219 deletions(-)
+> 
+-- 
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+   
+Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
