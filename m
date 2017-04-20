@@ -1,18 +1,61 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Fri, 28 Apr 2017 13:51:20 +0000
-Subject: Re: [PATCH] netfilter: x_tables: unlock on error in xt_find_table_lock()
-Message-Id: <20170428135120.GA8648@salvia>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 08:32:18 +0000
+Subject: [PATCH 8/8] clk: nomadik: Delete error messages for a failed memory allocation in two functions
+Message-Id: <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428125756.s4ycoffclspnr4zo@mwanda>
-In-Reply-To: <20170428125756.s4ycoffclspnr4zo@mwanda>
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Florian Westphal <fw@strlen.de>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On Fri, Apr 28, 2017 at 03:57:56PM +0300, Dan Carpenter wrote:
-> According to my static checker we should unlock here before the return.
-> That seems reasonable to me as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 10:04:00 +0200
 
-Applied, thanks.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: Possible unnecessary 'out of memory' message
+
+Thus remove such statements here.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-nomadik.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index 8d57ab8d6ed8..13ad6d1e5090 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -267,10 +267,8 @@ pll_clk_register(struct device *dev, const char *name,
+ 	}
+ 
+ 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("%s: could not allocate PLL clk\n", __func__);
++	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &pll_clk_ops;
+@@ -356,11 +354,9 @@ src_clk_register(struct device *dev, const char *name,
+ 	struct clk_init_data init;
+ 
+ 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
+-	if (!sclk) {
+-		pr_err("could not allocate SRC clock %s\n",
+-			name);
++	if (!sclk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
++
+ 	init.name = name;
+ 	init.ops = &src_clk_ops;
+ 	/* Do not force-disable the static SDRAM controller */
+-- 
+2.12.2
+
