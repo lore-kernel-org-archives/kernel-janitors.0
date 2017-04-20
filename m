@@ -1,44 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Apr 2017 14:25:36 +0000
-Subject: [bug report] net/hsr: Added support for HSR v1
-Message-Id: <20170419142535.2lxzzqabh2amfyh6@mwanda>
+From: =?UTF-8?Q?Peter_Heise?= <mail@pheise.de>
+Date: Thu, 20 Apr 2017 00:07:25 +0000
+Subject: AW: [bug report] net/hsr: Added support for HSR v1
+Message-Id: <0102015b88af5b7f-e71057ba-15e3-42b9-921e-2c89ba77a36e-000000@eu-west-1.amazonses.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170419142535.2lxzzqabh2amfyh6@mwanda>
+In-Reply-To: <20170419142535.2lxzzqabh2amfyh6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Peter Heise,
-
-The patch ee1c27977284: "net/hsr: Added support for HSR v1" from Apr
-13, 2016, leads to the following static checker warning:
-
-	net/hsr/hsr_device.c:319 send_hsr_supervision_frame()
-	warn: passing freed memory 'skb'
-
-net/hsr/hsr_device.c
-   308  
-   309          hsr_stag->HSR_TLV_Type = type;
-   310          /* TODO: Why 12 in HSRv0? */
-   311          hsr_stag->HSR_TLV_Length = hsrVer ? sizeof(struct hsr_sup_payload) : 12;
-   312  
-   313          /* Payload: MacAddressA */
-   314          hsr_sp = (typeof(hsr_sp)) skb_put(skb, sizeof(struct hsr_sup_payload));
-   315          ether_addr_copy(hsr_sp->MacAddressA, master->dev->dev_addr);
-   316  
-   317          skb_put_padto(skb, ETH_ZLEN + HSR_HLEN);
-                              ^^^
-The skb_put_padto() function frees skb() on error.  Maybe that's not
-possible?
-
-   318  
-   319          hsr_forward_skb(skb, master);
-   320          return;
-   321  
-   322  out:
-   323          WARN_ONCE(1, "HSR: Could not send supervision frame\n");
-   324          kfree_skb(skb);
-   325  }
-
-regards,
-dan carpenter
+VGhhbmsgeW91IGZvciB0aGUgbWVzc2FnZSBEYW4sIEkgd2lsbCBzdWJtaXQgYSBwYXRjaCB0
+byBuZXQgdGhlIG5leHQgZGF5cyENCg0KUmVnYXJkcywNClBldGVyDQoNClZvbjogRGFuIENh
+cnBlbnRlciANCkdlc2VuZGV0OiBNaXR0d29jaCwgMTkuIEFwcmlsIDIwMTcgMTY6MjYNCkFu
+OiBQZXRlciBIZWlzZSA8bWFpbEBwaGVpc2UuZGU+DQpDYzoga2VybmVsLWphbml0b3JzQHZn
+ZXIua2VybmVsLm9yZw0KQmV0cmVmZjogW2J1ZyByZXBvcnRdIG5ldC9oc3I6IEFkZGVkIHN1
+cHBvcnQgZm9yIEhTUiB2MQ0KDQpIZWxsbyBQZXRlciBIZWlzZSwNCg0KVGhlIHBhdGNoIGVl
+MWMyNzk3NzI4NDogIm5ldC9oc3I6IEFkZGVkIHN1cHBvcnQgZm9yIEhTUiB2MSIgZnJvbSBB
+cHINCjEzLCAyMDE2LCBsZWFkcyB0byB0aGUgZm9sbG93aW5nIHN0YXRpYyBjaGVja2VyIHdh
+cm5pbmc6DQoNCsKgwqDCoCBuZXQvaHNyL2hzcl9kZXZpY2UuYzozMTkgc2VuZF9oc3Jfc3Vw
+ZXJ2aXNpb25fZnJhbWUoKQ0KwqDCoMKgIHdhcm46IHBhc3NpbmcgZnJlZWQgbWVtb3J5ICdz
+a2InDQoNCm5ldC9oc3IvaHNyX2RldmljZS5jDQrCoMKgIDMwOMKgIA0KwqDCoCAzMDnCoMKg
+wqDCoMKgwqDCoMKgwqAgaHNyX3N0YWctPkhTUl9UTFZfVHlwZSA9IHR5cGU7DQrCoMKgIDMx
+MMKgwqDCoMKgwqDCoMKgwqDCoCAvKiBUT0RPOiBXaHkgMTIgaW4gSFNSdjA/ICovDQrCoMKg
+IDMxMcKgwqDCoMKgwqDCoMKgwqDCoCBoc3Jfc3RhZy0+SFNSX1RMVl9MZW5ndGggPSBoc3JW
+ZXIgPyBzaXplb2Yoc3RydWN0IGhzcl9zdXBfcGF5bG9hZCkgOiAxMjsNCsKgwqAgMzEywqAg
+DQrCoMKgIDMxM8KgwqDCoMKgwqDCoMKgwqDCoCAvKiBQYXlsb2FkOiBNYWNBZGRyZXNzQSAq
+Lw0KwqDCoCAzMTTCoMKgwqDCoMKgwqDCoMKgwqAgaHNyX3NwID0gKHR5cGVvZihoc3Jfc3Ap
+KSBza2JfcHV0KHNrYiwgc2l6ZW9mKHN0cnVjdCBoc3Jfc3VwX3BheWxvYWQpKTsNCsKgwqAg
+MzE1wqDCoMKgwqDCoMKgwqDCoMKgIGV0aGVyX2FkZHJfY29weShoc3Jfc3AtPk1hY0FkZHJl
+c3NBLCBtYXN0ZXItPmRldi0+ZGV2X2FkZHIpOw0KwqDCoCAzMTbCoCANCsKgwqAgMzE3wqDC
+oMKgwqDCoMKgwqDCoMKgIHNrYl9wdXRfcGFkdG8oc2tiLCBFVEhfWkxFTiArIEhTUl9ITEVO
+KTsNCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgXl5eDQpUaGUgc2tiX3B1dF9wYWR0bygpIGZ1bmN0aW9uIGZyZWVzIHNrYigp
+IG9uIGVycm9yLsKgIE1heWJlIHRoYXQncyBub3QNCnBvc3NpYmxlPw0KDQrCoMKgIDMxOMKg
+IA0KwqDCoCAzMTnCoMKgwqDCoMKgwqDCoMKgwqAgaHNyX2ZvcndhcmRfc2tiKHNrYiwgbWFz
+dGVyKTsNCsKgwqAgMzIwwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybjsNCsKgwqAgMzIxwqAg
+DQrCoMKgIDMyMsKgIG91dDoNCsKgwqAgMzIzwqDCoMKgwqDCoMKgwqDCoMKgIFdBUk5fT05D
+RSgxLCAiSFNSOiBDb3VsZCBub3Qgc2VuZCBzdXBlcnZpc2lvbiBmcmFtZVxuIik7DQrCoMKg
+IDMyNMKgwqDCoMKgwqDCoMKgwqDCoCBrZnJlZV9za2Ioc2tiKTsNCsKgwqAgMzI1wqAgfQ0K
+DQpyZWdhcmRzLA0KZGFuIGNhcnBlbnRlcg0K
