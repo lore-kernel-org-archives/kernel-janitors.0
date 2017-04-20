@@ -1,98 +1,46 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 13 Apr 2017 16:38:55 +0000
-Subject: Re: [PATCH 2/2] crypto: chcr - Fix error checking
-Message-Id: <aef0f5d8-fc0b-6091-39d3-c4564e6d1238@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Apr 2017 14:07:18 +0000
+Subject: [PATCH][-next] block, bfq: don't dereference bic before null checking it
+Message-Id: <20170420140718.19694-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1492085165.git.christophe.jaillet@wanadoo.fr>
- <a0f6ad87c1b9e04304e2ff4b4ddad92e7415f21f.1492085165.git.christophe.jaillet@wanadoo.fr>
- <20170413140415.6yikoizav7xaka43@mwanda>
- <8c1af6bd-b12f-4bf7-c44a-360ea2359e08@wanadoo.fr>
- <CAFXBA==dGxLJWG39Vz5Ooj5vhvfs-LDz06bVyoYZZC9hnZ6dnw@mail.gmail.com>
- <20170413161341.hln2v2ycs6efa5vh@mwanda>
-In-Reply-To: <20170413161341.hln2v2ycs6efa5vh@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 13/04/2017 =E0 18:13, Dan Carpenter a =E9crit :
-> On Thu, Apr 13, 2017 at 08:37:50PM +0530, Harsh Jain wrote:
->> On Thu, Apr 13, 2017 at 8:20 PM, Christophe JAILLET
->> <christophe.jaillet@wanadoo.fr> wrote:
->>> Le 13/04/2017 =E0 16:04, Dan Carpenter a =E9crit :
->>>> On Thu, Apr 13, 2017 at 02:14:30PM +0200, Christophe JAILLET wrote:
->>>>> If 'chcr_alloc_shash()' a few lines above fails, 'base_hash' can be an
->>>>> error pointer when we 'goto out'.
->>>>> So checking for NULL here is not enough because it is likely that
->>>>> 'chcr_free_shash' will crash if we pass an error pointer.
->>>>>
->>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>>> ---
->>>>> Another solution, amybe safer, would be to instrument 'chcr_free_shas=
-h'
->>>>> or
->>>>> 'crypto_free_shash' to accept an error pointer and return immediatell=
-y in
->>>>> such a case.
->>>>> ---
->>>>>    drivers/crypto/chelsio/chcr_algo.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/crypto/chelsio/chcr_algo.c
->>>>> b/drivers/crypto/chelsio/chcr_algo.c
->>>>> index f19590ac8775..41750b97f43c 100644
->>>>> --- a/drivers/crypto/chelsio/chcr_algo.c
->>>>> +++ b/drivers/crypto/chelsio/chcr_algo.c
->>>>> @@ -2351,7 +2351,7 @@ static int chcr_authenc_setkey(struct crypto_ae=
-ad
->>>>> *authenc, const u8 *key,
->>>>>          }
->>>>>    out:
->>>>>          aeadctx->enckey_len =3D 0;
->>>>> -       if (base_hash)
->>>>> +       if (!IS_ERR_OR_NULL(base_hash))
->>>>>                  chcr_free_shash(base_hash);
->>>> Ah...  Ok.  Fine, but redo the first patch anyway because it shouldn't
->>>> ever be NULL.
->>>>
->>>> regards,
->>>> dan carpenter
->>> Hi Dan,
->>>
->>> I will update the first patch as you proposed in order to:
->>>     - teach 'chcr_alloc_shash' not to return NULL
->>>     - initialize 'base_hash' with ERR_PTR(-EINVAL)
->>>     - update the above test to !IS_ERR.
->>> The 2 patches will be merged in only 1.
->>>
->>> Thanks for your suggestions.
->> Thanks for pointing the error. or You can simply return instead of
->> goto. Just like that.
->>
->>       1.3 @@ -2455,7 +2455,8 @@ static int chcr_authenc_setkey(struct cr
->>       1.4   base_hash  =3D chcr_alloc_shash(max_authsize);
->>       1.5   if (IS_ERR(base_hash)) {
->>       1.6   pr_err("chcr : Base driver cannot be loaded\n");
->>       1.7 - goto out;
->>       1.8 + aeadctx->enckey_len =3D 0;
->>       1.9 + return -EINVAL;
-> Don't do that.  There should be a goto.
->
-> regards,
-> dan carpenter
->
->
-Agreed.
+From: Colin Ian King <colin.king@canonical.com>
 
-Having direct return after some other gotos statement puzzles my=20
-coccinelle scripts and are spurious (at least IMHO).
+The call to bfq_check_ioprio_change will dereference bic, however,
+the null check for bic is after this call.  Move the the null
+check on bic to before the call to avoid any potential null
+pointer dereference issues.
 
-best regards,
-CJ
+Detected by CoverityScan, CID#1430138 ("Dereference before null check")
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/bfq-iosched.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 6d14f18c0d45..bd8499ef157c 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -4401,11 +4401,11 @@ static int bfq_get_rq_private(struct request_queue *q, struct request *rq,
+ 
+ 	spin_lock_irq(&bfqd->lock);
+ 
+-	bfq_check_ioprio_change(bic, bio);
+-
+ 	if (!bic)
+ 		goto queue_fail;
+ 
++	bfq_check_ioprio_change(bic, bio);
++
+ 	bfq_bic_update_cgroup(bic, bio);
+ 
+ 	bfqq = bfq_get_bfqq_handle_split(bfqd, bic, bio, false, is_sync,
+-- 
+2.11.0
+
