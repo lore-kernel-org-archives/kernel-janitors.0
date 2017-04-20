@@ -1,23 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Apr 2017 17:59:05 +0000
-Subject: Re: [PATCH net] ravb: Double free on error in ravb_start_xmit()
-Message-Id: <20170424.135905.515581977383181185.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Apr 2017 10:24:23 +0000
+Subject: [PATCH] drm/mediatek: fix a loop timeout
+Message-Id: <20170420102423.5yqe6uwohaeleyyl@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170422104656.jjnooh3or4x3lbw3@mwanda>
-In-Reply-To: <20170422104656.jjnooh3or4x3lbw3@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sergei.shtylyov@cogentembedded.com, kazuya.mizuguchi.ks@renesas.com, horms+renesas@verge.net.au, ykaneko0929@gmail.com, masaru.nagai.vx@renesas.com, geert+renesas@glider.be, niklas.soderlund+renesas@ragnatech.se, tremyfr@gmail.com, netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: CK Hu <ck.hu@mediatek.com>, shaoming chen <shaoming.chen@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Apr 2017 13:46:56 +0300
+We expected to end with "timeout_ms" set to zero, but it's a post-op so
+the current code ends with -1.  Let's fix this by changing it to a
+pre-op.
 
-> If skb_put_padto() fails then it frees the skb.  I shifted that code
-> up a bit to make my error handling a little simpler.
-> 
-> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 21898816831f ("drm/mediatek: add dsi transfer function")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 808b995a990f..3a0b6d1057a2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -902,7 +902,7 @@ static void mtk_dsi_wait_for_idle(struct mtk_dsi *dsi)
+ {
+ 	u32 timeout_ms = 500000; /* total 1s ~ 2s timeout */
+ 
+-	while (timeout_ms--) {
++	while (--timeout_ms) {
+ 		if (!(readl(dsi->regs + DSI_INTSTA) & DSI_BUSY))
+ 			break;
+ 
