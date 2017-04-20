@@ -1,68 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 27 Apr 2017 17:59:11 +0000
-Subject: [PATCH] igb: make a few local functions static
-Message-Id: <20170427175911.15477-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 08:26:01 +0000
+Subject: [PATCH 3/8] clk: si5351: Adjust a null pointer check in si5351_dt_parse()
+Message-Id: <faed4e9c-ebd0-8c00-77f4-72820ba464f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 07:47:04 +0200
 
-clean up a few sparse warnings, these following
-functions can be made static:
+The script "checkpatch.pl" pointed information out like the following.
 
-drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
-  'igb_add_mac_filter' was not declared. Should it be static?
-drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
-  'igb_del_mac_filter' was not declared. Should it be static?
-drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
-  'igb_set_vf_mac_filter' was not declared. Should it be static?
+Comparison to NULL could be written "!np".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Thus adjust this expression.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk-si5351.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1cf74aa4ebd9..b0021819b9d0 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -6457,8 +6457,8 @@ static void igb_set_default_mac_filter(struct igb_adapter *adapter)
- 	igb_rar_set_index(adapter, 0);
- }
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 2492442eea77..a0acea67b571 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1140,7 +1140,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 	int num = 0;
+ 	u32 val;
  
--int igb_add_mac_filter(struct igb_adapter *adapter, const u8 *addr,
--		       const u8 queue)
-+static int igb_add_mac_filter(struct igb_adapter *adapter, const u8 *addr,
-+			      const u8 queue)
- {
- 	struct e1000_hw *hw = &adapter->hw;
- 	int rar_entries = hw->mac.rar_entry_count -
-@@ -6487,8 +6487,8 @@ int igb_add_mac_filter(struct igb_adapter *adapter, const u8 *addr,
- 	return -ENOSPC;
- }
+-	if (np = NULL)
++	if (!np)
+ 		return 0;
  
--int igb_del_mac_filter(struct igb_adapter *adapter, const u8 *addr,
--		       const u8 queue)
-+static int igb_del_mac_filter(struct igb_adapter *adapter, const u8 *addr,
-+			      const u8 queue)
- {
- 	struct e1000_hw *hw = &adapter->hw;
- 	int rar_entries = hw->mac.rar_entry_count -
-@@ -6540,8 +6540,8 @@ static int igb_uc_unsync(struct net_device *netdev, const unsigned char *addr)
- 	return 0;
- }
- 
--int igb_set_vf_mac_filter(struct igb_adapter *adapter, const int vf,
--			  const u32 info, const u8 *addr)
-+static int igb_set_vf_mac_filter(struct igb_adapter *adapter, const int vf,
-+				 const u32 info, const u8 *addr)
- {
- 	struct pci_dev *pdev = adapter->pdev;
- 	struct vf_data_storage *vf_data = &adapter->vf_data[vf];
+ 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
 -- 
-2.11.0
+2.12.2
 
