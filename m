@@ -1,67 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Apr 2017 15:55:32 +0000
-Subject: [PATCH] fuse: Use kmalloc_array() in three functions
-Message-Id: <2e6f0cd2-2a24-2d1e-9301-7e5238372306@users.sourceforge.net>
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 20 Apr 2017 20:29:51 +0000
+Subject: Re: [PATCH 0/5] IB/hfi1: Fine-tuning for three function implementations
+Message-Id: <1492720191.3041.10.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8a997282-09c7-0f9f-645e-d7c6e8c79e67@users.sourceforge.net>
+In-Reply-To: <8a997282-09c7-0f9f-645e-d7c6e8c79e67-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Apr 2017 17:45:19 +0200
+On Fri, 2017-02-10 at 22:00 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 10 Feb 2017 21:53:21 +0100
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (5):
+>   Use kcalloc() in hfi1_user_exp_rcv_init()
+>   Use kcalloc() in hfi1_user_sdma_alloc_queues()
+>   Adjust another size determination in hfi1_user_sdma_alloc_queues()
+>   Use memdup_user() rather than duplicating its implementation in
+> hfi1_user_sdma_process_request()
+>   Improve another size determination in
+> hfi1_user_sdma_process_request()
+> 
+>  drivers/infiniband/hw/hfi1/user_exp_rcv.c |  5 +++--
+>  drivers/infiniband/hw/hfi1/user_sdma.c    | 35 +++++++++++++++----
+> ------------
+>  2 files changed, 20 insertions(+), 20 deletions(-)
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kmalloc_array".
+I took 4 of the 5, leaving out the one that was addressed separately by
+an Intel patch.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of data types by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/fuse/dev.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index c16d00e53264..685dd467c5f7 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -64,9 +64,9 @@ static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
- 			pages = req->inline_pages;
- 			page_descs = req->inline_page_descs;
- 		} else {
--			pages = kmalloc(sizeof(struct page *) * npages, flags);
--			page_descs = kmalloc(sizeof(struct fuse_page_desc) *
--					     npages, flags);
-+			pages = kmalloc_array(npages, sizeof(*pages), flags);
-+			page_descs = kmalloc_array(npages, sizeof(*page_descs),
-+						   flags);
- 		}
- 
- 		if (!pages || !page_descs) {
-@@ -1357,7 +1357,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
- 	if (!fud)
- 		return -EPERM;
- 
--	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
-+	bufs = kmalloc_array(pipe->buffers, sizeof(*bufs), GFP_KERNEL);
- 	if (!bufs)
- 		return -ENOMEM;
- 
-@@ -1941,7 +1941,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 	if (!fud)
- 		return -EPERM;
- 
--	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
-+	bufs = kmalloc_array(pipe->buffers, sizeof(*bufs), GFP_KERNEL);
- 	if (!bufs)
- 		return -ENOMEM;
- 
 -- 
-2.12.2
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+   
+Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
