@@ -1,27 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 21:00:06 +0000
-Subject: [PATCH 0/2] regulator: s2mps11: Fine-tuning for s2mps11_pmic_probe()
-Message-Id: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:44:00 +0000
+Subject: [PATCH v2 11/17] IB/mlx4: Delete an unnecessary variable initialisation in mlx4_ib_add()
+Message-Id: <1b8eaaee-c417-f9f6-9bf8-04ea082e5d0d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Majd Dibbiny <majd-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 22:55:22 +0200
+Date: Fri, 21 Apr 2017 18:44:15 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+The local variable "new_counter_index" will be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (2):
-  Use kcalloc()
-  Use devm_kmalloc_array()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/regulator/s2mps11.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index a54e2f04929b..d08b9b154c97 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2615,7 +2615,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 	int num_req_counters;
+ 	int allocated;
+ 	u32 counter_index;
+-	struct counter_index *new_counter_index = NULL;
++	struct counter_index *new_counter_index;
+ 
+ 	pr_info_once("%s", mlx4_ib_version);
+ 
 -- 
 2.12.2
 
