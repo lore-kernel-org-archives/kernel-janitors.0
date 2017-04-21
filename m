@@ -1,53 +1,29 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sat, 15 Apr 2017 10:48:45 +0000
-Subject: Re: [PATCH 1/2] regulator: s2mps11: Use kcalloc() in s2mps11_pmic_probe()
-Message-Id: <20170415104845.bofxl34wr7z7khix@kozik-lap>
+From: Khalid Aziz <khalid@gonehiking.org>
+Date: Fri, 21 Apr 2017 14:24:27 +0000
+Subject: Re: [PATCH] scsi: BusLogic: fix incorrect spelling of adatper_reset_req
+Message-Id: <5f14add6-e78f-9cc7-7f3a-e53fb9e2dd2d@gonehiking.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
- <542252e0-817f-ce13-fbd5-8fd8dda4c746@users.sourceforge.net>
-In-Reply-To: <542252e0-817f-ce13-fbd5-8fd8dda4c746@users.sourceforge.net>
+References: <20170221162711.24694-1-colin.king@canonical.com>
+In-Reply-To: <20170221162711.24694-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 14, 2017 at 11:01:25PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 14 Apr 2017 22:00:35 +0200
+On 02/21/2017 09:27 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kcalloc".
+> trivial fix to spelling mistake, adatper_reset_req should
+> be adapter_reset_req.  Also break up very long seq_printf statement
+> into multiple lines.
 > 
-> This issue was detected by using the Coccinelle software.
-
-Unfortunately you write mostly cryptic commit messages. This does not
-answer for the main question - why this change is needed. Code looks
-okay, but you should explain in simple words why this is needed.
-
-Best regards,
-Krzysztof
-
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/regulator/s2mps11.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/scsi/BusLogic.c | 14 +++++++++++---
+>  drivers/scsi/BusLogic.h |  2 +-
+>  2 files changed, 12 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-> index 7726b874e539..b4e588cce03d 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -1162,7 +1162,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	rdata = kzalloc(sizeof(*rdata) * rdev_num, GFP_KERNEL);
-> +	rdata = kcalloc(rdev_num, sizeof(*rdata), GFP_KERNEL);
->  	if (!rdata)
->  		return -ENOMEM;
->  
-> -- 
-> 2.12.2
-> 
+
+
+Acked-by: Khalid Aziz <khalid@gonehiking.org>
