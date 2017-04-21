@@ -1,63 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 13 Apr 2017 18:25:15 +0000
-Subject: [PATCH v2] crypto: chcr - Fix error handling related to 'chcr_alloc_shash'
-Message-Id: <20170413182515.29107-1-christophe.jaillet@wanadoo.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 21 Apr 2017 13:15:12 +0000
+Subject: Re: [PATCH v2] crypto: chcr - Fix error handling related to 'chcr_alloc_shash'
+Message-Id: <20170421131512.GD14803@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170413182515.29107-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170413182515.29107-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net, harsh@chelsio.com, hariprasad@chelsio.com
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, harsh@chelsio.com, hariprasad@chelsio.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Up to now, 'crypto_alloc_shash()' may return a valid pointer, an error
-pointer or NULL (in case of invalid parameter)
-Update it to always return an error pointer in case of error. It now
-returns ERR_PTR(-EINVAL) instead of NULL in case of invalid parameter.
+On Thu, Apr 13, 2017 at 08:25:15PM +0200, Christophe JAILLET wrote:
+> Up to now, 'crypto_alloc_shash()' may return a valid pointer, an error
+> pointer or NULL (in case of invalid parameter)
+> Update it to always return an error pointer in case of error. It now
+> returns ERR_PTR(-EINVAL) instead of NULL in case of invalid parameter.
+> 
+> This simplifies error handling.
+> 
+> Also fix a crash in 'chcr_authenc_setkey()' if 'chcr_alloc_shash()'
+> returns an error pointer and the "goto out" path is taken.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This simplifies error handling.
-
-Also fix a crash in 'chcr_authenc_setkey()' if 'chcr_alloc_shash()'
-returns an error pointer and the "goto out" path is taken.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: Modify 'chcr_alloc_shash' to return ERR_PTR(-EINVAL) instead of NULL
-    in case of invalid parameter.
----
- drivers/crypto/chelsio/chcr_algo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index 41bc7f4f58cd..1fb1ac9d70b1 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -294,7 +294,7 @@ static inline void get_aes_decrypt_key(unsigned char *dec_key,
- 
- static struct crypto_shash *chcr_alloc_shash(unsigned int ds)
- {
--	struct crypto_shash *base_hash = NULL;
-+	struct crypto_shash *base_hash = ERR_PTR(-EINVAL);
- 
- 	switch (ds) {
- 	case SHA1_DIGEST_SIZE:
-@@ -2259,7 +2259,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
- 	int err = 0, i, key_ctx_len = 0;
- 	unsigned char ck_size = 0;
- 	unsigned char pad[CHCR_HASH_MAX_BLOCK_SIZE_128] = { 0 };
--	struct crypto_shash *base_hash = NULL;
-+	struct crypto_shash *base_hash = ERR_PTR(-EINVAL);
- 	struct algo_param param;
- 	int align;
- 	u8 *o_ptr = NULL;
-@@ -2351,7 +2351,7 @@ static int chcr_authenc_setkey(struct crypto_aead *authenc, const u8 *key,
- 	}
- out:
- 	aeadctx->enckey_len = 0;
--	if (base_hash)
-+	if (!IS_ERR(base_hash))
- 		chcr_free_shash(base_hash);
- 	return -EINVAL;
- }
+Patch applied.  Thanks.
 -- 
-2.11.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
