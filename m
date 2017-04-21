@@ -1,26 +1,29 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 26 Apr 2017 18:27:22 +0000
-Subject: Re: [PATCH 2/3] scsi: ufs: Delete an error message for a failed memory allocation in ufshcd_memory_a
-Message-Id: <1493231242.18659.28.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 10:52:20 +0000
+Subject: [PATCH] fsnotify: remove a stray unlock
+Message-Id: <20170421105220.tha7fa73smi7vowv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
-         <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
-         <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
-In-Reply-To: <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subhash Jadavani <subhashj@codeaurora.org>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-scsi-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2017-04-26 at 10:57 -0700, Subhash Jadavani wrote:
-> PS: ufshcd_memory_alloc() also does some DMA coherent memory allocation 
-> (via dmam_alloc_coherent() APIs) and tries to print out the message on 
-> allocation failure. Although i don't know "out of memory" messages will 
-> be printed out by dmam_alloc_coherent() APIs or not. If it does print it 
-> out then we might want to remove our local memory allocation failure log 
-> messages.
+We recently shifted this code around, so we're no longer holding the
+lock on this path.
 
-Basically most everything that has a gfp_t argument does a
-dump_stack() on OOM unless __GFP_NOWARN is specified by that gfp_t.
+Fixes: 755b5bc681eb ("fsnotify: Remove indirection from mark list addition")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index 55955ded338d..9991f8826734 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -603,7 +603,6 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark, struct inode *inode,
+ 			 FSNOTIFY_MARK_FLAG_ATTACHED);
+ 	list_del_init(&mark->g_list);
+ 	atomic_dec(&group->num_marks);
+-	spin_unlock(&mark->lock);
+ 
+ 	fsnotify_put_mark(mark);
+ 	return ret;
