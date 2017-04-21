@@ -1,51 +1,51 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Tue, 11 Apr 2017 11:37:19 +0000
-Subject: Re: [patch] mtd: nand: Fix a couple error codes
-Message-Id: <20170411133719.49543703@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:54:06 +0000
+Subject: [PATCH v2 16/17] IB/mlx4: Add spaces for better code readability
+Message-Id: <d7f1064f-a70e-83c4-bf45-0467ffba954f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170404081545.GA25533@mwanda>
-In-Reply-To: <20170404081545.GA25533@mwanda>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-On Tue, 4 Apr 2017 11:15:46 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 19:14:11 +0200
 
-> We accidentally return 1 on error instead of proper error codes.
-> 
+Use space characters at some source code places according to
+the Linux coding style convention.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/qp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-Boris
-
-> Fixes: 07b23e3db9ed ("mtd: nand: Cleanup/rework the atmel_nand driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
-> index 27301603f394..b8d17a024dbd 100644
-> --- a/drivers/mtd/nand/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/atmel/nand-controller.c
-> @@ -1686,7 +1686,7 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
->  	nc->smc = syscon_node_to_regmap(np);
->  	of_node_put(np);
->  	if (IS_ERR(nc->smc)) {
-> -		ret = IS_ERR(nc->smc);
-> +		ret = PTR_ERR(nc->smc);
->  		dev_err(dev, "Could not get SMC regmap (err = %d)\n", ret);
->  		return ret;
->  	}
-> @@ -1719,7 +1719,7 @@ atmel_smc_nand_controller_init(struct atmel_smc_nand_controller *nc)
->  	nc->matrix = syscon_node_to_regmap(np);
->  	of_node_put(np);
->  	if (IS_ERR(nc->matrix)) {
-> -		ret = IS_ERR(nc->matrix);
-> +		ret = PTR_ERR(nc->matrix);
->  		dev_err(dev, "Could not get Matrix regmap (err = %d)\n", ret);
->  		return ret;
->  	}
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 068abfdc9d01..15240163c399 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -1065,7 +1065,7 @@ static void destroy_qp_common(struct mlx4_ib_dev *dev, struct mlx4_ib_qp *qp,
+ 	list_del(&qp->cq_recv_list);
+ 	if (!is_user) {
+ 		__mlx4_ib_cq_clean(recv_cq, qp->mqp.qpn,
+-				 qp->ibqp.srq ? to_msrq(qp->ibqp.srq): NULL);
++				   qp->ibqp.srq ? to_msrq(qp->ibqp.srq) : NULL);
+ 		if (send_cq != recv_cq)
+ 			__mlx4_ib_cq_clean(send_cq, qp->mqp.qpn, NULL);
+ 	}
+@@ -2599,7 +2599,7 @@ static int build_mlx_header(struct mlx4_ib_sqp *sqp, struct ib_ud_wr *wr,
+ 		u16 ether_type;
+ 		u16 pcp = (be32_to_cpu(ah->av.ib.sl_tclass_flowlabel) >> 29) << 13;
+ 
+-		ether_type = (!is_udp) ? ETH_P_IBOE:
++		ether_type = (!is_udp) ? ETH_P_IBOE :
+ 			(ip_version = 4 ? ETH_P_IP : ETH_P_IPV6);
+ 
+ 		mlx->sched_prio = cpu_to_be16(pcp);
+-- 
+2.12.2
 
