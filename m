@@ -1,30 +1,32 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Sat, 15 Apr 2017 09:32:09 +0000
-Subject: Re: [PATCH v2] drm/i915: set "ret" correctly on error paths
-Message-Id: <20170415093209.GD12532@nuc-i3427.alporthouse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 20:53:01 +0000
+Subject: [PATCH 1/2] lightnvm: potential underflow in pblk_read_rq()
+Message-Id: <20170421205301.3ds7jrgcktuldvrp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413202924.GY12532@nuc-i3427.alporthouse.com>
- <20170414195425.GA8144@mwanda>
-In-Reply-To: <20170414195425.GA8144@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Matias Bjorling <mb@lightnvm.io>, Javier =?iso-8859-1?Q?Gonz=E1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 14, 2017 at 10:54:25PM +0300, Dan Carpenter wrote:
-> If "crtc" is NULL, then my static checker complains that "ret" isn't
-> initialized on that path.  It doesn't really cause a problem unless
-> "ret" is somehow set to -EDEADLK which is not likely.
-> 
-> Chris Wilson also noticed another error path where "ret" isn't set
-> correctly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+This is a static checker fix, and perhaps not a real bug.  The static
+checker thinks that nr_secs could be negative.  It would result in
+zeroing more memory than intended.  Anyway, even if it's not a bug,
+changing this variable to unsigned makes the code easier to audit.
 
-Pushed, thanks very much for the patch.
--Chris
+Fixes: a4bd217b4326 ("lightnvm: physical block device (pblk) target")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index bce7ed5fc73f..c9daa33e8d9c 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -288,7 +288,7 @@ static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+-	int nr_secs = pblk_get_secs(bio);
++	unsigned int nr_secs = pblk_get_secs(bio);
+ 	struct nvm_rq *rqd;
+ 	unsigned long read_bitmap; /* Max 64 ppas per request */
+ 	unsigned int bio_init_idx;
