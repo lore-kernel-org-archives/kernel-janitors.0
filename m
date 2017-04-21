@@ -1,26 +1,41 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 20 Apr 2017 14:19:44 +0000
-Subject: Re: [PATCH][-next] block, bfq: don't dereference bic before null checking it
-Message-Id: <20170420141944.GB10057@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 10:39:09 +0000
+Subject: [PATCH] HSI: ssi_protocol: double free in ssip_pn_xmit()
+Message-Id: <20170421103909.y5zdbq7joxw6leam@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170420140718.19694-1-colin.king@canonical.com>
-In-Reply-To: <20170420140718.19694-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Paolo Valente <paolo.valente@linaro.org>, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Jarod Wilson <jarod@redhat.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 20 2017, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to bfq_check_ioprio_change will dereference bic, however,
-> the null check for bic is after this call.  Move the the null
-> check on bic to before the call to avoid any potential null
-> pointer dereference issues.
+If skb_pad() fails then it frees skb and we don't need to free it again
+at the end of the function.
 
-Thanks, added.
+Fixes: dc7bf5d7 ("HSI: Introduce driver for SSI Protocol")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_protocol.c
+index 7ef819680acd..26b05106f0d3 100644
+--- a/drivers/hsi/clients/ssi_protocol.c
++++ b/drivers/hsi/clients/ssi_protocol.c
+@@ -980,7 +980,7 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		goto drop;
+ 	/* Pad to 32-bits - FIXME: Revisit*/
+ 	if ((skb->len & 3) && skb_pad(skb, 4 - (skb->len & 3)))
+-		goto drop;
++		goto inc_dropped;
+ 
+ 	/*
+ 	 * Modem sends Phonet messages over SSI with its own endianess...
+@@ -1032,8 +1032,9 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct net_device *dev)
+ drop2:
+ 	hsi_free_msg(msg);
+ drop:
+-	dev->stats.tx_dropped++;
+ 	dev_kfree_skb(skb);
++inc_dropped:
++	dev->stats.tx_dropped++;
+ 
+ 	return 0;
+ }
