@@ -1,98 +1,78 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 19:47:55 +0000
-Subject: [PATCH 2/5] target: Delete error messages for failed memory allocations
-Message-Id: <0ba7f3ea-612d-c3a6-16de-8237e41da041@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:33:31 +0000
+Subject: [PATCH v2 05/17] IB/mlx4: Delete four unnecessary return statements
+Message-Id: <c7dc6218-7cab-06ea-bca9-d534c607bbea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
-In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 19:20:26 +0200
+Date: Fri, 21 Apr 2017 13:10:14 +0200
 
 The script "checkpatch.pl" pointed information out like the following.
 
-WARNING: Possible unnecessary 'out of memory' message
+WARNING: void function return statements are not generally useful
 
-Thus remove such statements here.
+Thus remove such a statement in the affected functions.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/target_core_rd.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
-index 026857861107..838dc128d494 100644
---- a/drivers/target/target_core_rd.c
-+++ b/drivers/target/target_core_rd.c
-@@ -48,10 +48,8 @@ static int rd_attach_hba(struct se_hba *hba, u32 host_id)
- 	struct rd_host *rd_host;
+v2:
+Changes were rebased on source files from Linux next-20170421.
+These were recombined as requested by Doug Ledford.
+
+ drivers/infiniband/hw/mlx4/mad.c  | 3 ---
+ drivers/infiniband/hw/mlx4/main.c | 1 -
+ 2 files changed, 4 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index d8c27e3ed69a..cf33efce69d2 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1173,7 +1173,6 @@ static void handle_slaves_guid_change(struct mlx4_ib_dev *dev, u8 port_num,
+ out:
+ 	kfree(in_mad);
+ 	kfree(out_mad);
+-	return;
+ }
  
- 	rd_host = kzalloc(sizeof(struct rd_host), GFP_KERNEL);
--	if (!rd_host) {
--		pr_err("Unable to allocate memory for struct rd_host\n");
-+	if (!rd_host)
- 		return -ENOMEM;
--	}
+ void handle_port_mgmt_change_event(struct work_struct *work)
+@@ -2140,7 +2139,6 @@ void mlx4_ib_tunnels_update_work(struct work_struct *work)
+ 	mlx4_ib_tunnels_update(dmxw->dev, dmxw->slave, (int) dmxw->port,
+ 			       dmxw->do_init);
+ 	kfree(dmxw);
+-	return;
+ }
  
- 	rd_host->rd_host_id = host_id;
+ static int mlx4_ib_alloc_demux_ctx(struct mlx4_ib_dev *dev,
+@@ -2268,7 +2266,6 @@ static void mlx4_ib_master_tunnels(struct mlx4_ib_dev *dev, int do_init)
+ 	/* initialize or tear down tunnel QPs for the master */
+ 	for (i = 0; i < dev->dev->caps.num_ports; i++)
+ 		mlx4_ib_tunnels_update(dev, mlx4_master_func_num(dev->dev), i + 1, do_init);
+-	return;
+ }
  
-@@ -148,11 +146,8 @@ static int rd_allocate_sgl_table(struct rd_dev *rd_dev, struct rd_dev_sg_table *
+ int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 0ac670765466..232f556b1121 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -3109,7 +3109,6 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+ 	}
+ out:
+ 	kfree(dm);
+-	return;
+ }
  
- 		sg = kcalloc(sg_per_table + chain_entry, sizeof(*sg),
- 				GFP_KERNEL);
--		if (!sg) {
--			pr_err("Unable to allocate scatterlist array"
--				" for struct rd_dev\n");
-+		if (!sg)
- 			return -ENOMEM;
--		}
- 
- 		sg_init_table(sg, sg_per_table + chain_entry);
- 
-@@ -211,11 +206,8 @@ static int rd_build_device_space(struct rd_dev *rd_dev)
- 
- 	sg_tables = (total_sg_needed / max_sg_per_table) + 1;
- 	sg_table = kcalloc(sg_tables, sizeof(*sg_table), GFP_KERNEL);
--	if (!sg_table) {
--		pr_err("Unable to allocate memory for Ramdisk"
--		       " scatterlist tables\n");
-+	if (!sg_table)
- 		return -ENOMEM;
--	}
- 
- 	rd_dev->sg_table_array = sg_table;
- 	rd_dev->sg_table_count = sg_tables;
-@@ -271,11 +263,8 @@ static int rd_build_prot_space(struct rd_dev *rd_dev, int prot_length, int block
- 
- 	sg_tables = (total_sg_needed / max_sg_per_table) + 1;
- 	sg_table = kcalloc(sg_tables, sizeof(*sg_table), GFP_KERNEL);
--	if (!sg_table) {
--		pr_err("Unable to allocate memory for Ramdisk protection"
--		       " scatterlist tables\n");
-+	if (!sg_table)
- 		return -ENOMEM;
--	}
- 
- 	rd_dev->sg_prot_array = sg_table;
- 	rd_dev->sg_prot_count = sg_tables;
-@@ -297,10 +286,8 @@ static struct se_device *rd_alloc_device(struct se_hba *hba, const char *name)
- 	struct rd_host *rd_host = hba->hba_ptr;
- 
- 	rd_dev = kzalloc(sizeof(struct rd_dev), GFP_KERNEL);
--	if (!rd_dev) {
--		pr_err("Unable to allocate memory for struct rd_dev\n");
-+	if (!rd_dev)
- 		return NULL;
--	}
- 
- 	rd_dev->rd_host = rd_host;
- 
+ static void mlx4_ib_handle_catas_error(struct mlx4_ib_dev *ibdev)
 -- 
 2.12.2
 
