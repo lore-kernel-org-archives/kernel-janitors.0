@@ -1,60 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Apr 2017 09:07:43 +0000
-Subject: [PATCH 1/2] dmaengine: k3dma: Use devm_kcalloc() in k3_dma_probe()
-Message-Id: <3f5acfa7-3c12-e8e1-17dd-ae03ce45c0be@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 21 Apr 2017 17:28:36 +0000
+Subject: Applied "ASoC: Intel: Skylake: Uninitialized variable in probe_codec()" to the asoc tree
+Message-Id: <E1d1cMG-0001xn-QD@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f83beedc-28fd-c373-cca8-7261e42577a5@users.sourceforge.net>
-In-Reply-To: <f83beedc-28fd-c373-cca8-7261e42577a5@users.sourceforge.net>
+References: <20170420101702.nlq3537xumrseu26@mwanda>
+In-Reply-To: <20170420101702.nlq3537xumrseu26@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Lukas Wunner <lukas@wunner.de>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, Jayachandran B <jayachandran.b@intel.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Yong Zhi <yong.zhi@intel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Apr 2017 10:30:32 +0200
+The patch
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+   ASoC: Intel: Skylake: Uninitialized variable in probe_codec()
 
-  This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From e6a33532affd14c12688c0e9b2e773e8b2550f3b Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Apr 2017 13:17:02 +0300
+Subject: [PATCH] ASoC: Intel: Skylake: Uninitialized variable in probe_codec()
+
+My static checker complains that if snd_hdac_bus_get_response() returns
+-EIO then "res" is uninitialized.  Fix this by initializing it to -1 so
+that the error is handled correctly.
+
+Fixes: d8c2dab8381d ("ASoC: Intel: Add Skylake HDA audio driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/dma/k3dma.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/intel/skylake/skl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index 01e25c68dd5a..31a51ee1a910 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -845,8 +845,8 @@ static int k3_dma_probe(struct platform_device *op)
- 		return -ENOMEM;
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index 0c57d4eaae3a..6df3b317a476 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -512,7 +512,7 @@ static int probe_codec(struct hdac_ext_bus *ebus, int addr)
+ 	struct hdac_bus *bus = ebus_to_hbus(ebus);
+ 	unsigned int cmd = (addr << 28) | (AC_NODE_ROOT << 20) |
+ 		(AC_VERB_PARAMETERS << 8) | AC_PAR_VENDOR_ID;
+-	unsigned int res;
++	unsigned int res = -1;
  
- 	/* init phy channel */
--	d->phy = devm_kzalloc(&op->dev,
--		d->dma_channels * sizeof(struct k3_dma_phy), GFP_KERNEL);
-+	d->phy = devm_kcalloc(&op->dev, d->dma_channels, sizeof(*d->phy),
-+			      GFP_KERNEL);
- 	if (d->phy = NULL)
- 		return -ENOMEM;
- 
-@@ -875,8 +875,8 @@ static int k3_dma_probe(struct platform_device *op)
- 	d->slave.copy_align = DMAENGINE_ALIGN_8_BYTES;
- 
- 	/* init virtual channel */
--	d->chans = devm_kzalloc(&op->dev,
--		d->dma_requests * sizeof(struct k3_dma_chan), GFP_KERNEL);
-+	d->chans = devm_kcalloc(&op->dev, d->dma_requests, sizeof(*d->chans),
-+				GFP_KERNEL);
- 	if (d->chans = NULL)
- 		return -ENOMEM;
- 
+ 	mutex_lock(&bus->cmd_mutex);
+ 	snd_hdac_bus_send_cmd(bus, cmd);
 -- 
-2.12.2
+2.11.0
 
