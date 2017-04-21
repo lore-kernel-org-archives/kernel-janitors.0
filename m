@@ -1,48 +1,33 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 21 Apr 2017 19:28:02 +0000
-Subject: Re: [PATCH v2 16/17] IB/mlx4: Add spaces for better code readability
-Message-Id: <1492802882.30293.34.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 10:39:38 +0000
+Subject: [PATCH] iwlwifi: pcie: missing unlock on error path
+Message-Id: <20170421103937.jko3eguvfn3i6r3v@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-         <1492720654.3041.16.camel@redhat.com>
-         <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-         <d7f1064f-a70e-83c4-bf45-0467ffba954f@users.sourceforge.net>
-In-Reply-To: <d7f1064f-a70e-83c4-bf45-0467ffba954f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Johannes Berg <johannes.berg@intel.com>, Sara Sharon <sara.sharon@intel.com>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2017-04-21 at 20:54 +0200, SF Markus Elfring wrote:
+We should unlock before returning.
 
-> Use space characters at some source code places according to
-> the Linux coding style convention.
+Fixes: eda50cde58de ("iwlwifi: pcie: add context information support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[]
-
-> diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-[]
-> @@ -2599,7 +2599,7 @@ static int build_mlx_header(struct mlx4_ib_sqp *sqp, struct ib_ud_wr *wr,
->  		u16 ether_type;
->  		u16 pcp = (be32_to_cpu(ah->av.ib.sl_tclass_flowlabel) >> 29) << 13;
->  
-> -		ether_type = (!is_udp) ? ETH_P_IBOE:
-> +		ether_type = (!is_udp) ? ETH_P_IBOE :
->  			(ip_version = 4 ? ETH_P_IP : ETH_P_IPV6);
-
-Please refrain from tool generated mechanical changes.
-
-Do try to make the code human readable and correct when
-you are also making actual object code differences.
-
-If this is to be modified at all then also please use
-consistent ?: condition testing parentheses or perhaps
-don't use parentheses at all.
-
-Maybe even align the ETH_P_ uses like:
-
-		ether_type = !is_udp		? ETH_P_IBOE :
-			     ip_version = 4	? ETH_P_IP :
-						  ETH_P_IPV6;
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c
+index 302310dfef9e..4e84955d55c8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c
+@@ -212,8 +212,10 @@ int iwl_trans_pcie_gen2_start_fw(struct iwl_trans *trans,
+ 		goto out;
+ 	}
+ 
+-	if (iwl_pcie_ctxt_info_init(trans, fw))
+-		return -ENOMEM;
++	if (iwl_pcie_ctxt_info_init(trans, fw)) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	/* re-check RF-Kill state since we may have missed the interrupt */
+ 	hw_rfkill = iwl_trans_check_hw_rf_kill(trans);
