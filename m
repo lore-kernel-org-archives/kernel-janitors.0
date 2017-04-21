@@ -1,30 +1,54 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Tue, 25 Apr 2017 17:02:13 +0000
-Subject: Re: [PATCH v2 01/12] IB/ocrdma: Use kcalloc() in ocrdma_mbx_alloc_pd_range()
-Message-Id: <1493139733.3041.75.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:17:52 +0000
+Subject: [PATCH v2 00/17] IB/mlx: Fine-tuning for several function implementations
+Message-Id: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
-         <1492720999.3041.18.camel@redhat.com>
-         <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
-         <21442d70-e77b-8338-30f7-9c41d048a665@users.sourceforge.net>
-         <CANjDDBgOa=8d5747AdTAZdwueGYrZNVZBe6zSPKOC1qzyDiheg@mail.gmail.com>
-In-Reply-To: <CANjDDBgOa=8d5747AdTAZdwueGYrZNVZBe6zSPKOC1qzyDiheg@mail.gmail.com>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+In-Reply-To: <1492720654.3041.16.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Devesh Sharma <devesh.sharma@broadcom.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Devesh Sharma <devesh.sharma@avagotech.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma <linux-rdma@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 2017-04-24 at 21:57 +0530, Devesh Sharma wrote:
-> Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 19:56:54 +0200
 
-Devesh, after you have reviewed any of Markus' patches that you care to
-review, if you wish any of them to go into my tree, please submit them
-to me yourself.  Thanks.
+Several update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (17):
+  Use kcalloc() in mlx4_ib_alloc_pv_bufs()
+  Use kmalloc_array() in six functions
+  Improve size determinations in six functions
+  Fix a typo in a comment line
+  Delete four unnecessary return statements
+  Delete an unnecessary check before kfree() in free_pv_object()
+  Move an assignment out of a check in forward_trap()
+  Enclose 46 expressions for sizeof by parentheses
+  Split a condition check in six functions
+  Delete an unnecessary variable in __mlx4_ib_query_gid()
+  Delete an unnecessary variable initialisation in mlx4_ib_add()
+  Delete an unnecessary variable assignment in mlx4_ib_add()
+  Delete an error message for a failed memory allocation in mlx4_ib_add()
+  Delete unnecessary braces in mlx4_ib_add()
+  Delete unwanted spaces behind usages of the sizeof operator
+  Add spaces for better code readability
+  Less function calls in create_kernel_qp() after error detection
+---
+
+v2:
+Changes were rebased on source files from Linux next-20170421.
+Some of them were recombined as requested by Doug Ledford.
+
+ drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
+ drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++----------------
+ drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++-------------------
+ drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
+ drivers/infiniband/hw/mlx5/srq.c  |   5 +-
+ 5 files changed, 261 insertions(+), 219 deletions(-)
 
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-   
-Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.12.2
 
