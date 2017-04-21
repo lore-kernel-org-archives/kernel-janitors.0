@@ -1,44 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 12:40:07 +0000
-Subject: [PATCH 1/3] extcon: Use devm_kcalloc() in extcon_dev_register()
-Message-Id: <309234f0-ce27-0db7-dc70-802b59b1cc88@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:36:05 +0000
+Subject: [PATCH v2 06/17] IB/mlx4: Delete an unnecessary check before kfree() in free_pv_object()
+Message-Id: <950a4a7f-01f6-9791-5d4c-41abe07366ed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
-In-Reply-To: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: patches@opensource.wolfsonmicro.com, Chanwoo Choi <cw00.choi@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Apr 2017 20:54:11 +0200
+Date: Fri, 21 Apr 2017 13:50:38 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "devm_kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: kfree(NULL) is safe and this check is probably not required
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/extcon/extcon.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx4/mad.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-index f422a78ba342..acb847bc1619 100644
---- a/drivers/extcon/extcon.c
-+++ b/drivers/extcon/extcon.c
-@@ -1252,9 +1252,8 @@ int extcon_dev_register(struct extcon_dev *edev)
- 	}
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index cf33efce69d2..3caf468ca133 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1962,10 +1962,8 @@ static int alloc_pv_object(struct mlx4_ib_dev *dev, int slave, int port,
  
- 	spin_lock_init(&edev->lock);
--
--	edev->nh = devm_kzalloc(&edev->dev,
--			sizeof(*edev->nh) * edev->max_supported, GFP_KERNEL);
-+	edev->nh = devm_kcalloc(&edev->dev, edev->max_supported,
-+				sizeof(*edev->nh), GFP_KERNEL);
- 	if (!edev->nh) {
- 		ret = -ENOMEM;
- 		goto err_dev;
+ static void free_pv_object(struct mlx4_ib_dev *dev, int slave, int port)
+ {
+-	if (dev->sriov.demux[port - 1].tun[slave]) {
+-		kfree(dev->sriov.demux[port - 1].tun[slave]);
+-		dev->sriov.demux[port - 1].tun[slave] = NULL;
+-	}
++	kfree(dev->sriov.demux[port - 1].tun[slave]);
++	dev->sriov.demux[port - 1].tun[slave] = NULL;
+ }
+ 
+ static int create_pv_resources(struct ib_device *ibdev, int slave, int port,
 -- 
 2.12.2
 
