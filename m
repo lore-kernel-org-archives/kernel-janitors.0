@@ -1,41 +1,50 @@
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Date: Tue, 11 Apr 2017 08:38:59 +0000
-Subject: Re: [PATCH] gpu: host1x: Fix error handling
-Message-Id: <2df1f833-15f2-07fc-7949-a8bde1b8e7ab@kapsi.fi>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Apr 2017 11:13:49 +0000
+Subject: [PATCH] crypto: crypto4xx: rename ce_ring_contol to ce_ring_control
+Message-Id: <20170421111349.4060-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170410202922.17665-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170410202922.17665-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10.04.2017 23:29, Christophe JAILLET wrote:
-> If 'devm_reset_control_get' returns an error, then we erroneously return
-> success because error code is taken from 'host->clk' instead of
-> 'host->rst'.
->
-> Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/host1x/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> index f05ebb14fa63..ac65f52850a6 100644
-> --- a/drivers/gpu/host1x/dev.c
-> +++ b/drivers/gpu/host1x/dev.c
-> @@ -172,7 +172,7 @@ static int host1x_probe(struct platform_device *pdev)
->
->  	host->rst = devm_reset_control_get(&pdev->dev, "host1x");
->  	if (IS_ERR(host->rst)) {
-> -		err = PTR_ERR(host->clk);
-> +		err = PTR_ERR(host->rst);
->  		dev_err(&pdev->dev, "failed to get reset: %d\n", err);
->  		return err;
->  	}
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+trivial spelling mistake, missing r, rename to ce_ring_control
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/amcc/crypto4xx_core.c    | 2 +-
+ drivers/crypto/amcc/crypto4xx_reg_def.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
+index d10b4ae5e0da..fdc83a2281ca 100644
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -50,7 +50,7 @@
+ static void crypto4xx_hw_init(struct crypto4xx_device *dev)
+ {
+ 	union ce_ring_size ring_size;
+-	union ce_ring_contol ring_ctrl;
++	union ce_ring_control ring_ctrl;
+ 	union ce_part_ring_size part_ring_size;
+ 	union ce_io_threshold io_threshold;
+ 	u32 rand_num;
+diff --git a/drivers/crypto/amcc/crypto4xx_reg_def.h b/drivers/crypto/amcc/crypto4xx_reg_def.h
+index 46fe57c8f6eb..279b8725559f 100644
+--- a/drivers/crypto/amcc/crypto4xx_reg_def.h
++++ b/drivers/crypto/amcc/crypto4xx_reg_def.h
+@@ -180,7 +180,7 @@ union ce_ring_size {
+ } __attribute__((packed));
+ 
+ #define CRYPTO4XX_RING_CONTROL_OFFSET		0x54
+-union ce_ring_contol {
++union ce_ring_control {
+ 	struct {
+ 		u32 continuous:1;
+ 		u32 rsv:5;
+-- 
+2.11.0
+
