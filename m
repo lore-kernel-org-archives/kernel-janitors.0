@@ -1,50 +1,56 @@
-From: Geoff Lansberry <geoff@kuvee.com>
-Date: Tue, 25 Apr 2017 13:18:12 +0000
-Subject: Re: [PATCH] NFC: trf7970a: fix check of clock frequencies, use && instead of ||
-Message-Id: <CAO7Z3WL=iE++iJ5uGyrk3erG1U1OucH7csvWxdtw3eUqq3ca1A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 10:51:43 +0000
+Subject: [PATCH v2] drm/mediatek: fix a timeout loop
+Message-Id: <20170421105143.jbzvbsremnu6ltgp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170424133603.3697-1-colin.king@canonical.com>
-In-Reply-To: <20170424133603.3697-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: CK Hu <ck.hu@mediatek.com>, shaoming chen <shaoming.chen@mediatek.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 
-On Mon, Apr 24, 2017 at 9:36 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The "or" condition (clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
-> (clk_freq != TRF7970A_13MHZ_CLOCK_FREQUE) will always be true because
-> clk_freq cannot be equal to two different values at the same time. Use
-> the  && operator instead of || to fix this.
->
-> Detected by CoverityScan, CID#1430468 ("Constant expression result")
->
-> Fixes: 837eb4d21ecde7 ("NFC: trf7970a: add device tree option for 27MHz clock")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/nfc/trf7970a.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
-> index 2d1c8ca6e679..00eb6cd2b22f 100644
-> --- a/drivers/nfc/trf7970a.c
-> +++ b/drivers/nfc/trf7970a.c
-> @@ -2071,8 +2071,8 @@ static int trf7970a_probe(struct spi_device *spi)
->         }
->
->         of_property_read_u32(np, "clock-frequency", &clk_freq);
-> -       if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
-> -               (clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
-> +       if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) &&
-> +               (clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
->                 dev_err(trf->dev,
->                         "clock-frequency (%u Hz) unsupported\n",
->                         clk_freq);
-> --
-> 2.11.0
->
-Nice catch.
+This code causes a static checker warning because it treats "i = 0" as
+a timeout but, because it's a post-op, the loop actually ends with "i"
+set to -1.  Philipp Zabel points out that it would be cleaner to use
+readl_poll_timeout() instead.
 
-Acked-by: Geoff Lansberry <geoff@kuvee.com>
+Fixes: 21898816831f ("drm/mediatek: add dsi transfer function")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Use readl_poll_timeout().  Please review this carefully because I've
+never used readl_poll_timeout() and could easily mess up.
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 808b995a990f..b5cc6e12334c 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -19,6 +19,7 @@
+ #include <drm/drm_of.h>
+ #include <linux/clk.h>
+ #include <linux/component.h>
++#include <linux/iopoll.h>
+ #include <linux/irq.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+@@ -900,16 +901,12 @@ static int mtk_dsi_host_detach(struct mipi_dsi_host *host,
+ 
+ static void mtk_dsi_wait_for_idle(struct mtk_dsi *dsi)
+ {
+-	u32 timeout_ms = 500000; /* total 1s ~ 2s timeout */
+-
+-	while (timeout_ms--) {
+-		if (!(readl(dsi->regs + DSI_INTSTA) & DSI_BUSY))
+-			break;
+-
+-		usleep_range(2, 4);
+-	}
++	int ret;
++	u32 val;
+ 
+-	if (timeout_ms = 0) {
++	ret = readl_poll_timeout(dsi->regs + DSI_INTSTA, val, !(val & DSI_BUSY),
++				 4, 2000000);
++	if (ret) {
+ 		DRM_WARN("polling dsi wait not busy timeout!\n");
+ 
+ 		mtk_dsi_enable(dsi);
