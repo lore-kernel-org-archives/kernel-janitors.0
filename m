@@ -1,28 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 08 Apr 2017 12:10:10 +0000
-Subject: [PATCH 0/3] InfiniBand-SRP: Fine-tuning for some function implementations
-Message-Id: <50db1f1d-b689-1a9d-f6dd-a0f55169c75a@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:46:48 +0000
+Subject: [PATCH v2 13/17] IB/mlx4: Delete an error message for a failed memory allocation in mlx4_ib_add()
+Message-Id: <c63df5f0-3344-1eeb-6513-bb064569ce41@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bart Van Assche <bart.vanassche-XdAiOPVOjttBDgjK7y7TUQ@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 8 Apr 2017 14:04:04 +0200
+Date: Fri, 21 Apr 2017 18:55:35 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (3):
-  Use kmalloc_array() in srp_alloc_req_data()
-  Enclose 14 expressions for the sizeof operator by parentheses
-  Delete unwanted spaces behind usages of the sizeof operator
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mlx4/main.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
- drivers/infiniband/ulp/srp/ib_srp.c | 59 +++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 29 deletions(-)
-
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 4eb2466530dc..67368dea9b6a 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2626,11 +2626,8 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 		return NULL;
+ 
+ 	ibdev = (struct mlx4_ib_dev *) ib_alloc_device(sizeof(*ibdev));
+-	if (!ibdev) {
+-		dev_err(&dev->persist->pdev->dev,
+-			"Device struct alloc failed\n");
++	if (!ibdev)
+ 		return NULL;
+-	}
+ 
+ 	iboe = &ibdev->iboe;
+ 
 -- 
 2.12.2
 
