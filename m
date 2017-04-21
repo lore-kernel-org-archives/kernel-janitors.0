@@ -1,50 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 21:02:55 +0000
-Subject: [PATCH 2/2] regulator: s2mps11: Use devm_kmalloc_array() in s2mps11_pmic_probe()
-Message-Id: <57e9c3a5-3751-41ee-3b70-f532fb928571@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:30:41 +0000
+Subject: [PATCH v2 04/17] IB/mlx4: Fix a typo in a comment line
+Message-Id: <c5cae195-ad8e-6f36-726f-7245ca7ff0a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
-In-Reply-To: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 22:40:19 +0200
+Date: Fri, 21 Apr 2017 12:28:35 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "devm_kmalloc_array".
-
-This issue was detected by using the Coccinelle software.
+Add a missing character in this description and adjust
+the comment formatting.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 ---
- drivers/regulator/s2mps11.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx4/mad.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index b4e588cce03d..b397a2e0bcd1 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1139,9 +1139,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index ea4892b0f39e..d8c27e3ed69a 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1559,8 +1559,10 @@ static void mlx4_ib_multiplex_mad(struct mlx4_ib_demux_pv_ctx *ctx, struct ib_wc
+ 		}
  	}
  
--	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
--			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
--			GFP_KERNEL);
-+	s2mps11->ext_control_gpio
-+		= devm_kmalloc_array(&pdev->dev,
-+				     rdev_num,
-+				     sizeof(*s2mps11->ext_control_gpio),
-+				     GFP_KERNEL);
- 	if (!s2mps11->ext_control_gpio)
- 		return -ENOMEM;
- 	/*
+-	/* We are using standard ib_core services to send the mad, so generate a
+-	 * stadard address handle by decoding the tunnelled mlx4_ah fields */
++	/*
++	 * We are using standard ib_core services to send the mad, so generate
++	 * a standard address handle by decoding the tunnelled mlx4_ah fields.
++	 */
+ 	memcpy(&ah.av, &tunnel->hdr.av, sizeof (struct mlx4_av));
+ 	ah.ibah.device = ctx->ib_dev;
+ 
 -- 
 2.12.2
-
 
