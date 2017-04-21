@@ -1,40 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:11:31 +0000
-Subject: [PATCH 03/10] pinctrl: imx: Return directly after a failed devm_kcalloc() in imx_pinctrl_parse_funct
-Message-Id: <786ef7b5-f889-7951-7479-e9e1f901f041@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:21:12 +0000
+Subject: [PATCH v2 01/17] IB/mlx4: Use kcalloc() in mlx4_ib_alloc_pv_bufs()
+Message-Id: <4ab0af63-1ea3-acd5-75ba-1992d8ae9924@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 15:12:20 +0200
+Date: Fri, 21 Apr 2017 10:21:01 +0200
 
-Add a check for a null pointer and return an error code
-after a memory allocation failure was detected.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/mlx4/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 975ed40cb774..f835e8210ace 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -585,6 +585,8 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
- 					 func->num_group_names,
- 					 sizeof(*func->group_names),
- 					 GFP_KERNEL);
-+	if (!func->group_names)
-+		return -ENOMEM;
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index db564ccc0f92..61bd81baeb29 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1600,8 +1600,8 @@ static int mlx4_ib_alloc_pv_bufs(struct mlx4_ib_demux_pv_ctx *ctx,
+ 		return -EINVAL;
  
- 	for_each_child_of_node(np, child) {
- 		func->group_names[i] = child->name;
+ 	tun_qp = &ctx->qp[qp_type];
+-
+-	tun_qp->ring = kzalloc(sizeof (struct mlx4_ib_buf) * MLX4_NUM_TUNNEL_BUFS,
++	tun_qp->ring = kcalloc(MLX4_NUM_TUNNEL_BUFS,
++			       sizeof(*tun_qp->ring),
+ 			       GFP_KERNEL);
+ 	if (!tun_qp->ring)
+ 		return -ENOMEM;
 -- 
 2.12.2
 
