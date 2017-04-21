@@ -1,54 +1,39 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Wed, 05 Apr 2017 15:17:48 +0000
-Subject: Re: [PATCH 1/5] IB/qib: Use kcalloc() in qib_init_iba7322_funcs()
-Message-Id: <20170405151747.GB5519@yuval-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Apr 2017 19:37:17 +0000
+Subject: [PATCH] mtip32xx: Uninitialized variable in mtip_no_dev_cleanup()
+Message-Id: <20170421193717.u2cxdq2jyithqqxi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c16b18ac-287f-5faf-b79a-c86e2adfa22c@users.sourceforge.net>
- <5e5e00d3-b6a4-7371-65be-c5fe387d26b3@users.sourceforge.net>
- <20170405143438.GC5006@yuval-lap>
- <fa90e815-daff-57b1-7930-447c6f5fa3ab@users.sourceforge.net>
- <20170405150658.GU3941@linux-x5ow.site>
-In-Reply-To: <20170405150658.GU3941@linux-x5ow.site>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>, Hannes Reinecke <hare@suse.com>, Bart Van Assche <Bart.VanAssche@sandisk.com>, Sachin Shukla <sachin.s5@samsung.com>, Pan Bian <bianpan2016@163.com>, Ming Lei <tom.leiming@gmail.com>, Eric Biggers <ebiggers@google.com>, Mike Christie <mchristi@redhat.com>, Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 05, 2017 at 05:06:58PM +0200, Johannes Thumshirn wrote:
-> On Wed, Apr 05, 2017 at 04:54:40PM +0200, SF Markus Elfring wrote:
-> > >> @@ -7324,8 +7324,9 @@ struct qib_devdata *qib_init_iba7322_funcs(str=
-uct pci_dev *pdev,
-> > >>  		actual_cnt -=3D dd->num_pports;
-> > >> =20
-> > >>  	tabsize =3D actual_cnt;
-> > >> -	dd->cspec->msix_entries =3D kzalloc(tabsize *
-> > >> -			sizeof(struct qib_msix_entry), GFP_KERNEL);
-> > >> +	dd->cspec->msix_entries =3D kcalloc(tabsize,
-> > >> +					  sizeof(*dd->cspec->msix_entries),
-> > >> +					  GFP_KERNEL);
-> > >=20
-> > > Are we fine with loosing the zeroing of the entries?
-> >=20
-> > How did you get this concern?
-> >=20
-> > Do you really miss such functionality from the other interface?
->=20
-> Ahm... Don't kzalloc() and kcalloc() both pass in __GFP_ZERO?
+We set "cmd->state = -ENODEV;" but "cmd" hasn't been initialized yet.
+It's weird that GCC doesn't catch this.
 
-Yes.
-Please ignore my comment.
+Fixes: 4dda4735c581 ("mtip32xx: add a status field to struct mtip_cmd")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested, please review carefully.
 
->=20
-> --=20
-> Johannes Thumshirn                                          Storage
-> jthumshirn@suse.de                                +49 911 74053 689
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-> GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG N=FCrnberg)
-> Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index 66a6bd83faae..bd4bf70a5bcd 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -4105,14 +4105,12 @@ static int mtip_block_initialize(struct driver_data *dd)
+ static void mtip_no_dev_cleanup(struct request *rq, void *data, bool reserv)
+ {
+ 	struct driver_data *dd = (struct driver_data *)data;
+-	struct mtip_cmd *cmd;
++	struct mtip_cmd *cmd = mtip_cmd_from_tag(dd, MTIP_TAG_INTERNAL);
+ 
+ 	if (likely(!reserv)) {
+ 		cmd->status = -ENODEV;
+ 		blk_mq_complete_request(rq);
+ 	} else if (test_bit(MTIP_PF_IC_ACTIVE_BIT, &dd->port->flags)) {
+-
+-		cmd = mtip_cmd_from_tag(dd, MTIP_TAG_INTERNAL);
+ 		if (cmd->comp_func)
+ 			cmd->comp_func(dd->port, MTIP_TAG_INTERNAL,
+ 					cmd, -ENODEV);
