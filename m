@@ -1,54 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:17:52 +0000
-Subject: [PATCH v2 00/17] IB/mlx: Fine-tuning for several function implementations
-Message-Id: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+From: Bart Van Assche <Bart.VanAssche@sandisk.com>
+Date: Fri, 21 Apr 2017 18:29:34 +0000
+Subject: Re: [PATCH v2 00/17] IB/mlx: Fine-tuning for several function implementations
+Message-Id: <1492799374.2550.24.camel@sandisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
-In-Reply-To: <1492720654.3041.16.camel@redhat.com>
+         <1492720654.3041.16.camel@redhat.com>
+         <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "leonro@mellanox.com" <leonro@mellanox.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "yishaih@mellanox.com" <yishaih@mellanox.com>, "sean.hefty@intel.com" <sean.hefty@intel.com>, "elfring@users.sourceforge.net" <elfring@users.sourceforge.net>, "majd@mellanox.com" <majd@mellanox.com>, "hal.rosenstock@gmail.com" <hal.rosenstock@gmail.com>, "dledford@redhat.com" <dledford@redhat.com>, "matanb@mellanox.com" <matanb@mellanox.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 19:56:54 +0200
+On Fri, 2017-04-21 at 20:17 +0200, SF Markus Elfring wrote:
+> Several update suggestions were taken into account
+> from static source code analysis.
 
-Several update suggestions were taken into account
-from static source code analysis.
+Hello Markus,
 
-Markus Elfring (17):
-  Use kcalloc() in mlx4_ib_alloc_pv_bufs()
-  Use kmalloc_array() in six functions
-  Improve size determinations in six functions
-  Fix a typo in a comment line
-  Delete four unnecessary return statements
-  Delete an unnecessary check before kfree() in free_pv_object()
-  Move an assignment out of a check in forward_trap()
-  Enclose 46 expressions for sizeof by parentheses
-  Split a condition check in six functions
-  Delete an unnecessary variable in __mlx4_ib_query_gid()
-  Delete an unnecessary variable initialisation in mlx4_ib_add()
-  Delete an unnecessary variable assignment in mlx4_ib_add()
-  Delete an error message for a failed memory allocation in mlx4_ib_add()
-  Delete unnecessary braces in mlx4_ib_add()
-  Delete unwanted spaces behind usages of the sizeof operator
-  Add spaces for better code readability
-  Less function calls in create_kernel_qp() after error detection
----
+Patches should either be useful to users of the Linux kernel, e.g. by adding
+new functionality or by fixing a bug, or to kernel developers, e.g. by making
+their workflow easier. I don't think this patch series falls in either
+category so please drop these patches.
 
-v2:
-Changes were rebased on source files from Linux next-20170421.
-Some of them were recombined as requested by Doug Ledford.
+Thanks,
 
- drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
- drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++----------------
- drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++-------------------
- drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
- drivers/infiniband/hw/mlx5/srq.c  |   5 +-
- 5 files changed, 261 insertions(+), 219 deletions(-)
-
--- 
-2.12.2
-
+Bart.
