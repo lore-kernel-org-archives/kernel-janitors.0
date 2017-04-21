@@ -1,24 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 18:11:38 +0000
-Subject: Re: scsi: ufs: Delete an error message for a failed memory allocation in ufshcd_memory_alloc()
-Message-Id: <6d4cb083-7a06-3c7d-bf98-a0386178a65d@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 18:37:11 +0000
+Subject: [PATCH v2 07/17] IB/mlx4: Move an assignment out of a check in forward_trap()
+Message-Id: <cdfdbe94-e226-e2f3-66ee-7649e58fcee5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
- <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
- <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
-In-Reply-To: <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subhash Jadavani <subhashj@codeaurora.org>
-Cc: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-scsi-owner@vger.kernel.org
+To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Majd Dibbiny <majd-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-> Although i don't know "out of memory" messages will be printed out by dmam_alloc_coherent() APIs
-> or not.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Apr 2017 14:00:08 +0200
 
-Would such information belong to the programming interface documentation?
+The script "checkpatch.pl" pointed information out like the following.
 
-Are there any related tags or source code annotations needed?
+ERROR: do not use assignment in if condition
 
-Regards,
-Markus
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
+---
+ drivers/infiniband/hw/mlx4/mad.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index 3caf468ca133..0a5b46791335 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -401,7 +401,8 @@ static void forward_trap(struct mlx4_ib_dev *dev, u8 port_num, const struct ib_m
+ 		 */
+ 		spin_lock_irqsave(&dev->sm_lock, flags);
+ 		memcpy(send_buf->mad, mad, sizeof *mad);
+-		if ((send_buf->ah = dev->sm_ah[port_num - 1]))
++		send_buf->ah = dev->sm_ah[port_num - 1];
++		if (send_buf->ah)
+ 			ret = ib_post_send_mad(send_buf, NULL);
+ 		else
+ 			ret = -EINVAL;
+-- 
+2.12.2
+
