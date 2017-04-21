@@ -1,31 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Apr 2017 10:21:30 +0000
-Subject: [PATCH] net: qrtr: potential use after free in qrtr_sendmsg()
-Message-Id: <20170420102130.jhafz7e532y5iqd4@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Apr 2017 12:07:13 +0000
+Subject: [PATCH] ARM: at91/at91-pinctrl documentation: fix spelling mistake: "contoller" -> "controller"
+Message-Id: <20170421120713.4939-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Courtney Cavin <courtney.cavin@sonymobile.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, David Ahern <dsa@cumulusnetworks.com>, Stephen Boyd <sboyd@codeaurora.org>, Johannes Berg <johannes.berg@intel.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If skb_pad() fails then it frees the skb so we should check for errors.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: bdabad3e363d ("net: Add Qualcomm IPC router")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+trivial fix to spelling mistake in documentation
 
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index c36b0ec364a4..a9a8c7d5a4a9 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -658,7 +658,9 @@ static int qrtr_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 	}
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+index 9a8a45d9d8ab..590e60378be3 100644
+--- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+@@ -4,7 +4,7 @@ The AT91 Pinmux Controller, enables the IC
+ to share one PAD to several functional blocks. The sharing is done by
+ multiplexing the PAD input/output signals. For each PAD there are up to
+ 8 muxing options (called periph modes). Since different modules require
+-different PAD settings (like pull up, keeper, etc) the contoller controls
++different PAD settings (like pull up, keeper, etc) the controller controls
+ also the PAD settings parameters.
  
- 	if (plen != len) {
--		skb_pad(skb, plen - len);
-+		rc = skb_pad(skb, plen - len);
-+		if (rc)
-+			goto out_node;
- 		skb_put(skb, plen - len);
- 	}
- 
+ Please refer to pinctrl-bindings.txt in this directory for details of the
+-- 
+2.11.0
+
