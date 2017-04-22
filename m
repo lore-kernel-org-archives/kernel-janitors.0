@@ -1,53 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Apr 2017 19:56:21 +0000
-Subject: [PATCH 4/5] clk: mvebu: Adjust two checks for null pointers in kirkwood_fix_sscg_deviation()
-Message-Id: <8c5bdefb-896b-cd96-7e69-77ccb4a9286e@users.sourceforge.net>
+Date: Sat, 22 Apr 2017 14:49:51 +0000
+Subject: [PATCH v2 09/12] IB/ocrdma: Delete an unnecessary variable assignment in ocrdma_alloc_mr()
+Message-Id: <78cdbeeb-5274-d315-33d3-4019f0eb35be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
-In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+ <1492720999.3041.18.camel@redhat.com>
+ <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Apr 2017 21:17:19 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sat, 22 Apr 2017 15:07:41 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+Delete an assignment for the local variable "status" in an if branch
+because the desired failure indication is already specified by a constant
+error code at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Devesh Sharma <devesh.sharma@broadcom.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
 ---
- drivers/clk/mvebu/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index 472c88b90256..659d534a137b 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -51,13 +51,13 @@ u32 kirkwood_fix_sscg_deviation(u32 system_clk)
- 	u64 freq_swing_half;
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index c804889db7e1..2dc399eeeefd 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -3022,10 +3022,8 @@ struct ib_mr *ocrdma_alloc_mr(struct ib_pd *ibpd,
+ 		return ERR_PTR(-ENOMEM);
  
- 	sscg_np = of_find_node_by_name(NULL, "sscg");
--	if (sscg_np = NULL) {
-+	if (!sscg_np) {
- 		pr_err("cannot get SSCG register node\n");
- 		return system_clk;
- 	}
+ 	mr->pages = kcalloc(max_num_sg, sizeof(*mr->pages), GFP_KERNEL);
+-	if (!mr->pages) {
+-		status = -ENOMEM;
++	if (!mr->pages)
+ 		goto pl_err;
+-	}
  
- 	sscg_map = of_iomap(sscg_np, 0);
--	if (sscg_map = NULL) {
-+	if (!sscg_map) {
- 		pr_err("cannot map SSCG register\n");
- 		goto out;
- 	}
+ 	status = ocrdma_get_pbl_info(dev, mr, max_num_sg);
+ 	if (status)
 -- 
 2.12.2
 
