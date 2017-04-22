@@ -1,48 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 14:23:41 +0000
-Subject: [PATCH 1/3] iscsi-target: Use kcalloc() in iscsit_allocate_iovecs()
-Message-Id: <ba9505d9-9c00-9534-c16b-4fab5403a57e@users.sourceforge.net>
+Date: Sat, 22 Apr 2017 14:50:51 +0000
+Subject: [PATCH v2 10/12] IB/ocrdma: Returning only value constants in ocrdma_resize_cq()
+Message-Id: <0ecccc12-7340-927b-3745-8b84a7e137f8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
-In-Reply-To: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+ <1492720999.3041.18.camel@redhat.com>
+ <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Hannes Reinecke <hare@suse.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
+To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 15:06:00 +0200
+Date: Sat, 22 Apr 2017 15:15:09 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Return constant integer values without storing them in the local
+variable "status".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Devesh Sharma <devesh.sharma@broadcom.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
 ---
- drivers/target/iscsi/iscsi_target.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-index a91802432f2f..536b939afe9d 100644
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -985,8 +985,7 @@ static int iscsit_allocate_iovecs(struct iscsi_cmd *cmd)
- 	u32 iov_count = max(1UL, DIV_ROUND_UP(cmd->se_cmd.data_length, PAGE_SIZE));
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 2dc399eeeefd..60b8813aff42 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1122,15 +1122,12 @@ struct ib_cq *ocrdma_create_cq(struct ib_device *ibdev,
+ int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
+ 		     struct ib_udata *udata)
+ {
+-	int status = 0;
+ 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
  
- 	iov_count += ISCSI_IOV_DATA_BUFFER;
--
--	cmd->iov_data = kzalloc(iov_count * sizeof(struct kvec), GFP_KERNEL);
-+	cmd->iov_data = kcalloc(iov_count, sizeof(*cmd->iov_data), GFP_KERNEL);
- 	if (!cmd->iov_data) {
- 		pr_err("Unable to allocate cmd->iov_data\n");
- 		return -ENOMEM;
+-	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
+-		status = -EINVAL;
+-		return status;
+-	}
++	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
++		return -EINVAL;
+ 	ibcq->cqe = new_cnt;
+-	return status;
++	return 0;
+ }
+ 
+ static void ocrdma_flush_cq(struct ocrdma_cq *cq)
 -- 
 2.12.2
 
