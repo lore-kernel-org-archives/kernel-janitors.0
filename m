@@ -1,61 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 13 Apr 2017 06:58:56 +0000
-Subject: Re: [PATCH] drm: fix spelling mistake: "committing"
-Message-Id: <20170413065856.5qcmkwycyqj4gywe@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Apr 2017 12:28:42 +0000
+Subject: [PATCH] ASoC: wm5100: fix spelling mistake: "micropone" -> "microphone"
+Message-Id: <20170422122842.8282-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170412162722.25087-1-colin.king@canonical.com>
-In-Reply-To: <20170412162722.25087-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 12, 2017 at 05:27:22PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DRM_DEBUG_ATOMIC debug message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied for 4.13 (4.12 feature cutoff is already gone).
+Trivial fix to spelling mistake in dev_err message
 
-Thanks, Daniel
-> ---
->  drivers/gpu/drm/drm_atomic.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index f32506a7c1d6..30229ab719c0 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -1618,7 +1618,7 @@ int drm_atomic_commit(struct drm_atomic_state *state)
->  	if (ret)
->  		return ret;
->  
-> -	DRM_DEBUG_ATOMIC("commiting %p\n", state);
-> +	DRM_DEBUG_ATOMIC("committing %p\n", state);
->  
->  	return config->funcs->atomic_commit(state->dev, state, false);
->  }
-> @@ -1647,7 +1647,7 @@ int drm_atomic_nonblocking_commit(struct drm_atomic_state *state)
->  	if (ret)
->  		return ret;
->  
-> -	DRM_DEBUG_ATOMIC("commiting %p nonblocking\n", state);
-> +	DRM_DEBUG_ATOMIC("committing %p nonblocking\n", state);
->  
->  	return config->funcs->atomic_commit(state->dev, state, true);
->  }
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/wm5100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
+index 560575000cc5..138a84efdd54 100644
+--- a/sound/soc/codecs/wm5100.c
++++ b/sound/soc/codecs/wm5100.c
+@@ -2014,7 +2014,7 @@ static void wm5100_micd_irq(struct wm5100_priv *wm5100)
+ 
+ 	ret = regmap_read(wm5100->regmap, WM5100_MIC_DETECT_3, &val);
+ 	if (ret != 0) {
+-		dev_err(wm5100->dev, "Failed to read micropone status: %d\n",
++		dev_err(wm5100->dev, "Failed to read microphone status: %d\n",
+ 			ret);
+ 		return;
+ 	}
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.11.0
+
