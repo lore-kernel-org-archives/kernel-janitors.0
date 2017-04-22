@@ -1,49 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:36:05 +0000
-Subject: [PATCH v2 06/17] IB/mlx4: Delete an unnecessary check before kfree() in free_pv_object()
-Message-Id: <950a4a7f-01f6-9791-5d4c-41abe07366ed@users.sourceforge.net>
+Date: Sat, 22 Apr 2017 14:26:14 +0000
+Subject: [PATCH v2 00/12] InfiniBand-OCRDMA: Fine-tuning for several function implementations
+Message-Id: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+ <1492720999.3041.18.camel@redhat.com>
+In-Reply-To: <1492720999.3041.18.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 13:50:38 +0200
+Date: Sat, 22 Apr 2017 16:16:06 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Several update suggestions were taken into account
+from static source code analysis.
 
-WARNING: kfree(NULL) is safe and this check is probably not required
-
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Markus Elfring (12):
+  Use kcalloc() in ocrdma_mbx_alloc_pd_range()
+  Use kcalloc() in five functions
+  Improve size determinations in ten functions
+  Delete unnecessary variable initialisations in ocrdma_mbx_get_dcbx_config()
+  Delete unnecessary braces
+  Use kmalloc_array() in ocrdma_create_srq()
+  Adjust 21 checks for null pointers
+  Delete an error message for a failed memory allocation in ocrdma_add()
+  Delete an unnecessary variable assignment in ocrdma_alloc_mr()
+  Returning only value constants in ocrdma_resize_cq()
+  Delete an unnecessary variable in ocrdma_dealloc_pd()
+  One jump label less in ocrdma_alloc_ucontext_pd()
 ---
- drivers/infiniband/hw/mlx4/mad.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index cf33efce69d2..3caf468ca133 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1962,10 +1962,8 @@ static int alloc_pv_object(struct mlx4_ib_dev *dev, int slave, int port,
- 
- static void free_pv_object(struct mlx4_ib_dev *dev, int slave, int port)
- {
--	if (dev->sriov.demux[port - 1].tun[slave]) {
--		kfree(dev->sriov.demux[port - 1].tun[slave]);
--		dev->sriov.demux[port - 1].tun[slave] = NULL;
--	}
-+	kfree(dev->sriov.demux[port - 1].tun[slave]);
-+	dev->sriov.demux[port - 1].tun[slave] = NULL;
- }
- 
- static int create_pv_resources(struct ib_device *ibdev, int slave, int port,
+v2:
+Changes were rebased on source files from Linux next-20170421.
+Some of them were recombined into bigger update steps
+as requested by Doug Ledford.
+
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  88 ++++++++++-----------
+ drivers/infiniband/hw/ocrdma/ocrdma_main.c  |  19 +++--
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 118 ++++++++++++----------------
+ 3 files changed, 100 insertions(+), 125 deletions(-)
+
 -- 
 2.12.2
 
