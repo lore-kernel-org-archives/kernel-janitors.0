@@ -1,61 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 08:32:18 +0000
-Subject: [PATCH 8/8] clk: nomadik: Delete error messages for a failed memory allocation in two functions
-Message-Id: <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Sat, 22 Apr 2017 02:48:18 +0000
+Subject: Re: [PATCH 8/8] clk: nomadik: Delete error messages for a failed memory allocation in two functions
+Message-Id: <20170422024818.GO7065@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+ <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
+In-Reply-To: <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:04:00 +0200
+On 04/20, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 20 Apr 2017 10:04:00 +0200
+> 
+> The script "checkpatch.pl" pointed information out like the following.
+> 
+> WARNING: Possible unnecessary 'out of memory' message
+> 
+> Thus remove such statements here.
+> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-The script "checkpatch.pl" pointed information out like the following.
+Applied to clk-next
 
-WARNING: Possible unnecessary 'out of memory' message
-
-Thus remove such statements here.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/clk-nomadik.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index 8d57ab8d6ed8..13ad6d1e5090 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -267,10 +267,8 @@ pll_clk_register(struct device *dev, const char *name,
- 	}
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
--	if (!pll) {
--		pr_err("%s: could not allocate PLL clk\n", __func__);
-+	if (!pll)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &pll_clk_ops;
-@@ -356,11 +354,9 @@ src_clk_register(struct device *dev, const char *name,
- 	struct clk_init_data init;
- 
- 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
--	if (!sclk) {
--		pr_err("could not allocate SRC clock %s\n",
--			name);
-+	if (!sclk)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	init.name = name;
- 	init.ops = &src_clk_ops;
- 	/* Do not force-disable the static SDRAM controller */
 -- 
-2.12.2
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
