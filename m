@@ -1,57 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Apr 2017 19:46:28 +0000
-Subject: [PATCH 1/2] coresight-stm: Use devm_kcalloc() in stm_probe()
-Message-Id: <47e6431f-1093-3a58-3ca4-406284c081aa@users.sourceforge.net>
+Date: Sat, 22 Apr 2017 20:31:27 +0000
+Subject: [PATCH 1/2] dmaengine: zx: Use devm_kcalloc() in zx_dma_probe()
+Message-Id: <e2b06d15-e639-43d0-6eee-42268b322d88@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
-In-Reply-To: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
+References: <85b8d46d-1643-0fdd-b295-9359ebca6444@users.sourceforge.net>
+In-Reply-To: <85b8d46d-1643-0fdd-b295-9359ebca6444@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Apr 2017 21:18:57 +0200
+Date: Sat, 22 Apr 2017 22:00:10 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
   Thus use the corresponding function "devm_kcalloc".
 
   This issue was detected by using the Coccinelle software.
 
-* Delete the local variable "bitmap_size" which became unnecessary
-  with this refactoring.
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwtracing/coresight/coresight-stm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/dma/zx_dma.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index 93fc26f01bab..bbb5275bf0d2 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -799,7 +799,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
- 	struct stm_drvdata *drvdata;
- 	struct resource *res = &adev->res;
- 	struct resource ch_res;
--	size_t res_size, bitmap_size;
-+	size_t res_size;
- 	struct coresight_desc desc = { 0 };
- 	struct device_node *np = adev->dev.of_node;
- 
-@@ -848,9 +848,9 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
- 		res_size = min((resource_size_t)(drvdata->numsp *
- 				 BYTES_PER_CHANNEL), resource_size(res));
- 	}
--	bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
- 
--	guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
-+	guaranteed = devm_kcalloc(dev, BITS_TO_LONGS(drvdata->numsp),
-+				  sizeof(long), GFP_KERNEL);
- 	if (!guaranteed)
+diff --git a/drivers/dma/zx_dma.c b/drivers/dma/zx_dma.c
+index 2bb695315300..4f7587a100ea 100644
+--- a/drivers/dma/zx_dma.c
++++ b/drivers/dma/zx_dma.c
+@@ -798,8 +798,8 @@ static int zx_dma_probe(struct platform_device *op)
  		return -ENOMEM;
- 	drvdata->chs.guaranteed = guaranteed;
+ 
+ 	/* init phy channel */
+-	d->phy = devm_kzalloc(&op->dev,
+-		d->dma_channels * sizeof(struct zx_dma_phy), GFP_KERNEL);
++	d->phy = devm_kcalloc(&op->dev, d->dma_channels, sizeof(*d->phy),
++			      GFP_KERNEL);
+ 	if (!d->phy)
+ 		return -ENOMEM;
+ 
+@@ -834,8 +834,8 @@ static int zx_dma_probe(struct platform_device *op)
+ 	d->slave.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+ 
+ 	/* init virtual channel */
+-	d->chans = devm_kzalloc(&op->dev,
+-		d->dma_requests * sizeof(struct zx_dma_chan), GFP_KERNEL);
++	d->chans = devm_kcalloc(&op->dev, d->dma_requests, sizeof(*d->chans),
++				GFP_KERNEL);
+ 	if (!d->chans)
+ 		return -ENOMEM;
+ 
 -- 
 2.12.2
 
