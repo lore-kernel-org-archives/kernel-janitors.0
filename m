@@ -1,50 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Apr 2017 20:19:40 +0000
-Subject: [PATCH 2/3] ACPI/int340x_thermal: Improve size determinations in two functions
-Message-Id: <4a122a0b-ac75-4a89-c991-487cc0017c5a@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 22 Apr 2017 12:35:33 +0000
+Subject: [PATCH] drivers/tty/hvc: fix spelling mistake: "missmanaged" -> "mismanaged"
+Message-Id: <20170422123533.8567-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
-In-Reply-To: <3ba36cc1-8445-462c-ca75-2b0928f3290a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Peter Hurley <peter@hurleysoftware.com>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Apr 2017 21:42:44 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of two data types by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determinations a bit safer according to the Linux coding style convention.
+Trivial fix to spelling mistake in printk message
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/thermal/int340x_thermal/acpi_thermal_rel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/hvc/hvcs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-index 52a5fe0f81e8..d7791b1fec33 100644
---- a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-+++ b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-@@ -247,7 +247,7 @@ static int fill_art(char __user *ubuf)
- 	ret = acpi_parse_art(acpi_thermal_rel_handle, &count, &arts, false);
- 	if (ret)
- 		goto free_art;
--	art_len = count * sizeof(union art_object);
-+	art_len = count * sizeof(*art_user);
- 	art_user = kzalloc(art_len, GFP_KERNEL);
- 	if (!art_user) {
- 		ret = -ENOMEM;
-@@ -283,7 +283,7 @@ static int fill_trt(char __user *ubuf)
- 	ret = acpi_parse_trt(acpi_thermal_rel_handle, &count, &trts, false);
- 	if (ret)
- 		goto free_trt;
--	trt_len = count * sizeof(union trt_object);
-+	trt_len = count * sizeof(*trt_user);
- 	trt_user = kzalloc(trt_len, GFP_KERNEL);
- 	if (!trt_user) {
- 		ret = -ENOMEM;
+diff --git a/drivers/tty/hvc/hvcs.c b/drivers/tty/hvc/hvcs.c
+index 7823d6d998cf..2113c64d565d 100644
+--- a/drivers/tty/hvc/hvcs.c
++++ b/drivers/tty/hvc/hvcs.c
+@@ -1242,8 +1242,7 @@ static void hvcs_close(struct tty_struct *tty, struct file *filp)
+ 		free_irq(irq, hvcsd);
+ 		return;
+ 	} else if (hvcsd->port.count < 0) {
+-		printk(KERN_ERR "HVCS: vty-server@%X open_count: %d"
+-				" is missmanaged.\n",
++		printk(KERN_ERR "HVCS: vty-server@%X open_count: %d is mismanaged.\n",
+ 		hvcsd->vdev->unit_address, hvcsd->port.count);
+ 	}
+ 
 -- 
-2.12.2
+2.11.0
 
