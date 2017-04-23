@@ -1,21 +1,35 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Date: Thu, 27 Apr 2017 14:04:06 +0000
-Subject: Re: [PATCH] usb: gadget: udc-xilinx: clean up a variable name
-Message-Id: <20170427140406.zdv32vgmjppdaiyd@xsjsorenbubuntu.xilinx.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 23 Apr 2017 21:32:57 +0000
+Subject: [PATCH 1/2] [media] vb2: Fix an off by one error in 'vb2_plane_vaddr'
+Message-Id: <20170423213257.14773-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170427091118.tm53zsyq53hhbzws@mwanda>
-In-Reply-To: <20170427091118.tm53zsyq53hhbzws@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Simek <michal.simek@xilinx.com>, Wolfram Sang <wsa-dev@sang-engineering.com>, Michal Nazarewicz <mina86@mina86.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 2017-04-27 at 12:11:18 +0300, Dan Carpenter wrote:
-> "ep->udc->lock" and "udc->lock" are the same thing.  It confuses Smatch
-> if we don't use the same name consistently.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Sören Brinkmann <soren.brinkmann@xilinx.com>
+We should ensure that 'plane_no' is '< vb->num_planes' as done in
+'vb2_plane_cookie' just a few lines below.
 
-	Sören
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/v4l2-core/videobuf2-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index 94afbbf92807..c0175ea7e7ad 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -868,7 +868,7 @@ EXPORT_SYMBOL_GPL(vb2_core_create_bufs);
+ 
+ void *vb2_plane_vaddr(struct vb2_buffer *vb, unsigned int plane_no)
+ {
+-	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
++	if (plane_no >= vb->num_planes || !vb->planes[plane_no].mem_priv)
+ 		return NULL;
+ 
+ 	return call_ptr_memop(vb, vaddr, vb->planes[plane_no].mem_priv);
+-- 
+2.11.0
+
