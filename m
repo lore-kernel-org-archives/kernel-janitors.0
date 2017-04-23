@@ -1,52 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:21:12 +0000
-Subject: [PATCH v2 01/17] IB/mlx4: Use kcalloc() in mlx4_ib_alloc_pv_bufs()
-Message-Id: <4ab0af63-1ea3-acd5-75ba-1992d8ae9924@users.sourceforge.net>
+Date: Sun, 23 Apr 2017 09:06:17 +0000
+Subject: [PATCH 0/2] dmaengine: k3dma: Fine-tuning for five function implementations
+Message-Id: <f83beedc-28fd-c373-cca8-7261e42577a5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, Zhangfei Gao <zhangfei.gao@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 10:21:01 +0200
+Date: Sun, 23 Apr 2017 10:56:54 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+A few update suggestions were taken into account
+from static source code analysis.
 
-  This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Use devm_kcalloc() in k3_dma_probe()
+  Adjust six checks for null pointers
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+ drivers/dma/k3dma.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
----
- drivers/infiniband/hw/mlx4/mad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index db564ccc0f92..61bd81baeb29 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1600,8 +1600,8 @@ static int mlx4_ib_alloc_pv_bufs(struct mlx4_ib_demux_pv_ctx *ctx,
- 		return -EINVAL;
- 
- 	tun_qp = &ctx->qp[qp_type];
--
--	tun_qp->ring = kzalloc(sizeof (struct mlx4_ib_buf) * MLX4_NUM_TUNNEL_BUFS,
-+	tun_qp->ring = kcalloc(MLX4_NUM_TUNNEL_BUFS,
-+			       sizeof(*tun_qp->ring),
- 			       GFP_KERNEL);
- 	if (!tun_qp->ring)
- 		return -ENOMEM;
 -- 
 2.12.2
 
