@@ -1,45 +1,30 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 11 Apr 2017 03:48:48 +0000
-Subject: Re: [PATCH] Input: omap-keypad - fix error handling code
-Message-Id: <20170411034848.GF4346@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Apr 2017 10:38:42 +0000
+Subject: Re: s3c24xx: Use devm_kcalloc() in s3c24xx_dma_probe()
+Message-Id: <02134825-fec7-73d7-2eb6-b510eaaf3b08@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170408171858.7266-1-christophe.jaillet@wanadoo.fr>
+References: <930f0a6c-bc5c-3d01-6814-563780fc90ef@users.sourceforge.net>
+ <9c10b823-f49b-8c73-2bf8-0fd2b0ba0231@users.sourceforge.net>
+ <f1257887-ca14-6415-b1ff-d57190a1810f@math.uni-bielefeld.de>
+In-Reply-To: <f1257887-ca14-6415-b1ff-d57190a1810f@math.uni-bielefeld.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux@roeck-us.net, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Apr 08, 2017 at 07:18:58PM +0200, Christophe JAILLET wrote:
-> According to the previous error handling code, it is likely that
-> 'goto err_free_keymap' is expected here in order to avoid a memory leak
-> in error handling path.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> * A multiplication for the size determination of a memory allocation
+>>   indicated that an array data structure should be processed.
+>>   Thus use the corresponding function "devm_kcalloc".
+> I have trouble parsing that sentences. This looks like the typical
+> approach of native german speakers to directly transfer sentence
+> constructions from German to English. Which, in most cases, doesn't work
+> or is just plain confusing.
 
-Applied, thank you.
+Do you find the following wording better to understand
+if it would be presented by a script like “checkpatch.pl”?
 
-> ---
->  drivers/input/keyboard/omap4-keypad.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-> index ebc67ba41fe2..940d38b08e6b 100644
-> --- a/drivers/input/keyboard/omap4-keypad.c
-> +++ b/drivers/input/keyboard/omap4-keypad.c
-> @@ -358,7 +358,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
->  				     "omap4-keypad", keypad_data);
->  	if (error) {
->  		dev_err(&pdev->dev, "failed to register interrupt\n");
-> -		goto err_free_input;
-> +		goto err_free_keymap;
->  	}
->  
->  	device_init_wakeup(&pdev->dev, true);
-> -- 
-> 2.11.0
-> 
+WARNING: Prefer devm_kcalloc over devm_kzalloc with multiply
 
--- 
-Dmitry
+
+Regards,
+Markus
