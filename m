@@ -1,44 +1,40 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 21 Apr 2017 02:23:31 +0000
-Subject: Re: [PATCH 00/29] IB/mlx: Fine-tuning for several function implementations
-Message-Id: <1492741411.3041.23.camel@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 23 Apr 2017 21:40:30 +0000
+Subject: [PATCH 2/2] [media] vb2: Fix error handling in '__vb2_buf_mem_alloc'
+Message-Id: <20170423214030.14854-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
-         <1492720654.3041.16.camel@redhat.com>
-         <8f433ee0-4dde-44db-cd36-fc2831b45df6@users.sourceforge.net>
-In-Reply-To: <8f433ee0-4dde-44db-cd36-fc2831b45df6-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, 2017-04-20 at 23:02 +0200, SF Markus Elfring wrote:
-> > 
-> > I've dropped this entire series.  If you want me to consider it,
-> > you
-> > need to respin it with the following changes:
-> 
-> How do you think about to integrate any of my update suggestions
-> which you do not find controversial (or questionable) at the moment?
+'call_ptr_memop' can return NULL, so we must test its return value with
+'IS_ERR_OR_NULL'. Otherwise, the test 'if (mem_priv)' is meaningless.
 
-No.  Far too many of your patches need commit messages fixes and the
-like.  If you want me to include them, then follow all of the
-requirements I gave you.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Note that error checking after 'call_ptr_memop' calls is not consistent
+in this file. I guess that 'IS_ERR_OR_NULL' should be used everywhere
+and that the corresponding error handling code should be tweaked just as
+the code in this function.
+---
+ drivers/media/v4l2-core/videobuf2-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> > 
-> > 1) Put all similar corrections in a single patch.
-> 
-> I preferred an other patch granularity so far.
-
-Not to be too blunt about it, but your preference is not the one that
-matters in this situation.  If you want me to consider the patches,
-then you need to respin them following the directions I gave.
-
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index c0175ea7e7ad..d1d3f5dd57b9 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -210,7 +210,7 @@ static int __vb2_buf_mem_alloc(struct vb2_buffer *vb)
+ 		mem_priv = call_ptr_memop(vb, alloc,
+ 				q->alloc_devs[plane] ? : q->dev,
+ 				q->dma_attrs, size, dma_dir, q->gfp_flags);
+-		if (IS_ERR(mem_priv)) {
++		if (IS_ERR_OR_NULL(mem_priv)) {
+ 			if (mem_priv)
+ 				ret = PTR_ERR(mem_priv);
+ 			goto free;
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-   
-Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.11.0
 
