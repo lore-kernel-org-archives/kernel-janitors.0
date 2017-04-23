@@ -1,53 +1,91 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 20:16:09 +0000
-Subject: [PATCH 1/7] HID: sensor-hub: Use devm_kcalloc() in sensor_hub_probe()
-Message-Id: <8a50aeac-0c9e-fff9-a7e7-61bcd733dfce@users.sourceforge.net>
+Date: Sun, 23 Apr 2017 09:09:19 +0000
+Subject: [PATCH 2/2] dmaengine: k3dma: Adjust six checks for null pointers
+Message-Id: <12cb50fb-63b7-8127-700d-1fe1c75c3961@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
-In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
+References: <f83beedc-28fd-c373-cca8-7261e42577a5@users.sourceforge.net>
+In-Reply-To: <f83beedc-28fd-c373-cca8-7261e42577a5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, Zhangfei Gao <zhangfei.gao@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 19:25:29 +0200
+Date: Sun, 23 Apr 2017 10:47:04 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+The script “checkpatch.pl” pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written …
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hid/hid-sensor-hub.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/dma/k3dma.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
-index 4ef73374a8f9..349494fc8def 100644
---- a/drivers/hid/hid-sensor-hub.c
-+++ b/drivers/hid/hid-sensor-hub.c
-@@ -672,9 +672,11 @@ static int sensor_hub_probe(struct hid_device *hdev,
- 		ret = -EINVAL;
- 		goto err_stop_hw;
- 	}
--	sd->hid_sensor_hub_client_devs = devm_kzalloc(&hdev->dev, dev_cnt *
--						      sizeof(struct mfd_cell),
--						      GFP_KERNEL);
-+	sd->hid_sensor_hub_client_devs
-+		= devm_kcalloc(&hdev->dev,
-+			       dev_cnt,
-+			       sizeof(*sd->hid_sensor_hub_client_devs),
-+			       GFP_KERNEL);
- 	if (sd->hid_sensor_hub_client_devs = NULL) {
- 		hid_err(hdev, "Failed to allocate memory for mfd cells\n");
- 		ret = -ENOMEM;
+diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+index 31a51ee1a910..da20565f7a8d 100644
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -230,7 +230,7 @@ static irqreturn_t k3_dma_int_handler(int irq, void *dev_id)
+ 			}
+ 			if (c && (tc2 & BIT(i))) {
+ 				spin_lock_irqsave(&c->vc.lock, flags);
+-				if (p->ds_run != NULL)
++				if (p->ds_run)
+ 					vchan_cyclic_callback(&p->ds_run->vd);
+ 				spin_unlock_irqrestore(&c->vc.lock, flags);
+ 			}
+@@ -312,7 +312,7 @@ static void k3_dma_tasklet(unsigned long arg)
+ 	for (pch = 0; pch < d->dma_channels; pch++) {
+ 		p = &d->phy[pch];
+ 
+-		if (p->vchan = NULL && !list_empty(&d->chan_pending)) {
++		if (!p->vchan && !list_empty(&d->chan_pending)) {
+ 			c = list_first_entry(&d->chan_pending,
+ 				struct k3_dma_chan, node);
+ 			/* remove from d->chan_pending */
+@@ -527,7 +527,7 @@ static struct dma_async_tx_descriptor *k3_dma_prep_slave_sg(
+ 	dma_addr_t addr, src = 0, dst = 0;
+ 	int num = sglen, i;
+ 
+-	if (sgl = NULL)
++	if (!sgl)
+ 		return NULL;
+ 
+ 	c->cyclic = 0;
+@@ -645,7 +645,7 @@ static int k3_dma_config(struct dma_chan *chan,
+ 	u32 maxburst = 0, val = 0;
+ 	enum dma_slave_buswidth width = DMA_SLAVE_BUSWIDTH_UNDEFINED;
+ 
+-	if (cfg = NULL)
++	if (!cfg)
+ 		return -EINVAL;
+ 	c->dir = cfg->direction;
+ 	if (c->dir = DMA_DEV_TO_MEM) {
+@@ -847,7 +847,7 @@ static int k3_dma_probe(struct platform_device *op)
+ 	/* init phy channel */
+ 	d->phy = devm_kcalloc(&op->dev, d->dma_channels, sizeof(*d->phy),
+ 			      GFP_KERNEL);
+-	if (d->phy = NULL)
++	if (!d->phy)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < d->dma_channels; i++) {
+@@ -877,7 +877,7 @@ static int k3_dma_probe(struct platform_device *op)
+ 	/* init virtual channel */
+ 	d->chans = devm_kcalloc(&op->dev, d->dma_requests, sizeof(*d->chans),
+ 				GFP_KERNEL);
+-	if (d->chans = NULL)
++	if (!d->chans)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < d->dma_requests; i++) {
 -- 
 2.12.2
 
