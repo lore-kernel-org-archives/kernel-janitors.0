@@ -1,57 +1,69 @@
 From: Doug Ledford <dledford@redhat.com>
-Date: Mon, 24 Apr 2017 16:38:22 +0000
+Date: Mon, 24 Apr 2017 16:38:58 +0000
 Subject: Re: [PATCH v2 03/12] IB/ocrdma: Improve size determinations in ten functions
-Message-Id: <1493051902.3041.51.camel@redhat.com>
+Message-Id: <1493051938.3041.52.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
          <1492720999.3041.18.camel@redhat.com>
          <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
          <755f6c2c-03a2-7248-a5e3-9190d119cdaf@users.sourceforge.net>
          <20170423073311.GA14088@mtr-leonro.local>
-In-Reply-To: <20170423073311.GA14088-U/DQcQFIOTAAJjI8aNfphQ@public.gmane.org>
+         <1f122892-7e67-a7ca-ae7f-7ac8e2b7a037@intel.com>
+In-Reply-To: <1f122892-7e67-a7ca-ae7f-7ac8e2b7a037@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Leon Romanovsky <leon@kernel.org>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Devesh Sharma <devesh.sharma@avagotech.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 2017-04-23 at 10:33 +0300, Leon Romanovsky wrote:
-> On Sat, Apr 22, 2017 at 04:36:19PM +0200, SF Markus Elfring wrote:
+On Mon, 2017-04-24 at 08:54 -0400, Dennis Dalessandro wrote:
+> On 04/23/2017 03:33 AM, Leon Romanovsky wrote:
 > > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 22 Apr 2017 13:26:49 +0200
+> > On Sat, Apr 22, 2017 at 04:36:19PM +0200, SF Markus Elfring wrote:
+> > > 
+> > > From: Markus Elfring <elfring@users.sourceforge.net>
+> > > Date: Sat, 22 Apr 2017 13:26:49 +0200
+> > > 
+> > > Replace the specification of data types by pointer dereferences
+> > > as the parameter for the operator "sizeof" to make the
+> > > corresponding size
+> > > determinations a bit safer according to the Linux coding style
+> > > convention.
+> > > 
+> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > > ---
+> > > 
+> > > v2:
+> > > Changes were rebased on source files from Linux next-20170421.
+> > > These were recombined as requested by Doug Ledford.
 > > 
-> > Replace the specification of data types by pointer dereferences
-> > as the parameter for the operator "sizeof" to make the
-> > corresponding size
-> > determinations a bit safer according to the Linux coding style
-> > convention.
+> > Hi Doug,
 > > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
+> > I recommend you to be extra cautious with this blind automatic
+> > conversions. It requires inspection that every size before and
+> > after
+> > match each other.
 > > 
-> > v2:
-> > Changes were rebased on source files from Linux next-20170421.
-> > These were recombined as requested by Doug Ledford.
+> > I already asked it and would be like to repeat it. Please DON'T
+> > take any
+> > patches from Markus, which are related to mlx4/mlx5/rxe without our
+> > explicit
+> > review of them.
 > 
-> Hi Doug,
-> 
-> I recommend you to be extra cautious with this blind automatic
-> conversions. It requires inspection that every size before and after
-> match each other.
-> 
-> I already asked it and would be like to repeat it. Please DON'T take
-> any
-> patches from Markus, which are related to mlx4/mlx5/rxe without our
-> explicit
-> review of them.
+> I agree with Leon here, and these sort of find/replace automagic 
+> clean-up patches make me nervous sometimes.
 
 OK, the easiest way to make sure that only the things you want from his
 patches get through is to have you pull them into a branch and submit
-them yourself.  I'll only take the ones you submit to me, that way
+them yourself.  I'll only take the ones you submit to me, that way
 there is no confusion about whether or not you have checked them and
 approved them.
 
+> Markus, what have you done to ensure your patches don't break
+> anything?
+> 
+> -Denny
+> 
 -- 
 Doug Ledford <dledford@redhat.com>
     GPG KeyID: B826A3330E572FDD
