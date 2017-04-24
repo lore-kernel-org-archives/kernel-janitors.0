@@ -1,41 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 07 Apr 2017 23:22:03 +0000
-Subject: [PATCH] ubifs: fix cut and paste error on sb type comparisons
-Message-Id: <20170407232203.9100-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:16:09 +0000
+Subject: [PATCH 1/7] HID: sensor-hub: Use devm_kcalloc() in sensor_hub_probe()
+Message-Id: <8a50aeac-0c9e-fff9-a7e7-61bcd733dfce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
+In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 19:25:29 +0200
 
-The check for the bad node type of sb->type is checking sa->type
-and not sb-type. This looks like a cut and paste error. Fix this.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
-Detected by PVS-Studio, warning: V581
+  This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ubifs/debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-sensor-hub.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
-index 1e712a364680..cb687733136d 100644
---- a/fs/ubifs/debug.c
-+++ b/fs/ubifs/debug.c
-@@ -2387,8 +2387,8 @@ int dbg_check_nondata_nodes_order(struct ubifs_info *c, struct list_head *head)
- 			ubifs_dump_node(c, sa->node);
- 			return -EINVAL;
- 		}
--		if (sa->type != UBIFS_INO_NODE && sa->type != UBIFS_DENT_NODE &&
--		    sa->type != UBIFS_XENT_NODE) {
-+		if (sb->type != UBIFS_INO_NODE && sb->type != UBIFS_DENT_NODE &&
-+		    sb->type != UBIFS_XENT_NODE) {
- 			ubifs_err(c, "bad node type %d", sb->type);
- 			ubifs_dump_node(c, sb->node);
- 			return -EINVAL;
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index 4ef73374a8f9..349494fc8def 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -672,9 +672,11 @@ static int sensor_hub_probe(struct hid_device *hdev,
+ 		ret = -EINVAL;
+ 		goto err_stop_hw;
+ 	}
+-	sd->hid_sensor_hub_client_devs = devm_kzalloc(&hdev->dev, dev_cnt *
+-						      sizeof(struct mfd_cell),
+-						      GFP_KERNEL);
++	sd->hid_sensor_hub_client_devs
++		= devm_kcalloc(&hdev->dev,
++			       dev_cnt,
++			       sizeof(*sd->hid_sensor_hub_client_devs),
++			       GFP_KERNEL);
+ 	if (sd->hid_sensor_hub_client_devs = NULL) {
+ 		hid_err(hdev, "Failed to allocate memory for mfd cells\n");
+ 		ret = -ENOMEM;
 -- 
-2.11.0
+2.12.2
 
