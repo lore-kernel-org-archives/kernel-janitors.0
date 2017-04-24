@@ -1,42 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:44:00 +0000
-Subject: [PATCH v2 11/17] IB/mlx4: Delete an unnecessary variable initialisation in mlx4_ib_add()
-Message-Id: <1b8eaaee-c417-f9f6-9bf8-04ea082e5d0d@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 12:41:14 +0000
+Subject: [PATCH 2/3] extcon: Fix a typo in three comment lines
+Message-Id: <251c60e8-4e20-b64c-24a5-27d477d05f4b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
+In-Reply-To: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Majd Dibbiny <majd-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: patches@opensource.wolfsonmicro.com, Chanwoo Choi <cw00.choi@samsung.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:44:15 +0200
+Date: Sun, 23 Apr 2017 22:15:20 +0200
 
-The local variable "new_counter_index" will be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+Adjust three words in this description for a function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/mlx4/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/extcon/extcon.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index a54e2f04929b..d08b9b154c97 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2615,7 +2615,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 	int num_req_counters;
- 	int allocated;
- 	u32 counter_index;
--	struct counter_index *new_counter_index = NULL;
-+	struct counter_index *new_counter_index;
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index acb847bc1619..8eccf7b14937 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -964,12 +964,12 @@ EXPORT_SYMBOL_GPL(extcon_unregister_notifier);
  
- 	pr_info_once("%s", mlx4_ib_version);
- 
+ /**
+  * extcon_register_notifier_all() - Register a notifier block for all connectors
+- * @edev:	the extcon device that has the external connecotr.
++ * @edev:	the extcon device that has the external connector.
+  * @nb:		a notifier block to be registered.
+  *
+- * This fucntion registers a notifier block in order to receive the state
++ * This function registers a notifier block in order to receive the state
+  * change of all supported external connectors from extcon device.
+- * And The second parameter given to the callback of nb (val) is
++ * And the second parameter given to the callback of nb (val) is
+  * the current state and third parameter is the edev pointer.
+  *
+  * Returns 0 if success or error number if fail
 -- 
 2.12.2
 
