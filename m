@@ -1,72 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 30 Apr 2017 12:58:24 +0000
-Subject: Applied "ASoC: sti: Fix error handling if of_clk_get() fails" to the asoc tree
-Message-Id: <E1d4oQi-00044Z-E9@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:20:10 +0000
+Subject: [PATCH 4/7] HID: debug: Replace five seq_printf() calls by seq_putc()
+Message-Id: <f7ad5a57-2f41-cc0a-5015-e99d58239a2d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428132210.jvjrltku25sepivw@mwanda>
-In-Reply-To: <20170428132210.jvjrltku25sepivw@mwanda>
+References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
+In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Arnaud Pouliquen <arnaud.pouliquen@st.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.orgArnaudPouliquenarnaud.pouliquen@st.com, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>alsa-devel@alsa-project.org
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:34:29 +0200
 
-   ASoC: sti: Fix error handling if of_clk_get() fails
+Five single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 65ed0a8d1f24abd79be149253025de8949321900 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 16:22:10 +0300
-Subject: [PATCH] ASoC: sti: Fix error handling if of_clk_get() fails
-
-We intended to return here.  The current code has a static checker
-warning because we set "ret" but don't use it.
-
-Fixes: 76c2145ded6b ("ASoC: sti: Add CPU DAI driver for playback")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/sti/uniperif_player.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-debug.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
-index d7e8dd46d2cc..d8b6936e544e 100644
---- a/sound/soc/sti/uniperif_player.c
-+++ b/sound/soc/sti/uniperif_player.c
-@@ -1074,7 +1074,7 @@ int uni_player_init(struct platform_device *pdev,
- 	player->clk = of_clk_get(pdev->dev.of_node, 0);
- 	if (IS_ERR(player->clk)) {
- 		dev_err(player->dev, "Failed to get clock\n");
--		ret = PTR_ERR(player->clk);
-+		return PTR_ERR(player->clk);
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index 5271db593478..d47d5085bc99 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -499,7 +499,7 @@ char *hid_resolv_usage(unsigned usage, struct seq_file *f) {
+ 		len++;
  	}
+ 	else {
+-		seq_printf(f, ".");
++		seq_putc(f, '.');
+ 	}
+ 	for (p = hid_usage_table; p->description; p++)
+ 		if (p->page = (usage >> 16)) {
+@@ -550,7 +550,8 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
+ 	}
+ 	tab(n, f); seq_printf(f, "Usage(%d)\n", field->maxusage);
+ 	for (j = 0; j < field->maxusage; j++) {
+-		tab(n+2, f); hid_resolv_usage(field->usage[j].hid, f); seq_printf(f, "\n");
++		tab(n + 2, f); hid_resolv_usage(field->usage[j].hid, f);
++		seq_putc(f, '\n');
+ 	}
+ 	if (field->logical_minimum != field->logical_maximum) {
+ 		tab(n, f); seq_printf(f, "Logical Minimum(%d)\n", field->logical_minimum);
+@@ -594,7 +595,7 @@ void hid_dump_field(struct hid_field *field, int n, struct seq_file *f) {
+ 				data >>= 4;
+ 				if (nibble != 0) {
+ 					if(earlier_unit++ > 0)
+-						seq_printf(f, "*");
++						seq_putc(f, '*');
+ 					seq_printf(f, "%s", units[sys][i]);
+ 					if(nibble != 1) {
+ 						/* This is a _signed_ nibble(!) */
+@@ -1041,5 +1042,5 @@ static void hid_dump_input_mapping(struct hid_device *hid, struct seq_file *f)
+ 					hid_resolv_event(usage->type, usage->code, f);
+-					seq_printf(f, "\n");
++					seq_putc(f, '\n');
+ 				}
+ 			}
+ 		}
+@@ -1066,7 +1067,7 @@ static int hid_debug_rdesc_show(struct seq_file *f, void *p)
  
- 	/* Select the frequency synthesizer clock */
+ 	/* dump parsed data and input mappings */
+ 	hid_dump_device(hdev, f);
+-	seq_printf(f, "\n");
++	seq_putc(f, '\n');
+ 	hid_dump_input_mapping(hdev, f);
+ 
+ 	return 0;
 -- 
-2.11.0
+2.12.2
 
