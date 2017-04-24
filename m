@@ -1,40 +1,44 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 12 Apr 2017 16:47:27 +0000
-Subject: Re: [PATCH] switchtec: checking for NULL instead of IS_ERR()
-Message-Id: <3de7a06b-d27c-9775-8eb9-1b02bf8e2fec@deltatee.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Apr 2017 13:36:02 +0000
+Subject: [PATCH] NFC: trf7970a: fix check of clock frequencies, use && instead of ||
+Message-Id: <20170424133603.3697-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170412083525.GF3250@mwanda>
-In-Reply-To: <20170412083525.GF3250@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-Cc: Stephen Bates <stephen.bates@microsemi.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Geoff Lansberry <geoff@kuvee.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the fix. This is the exact same patch Christophe Jaillet sent
-a couple of days ago so only one needs to be merged.
+The "or" condition (clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
+(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUE) will always be true because
+clk_freq cannot be equal to two different values at the same time. Use
+the  && operator instead of || to fix this.
 
-Logan
+Detected by CoverityScan, CID#1430468 ("Constant expression result")
 
-On 12/04/17 02:35 AM, Dan Carpenter wrote:
-> stuser_create() uses error pointers, it never returns NULL.
-> 
-> Fixes: 74004262f329 ("MicroSemi Switchtec management interface driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index fcde98161d9a..cc6e085008fb 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -608,7 +608,7 @@ static int switchtec_dev_open(struct inode *inode, struct file *filp)
->  	stdev = container_of(inode->i_cdev, struct switchtec_dev, cdev);
->  
->  	stuser = stuser_create(stdev);
-> -	if (!stuser)
-> +	if (IS_ERR(stuser))
->  		return PTR_ERR(stuser);
->  
->  	filp->private_data = stuser;
-> 
+Fixes: 837eb4d21ecde7 ("NFC: trf7970a: add device tree option for 27MHz clock")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nfc/trf7970a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
+index 2d1c8ca6e679..00eb6cd2b22f 100644
+--- a/drivers/nfc/trf7970a.c
++++ b/drivers/nfc/trf7970a.c
+@@ -2071,8 +2071,8 @@ static int trf7970a_probe(struct spi_device *spi)
+ 	}
+ 
+ 	of_property_read_u32(np, "clock-frequency", &clk_freq);
+-	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
+-		(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
++	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) &&
++		(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
+ 		dev_err(trf->dev,
+ 			"clock-frequency (%u Hz) unsupported\n",
+ 			clk_freq);
+-- 
+2.11.0
+
