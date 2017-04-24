@@ -1,42 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 09:19:17 +0000
-Subject: [PATCH 07/10] pinctrl: imx: Use seq_puts() in imx_pinconf_dbg_show()
-Message-Id: <58b499ad-a6c3-5f67-5113-e80cf87aaf24@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:12:50 +0000
+Subject: [PATCH 0/7] HID: Fine-tuning for some function implementations
+Message-Id: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
-In-Reply-To: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Gary Bisson <gary.bisson@boundarydevices.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 15:50:58 +0200
+Date: Mon, 24 Apr 2017 22:00:22 +0200
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Some update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (7):
+  Use devm_kcalloc() in sensor_hub_probe()
+  Delete error messages for failed memory allocations in sensor_hub_probe()
+  Adjust two checks for null pointers in sensor_hub_probe()
+  Replace five seq_printf() calls by seq_putc()
+  Replace 12 seq_printf() calls by seq_puts()
+  Combine two seq_printf() calls into one call in hid_dump_device()
+  Replace two seq_printf() calls by seq_puts() in picolcd_debug_reset_show()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-debug.c           | 38 +++++++++++++++++++-------------------
+ drivers/hid/hid-picolcd_debugfs.c |  4 ++--
+ drivers/hid/hid-sensor-hub.c      | 18 ++++++++----------
+ 3 files changed, 29 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 71dbba892e70..c6bfabcd577a 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -424,7 +424,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
- 	unsigned long config;
- 
- 	if (!pin_reg || pin_reg->conf_reg = -1) {
--		seq_printf(s, "N/A");
-+		seq_puts(s, "N/A");
- 		return;
- 	}
- 
 -- 
 2.12.2
 
