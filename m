@@ -1,20 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Apr 2017 18:09:36 +0000
-Subject: Re: [PATCH 00/25] Ethernet-Marvell: Fine-tuning for several function implementations
-Message-Id: <20170418.140936.1168159840007856813.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 13:23:52 +0000
+Subject: Re: IB/ocrdma: Improve size determinations in ten functions
+Message-Id: <a2b014f3-7674-6e33-3b22-72594b38a6b6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+ <1492720999.3041.18.camel@redhat.com>
+ <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+ <755f6c2c-03a2-7248-a5e3-9190d119cdaf@users.sourceforge.net>
+ <20170423073311.GA14088@mtr-leonro.local>
+ <1f122892-7e67-a7ca-ae7f-7ac8e2b7a037@intel.com>
+In-Reply-To: <1f122892-7e67-a7ca-ae7f-7ac8e2b7a037@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: netdev@vger.kernel.org, f.fainelli@gmail.com, jarod@redhat.com, jszhang@marvell.com, mlindner@marvell.com, tremyfr@gmail.com, rmk+kernel@armlinux.org.uk, sergei.shtylyov@cogentembedded.com, stephen@networkplumber.org, thomas.petazzoni@free-electrons.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, Devesh Sharma <devesh.sharma@avagotech.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 17:03:33 +0200
+> Markus, what have you done to ensure your patches don't break anything?
 
-> Several update suggestions were taken into account
-> from static source code analysis.
+I would expect that this update step will not change the run time behaviour
+for the OCRDMA module. I guess that it will influence the run time
+characteristics for compilation of three adjusted source files besides
+the proposed coding style improvements.
 
-Series applied.
+Further update steps change other source code places. I hope that their
+impact can be clarified according to your expectations for each shown update
+possibility separately. Some of them got a bit of acceptance already.
+
+How would you like to reduce any remaining software development concerns here?
+
+Regards,
+Markus
