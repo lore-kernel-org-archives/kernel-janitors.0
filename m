@@ -1,60 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 20:31:27 +0000
-Subject: [PATCH 1/2] dmaengine: zx: Use devm_kcalloc() in zx_dma_probe()
-Message-Id: <e2b06d15-e639-43d0-6eee-42268b322d88@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:18:57 +0000
+Subject: [PATCH 3/7] HID: sensor-hub: Adjust two checks for null pointers in sensor_hub_probe()
+Message-Id: <89ec267f-cae0-66b2-bcd7-27d786af3a5f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85b8d46d-1643-0fdd-b295-9359ebca6444@users.sourceforge.net>
-In-Reply-To: <85b8d46d-1643-0fdd-b295-9359ebca6444@users.sourceforge.net>
+References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
+In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vinod.koul@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 22:00:10 +0200
+Date: Mon, 24 Apr 2017 20:00:06 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "devm_kcalloc".
+The script “checkpatch.pl” pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/zx_dma.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/hid/hid-sensor-hub.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/zx_dma.c b/drivers/dma/zx_dma.c
-index 2bb695315300..4f7587a100ea 100644
---- a/drivers/dma/zx_dma.c
-+++ b/drivers/dma/zx_dma.c
-@@ -798,8 +798,8 @@ static int zx_dma_probe(struct platform_device *op)
- 		return -ENOMEM;
- 
- 	/* init phy channel */
--	d->phy = devm_kzalloc(&op->dev,
--		d->dma_channels * sizeof(struct zx_dma_phy), GFP_KERNEL);
-+	d->phy = devm_kcalloc(&op->dev, d->dma_channels, sizeof(*d->phy),
-+			      GFP_KERNEL);
- 	if (!d->phy)
- 		return -ENOMEM;
- 
-@@ -834,8 +834,8 @@ static int zx_dma_probe(struct platform_device *op)
- 	d->slave.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
- 
- 	/* init virtual channel */
--	d->chans = devm_kzalloc(&op->dev,
--		d->dma_requests * sizeof(struct zx_dma_chan), GFP_KERNEL);
-+	d->chans = devm_kcalloc(&op->dev, d->dma_requests, sizeof(*d->chans),
-+				GFP_KERNEL);
- 	if (!d->chans)
- 		return -ENOMEM;
- 
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index feb4bb8ee3ec..4eadaef19e6a 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -675,7 +675,7 @@ static int sensor_hub_probe(struct hid_device *hdev,
+ 			       dev_cnt,
+ 			       sizeof(*sd->hid_sensor_hub_client_devs),
+ 			       GFP_KERNEL);
+-	if (sd->hid_sensor_hub_client_devs = NULL) {
++	if (!sd->hid_sensor_hub_client_devs) {
+ 		ret = -ENOMEM;
+ 		goto err_stop_hw;
+ 	}
+@@ -711,7 +711,7 @@ static int sensor_hub_probe(struct hid_device *hdev,
+ 			name = devm_kasprintf(&hdev->dev, GFP_KERNEL,
+ 					      "HID-SENSOR-%x",
+ 					      collection->usage);
+-			if (name = NULL) {
++			if (!name) {
+ 				hid_err(hdev, "Failed MFD device name\n");
+ 				ret = -ENOMEM;
+ 				goto err_stop_hw;
 -- 
 2.12.2
 
