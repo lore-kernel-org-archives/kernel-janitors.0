@@ -1,23 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 05 Apr 2017 13:54:35 +0000
-Subject: Re: [PATCH -next] qed: Add a missing error code
-Message-Id: <20170405.065435.2136737390754015809.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 20:23:02 +0000
+Subject: [PATCH 7/7] HID: picoLCD: Replace two seq_printf() calls by seq_puts() in picolcd_debug_reset_show()
+Message-Id: <ceee0ae6-fd37-66b6-116a-319f5e393327@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170403182522.GA32592@mwanda>
-In-Reply-To: <20170403182522.GA32592@mwanda>
+References: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
+In-Reply-To: <2d526d72-a740-367b-04a9-ed698435f8ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Yuval.Mintz@cavium.com, Tomer.Tayar@cavium.com, Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-iio@vger.kernel.org, linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?Q?Bruno_Pr=c3=a9mont?= <bonbons@linux-vserver.org>, Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 3 Apr 2017 21:25:22 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Apr 2017 21:27:42 +0200
 
-> We should be returning -ENOMEM if qed_mcp_cmd_add_elem() fails.  The
-> current code returns success.
-> 
-> Fixes: 4ed1eea82a21 ("qed: Revise MFW command locking")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/hid-picolcd_debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolcd_debugfs.c
+index 3e0feb4bb538..975f36601d59 100644
+--- a/drivers/hid/hid-picolcd_debugfs.c
++++ b/drivers/hid/hid-picolcd_debugfs.c
+@@ -33,9 +33,9 @@
+ static int picolcd_debug_reset_show(struct seq_file *f, void *p)
+ {
+ 	if (picolcd_fbinfo((struct picolcd_data *)f->private))
+-		seq_printf(f, "all fb\n");
++		seq_puts(f, "all fb\n");
+ 	else
+-		seq_printf(f, "all\n");
++		seq_puts(f, "all\n");
+ 	return 0;
+ }
+ 
+-- 
+2.12.2
+
