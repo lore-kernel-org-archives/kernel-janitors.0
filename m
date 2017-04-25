@@ -1,35 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Apr 2017 13:49:31 +0000
-Subject: [PATCH] cifs: small underflow in cnvrtDosUnixTm()
-Message-Id: <20170410134931.GC1918@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 11:16:42 +0000
+Subject: [PATCH 2/3] HSI: omap_ssi: Fix a typo in a comment line
+Message-Id: <61849261-123e-aa72-953e-dd5cc2bb4dc4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
+In-Reply-To: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-January is month 1.  There is no zero-th month.  We don't care very much
-if the days are invalid but for months, we use it to read from an array
-so this bug means we read one space before the start of the
-total_days_of_prev_months[] array.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 11:35:11 +0200
 
-Fixes: 1bd5bbcb6531 ("[CIFS] Legacy time handling for Win9x and OS/2 part 1")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a missing character in this description for a function call.
 
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index abae6dd2c6b9..f1f64a15215a 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -980,8 +980,10 @@ struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
- 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
- 	days = sd->Day;
- 	month = sd->Month;
--	if ((days > 31) || (month > 12)) {
-+	if (days > 31 || month < 1 || month > 12) {
- 		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
-+		if (month < 1)
-+			month = 1;
- 		if (month > 12)
- 			month = 12;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hsi/controllers/omap_ssi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
+index 464db6d33afb..fb7ed8fce83a 100644
+--- a/drivers/hsi/controllers/omap_ssi_core.c
++++ b/drivers/hsi/controllers/omap_ssi_core.c
+@@ -467,7 +467,7 @@ static int ssi_hw_init(struct hsi_controller *ssi)
+ 		dev_err(&ssi->device, "runtime PM failed %d\n", err);
+ 		return err;
  	}
+-	/* Reseting GDD */
++	/* Resetting GDD */
+ 	writel_relaxed(SSI_SWRESET, omap_ssi->gdd + SSI_GDD_GRST_REG);
+ 	/* Get FCK rate in KHz */
+ 	omap_ssi->fck_rate = DIV_ROUND_CLOSEST(ssi_get_clk_rate(ssi), 1000);
+-- 
+2.12.2
+
