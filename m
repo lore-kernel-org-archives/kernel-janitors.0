@@ -1,37 +1,42 @@
-From: Felix Manlunas <felix.manlunas@cavium.com>
-Date: Fri, 28 Apr 2017 17:42:51 +0000
-Subject: Re: [PATCH net] liquidio: silence a locking static checker warning
-Message-Id: <20170428174251.GA1021@felix-thinkpad.cavium.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 20:30:05 +0000
+Subject: [PATCH 3/3] scsi: ufs: Delete an unnecessary return statement in ufshcd_exception_event_handler()
+Message-Id: <9fc152fd-0881-85f6-a4d0-3db27dc364f5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428125715.h6d5ttnfq7rdnpni@mwanda>
-In-Reply-To: <20170428125715.h6d5ttnfq7rdnpni@mwanda>
+References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
+In-Reply-To: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 15:57:15 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 22:00:05 +0200
 
-> Presumably we never hit this return, but static checkers complain that
-> we need to unlock so we may as well fix that.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c b/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
-> index 201b9875f9bb..5cca73b8880b 100644
-> --- a/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
-> +++ b/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
-> @@ -313,6 +313,7 @@ int octeon_mbox_process_message(struct octeon_mbox *mbox)
->  		return 0;
->  	}
->  
-> +	spin_unlock_irqrestore(&mbox->lock, flags);
->  	WARN_ON(1);
->  
->  	return 0;
+The script "checkpatch.pl" pointed information out like the following.
 
-Thanks.
+WARNING: void function return statements are not generally useful
 
-Acked-by: Felix Manlunas <felix.manlunas@cavium.com>
+Thus remove such a statement here.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/ufs/ufshcd.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 5216e33e61a3..9018f26a5667 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4966,7 +4966,6 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+ 
+ out:
+ 	pm_runtime_put_sync(hba->dev);
+-	return;
+ }
+ 
+ /* Complete requests that have door-bell cleared */
+-- 
+2.12.2
+
