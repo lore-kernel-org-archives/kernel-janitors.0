@@ -1,45 +1,28 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 07 Apr 2017 05:57:23 +0000
-Subject: [PATCH 3/3] staging: atomisp: move mipi_info assignment to next line in __get_asd_from_port()
-Message-Id: <20170407055702.GA32406@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 12:43:25 +0000
+Subject: [PATCH 0/2] HSI: Fine-tuning for three function implementations
+Message-Id: <52f7db50-a3a0-6bc5-a39f-1d235a5945cd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org
-Cc: gregkh@linuxfoundation.org, daeseok.youn@gmail.com, alan@linux.intel.com, dan.carpenter@oracle.com, singhalsimran0@gmail.com, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>, Carlos Chinea <carlos.chinea@nokia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The line which is initializing mipi_info variable is too long
-to read. It would be placed in next line.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 14:32:10 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-This series of patches are related to previous patches:
-[1] https://lkml.org/lkml/2017/3/27/159
-[2] https://lkml.org/lkml/2017/3/30/1068
-[3] https://lkml.org/lkml/2017/3/30/1069
+Two update suggestions were taken into account
+from static source code analysis.
 
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Markus Elfring (2):
+  Use kcalloc() in hsi_register_board_info()
+  core: Use kcalloc() in two functions
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-index 4af76b5..2208477 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_cmd.c
-@@ -532,9 +532,11 @@ static void clear_irq_reg(struct atomisp_device *isp)
- 	/* Check which isp subdev to send eof */
- 	for (i = 0; i < isp->num_of_streams; i++) {
- 		struct atomisp_sub_device *asd = &isp->asd[i];
--		struct camera_mipi_info *mipi_info -				atomisp_to_sensor_mipi_info(
--					isp->inputs[asd->input_curr].camera);
-+		struct camera_mipi_info *mipi_info;
-+
-+		mipi_info = atomisp_to_sensor_mipi_info(
-+				isp->inputs[asd->input_curr].camera);
-+
- 		if (asd->streaming = ATOMISP_DEVICE_STREAMING_ENABLED &&
- 		    __get_mipi_port(isp, mipi_info->port) = port) {
- 			return asd;
+ drivers/hsi/hsi_boardinfo.c | 2 +-
+ drivers/hsi/hsi_core.c      | 7 +++----
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
 -- 
-1.9.1
+2.12.2
 
