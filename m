@@ -1,24 +1,22 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 14:45:07 +0000
-Subject: [PATCH v2 06/12] IB/ocrdma: Use kmalloc_array() in ocrdma_create_srq()
-Message-Id: <899edbe6-3248-d2de-0d09-f9ffef952ec8@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 11:15:33 +0000
+Subject: [PATCH 1/3] HSI: omap_ssi: Use devm_kcalloc() in ssi_add_controller()
+Message-Id: <0c285b86-6fe8-2f36-8442-474ded5edc61@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <1492720999.3041.18.camel@redhat.com>
- <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
-In-Reply-To: <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+References: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
+In-Reply-To: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Apr 2017 14:17:46 +0200
+Date: Tue, 25 Apr 2017 11:20:41 +0200
 
 * A multiplication for the size determination of a memory allocation
   indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+  Thus use the corresponding function "devm_kcalloc".
 
   This issue was detected by using the Coccinelle software.
 
@@ -28,24 +26,24 @@ Date: Sat, 22 Apr 2017 14:17:46 +0200
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hsi/controllers/omap_ssi_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 16f14d4c3e85..5eaf946aeac6 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -1908,8 +1908,9 @@ struct ib_srq *ocrdma_create_srq(struct ib_pd *ibpd,
+diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
+index 9a29b34ed2c8..464db6d33afb 100644
+--- a/drivers/hsi/controllers/omap_ssi_core.c
++++ b/drivers/hsi/controllers/omap_ssi_core.c
+@@ -421,8 +421,8 @@ static int ssi_add_controller(struct hsi_controller *ssi,
+ 		goto out_err;
+ 	}
  
- 		srq->bit_fields_len = (srq->rq.max_cnt / 32) +
- 		    (srq->rq.max_cnt % 32 ? 1 : 0);
--		srq->idx_bit_fields -		    kmalloc(srq->bit_fields_len * sizeof(u32), GFP_KERNEL);
-+		srq->idx_bit_fields = kmalloc_array(srq->bit_fields_len,
-+						    sizeof(*srq->idx_bit_fields),
-+						    GFP_KERNEL);
- 		if (srq->idx_bit_fields = NULL)
- 			goto arm_err;
- 		memset(srq->idx_bit_fields, 0xff,
+-	omap_ssi->port = devm_kzalloc(&ssi->device,
+-		sizeof(struct omap_ssi_port *) * ssi->num_ports, GFP_KERNEL);
++	omap_ssi->port = devm_kcalloc(&ssi->device, ssi->num_ports,
++				      sizeof(*omap_ssi->port), GFP_KERNEL);
+ 	if (!omap_ssi->port) {
+ 		err = -ENOMEM;
+ 		goto out_err;
 -- 
 2.12.2
 
