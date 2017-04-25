@@ -1,38 +1,46 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 18 Apr 2017 19:15:50 +0000
-Subject: Re: [PATCH] mmc: cavium: Fix a shift wrapping bug
-Message-Id: <CAPDyKFqqK6kx1NzZyo_91OzH-ODxkD3z0UjeKijyh1DxOVbY_A@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 20:28:33 +0000
+Subject: [PATCH 2/3] scsi: ufs: Delete an error message for a failed memory allocation in ufshcd_memory_alloc
+Message-Id: <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413194748.GE591@mwanda>
-In-Reply-To: <20170413194748.GE591@mwanda>
+References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
+In-Reply-To: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jan Glauber <jglauber@cavium.com>, David Daney <david.daney@cavium.com>, "Steven J. Hill" <Steven.Hill@cavium.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On 13 April 2017 at 21:47, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> "dat" is a u64 and "shift" starts as 54 so this is a shift wrapping bug.
->
-> Fixes: 8047c753f3d3 ("mmc: cavium: Add core MMC driver for Cavium SOCs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 21:50:43 +0200
 
-Thanks, applied for next!
+The script "checkpatch.pl" pointed information out like the following.
 
-Kind regards
-Uffe
+WARNING: Possible unnecessary 'out of memory' message
 
->
-> diff --git a/drivers/mmc/host/cavium.c b/drivers/mmc/host/cavium.c
-> index d842b6986189..54ff1363b564 100644
-> --- a/drivers/mmc/host/cavium.c
-> +++ b/drivers/mmc/host/cavium.c
-> @@ -733,7 +733,7 @@ static void do_write_request(struct cvm_mmc_host *host, struct mmc_request *mrq)
->                 }
->
->                 while (smi->consumed < smi->length && shift >= 0) {
-> -                       dat |= ((u8 *)smi->addr)[smi->consumed] << shift;
-> +                       dat |= (u64)((u8 *)smi->addr)[smi->consumed] << shift;
->                         bytes_xfered++;
->                         smi->consumed++;
->                         shift -= 8;
+Thus remove such a statement here.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/ufs/ufshcd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index ce385911a20e..5216e33e61a3 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3274,8 +3274,7 @@ static int ufshcd_memory_alloc(struct ufs_hba *hba)
+ 				GFP_KERNEL);
+-	if (!hba->lrb) {
+-		dev_err(hba->dev, "LRB Memory allocation failed\n");
++	if (!hba->lrb)
+ 		goto out;
+-	}
++
+ 	return 0;
+ out:
+ 	return -ENOMEM;
+-- 
+2.12.2
+
