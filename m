@@ -1,47 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 11:18:31 +0000
-Subject: [PATCH 3/3] HSI: omap_ssi: Delete an error message for a failed memory allocation in ssi_add_control
-Message-Id: <e6102bce-0b27-68e6-8247-f87851f7f9b9@users.sourceforge.net>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Tue, 25 Apr 2017 11:54:46 +0000
+Subject: Re: [PATCH 3/3] HSI: omap_ssi: Delete an error message for a failed memory allocation in ssi_add_con
+Message-Id: <20170425115446.GC7926@amd>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1SQmhf2mF2YjsYvc"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
-In-Reply-To: <2fa2c33a-dc43-7e03-03d7-7ca04931e6c7@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+ <e6102bce-0b27-68e6-8247-f87851f7f9b9@users.sourceforge.net>
+In-Reply-To: <e6102bce-0b27-68e6-8247-f87851f7f9b9@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Apr 2017 12:42:14 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+--1SQmhf2mF2YjsYvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-WARNING: Possible unnecessary 'out of memory' message
+On Tue 2017-04-25 13:18:31, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 25 Apr 2017 12:42:14 +0200
+>=20
+> The script "checkpatch.pl" pointed information out like the following.
+>=20
+> WARNING: Possible unnecessary 'out of memory' message
+>=20
+> Thus remove such a statement here.
 
-Thus remove such a statement here.
+Any reason to believe it is good idea besides program telling you it
+_might_ be?
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hsi/controllers/omap_ssi_core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+--1SQmhf2mF2YjsYvc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
-index fb7ed8fce83a..88e48b346916 100644
---- a/drivers/hsi/controllers/omap_ssi_core.c
-+++ b/drivers/hsi/controllers/omap_ssi_core.c
-@@ -384,10 +384,8 @@ static int ssi_add_controller(struct hsi_controller *ssi,
- 	int err;
- 
- 	omap_ssi = devm_kzalloc(&ssi->device, sizeof(*omap_ssi), GFP_KERNEL);
--	if (!omap_ssi) {
--		dev_err(&pd->dev, "not enough memory for omap ssi\n");
-+	if (!omap_ssi)
- 		return -ENOMEM;
--	}
- 
- 	err = ida_simple_get(&platform_omap_ssi_ida, 0, 0, GFP_KERNEL);
- 	if (err < 0)
--- 
-2.12.2
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEYEARECAAYFAlj/OQYACgkQMOfwapXb+vIXmQCeMoGSc52o2isav2ncswTZ7L4/
+1YwAoLEllV0JNoMZgcXcDZbhGSMKsVd3
+=MVUh
+-----END PGP SIGNATURE-----
+
+--1SQmhf2mF2YjsYvc--
