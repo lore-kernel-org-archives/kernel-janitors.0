@@ -1,43 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 13:05:58 +0000
-Subject: [PATCH 2/3] ASoC: simple-card: Use devm_kcalloc() in asoc_simple_card_probe()
-Message-Id: <f82c9081-bded-9bd9-6bef-6a137dd90ba1@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 12:45:04 +0000
+Subject: [PATCH 1/2] HSI: Use kcalloc() in hsi_register_board_info()
+Message-Id: <7c7f7b19-d3f3-6653-6830-5b00660fa2b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
-In-Reply-To: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
+References: <52f7db50-a3a0-6bc5-a39f-1d235a5945cd@users.sourceforge.net>
+In-Reply-To: <52f7db50-a3a0-6bc5-a39f-1d235a5945cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>, Carlos Chinea <carlos.chinea@nokia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 26 Apr 2017 14:32:12 +0200
+Date: Tue, 25 Apr 2017 13:56:08 +0200
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "devm_kcalloc".
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/generic/simple-card.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hsi/hsi_boardinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index b59d51374b89..55586326fde8 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -437,8 +437,8 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
+diff --git a/drivers/hsi/hsi_boardinfo.c b/drivers/hsi/hsi_boardinfo.c
+index e56bc6da5f98..e381cb4c962e 100644
+--- a/drivers/hsi/hsi_boardinfo.c
++++ b/drivers/hsi/hsi_boardinfo.c
+@@ -49,7 +49,7 @@ int __init hsi_register_board_info(struct hsi_board_info const *info,
+ {
+ 	struct hsi_cl_info *cl_info;
  
--	dai_props = devm_kzalloc(dev, sizeof(*dai_props) * num, GFP_KERNEL);
--	dai_link  = devm_kzalloc(dev, sizeof(*dai_link)  * num, GFP_KERNEL);
-+	dai_props = devm_kcalloc(dev, num, sizeof(*dai_props), GFP_KERNEL);
-+	dai_link  = devm_kcalloc(dev, num, sizeof(*dai_link), GFP_KERNEL);
- 	if (!dai_props || !dai_link)
+-	cl_info = kzalloc(sizeof(*cl_info) * len, GFP_KERNEL);
++	cl_info = kcalloc(len, sizeof(*cl_info), GFP_KERNEL);
+ 	if (!cl_info)
  		return -ENOMEM;
  
 -- 
