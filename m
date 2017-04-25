@@ -1,52 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:16:20 +0000
-Subject: [PATCH 06/25] net: mvpp2: Improve two size determinations in mvpp2_probe()
-Message-Id: <c745ed5e-9b8e-6aeb-9faf-27a8ddd7544a@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 08:40:10 +0000
+Subject: [PATCH 0/3] HSI: nokia-modem: Fine-tuning for two function implementations
+Message-Id: <be1a9b8a-bc9f-d96e-04b4-a6edf2dc37c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Sebastian Reichel <sre@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 08:38:32 +0200
+Date: Tue, 25 Apr 2017 10:36:54 +0200
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/marvell/mvpp2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Markus Elfring (3):
+  Use devm_kcalloc() in nokia_modem_gpio_probe()
+  Delete error messages for a failed memory allocation in two functions
+  Add a space character for better code readability in nokia_modem_probe()
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index a86d9111c476..04aba2307b60 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -6873,7 +6873,7 @@ static int mvpp2_probe(struct platform_device *pdev)
- 	int port_count, cpu;
- 	int err;
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(struct mvpp2), GFP_KERNEL);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-@@ -6970,8 +6970,8 @@ static int mvpp2_probe(struct platform_device *pdev)
- 	}
- 
- 	priv->port_list = devm_kcalloc(&pdev->dev, port_count,
--				      sizeof(struct mvpp2_port *),
--				      GFP_KERNEL);
-+				       sizeof(*priv->port_list),
-+				       GFP_KERNEL);
- 	if (!priv->port_list) {
- 		err = -ENOMEM;
- 		goto err_mg_clk;
+ drivers/hsi/clients/nokia-modem.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
 -- 
 2.12.2
 
