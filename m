@@ -1,30 +1,51 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Sat, 01 Apr 2017 22:19:14 +0000
-Subject: Re: [PATCH] NFC: st21nfca: Fix potential memory leak
-Message-Id: <20170401221914.GE22034@zurbaran.ger.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 15:15:55 +0000
+Subject: [PATCH 3/3] HID: Wacom: Delete two unnecessary return statements
+Message-Id: <40f97a94-1df2-c50a-803d-7b66b641eaf3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219095847.9397-1-christophe.jaillet@wanadoo.fr>
+References: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
+In-Reply-To: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: christophe.ricard@gmail.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 16:50:02 +0200
 
-On Sun, Feb 19, 2017 at 10:58:47AM +0100, Christophe JAILLET wrote:
-> If all bits of 'dev_mask' are already set, there is a memory leak because
-> 'info' should be freed before returning.
-> 
-> While fixing it, 'return -ENOMEM' directly if the first kzalloc fails.
-> This makes the code more readable.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/nfc/st21nfca/core.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-Applied, thanks.
+The script "checkpatch.pl" pointed information out like the following.
 
-Cheers,
-Samuel.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/wacom_sys.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index 7517da5300fd..f70e7d7351c7 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -2329,7 +2329,6 @@ static void wacom_wireless_work(struct work_struct *work)
+ fail:
+ 	wacom_release_resources(wacom1);
+ 	wacom_release_resources(wacom2);
+-	return;
+ }
+ 
+ static void wacom_remote_destroy_one(struct wacom *wacom, unsigned int index)
+@@ -2534,8 +2533,6 @@ static void wacom_mode_change_work(struct work_struct *work)
+ 		if (error)
+ 			return;
+ 	}
+-
+-	return;
+ }
+ 
+ static int wacom_probe(struct hid_device *hdev,
+-- 
+2.12.2
+
