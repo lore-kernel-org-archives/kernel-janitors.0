@@ -1,44 +1,57 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Apr 2017 08:49:16 +0000
-Subject: Re: staging: ks7010: Adjust dev_err() calls in ks7010_sdio_probe()
-Message-Id: <ec2d26bd-d9c0-25bf-dcfb-d9ac564bfc73@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 15:13:55 +0000
+Subject: [PATCH 1/3] HID: Wacom: Use devm_kcalloc() in two functions
+Message-Id: <d0224def-26ba-d33b-e9be-a6218259c8e4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <901acc3c-ff1b-6f0c-b744-2bfb36de18d8@users.sourceforge.net>
- <1468787163.1900.1.camel@perches.com> <20160720155500.GG1688@katana>
- <12095569-1d23-7676-adef-b89ebc3a229b@users.sourceforge.net>
- <20170411223915.GD8814@eros>
-In-Reply-To: <20170411223915.GD8814@eros>
+References: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
+In-Reply-To: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sabitha George <sabitha.george@gmail.com>, sayli karnik <karniksayli1995@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-input@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> This patch does not apply to Greg's staging-testing branch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Apr 2017 16:06:08 +0200
 
-Could the proposed changes be applied with a bit of “fuzz” for the
-implementation of the function “ks7010_sdio_probe”?
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
+  This issue was detected by using the Coccinelle software.
 
-> Markus a patch was merged the same day you submitted this one that
-> refactored this code.
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-Do you refer to your contributions from 2017-04-10 here which seem to
-touch only other functions?
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/log/?h=staging-testing&qt=author&q=Tobin+C.+Harding
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/wacom_sys.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index 0022c0dac88a..550faf8819ea 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -1245,7 +1245,7 @@ static int wacom_led_groups_alloc_and_register_one(struct device *dev,
+ 	if (!devres_open_group(dev, &wacom->led.groups[group_id], GFP_KERNEL))
+ 		return -ENOMEM;
+ 
+-	leds = devm_kzalloc(dev, sizeof(struct wacom_led) * count, GFP_KERNEL);
++	leds = devm_kcalloc(dev, count, sizeof(*leds), GFP_KERNEL);
+ 	if (!leds) {
+ 		error = -ENOMEM;
+ 		goto err;
+@@ -1345,8 +1345,7 @@ static int wacom_led_groups_allocate(struct wacom *wacom, int count)
+ 	struct wacom_group_leds *groups;
+ 	int error;
+ 
+-	groups = devm_kzalloc(dev, sizeof(struct wacom_group_leds) * count,
+-			      GFP_KERNEL);
++	groups = devm_kcalloc(dev, count, sizeof(*groups), GFP_KERNEL);
+ 	if (!groups)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
 
-> The patch was good though, good spotting.
-
-Will there any more approaches be needed for a corresponding
-editing conflict resolution?
-Which day would be better to dare a resend for my small update suggestion?
-
-Regards,
-Markus
