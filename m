@@ -1,42 +1,47 @@
-From: =?UTF-8?Q?Peter_Heise?= <mail@pheise.de>
-Date: Thu, 20 Apr 2017 00:07:25 +0000
-Subject: AW: [bug report] net/hsr: Added support for HSR v1
-Message-Id: <0102015b88af5b7f-e71057ba-15e3-42b9-921e-2c89ba77a36e-000000@eu-west-1.amazonses.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 09:20:07 +0000
+Subject: [PATCH] omapfb: Use devm_kcalloc() in vrfb_probe()
+Message-Id: <4a7b1751-4319-4bde-cf26-2de2a4096c68@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170419142535.2lxzzqabh2amfyh6@mwanda>
-In-Reply-To: <20170419142535.2lxzzqabh2amfyh6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-VGhhbmsgeW91IGZvciB0aGUgbWVzc2FnZSBEYW4sIEkgd2lsbCBzdWJtaXQgYSBwYXRjaCB0
-byBuZXQgdGhlIG5leHQgZGF5cyENCg0KUmVnYXJkcywNClBldGVyDQoNClZvbjogRGFuIENh
-cnBlbnRlciANCkdlc2VuZGV0OiBNaXR0d29jaCwgMTkuIEFwcmlsIDIwMTcgMTY6MjYNCkFu
-OiBQZXRlciBIZWlzZSA8bWFpbEBwaGVpc2UuZGU+DQpDYzoga2VybmVsLWphbml0b3JzQHZn
-ZXIua2VybmVsLm9yZw0KQmV0cmVmZjogW2J1ZyByZXBvcnRdIG5ldC9oc3I6IEFkZGVkIHN1
-cHBvcnQgZm9yIEhTUiB2MQ0KDQpIZWxsbyBQZXRlciBIZWlzZSwNCg0KVGhlIHBhdGNoIGVl
-MWMyNzk3NzI4NDogIm5ldC9oc3I6IEFkZGVkIHN1cHBvcnQgZm9yIEhTUiB2MSIgZnJvbSBB
-cHINCjEzLCAyMDE2LCBsZWFkcyB0byB0aGUgZm9sbG93aW5nIHN0YXRpYyBjaGVja2VyIHdh
-cm5pbmc6DQoNCsKgwqDCoCBuZXQvaHNyL2hzcl9kZXZpY2UuYzozMTkgc2VuZF9oc3Jfc3Vw
-ZXJ2aXNpb25fZnJhbWUoKQ0KwqDCoMKgIHdhcm46IHBhc3NpbmcgZnJlZWQgbWVtb3J5ICdz
-a2InDQoNCm5ldC9oc3IvaHNyX2RldmljZS5jDQrCoMKgIDMwOMKgIA0KwqDCoCAzMDnCoMKg
-wqDCoMKgwqDCoMKgwqAgaHNyX3N0YWctPkhTUl9UTFZfVHlwZSA9IHR5cGU7DQrCoMKgIDMx
-MMKgwqDCoMKgwqDCoMKgwqDCoCAvKiBUT0RPOiBXaHkgMTIgaW4gSFNSdjA/ICovDQrCoMKg
-IDMxMcKgwqDCoMKgwqDCoMKgwqDCoCBoc3Jfc3RhZy0+SFNSX1RMVl9MZW5ndGggPSBoc3JW
-ZXIgPyBzaXplb2Yoc3RydWN0IGhzcl9zdXBfcGF5bG9hZCkgOiAxMjsNCsKgwqAgMzEywqAg
-DQrCoMKgIDMxM8KgwqDCoMKgwqDCoMKgwqDCoCAvKiBQYXlsb2FkOiBNYWNBZGRyZXNzQSAq
-Lw0KwqDCoCAzMTTCoMKgwqDCoMKgwqDCoMKgwqAgaHNyX3NwID0gKHR5cGVvZihoc3Jfc3Ap
-KSBza2JfcHV0KHNrYiwgc2l6ZW9mKHN0cnVjdCBoc3Jfc3VwX3BheWxvYWQpKTsNCsKgwqAg
-MzE1wqDCoMKgwqDCoMKgwqDCoMKgIGV0aGVyX2FkZHJfY29weShoc3Jfc3AtPk1hY0FkZHJl
-c3NBLCBtYXN0ZXItPmRldi0+ZGV2X2FkZHIpOw0KwqDCoCAzMTbCoCANCsKgwqAgMzE3wqDC
-oMKgwqDCoMKgwqDCoMKgIHNrYl9wdXRfcGFkdG8oc2tiLCBFVEhfWkxFTiArIEhTUl9ITEVO
-KTsNCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgXl5eDQpUaGUgc2tiX3B1dF9wYWR0bygpIGZ1bmN0aW9uIGZyZWVzIHNrYigp
-IG9uIGVycm9yLsKgIE1heWJlIHRoYXQncyBub3QNCnBvc3NpYmxlPw0KDQrCoMKgIDMxOMKg
-IA0KwqDCoCAzMTnCoMKgwqDCoMKgwqDCoMKgwqAgaHNyX2ZvcndhcmRfc2tiKHNrYiwgbWFz
-dGVyKTsNCsKgwqAgMzIwwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybjsNCsKgwqAgMzIxwqAg
-DQrCoMKgIDMyMsKgIG91dDoNCsKgwqAgMzIzwqDCoMKgwqDCoMKgwqDCoMKgIFdBUk5fT05D
-RSgxLCAiSFNSOiBDb3VsZCBub3Qgc2VuZCBzdXBlcnZpc2lvbiBmcmFtZVxuIik7DQrCoMKg
-IDMyNMKgwqDCoMKgwqDCoMKgwqDCoCBrZnJlZV9za2Ioc2tiKTsNCsKgwqAgMzI1wqAgfQ0K
-DQpyZWdhcmRzLA0KZGFuIGNhcnBlbnRlcg0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 11:08:30 +0200
+
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/omap2/omapfb/vrfb.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/vrfb.c b/drivers/video/fbdev/omap2/omapfb/vrfb.c
+index f346b02eee1d..54b51a7a290a 100644
+--- a/drivers/video/fbdev/omap2/omapfb/vrfb.c
++++ b/drivers/video/fbdev/omap2/omapfb/vrfb.c
+@@ -358,11 +358,7 @@ static int __init vrfb_probe(struct platform_device *pdev)
+ 		return PTR_ERR(vrfb_base);
+ 
+ 	num_ctxs = pdev->num_resources - 1;
+-
+-	ctxs = devm_kzalloc(&pdev->dev,
+-			sizeof(struct vrfb_ctx) * num_ctxs,
+-			GFP_KERNEL);
+-
++	ctxs = devm_kcalloc(&pdev->dev, num_ctxs, sizeof(*ctxs), GFP_KERNEL);
+ 	if (!ctxs)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
+
