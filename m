@@ -1,56 +1,45 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Mon, 10 Apr 2017 20:31:38 +0000
-Subject: Re: [PATCH 1/2] hwmon: (tacho) Fix a condition in aspeed_get_fan_tach_ch_rpm()
-Message-Id: <0e7d4c14-0710-cf45-32d6-a805004cb8e2@roeck-us.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 13:04:11 +0000
+Subject: [PATCH 1/3] ASoC: simple-card: Use devm_kcalloc() in asoc_simple_card_parse_aux_devs()
+Message-Id: <8c8c6979-0368-9ef5-2e10-57199f0bc03e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170410134621.GA1918@mwanda>
-In-Reply-To: <20170410134621.GA1918@mwanda>
+References: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
+In-Reply-To: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Joel Stanley <joel@jms.id.au>, Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 14:21:51 +0200
 
-On 04/10/2017 06:46 AM, Dan Carpenter wrote:
-> What we want is for regmap_read() to return zero meaning success and
-> for RESULT_STATUS_MASK which is BIT(31) to be set set.
->
-> The current code is buggy in two ways.  It requires both failure
-> conditions should be met before it fails.  And if it times out then it
-> returns zero instead of -EIO.
->
-> Fixes: cc96f6f6d766 ("hwmon: Support for ASPEED PWM/Fan tach")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static analysis.  Not tested.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-Thanks for the report. My fault - I had asked for this and the problem
-in the next patch to be fixed, I got a new version of the patch with the fix,
-but I did not find the time to apply it. Sorry for the noise.
+This issue was detected by using the Coccinelle software.
 
-Guenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/generic/simple-card.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
-> index 29010ad94208..2f22add5c73b 100644
-> --- a/drivers/hwmon/aspeed-pwm-tacho.c
-> +++ b/drivers/hwmon/aspeed-pwm-tacho.c
-> @@ -512,11 +512,11 @@ static u32 aspeed_get_fan_tach_ch_rpm(struct aspeed_pwm_tacho_data *priv,
->
->  	msleep(sec);
->
-> -	while (!(regmap_read(priv->regmap, ASPEED_PTCR_RESULT, &val))
-> -			& !(val & RESULT_STATUS_MASK)) {
-> +	while (regmap_read(priv->regmap, ASPEED_PTCR_RESULT, &val) ||
-> +	       !(val & RESULT_STATUS_MASK)) {
->  		timeout++;
->  		if (timeout > 1)
-> -			return 0;
-> +			return -EIO;
->  		msleep(sec);
->  	}
->
->
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 2c9dedab5184..b59d51374b89 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -334,8 +334,8 @@ static int asoc_simple_card_parse_aux_devs(struct device_node *node,
+ 	if (n <= 0)
+ 		return -EINVAL;
+ 
+-	card->aux_dev = devm_kzalloc(dev,
+-			n * sizeof(*card->aux_dev), GFP_KERNEL);
++	card->aux_dev = devm_kcalloc(dev, n, sizeof(*card->aux_dev),
++				     GFP_KERNEL);
+ 	if (!card->aux_dev)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
 
