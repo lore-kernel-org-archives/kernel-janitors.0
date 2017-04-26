@@ -1,112 +1,51 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Thu, 20 Apr 2017 20:40:58 +0000
-Subject: Re: [PATCH 02/26] IB/ocrdma: Use kcalloc() in ocrdma_mbx_alloc_pd_range()
-Message-Id: <1492720858.3041.17.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 16:52:19 +0000
+Subject: [PATCH] soc: mediatek: Use devm_kcalloc() in init_scp()
+Message-Id: <bb0b7d0d-a2e7-3415-2c15-961a05493e08@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
-         <7abcae42-6bc2-0653-69ea-5112943ff72e@users.sourceforge.net>
-         <20170308140304.GC4828@yuval-lap>
-In-Reply-To: <20170308140304.GC4828@yuval-lap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Yuval Shaia <yuval.shaia@oracle.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 2017-03-08 at 16:03 +0200, Yuval Shaia wrote:
-> On Wed, Mar 08, 2017 at 01:41:00PM +0100, SF Markus Elfring wrote:
-> > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 7 Mar 2017 18:23:54 +0100
-> > 
-> > * Multiplications for the size determination of memory allocations
-> >   indicated that array data structures should be processed.
-> >   Thus reuse the corresponding function "kcalloc".
-> > 
-> >   This issue was detected by using the Coccinelle software.
-> > 
-> > * Delete the local variable "pd_bitmap_size" which became
-> > unnecessary with
-> >   this refactoring.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> > b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> > index cbac41b15d94..d5a3127b6df8 100644
-> > --- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> > +++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-> > @@ -1505,7 +1505,6 @@ int ocrdma_mbx_dealloc_pd(struct ocrdma_dev
-> > *dev, struct ocrdma_pd *pd)
-> >  static int ocrdma_mbx_alloc_pd_range(struct ocrdma_dev *dev)
-> >  {
-> >  	int status = -ENOMEM;
-> > -	size_t pd_bitmap_size;
-> >  	struct ocrdma_alloc_pd_range *cmd;
-> >  	struct ocrdma_alloc_pd_range_rsp *rsp;
-> >  
-> > @@ -1527,10 +1526,10 @@ static int ocrdma_mbx_alloc_pd_range(struct
-> > ocrdma_dev *dev)
-> >  			dev->pd_mgr->pd_dpp_start = rsp-
-> > >dpp_page_pdid &
-> >  					OCRDMA_ALLOC_PD_RNG_RSP_ST
-> > ART_PDID_MASK;
-> >  			dev->pd_mgr->max_dpp_pd = rsp->pd_count;
-> > -			pd_bitmap_size > > -				BITS_TO_LONGS(rsp->pd_count) *
-> > sizeof(long);
-> > -			dev->pd_mgr->pd_dpp_bitmap > > kzalloc(pd_bitmap_size,
-> > -							     GFP_K
-> > ERNEL);
-> > +			dev->pd_mgr->pd_dpp_bitmap
-> > +				= kcalloc(BITS_TO_LONGS(rsp-
-> > >pd_count),
-> > +							sizeof(lon
-> > g),
-> > +							GFP_KERNEL
-> > );
-> 
-> kzalloc gives "clean" buffer.
-> Just making sure that it is fine with you if the array is not
-> "clean".
-> (looking at _ocrdma_pd_mgr_get_bitmap i think it should).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 18:33:15 +0200
 
-kcalloc is documented to return memory set to 0.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-> > 
-> >  		}
-> >  		kfree(cmd);
-> >  	}
-> > @@ -1546,9 +1545,10 @@ static int ocrdma_mbx_alloc_pd_range(struct
-> > ocrdma_dev *dev)
-> >  		dev->pd_mgr->pd_norm_start = rsp->dpp_page_pdid &
-> >  					OCRDMA_ALLOC_PD_RNG_RSP_ST
-> > ART_PDID_MASK;
-> >  		dev->pd_mgr->max_normal_pd = rsp->pd_count;
-> > -		pd_bitmap_size = BITS_TO_LONGS(rsp->pd_count) *
-> > sizeof(long);
-> > -		dev->pd_mgr->pd_norm_bitmap > > kzalloc(pd_bitmap_size,
-> > -						      GFP_KERNEL);
-> > +		dev->pd_mgr->pd_norm_bitmap
-> > +			= kcalloc(BITS_TO_LONGS(rsp->pd_count),
-> > +						sizeof(long),
-> > +						GFP_KERNEL);
-> >  	}
-> >  	kfree(cmd);
-> >  
-> > -- 
-> > 2.12.0
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-
-> > rdma" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index beb79162369a..9abf2b067ec6 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -365,15 +365,14 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 	if (IS_ERR(scp->base))
+ 		return ERR_CAST(scp->base);
+ 
+-	scp->domains = devm_kzalloc(&pdev->dev,
+-				sizeof(*scp->domains) * num, GFP_KERNEL);
++	scp->domains = devm_kcalloc(&pdev->dev, num, sizeof(*scp->domains),
++				    GFP_KERNEL);
+ 	if (!scp->domains)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	pd_data = &scp->pd_data;
+-
+-	pd_data->domains = devm_kzalloc(&pdev->dev,
+-			sizeof(*pd_data->domains) * num, GFP_KERNEL);
++	pd_data->domains = devm_kcalloc(&pdev->dev, num,
++					sizeof(*pd_data->domains), GFP_KERNEL);
+ 	if (!pd_data->domains)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-   
-Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.12.2
 
