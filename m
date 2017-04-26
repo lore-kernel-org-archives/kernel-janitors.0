@@ -1,30 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Apr 2017 14:54:09 +0000
-Subject: Re: IB/ocrdma: Improve size determinations in ten functions
-Message-Id: <291bca43-2cff-6996-91f6-d6b1769cbc59@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 18:50:13 +0000
+Subject: Re: Checking error messages for failed memory allocations
+Message-Id: <f6da1799-02a1-b1dc-edcb-a2ea5563b51a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
- <1492720999.3041.18.camel@redhat.com>
- <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
- <755f6c2c-03a2-7248-a5e3-9190d119cdaf@users.sourceforge.net>
- <20170423073311.GA14088@mtr-leonro.local>
- <1f122892-7e67-a7ca-ae7f-7ac8e2b7a037@intel.com>
- <a2b014f3-7674-6e33-3b22-72594b38a6b6@users.sourceforge.net>
- <20170424143332.GK14088@mtr-leonro.local>
-In-Reply-To: <20170424143332.GK14088-U/DQcQFIOTAAJjI8aNfphQ@public.gmane.org>
+References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
+ <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
+ <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
+ <1493231242.18659.28.camel@perches.com>
+In-Reply-To: <1493231242.18659.28.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>
+Cc: Subhash Jadavani <subhashj@codeaurora.org>, linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-scsi-owner@vger.kernel.org
 
-> He didn't check it, this is why in most susbsystems his patches are ignored.
+> Basically most everything that has a gfp_t argument does a
+> dump_stack() on OOM unless __GFP_NOWARN is specified by that gfp_t.
 
-I assume that it does only partly matter how much I could check
-such an update suggestion when you would generally prefer to exclude
-some special change possibilities.
+How do you think about to improve any programming interface documentation
+around such a function property?
 
-It can eventually happen a bit more software evolution, can't it there?
+Are there any special checks needed for function implementations
+which can pass the flag “__GFP_NOWARN”?
 
 Regards,
 Markus
