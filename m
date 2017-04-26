@@ -1,46 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Apr 2017 17:29:23 +0000
-Subject: Re: regulator: s2mps11: Use kcalloc() in s2mps11_pmic_probe()
-Message-Id: <5fbe1743-2d68-4959-d71d-ed9dfca69eb5@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 15:39:19 +0000
+Subject: [PATCH 3/3] ti-soc-thermal: Fix a typo in a comment line
+Message-Id: <f1b47bde-bd8a-2a5d-a6b3-4c721628b243@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0fc50c2-4552-93d1-1ae0-42f78d255fe9@users.sourceforge.net>
- <542252e0-817f-ce13-fbd5-8fd8dda4c746@users.sourceforge.net>
- <20170415104845.bofxl34wr7z7khix@kozik-lap>
-In-Reply-To: <20170415104845.bofxl34wr7z7khix@kozik-lap>
+References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
+In-Reply-To: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> A multiplication for the size determination of a memory allocation
->> indicated that an array data structure should be processed.
->> Thus use the corresponding function "kcalloc".
->>
->> This issue was detected by using the Coccinelle software.
-> 
-> Unfortunately you write mostly cryptic commit messages.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 17:11:28 +0200
 
-Thanks for your feedback.
+Add a missing character in this description for a function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> This does not answer for the main question - why this change is needed.
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index 109fb0a5f19f..696ab3046b87 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -1010,7 +1010,7 @@ ti_bandgap_force_single_read(struct ti_bandgap *bgp, int id)
+ }
+ 
+ /**
+- * ti_bandgap_set_continous_mode() - One time enabling of continuous mode
++ * ti_bandgap_set_continuous_mode() - One time enabling of continuous mode
+  * @bgp: pointer to struct ti_bandgap
+  *
+  * Call this function only if HAS(MODE_CONFIG) is set. As this driver may
+-- 
+2.12.2
 
-My update suggestion affects an aspect for the coding style.
-
-
-> Code looks okay,
-
-There can be different opinions about related implementation details.
-
-
-> but you should explain in simple words why this is needed.
-
-Do you find the following wording from the script “checkpatch.pl”
-better to understand?
-
-WARNING: Prefer kcalloc over kzalloc with multiply
-
-
-Regards,
-Markus
