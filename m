@@ -1,56 +1,55 @@
-From: David Lebrun <david.lebrun@uclouvain.be>
-Date: Wed, 19 Apr 2017 14:05:04 +0000
-Subject: Re: [bug report] ipv6: implement dataplane support for rthdr type 4 (Segment Routing Header)
-Message-Id: <99b5955e-9516-cbde-c005-f0f858e1b6bf@uclouvain.be>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="FDgauix8An44NA28VvEF8dLWsrNXa8C2m"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 08:05:27 +0000
+Subject: [PATCH] reset: sti: Use devm_kcalloc() in syscfg_reset_controller_register()
+Message-Id: <e10a20a2-cfea-5b42-db3a-41b6eb08d7e4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170419135500.ntv67xcc3wnkkzr6@mwanda>
-In-Reply-To: <20170419135500.ntv67xcc3wnkkzr6@mwanda>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
---FDgauix8An44NA28VvEF8dLWsrNXa8C2m
-Content-Type: multipart/mixed; boundary="08xU9Owjs2nBbn6exDcX1cLRKDGxKd7AS"
-From: David Lebrun <david.lebrun@uclouvain.be>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org
-Message-ID: <99b5955e-9516-cbde-c005-f0f858e1b6bf@uclouvain.be>
-Subject: Re: [bug report] ipv6: implement dataplane support for rthdr type 4
- (Segment Routing Header)
-References: <20170419135500.ntv67xcc3wnkkzr6@mwanda>
-In-Reply-To: <20170419135500.ntv67xcc3wnkkzr6@mwanda>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 09:50:34 +0200
 
---08xU9Owjs2nBbn6exDcX1cLRKDGxKd7AS
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kcalloc".
 
-On 04/19/2017 03:55 PM, Dan Carpenter wrote:
-> Hello David Lebrun,
->=20
-> The patch 1ababeba4a21: "ipv6: implement dataplane support for rthdr
-> type 4 (Segment Routing Header)" from Nov 8, 2016, leads to the
-> following static checker warning:
->=20
-> 	net/ipv6/exthdrs.c:391 ipv6_srh_rcv()
-> 	error: double free of 'skb'
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-Thanks for the report ! I'll send a patch to fix that right now :)
+* Delete the local variable "size" which became unnecessary with
+  this refactoring.
 
-David
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/reset/sti/reset-syscfg.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/reset/sti/reset-syscfg.c b/drivers/reset/sti/reset-syscfg.c
+index 9bd57a5eee72..7e0f2aa55ba7 100644
+--- a/drivers/reset/sti/reset-syscfg.c
++++ b/drivers/reset/sti/reset-syscfg.c
+@@ -145,16 +145,14 @@ static int syscfg_reset_controller_register(struct device *dev,
+ 				const struct syscfg_reset_controller_data *data)
+ {
+ 	struct syscfg_reset_controller *rc;
+-	size_t size;
+ 	int i, err;
+ 
+ 	rc = devm_kzalloc(dev, sizeof(*rc), GFP_KERNEL);
+ 	if (!rc)
+ 		return -ENOMEM;
+ 
+-	size = sizeof(struct syscfg_reset_channel) * data->nr_channels;
+-
+-	rc->channels = devm_kzalloc(dev, size, GFP_KERNEL);
++	rc->channels = devm_kcalloc(dev, data->nr_channels,
++				    sizeof(*rc->channels), GFP_KERNEL);
+ 	if (!rc->channels)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
 
---08xU9Owjs2nBbn6exDcX1cLRKDGxKd7AS--
-
---FDgauix8An44NA28VvEF8dLWsrNXa8C2m
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQT8nTbQ2eQR5sQwCJ+NvOfruxnoAwUCWPdukAAKCRCNvOfruxno
-A28qAJ9hxEL3JHD8Y8/7MZYxZgD7edOqDACdHzlFF6o6UOIRc7BxeLeOXTe4pe0=
-=wulw
------END PGP SIGNATURE-----
-
---FDgauix8An44NA28VvEF8dLWsrNXa8C2m--
