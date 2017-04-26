@@ -1,58 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:28:10 +0000
-Subject: [PATCH 18/25] net: mvpp2: Rename a jump label in mvpp2_prs_double_vlan_add()
-Message-Id: <489b0f89-c362-e931-0b5a-baa0df84b275@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 13:02:03 +0000
+Subject: [PATCH 0/3] ASoC: simple-card: Fine-tuning for three function implementations
+Message-Id: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 13:03:49 +0200
+Date: Wed, 26 Apr 2017 14:54:32 +0200
 
-Adjust jump labels according to the Linux coding style convention.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/marvell/mvpp2.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Markus Elfring (3):
+  Use devm_kcalloc() in asoc_simple_card_parse_aux_devs()
+  Use devm_kcalloc() in asoc_simple_card_probe()
+  SCU: Use devm_kcalloc() in asoc_simple_card_probe()
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index a5cd1036012a..0c190bd003b1 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -2139,7 +2139,7 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
- 		ai = mvpp2_prs_double_vlan_ai_free_get(priv);
- 		if (ai < 0) {
- 			ret = ai;
--			goto error;
-+			goto free_pe;
- 		}
- 
- 		/* Get first single/triple vlan tid */
-@@ -2162,7 +2162,7 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
- 
- 		if (tid >= tid_aux) {
- 			ret = -ERANGE;
--			goto error;
-+			goto free_pe;
- 		}
- 
- 		memset(pe, 0, sizeof(*pe));
-@@ -2189,8 +2189,7 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
- 	/* Update ports' mask */
- 	mvpp2_prs_tcam_port_map_set(pe, port_map);
- 	mvpp2_prs_hw_write(priv, pe);
--
--error:
-+free_pe:
- 	kfree(pe);
- 	return ret;
- }
+ sound/soc/generic/simple-card.c     | 8 ++++----
+ sound/soc/generic/simple-scu-card.c | 5 ++---
+ 2 files changed, 6 insertions(+), 7 deletions(-)
+
 -- 
 2.12.2
 
