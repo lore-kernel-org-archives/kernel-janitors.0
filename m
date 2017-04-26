@@ -1,19 +1,17 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 26 Apr 2017 14:34:38 +0000
+From: Mark Greer <mgreer@animalcreek.com>
+Date: Wed, 26 Apr 2017 17:04:43 +0000
 Subject: Re: [PATCH] NFC: trf7970a: Correct register settings for 27MHz clock
-Message-Id: <5900AFFE.8060702@bfs.de>
+Message-Id: <20170426170443.GB11522@animalcreek.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1493214513-12245-1-git-send-email-geoff@kuvee.com>
-In-Reply-To: <1493214513-12245-1-git-send-email-geoff@kuvee.com>
+In-Reply-To: <1493214513-12245-1-git-send-email-geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geoff Lansberry <geoff@kuvee.com>
-Cc: linux-wireless@vger.kernel.org, sameo@linux.intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfc@lists.01.org, devicetree@vger.kernel.org, mgreer@animalcreek.com, justin@kuvee.com, colin.king@canonical.com
+To: Geoff Lansberry <geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>, g@animalcreek.com
+Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfc-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mgreer-luAo+O/VEmrlveNOaEYElw@public.gmane.org, justin-R+k406RtEhcAvxtiuMwx3w@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org
 
-
-
-Am 26.04.2017 15:48, schrieb Geoff Lansberry:
+On Wed, Apr 26, 2017 at 09:48:33AM -0400, Geoff Lansberry wrote:
 > In prior commits the selected clock frequency does not propagate
 > correctly to what is written the the TRF7970A_MODULATOR_SYS_CLK_CTRL
 > register.
@@ -35,6 +33,11 @@ Am 26.04.2017 15:48, schrieb Geoff Lansberry:
 >  	of_property_read_u32(np, "clock-frequency", &clk_freq);
 > -	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
 > +	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) &&
+
+There is already a patch submitted to fix this issue so no need to fix
+it again.  For the record, it should have been in a separate patch
+since it fixes a different issue than what is fixed below.
+
 >  		(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
 >  		dev_err(trf->dev,
 >  			"clock-frequency (%u Hz) unsupported\n",
@@ -49,23 +52,10 @@ Am 26.04.2017 15:48, schrieb Geoff Lansberry:
 > +		trf->modulator_sys_clk_ctrl = 0;
 > +	}
 > +
-
-
-I am a fan of defensive programming and would move do:
-trf->modulator_sys_clk_ctrl = 0;
-if (clk_freq = TRF7970A_27MHZ_CLOCK_FREQUENCY) {
-		trf->modulator_sys_clk_ctrl = TRF7970A_MODULATOR_27MHZ;
-		dev_dbg(trf->dev, "trf7970a configured for 27MHz crystal\n");
-	}
-
-perhaps using a switch/case here is appropriate IMHO a border case for 2 case
-but would make the init code more clear.
-
-just my 2 cents,
-
-re,
- wh
-
 >  	if (of_property_read_bool(np, "en2-rf-quirk"))
 >  		trf->quirks |= TRF7970A_QUIRK_EN2_MUST_STAY_LOW;
->  
+
+This part looks okay to me but I like Walter's suggestion too.
+
+Mark
+--
