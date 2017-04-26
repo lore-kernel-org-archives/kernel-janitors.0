@@ -1,45 +1,24 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Apr 2017 20:09:45 +0000
-Subject: [PATCH 1/2] IB/usnic: Use kcalloc() in alloc_res_chunk_list()
-Message-Id: <db43dde0-c172-a9e5-1878-1bada275d095@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 18:11:38 +0000
+Subject: Re: scsi: ufs: Delete an error message for a failed memory allocation in ufshcd_memory_alloc()
+Message-Id: <6d4cb083-7a06-3c7d-bf98-a0386178a65d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f0a030a8-2a03-f531-57d8-39c2aeae28a4@users.sourceforge.net>
-In-Reply-To: <f0a030a8-2a03-f531-57d8-39c2aeae28a4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
+ <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
+ <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
+In-Reply-To: <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christian Benvenuti <benve-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Dave Goodell <dgoodell-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Subhash Jadavani <subhashj@codeaurora.org>
+Cc: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-scsi-owner@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 6 Apr 2017 20:32:39 +0200
+> Although i don't know "out of memory" messages will be printed out by dmam_alloc_coherent() APIs
+> or not.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kcalloc".
+Would such information belong to the programming interface documentation?
 
-This issue was detected by using the Coccinelle software.
+Are there any related tags or source code annotations needed?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
-index 092d4e11a633..817f0475d9fe 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_qp_grp.c
-@@ -545,8 +545,8 @@ alloc_res_chunk_list(struct usnic_vnic *vnic,
- 		/* Do Nothing */
- 	}
- 
--	res_chunk_list = kzalloc(sizeof(*res_chunk_list)*(res_lst_sz+1),
--					GFP_ATOMIC);
-+	res_chunk_list = kcalloc(res_lst_sz + 1, sizeof(*res_chunk_list),
-+				 GFP_ATOMIC);
- 	if (!res_chunk_list)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.12.2
-
+Regards,
+Markus
