@@ -1,33 +1,52 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:31 +0000
-Subject: Re: [PATCH 2/6] clk: hisilicon: Delete error messages for failed memory allocations in hisi_clk_init
-Message-Id: <20170419183131.GR7065@codeaurora.org>
+From: Geoff Lansberry <geoff@kuvee.com>
+Date: Wed, 26 Apr 2017 13:48:33 +0000
+Subject: [PATCH] NFC: trf7970a: Correct register settings for 27MHz clock
+Message-Id: <1493214513-12245-1-git-send-email-geoff@kuvee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <362845e2-00da-9631-a049-1a53749a1fcf@users.sourceforge.net>
-In-Reply-To: <362845e2-00da-9631-a049-1a53749a1fcf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfc-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mgreer-luAo+O/VEmrlveNOaEYElw@public.gmane.org, justin-R+k406RtEhcAvxtiuMwx3w@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org, Geoff Lansberry <geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 10:12:32 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus remove such statements here.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+In prior commits the selected clock frequency does not propagate
+correctly to what is written the the TRF7970A_MODULATOR_SYS_CLK_CTRL
+register.
+Also fixes a bug that causes the device tree property check to always
+pass.
 
-Applied to clk-next
+Signed-off-by: Geoff Lansberry <geoff@kuvee.com>
+---
+ drivers/nfc/trf7970a.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
+index 2d1c8ca..c278b0e 100644
+--- a/drivers/nfc/trf7970a.c
++++ b/drivers/nfc/trf7970a.c
+@@ -2071,7 +2071,7 @@ static int trf7970a_probe(struct spi_device *spi)
+ 	}
+ 
+ 	of_property_read_u32(np, "clock-frequency", &clk_freq);
+-	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
++	if ((clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) &&
+ 		(clk_freq != TRF7970A_13MHZ_CLOCK_FREQUENCY)) {
+ 		dev_err(trf->dev,
+ 			"clock-frequency (%u Hz) unsupported\n",
+@@ -2079,6 +2079,13 @@ static int trf7970a_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_freq = TRF7970A_27MHZ_CLOCK_FREQUENCY) {
++		trf->modulator_sys_clk_ctrl = TRF7970A_MODULATOR_27MHZ;
++		dev_dbg(trf->dev, "trf7970a configured for 27MHz crystal\n");
++	} else {
++		trf->modulator_sys_clk_ctrl = 0;
++	}
++
+ 	if (of_property_read_bool(np, "en2-rf-quirk"))
+ 		trf->quirks |= TRF7970A_QUIRK_EN2_MUST_STAY_LOW;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
