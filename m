@@ -1,49 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 19:50:12 +0000
-Subject: [PATCH 3/5] target: Improve size determinations in two functions
-Message-Id: <166debca-20eb-9540-5fd3-e984cc1f8098@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 13:05:58 +0000
+Subject: [PATCH 2/3] ASoC: simple-card: Use devm_kcalloc() in asoc_simple_card_probe()
+Message-Id: <f82c9081-bded-9bd9-6bef-6a137dd90ba1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
-In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+References: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
+In-Reply-To: <8b5e37d1-17c5-4551-801f-ca7939d5efd7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 20:15:12 +0200
+Date: Wed, 26 Apr 2017 14:32:12 +0200
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determinations a bit safer according to the Linux coding style convention.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/target_core_rd.c | 4 ++--
+ sound/soc/generic/simple-card.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
-index 838dc128d494..20253d04103f 100644
---- a/drivers/target/target_core_rd.c
-+++ b/drivers/target/target_core_rd.c
-@@ -47,7 +47,7 @@ static int rd_attach_hba(struct se_hba *hba, u32 host_id)
- {
- 	struct rd_host *rd_host;
- 
--	rd_host = kzalloc(sizeof(struct rd_host), GFP_KERNEL);
-+	rd_host = kzalloc(sizeof(*rd_host), GFP_KERNEL);
- 	if (!rd_host)
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index b59d51374b89..55586326fde8 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -437,8 +437,8 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 	if (!priv)
  		return -ENOMEM;
  
-@@ -285,7 +285,7 @@ static struct se_device *rd_alloc_device(struct se_hba *hba, const char *name)
- 	struct rd_dev *rd_dev;
- 	struct rd_host *rd_host = hba->hba_ptr;
- 
--	rd_dev = kzalloc(sizeof(struct rd_dev), GFP_KERNEL);
-+	rd_dev = kzalloc(sizeof(*rd_dev), GFP_KERNEL);
- 	if (!rd_dev)
- 		return NULL;
+-	dai_props = devm_kzalloc(dev, sizeof(*dai_props) * num, GFP_KERNEL);
+-	dai_link  = devm_kzalloc(dev, sizeof(*dai_link)  * num, GFP_KERNEL);
++	dai_props = devm_kcalloc(dev, num, sizeof(*dai_props), GFP_KERNEL);
++	dai_link  = devm_kcalloc(dev, num, sizeof(*dai_link), GFP_KERNEL);
+ 	if (!dai_props || !dai_link)
+ 		return -ENOMEM;
  
 -- 
 2.12.2
