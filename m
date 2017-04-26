@@ -1,36 +1,28 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Mon, 24 Apr 2017 12:59:50 +0000
-Subject: Re: [PATCH 3/3] extcon: arizona: Use devm_kcalloc() in arizona_extcon_get_micd_configs()
-Message-Id: <20170424130039.GG1594@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 15:33:10 +0000
+Subject: [PATCH 0/3] TI-SoC-thermal: Fine-tuning for two functions
+Message-Id: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
- <1a203761-76b9-bf3c-c034-0bb81fe6006a@users.sourceforge.net>
-In-Reply-To: <1a203761-76b9-bf3c-c034-0bb81fe6006a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: patches@opensource.wolfsonmicro.com, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Apr 24, 2017 at 02:43:55PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 23 Apr 2017 22:44:19 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "devm_kcalloc".
-> 
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 26 Apr 2017 17:24:56 +0200
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Three update suggestions were taken into account
+from static source code analysis.
 
-Actually fixes a bug on the alloc as well looks like the type was
-wrong before.
+Markus Elfring (3):
+  Use devm_kcalloc() in ti_bandgap_build()
+  Delete error messages for failed memory allocations in ti_bandgap_build()
+  Fix a typo in a comment line
 
-Thanks,
-Charles
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+-- 
+2.12.2
+
