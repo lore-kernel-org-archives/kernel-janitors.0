@@ -1,32 +1,28 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 18:31:49 +0000
-Subject: Re: [PATCH 6/6] clk: hi3620: Fix a typo in one variable name
-Message-Id: <20170419183149.GV7065@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Apr 2017 19:08:15 +0000
+Subject: [PATCH] gpio: f7188x: Add a missing break
+Message-Id: <20170426190815.vi2v3ef4j7ruspkg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <6034a36d-a1a2-e942-0651-61f08475d8c8@users.sourceforge.net>
-In-Reply-To: <6034a36d-a1a2-e942-0651-61f08475d8c8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Marty Plummer <netz.kernel@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 11:15:56 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> CHECK: 'seperated' may be misspelled - perhaps 'separated'?
-> 
-> Thus rename the affected variable.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+A break statement was obviously intended here.
 
-Applied to clk-next
+Fixes: d69843e416d3 ("gpio: f7188x: Add F71889A GPIO support.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index c013ff5deb70..13350c9d7f5e 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -398,6 +398,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 	case f71889a:
+ 		data->nr_bank = ARRAY_SIZE(f71889a_gpio_bank);
+ 		data->bank = f71889a_gpio_bank;
++		break;
+ 	case f71889f:
+ 		data->nr_bank = ARRAY_SIZE(f71889_gpio_bank);
+ 		data->bank = f71889_gpio_bank;
