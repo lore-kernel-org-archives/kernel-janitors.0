@@ -1,71 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 07 Mar 2017 12:57:26 +0000
-Subject: Applied "ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"" to the asoc tree
-Message-Id: <E1clEgA-0004fV-8c@finisterre>
+From: Geoff Lansberry <geoff@kuvee.com>
+Date: Thu, 27 Apr 2017 01:41:48 +0000
+Subject: [PATCH v2] NFC: trf7970a: Correct register settings for 27MHz clock
+Message-Id: <1493257308-32503-1-git-send-email-geoff@kuvee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170221185005.27973-1-colin.king@canonical.com>
-In-Reply-To: <20170221185005.27973-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Dharageswari R <dharageswari.r@intel.com>, Vinod Koul <vinod.koul@intel.com>, Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, sameo@linux.intel.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfc@lists.01.org, devicetree@vger.kernel.org, mgreer@animalcreek.com, justin@kuvee.com, colin.king@canonical.com, wharms@bfs.de, Geoff Lansberry <geoff@kuvee.com>
 
-The patch
+In prior commits the selected clock frequency does not propagate
+correctly to what is written the the TRF7970A_MODULATOR_SYS_CLK_CTRL
+register.
 
-   ASoC: Intel: Skylake: fix spelling mistake: "allocationf" -> "allocation"
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 08458871b60c4bfe49973ce1c27a2b4bc4c159b0 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 21 Feb 2017 18:50:05 +0000
-Subject: [PATCH] ASoC: Intel: Skylake: fix spelling mistake: "allocationf" ->
- "allocation"
-
-Trivial fix to spelling mistake in dev_err message.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geoff Lansberry <geoff@kuvee.com>
 ---
- sound/soc/intel/skylake/skl-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nfc/trf7970a.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index e12520e142ff..635cbb1e7d91 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1165,7 +1165,7 @@ static int skl_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 						snd_dma_pci_data(skl->pci),
- 						size, MAX_PREALLOC_SIZE);
- 		if (retval) {
--			dev_err(dai->dev, "dma buffer allocationf fail\n");
-+			dev_err(dai->dev, "dma buffer allocation fail\n");
- 			return retval;
- 		}
+diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
+index 5f040e6..c278b0e 100644
+--- a/drivers/nfc/trf7970a.c
++++ b/drivers/nfc/trf7970a.c
+@@ -2079,6 +2079,13 @@ static int trf7970a_probe(struct spi_device *spi)
+ 		return -EINVAL;
  	}
+ 
++	if (clk_freq = TRF7970A_27MHZ_CLOCK_FREQUENCY) {
++		trf->modulator_sys_clk_ctrl = TRF7970A_MODULATOR_27MHZ;
++		dev_dbg(trf->dev, "trf7970a configured for 27MHz crystal\n");
++	} else {
++		trf->modulator_sys_clk_ctrl = 0;
++	}
++
+ 	if (of_property_read_bool(np, "en2-rf-quirk"))
+ 		trf->quirks |= TRF7970A_QUIRK_EN2_MUST_STAY_LOW;
+ 
 -- 
-2.11.0
+2.7.4
 
