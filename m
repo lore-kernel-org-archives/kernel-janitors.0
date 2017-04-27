@@ -1,47 +1,30 @@
-From: Rodolfo Giometti <giometti@enneenne.com>
-Date: Wed, 12 Apr 2017 09:18:56 +0000
-Subject: Re: [PATCH] c2port: checking for NULL instead of IS_ERR()
-Message-Id: <aeae847b-12c5-9bdf-ece6-76e86f16b76c@enneenne.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 27 Apr 2017 09:14:20 +0000
+Subject: [PATCH] IB/rdmavt: restore IRQs on error path in rvt_create_ah()
+Message-Id: <20170427091420.j7kl5tmzqnyami4s@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170412083321.GC3250@mwanda>
-In-Reply-To: <20170412083321.GC3250@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, Rodolfo Giometti <giometti@linux.it>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kamal Heib <kamalh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 04/12/17 10:33, Dan Carpenter wrote:
-> c2port_device_register() never returns NULL, it uses error pointers.
->
-> Fixes: 65131cd52b9e ("c2port: add c2port support for Eurotech Duramar 2150")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We need to call spin_unlock_irqrestore() instead of vanilla
+spin_unlock() on this error path.
 
-Acked-by: Rodolfo Giometti <giometti@linux.it>
+Fixes: 119a8e708d16 ("IB/rdmavt: Add AH to rdmavt")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/misc/c2port/c2port-duramar2150.c b/drivers/misc/c2port/c2port-duramar2150.c
-> index 5484301d57d9..3dc61ea7dc64 100644
-> --- a/drivers/misc/c2port/c2port-duramar2150.c
-> +++ b/drivers/misc/c2port/c2port-duramar2150.c
-> @@ -129,8 +129,8 @@ static int __init duramar2150_c2port_init(void)
->
->  	duramar2150_c2port_dev = c2port_device_register("uc",
->  					&duramar2150_c2port_ops, NULL);
-> -	if (!duramar2150_c2port_dev) {
-> -		ret = -ENODEV;
-> +	if (IS_ERR(duramar2150_c2port_dev)) {
-> +		ret = PTR_ERR(duramar2150_c2port_dev);
->  		goto free_region;
->  	}
->
->
-
--- 
-
-HCE Engineering                      e-mail: giometti@hce-engineering.com
-GNU/Linux Solutions                          giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming                     skype:  rodolfo.giometti
-Cosino Project - the quick prototyping embedded system - www.cosino.io
-Freelance ICT Italia - Consulente ICT Italia - www.consulenti-ict.it
+diff --git a/drivers/infiniband/sw/rdmavt/ah.c b/drivers/infiniband/sw/rdmavt/ah.c
+index 16c446142c2a..b0f09fb45c72 100644
+--- a/drivers/infiniband/sw/rdmavt/ah.c
++++ b/drivers/infiniband/sw/rdmavt/ah.c
+@@ -119,7 +119,7 @@ struct ib_ah *rvt_create_ah(struct ib_pd *pd,
+ 
+ 	spin_lock_irqsave(&dev->n_ahs_lock, flags);
+ 	if (dev->n_ahs_allocated = dev->dparms.props.max_ah) {
+-		spin_unlock(&dev->n_ahs_lock);
++		spin_unlock_irqrestore(&dev->n_ahs_lock, flags);
+ 		kfree(ah);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
