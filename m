@@ -1,144 +1,58 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 14:26:26 +0000
-Subject: [PATCH 2/3] iscsi-target: Delete error messages for failed memory allocations
-Message-Id: <feaea14d-9e1e-4a64-4734-811195f31bd2@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 19:47:38 +0000
+Subject: [PATCH 2/2] of_coresight: Use devm_kcalloc() in of_coresight_alloc_memory()
+Message-Id: <f053b2f8-9c35-a5fc-5260-dfee273faf53@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
-In-Reply-To: <f573fbbe-aef2-7b68-1540-ceb2f30a6aa6@users.sourceforge.net>
+References: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
+In-Reply-To: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Hannes Reinecke <hare@suse.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Varun Prakash <varun@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 15:34:50 +0200
+Date: Thu, 27 Apr 2017 21:29:12 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-WARNING: Possible unnecessary 'out of memory' message
+This issue was detected by using the Coccinelle software.
 
-Thus remove such statements here.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/iscsi_target.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+ drivers/hwtracing/coresight/of_coresight.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-index 536b939afe9d..196e9dd138ca 100644
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -129,10 +129,8 @@ struct iscsi_tiqn *iscsit_add_tiqn(unsigned char *buf)
- 	}
- 
- 	tiqn = kzalloc(sizeof(struct iscsi_tiqn), GFP_KERNEL);
--	if (!tiqn) {
--		pr_err("Unable to allocate struct iscsi_tiqn\n");
-+	if (!tiqn)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	sprintf(tiqn->tiqn, "%s", buf);
- 	INIT_LIST_HEAD(&tiqn->tiqn_list);
-@@ -364,7 +362,6 @@ struct iscsi_np *iscsit_add_np(
- 
- 	np = kzalloc(sizeof(struct iscsi_np), GFP_KERNEL);
- 	if (!np) {
--		pr_err("Unable to allocate memory for struct iscsi_np\n");
- 		mutex_unlock(&np_lock);
- 		return ERR_PTR(-ENOMEM);
- 	}
-@@ -699,10 +696,9 @@ static int __init iscsi_target_init_module(void)
- 	pr_debug("iSCSI-Target "ISCSIT_VERSION"\n");
- 
- 	iscsit_global = kzalloc(sizeof(struct iscsit_global), GFP_KERNEL);
--	if (!iscsit_global) {
--		pr_err("Unable to allocate memory for iscsit_global\n");
-+	if (!iscsit_global)
- 		return -1;
--	}
-+
- 	spin_lock_init(&iscsit_global->ts_bitmap_lock);
- 	mutex_init(&auth_id_lock);
- 	spin_lock_init(&sess_idr_lock);
-@@ -715,10 +711,8 @@ static int __init iscsi_target_init_module(void)
- 
- 	size = BITS_TO_LONGS(ISCSIT_BITMAP_BITS) * sizeof(long);
- 	iscsit_global->ts_bitmap = vzalloc(size);
--	if (!iscsit_global->ts_bitmap) {
--		pr_err("Unable to allocate iscsit_global->ts_bitmap\n");
-+	if (!iscsit_global->ts_bitmap)
- 		goto configfs_out;
--	}
- 
- 	lio_qr_cache = kmem_cache_create("lio_qr_cache",
- 			sizeof(struct iscsi_queue_req),
-@@ -986,10 +980,8 @@ static int iscsit_allocate_iovecs(struct iscsi_cmd *cmd)
- 
- 	iov_count += ISCSI_IOV_DATA_BUFFER;
- 	cmd->iov_data = kcalloc(iov_count, sizeof(*cmd->iov_data), GFP_KERNEL);
--	if (!cmd->iov_data) {
--		pr_err("Unable to allocate cmd->iov_data\n");
-+	if (!cmd->iov_data)
+diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+index 09142e99e915..1e622912cd0f 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/of_coresight.c
+@@ -78,21 +78,21 @@ static int of_coresight_alloc_memory(struct device *dev,
+ 			struct coresight_platform_data *pdata)
+ {
+ 	/* List of output port on this component */
+-	pdata->outports = devm_kzalloc(dev, pdata->nr_outport *
++	pdata->outports = devm_kcalloc(dev, pdata->nr_outport,
+ 				       sizeof(*pdata->outports),
+ 				       GFP_KERNEL);
+ 	if (!pdata->outports)
  		return -ENOMEM;
--	}
  
- 	cmd->orig_iov_data_count = iov_count;
- 	return 0;
-@@ -1850,8 +1842,6 @@ static int iscsit_handle_nop_out(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
- 
- 		ping_data = kzalloc(payload_length + 1, GFP_KERNEL);
- 		if (!ping_data) {
--			pr_err("Unable to allocate memory for"
--				" NOPOUT ping data.\n");
- 			ret = -1;
- 			goto out;
- 		}
-@@ -1999,13 +1989,10 @@ iscsit_handle_task_mgt_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
- 	cmd->data_direction = DMA_NONE;
- 
- 	cmd->tmr_req = kzalloc(sizeof(struct iscsi_tmr_req), GFP_KERNEL);
--	if (!cmd->tmr_req) {
--		pr_err("Unable to allocate memory for"
--			" Task Management command!\n");
-+	if (!cmd->tmr_req)
- 		return iscsit_add_reject_cmd(cmd,
- 					     ISCSI_REASON_BOOKMARK_NO_RESOURCES,
- 					     buf);
--	}
- 
- 	/*
- 	 * TASK_REASSIGN for ERL=2 / connection stays inside of
-@@ -2265,11 +2252,9 @@ iscsit_handle_text_cmd(struct iscsi_conn *conn, struct iscsi_cmd *cmd,
- 		struct kvec iov[3];
- 
- 		text_in = kzalloc(payload_length, GFP_KERNEL);
--		if (!text_in) {
--			pr_err("Unable to allocate memory for"
--				" incoming text parameters\n");
-+		if (!text_in)
- 			goto reject;
--		}
-+
- 		cmd->text_in_ptr = text_in;
- 
- 		memset(iov, 0, 3 * sizeof(struct kvec));
-@@ -3353,11 +3338,9 @@ iscsit_build_sendtargets_response(struct iscsi_cmd *cmd,
- 			 SENDTARGETS_BUF_LIMIT);
- 
- 	payload = kzalloc(buffer_len, GFP_KERNEL);
--	if (!payload) {
--		pr_err("Unable to allocate memory for sendtargets"
--				" response.\n");
-+	if (!payload)
+ 	/* Children connected to this component via @outports */
+-	pdata->child_names = devm_kzalloc(dev, pdata->nr_outport *
++	pdata->child_names = devm_kcalloc(dev, pdata->nr_outport,
+ 					  sizeof(*pdata->child_names),
+ 					  GFP_KERNEL);
+ 	if (!pdata->child_names)
  		return -ENOMEM;
--	}
-+
- 	/*
- 	 * Locate pointer to iqn./eui. string for ICF_SENDTARGETS_SINGLE
- 	 * explicit case..
+ 
+ 	/* Port number on the child this component is connected to */
+-	pdata->child_ports = devm_kzalloc(dev, pdata->nr_outport *
++	pdata->child_ports = devm_kcalloc(dev, pdata->nr_outport,
+ 					  sizeof(*pdata->child_ports),
+ 					  GFP_KERNEL);
+ 	if (!pdata->child_ports)
 -- 
 2.12.2
 
