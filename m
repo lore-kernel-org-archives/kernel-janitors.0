@@ -1,42 +1,44 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 26 Apr 2017 21:08:03 +0000
-Subject: Re: [PATCH 1/2] input: touchscreen: mxs-lradc: Checking for ERR_PTR instead of NULL in probe
-Message-Id: <CAKdAkRSwjoUgsn4kYDeP4CCozHhUeeSnui4xSMB8JPWFbPkM0Q@mail.gmail.com>
+From: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
+Date: Thu, 27 Apr 2017 16:52:32 +0000
+Subject: [PATCH] staging: speakup: Replace simple_strtoul by kstrtoul
+Message-Id: <20170427164032.GA1578@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170426210410.k2pe5ov2nkxtuf54@mwanda>
-In-Reply-To: <20170426210410.k2pe5ov2nkxtuf54@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ksenija Stanojevic <ksenija.stanojevic@gmail.com>, Marek Vasut <marex@denx.de>, Lee Jones <lee.jones@linaro.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The simple_strtoul function is obsolete.
+This patch replaces it by kstrtoul.
 
-On Wed, Apr 26, 2017 at 2:04 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> devm_ioremap() returns NULL on error.  It never returns error pointers.
->
-> Fixes: d81ca730e3e4 ("input: touchscreen: mxs-lradc: Add support for touchscreen")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/input/touchscreen/mxs-lradc-ts.c b/drivers/input/touchscreen/mxs-lradc-ts.c
-> index 4b4aebfe3e7f..ff9cda29d9a0 100644
-> --- a/drivers/input/touchscreen/mxs-lradc-ts.c
-> +++ b/drivers/input/touchscreen/mxs-lradc-ts.c
-> @@ -631,8 +631,8 @@ static int mxs_lradc_ts_probe(struct platform_device *pdev)
->
->         iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         ts->base = devm_ioremap(dev, iores->start, resource_size(iores));
-> -       if (IS_ERR(ts->base))
-> -               return PTR_ERR(ts->base);
-> +       if (!ts->base)
-> +               return -ENOMEM;
->
->         ret = of_property_read_u32(node, "fsl,lradc-touchscreen-wires",
->                                    &ts_wires);
+Signed-off-by: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
+---
+ drivers/staging/speakup/kobjects.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-As mentioned in another email I'd prefer we switched to
-devm_ioremap_resource() instead.
-
+diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+index ca85476..8b9ddb9 100644
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -127,6 +127,7 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+ 	int do_characters = !strcmp(attr->attr.name, "characters");
+ 	size_t desc_length = 0;
+ 	int i;
++	int err;
+ 
+ 	spin_lock_irqsave(&speakup_info.spinlock, flags);
+ 	while (cp < end) {
+@@ -153,7 +154,9 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+ 			continue;
+ 		}
+ 
+-		index = simple_strtoul(cp, &temp, 10);
++		err = kstrtoul(cp, 10, &index);
++		if (err)
++			return err;
+ 		if (index > 255) {
+ 			rejected++;
+ 			cp = linefeed + 1;
 -- 
-Dmitry
+2.7.4
+
