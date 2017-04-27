@@ -1,48 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Tue, 11 Apr 2017 07:15:02 +0000
-Subject: Re: [PATCH] soc/tegra: flowctrl: Fix error handling
-Message-Id: <e5718c3d-e0f7-8a4d-7936-6ecfe6208f31@nvidia.com>
+From: Geoff Lansberry <geoff@kuvee.com>
+Date: Thu, 27 Apr 2017 14:41:59 +0000
+Subject: [PATCH v3] NFC: trf7970a: Correct register settings for 27MHz clock
+Message-Id: <1493304119-16605-1-git-send-email-geoff@kuvee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfc-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mgreer-luAo+O/VEmrlveNOaEYElw@public.gmane.org, justin-R+k406RtEhcAvxtiuMwx3w@public.gmane.org, colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org, wharms-fPG8STNUNVg@public.gmane.org, Geoff Lansberry <geoff-R+k406RtEhcAvxtiuMwx3w@public.gmane.org>
 
+In prior commits the selected clock frequency does not propagate
+correctly to what is written the the TRF7970A_MODULATOR_SYS_CLK_CTRL
+register.
 
-On 11/04/17 04:40, Christophe JAILLET wrote:
-> It is likely that returning returned by 'devm_ioremap_resource()' is
-> expected here instead of something related to 'base' which should be a
-> valid pointer at this point.
-> 
-> Fixes: 841fd94c43a4 ("soc/tegra: flowctrl: Add basic platform driver")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/soc/tegra/flowctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
-> index 0e345c05fc65..5433cc7a043e 100644
-> --- a/drivers/soc/tegra/flowctrl.c
-> +++ b/drivers/soc/tegra/flowctrl.c
-> @@ -157,7 +157,7 @@ static int tegra_flowctrl_probe(struct platform_device *pdev)
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(tegra_flowctrl_base))
-> -		return PTR_ERR(base);
-> +		return PTR_ERR(tegra_flowctrl_base);
->  
->  	iounmap(base);
+Signed-off-by: Geoff Lansberry <geoff@kuvee.com>
+---
+ drivers/nfc/trf7970a.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Oops! Thanks for the fix.
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
+diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
+index 6ed5d7e..f7fee7d 100644
+--- a/drivers/nfc/trf7970a.c
++++ b/drivers/nfc/trf7970a.c
+@@ -2067,6 +2067,13 @@ static int trf7970a_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_freq = TRF7970A_27MHZ_CLOCK_FREQUENCY) {
++		trf->modulator_sys_clk_ctrl = TRF7970A_MODULATOR_27MHZ;
++		dev_dbg(trf->dev, "trf7970a configured for 27MHz crystal\n");
++	} else {
++		trf->modulator_sys_clk_ctrl = 0;
++	}
++
+ 	ret = devm_request_threaded_irq(trf->dev, spi->irq, NULL,
+ 					trf7970a_irq,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
 -- 
-nvpublic
+2.7.4
+
