@@ -1,58 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Apr 2017 19:47:38 +0000
-Subject: [PATCH 2/2] of_coresight: Use devm_kcalloc() in of_coresight_alloc_memory()
-Message-Id: <f053b2f8-9c35-a5fc-5260-dfee273faf53@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 27 Apr 2017 09:12:08 +0000
+Subject: [PATCH] drm/vmwgfx: Handle vmalloc() failure in vmw_local_fifo_reserve()
+Message-Id: <20170427091208.mpdh2ldnolyusrpx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
-In-Reply-To: <52619d05-65c4-149d-f355-cf9c037a0c9b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: VMware Graphics <linux-graphics-maintainer@vmware.com>, Jakob Bornecrantz <jakob@vmware.com>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Apr 2017 21:29:12 +0200
+If vmalloc() fails then we need to a bit of cleanup before returning.
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "devm_kcalloc".
+Fixes: fb1d9738ca05 ("drm/vmwgfx: Add DRM driver for VMware Virtual GPU")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hwtracing/coresight/of_coresight.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 09142e99e915..1e622912cd0f 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -78,21 +78,21 @@ static int of_coresight_alloc_memory(struct device *dev,
- 			struct coresight_platform_data *pdata)
- {
- 	/* List of output port on this component */
--	pdata->outports = devm_kzalloc(dev, pdata->nr_outport *
-+	pdata->outports = devm_kcalloc(dev, pdata->nr_outport,
- 				       sizeof(*pdata->outports),
- 				       GFP_KERNEL);
- 	if (!pdata->outports)
- 		return -ENOMEM;
- 
- 	/* Children connected to this component via @outports */
--	pdata->child_names = devm_kzalloc(dev, pdata->nr_outport *
-+	pdata->child_names = devm_kcalloc(dev, pdata->nr_outport,
- 					  sizeof(*pdata->child_names),
- 					  GFP_KERNEL);
- 	if (!pdata->child_names)
- 		return -ENOMEM;
- 
- 	/* Port number on the child this component is connected to */
--	pdata->child_ports = devm_kzalloc(dev, pdata->nr_outport *
-+	pdata->child_ports = devm_kcalloc(dev, pdata->nr_outport,
- 					  sizeof(*pdata->child_ports),
- 					  GFP_KERNEL);
- 	if (!pdata->child_ports)
--- 
-2.12.2
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+index b6a0806b06bf..a1c68e6a689e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+@@ -368,6 +368,8 @@ static void *vmw_local_fifo_reserve(struct vmw_private *dev_priv,
+ 				return fifo_state->static_buffer;
+ 			else {
+ 				fifo_state->dynamic_buffer = vmalloc(bytes);
++				if (!fifo_state->dynamic_buffer)
++					goto out_err;
+ 				return fifo_state->dynamic_buffer;
+ 			}
+ 		}
