@@ -1,91 +1,30 @@
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Date: Thu, 13 Apr 2017 19:43:40 +0000
-Subject: Re: [PATCH] lightnvm: fix some error code in pblk-init.c
-Message-Id: <d4c65d15-ace0-3fbf-8380-cfb6103eb8d6@lightnvm.io>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 09:27:21 +0000
+Subject: [PATCH 0/4] hwmon-NCT: Fine-tuning for four function implementations
+Message-Id: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170413193512.GB591@mwanda>
-In-Reply-To: <20170413193512.GB591@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 11:18:22 +0200
 
+A few update suggestions were taken into account
+from static source code analysis.
 
-On 04/13/2017 09:35 PM, Dan Carpenter wrote:
-> There were a bunch of places in pblk_lines_init() where we didn't set an
-> error code.  And in pblk_writer_init() we accidentally return 1 instead
-> of a correct error code, which would result in a Oops later.
->
-> Fixes: 11a5d6fdf919 ("lightnvm: physical block device (pblk) target")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index 94653b1f1300..3996e4b8fb0e 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -543,7 +543,7 @@ static int pblk_lines_init(struct pblk *pblk)
->  	long nr_bad_blks, nr_meta_blks, nr_free_blks;
->  	int bb_distance;
->  	int i;
-> -	int ret = 0;
-> +	int ret;
->
->  	lm->sec_per_line = geo->sec_per_blk * geo->nr_luns;
->  	lm->blk_per_line = geo->nr_luns;
-> @@ -638,12 +638,16 @@ static int pblk_lines_init(struct pblk *pblk)
->  	}
->
->  	l_mg->bb_template = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-> -	if (!l_mg->bb_template)
-> +	if (!l_mg->bb_template) {
-> +		ret = -ENOMEM;
->  		goto fail_free_meta;
-> +	}
->
->  	l_mg->bb_aux = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-> -	if (!l_mg->bb_aux)
-> +	if (!l_mg->bb_aux) {
-> +		ret = -ENOMEM;
->  		goto fail_free_bb_template;
-> +	}
->
->  	bb_distance = (geo->nr_luns) * geo->sec_per_pl;
->  	for (i = 0; i < lm->sec_per_line; i += bb_distance)
-> @@ -667,8 +671,10 @@ static int pblk_lines_init(struct pblk *pblk)
->
->  	pblk->lines = kcalloc(l_mg->nr_lines, sizeof(struct pblk_line),
->  								GFP_KERNEL);
-> -	if (!pblk->lines)
-> +	if (!pblk->lines) {
-> +		ret = -ENOMEM;
->  		goto fail_free_bb_aux;
-> +	}
->
->  	nr_free_blks = 0;
->  	for (i = 0; i < l_mg->nr_lines; i++) {
-> @@ -682,8 +688,10 @@ static int pblk_lines_init(struct pblk *pblk)
->  		spin_lock_init(&line->lock);
->
->  		nr_bad_blks = pblk_bb_line(pblk, line);
-> -		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line)
-> +		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line) {
-> +			ret = -EINVAL;
->  			goto fail_free_lines;
-> +		}
->
->  		line->blk_in_line = lm->blk_per_line - nr_bad_blks;
->  		if (line->blk_in_line < lm->min_blk_line) {
-> @@ -733,7 +741,7 @@ static int pblk_writer_init(struct pblk *pblk)
->  	pblk->writer_ts = kthread_create(pblk_write_ts, pblk, "pblk-writer-t");
->  	if (IS_ERR(pblk->writer_ts)) {
->  		pr_err("pblk: could not allocate writer kthread\n");
-> -		return 1;
-> +		return PTR_ERR(pblk->writer_ts);
->  	}
->
->  	return 0;
->
+Markus Elfring (4):
+  Use devm_kcalloc() in nct6683_create_attr_group()
+  Adjust five checks for null pointers
+  Use devm_kcalloc() in nct6775_create_attr_group()
+  Adjust seven checks for null pointers
 
-Thanks Dan. Applied for 4.12.
+ drivers/hwmon/nct6683.c | 15 +++++++--------
+ drivers/hwmon/nct6775.c | 19 +++++++++----------
+ 2 files changed, 16 insertions(+), 18 deletions(-)
+
+-- 
+2.12.2
+
