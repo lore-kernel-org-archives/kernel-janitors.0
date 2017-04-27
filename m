@@ -1,49 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:26:18 +0000
-Subject: [PATCH 16/25] net: mvpp2: Rename a jump label in mvpp2_tx_frag_process()
-Message-Id: <0253300e-221d-49b8-6dae-6fd1fd738261@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 09:30:33 +0000
+Subject: [PATCH 3/4] hwmon-nct6775: Use devm_kcalloc() in nct6775_create_attr_group()
+Message-Id: <e5dc9467-16c5-a143-f8d5-4da464cd97f6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+References: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
+In-Reply-To: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 11:36:34 +0200
+Date: Thu, 27 Apr 2017 10:35:36 +0200
 
-Adjust jump labels according to the Linux coding style convention.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 5 ++---
+ drivers/hwmon/nct6775.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 717d79dcb6aa..8f4348316d28 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -5606,7 +5606,7 @@ static int mvpp2_tx_frag_process(struct mvpp2_port *port, struct sk_buff *skb,
- 					       DMA_TO_DEVICE);
- 		if (dma_mapping_error(port->dev->dev.parent, buf_dma_addr)) {
- 			mvpp2_txq_desc_put(txq);
--			goto error;
-+			goto cleanup;
- 		}
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index 2458b406f6aa..d552ab7901a7 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -1073,13 +1073,12 @@ nct6775_create_attr_group(struct device *dev,
+ 	if (group = NULL)
+ 		return ERR_PTR(-ENOMEM);
  
- 		mvpp2_txdesc_offset_set(port, tx_desc,
-@@ -5627,8 +5627,7 @@ static int mvpp2_tx_frag_process(struct mvpp2_port *port, struct sk_buff *skb,
- 	}
+-	attrs = devm_kzalloc(dev, sizeof(*attrs) * (repeat * count + 1),
++	attrs = devm_kcalloc(dev, repeat * count + 1, sizeof(*attrs),
+ 			     GFP_KERNEL);
+ 	if (attrs = NULL)
+ 		return ERR_PTR(-ENOMEM);
  
- 	return 0;
--
--error:
-+cleanup:
- 	/* Release all descriptors that were used to map fragments of
- 	 * this packet, as well as the corresponding DMA mappings
- 	 */
+-	su = devm_kzalloc(dev, sizeof(*su) * repeat * count,
+-			       GFP_KERNEL);
++	su = devm_kcalloc(dev, repeat * count, sizeof(*su), GFP_KERNEL);
+ 	if (su = NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
 2.12.2
 
