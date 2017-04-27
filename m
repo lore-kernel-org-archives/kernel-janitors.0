@@ -1,24 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 20 Apr 2017 02:17:46 +0000
-Subject: Re: [PATCH] [SCSI] aic7xxx: fix order of arguments in function prototype
-Message-Id: <yq1bmrrrfed.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 27 Apr 2017 09:13:45 +0000
+Subject: [PATCH] fpga: region: Fix some error handling
+Message-Id: <20170427091345.a6vpeapnesey7k6d@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170408172842.20226-1-colin.king@canonical.com>
-In-Reply-To: <20170408172842.20226-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 8 Apr 2017 18:28:42 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+We need to release some resources if fpga_region_get_manager() fails.
 
-> The vendor/device and subvendor/subdevice arguments to the function
-> prototype ahc_9005_subdevinfo_valid are in the wrong order and need to
-> be swapped to fix this.  Detected with PVS-Studio studio.
+Fixes: 0fa20cdfcc1f ("fpga: fpga-region: device tree control for FPGA")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.12/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+index ae4c61aada99..3b6b2f4182a1 100644
+--- a/drivers/fpga/fpga-region.c
++++ b/drivers/fpga/fpga-region.c
+@@ -245,7 +245,8 @@ static int fpga_region_program_fpga(struct fpga_region *region,
+ 	mgr = fpga_region_get_manager(region);
+ 	if (IS_ERR(mgr)) {
+ 		pr_err("failed to get fpga region manager\n");
+-		return PTR_ERR(mgr);
++		ret = PTR_ERR(mgr);
++		goto err_put_region;
+ 	}
+ 
+ 	ret = fpga_region_get_bridges(region, overlay);
+@@ -281,6 +282,7 @@ static int fpga_region_program_fpga(struct fpga_region *region,
+ 	fpga_bridges_put(&region->bridge_list);
+ err_put_mgr:
+ 	fpga_mgr_put(mgr);
++err_put_region:
+ 	fpga_region_put(region);
+ 
+ 	return ret;
