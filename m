@@ -1,39 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 13 Apr 2017 15:59:12 +0000
-Subject: [PATCH] x86/boot/e820: remove a redundant self assignment
-Message-Id: <20170413155912.12078-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 09:28:45 +0000
+Subject: [PATCH 1/4] hwmon-nct6683: Use devm_kcalloc() in nct6683_create_attr_group()
+Message-Id: <719f2298-cd74-8769-b52b-1be9568b3851@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
+In-Reply-To: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Denys Vlasenko <dvlasenk@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 10:10:36 +0200
 
-Remove a redundant self assignment of table->nr_entries, it does
-nothing and is an artifact of code simplification re-work.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "devm_kcalloc".
 
-Detected by CoverityScan, CID#1428450 ("Self assignment")
+This issue was detected by using the Coccinelle software.
 
-Fixes: 441ac2f33dd7 ("x86/boot/e820: Simplify e820__update_table()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/e820.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/hwmon/nct6683.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 6e9b26fa6d05..d78a586ba8dc 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -270,7 +270,6 @@ int __init e820__update_table(struct e820_table *table)
- 	if (table->nr_entries < 2)
- 		return -1;
+diff --git a/drivers/hwmon/nct6683.c b/drivers/hwmon/nct6683.c
+index 8b0bc4fc06e8..dd14a98cc6dd 100644
+--- a/drivers/hwmon/nct6683.c
++++ b/drivers/hwmon/nct6683.c
+@@ -426,13 +426,12 @@ nct6683_create_attr_group(struct device *dev,
+ 	if (group = NULL)
+ 		return ERR_PTR(-ENOMEM);
  
--	table->nr_entries = table->nr_entries;
- 	BUG_ON(table->nr_entries > max_nr_entries);
+-	attrs = devm_kzalloc(dev, sizeof(*attrs) * (repeat * count + 1),
++	attrs = devm_kcalloc(dev, repeat * count + 1, sizeof(*attrs),
+ 			     GFP_KERNEL);
+ 	if (attrs = NULL)
+ 		return ERR_PTR(-ENOMEM);
  
- 	/* Bail out if we find any unreasonable addresses in the map: */
+-	su = devm_kzalloc(dev, sizeof(*su) * repeat * count,
+-			  GFP_KERNEL);
++	su = devm_kcalloc(dev, repeat * count, sizeof(*su), GFP_KERNEL);
+ 	if (su = NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
-2.11.0
+2.12.2
 
