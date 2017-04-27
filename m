@@ -1,43 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:34:05 +0000
-Subject: [PATCH 24/25] skge: Adjust a null pointer check in skge_down()
-Message-Id: <2122f892-68a6-e9cc-d15e-e82e62fc50b9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 27 Apr 2017 17:41:34 +0000
+Subject: [PATCH] goldfish_pipe: make pipe_dev static
+Message-Id: <20170427174134.14892-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Jan Kara <jack@suse.cz>, Jin Qian <jinqian@android.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 16:08:39 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Make this static as it's only referenced in this source and
+it does not need global scope.
 
-Comparison to NULL could be written "!skge->mem".
+Cleans up a sparse warning:
 
-Thus fix the affected source code place.
+drivers/platform/goldfish/goldfish_pipe.c: warning: symbol 
+  'pipe_dev' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/marvell/skge.c | 2 +-
+ drivers/platform/goldfish/goldfish_pipe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/skge.c b/drivers/net/ethernet/marvell/skge.c
-index 90bfdbcfd910..5d7d94de4e00 100644
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -2657,7 +2657,7 @@ static int skge_down(struct net_device *dev)
- 	struct skge_hw *hw = skge->hw;
- 	int port = skge->port;
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+index 2de1e603bd2b..8a4b088c52a7 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -266,7 +266,7 @@ struct goldfish_pipe_dev {
+ 	unsigned char __iomem *base;
+ };
  
--	if (skge->mem = NULL)
-+	if (!skge->mem)
- 		return 0;
+-struct goldfish_pipe_dev pipe_dev[1] = {};
++static struct goldfish_pipe_dev pipe_dev[1] = {};
  
- 	netif_info(skge, ifdown, skge->netdev, "disabling interface\n");
+ static int goldfish_cmd_locked(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
+ {
 -- 
-2.12.2
+2.11.0
 
