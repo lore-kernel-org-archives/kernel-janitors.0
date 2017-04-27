@@ -1,47 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 18:37:11 +0000
-Subject: [PATCH v2 07/17] IB/mlx4: Move an assignment out of a check in forward_trap()
-Message-Id: <cdfdbe94-e226-e2f3-66ee-7649e58fcee5@users.sourceforge.net>
+Date: Thu, 27 Apr 2017 09:29:49 +0000
+Subject: [PATCH 2/4] hwmon-nct6683: Adjust five checks for null pointers
+Message-Id: <339214ae-9c04-9e8c-e97e-368aa83a17b5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
+In-Reply-To: <2f58a509-4aba-5c44-bc79-568b260ab692@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Majd Dibbiny <majd-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Apr 2017 14:00:08 +0200
+Date: Thu, 27 Apr 2017 10:22:39 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The script "checkpatch.pl" pointed information out like the following.
+The script “checkpatch.pl” pointed information out like the following.
 
-ERROR: do not use assignment in if condition
+Comparison to NULL could be written …
 
-Thus fix the affected source code place.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 ---
- drivers/infiniband/hw/mlx4/mad.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hwmon/nct6683.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index 3caf468ca133..0a5b46791335 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -401,7 +401,8 @@ static void forward_trap(struct mlx4_ib_dev *dev, u8 port_num, const struct ib_m
- 		 */
- 		spin_lock_irqsave(&dev->sm_lock, flags);
- 		memcpy(send_buf->mad, mad, sizeof *mad);
--		if ((send_buf->ah = dev->sm_ah[port_num - 1]))
-+		send_buf->ah = dev->sm_ah[port_num - 1];
-+		if (send_buf->ah)
- 			ret = ib_post_send_mad(send_buf, NULL);
- 		else
- 			ret = -EINVAL;
+diff --git a/drivers/hwmon/nct6683.c b/drivers/hwmon/nct6683.c
+index dd14a98cc6dd..4deb46ce8834 100644
+--- a/drivers/hwmon/nct6683.c
++++ b/drivers/hwmon/nct6683.c
+@@ -423,16 +423,16 @@ nct6683_create_attr_group(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	group = devm_kzalloc(dev, sizeof(*group), GFP_KERNEL);
+-	if (group = NULL)
++	if (!group)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	attrs = devm_kcalloc(dev, repeat * count + 1, sizeof(*attrs),
+ 			     GFP_KERNEL);
+-	if (attrs = NULL)
++	if (!attrs)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	su = devm_kcalloc(dev, repeat * count, sizeof(*su), GFP_KERNEL);
+-	if (su = NULL)
++	if (!su)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	group->attrs = attrs;
+@@ -440,7 +440,7 @@ nct6683_create_attr_group(struct device *dev,
+ 
+ 	for (i = 0; i < repeat; i++) {
+ 		t = tg->templates;
+-		for (j = 0; *t != NULL; j++) {
++		for (j = 0; *t; j++) {
+ 			snprintf(su->name, sizeof(su->name),
+ 				 (*t)->dev_attr.attr.name, tg->base + i);
+ 			if ((*t)->s2) {
+@@ -1179,7 +1179,7 @@ static void nct6683_setup_sensors(struct nct6683_data *data)
+ 		if (reg >= NUM_MON_LABELS)
+ 			continue;
+ 		/* Skip if disabled or reserved */
+-		if (nct6683_mon_label[reg] = NULL)
++		if (!nct6683_mon_label[reg])
+ 			continue;
+ 		if (reg < MON_VOLTAGE_START) {
+ 			data->temp_index[data->temp_num] = i;
 -- 
 2.12.2
 
