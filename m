@@ -1,26 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 16:08:24 +0000
-Subject: Re: pinctrl: imx: Checking reuse of grouping functionality
-Message-Id: <2c82f25b-4095-fbb0-f766-c83387b46ef5@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Apr 2017 04:51:40 +0000
+Subject: [PATCH v2] [media] vb2: Fix an off by one error in 'vb2_plane_vaddr'
+Message-Id: <20170428045140.20870-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <60eb8e84-7914-4e25-4822-7e1d8fd8afcb@users.sourceforge.net>
- <CAAMH-ysVX+ZX-+nEF2kyrAKqhrkaZisBKiZuv6fAZUrKk3-ZDg@mail.gmail.com>
-In-Reply-To: <CAAMH-ysVX+ZX-+nEF2kyrAKqhrkaZisBKiZuv6fAZUrKk3-ZDg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: linux-gpio@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Fabio Estevam <fabio.estevam@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, stable@vger.kernel.org
 
-> However the imx pinctrl driver _absolutely_ needs this configuration to work.
+We should ensure that 'plane_no' is '< vb->num_planes' as done in
+'vb2_plane_cookie' just a few lines below.
 
-Thanks for your explanation that the file “drivers/pinctrl/freescale/Kconfig”
-will usually provide needed information for this software module.
+Cc: stable@vger.kernel.org
+Fixes: e23ccc0ad925 ("[media] v4l: add videobuf2 Video for Linux 2 driver framework")
 
-Would it make sense to document such a requirement also by a preprocessor error
-directive in the source file “drivers/pinctrl/freescale/pinctrl-imx.c”
-for the special case if the macro “CONFIG_GENERIC_PINCTRL_GROUPS” would
-accidentally not be defined?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: add CC and Fixes tags
+---
+ drivers/media/v4l2-core/videobuf2-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index 94afbbf92807..c0175ea7e7ad 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -868,7 +868,7 @@ EXPORT_SYMBOL_GPL(vb2_core_create_bufs);
+ 
+ void *vb2_plane_vaddr(struct vb2_buffer *vb, unsigned int plane_no)
+ {
+-	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
++	if (plane_no >= vb->num_planes || !vb->planes[plane_no].mem_priv)
+ 		return NULL;
+ 
+ 	return call_ptr_memop(vb, vaddr, vb->planes[plane_no].mem_priv);
+-- 
+2.11.0
+
