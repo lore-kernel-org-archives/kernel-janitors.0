@@ -1,43 +1,33 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Date: Thu, 06 Apr 2017 08:58:56 +0000
-Subject: Re: [PATCH] drm: bridge: dw-hdmi: Add a missing break statement
-Message-Id: <6fa17233-9941-5dd6-f3e4-3afc52c30bf4@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Apr 2017 13:06:15 +0000
+Subject: [PATCH] mtd: spi-nor: Potential oops on error path in quad_enable()
+Message-Id: <20170428130614.w4cmbwvprgzv7sky@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170406052132.GA26605@mwanda>
- <757bc9ac-9e17-cd19-e805-5fa4a19d225b@baylibre.com>
-In-Reply-To: <757bc9ac-9e17-cd19-e805-5fa4a19d225b@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Archit Taneja <architt@codeaurora.org>
-Cc: Jose Abreu <Jose.Abreu@synopsys.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Huang Shijie <b32955@freescale.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On 04/06/2017 09:41 AM, Neil Armstrong wrote:
-> On 04/06/2017 07:21 AM, Dan Carpenter wrote:
->> There was supposed to be a break before the next case statement.
->>
->> Fixes: def23aa7e982 ("drm: bridge: dw-hdmi: Switch to V4L bus format and encodings")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> index 84cc949eae2b..8b605039c613 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -1318,6 +1318,7 @@ static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
->>  			frame.colorimetry = HDMI_COLORIMETRY_ITU_601;
->>  		frame.extended_colorimetry >>  				HDMI_EXTENDED_COLORIMETRY_XV_YCC_601;
->> +		break;
->>  	case V4L2_YCBCR_ENC_709:
->>  		if (hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_XV709)
->>  			frame.colorimetry = HDMI_COLORIMETRY_EXTENDED;
->>
-> 
-> Thanks for the fix !
-> 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
+Before commit cff959958832 ("mtd: spi-nor: introduce SPI 1-2-2 and SPI
+1-4-4 protocols") then we treated 1 as -EINVAL in the caller but after
+that commit we changed to propagate the return.  My static checker
+complains that it's eventually passed to an ERR_PTR() and later
+dereferenced, but I'm not totally certain if that's true.  Regardless,
+returning 1 is wrong.
 
-Applied to drm-misc-next
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Neil
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 060a59e716be..a05db3371ebb 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1390,7 +1390,7 @@ static int macronix_quad_enable(struct spi_nor *nor)
+ 	write_sr(nor, val | SR_QUAD_EN_MX);
+ 
+ 	if (spi_nor_wait_till_ready(nor))
+-		return 1;
++		return -EINVAL;
+ 
+ 	ret = read_sr(nor);
+ 	if (!(ret > 0 && (ret & SR_QUAD_EN_MX))) {
