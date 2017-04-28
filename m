@@ -1,45 +1,44 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 01 Apr 2017 14:52:26 +0000
-Subject: Re: selinux: Fix an uninitialized variable bug in range_read()
-Message-Id: <CAHC9VhT8nXOPpOy5sRpRYjVnj2oOgFGAzibgkj_ZpK7xyg35qg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Apr 2017 12:51:30 +0000
+Subject: [PATCH v2] cifs: small underflow in cnvrtDosUnixTm()
+Message-Id: <20170428125130.4y22bpllksfyb37k@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170331152118.GA8141@mwanda>
-	<1490975541.31110.12.camel@tycho.nsa.gov>
-	<CAHC9VhT7njoVyHgyiTQhCcvZEYrTE_XZRLxT4+JJPiH3W88AUw@mail.gmail.com>
-	<fb1cb81c-4b03-5b21-f933-ea3e58491a13@users.sourceforge.net>
-In-Reply-To: <fb1cb81c-4b03-5b21-f933-ea3e58491a13@users.sourceforge.net>
+References: <20170410134931.GC1918@mwanda>
+In-Reply-To: <20170410134931.GC1918@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat, Apr 1, 2017 at 2:40 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>>> We removed this initialization as a cleanup but it is probably
->>>> required.
->>>>
->>>> The concern is that "nel" can be zero.  I'm not an expert on SELinux
->>>> code but I think it looks possible to write an SELinux policy which
->>>> triggers this bug.  GCC doesn't catch this, but my static checker
->>>> does.
->>>>
->>>> Fixes: 9c312e79d6af ("selinux: Delete an unnecessary variable
->>>> initialisation in range_read()")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> Nice catch, thanks!
->>>
->>> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
->>
->> Yes, indeed.  Thanks Dan, I should have caught this when merging Markus' patch.
->
-> How do you think about the possibility to call the function “range_read” only with
-> a system configuration where the interface “le32_to_cpu” will be resolved to
-> a positive value so that statements in the corresponding for loop will be executed
-> at least once?
+January is month 1.  There is no zero-th month.  If someone passes a
+zero month then it means we read from one space before the start of the
+total_days_of_prev_months[] array.
 
-I suggest we leave this as-is for the moment.
+We may as well also be strict about days as well.
 
--- 
-paul moore
-www.paul-moore.com
+Fixes: 1bd5bbcb6531 ("[CIFS] Legacy time handling for Win9x and OS/2 part 1")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  Be strict about days as well.  My first patch was less intrusive
+because it only prevented the out of bounds access.  I have no idea how
+common it is to pass in an illegal day but, hopefully, not very common.
+
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index abae6dd2c6b9..4b2726ee4fad 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -980,10 +980,10 @@ struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
+ 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
+ 	days = sd->Day;
+ 	month = sd->Month;
+-	if ((days > 31) || (month > 12)) {
++	if (days < 1 || days > 31 || month < 1 || month > 12) {
+ 		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
+-		if (month > 12)
+-			month = 12;
++		days = (days < 1) ? 1 : ((days <= 31) ? days : 31);
++		month = (month < 1) ? 1 : ((month <= 12) ? month : 12);
+ 	}
+ 	month -= 1;
+ 	days += total_days_of_prev_months[month];
