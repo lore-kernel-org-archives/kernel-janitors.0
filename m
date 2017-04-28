@@ -1,7 +1,7 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Date: Thu, 27 Apr 2017 21:58:41 +0000
-Subject: Re: [PATCH] staging: speakup: Replace simple_strtoul by kstrtoul
-Message-Id: <20170427215841.rbiiu5tzkrxhqefx@var.youpi.perso.aquilenet.fr>
+From: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
+Date: Fri, 28 Apr 2017 03:50:22 +0000
+Subject: [PATCH] staging: speakup: Replace simple_strtoul by kstrtoul
+Message-Id: <20170428035012.GA1319@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170427164032.GA1578@gmail.com>
 In-Reply-To: <20170427164032.GA1578@gmail.com>
@@ -10,18 +10,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Shekhar Bhandakkar, on jeu. 27 avril 2017 22:10:32 +0530, wrote:
-> The simple_strtoul function is obsolete.
-> This patch replaces it by kstrtoul.
+The simple_strtoul function is obsolete.
+This patch replaces it with kstrtoul.
 
-> @@ -153,7 +154,9 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
->  			continue;
->  		}
->  
-> -		index = simple_strtoul(cp, &temp, 10);
-> +		err = kstrtoul(cp, 10, &index);
+Signed-off-by: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
+---
+ drivers/staging/speakup/kobjects.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Again, that doesn't update the temp pointer, which is used below.
-So really NACK from me.
+diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+index ca85476..8a1ebe6 100644
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -127,6 +127,7 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+ 	int do_characters = !strcmp(attr->attr.name, "characters");
+ 	size_t desc_length = 0;
+ 	int i;
++	int err;
+ 
+ 	spin_lock_irqsave(&speakup_info.spinlock, flags);
+ 	while (cp < end) {
+@@ -153,7 +154,10 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+ 			continue;
+ 		}
+ 
+-		index = simple_strtoul(cp, &temp, 10);
++		temp = cp;
++		err = kstrtoul(temp, 10, &index);
++		if (err)
++			return err;
+ 		if (index > 255) {
+ 			rejected++;
+ 			cp = linefeed + 1;
+-- 
+2.7.4
 
-Samuel
