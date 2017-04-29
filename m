@@ -1,32 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Apr 2017 19:43:58 +0000
-Subject: [PATCH 0/5] target: Fine-tuning for some function implementations
-Message-Id: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
+Date: Sat, 29 Apr 2017 08:30:29 +0000
+Subject: Re: SATA: Fine-tuning for two function implementations
+Message-Id: <b2a3953b-8e8f-fea1-8a04-9ecafdf31102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
+ <20170428215334.GH22354@htj.duckdns.org>
+In-Reply-To: <20170428215334.GH22354@htj.duckdns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Apr 2017 21:33:21 +0200
+> Hmmm, allocs -> callocs.  Are these actually beneficial?  If so, why?
+> Because one multiplication is rolled into the call?
 
-A few update suggestions were taken into account
-from static source code analysis.
+Did the previous size calculations contain the general possibility for
+integer overflows?
+https://cwe.mitre.org/data/definitions/190.html
 
-Markus Elfring (5):
-  rd: Use kcalloc() in two functions
-  rd: Delete error messages for failed memory allocations
-  rd: Improve size determinations in two functions
-  sbc: Use kmalloc_array() in compare_and_write_callback()
-  transport: Use kmalloc_array() in transport_kmap_data_sg()
+* Will the computed values usually stay within the limits of the used
+  data types so far?
 
- drivers/target/target_core_rd.c        | 33 +++++++++------------------------
- drivers/target/target_core_sbc.c       |  4 ++--
- drivers/target/target_core_transport.c |  2 +-
- 3 files changed, 12 insertions(+), 27 deletions(-)
+* How much do you care for corresponding checks and source code annotations
+  by functions like “devm_kcalloc”?
 
--- 
-2.12.2
-
+Regards,
+Markus
