@@ -1,71 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 18:30:13 +0000
-Subject: [PATCH 2/2] tty-goldfish: Adjust five checks for null pointers
-Message-Id: <dc16bfba-ba55-c478-aada-7bed4c3ece51@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 30 Apr 2017 12:58:24 +0000
+Subject: Applied "ASoC: sti: Fix error handling if of_clk_get() fails" to the asoc tree
+Message-Id: <E1d4oQi-00044Z-E9@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
-In-Reply-To: <53ab1654-e0ef-1227-cef2-32dbedcdc124@users.sourceforge.net>
+References: <20170428132210.jvjrltku25sepivw@mwanda>
+In-Reply-To: <20170428132210.jvjrltku25sepivw@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Arnaud Pouliquen <arnaud.pouliquen@st.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.orgArnaudPouliquenarnaud.pouliquen@st.com, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Apr 2017 20:15:30 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+The patch
 
-The script “checkpatch.pl” pointed information out like the following.
+   ASoC: sti: Fix error handling if of_clk_get() fails
 
-Comparison to NULL could be written !…
+has been applied to the asoc tree at
 
-Thus fix the affected source code places.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 65ed0a8d1f24abd79be149253025de8949321900 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Apr 2017 16:22:10 +0300
+Subject: [PATCH] ASoC: sti: Fix error handling if of_clk_get() fails
+
+We intended to return here.  The current code has a static checker
+warning because we set "ret" but don't use it.
+
+Fixes: 76c2145ded6b ("ASoC: sti: Add CPU DAI driver for playback")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/tty/goldfish.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/soc/sti/uniperif_player.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index b92c3312ecd2..a07e5b01c279 100644
---- a/drivers/tty/goldfish.c
-+++ b/drivers/tty/goldfish.c
-@@ -182,12 +182,12 @@ static int goldfish_tty_create_driver(void)
- 
- 	goldfish_ttys = kcalloc(goldfish_tty_line_count, sizeof(*goldfish_ttys),
- 				GFP_KERNEL);
--	if (goldfish_ttys = NULL) {
-+	if (!goldfish_ttys) {
- 		ret = -ENOMEM;
- 		goto err_alloc_goldfish_ttys_failed;
+diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
+index d7e8dd46d2cc..d8b6936e544e 100644
+--- a/sound/soc/sti/uniperif_player.c
++++ b/sound/soc/sti/uniperif_player.c
+@@ -1074,7 +1074,7 @@ int uni_player_init(struct platform_device *pdev,
+ 	player->clk = of_clk_get(pdev->dev.of_node, 0);
+ 	if (IS_ERR(player->clk)) {
+ 		dev_err(player->dev, "Failed to get clock\n");
+-		ret = PTR_ERR(player->clk);
++		return PTR_ERR(player->clk);
  	}
- 	tty = alloc_tty_driver(goldfish_tty_line_count);
--	if (tty = NULL) {
-+	if (!tty) {
- 		ret = -ENOMEM;
- 		goto err_alloc_tty_driver_failed;
- 	}
-@@ -235,15 +235,15 @@ static int goldfish_tty_probe(struct platform_device *pdev)
- 	unsigned int line;
  
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r = NULL)
-+	if (!r)
- 		return -EINVAL;
- 
- 	base = ioremap(r->start, 0x1000);
--	if (base = NULL)
-+	if (!base)
- 		pr_err("goldfish_tty: unable to remap base\n");
- 
- 	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (r = NULL)
-+	if (!r)
- 		goto err_unmap;
- 
- 	irq = r->start;
+ 	/* Select the frequency synthesizer clock */
 -- 
-2.12.2
+2.11.0
 
