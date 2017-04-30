@@ -1,41 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 04 Apr 2017 11:16:01 +0000
-Subject: [PATCH 3/3] selinux: Use an other error code for an input validation failure in sidtab_insert()
-Message-Id: <38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 30 Apr 2017 07:14:20 +0000
+Subject: [PATCH] cris: nand: fix a leak in error handling path
+Message-Id: <20170430071420.24906-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-In-Reply-To: <5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: starvik@axis.com, jesper.nilsson@axis.com
+Cc: linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Apr 2017 12:23:41 +0200
+If only 1 of the 2 'ioremap' fails, then there is a small leak.
 
-The error code "-ENOMEM" was also returned so far when the parameter "s"
-of this function contained a null pointer.
-Now I find that the code "-EINVAL" is more appropriate in this case.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- security/selinux/ss/sidtab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-index c5f436b15d19..2eb2a54b88d2 100644
---- a/security/selinux/ss/sidtab.c
-+++ b/security/selinux/ss/sidtab.c
-@@ -36,7 +36,7 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
- 	struct sidtab_node *prev, *cur, *newnode;
+diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+index a74540514bdb..57622fbd9f25 100644
+--- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
++++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+@@ -123,7 +123,7 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 	if (!read_cs || !write_cs) {
+ 		printk(KERN_ERR "CRISv32 NAND ioremap failed\n");
+ 		err = -EIO;
+-		goto out_mtd;
++		goto out_ior;
+ 	}
  
- 	if (!s)
--		return -ENOMEM;
-+		return -EINVAL;
+ 	/* Get pointer to private data */
+@@ -162,9 +162,11 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 	return crisv32_mtd;
  
- 	hvalue = SIDTAB_HASH(sid);
- 	prev = NULL;
+ out_ior:
+-	iounmap((void *)read_cs);
+-	iounmap((void *)write_cs);
+-out_mtd:
++	if (read_cs)
++		iounmap((void *)read_cs);
++	if (write_cs)
++		iounmap((void *)write_cs);
++
+ 	kfree(wrapper);
+ 	return NULL;
+ }
 -- 
-2.12.2
+2.11.0
 
