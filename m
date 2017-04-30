@@ -1,38 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Apr 2017 09:04:47 +0000
-Subject: [PATCH] virtio_net: tidy a couple debug statements
-Message-Id: <20170406090446.GA29939@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 30 Apr 2017 14:20:33 +0000
+Subject: MIPS: Lantiq: Completion of error handling around clkdev_add_clkout()
+Message-Id: <b27c5b95-747b-e83a-84e8-01fd7a1ae04e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-mips@linux-mips.org, Arnd Bergmann <arnd@arndb.de>, Felix Fietkau <nbd@nbd.name>, Hauke Mehrtens <hauke@hauke-m.de>, James Hogan <james.hogan@imgtec.com>, John Crispin <john@phrozen.org>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Pan Bian <bianpan2016@163.com>
 
-We are printing a decimal value for truesize so we shouldn't use an "0x"
-prefix.
+Hello,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I have noticed by execution of another script for the semantic patch language
+(Coccinelle software) that the function “clkdev_add_clkout” does not contain
+null pointer checks after calls of the function “kzalloc”.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/mips/lantiq/xway/sysctrl.c?h=v4.10#n403
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 0e6e3acf6ff1..2b5e8069d9e5 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -668,7 +668,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 	rcu_read_unlock();
- 
- 	if (unlikely(len > (unsigned long)ctx)) {
--		pr_debug("%s: rx error: len %u exceeds truesize 0x%lu\n",
-+		pr_debug("%s: rx error: len %u exceeds truesize %lu\n",
- 			 dev->name, len, (unsigned long)ctx);
- 		dev->stats.rx_length_errors++;
- 		goto err_skb;
-@@ -694,7 +694,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 
- 		page = virt_to_head_page(buf);
- 		if (unlikely(len > (unsigned long)ctx)) {
--			pr_debug("%s: rx error: len %u exceeds truesize 0x%lu\n",
-+			pr_debug("%s: rx error: len %u exceeds truesize %lu\n",
- 				 dev->name, len, (unsigned long)ctx);
- 			dev->stats.rx_length_errors++;
- 			goto err_skb;
+How do you think about to add corresponding checks and adjust the function
+return type there?
+
+Regards,
+Markus
