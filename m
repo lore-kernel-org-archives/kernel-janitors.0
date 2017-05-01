@@ -1,48 +1,25 @@
-From: Vlad Yasevich <vyasevic@redhat.com>
-Date: Mon, 22 May 2017 21:00:59 +0000
-Subject: Re: [PATCH 5/5] sctp: Adjust one function call together with a variable assignment
-Message-Id: <44ba1b0c-8987-8710-a9eb-f13ad31bd966@redhat.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 01 May 2017 02:42:59 +0000
+Subject: Re: [PATCH net-next] lwtunnel: fix error path in lwtunnel_fill_encap()
+Message-Id: <20170430.224259.758720932636802809.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
- <197333e8-b528-ef34-bd16-01e415acdf52@users.sourceforge.net>
-In-Reply-To: <197333e8-b528-ef34-bd16-01e415acdf52@users.sourceforge.net>
+References: <20170428130347.53hagk77wh6scmcs@mwanda>
+In-Reply-To: <20170428130347.53hagk77wh6scmcs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: bianpan2016@163.com, roopa@cumulusnetworks.com, dsa@cumulusnetworks.com, rshearma@brocade.com, tom@herbertland.com, david.lebrun@uclouvain.be, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/22/2017 12:41 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 18:15:12 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> ERROR: do not use assignment in if condition
-> 
-> Thus fix the affected source code place.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/sctp/protocol.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-> index 057479b7bd72..be2fe3ebae78 100644
-> --- a/net/sctp/protocol.c
-> +++ b/net/sctp/protocol.c
-> @@ -141,7 +141,8 @@ static void sctp_v4_copy_addrlist(struct list_head *addrlist,
->  	struct sctp_sockaddr_entry *addr;
->  
->  	rcu_read_lock();
-> -	if ((in_dev = __in_dev_get_rcu(dev)) = NULL) {
-> +	in_dev = __in_dev_get_rcu(dev);
-> +	if (!in_dev) {
->  		rcu_read_unlock();
->  		return;
->  	}
-> 
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Apr 2017 16:03:48 +0300
 
-Acked-by: Vlad Yasevich <vyasevich@gmail.com>
+> We recently added a check to see if nla_nest_start() fails.  There are
+> two issues with that.  First, if it fails then I don't think we should
+> call nla_nest_cancel().  Second, it's slightly convoluted but the
+> current code returns success but we should return -EMSGSIZE instead.
+> 
+> Fixes: a50fe0ffd76f ("lwtunnel: check return value of nla_nest_start")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--vlad
+Applied.
