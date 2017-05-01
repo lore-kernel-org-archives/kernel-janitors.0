@@ -1,55 +1,92 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 09:51:47 +0000
-Subject: [PATCH 1/3] thermal: tegra: Combine two function calls into one in regs_show()
-Message-Id: <4623bb17-1dd8-2038-e465-5fe3309e22ba@users.sourceforge.net>
+Date: Mon, 01 May 2017 13:31:38 +0000
+Subject: [PATCH 1/3] sctp: Replace six seq_printf() calls by seq_putc()
+Message-Id: <a22ad66a-ffe1-b772-8151-8b389aa2c94b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
-In-Reply-To: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
+References: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
+In-Reply-To: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Eduardo Valentin <edubezval@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Wei Ni <wni@nvidia.com>, Zhang Rui <rui.zhang@intel.com>
+To: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 10:50:35 +0200
+Date: Mon, 1 May 2017 14:18:52 +0200
 
-A bit of data was put into a sequence by two separate function calls
-at two places. Print the same data by single function calls instead.
+Six single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/tegra/soctherm.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ net/sctp/proc.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 7d2db23d71a3..c5871f9b6596 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -706,9 +706,7 @@ static int regs_show(struct seq_file *s, void *data)
- 	seq_printf(s, "PDIV: 0x%x\n", r);
+diff --git a/net/sctp/proc.c b/net/sctp/proc.c
+index a0b29d43627f..1cf4b6385418 100644
+--- a/net/sctp/proc.c
++++ b/net/sctp/proc.c
+@@ -149,9 +149,8 @@ static void sctp_seq_dump_local_addrs(struct seq_file *seq, struct sctp_ep_commo
  
- 	r = readl(ts->regs + SENSOR_HOTSPOT_OFF);
--	seq_printf(s, "HOTSPOT: 0x%x\n", r);
--
--	seq_puts(s, "\n");
-+	seq_printf(s, "HOTSPOT: 0x%x\n\n", r);
- 	seq_puts(s, "-----SOC_THERM-----\n");
- 
- 	r = readl(ts->regs + SENSOR_TEMP1);
-@@ -809,9 +807,7 @@ static int regs_show(struct seq_file *s, void *data)
+ 		addr = &laddr->a;
+ 		af = sctp_get_af_specific(addr->sa.sa_family);
+-		if (primary && af->cmp_addr(addr, primary)) {
+-			seq_printf(seq, "*");
+-		}
++		if (primary && af->cmp_addr(addr, primary))
++			seq_putc(seq, '*');
+ 		af->seq_dump_addr(seq, addr);
  	}
+ 	rcu_read_unlock();
+@@ -170,9 +169,8 @@ static void sctp_seq_dump_remote_addrs(struct seq_file *seq, struct sctp_associa
+ 		addr = &transport->ipaddr;
  
- 	r = readl(ts->regs + THROT_GLOBAL_CFG);
--	seq_puts(s, "\n");
--	seq_printf(s, "GLOBAL THROTTLE CONFIG: 0x%08x\n", r);
+ 		af = sctp_get_af_specific(addr->sa.sa_family);
+-		if (af->cmp_addr(addr, primary)) {
+-			seq_printf(seq, "*");
+-		}
++		if (af->cmp_addr(addr, primary))
++			seq_putc(seq, '*');
+ 		af->seq_dump_addr(seq, addr);
+ 	}
+ }
+@@ -232,7 +230,7 @@ static int sctp_eps_seq_show(struct seq_file *seq, void *v)
+ 			   sock_i_ino(sk));
+ 
+ 		sctp_seq_dump_local_addrs(seq, epb);
+-		seq_printf(seq, "\n");
++		seq_putc(seq, '\n');
+ 	}
+ 	read_unlock(&head->lock);
+ 	local_bh_enable();
+@@ -355,5 +353,5 @@ static int sctp_assocs_seq_show(struct seq_file *seq, void *v)
+ 		   sock_i_ino(sk),
+ 		   epb->bind_addr.port,
+ 		   assoc->peer.port);
+-	seq_printf(seq, " ");
++	seq_putc(seq, ' ');
+ 	sctp_seq_dump_local_addrs(seq, epb);
+@@ -369,8 +367,7 @@ static int sctp_assocs_seq_show(struct seq_file *seq, void *v)
+ 		sk->sk_wmem_queued,
+ 		sk->sk_sndbuf,
+ 		sk->sk_rcvbuf);
+-	seq_printf(seq, "\n");
 -
-+	seq_printf(s, "\nGLOBAL THROTTLE CONFIG: 0x%08x\n", r);
- 	seq_puts(s, "---------------------------------------------------\n");
- 	r = readl(ts->regs + THROT_STATUS);
- 	state = REG_GET_MASK(r, THROT_STATUS_BREACH_MASK);
++	seq_putc(seq, '\n');
+ 	sctp_transport_put(transport);
+ 
+ 	return 0;
+@@ -438,7 +435,7 @@ static int sctp_remaddr_seq_show(struct seq_file *seq, void *v)
+ 		 * The remote address (ADDR)
+ 		 */
+ 		tsp->af_specific->seq_dump_addr(seq, &tsp->ipaddr);
+-		seq_printf(seq, " ");
++		seq_putc(seq, ' ');
+ 		/*
+ 		 * The association ID (ASSOC_ID)
+ 		 */
 -- 
 2.12.2
 
