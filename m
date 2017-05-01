@@ -1,50 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:47:10 +0000
-Subject: [PATCH 09/10] dlm: Improve a size determination in two functions
-Message-Id: <96e43ba3-1e9e-b598-f980-59751a720cc2@users.sourceforge.net>
+Date: Mon, 01 May 2017 18:12:58 +0000
+Subject: [PATCH] drbd: Use seq_putc() once more in drbd_syncer_progress()
+Message-Id: <2bb2d7fe-b27d-db5a-db0d-6159bc753599@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 09:45:59 +0200
+Date: Mon, 1 May 2017 20:05:08 +0200
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+A single dot should be put into a sequence.
+Thus use the corresponding function "seq_putc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/dlm/member.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/drbd/drbd_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/dlm/member.c b/fs/dlm/member.c
-index 92c601a11e38..3e565034ff2e 100644
---- a/fs/dlm/member.c
-+++ b/fs/dlm/member.c
-@@ -318,7 +318,7 @@ static int dlm_add_member(struct dlm_ls *ls, struct dlm_config_node *node)
- 	struct dlm_member *memb;
- 	int error;
+diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+index 8378142f7a55..fc0f627567fd 100644
+--- a/drivers/block/drbd/drbd_proc.c
++++ b/drivers/block/drbd/drbd_proc.c
+@@ -127,7 +127,7 @@ static void drbd_syncer_progress(struct drbd_device *device, struct seq_file *se
+ 		seq_putc(seq, '=');
+ 	seq_putc(seq, '>');
+ 	for (i = 0; i < y; i++)
+-		seq_printf(seq, ".");
++		seq_putc(seq, '.');
+ 	seq_puts(seq, "] ");
  
--	memb = kzalloc(sizeof(struct dlm_member), GFP_NOFS);
-+	memb = kzalloc(sizeof(*memb), GFP_NOFS);
- 	if (!memb)
- 		return -ENOMEM;
- 
-@@ -674,7 +674,7 @@ int dlm_ls_start(struct dlm_ls *ls)
- 	struct dlm_config_node *nodes;
- 	int error, count;
- 
--	rv = kzalloc(sizeof(struct dlm_recover), GFP_NOFS);
-+	rv = kzalloc(sizeof(*rv), GFP_NOFS);
- 	if (!rv)
- 		return -ENOMEM;
- 
+ 	if (state.conn = C_VERIFY_S || state.conn = C_VERIFY_T)
 -- 
 2.12.2
 
