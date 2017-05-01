@@ -1,26 +1,47 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 09 May 2017 20:52:34 +0000
-Subject: Re: [PATCH] checkpatch: Adjust regular expressions in $logFunctions
-Message-Id: <1494363154.20782.7.camel@perches.com>
+From: Keerthy <j-keerthy@ti.com>
+Date: Mon, 01 May 2017 05:32:06 +0000
+Subject: Re: [PATCH 0/3] TI-SoC-thermal: Fine-tuning for two functions
+Message-Id: <5fa2705e-3082-29b0-b174-cc478cd66e75@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2178c87-9229-978d-c94e-6c124755c440@users.sourceforge.net>
-In-Reply-To: <a2178c87-9229-978d-c94e-6c124755c440@users.sourceforge.net>
+References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
+ <20170427162047.GA18276@localhost.localdomain>
+In-Reply-To: <20170427162047.GA18276@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Andy Whitcroft <apw@canonical.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 2017-05-09 at 21:00 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 9 May 2017 20:40:51 +0200
+
+
+On Thursday 27 April 2017 09:50 PM, Eduardo Valentin wrote:
+> On Wed, Apr 26, 2017 at 05:33:10PM +0200, SF Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Wed, 26 Apr 2017 17:24:56 +0200
+>>
+>> Three update suggestions were taken into account
+>> from static source code analysis.
+>>
+>> Markus Elfring (3):
+>>   Use devm_kcalloc() in ti_bandgap_build()
+>>   Delete error messages for failed memory allocations in ti_bandgap_build()
+>>   Fix a typo in a comment line
+>>
 > 
-> * Two alternations contained an empty element. Use the question mark
->   metacharacter instead to express optional items in the search pattern.
+> Keerthy,
 > 
-> * Some alternation elements shared a common prefix (like an underscore).
->   Improve the specification of this detail by more non-capturing groups.
+> Can you please give it a shot of this series on all supported OMAP chip
+> boards? I do not see any major issue with the series at all, but would
+> like to get it tested by you.
 
-No thanks.   Perl is odd enough already adding more non-capture
-groups when the arguments are clearly specified is harder to read.
+Sure Eduardo. I will test and review this series.
 
+> 
+> BR,
+> 
+>>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 14 +++++---------
+>>  1 file changed, 5 insertions(+), 9 deletions(-)
+>>
+>> -- 
+>> 2.12.2
+>>
