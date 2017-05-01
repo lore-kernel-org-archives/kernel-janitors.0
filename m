@@ -1,75 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 19:41:40 +0000
-Subject: [PATCH 1/3] kernel-sched: Use seq_putc() in three functions
-Message-Id: <d8c7dddc-9007-4e3d-73d3-3e783383fa25@users.sourceforge.net>
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Mon, 01 May 2017 17:36:26 +0000
+Subject: Re: [PATCH 3/3] w1: Add subsystem kernel public interface
+Message-Id: <e2cfddfe-f56b-1b83-eaa6-bb24067889b8@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ece07743-9bbb-e396-b562-ba161c3eb9b8@users.sourceforge.net>
-In-Reply-To: <ece07743-9bbb-e396-b562-ba161c3eb9b8@users.sourceforge.net>
+References: <20170316151955.10710-1-afd@ti.com>
+ <20170316151955.10710-4-afd@ti.com> <5478321493483316@web21g.yandex.ru>
+In-Reply-To: <5478321493483316@web21g.yandex.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 20:45:35 +0200
+On 04/29/2017 11:28 AM, Evgeniy Polyakov wrote:
+> Hi everyone
+> 
+> 16.03.2017, 18:20, "Andrew F. Davis" <afd@ti.com>:
+>> Like other subsystems we should be able to define slave devices outside
+>> of the w1 directory. To do this we move public facing interface
+>> definitions to include/linux/w1.h and rename the internal definition
+>> file to w1_internal.h.
+>>
+>> As w1_family.h and w1_int.h contained almost entirely public
+>> driver interface definitions we simply removed these files and
+>> moved the remaining definitions into w1_internal.h.
+> 
+> w1_int.h was a shortname for w1_internal.h actually
+> 
+>> With this we can now start to move slave devices out of w1/slaves and
+>> into the subsystem based on the function they implement, again like
+>> other drivers.
+> 
+> I'm not against this patch per-se, I especially like linux/w1 include instead of ../w1.h,
+> quite curious why didn't I move include file into linux directory in the first place,
+> but please elaborate why is this needed?
+> 
 
-Four single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+I'm moving the bq27xxx driver out of w1 and into power/supply where it
+should be, see:
+https://lkml.org/lkml/2017/3/16/688
 
-This issue was detected by using the Coccinelle software.
+> Also I do not agree with TI copyright in the new inclusion file which is merely a movement of the old file.
+> 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- kernel/sched/cpuacct.c | 6 +++---
- kernel/sched/debug.c   | 3 +--
- 2 files changed, 4 insertions(+), 5 deletions(-)
+There is more going on that just moving the file, this was a lot of
+re-work, also I kept your copyright, is it a problem to add another? If
+so I'm fine with that too and can remove it.
 
-diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
-index f95ab29a45d0..28d9fe0df92a 100644
---- a/kernel/sched/cpuacct.c
-+++ b/kernel/sched/cpuacct.c
-@@ -221,7 +221,7 @@ static int __cpuacct_percpu_seq_show(struct seq_file *m,
- 		percpu = cpuacct_cpuusage_read(ca, i, index);
- 		seq_printf(m, "%llu ", (unsigned long long) percpu);
- 	}
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
-@@ -249,7 +249,7 @@ static int cpuacct_all_seq_show(struct seq_file *m, void *V)
- 	seq_puts(m, "cpu");
- 	for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
- 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 
- 	for_each_possible_cpu(cpu) {
- 		struct cpuacct_usage *cpuusage = per_cpu_ptr(ca->cpuusage, cpu);
-@@ -271,7 +271,7 @@ static int cpuacct_all_seq_show(struct seq_file *m, void *V)
- 			raw_spin_unlock_irq(&cpu_rq(cpu)->lock);
- #endif
- 		}
--		seq_puts(m, "\n");
-+		seq_putc(m, '\n');
- 	}
- 	return 0;
- }
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 38f019324f1a..ff599b7f10b6 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -78,8 +78,7 @@ static int sched_feat_show(struct seq_file *m, void *v)
- 			seq_puts(m, "NO_");
- 		seq_printf(m, "%s ", sched_feat_names[i]);
- 	}
--	seq_puts(m, "\n");
--
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
--- 
-2.12.2
-
+Andrew
