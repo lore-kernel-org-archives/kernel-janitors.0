@@ -1,68 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 May 2017 13:06:12 +0000
-Subject: [PATCH 3/3] Input: Improve a size determination in four functions
-Message-Id: <a29ed456-2607-a417-8a35-e48c15656585@users.sourceforge.net>
+Date: Mon, 01 May 2017 16:49:36 +0000
+Subject: [PATCH 4/4] drm/dp: Adjust four checks for null pointers
+Message-Id: <311ce726-9941-9040-1368-cdd556f41e73@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
-In-Reply-To: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
+References: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
+In-Reply-To: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 14:54:26 +0200
+Date: Mon, 1 May 2017 18:22:52 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Replace the specification of four data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/input.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 067a6edd643c..7e6842bd525c 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -481,7 +481,7 @@ EXPORT_SYMBOL(input_inject_event);
- void input_alloc_absinfo(struct input_dev *dev)
- {
- 	if (!dev->absinfo)
--		dev->absinfo = kcalloc(ABS_CNT, sizeof(struct input_absinfo),
-+		dev->absinfo = kcalloc(ABS_CNT, sizeof(*dev->absinfo),
- 					GFP_KERNEL);
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index bcc76f15f1ce..f46bf5101d14 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -1405,13 +1405,12 @@ static int set_hdr_from_dst_qlock(struct drm_dp_sideband_msg_hdr *hdr,
+ 			DRM_DEBUG_KMS("%s: failed to find slot\n", __func__);
+ 			return -EAGAIN;
+ 		}
+-		if (mstb->tx_slots[0] = NULL && mstb->tx_slots[1] = NULL) {
++		if (!mstb->tx_slots[0] && !mstb->tx_slots[1]) {
+ 			txmsg->seqno = mstb->last_seqno;
+ 			mstb->last_seqno ^= 1;
+-		} else if (mstb->tx_slots[0] = NULL)
+-			txmsg->seqno = 0;
+-		else
+-			txmsg->seqno = 1;
++		} else {
++			txmsg->seqno = mstb->tx_slots[0] ? 1 : 0;
++		}
+ 		mstb->tx_slots[txmsg->seqno] = txmsg;
+ 	}
  
- 	WARN(!dev->absinfo, "%s(): kcalloc() failed?\n", __func__);
-@@ -1783,7 +1783,7 @@ struct input_dev *input_allocate_device(void)
- 	static atomic_t input_no = ATOMIC_INIT(-1);
- 	struct input_dev *dev;
+@@ -2044,7 +2043,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
  
--	dev = kzalloc(sizeof(struct input_dev), GFP_KERNEL);
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (dev) {
- 		dev->dev.type = &input_dev_type;
- 		dev->dev.class = &input_class;
-@@ -1849,7 +1849,7 @@ struct input_dev *devm_input_allocate_device(struct device *dev)
- 	struct input_devres *devres;
- 
- 	devres = devres_alloc(devm_input_device_release,
--			      sizeof(struct input_devres), GFP_KERNEL);
-+			      sizeof(*devres), GFP_KERNEL);
- 	if (!devres)
- 		return NULL;
- 
-@@ -2099,7 +2099,7 @@ int input_register_device(struct input_dev *dev)
- 
- 	if (dev->devres_managed) {
- 		devres = devres_alloc(devm_input_device_unregister,
--				      sizeof(struct input_devres), GFP_KERNEL);
-+				      sizeof(*devres), GFP_KERNEL);
- 		if (!devres)
- 			return -ENOMEM;
- 
+ 		/* add initial branch device at LCT 1 */
+ 		mstb = drm_dp_add_mst_branch_device(1, NULL);
+-		if (mstb = NULL) {
++		if (!mstb) {
+ 			ret = -ENOMEM;
+ 			goto out_unlock;
+ 		}
 -- 
 2.12.2
 
