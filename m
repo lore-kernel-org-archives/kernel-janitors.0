@@ -1,54 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 15:51:57 +0000
-Subject: [PATCH 1/3] s390: virtio: Delete error messages for failed memory allocations in two functions
-Message-Id: <78b6667b-69c4-39c5-7e1b-1b69ae983695@users.sourceforge.net>
+Date: Mon, 01 May 2017 19:26:17 +0000
+Subject: [PATCH 0/3] SoC-TI-knav_dma: Fine-tuning for three function implementations
+Message-Id: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
-In-Reply-To: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, virtualization@lists.linux-foundation.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Halil Pasic <pasic@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 16:50:17 +0200
+Date: Mon, 1 May 2017 21:21:42 +0200
 
-Omit three extra messages for memory allocation failures in these functions.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Use seq_putc() in dma_debug_show_channels()
+  Improve a size determination in knav_dma_probe()
+  Delete error messages for a failed memory allocation in two functions
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/s390/virtio/virtio_ccw.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/soc/ti/knav_dma.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-index 2a76ea78a0bf..447fe718c0ab 100644
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -499,12 +499,10 @@ static struct virtqueue *virtio_ccw_setup_vq(struct virtio_device *vdev,
- 	if (!info) {
--		dev_warn(&vcdev->cdev->dev, "no info\n");
- 		err = -ENOMEM;
- 		goto out_err;
- 	}
- 	info->info_block = kzalloc(sizeof(*info->info_block),
- 				   GFP_DMA | GFP_KERNEL);
- 	if (!info->info_block) {
--		dev_warn(&vcdev->cdev->dev, "no info block\n");
- 		err = -ENOMEM;
- 		goto out_err;
- 	}
-@@ -1225,7 +1223,6 @@ static int virtio_ccw_online(struct ccw_device *cdev)
- 
- 	vcdev = kzalloc(sizeof(*vcdev), GFP_KERNEL);
- 	if (!vcdev) {
--		dev_warn(&cdev->dev, "Could not get memory for virtio\n");
- 		ret = -ENOMEM;
- 		goto out_free;
- 	}
 -- 
-2.13.0
+2.12.2
 
