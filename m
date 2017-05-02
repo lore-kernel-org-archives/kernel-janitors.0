@@ -1,50 +1,56 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Sun, 07 May 2017 12:31:00 +0000
-Subject: Re: [PATCH 1/2] apparmorfs: Combine two function calls into one in aa_fs_seq_raw_abi_show()
-Message-Id: <af3aac53-972d-ec04-4bfb-297718300ef2@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 09:27:14 +0000
+Subject: [PATCH 7/9] pinctrl: Add spaces for better code readability
+Message-Id: <9c9c3bf8-f8c2-955b-934d-535b09d988f7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
-	<b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
-In-Reply-To: <b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
+References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 05/07/2017 05:02 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 May 2017 13:43:50 +0200
-> 
-> A bit of data was put into a sequence by two separate function calls.
-> Print the same data by a single function call instead.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 10:32:19 +0200
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+The script "checkpatch.pl" pointed information out like the following.
 
-I'll pull it into my tree for my next push
+CHECK: spaces preferred around that '+' (ctx:VxV)
 
-> ---
->  security/apparmor/apparmorfs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 4f6ac9dbc65d..b4d83e0bc651 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -572,10 +572,9 @@ static int aa_fs_seq_raw_abi_show(struct seq_file *seq, void *v)
->  	struct aa_proxy *proxy = seq->private;
->  	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
->  
-> -	if (profile->rawdata->abi) {
-> -		seq_printf(seq, "v%d", profile->rawdata->abi);
-> -		seq_puts(seq, "\n");
-> -	}
-> +	if (profile->rawdata->abi)
-> +		seq_printf(seq, "v%d\n", profile->rawdata->abi);
-> +
->  	aa_put_profile(profile);
->  
->  	return 0;
-> 
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinconf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 037ac3e47891..14a8644ad6b0 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -395,9 +395,9 @@ static const struct file_operations pinconf_groups_ops = {
+ 
+ struct dbg_cfg {
+ 	enum pinctrl_map_type map_type;
+-	char dev_name[MAX_NAME_LEN+1];
+-	char state_name[MAX_NAME_LEN+1];
+-	char pin_name[MAX_NAME_LEN+1];
++	char dev_name[MAX_NAME_LEN + 1];
++	char state_name[MAX_NAME_LEN + 1];
++	char pin_name[MAX_NAME_LEN + 1];
+ };
+ 
+ /*
+@@ -486,7 +486,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 	const struct pinconf_ops *confops = NULL;
+ 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
+ 	const struct pinctrl_map_configs *configs;
+-	char config[MAX_NAME_LEN+1];
++	char config[MAX_NAME_LEN + 1];
+ 	char buf[128];
+ 	char *b = &buf[0];
+ 	int buf_size;
+-- 
+2.12.2
 
