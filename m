@@ -1,29 +1,45 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Thu, 18 May 2017 13:52:44 +0000
-Subject: Re: [PATCH] drm/i915: Check C for null pointer rather than B
-Message-Id: <20170518135244.GF26693@nuc-i3427.alporthouse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 May 2017 09:29:03 +0000
+Subject: [PATCH] Bluetooth: add a check for kmalloc() failure
+Message-Id: <20170502092903.u7no6pizkakf454o@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518133942.5660-1-colin.king@canonical.com>
-In-Reply-To: <20170518133942.5660-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Mika Kuoppala <mika.kuoppala@intel.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Salvatore Benedetto <salvatore.benedetto@intel.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 18, 2017 at 02:39:42PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two occasions where pointer B is being check for a NULL
-> when it should be pointer C instead. Fix these.
-> 
-> Detected by CoverityScan, CID#1436348,1436349 ("Logically Dead Code")
-> 
-> Fixes: 47624cc3301b60 ("drm/i915: Import the kfence selftests for i915_sw_fence")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We should check to see if this kmalloc() fails.
 
-Thanks, obviously correct and not exercised by BAT so pushed.
--Chris
+Fixes: e7c404c96c74 ("Bluetooth: allocate data for kpp on heap")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+diff --git a/net/bluetooth/ecdh_helper.c b/net/bluetooth/ecdh_helper.c
+index 80184476ff74..c8535845813d 100644
+--- a/net/bluetooth/ecdh_helper.c
++++ b/net/bluetooth/ecdh_helper.c
+@@ -59,11 +59,15 @@ bool compute_ecdh_secret(const u8 public_key[64], const u8 private_key[32],
+ 	struct ecdh p;
+ 	struct ecdh_completion result;
+ 	struct scatterlist src, dst;
+-	u8 *tmp = kmalloc(64, GFP_KERNEL);
++	u8 *tmp;
+ 	u8 *buf;
+ 	unsigned int buf_len;
+ 	int err = -ENOMEM;
+ 
++	tmp = kmalloc(64, GFP_KERNEL);
++	if (!tmp)
++		goto out;
++
+ 	tfm = crypto_alloc_kpp("ecdh", CRYPTO_ALG_INTERNAL, 0);
+ 	if (IS_ERR(tfm)) {
+ 		pr_err("alg: kpp: Failed to load tfm for kpp: %ld\n",
+@@ -130,6 +134,7 @@ bool compute_ecdh_secret(const u8 public_key[64], const u8 private_key[32],
+ 	crypto_free_kpp(tfm);
+ free_tmp:
+ 	kfree(tmp);
++out:
+ 	return (err = 0);
+ }
+ 
