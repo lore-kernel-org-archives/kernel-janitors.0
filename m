@@ -1,49 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 18 May 2017 09:22:34 +0000
-Subject: [PATCH] phy: rockchip-typec: make dp_pll_cfg and usb3_pll_cfg static
-Message-Id: <20170518092234.13276-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 20:08:10 +0000
+Subject: [PATCH 2/3] GPU-DRM-Radeon: Use seq_puts() in radeon_debugfs_pm_info()
+Message-Id: <85bb0532-b548-b3cc-4482-ce7a161c7d32@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
+In-Reply-To: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 21:50:14 +0200
 
-arrays dp_pll_cfg and usb3_pll_cfg can be made static as they do
-not need to be in global scope. Also make them const.
+Two strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Cleans up sparse warnings:
-  warning: symbol 'dp_pll_cfg' was not declared. Should it be static?
-  warning: symbol 'usb3_pll_cfg' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/phy/phy-rockchip-typec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_pm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/phy-rockchip-typec.c b/drivers/phy/phy-rockchip-typec.c
-index 7cfb0f8995de..66b54a6f00f6 100644
---- a/drivers/phy/phy-rockchip-typec.c
-+++ b/drivers/phy/phy-rockchip-typec.c
-@@ -292,7 +292,7 @@ struct phy_reg {
- 	u32 addr;
- };
+diff --git a/drivers/gpu/drm/radeon/radeon_pm.c b/drivers/gpu/drm/radeon/radeon_pm.c
+index 326ad068c15a..f84ddcc426c1 100644
+--- a/drivers/gpu/drm/radeon/radeon_pm.c
++++ b/drivers/gpu/drm/radeon/radeon_pm.c
+@@ -1869,13 +1869,14 @@ static int radeon_debugfs_pm_info(struct seq_file *m, void *data)
  
--struct phy_reg usb3_pll_cfg[] = {
-+static const struct phy_reg usb3_pll_cfg[] = {
- 	{ 0xf0,		CMN_PLL0_VCOCAL_INIT },
- 	{ 0x18,		CMN_PLL0_VCOCAL_ITER },
- 	{ 0xd0,		CMN_PLL0_INTDIV },
-@@ -309,7 +309,7 @@ struct phy_reg usb3_pll_cfg[] = {
- 	{ 0x8,		CMN_DIAG_PLL0_LF_PROG },
- };
- 
--struct phy_reg dp_pll_cfg[] = {
-+static const struct phy_reg dp_pll_cfg[] = {
- 	{ 0xf0,		CMN_PLL1_VCOCAL_INIT },
- 	{ 0x18,		CMN_PLL1_VCOCAL_ITER },
- 	{ 0x30b9,	CMN_PLL1_VCOCAL_START },
+ 	if  ((rdev->flags & RADEON_IS_PX) &&
+ 	     (ddev->switch_power_state != DRM_SWITCH_POWER_ON)) {
+-		seq_printf(m, "PX asic powered off\n");
++		seq_puts(m, "PX asic powered off\n");
+ 	} else if (rdev->pm.dpm_enabled) {
+ 		mutex_lock(&rdev->pm.mutex);
+ 		if (rdev->asic->dpm.debugfs_print_current_performance_level)
+ 			radeon_dpm_debugfs_print_current_performance_level(rdev, m);
+ 		else
+-			seq_printf(m, "Debugfs support not implemented for this asic\n");
++			seq_puts(m,
++				 "Debugfs support not implemented for this asic\n");
+ 		mutex_unlock(&rdev->pm.mutex);
+ 	} else {
+ 		seq_printf(m, "default engine clock: %u0 kHz\n", rdev->pm.default_sclk);
 -- 
-2.11.0
+2.12.2
 
