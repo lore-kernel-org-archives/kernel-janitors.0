@@ -1,43 +1,46 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 08 May 2017 06:11:16 +0000
-Subject: [PATCH] sm501fb: Silence a coccinelle script warning.
-Message-Id: <20170508061116.31471-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 09:24:18 +0000
+Subject: [PATCH 4/9] pinctrl: Replace two seq_printf() calls by seq_puts() in pinconf_show_map()
+Message-Id: <68dee714-acb7-5c69-7764-3e302a335c38@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, khoroshilov@ispras.ru
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-According to surrounding goto, it is likely that 'goto err_probed_panel' is
-expected here.
-This change is just done in order to silence some coccinelle scripts
-which try to detect wrongly ordered goto.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 09:52:50 +0200
 
-If 'info->fb[HEAD_PANEL]' and' 'info->fb[HEAD_CRT]' are both NULL, this
-means that no 'framebuffer_alloc' has been performed, so 'goto err_alloc'
-looks fine.
-Anyway, it is also harmless in this case to call 'framebuffer_release'.
-The code looks more straight forward.
+Strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/sm501fb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinconf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
-index 67e314fdd947..4d89b045ce40 100644
---- a/drivers/video/fbdev/sm501fb.c
-+++ b/drivers/video/fbdev/sm501fb.c
-@@ -1990,7 +1990,7 @@ static int sm501fb_probe(struct platform_device *pdev)
- 	    info->fb[HEAD_CRT] = NULL) {
- 		dev_err(dev, "no framebuffers found\n");
- 		ret = -ENODEV;
--		goto err_alloc;
-+		goto err_probed_panel;
- 	}
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index d37f98aafb4b..dfa782e19f37 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -244,10 +244,10 @@ void pinconf_show_map(struct seq_file *s, struct pinctrl_map const *map)
  
- 	/* get the resources for both of the framebuffers */
+ 	switch (map->type) {
+ 	case PIN_MAP_TYPE_CONFIGS_PIN:
+-		seq_printf(s, "pin ");
++		seq_puts(s, "pin ");
+ 		break;
+ 	case PIN_MAP_TYPE_CONFIGS_GROUP:
+-		seq_printf(s, "group ");
++		seq_puts(s, "group ");
+ 		break;
+ 	default:
+ 		break;
 -- 
-2.11.0
+2.12.2
 
