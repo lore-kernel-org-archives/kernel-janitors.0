@@ -1,86 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 May 2017 18:03:08 +0000
-Subject: [PATCH 3/3] s390/dasd: Adjust six checks for null pointers
-Message-Id: <1395faca-9953-5873-0892-3d2eedbef2b6@users.sourceforge.net>
+Date: Tue, 02 May 2017 14:27:21 +0000
+Subject: [PATCH 3/6] md: Adjust four function calls together with a variable assignment
+Message-Id: <7d82f7ed-6d1d-a666-0d55-2769f27a4ef3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
-In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
+In-Reply-To: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-raid@vger.kernel.org, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 May 2017 19:29:17 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 2 May 2017 15:07:21 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+The script "checkpatch.pl" pointed information out like the following.
 
-Comparison to NULL could be written …
+ERROR: do not use assignment in if condition
 
-Thus fix the affected source code places.
+Thus fix affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/s390/block/dasd_eckd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/md/md.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index e78601d97a67..d02f3bbbd552 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -1080,7 +1080,7 @@ static int dasd_eckd_read_conf(struct dasd_device *device)
- 					"error %d", rc);
- 			return rc;
- 		}
--		if (conf_data = NULL) {
-+		if (!conf_data) {
- 			DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "%s",
- 					"No configuration data "
- 					"retrieved");
-@@ -2049,7 +2049,7 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
- 				 "Track 0 has no records following the VTOC\n");
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 65233a91e5e2..60580095a5de 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -2153,7 +2153,8 @@ static int bind_rdev_to_array(struct md_rdev *rdev, struct mddev *mddev)
+ 	rdev->mddev = mddev;
+ 	pr_debug("md: bind<%s>\n", b);
+ 
+-	if ((err = kobject_add(&rdev->kobj, &mddev->kobj, "dev-%s", b)))
++	err = kobject_add(&rdev->kobj, &mddev->kobj, "dev-%s", b);
++	if (err)
+ 		goto fail;
+ 
+ 	ko = &part_to_dev(rdev->bdev->bd_part)->kobj;
+@@ -7306,7 +7307,8 @@ static int md_open(struct block_device *bdev, fmode_t mode)
  	}
+ 	BUG_ON(mddev != bdev->bd_disk->private_data);
  
--	if (count_area != NULL && count_area->kl = 0) {
-+	if (count_area && count_area->kl = 0) {
- 		/* we found notthing violating our disk layout */
- 		if (dasd_check_blocksize(count_area->dl) = 0)
- 			block->bp_block = count_area->dl;
-@@ -2649,10 +2649,10 @@ static int dasd_eckd_format_process_data(struct dasd_device *base,
- 	old_start = fdata->start_unit;
- 	old_stop = fdata->stop_unit;
+-	if ((err = mutex_lock_interruptible(&mddev->open_mutex)))
++	err = mutex_lock_interruptible(&mddev->open_mutex);
++	if (err)
+ 		goto out;
  
--	if (!tpm && fmt_buffer != NULL) {
-+	if (!tpm && fmt_buffer) {
- 		/* Command Mode / Format Check */
- 		format_step = 1;
--	} else if (tpm && fmt_buffer != NULL) {
-+	} else if (tpm && fmt_buffer) {
- 		/* Transport Mode / Format Check */
- 		format_step = DASD_CQR_MAX_CCW / rpt;
- 	} else {
-@@ -4681,7 +4681,7 @@ static void dasd_eckd_dump_sense_ccw(struct dasd_device *device,
- 	int len, sl, sct;
+ 	if (test_bit(MD_CLOSING, &mddev->flags)) {
+@@ -8927,10 +8929,12 @@ static int __init md_init(void)
+ 	if (!md_misc_wq)
+ 		goto err_misc_wq;
  
- 	page = (char *) get_zeroed_page(GFP_ATOMIC);
--	if (page = NULL) {
-+	if (!page) {
- 		DBF_DEV_EVENT(DBF_WARNING, device, "%s",
- 			      "No memory to dump sense data\n");
- 		return;
-@@ -4785,7 +4785,7 @@ static void dasd_eckd_dump_sense_tcw(struct dasd_device *device,
- 	u8 *sense, *rcq;
+-	if ((ret = register_blkdev(MD_MAJOR, "md")) < 0)
++	ret = register_blkdev(MD_MAJOR, "md");
++	if (ret < 0)
+ 		goto err_md;
  
- 	page = (char *) get_zeroed_page(GFP_ATOMIC);
--	if (page = NULL) {
-+	if (!page) {
- 		DBF_DEV_EVENT(DBF_WARNING, device, " %s",
- 			    "No memory to dump sense data");
- 		return;
+-	if ((ret = register_blkdev(0, "mdp")) < 0)
++	ret = register_blkdev(0, "mdp");
++	if (ret < 0)
+ 		goto err_mdp;
+ 	mdp_major = ret;
+ 
 -- 
-2.12.3
+2.12.2
 
