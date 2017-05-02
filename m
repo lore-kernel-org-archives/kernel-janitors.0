@@ -1,72 +1,58 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 May 2017 20:33:22 +0000
-Subject: [PATCH] of/unittest: Delete an error message for a failed memory allocation in three functions
-Message-Id: <958edc32-bc4d-4f3b-52d5-8a13aa36fd61@users.sourceforge.net>
+From: Keerthy <j-keerthy@ti.com>
+Date: Tue, 02 May 2017 03:53:16 +0000
+Subject: Re: [PATCH 2/3] ti-soc-thermal: Delete error messages for failed memory allocations in ti_bandgap_bu
+Message-Id: <f3fe19c4-f31b-6992-838a-d93947c8f780@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
+ <65329026-ad0d-df20-1ff6-4befab001b3c@users.sourceforge.net>
+In-Reply-To: <65329026-ad0d-df20-1ff6-4befab001b3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 May 2017 22:20:52 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
 
-This issue was detected by using the Coccinelle software.
+On Wednesday 26 April 2017 09:07 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 26 Apr 2017 17:03:07 +0200
+> 
+> The script "checkpatch.pl" pointed information out like the following.
+> 
+> WARNING: Possible unnecessary 'out of memory' message
+> 
+> Thus remove such statements here.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/of/unittest.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+Reviewed-by: Keerthy <j-keerthy@ti.com>
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 987a1530282a..9554f83a0260 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -914,12 +914,9 @@ static int __init unittest_data_add(void)
- 
- 	/* creating copy */
- 	unittest_data = kmemdup(__dtb_testcases_begin, size, GFP_KERNEL);
--
--	if (!unittest_data) {
--		pr_warn("%s: Failed to allocate memory for unittest_data; "
--			"not running tests\n", __func__);
-+	if (!unittest_data)
- 		return -ENOMEM;
--	}
-+
- 	of_fdt_unflatten_tree(unittest_data, NULL, &unittest_data_node);
- 	if (!unittest_data_node) {
- 		pr_warn("%s: No tree to attach; not running tests\n", __func__);
-@@ -1593,12 +1590,9 @@ static int unittest_i2c_bus_probe(struct platform_device *pdev)
- 	}
- 
- 	dev_dbg(dev, "%s for node @%s\n", __func__, np->full_name);
--
- 	std = devm_kzalloc(dev, sizeof(*std), GFP_KERNEL);
--	if (!std) {
--		dev_err(dev, "Failed to allocate unittest i2c data\n");
-+	if (!std)
- 		return -ENOMEM;
--	}
- 
- 	/* link them together */
- 	std->pdev = pdev;
-@@ -2062,10 +2056,8 @@ static int __init overlay_data_add(int onum)
- 	 * will create pointers to the passed in FDT in the EDT.
- 	 */
- 	info->data = kmemdup(info->dtb_begin, size, GFP_KERNEL);
--	if (!info->data) {
--		pr_err("unable to allocate memory for data, %d\n", onum);
-+	if (!info->data)
- 		return 0;
--	}
- 
- 	of_fdt_unflatten_tree(info->data, NULL, &info->np_overlay);
- 	if (!info->np_overlay) {
--- 
-2.12.3
-
+> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> index f19cb7612a65..109fb0a5f19f 100644
+> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> @@ -1217,7 +1217,5 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
+> -	if (!bgp) {
+> -		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
+> +	if (!bgp)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	of_id = of_match_device(of_ti_bandgap_match, &pdev->dev);
+>  	if (of_id)
+> @@ -1229,7 +1227,5 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
+> -	if (!bgp->regval) {
+> -		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
+> +	if (!bgp->regval)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	i = 0;
+>  	do {
+> 
