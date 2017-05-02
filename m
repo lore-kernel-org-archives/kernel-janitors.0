@@ -1,40 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 19:35:24 +0000
-Subject: [PATCH] PM / clock_ops: Delete an error message for a failed memory allocation in __pm_clk_add()
-Message-Id: <7665c16b-5f76-731b-abd0-476f8d90dd59@users.sourceforge.net>
+Date: Tue, 02 May 2017 14:28:28 +0000
+Subject: [PATCH 4/6] md: Use seq_puts() in faulty_status()
+Message-Id: <7bf548c7-2e09-3af1-f301-fe55b4e9f1d8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
+In-Reply-To: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-raid@vger.kernel.org, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 21:28:10 +0200
+Date: Tue, 2 May 2017 15:20:30 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/base/power/clock_ops.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/md/faulty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-index 8e2e4757adcb..aa25ef4e6e5a 100644
---- a/drivers/base/power/clock_ops.c
-+++ b/drivers/base/power/clock_ops.c
-@@ -88,8 +88,6 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
- 	if (con_id) {
- 		ce->con_id = kstrdup(con_id, GFP_KERNEL);
- 		if (!ce->con_id) {
--			dev_err(dev,
--				"Not enough memory for clock connection ID.\n");
- 			kfree(ce);
- 			return -ENOMEM;
- 		}
+diff --git a/drivers/md/faulty.c b/drivers/md/faulty.c
+index b0536cfd8e17..f5536c91be5c 100644
+--- a/drivers/md/faulty.c
++++ b/drivers/md/faulty.c
+@@ -253,7 +253,7 @@ static void faulty_status(struct seq_file *seq, struct mddev *mddev)
+ 			   n, conf->period[ReadFixable]);
+ 
+ 	if ((n=atomic_read(&conf->counters[WriteAll])) != 0)
+-		seq_printf(seq, " WriteAll");
++		seq_puts(seq, " WriteAll");
+ 
+ 	seq_printf(seq, " nfaults=%d", conf->nfaults);
+ }
 -- 
-2.13.0
+2.12.2
 
