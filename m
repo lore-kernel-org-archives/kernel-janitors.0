@@ -1,41 +1,100 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 25 May 2017 16:51:34 +0000
-Subject: [PATCH] spi: omap2-mcspi: remove redundant check for error status
-Message-Id: <20170525165134.18103-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 14:31:00 +0000
+Subject: [PATCH 6/6] md: Add some spaces for better code readability
+Message-Id: <9ef3d847-cab3-d7e4-7d76-2c41700df779@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
+In-Reply-To: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-raid@vger.kernel.org, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 16:00:45 +0200
 
-The check to see if status is less than zero is actually redundant
-as all previous places where it is -ve have already branched to the
-exit paths, so it is never less than zero at the check.
+Use space characters and blank lines at some source code places
+according to the Linux coding style convention.
 
-Detected by CoverityScan, CID#1357119 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-omap2-mcspi.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/md/faulty.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 7275223dbcd4..e048268d8ba2 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -1412,9 +1412,6 @@ static int omap2_mcspi_probe(struct platform_device *pdev)
- 		sprintf(mcspi->dma_channels[i].dma_tx_ch_name, "tx%d", i);
- 	}
+diff --git a/drivers/md/faulty.c b/drivers/md/faulty.c
+index 2573009b1265..434c3643c9c3 100644
+--- a/drivers/md/faulty.c
++++ b/drivers/md/faulty.c
+@@ -110,19 +110,20 @@ static int check_sector(struct faulty_conf *conf, sector_t start, sector_t end,
+ {
+ 	/* If we find a ReadFixable sector, we fix it ... */
+ 	int i;
+-	for (i=0; i<conf->nfaults; i++)
++
++	for (i = 0; i < conf->nfaults; i++)
+ 		if (conf->faults[i] >= start &&
+ 		    conf->faults[i] < end) {
+ 			/* found it ... */
+ 			switch (conf->modes[i] * 2 + dir) {
+-			case WritePersistent*2+WRITE: return 1;
+-			case ReadPersistent*2+READ: return 1;
+-			case ReadFixable*2+READ: return 1;
+-			case ReadFixable*2+WRITE:
++			case WritePersistent * 2 + WRITE: return 1;
++			case ReadPersistent * 2 + READ: return 1;
++			case ReadFixable * 2 + READ: return 1;
++			case ReadFixable * 2 + WRITE:
+ 				conf->modes[i] = NoPersist;
+ 				return 0;
+-			case AllPersist*2+READ:
+-			case AllPersist*2+WRITE: return 1;
++			case AllPersist * 2 + READ:
++			case AllPersist * 2 + WRITE: return 1;
+ 			default:
+ 				return 0;
+ 			}
+@@ -134,9 +135,10 @@ static void add_sector(struct faulty_conf *conf, sector_t start, int mode)
+ {
+ 	int i;
+ 	int n = conf->nfaults;
+-	for (i=0; i<conf->nfaults; i++)
++
++	for (i = 0; i < conf->nfaults; i++)
+ 		if (conf->faults[i] = start) {
+-			switch(mode) {
++			switch (mode) {
+ 			case NoPersist: conf->modes[i] = mode; return;
+ 			case WritePersistent:
+ 				if (conf->modes[i] = ReadPersistent ||
+@@ -167,7 +169,7 @@ static void add_sector(struct faulty_conf *conf, sector_t start, int mode)
+ 	conf->faults[n] = start;
+ 	conf->modes[n] = mode;
+ 	if (conf->nfaults = n)
+-		conf->nfaults = n+1;
++		conf->nfaults = n + 1;
+ }
  
--	if (status < 0)
--		goto free_master;
--
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, SPI_AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_enable(&pdev->dev);
+ static void faulty_make_request(struct mddev *mddev, struct bio *bio)
+@@ -278,7 +280,8 @@ static int faulty_reshape(struct mddev *mddev)
+ 		conf->nfaults = 0;
+ 	else if (mode = ClearErrors) {
+ 		int i;
+-		for (i=0 ; i < Modes ; i++) {
++
++		for (i = 0; i < Modes; i++) {
+ 			conf->period[i] = 0;
+ 			atomic_set(&conf->counters[i], 0);
+ 		}
+@@ -317,7 +320,7 @@ static int faulty_run(struct mddev *mddev)
+ 	if (!conf)
+ 		return -ENOMEM;
+ 
+-	for (i=0; i<Modes; i++) {
++	for (i = 0; i < Modes; i++) {
+ 		atomic_set(&conf->counters[i], 0);
+ 		conf->period[i] = 0;
+ 	}
 -- 
-2.11.0
+2.12.2
 
