@@ -1,42 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 21:01:44 +0000
-Subject: [PATCH 1/7] kernel-trace: Combine two function calls into one in hist_trigger_entry_print()
-Message-Id: <7f9cad99-4eb5-7b3f-505d-8fa9265f476e@users.sourceforge.net>
+From: Keerthy <j-keerthy@ti.com>
+Date: Tue, 02 May 2017 03:52:25 +0000
+Subject: Re: [PATCH 3/3] ti-soc-thermal: Fix a typo in a comment line
+Message-Id: <75adbe08-1254-ef9a-d7c8-08a9a35b31cd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
-In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
+References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
+ <f1b47bde-bd8a-2a5d-a6b3-4c721628b243@users.sourceforge.net>
+In-Reply-To: <f1b47bde-bd8a-2a5d-a6b3-4c721628b243@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 May 2017 19:40:39 +0200
 
-A bit of data was put into a sequence by two separate function calls.
-Print the same data by a single function call instead.
 
-This issue was detected by using the Coccinelle software.
+On Wednesday 26 April 2017 09:09 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 26 Apr 2017 17:11:28 +0200
+> 
+> Add a missing character in this description for a function.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- kernel/trace/trace_events_hist.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Keerthy <j-keerthy@ti.com>
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1c21d0e2a145..94999934ffd5 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1017,7 +1017,5 @@ hist_trigger_entry_print(struct seq_file *m,
- 
--	seq_puts(m, "}");
--
--	seq_printf(m, " hitcount: %10llu",
-+	seq_printf(m, "} hitcount: %10llu",
- 		   tracing_map_read_sum(elt, HITCOUNT_IDX));
- 
- 	for (i = 1; i < hist_data->n_vals; i++) {
--- 
-2.12.2
-
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> index 109fb0a5f19f..696ab3046b87 100644
+> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> @@ -1010,7 +1010,7 @@ ti_bandgap_force_single_read(struct ti_bandgap *bgp, int id)
+>  }
+>  
+>  /**
+> - * ti_bandgap_set_continous_mode() - One time enabling of continuous mode
+> + * ti_bandgap_set_continuous_mode() - One time enabling of continuous mode
+>   * @bgp: pointer to struct ti_bandgap
+>   *
+>   * Call this function only if HAS(MODE_CONFIG) is set. As this driver may
+> 
