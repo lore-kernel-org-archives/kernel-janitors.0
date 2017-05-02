@@ -1,82 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 09:14:37 +0000
-Subject: [PATCH 3/3] net: pktgen: Adjust five checks for null pointers
-Message-Id: <9cbf8dea-1a36-9388-af71-9c07d788d0af@users.sourceforge.net>
+Date: Tue, 02 May 2017 17:46:53 +0000
+Subject: [PATCH 1/3] net/atm: Combine four seq_printf() calls in mpc_show()
+Message-Id: <c540d391-251e-a4bb-5701-a86319f7f88b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <79472009-7764-bb92-5f29-60bb21793cec@users.sourceforge.net>
-In-Reply-To: <79472009-7764-bb92-5f29-60bb21793cec@users.sourceforge.net>
+References: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
+In-Reply-To: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, John Fastabend <john.fastabend@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 10:44:16 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 2 May 2017 18:52:58 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Some data were put into a sequence by four separate function calls.
+Print the same data by two function calls instead.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/core/pktgen.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/atm/mpoa_proc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 51008ddc7af6..a28350c9ac67 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -1986,7 +1986,7 @@ static void pktgen_mark_device(const struct pktgen_net *pn, const char *ifname)
- 	while (1) {
- 
- 		pkt_dev = __pktgen_NN_threads(pn, ifname, REMOVE);
--		if (pkt_dev = NULL)
-+		if (!pkt_dev)
- 			break;	/* success */
- 
- 		mutex_unlock(&pktgen_thread_lock);
-@@ -3274,7 +3274,7 @@ static struct pktgen_dev *next_to_run(struct pktgen_thread *t)
- 	list_for_each_entry_rcu(pkt_dev, &t->if_list, list) {
- 		if (!pkt_dev->running)
- 			continue;
--		if (best = NULL)
-+		if (!best)
- 			best = pkt_dev;
- 		else if (ktime_compare(pkt_dev->next_tx, best->next_tx) < 0)
- 			best = pkt_dev;
-@@ -3402,7 +3402,7 @@ static void pktgen_xmit(struct pktgen_dev *pkt_dev)
- 		kfree_skb(pkt_dev->skb);
- 
- 		pkt_dev->skb = fill_packet(odev, pkt_dev);
--		if (pkt_dev->skb = NULL) {
-+		if (!pkt_dev->skb) {
- 			pr_err("ERROR: couldn't allocate skb in fill_packet\n");
- 			schedule();
- 			pkt_dev->clone_count--;	/* back out increment, OOM */
-@@ -3685,7 +3685,7 @@ static int pktgen_add_device(struct pktgen_thread *t, const char *ifname)
- 	strcpy(pkt_dev->odevname, ifname);
- 	pkt_dev->flows = vzalloc_node(MAX_CFLOWS * sizeof(struct flow_state),
- 				      node);
--	if (pkt_dev->flows = NULL) {
-+	if (!pkt_dev->flows) {
- 		kfree(pkt_dev);
- 		return -ENOMEM;
+diff --git a/net/atm/mpoa_proc.c b/net/atm/mpoa_proc.c
+index 2df34eb5d65f..6ea6028fd865 100644
+--- a/net/atm/mpoa_proc.c
++++ b/net/atm/mpoa_proc.c
+@@ -145,8 +145,8 @@ static int mpc_show(struct seq_file *m, void *v)
+ 		return 0;
  	}
-@@ -3868,7 +3868,7 @@ static int __net_init pg_net_init(struct net *net)
- 		return -ENODEV;
+ 
+-	seq_printf(m, "\nInterface %d:\n\n", mpc->dev_num);
+-	seq_printf(m, "Ingress Entries:\nIP address      State      Holding time  Packets fwded  VPI  VCI\n");
++	seq_printf(m, "\nInterface %d:\n\nIngress Entries:\nIP address      State      Holding time  Packets fwded  VPI  VCI\n",
++		   mpc->dev_num);
+ 	do_gettimeofday(&now);
+ 
+ 	for (in_entry = mpc->in_cache; in_entry; in_entry = in_entry->next) {
+@@ -165,7 +165,7 @@ static int mpc_show(struct seq_file *m, void *v)
  	}
- 	pe = proc_create(PGCTRL, 0600, pn->proc_dir, &pktgen_fops);
--	if (pe = NULL) {
-+	if (!pe) {
- 		pr_err("cannot create %s procfs entry\n", PGCTRL);
- 		ret = -EINVAL;
- 		goto remove;
+ 
+-	seq_printf(m, "\n");
+-	seq_printf(m, "Egress Entries:\nIngress MPC ATM addr\nCache-id        State      Holding time  Packets recvd  Latest IP addr   VPI VCI\n");
++	seq_printf(m,
++		   "\nEgress Entries:\nIngress MPC ATM addr\nCache-id        State      Holding time  Packets recvd  Latest IP addr   VPI VCI\n");
+ 	for (eg_entry = mpc->eg_cache; eg_entry; eg_entry = eg_entry->next) {
+ 		unsigned char *p = eg_entry->ctrl_info.in_MPC_data_ATM_addr;
+ 		for (i = 0; i < ATM_ESA_LEN; i++)
 -- 
-2.13.0
+2.12.2
 
