@@ -1,40 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:16:04 +0000
-Subject: [PATCH 3/6] PNP: Improve a size determination in pnp_clone_dependent_set()
-Message-Id: <2a61f08a-54f2-c8c9-1aa0-4cc9b51715db@users.sourceforge.net>
+Date: Tue, 02 May 2017 14:29:39 +0000
+Subject: [PATCH 5/6] md: Adjust six function calls together with a variable assignment in faulty_status()
+Message-Id: <2af19638-e678-3386-f45e-ddaee2c6e9e1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
-In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
+In-Reply-To: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-raid@vger.kernel.org, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:52:26 +0200
+Date: Tue, 2 May 2017 15:35:35 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
+
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pnp/quirks.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/md/faulty.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
-index d28e3ab9479c..215a50723243 100644
---- a/drivers/pnp/quirks.c
-+++ b/drivers/pnp/quirks.c
-@@ -155,6 +155,5 @@ static struct pnp_option *pnp_clone_dependent_set(struct pnp_dev *dev,
- 	list_for_each_entry(option, &dev->options, list) {
- 		if (pnp_option_is_dependent(option) &&
- 		    pnp_option_set(option) = set) {
--			new_option = kmalloc(sizeof(struct pnp_option),
--					     GFP_KERNEL);
-+			new_option = kmalloc(sizeof(*new_option), GFP_KERNEL);
- 			if (!new_option) {
+diff --git a/drivers/md/faulty.c b/drivers/md/faulty.c
+index f5536c91be5c..2573009b1265 100644
+--- a/drivers/md/faulty.c
++++ b/drivers/md/faulty.c
+@@ -231,28 +231,33 @@ static void faulty_status(struct seq_file *seq, struct mddev *mddev)
+ 	struct faulty_conf *conf = mddev->private;
+ 	int n;
+ 
+-	if ((n=atomic_read(&conf->counters[WriteTransient])) != 0)
++	n = atomic_read(&conf->counters[WriteTransient]);
++	if (n != 0)
+ 		seq_printf(seq, " WriteTransient=%d(%d)",
+ 			   n, conf->period[WriteTransient]);
+ 
+-	if ((n=atomic_read(&conf->counters[ReadTransient])) != 0)
++	n = atomic_read(&conf->counters[ReadTransient]);
++	if (n != 0)
+ 		seq_printf(seq, " ReadTransient=%d(%d)",
+ 			   n, conf->period[ReadTransient]);
+ 
+-	if ((n=atomic_read(&conf->counters[WritePersistent])) != 0)
++	n = atomic_read(&conf->counters[WritePersistent]);
++	if (n != 0)
+ 		seq_printf(seq, " WritePersistent=%d(%d)",
+ 			   n, conf->period[WritePersistent]);
+ 
+-	if ((n=atomic_read(&conf->counters[ReadPersistent])) != 0)
++	n = atomic_read(&conf->counters[ReadPersistent]);
++	if (n != 0)
+ 		seq_printf(seq, " ReadPersistent=%d(%d)",
+ 			   n, conf->period[ReadPersistent]);
+ 
+-
+-	if ((n=atomic_read(&conf->counters[ReadFixable])) != 0)
++	n = atomic_read(&conf->counters[ReadFixable]);
++	if (n != 0)
+ 		seq_printf(seq, " ReadFixable=%d(%d)",
+ 			   n, conf->period[ReadFixable]);
+ 
+-	if ((n=atomic_read(&conf->counters[WriteAll])) != 0)
++	n = atomic_read(&conf->counters[WriteAll]);
++	if (n != 0)
+ 		seq_puts(seq, " WriteAll");
+ 
+ 	seq_printf(seq, " nfaults=%d", conf->nfaults);
 -- 
-2.13.0
+2.12.2
 
