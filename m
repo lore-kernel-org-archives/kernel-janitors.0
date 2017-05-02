@@ -1,67 +1,30 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Tue, 09 May 2017 16:29:16 +0000
-Subject: Re: [RFC] Spurious error handling code in 'vc4_get_hang_state_ioctl'
-Message-Id: <87bmr2ngdf.fsf@eliezer.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 20:04:31 +0000
+Subject: [PATCH 0/3] GPU-DRM-Radeon: Fine-tuning for three function implementations
+Message-Id: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bba7889b-7f80-c973-0a1b-e56a4a88cb03@wanadoo.fr>
-In-Reply-To: <bba7889b-7f80-c973-0a1b-e56a4a88cb03@wanadoo.fr>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 22:00:02 +0200
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+Three update suggestions were taken into account
+from static source code analysis.
 
-> Hi,
->
-> While looking for labels with a spurious order in the linux kernel code,=
-=20
-> I came across code around:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-drivers/gpu/drm/vc4/vc4_gem.c#n106
->
-> The error handling in this for loop looks spurious to me:
->     - if 'drm_gem_handle_create' fails, we leak 'bo_state'
->       This is freed after the 'copy_to_user'
->     - if 'drm_gem_handle_create' fails, then we have 'state->bo_count =3D=
-=20
-> i - 1'
->       This looks odd. 'state->bo_count =3D i' sounds more logical to me.
->     - as 'state->bo_count' is updated, this could mean than the=20
-> 'copy_to_user' should be performed.
+Markus Elfring (3):
+  Use seq_putc() in radeon_sa_bo_dump_debug_info()
+  Use seq_puts() in radeon_debugfs_pm_info()
+  Use seq_puts() in r100_debugfs_cp_csq_fifo()
 
-The point of reducing the bo_count was presumably for freeing the
-handles we had created before returning the error, which I forgot to
-actually do (userspace won't know about the new handles to go and free
-them itself).  This is not that big a deal, as this interface is for use
-by a root-only, one-shot app that gets the hang state and dumps it to
-disk, so it can be processed later to try to debug the hang.
+ drivers/gpu/drm/radeon/r100.c      | 6 +++---
+ drivers/gpu/drm/radeon/radeon_pm.c | 5 +++--
+ drivers/gpu/drm/radeon/radeon_sa.c | 9 +++------
+ 3 files changed, 9 insertions(+), 11 deletions(-)
 
-Want to put together a patch that frees the handles (and bo_state),
-though, for correctness?  Don't worry about copying any partial data out
-on error -- the userspace tool just exits.
+-- 
+2.12.2
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkR7lwACgkQtdYpNtH8
-nujRWxAAgtjv+IpFiQ9DojWKdunS043kQN2qD1ifK8sNSIIkYpPpp+EgPXhVVdtY
-swmEZVfgszhIBXwmrWp49kCAfjSrIl1r+DW55r7MwhQ6Vzd3UTJJCWSdOFuzyi7m
-Ne3uK1cK3BwfwRQEW+WJ3/Hhx8LA1qBdFn4guogFbBtsVxLeM+I0cNWjwG8xOS1b
-whCFH9+U/2zjAp1FLyZ8ZLT6UUnEX7unKM6XNiJ0NkyKJ37O8Tz1RLYGgiRlqg2n
-hv9Dy0VoHXS4rhhlKS+f1hvCob21Obso+K2cg7NpWCFrA8+LbN0iDQSD070CV8Uc
-jtcyylKjdVZrvF4jgYV3XxFQ8flQttaLesgNydY8gxJhreVFXyoLNPRNNsl0k94h
-PjOKzVzSxUZ/XvsSyINwFiXF5PqWjarEkE2vD0VvFwNOtureKedPOcHBZgKxJNm/
-FbhcPSq5f7dqihAITNrYaydPZZwCr8XqNizHdYYL9D016K1a+VrH3kmS/T0JjQBE
-HxA4z8tIbvV7TFwb3aNHfmbK4sHo4lcoKf3UguuNz4VlTFWiAQ4mbniK0Eeow73n
-FgsOzyRgSqbFI6kHjCQTBO/30Kx4w07tudaHhZHcAAhr4ZgUBy1Qf37xPF8IBfUX
-d8qI3ZOlxuzMge649gvxPbr64941htIuqWQ+CqKgPJLgT/KfXnI=
-=MfRV
------END PGP SIGNATURE-----
---=-=-=--
