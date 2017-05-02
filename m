@@ -1,27 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 14:00:33 +0000
-Subject: [PATCH 0/2] PCMCIA-Resource management: Adjustments for three function implementations
-Message-Id: <0d48eee5-11d8-e44e-8c11-6370ae7a7ea1@users.sourceforge.net>
+Date: Tue, 02 May 2017 17:45:31 +0000
+Subject: [PATCH 0/3] net/atm: Fine-tuning for three function implementations
+Message-Id: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 15:46:54 +0200
+Date: Tue, 2 May 2017 19:37:39 +0200
 
-Two update suggestions were taken into account
+A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (2):
-  Improve a size determination in three functions
-  Delete an error message for a failed memory allocation in two functions
+Markus Elfring (3):
+  Combine four seq_printf() calls in mpc_show()
+  Use seq_putc() in mpc_show()
+  Add some spaces for better code readability
 
- drivers/pcmcia/rsrc_nonstatic.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ net/atm/mpoa_proc.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
 -- 
-2.13.0
+2.12.2
 
