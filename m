@@ -1,39 +1,54 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Wed, 03 May 2017 01:38:06 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] igb: make a few local functions static
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C5F2C01@ORSMSX101.amr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 17:48:18 +0000
+Subject: [PATCH 2/3] net/atm: Use seq_putc() in mpc_show()
+Message-Id: <e445e058-15cd-787c-0717-efd7faed999a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170427175911.15477-1-colin.king@canonical.com>
-In-Reply-To: <20170427175911.15477-1-colin.king@canonical.com>
+References: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
+In-Reply-To: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@lists.osuosl.org] On
-> Behalf Of Colin King
-> Sent: Thursday, April 27, 2017 10:59 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; intel-wired-
-> lan@lists.osuosl.org; netdev@vger.kernel.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH] igb: make a few local functions static
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> clean up a few sparse warnings, these following
-> functions can be made static:
-> 
-> drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
->   'igb_add_mac_filter' was not declared. Should it be static?
-> drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
->   'igb_del_mac_filter' was not declared. Should it be static?
-> drivers/net/ethernet/intel/igb/igb_main.c: warning: symbol
->   'igb_set_vf_mac_filter' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/intel/igb/igb_main.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 18:58:08 +0200
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/atm/mpoa_proc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/atm/mpoa_proc.c b/net/atm/mpoa_proc.c
+index 6ea6028fd865..324c4f95f4bf 100644
+--- a/net/atm/mpoa_proc.c
++++ b/net/atm/mpoa_proc.c
+@@ -161,7 +161,7 @@ static int mpc_show(struct seq_file *m, void *v)
+ 			seq_printf(m, "   %-3d  %-3d",
+ 				   in_entry->shortcut->vpi,
+ 				   in_entry->shortcut->vci);
+-		seq_printf(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 
+ 	seq_printf(m,
+@@ -185,9 +185,9 @@ static int mpc_show(struct seq_file *m, void *v)
+ 			seq_printf(m, " %-3d %-3d",
+ 				   eg_entry->shortcut->vpi,
+ 				   eg_entry->shortcut->vci);
+-		seq_printf(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
+-- 
+2.12.2
+
