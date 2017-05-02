@@ -1,11 +1,12 @@
 From: Keerthy <j-keerthy@ti.com>
-Date: Mon, 01 May 2017 05:32:06 +0000
+Date: Tue, 02 May 2017 04:56:02 +0000
 Subject: Re: [PATCH 0/3] TI-SoC-thermal: Fine-tuning for two functions
-Message-Id: <5fa2705e-3082-29b0-b174-cc478cd66e75@ti.com>
+Message-Id: <d87115f9-db8f-d2af-c03e-019004d9b9ac@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
  <20170427162047.GA18276@localhost.localdomain>
-In-Reply-To: <20170427162047.GA18276@localhost.localdomain>
+ <5fa2705e-3082-29b0-b174-cc478cd66e75@ti.com>
+In-Reply-To: <5fa2705e-3082-29b0-b174-cc478cd66e75@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,34 +15,49 @@ Cc: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Zhang Rui <rui.zhang@i
 
 
 
-On Thursday 27 April 2017 09:50 PM, Eduardo Valentin wrote:
-> On Wed, Apr 26, 2017 at 05:33:10PM +0200, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Wed, 26 Apr 2017 17:24:56 +0200
->>
->> Three update suggestions were taken into account
->> from static source code analysis.
->>
->> Markus Elfring (3):
->>   Use devm_kcalloc() in ti_bandgap_build()
->>   Delete error messages for failed memory allocations in ti_bandgap_build()
->>   Fix a typo in a comment line
->>
+On Monday 01 May 2017 10:50 AM, Keerthy wrote:
 > 
-> Keerthy,
 > 
-> Can you please give it a shot of this series on all supported OMAP chip
-> boards? I do not see any major issue with the series at all, but would
-> like to get it tested by you.
+> On Thursday 27 April 2017 09:50 PM, Eduardo Valentin wrote:
+>> On Wed, Apr 26, 2017 at 05:33:10PM +0200, SF Markus Elfring wrote:
+>>> From: Markus Elfring <elfring@users.sourceforge.net>
+>>> Date: Wed, 26 Apr 2017 17:24:56 +0200
+>>>
+>>> Three update suggestions were taken into account
+>>> from static source code analysis.
+>>>
+>>> Markus Elfring (3):
+>>>   Use devm_kcalloc() in ti_bandgap_build()
+>>>   Delete error messages for failed memory allocations in ti_bandgap_build()
+>>>   Fix a typo in a comment line
+>>>
+>>
+>> Keerthy,
+>>
+>> Can you please give it a shot of this series on all supported OMAP chip
+>> boards? I do not see any major issue with the series at all, but would
+>> like to get it tested by you.
+> 
+> Sure Eduardo. I will test and review this series.
 
-Sure Eduardo. I will test and review this series.
+Tested for Temperatures of all the sensors and thermal shutdown
+triggering using emul_temp on DRA7/DRA72 AM57xx-evm boards.
+
+
+For the series:
+
+Acked-by: Keerthy <j-keerthy@ti.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+
+- Keerthy
 
 > 
-> BR,
-> 
->>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 14 +++++---------
->>  1 file changed, 5 insertions(+), 9 deletions(-)
 >>
->> -- 
->> 2.12.2
+>> BR,
 >>
+>>>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 14 +++++---------
+>>>  1 file changed, 5 insertions(+), 9 deletions(-)
+>>>
+>>> -- 
+>>> 2.12.2
+>>>
