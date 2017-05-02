@@ -1,39 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 May 2017 19:26:43 +0000
-Subject: Re: [PATCH] tinydrm: mipi-dbi: Adjust buffer output in mipi_dbi_debugfs_command_show()
-Message-Id: <20170510192643.2v5fhkapqzwf4eat@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 09:28:16 +0000
+Subject: [PATCH 8/9] pinctrl: Use seq_putc() in pinctrl_maps_show()
+Message-Id: <80f6dabc-6547-4d2b-2efa-15a90de41c0c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2795b611-dfb9-eaf6-e04d-10e27ce96772@users.sourceforge.net>
- <7a6e57ed-7d71-78bc-706e-3a6a1eea3a23@tronnes.org>
- <1494354199.20782.5.camel@perches.com>
- <f385d46e-cd60-ce57-d9c5-da23ad69e262@users.sourceforge.net>
-In-Reply-To: <f385d46e-cd60-ce57-d9c5-da23ad69e262@users.sourceforge.net>
+References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Thierry Reding <treding@nvidia.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Joe Perches <joe@perches.com>, Fengguang Wu <fengguang.wu@intel.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, May 10, 2017 at 05:15:33PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 10 May 2017 17:03:20 +0200
-> 
-> * Use a special format string specification for the desired output of the
->   array "val" into a sequence.
-> 
-> * Adjust two local variables accordingly.
-> 
-> This refactoring supersedes the update suggestion "tinydrm: mipi-dbi:
-> Use seq_putc() in mipi_dbi_debugfs_command_show()" from 2017-05-08.
-> https://patchwork.kernel.org/patch/9716119/
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 10:47:35 +0200
 
-This is not how to send v2 patches.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-> 
-> Fixes: 02dd95fe316936269a52d6ccb971bb956412b40a ("drm/tinydrm: Add MIPI DBI support")
+This issue was detected by using the Coccinelle software.
 
-This is not a bug fix so do not use the fixes tag.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 1653cbda6a82..7df16771fa13 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1732,7 +1732,7 @@ static int pinctrl_maps_show(struct seq_file *s, void *what)
+ 			break;
+ 		}
+ 
+-		seq_printf(s, "\n");
++		seq_putc(s, '\n');
+ 	}
+ 	mutex_unlock(&pinctrl_maps_mutex);
+ 
+-- 
+2.12.2
 
