@@ -1,36 +1,82 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Wed, 10 May 2017 08:48:13 +0000
-Subject: RE: [PATCH 1/4] hamradio: Combine two seq_printf() calls into one in yam_seq_show()
-Message-Id: <063D6719AE5E284EB5DD2968C1650D6DCFFE852F@AcuExch.aculab.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 May 2017 09:25:07 +0000
+Subject: [PATCH 5/9] pinctrl: Adjust five checks for null pointers
+Message-Id: <080f6ec0-7796-d802-7b64-8ea9b5488a7a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
- <c2866b46-28c9-f17f-dce7-96425a17a43a@users.sourceforge.net>
-In-Reply-To: <c2866b46-28c9-f17f-dce7-96425a17a43a@users.sourceforge.net>
+References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 'SF Markus Elfring' <elfring@users.sourceforge.net>, "linux-hams@vger.kernel.org" <linux-hams@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Jean-Paul Roubelat <jpr@f6fbb.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-RnJvbTogU0YgTWFya3VzIEVsZnJpbmcNCj4gU2VudDogMDkgTWF5IDIwMTcgMTU6MjINCj4gQSBi
-aXQgb2YgZGF0YSB3YXMgcHV0IGludG8gYSBzZXF1ZW5jZSBieSB0d28gc2VwYXJhdGUgZnVuY3Rp
-b24gY2FsbHMuDQo+IFByaW50IHRoZSBzYW1lIGRhdGEgYnkgYSBzaW5nbGUgZnVuY3Rpb24gY2Fs
-bCBpbnN0ZWFkLg0KPiANCj4gVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENv
-Y2NpbmVsbGUgc29mdHdhcmUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8
-ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvaGFt
-cmFkaW8veWFtLmMgfCAzICstLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAy
-IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2hhbXJhZGlvL3lh
-bS5jIGIvZHJpdmVycy9uZXQvaGFtcmFkaW8veWFtLmMNCj4gaW5kZXggYjY4OTFhZGExZDdiLi41
-NDJmMWU1MTFkZjEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2hhbXJhZGlvL3lhbS5jDQo+
-ICsrKyBiL2RyaXZlcnMvbmV0L2hhbXJhZGlvL3lhbS5jDQo+IEBAIC04MzAsOCArODMwLDcgQEAg
-c3RhdGljIGludCB5YW1fc2VxX3Nob3coc3RydWN0IHNlcV9maWxlICpzZXEsIHZvaWQgKnYpDQo+
-ICAJc2VxX3ByaW50ZihzZXEsICIgIFJ4RnJhbWVzICVsdVxuIiwgZGV2LT5zdGF0cy5yeF9wYWNr
-ZXRzKTsNCj4gIAlzZXFfcHJpbnRmKHNlcSwgIiAgVHhJbnQgICAgJXVcbiIsIHlwLT5uYl9tZGlu
-dCk7DQo+ICAJc2VxX3ByaW50ZihzZXEsICIgIFJ4SW50ICAgICV1XG4iLCB5cC0+bmJfcnhpbnQp
-Ow0KPiAtCXNlcV9wcmludGYoc2VxLCAiICBSeE92ZXIgICAlbHVcbiIsIGRldi0+c3RhdHMucnhf
-Zmlmb19lcnJvcnMpOw0KPiAtCXNlcV9wcmludGYoc2VxLCAiXG4iKTsNCj4gKwlzZXFfcHJpbnRm
-KHNlcSwgIiAgUnhPdmVyICAgJWx1XG5cbiIsIGRldi0+c3RhdHMucnhfZmlmb19lcnJvcnMpOw0K
-PiAgCXJldHVybiAwOw0KDQpUaGUgY29kZSB3YXMgY29uc2lzdGVudGx5IChhbmQgcHJvYmFibHkg
-ZGVsaWJlcmF0ZWx5KSB1c2luZyBvbmUgc2VxX3ByaW50ZigpDQpjYWxsIGZvciBlYWNoIGxpbmUg
-c28gdGhhdCB0aGUgc291cmNlIGxvb2tzICdhIGJpdCBsaWtlJyB0aGUgb3V0cHV0Lg0KDQpUaGVz
-ZSBjaGFuZ2VzIGFyZSBhbGwgc3R1cGlkLg0KDQoJRGF2aWQNCg0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 10:01:57 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinconf.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index dfa782e19f37..f2168b6e3418 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -319,7 +319,7 @@ static int pinconf_pins_show(struct seq_file *s, void *what)
+ 		pin = pctldev->desc->pins[i].number;
+ 		desc = pin_desc_get(pctldev, pin);
+ 		/* Skip if we cannot search the pin */
+-		if (desc = NULL)
++		if (!desc)
+ 			continue;
+ 
+ 		seq_printf(s, "pin %d (%s): ", pin, desc->name);
+@@ -528,7 +528,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'device_name' */
+ 	token = strsep(&b, " ");
+-	if (token = NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -536,7 +536,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'state_name' */
+ 	token = strsep(&b, " ");
+-	if (token = NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -544,7 +544,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'pin_name' */
+ 	token = strsep(&b, " ");
+-	if (token = NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -552,7 +552,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get new_value of config' */
+ 	token = strsep(&b, " ");
+-	if (token = NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+-- 
+2.12.2
+
