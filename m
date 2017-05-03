@@ -1,30 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 May 2017 11:34:33 +0000
-Subject: Re: [PATCH 1/9] pinctrl: Use seq_putc() in three functions
-Message-Id: <CACRpkdaj0oGg=fMxHwdxgU3vNy50Xy8_XQC=kfpedwbKWyozXA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 May 2017 15:49:24 +0000
+Subject: [PATCH] firmware: Google VPD: fix error handling on allocation failures
+Message-Id: <20170503154924.1659-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <6b51c0df-b48e-c49c-b7ae-ee0c8edfb581@users.sourceforge.net>
-In-Reply-To: <6b51c0df-b48e-c49c-b7ae-ee0c8edfb581@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wei-Ning Huang <wnhuang@google.com>, Thierry Escande <thierry.escande@collabora.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 2, 2017 at 11:21 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 May 2017 22:24:29 +0200
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fix two allocation failure checks. Firstly, ensure info is checked
+for a failed allocation; this fixes a potential null pointer
+dereference issue on info->key.  Secondly, free info is info->key
+fails to allocate to fix a memory leak.
 
-Looks reasonable. Patch applied.
+Detected by CoverityScan, CID#1430064 ("Resource Leak")
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/firmware/google/vpd.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/google/vpd.c b/drivers/firmware/google/vpd.c
+index 3ce813110d5e..2eb15b1dabcc 100644
+--- a/drivers/firmware/google/vpd.c
++++ b/drivers/firmware/google/vpd.c
+@@ -116,9 +116,13 @@ static int vpd_section_attrib_add(const u8 *key, s32 key_len,
+ 		return VPD_OK;
+ 
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
+ 	info->key = kzalloc(key_len + 1, GFP_KERNEL);
+-	if (!info->key)
++	if (!info->key) {
++		kfree(info);
+ 		return -ENOMEM;
++	}
+ 
+ 	memcpy(info->key, key, key_len);
+ 
+-- 
+2.11.0
+
