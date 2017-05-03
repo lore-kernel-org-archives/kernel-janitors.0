@@ -1,53 +1,60 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Tue, 23 May 2017 05:15:18 +0000
-Subject: Re: [PATCH 3/7] kernel-trace: Adjust two checks for null pointers in compatible_field()
-Message-Id: <20170523011518.4a81aad6@vmware.local.home>
+From: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Date: Wed, 03 May 2017 21:40:09 +0000
+Subject: Re: [PATCH] mtd: spi-nor: Potential oops on error path in quad_enable()
+Message-Id: <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
-        <392fd14c-1a61-c3de-e5a7-14caaa51be75@users.sourceforge.net>
-In-Reply-To: <392fd14c-1a61-c3de-e5a7-14caaa51be75@users.sourceforge.net>
+References: <20170428130614.w4cmbwvprgzv7sky@mwanda>
+In-Reply-To: <20170428130614.w4cmbwvprgzv7sky@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>, Huang Shijie <b32955@freescale.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On Fri, 5 May 2017 23:03:23 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+Hi Dan,
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 5 May 2017 20:00:11 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written !…
-> 
-> Thus fix the affected source code place.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  kernel/trace/trace_events_hist.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c
-> b/kernel/trace/trace_events_hist.c index df566e21344d..36412deac24c
-> 100644 --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -1324,7 +1324,7 @@ static bool compatible_field(struct
-> ftrace_event_field *field, {
->  	if (field = test_field)
->  		return true;
-> -	if (field = NULL || test_field = NULL)
-> +	if (!field || !test_field)
+Le 28/04/2017 =E0 15:06, Dan Carpenter a =E9crit :
+> Before commit cff959958832 ("mtd: spi-nor: introduce SPI 1-2-2 and SPI
+> 1-4-4 protocols") then we treated 1 as -EINVAL in the caller but after
+> that commit we changed to propagate the return.  My static checker
+> complains that it's eventually passed to an ERR_PTR() and later
+> dereferenced, but I'm not totally certain if that's true.  Regardless,
+> returning 1 is wrong.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 060a59e716be..a05db3371ebb 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1390,7 +1390,7 @@ static int macronix_quad_enable(struct spi_nor *nor)
+>  	write_sr(nor, val | SR_QUAD_EN_MX);
+> =20
+>  	if (spi_nor_wait_till_ready(nor))
+> -		return 1;
+> +		return -EINVAL;
+>
 
-The first two are fine, this one isn't needed.
+Good catch!
 
--- Steve
+However, I think we could return the return code of
+spi_nor_wait_till_ready() instead, like already done in
+spansion_quad_enable().
 
->  		return false;
->  	if (strcmp(field->name, test_field->name) != 0)
->  		return false;
+Looking at the source code of spi_nor_wait_till_ready() /
+spi_nor_wait_till_ready_with_timeout(), both function return 0 when
+successful, a negative error code otherwise.
 
+Best regards,
+
+Cyrille
+
+>  	ret =3D read_sr(nor);
+>  	if (!(ret > 0 && (ret & SR_QUAD_EN_MX))) {
+>=20
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
