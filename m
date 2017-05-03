@@ -1,42 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 May 2017 15:10:03 +0000
-Subject: [PATCH 3/3] mtdswap: Improve a size determination in mtdswap_erase_block()
-Message-Id: <0afe37eb-71fe-2a40-7ed5-24b910906671@users.sourceforge.net>
+Date: Wed, 03 May 2017 20:35:36 +0000
+Subject: [PATCH 0/6] lockdep: Fine-tuning for some function implementations
+Message-Id: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
-In-Reply-To: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 16:51:30 +0200
+Date: Wed, 3 May 2017 22:17:03 +0200
 
-Replace the specification of a data structure by a name for
-a local variable as the parameter for the operator "sizeof" to make
-the corresponding size determination a bit safer.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mtd/mtdswap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Markus Elfring (6):
+  Replace 11 seq_puts() calls by seq_putc()
+  Use seq_putc() in seq_header()
+  Replace four seq_printf() calls by seq_puts()
+  Combine two seq_printf() calls into one call in l_show()
+  Improve a size determination in lock_stat_open()
+  Add spaces for better code readability
 
-diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-index f73fb0909b0c..c748515f8533 100644
---- a/drivers/mtd/mtdswap.c
-+++ b/drivers/mtd/mtdswap.c
-@@ -559,8 +559,7 @@ static int mtdswap_erase_block(struct mtdswap_dev *d, struct swap_eb *eb)
- 
- retry:
- 	init_waitqueue_head(&wq);
--	memset(&erase, 0, sizeof(struct erase_info));
--
-+	memset(&erase, 0, sizeof(erase));
- 	erase.mtd	= mtd;
- 	erase.callback	= mtdswap_erase_callback;
- 	erase.addr	= mtdswap_eb_offset(d, eb);
+ kernel/locking/lockdep_proc.c | 50 ++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 27 deletions(-)
+
 -- 
 2.12.2
 
