@@ -1,44 +1,88 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 May 2017 20:30:07 +0000
-Subject: [PATCH] ti-thermal-common: Delete an error message for a failed memory allocation in ti_thermal_buil
-Message-Id: <d85aaf2b-0db5-1ad0-f57f-1000c96e1c38@users.sourceforge.net>
+Date: Wed, 03 May 2017 18:35:23 +0000
+Subject: [PATCH 1/2] blk-mq-debugfs: Replace seven seq_puts() calls by seq_putc()
+Message-Id: <caf15567-45d2-2062-9fae-cf1d098f2f3c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <507a3eee-6dfe-c218-1056-38221bd22be7@users.sourceforge.net>
+In-Reply-To: <507a3eee-6dfe-c218-1056-38221bd22be7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-block@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 May 2017 22:20:12 +0200
+Date: Wed, 3 May 2017 20:00:49 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+A few single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ block/blk-mq-debugfs.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-index 02790f69e26c..5d29aa35cc34 100644
---- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-@@ -160,10 +160,9 @@ static struct ti_thermal_data
- 	struct ti_thermal_data *data;
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index bcd2a7d4a3a5..2265b70b1121 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -53,7 +53,7 @@ static int blk_flags_show(struct seq_file *m, const unsigned long flags,
+ 		if (!(flags & BIT(i)))
+ 			continue;
+ 		if (sep)
+-			seq_puts(m, " ");
++			seq_putc(m, ' ');
+ 		sep = true;
+ 		if (i < flag_name_count && flag_name[i])
+ 			seq_puts(m, flag_name[i]);
+@@ -101,7 +101,7 @@ static int blk_queue_flags_show(struct seq_file *m, void *v)
  
- 	data = devm_kzalloc(bgp->dev, sizeof(*data), GFP_KERNEL);
--	if (!data) {
--		dev_err(bgp->dev, "kzalloc fail\n");
-+	if (!data)
- 		return NULL;
--	}
-+
- 	data->sensor_id = id;
- 	data->bgp = bgp;
- 	data->mode = THERMAL_DEVICE_ENABLED;
+ 	blk_flags_show(m, q->queue_flags, blk_queue_flag_name,
+ 		       ARRAY_SIZE(blk_queue_flag_name));
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
+@@ -159,11 +159,10 @@ static int queue_poll_stat_show(struct seq_file *m, void *v)
+ 	for (bucket = 0; bucket < BLK_MQ_POLL_STATS_BKTS/2; bucket++) {
+ 		seq_printf(m, "read  (%d Bytes): ", 1 << (9+bucket));
+ 		print_stat(m, &q->poll_stat[2*bucket]);
+-		seq_puts(m, "\n");
+-
++		seq_putc(m, '\n');
+ 		seq_printf(m, "write (%d Bytes): ",  1 << (9+bucket));
+ 		print_stat(m, &q->poll_stat[2*bucket+1]);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 	return 0;
+ }
+@@ -193,7 +192,7 @@ static int hctx_state_show(struct seq_file *m, void *v)
+ 
+ 	blk_flags_show(m, hctx->state, hctx_state_name,
+ 		       ARRAY_SIZE(hctx_state_name));
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
+@@ -233,11 +232,11 @@ static int hctx_flags_show(struct seq_file *m, void *v)
+ 		seq_puts(m, alloc_policy_name[alloc_policy]);
+ 	else
+ 		seq_printf(m, "%d", alloc_policy);
+-	seq_puts(m, " ");
++	seq_putc(m, ' ');
+ 	blk_flags_show(m,
+ 		       hctx->flags ^ BLK_ALLOC_POLICY_TO_MQ_FLAG(alloc_policy),
+ 		       hctx_flag_name, ARRAY_SIZE(hctx_flag_name));
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
 -- 
-2.13.0
+2.12.2
 
