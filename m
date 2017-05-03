@@ -1,34 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 12 May 2017 01:42:33 +0000
-Subject: Re: [PATCH][V2] ethernet: aquantia: remove redundant checks on error status
-Message-Id: <20170511.214233.1981021610793266657.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 May 2017 19:31:40 +0000
+Subject: [PATCH] hwmon: (pmbus) Add missing break statements
+Message-Id: <20170503193140.zbxcdgda7k3rnr2m@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170511182940.18774-1-colin.king@canonical.com>
-In-Reply-To: <20170511182940.18774-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: pavel.belous@aquantia.com, vomlehn@texas.net, Alexander.Loktionov@aquantia.com, Dmitry.Bezrukov@aquantia.com, Dmitrii.Tarakanov@aquantia.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Samuel Mendoza-Jonas <sam@mendozajonas.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 11 May 2017 19:29:40 +0100
+Static checkers complain about these missing break statements.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The error status err is initialized as zero and then being checked
-> several times to see if it is less than zero even when it has not
-> been updated.  It may seem that the err should be assigned to the
-> return code of the call to the various *offload_en_set calls and
-> then we check for failure, however, these functions are void and
-> never actually return any status.  
-> 
-> Since these error checks are redundant we can remove these
-> as well as err and the error exit label err_exit.
-> 
-> Detected by CoverityScan, CID#1398313 and CID#1398306 ("Logically
-> dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 6eaaea144dc5 ("hwmon: (pmbus) Add client driver for IR35221")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
+diff --git a/drivers/hwmon/pmbus/ir35221.c b/drivers/hwmon/pmbus/ir35221.c
+index cc7b3b542531..00e4a1e264e2 100644
+--- a/drivers/hwmon/pmbus/ir35221.c
++++ b/drivers/hwmon/pmbus/ir35221.c
+@@ -129,6 +129,7 @@ static int ir35221_read_word_data(struct i2c_client *client, int page, int reg)
+ 	case PMBUS_IIN_OC_WARN_LIMIT:
+ 		ret = pmbus_read_word_data(client, page, reg);
+ 		ret = ir35221_scale_result(ret, -1, PSC_CURRENT_IN);
++		break;
+ 	case PMBUS_READ_VIN:
+ 		ret = pmbus_read_word_data(client, page, PMBUS_READ_VIN);
+ 		ret = ir35221_scale_result(ret, -5, PSC_VOLTAGE_IN);
+@@ -222,6 +223,7 @@ static int ir35221_write_word_data(struct i2c_client *client, int page, int reg,
+ 	case PMBUS_IIN_OC_WARN_LIMIT:
+ 		val = ir35221_scale_result(word, 1, PSC_CURRENT_IN);
+ 		ret = pmbus_write_word_data(client, page, reg, val);
++		break;
+ 	default:
+ 		ret = -ENODATA;
+ 		break;
