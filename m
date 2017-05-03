@@ -1,58 +1,108 @@
-From: Keerthy <j-keerthy@ti.com>
-Date: Tue, 02 May 2017 03:53:16 +0000
-Subject: Re: [PATCH 2/3] ti-soc-thermal: Delete error messages for failed memory allocations in ti_bandgap_bu
-Message-Id: <f3fe19c4-f31b-6992-838a-d93947c8f780@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 May 2017 20:36:50 +0000
+Subject: [PATCH 1/6] lockdep: Replace 11 seq_puts() calls by seq_putc()
+Message-Id: <0fae17e0-1880-e041-293e-8ab3184df6a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
- <65329026-ad0d-df20-1ff6-4befab001b3c@users.sourceforge.net>
-In-Reply-To: <65329026-ad0d-df20-1ff6-4befab001b3c@users.sourceforge.net>
+References: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
+In-Reply-To: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 May 2017 21:00:26 +0200
 
+Some single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-On Wednesday 26 April 2017 09:07 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 26 Apr 2017 17:03:07 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus remove such statements here.
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/locking/lockdep_proc.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> index f19cb7612a65..109fb0a5f19f 100644
-> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> @@ -1217,7 +1217,5 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
-> -	if (!bgp) {
-> -		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
-> +	if (!bgp)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	of_id = of_match_device(of_ti_bandgap_match, &pdev->dev);
->  	if (of_id)
-> @@ -1229,7 +1227,5 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
-> -	if (!bgp->regval) {
-> -		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
-> +	if (!bgp->regval)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	i = 0;
->  	do {
-> 
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 6d1fcc786081..825496ece766 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -81,15 +81,14 @@ static int l_show(struct seq_file *m, void *v)
+ 	print_name(m, class);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 
+ 	list_for_each_entry(entry, &class->locks_after, entry) {
+ 		if (entry->distance = 1) {
+ 			seq_printf(m, " -> [%p] ", entry->class->key);
+ 			print_name(m, entry->class);
+-			seq_puts(m, "\n");
++			seq_putc(m, '\n');
+ 		}
+ 	}
+-	seq_puts(m, "\n");
+-
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
+@@ -156,10 +155,9 @@ static int lc_show(struct seq_file *m, void *v)
+ 
+ 		seq_printf(m, "[%p] ", class->key);
+ 		print_name(m, class);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+-	seq_puts(m, "\n");
+-
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ 
+@@ -393,10 +391,10 @@ static void seq_line(struct seq_file *m, char c, int offset, int length)
+ 	int i;
+ 
+ 	for (i = 0; i < offset; i++)
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	for (i = 0; i < length; i++)
+ 		seq_printf(m, "%c", c);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ }
+ 
+ static void snprint_time(char *buf, size_t bufsiz, s64 nr)
+@@ -483,7 +481,7 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+ 		seq_lock_time(m, &stats->write_waittime);
+ 		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_write]);
+ 		seq_lock_time(m, &stats->write_holdtime);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 
+ 	if (stats->read_holdtime.nr) {
+@@ -492,7 +490,7 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+ 		seq_lock_time(m, &stats->read_waittime);
+ 		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_read]);
+ 		seq_lock_time(m, &stats->read_holdtime);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 
+ 	if (stats->read_waittime.nr + stats->write_waittime.nr = 0)
+@@ -532,9 +530,9 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+ 			   ip, (void *)class->contending_point[i]);
+ 	}
+ 	if (i) {
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 		seq_line(m, '.', 0, 40 + 1 + 12 * (14 + 1));
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ }
+ 
+-- 
+2.12.2
+
