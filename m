@@ -1,40 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 May 2017 13:46:07 +0000
-Subject: [PATCH 1/4] C6X/megamode-pic: Improve a size determination in init_megamod_pic()
-Message-Id: <db7a5f16-21d4-59da-ae8c-31bdeafe63a2@users.sourceforge.net>
+Date: Wed, 03 May 2017 20:38:59 +0000
+Subject: [PATCH 3/6] lockdep: Replace four seq_printf() calls by seq_puts()
+Message-Id: <38fbeb11-8a3f-69f2-ff04-4cd9b61250b8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1b8c2efb-1096-3b78-9100-e20c55b6ecf1@users.sourceforge.net>
-In-Reply-To: <1b8c2efb-1096-3b78-9100-e20c55b6ecf1@users.sourceforge.net>
+References: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
+In-Reply-To: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-c6x-dev@linux-c6x.org, Aurelien Jacquiot <a-jacquiot@ti.com>, Mark Salter <msalter@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 May 2017 14:56:57 +0200
+Date: Wed, 3 May 2017 21:46:49 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Four strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/c6x/platforms/megamod-pic.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/locking/lockdep_proc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/c6x/platforms/megamod-pic.c b/arch/c6x/platforms/megamod-pic.c
-index 43afc03e4125..72b5f143c105 100644
---- a/arch/c6x/platforms/megamod-pic.c
-+++ b/arch/c6x/platforms/megamod-pic.c
-@@ -205,6 +205,5 @@ static struct megamod_pic * __init init_megamod_pic(struct device_node *np)
- 	int mapping[NR_MUX_OUTPUTS];
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index b1fa2ae31c0b..a353f53b6de6 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -61,7 +61,7 @@ static int l_show(struct seq_file *m, void *v)
+ 	char usage[LOCK_USAGE_CHARS];
  
- 	pr_info("Initializing C64x+ Megamodule PIC\n");
--
--	pic = kzalloc(sizeof(struct megamod_pic), GFP_KERNEL);
-+	pic = kzalloc(sizeof(*pic), GFP_KERNEL);
- 	if (!pic) {
+ 	if (v = &all_lock_classes) {
+-		seq_printf(m, "all lock classes:\n");
++		seq_puts(m, "all lock classes:\n");
+ 		return 0;
+ 	}
+ 
+@@ -141,8 +141,8 @@ static int lc_show(struct seq_file *m, void *v)
+ 
+ 	if (v = SEQ_START_TOKEN) {
+ 		if (nr_chain_hlocks > MAX_LOCKDEP_CHAIN_HLOCKS)
+-			seq_printf(m, "(buggered) ");
+-		seq_printf(m, "all lock chains:\n");
++			seq_puts(m, "(buggered) ");
++		seq_puts(m, "all lock chains:\n");
+ 		return 0;
+ 	}
+ 
+@@ -541,7 +541,7 @@ static void seq_header(struct seq_file *m)
+ 	seq_puts(m, "lock_stat version 0.4\n");
+ 
+ 	if (unlikely(!debug_locks))
+-		seq_printf(m, "*WARNING* lock debugging disabled!! - possibly due to a lockdep warning\n");
++		seq_puts(m, "*WARNING* lock debugging disabled!! - possibly due to a lockdep warning\n");
+ 
+ 	seq_line(m, '-', 0, 40 + 1 + 12 * (14 + 1));
+ 	seq_printf(m, "%40s %14s %14s %14s %14s %14s %14s %14s %14s %14s %14s "
 -- 
-2.12.3
+2.12.2
 
