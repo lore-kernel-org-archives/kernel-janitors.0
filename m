@@ -1,49 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 10 May 2017 09:18:44 +0000
-Subject: [PATCH][V2] dm ioctl: make dm_open and dm_release release static
-Message-Id: <20170510091844.18045-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 May 2017 20:40:51 +0000
+Subject: [PATCH 5/6] lockdep: Improve a size determination in lock_stat_open()
+Message-Id: <d8ceba55-646a-e0ac-1c1a-8178b79d3200@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
+In-Reply-To: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 3 May 2017 22:05:57 +0200
 
-Making dm_open and dm_release static fixes the sparse warnings:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-warning: symbol 'dm_open' was not declared. Should it be static?
-warning: symbol 'dm_release' was not declared. Should it be static?
-
-Fixes: ab2c6224f4c0c ("dm: a basic support for using the select or poll function")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/locking/lockdep_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index 70dc5db90ef2..d45c68115d4c 100644
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1893,7 +1893,7 @@ static long dm_compat_ctl_ioctl(struct file *file, uint command, ulong u)
- #define dm_compat_ctl_ioctl NULL
- #endif
- 
--int dm_open(struct inode *inode, struct file *filp)
-+static int dm_open(struct inode *inode, struct file *filp)
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 2cc0ccd2b3de..509a17f5ea01 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -607,7 +607,7 @@ static int lock_stat_open(struct inode *inode, struct file *file)
  {
- 	int r;
- 	struct dm_file *priv;
-@@ -1911,7 +1911,7 @@ int dm_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
+ 	int res;
+ 	struct lock_class *class;
+-	struct lock_stat_seq *data = vmalloc(sizeof(struct lock_stat_seq));
++	struct lock_stat_seq *data = vmalloc(sizeof(*data));
  
--int dm_release(struct inode *inode, struct file *filp)
-+static int dm_release(struct inode *inode, struct file *filp)
- {
- 	kfree(filp->private_data);
- 	return 0;
+ 	if (!data)
+ 		return -ENOMEM;
 -- 
-2.11.0
+2.12.2
 
