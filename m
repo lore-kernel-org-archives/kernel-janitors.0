@@ -1,51 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 11 May 2017 17:47:54 +0000
-Subject: Re: [PATCH 1/4] vmbus: Improve a size determination in vmbus_device_create()
-Message-Id: <20170511174754.GA23371@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 May 2017 10:45:54 +0000
+Subject: [PATCH] power: supply: bq27xxx: make bq27xxx_battery_settings static
+Message-Id: <20170503104554.23019-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
- <22c8886f-a38c-23ab-9277-ccccf86b1801@users.sourceforge.net>
- <20170511093056.036d93b6@xeon-e3>
-In-Reply-To: <20170511093056.036d93b6@xeon-e3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Stephen Hemminger <sthemmin@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@linuxdriverproject.org
+To: Liam Breck <kernel@networkimprov.net>, "Andrew F . Davis" <afd@ti.com>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 11, 2017 at 09:30:56AM -0700, Stephen Hemminger wrote:
-> On Thu, 11 May 2017 18:15:46 +0200
-> SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Thu, 11 May 2017 17:30:10 +0200
-> > 
-> > Replace the specification of a data structure by a pointer dereference
-> > as the parameter for the operator "sizeof" to make the corresponding size
-> > determination a bit safer according to the Linux coding style convention.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/hv/vmbus_drv.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > index 0087b49095eb..6802d74f162c 100644
-> > --- a/drivers/hv/vmbus_drv.c
-> > +++ b/drivers/hv/vmbus_drv.c
-> > @@ -1145,5 +1145,5 @@ struct hv_device *vmbus_device_create(const uuid_le *type,
-> >  {
-> >  	struct hv_device *child_device_obj;
-> >  
-> > -	child_device_obj = kzalloc(sizeof(struct hv_device), GFP_KERNEL);
-> > +	child_device_obj = kzalloc(sizeof(*child_device_obj), GFP_KERNEL);
-> >  	if (!child_device_obj) {
-> 
-> This looks fine.
-> 
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Note, I have a blacklist filter for this person for a reason, I, and
-many other maintainers, just ignore them for good reason...
+The function bq27xxx_battery_settings can be made static as it
+does not need to be in global scope.
 
-greg k-h
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/bq27xxx_battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index 7152370b9d61..06f15da32464 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -1251,7 +1251,7 @@ static void bq27xxx_battery_set_config(struct bq27xxx_device_info *di,
+ 	/* assume bq27xxx_battery_update() is called hereafter */
+ }
+ 
+-void bq27xxx_battery_settings(struct bq27xxx_device_info *di)
++static void bq27xxx_battery_settings(struct bq27xxx_device_info *di)
+ {
+ 	struct power_supply_battery_info info = {};
+ 	unsigned int min, max;
+-- 
+2.11.0
+
