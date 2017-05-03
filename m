@@ -1,53 +1,48 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Thu, 04 May 2017 15:22:48 +0000
-Subject: Re: [PATCH] power: supply: twl4030-charger: make twl4030_bci_property_is_writeable static
-Message-Id: <20170504152248.opqdp4jcizlk2zn4@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vv7dv6b5v5dmyh5f"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 May 2017 19:49:50 +0000
+Subject: [PATCH] of/unittest: Missing unlocks on error
+Message-Id: <20170503194950.4xbdbwybvx6dkadx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503103357.22598-1-colin.king@canonical.com>
-In-Reply-To: <20170503103357.22598-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: "H . Nikolaus Schaller" <hns@goldelico.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frank.rowand@sony.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Static checkers complain that we should unlock before returning.  Which
+is true.
 
---vv7dv6b5v5dmyh5f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi,
-
-On Wed, May 03, 2017 at 11:33:57AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The function twl4030_bci_property_is_writeable can be made static
-> as it does not need to be in global scope.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, queued.
-
--- Sebastian
-
---vv7dv6b5v5dmyh5f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlkLR0gACgkQ2O7X88g7
-+prS1Q/9GHDVTANxz/5iLoEJJu2aHySNzID8J567niT6I1uQ4Bqbacqv30+lldMS
-TJweJyywJlB0eMZx9F+g9EJ8UnfLK/YWpZWBuwqKcXkIpcb/ydbJvXOQdrM8lM1S
-TiRjbzBL99FR37/f9wDWJtDsUDTpnv7QT0ukBz5FnChSo79gjX9msNxdeIN3ShvI
-M4zxWiiOKDafUEL+omT2ogiGAq5ad8bJc5U7Urn+7IUCkMGJYchNtLtXqqAC0vUi
-ZN0Ccj6BuHrV7KullDv3y/XmKa5fnpDPpkDEoQy9Iuc5UbirWBdz/RKBspsIyKeo
-GOjbZBgemmmI3BziZO9t8u86Dcme5Me3xq/GNTN38hEq7PAGQCUFvPJcRkpn8F3j
-ttpkEIKDV/0hVsUKFLxoXOFD6QUlU4xYqWNf19zPsVX5vHH9hTknBd/3IZm9g7c9
-OI4Wd6Z53CS4JD1Vo/4fx/B8uznKqUk4MK4SUdf8YgRxqt+1IOzFLv0DWGFvjGrp
-hnQF+6qeSvOjrI2gmgEJB9pp0pQlvUQWaQGKxMKMk3zNO0HXf1151Oi8dsag2JwO
-uEnwaeMzcnM1XucDc+IXF6GE/o77juHkA2i0dpafBFwk29+Ld1YfZCk8YJEOzX+W
-+N50zNrkwaDGBKwVhhhZl8rluWwEk/C6lAQ4Osg/yu+zefWjaqo=
-=vwKw
------END PGP SIGNATURE-----
-
---vv7dv6b5v5dmyh5f--
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 12597ff8cfb0..425338d6286d 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -2210,14 +2210,14 @@ static __init void of_unittest_overlay_high_level(void)
+ 				unittest(0,
+ 					 "duplicate property '%s' in overlay_base node __symbols__",
+ 					 prop->name);
+-				return;
++				goto err_unlock;
+ 			}
+ 			ret = __of_add_property_sysfs(of_symbols, prop);
+ 			if (ret) {
+ 				unittest(0,
+ 					 "unable to add property '%s' in overlay_base node __symbols__ to sysfs",
+ 					 prop->name);
+-				return;
++				goto err_unlock;
+ 			}
+ 		}
+ 	}
+@@ -2232,6 +2232,10 @@ static __init void of_unittest_overlay_high_level(void)
+ 
+ 	unittest(overlay_data_add(2),
+ 		 "Adding overlay 'overlay_bad_phandle' failed\n");
++	return;
++
++err_unlock:
++	mutex_unlock(&of_mutex);
+ }
+ 
+ #else
