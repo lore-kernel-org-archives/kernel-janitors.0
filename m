@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 08:50:28 +0000
-Subject: [PATCH] IB/hfi1: Replace two seq_puts() calls by seq_putc() in sdma_seqfile_dump_cpu_list()
-Message-Id: <0bf8f61d-63c6-ba0a-df2f-00340b26afa7@users.sourceforge.net>
+Date: Wed, 03 May 2017 20:37:53 +0000
+Subject: [PATCH 2/6] lockdep: Use seq_putc() in seq_header()
+Message-Id: <49523826-875c-fcc7-9b47-40f3816136f4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
+In-Reply-To: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 May 2017 10:40:03 +0200
+Date: Wed, 3 May 2017 21:30:26 +0200
 
-Two single characters should be put into a sequence.
+A single character (line break) should be put into a sequence.
 Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/hfi1/sdma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/locking/lockdep_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/sdma.c b/drivers/infiniband/hw/hfi1/sdma.c
-index bfd0d5187e9b..7611a88b86cf 100644
---- a/drivers/infiniband/hw/hfi1/sdma.c
-+++ b/drivers/infiniband/hw/hfi1/sdma.c
-@@ -1130,7 +1130,7 @@ void sdma_seqfile_dump_cpu_list(struct seq_file *s,
- 				continue;
- 
- 			if (j > 0)
--				seq_puts(s, ",");
-+				seq_putc(s, ',');
- 
- 			seq_printf(s, " sdma%2d",
- 				   rht_node->map[i]->sde[j]->this_idx);
-@@ -1138,7 +1138,7 @@ void sdma_seqfile_dump_cpu_list(struct seq_file *s,
- 		seq_puts(s, " ]");
- 	}
- 
--	seq_puts(s, "\n");
-+	seq_putc(s, '\n');
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 825496ece766..b1fa2ae31c0b 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -560,7 +560,7 @@ static void seq_header(struct seq_file *m)
+ 			"holdtime-total",
+ 			"holdtime-avg");
+ 	seq_line(m, '-', 0, 40 + 1 + 12 * (14 + 1));
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
  }
  
- /*
+ static void *ls_start(struct seq_file *m, loff_t *pos)
 -- 
 2.12.2
 
