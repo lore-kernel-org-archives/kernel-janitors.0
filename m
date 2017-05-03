@@ -1,31 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 May 2017 13:26:37 +0000
-Subject: Re: [PATCH 6/9] pinctrl: Combine substrings for a message in pin_config_group_get()
-Message-Id: <CACRpkdZ9CDa8amANOXV0aBUcv6x8PLmn777fBqnpCZQ5eS4xvw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 May 2017 21:23:57 +0000
+Subject: [PATCH] scsi: qedf: Cleanup the type of io_log->op
+Message-Id: <20170503212357.cdl4e43ihpyzl2w6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <04433cd2-002c-6534-622e-49ecb2dcfdc8@users.sourceforge.net>
-In-Reply-To: <04433cd2-002c-6534-622e-49ecb2dcfdc8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 2, 2017 at 11:26 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+We store sc_cmd->cmnd[0] which is an unsigned char in io_log->op so
+this should also be unsigned char.  The other thing is that this is
+displayed in the debugfs:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 May 2017 10:22:47 +0200
->
-> The script "checkpatch.pl" pointed information out like the following.
->
-> WARNING: quoted string split across lines
->
-> Thus fix the affected source code place.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+	seq_printf(s, "0x%02x:", io_log->op);
 
-Patch applied.
+Smatch complains that the formatting won't work for negative values so
+changing it to unsigned silences that warning as well.
 
-Yours,
-Linus Walleij
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/qedf/qedf.h b/drivers/scsi/qedf/qedf.h
+index 40aeb6bb96a2..07ee88200e91 100644
+--- a/drivers/scsi/qedf/qedf.h
++++ b/drivers/scsi/qedf/qedf.h
+@@ -259,7 +259,7 @@ struct qedf_io_log {
+ 	uint16_t task_id;
+ 	uint32_t port_id; /* Remote port fabric ID */
+ 	int lun;
+-	char op; /* SCSI CDB */
++	unsigned char op; /* SCSI CDB */
+ 	uint8_t lba[4];
+ 	unsigned int bufflen; /* SCSI buffer length */
+ 	unsigned int sg_count; /* Number of SG elements */
