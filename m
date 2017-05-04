@@ -1,65 +1,165 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 12 May 2017 11:38:38 +0000
-Subject: Re: [PATCH 0/3] GPU-DRM-Radeon: Fine-tuning for three function implementations
-Message-Id: <1587529.CdsjPgZMHu@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 May 2017 16:54:16 +0000
+Subject: [PATCH 3/9] drm/i915: Replace 14 seq_printf() calls by seq_puts()
+Message-Id: <56ab5065-5a24-47cf-023f-b10c6daf4799@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
- <8c4e7dde-06d5-3f13-2322-f661e9d3dbf4@daenzer.net>
- <66a88c64-cc8f-45ed-81c6-f7e2947f1f18@amd.com>
-In-Reply-To: <66a88c64-cc8f-45ed-81c6-f7e2947f1f18@amd.com>
+References: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
+In-Reply-To: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: dri-devel@lists.freedesktop.org
-Cc: Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx@lists.freedesktop.org, SF Markus Elfring <elfring@users.sourceforge.net>, Alex Deucher <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Christian,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 May 2017 13:20:47 +0200
 
-On Wednesday 10 May 2017 13:30:37 Christian K=F6nig wrote:
-> Am 10.05.2017 um 02:23 schrieb Michel D=E4nzer:
-> > On 03/05/17 09:46 PM, Christian K=F6nig wrote:
-> >> Am 02.05.2017 um 22:04 schrieb SF Markus Elfring:
-> >>> From: Markus Elfring <elfring@users.sourceforge.net>
-> >>> Date: Tue, 2 May 2017 22:00:02 +0200
-> >>>=20
-> >>> Three update suggestions were taken into account
-> >>> from static source code analysis.
-> >>>=20
-> >>> Markus Elfring (3):
-> >>>     Use seq_putc() in radeon_sa_bo_dump_debug_info()
-> >>>     Use seq_puts() in radeon_debugfs_pm_info()
-> >>>     Use seq_puts() in r100_debugfs_cp_csq_fifo()
-> >>=20
-> >> Reviewed-by: Christian K=F6nig <christian.koenig@amd.com>
-> >=20
-> > Based on
-> > https://lists.freedesktop.org/archives/dri-devel/2017-May/140837.html
-> > and followups, I'm afraid we'll have to make sure Markus' patches have
-> > been tested adequately before applying them.
->=20
-> I can't judge the background of that decision, but at least those tree
-> patches for radeon looked trivial to me.
->=20
-> I don't see much what could go wrong when merging them.
+Some strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-For what it's worth, I've once applied a patch from Markus for the uvcvideo=
-=20
-driver that seemed trivial but ended up introducing a breakage that I hadn'=
-t=20
-caught during review. I recommend rejecting Markus' patches that are not cl=
-ear=20
-improvements, and carefully testing the others.
+This issue was detected by using the Coccinelle software.
 
-> On the other hand you are right that trying to find hardware to test that
-> stuff could be challenging.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
---=20
-Regards,
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 4adf96be9146..296108464f2b 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -149,7 +149,7 @@ describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj)
+ 	}
+ 	seq_printf(m, " (pinned x %d)", pin_count);
+ 	if (obj->pin_display)
+-		seq_printf(m, " (display)");
++		seq_puts(m, " (display)");
+ 	list_for_each_entry(vma, &obj->vma_list, obj_link) {
+ 		if (!drm_mm_node_allocated(&vma->node))
+ 			continue;
+@@ -581,8 +581,10 @@ static int i915_gem_pageflip_info(struct seq_file *m, void *data)
+ 					   intel_engine_last_submit(engine),
+ 					   intel_engine_get_seqno(engine),
+ 					   i915_gem_request_completed(work->flip_queued_req));
+-			} else
+-				seq_printf(m, "Flip not associated with any ring\n");
++			} else {
++				seq_puts(m,
++					 "Flip not associated with any ring\n");
++			}
+ 			seq_printf(m, "Flip queued on frame %d, (was ready on frame %d), now %d\n",
+ 				   work->flip_queued_vblank,
+ 				   work->flip_ready_vblank,
+@@ -2048,7 +2050,7 @@ static int i915_dump_lrc(struct seq_file *m, void *unused)
+ 	int ret;
+ 
+ 	if (!i915.enable_execlists) {
+-		seq_printf(m, "Logical Ring Contexts are disabled\n");
++		seq_puts(m, "Logical Ring Contexts are disabled\n");
+ 		return 0;
+ 	}
+ 
+@@ -2402,7 +2404,7 @@ static int i915_guc_load_status_info(struct seq_file *m, void *data)
+ 	if (!HAS_GUC_UCODE(dev_priv))
+ 		return 0;
+ 
+-	seq_printf(m, "GuC firmware status:\n");
++	seq_puts(m, "GuC firmware status:\n");
+ 	seq_printf(m, "\tpath: %s\n",
+ 		guc_fw->path);
+ 	seq_printf(m, "\tfetch: %s\n",
+@@ -2510,7 +2512,7 @@ static int i915_guc_info(struct seq_file *m, void *data)
+ 		return 0;
+ 	}
+ 
+-	seq_printf(m, "Doorbell map:\n");
++	seq_puts(m, "Doorbell map:\n");
+ 	seq_printf(m, "\t%*pb\n", GUC_NUM_DOORBELLS, guc->doorbell_bitmap);
+ 	seq_printf(m, "Doorbell next cacheline: 0x%x\n\n", guc->db_cacheline);
+ 
+@@ -2521,7 +2523,7 @@ static int i915_guc_info(struct seq_file *m, void *data)
+ 	seq_printf(m, "GuC last action error code: %d\n", guc->action_err);
+ 
+ 	total = 0;
+-	seq_printf(m, "\nGuC submissions:\n");
++	seq_puts(m, "\nGuC submissions:\n");
+ 	for_each_engine(engine, dev_priv, id) {
+ 		u64 submissions = guc->submissions[id];
+ 		total += submissions;
+@@ -2795,7 +2797,7 @@ static int i915_runtime_pm_status(struct seq_file *m, void *unused)
+ 	seq_printf(m, "Usage count: %d\n",
+ 		   atomic_read(&dev_priv->drm.dev->power.usage_count));
+ #else
+-	seq_printf(m, "Device Power Management (CONFIG_PM) disabled\n");
++	seq_puts(m, "Device Power Management (CONFIG_PM) disabled\n");
+ #endif
+ 	seq_printf(m, "PCI device power state: %s [%d]\n",
+ 		   pci_power_name(pdev->current_state),
+@@ -2914,7 +2916,7 @@ static void intel_encoder_info(struct seq_file *m,
+ 			   drm_get_connector_status_name(connector->status));
+ 		if (connector->status = connector_status_connected) {
+ 			struct drm_display_mode *mode = &crtc->mode;
+-			seq_printf(m, ", mode:\n");
++			seq_puts(m, ", mode:\n");
+ 			intel_seq_print_mode(m, 2, mode);
+ 		} else {
+ 			seq_putc(m, '\n');
+@@ -2945,7 +2947,7 @@ static void intel_panel_info(struct seq_file *m, struct intel_panel *panel)
+ {
+ 	struct drm_display_mode *mode = panel->fixed_mode;
+ 
+-	seq_printf(m, "\tfixed mode:\n");
++	seq_puts(m, "\tfixed mode:\n");
+ 	intel_seq_print_mode(m, 2, mode);
+ }
+ 
+@@ -3038,7 +3040,7 @@ static void intel_connector_info(struct seq_file *m,
+ 		break;
+ 	}
+ 
+-	seq_printf(m, "\tmodes:\n");
++	seq_puts(m, "\tmodes:\n");
+ 	list_for_each_entry(mode, &connector->modes, head)
+ 		intel_seq_print_mode(m, 2, mode);
+ }
+@@ -3266,9 +3268,7 @@ static int i915_engine_info(struct seq_file *m, void *unused)
+ 			   engine->timeline->inflight_seqnos);
+ 
+ 		rcu_read_lock();
+-
+-		seq_printf(m, "\tRequests:\n");
+-
++		seq_puts(m, "\tRequests:\n");
+ 		rq = list_first_entry(&engine->timeline->requests,
+ 				      struct drm_i915_gem_request, link);
+ 		if (&rq->link != &engine->timeline->requests)
+@@ -3346,7 +3346,7 @@ static int i915_engine_info(struct seq_file *m, void *unused)
+ 					   engine->execlist_port[0].count);
+ 				print_request(m, rq, "rq: ");
+ 			} else {
+-				seq_printf(m, "\t\tELSP[0] idle\n");
++				seq_puts(m, "\t\tELSP[0] idle\n");
+ 			}
+ 			rq = READ_ONCE(engine->execlist_port[1].request);
+ 			if (rq) {
+@@ -3354,7 +3354,7 @@ static int i915_engine_info(struct seq_file *m, void *unused)
+ 					   engine->execlist_port[1].count);
+ 				print_request(m, rq, "rq: ");
+ 			} else {
+-				seq_printf(m, "\t\tELSP[1] idle\n");
++				seq_puts(m, "\t\tELSP[1] idle\n");
+ 			}
+ 			rcu_read_unlock();
+ 
+@@ -3465,7 +3465,7 @@ static int i915_shared_dplls_info(struct seq_file *m, void *unused)
+ 		seq_printf(m, "DPLL%i: %s, id: %i\n", i, pll->name, pll->id);
+ 		seq_printf(m, " crtc_mask: 0x%08x, active: 0x%x, on: %s\n",
+ 			   pll->state.crtc_mask, pll->active_mask, yesno(pll->on));
+-		seq_printf(m, " tracked hardware state:\n");
++		seq_puts(m, " tracked hardware state:\n");
+ 		seq_printf(m, " dpll:    0x%08x\n", pll->state.hw_state.dpll);
+ 		seq_printf(m, " dpll_md: 0x%08x\n",
+ 			   pll->state.hw_state.dpll_md);
+-- 
+2.12.2
 
-Laurent Pinchart
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
