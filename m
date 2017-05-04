@@ -1,36 +1,77 @@
-From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Date: Thu, 25 May 2017 13:56:24 +0000
-Subject: Re: [PATCH][net-next] qtnfmac: remove duplicated assignment to mac
-Message-Id: <20170525135624.z723srd7evhml5e3@bars>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 04 May 2017 20:10:49 +0000
+Subject: [PATCH 4/9] power: supply: axp20x_usb_power: Drop unnecessary static
+Message-Id: <1493928654-18768-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170525134503.12106-1-colin.king@canonical.com>
-In-Reply-To: <20170525134503.12106-1-colin.king@canonical.com>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>, Igor Mitsyanko <igor.mitsyanko.os@quantenna.com>, Kalle Valo <kvalo@codeaurora.org>, Huizhao Wang <hwang@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> mac is being assigned twice, remove redundant 2nd assignment.
-> 
-> Detected by CoverityScan, CID#1437554 ("Incorrect expression")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-> index fc0ce2c09097..e3c090008125 100644
-> --- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-> +++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-> @@ -922,7 +922,7 @@ void qtnf_netdev_updown(struct net_device *ndev, bool up)
->  void qtnf_virtual_intf_cleanup(struct net_device *ndev)
->  {
->         struct qtnf_vif *vif = qtnf_netdev_get_priv(ndev);
-> -       struct qtnf_wmac *mac = mac = wiphy_priv(vif->wdev.wiphy);
-> +       struct qtnf_wmac *mac = wiphy_priv(vif->wdev.wiphy);
+Drop static on a local variable, when the variable is either first
+initialized or never used, on every possible execution path through the
+function.  The static has no benefit, and dropping it reduces the code
+size.
 
-Thanks !
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+The change in code size is indicates by the following output from the size
+command.
+
+before:
+   text    data     bss     dec     hex filename
+   2865     252       8    3125     c35 drivers/power/supply/axp20x_usb_power.o
+
+after:
+   text    data     bss     dec     hex filename
+   2822     252       0    3074     c02 drivers/power/supply/axp20x_usb_power.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/power/supply/axp20x_usb_power.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
+index 2397c48..44f70dc 100644
+--- a/drivers/power/supply/axp20x_usb_power.c
++++ b/drivers/power/supply/axp20x_usb_power.c
+@@ -339,7 +339,7 @@ static int axp20x_usb_power_probe(struct platform_device *pdev)
+ 		"VBUS_REMOVAL", "VBUS_VALID", "VBUS_NOT_VALID", NULL };
+ 	static const char * const axp22x_irq_names[] = {
+ 		"VBUS_PLUGIN", "VBUS_REMOVAL", NULL };
+-	static const char * const *irq_names;
++	const char * const *irq_names;
+ 	const struct power_supply_desc *usb_power_desc;
+ 	int i, irq, ret;
+ 
+
