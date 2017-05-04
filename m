@@ -1,75 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 14:23:20 +0000
-Subject: [PATCH 2/4] hamradio: Adjust four function calls together with a variable assignment
-Message-Id: <28005de5-baf6-9db0-7eaa-7ef14d4e7142@users.sourceforge.net>
+Date: Thu, 04 May 2017 20:33:22 +0000
+Subject: [PATCH 3/6] cxgb4vf: Adjust five checks for null pointers
+Message-Id: <921bc451-3b7b-1d77-72eb-755061a7fe09@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
-In-Reply-To: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
+References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
+In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Jean-Paul Roubelat <jpr@f6fbb.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 May 2017 15:15:16 +0200
+Date: Thu, 4 May 2017 21:20:25 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The script "checkpatch.pl" pointed information out like the following.
+The script “checkpatch.pl” pointed information out like the following.
 
-ERROR: do not use assignment in if condition
+Comparison to NULL could be written !…
 
-Thus fix affected source code places.
-Improve a size determination.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/hamradio/yam.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
-index 542f1e511df1..c792b0f116a5 100644
---- a/drivers/net/hamradio/yam.c
-+++ b/drivers/net/hamradio/yam.c
-@@ -401,7 +401,8 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
- 	}
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+index 9c2690aeb32b..682e844c5a7d 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+@@ -491,7 +491,7 @@ static int fwevtq_handler(struct sge_rspq *rspq, const __be64 *rsp,
+ 			break;
+ 		}
+ 		tq = s->egr_map[eq_idx];
+-		if (unlikely(tq = NULL)) {
++		if (unlikely(!tq)) {
+ 			dev_err(adapter->pdev_dev,
+ 				"Egress Update QID %d TXQ=NULL\n", qid);
+ 			break;
+@@ -2939,7 +2939,7 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
+ 		 */
+ 		netdev = alloc_etherdev_mq(sizeof(struct port_info),
+ 					   MAX_PORT_QSETS);
+-		if (netdev = NULL) {
++		if (!netdev) {
+ 			t4vf_free_vi(adapter, viid);
+ 			err = -ENOMEM;
+ 			goto err_free_dev;
+@@ -3053,7 +3053,7 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
+ 	for_each_port(adapter, pidx) {
+ 		struct port_info *pi = netdev_priv(adapter->port[pidx]);
+ 		netdev = adapter->port[pidx];
+-		if (netdev = NULL)
++		if (!netdev)
+ 			continue;
  
- 	/* Allocate a new mcs */
--	if ((p = kmalloc(sizeof(struct yam_mcs), GFP_KERNEL)) = NULL) {
-+	p = kmalloc(sizeof(*p), GFP_KERNEL);
-+	if (!p) {
- 		release_firmware(fw);
- 		return NULL;
- 	}
-@@ -549,7 +550,8 @@ static inline void yam_rx_flag(struct net_device *dev, struct yam_port *yp)
- 		if ((yp->rx_crch & yp->rx_crcl) != 0xFF) {
- 			/* Bad crc */
- 		} else {
--			if (!(skb = dev_alloc_skb(pkt_len))) {
-+			skb = dev_alloc_skb(pkt_len);
-+			if (!skb) {
- 				printk(KERN_WARNING "%s: memory squeeze, dropping packet\n", dev->name);
- 				++dev->stats.rx_dropped;
- 			} else {
-@@ -670,7 +672,8 @@ static void yam_tx_byte(struct net_device *dev, struct yam_port *yp)
- 		break;
- 	case TX_HEAD:
- 		if (--yp->tx_count <= 0) {
--			if (!(skb = skb_dequeue(&yp->send_queue))) {
-+			skb = skb_dequeue(&yp->send_queue);
-+			if (!skb) {
- 				ptt_off(dev);
- 				yp->tx_state = TX_OFF;
- 				break;
-@@ -879,7 +882,8 @@ static int yam_open(struct net_device *dev)
- 		printk(KERN_ERR "%s: cannot 0x%lx busy\n", dev->name, dev->base_addr);
- 		return -EACCES;
- 	}
--	if ((u = yam_check_uart(dev->base_addr)) = c_uart_unknown) {
-+	u = yam_check_uart(dev->base_addr);
-+	if (u = c_uart_unknown) {
- 		printk(KERN_ERR "%s: cannot find uart type\n", dev->name);
- 		ret = -EIO;
- 		goto out_release_base;
+ 		netif_set_real_num_tx_queues(netdev, pi->nqsets);
+@@ -3120,7 +3120,7 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
+ err_free_dev:
+ 	for_each_port(adapter, pidx) {
+ 		netdev = adapter->port[pidx];
+-		if (netdev = NULL)
++		if (!netdev)
+ 			continue;
+ 		pi = netdev_priv(netdev);
+ 		t4vf_free_vi(adapter, pi->viid);
+@@ -3197,7 +3197,7 @@ static void cxgb4vf_pci_remove(struct pci_dev *pdev)
+ 			struct net_device *netdev = adapter->port[pidx];
+ 			struct port_info *pi;
+ 
+-			if (netdev = NULL)
++			if (!netdev)
+ 				continue;
+ 
+ 			pi = netdev_priv(netdev);
 -- 
 2.12.2
 
