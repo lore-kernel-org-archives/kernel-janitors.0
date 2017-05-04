@@ -1,49 +1,100 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 10:45:46 +0000
-Subject: Re: Using best practices for big software change possibilities
-Message-Id: <be7ee31a-8623-2f23-4dea-ffb323169b52@users.sourceforge.net>
+Date: Thu, 04 May 2017 16:56:56 +0000
+Subject: [PATCH 5/9] drm/i915: Adjust seven checks for null pointers
+Message-Id: <0fb8a6a5-f9ee-1e5d-d52d-5faca3ecde0d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
- <bae25b04-2ce2-7137-a71c-50d7b4f06431@users.sourceforge.net>
- <20170521084734.GB1456@katana>
- <7bd4b458-6f6e-416b-97a9-b1b3d0840144@users.sourceforge.net>
- <20170521095654.bzpaa2obfszrajgb@ninjato>
- <82cfcf3e-0089-0629-f10c-e01346487f6a@users.sourceforge.net>
- <20170521102750.ljgvdw2btuks3tqf@ninjato>
-In-Reply-To: <20170521102750.ljgvdw2btuks3tqf@ninjato>
+References: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
+In-Reply-To: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mm@kvack.org, Dan Streetman <ddstreet@ieee.org>, Seth Jennings <sjenning@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> How do you think about to resolve them by additional means besides mail exchange?
-> 
-> That can work.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 May 2017 13:52:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I am curious to find out which other communication means could really help here.
+The script “checkpatch.pl” pointed information out like the following.
 
+Comparison to NULL could be written …
 
-> E.g. meeting at conferences often solved mail communication problems.
+Thus fix affected source code places.
 
-I find my resources too limited at the moment to attend conferences on site.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-How are the chances for further clarification by ordinary telephone calls?
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index bf9a2e8d8c16..d9c699d7245e 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -242,7 +242,7 @@ static int i915_gem_stolen_list_info(struct seq_file *m, void *data)
+ 		if (count = total)
+ 			break;
+ 
+-		if (obj->stolen = NULL)
++		if (!obj->stolen)
+ 			continue;
+ 
+ 		objects[count++] = obj;
+@@ -254,7 +254,7 @@ static int i915_gem_stolen_list_info(struct seq_file *m, void *data)
+ 		if (count = total)
+ 			break;
+ 
+-		if (obj->stolen = NULL)
++		if (!obj->stolen)
+ 			continue;
+ 
+ 		objects[count++] = obj;
+@@ -557,7 +557,7 @@ static int i915_gem_pageflip_info(struct seq_file *m, void *data)
+ 
+ 		spin_lock_irq(&dev->event_lock);
+ 		work = crtc->flip_work;
+-		if (work = NULL) {
++		if (!work) {
+ 			seq_printf(m, "No flip due on pipe %c (plane %c)\n",
+ 				   pipe, plane);
+ 		} else {
+@@ -3717,7 +3717,7 @@ static ssize_t i915_displayport_test_active_write(struct file *file,
+ 			continue;
+ 
+ 		if (connector->status = connector_status_connected &&
+-		    connector->encoder != NULL) {
++		    connector->encoder) {
+ 			intel_dp = enc_to_intel_dp(connector->encoder);
+ 			status = kstrtoint(input_buffer, 10, &val);
+ 			if (status < 0)
+@@ -3756,7 +3756,7 @@ static int i915_displayport_test_active_show(struct seq_file *m, void *data)
+ 			continue;
+ 
+ 		if (connector->status = connector_status_connected &&
+-		    connector->encoder != NULL) {
++		    connector->encoder) {
+ 			intel_dp = enc_to_intel_dp(connector->encoder);
+ 			seq_putc(m,
+ 				 intel_dp->compliance.test_active ? '1' : '0');
+@@ -3801,7 +3801,7 @@ static int i915_displayport_test_data_show(struct seq_file *m, void *data)
+ 			continue;
+ 
+ 		if (connector->status = connector_status_connected &&
+-		    connector->encoder != NULL) {
++		    connector->encoder) {
+ 			intel_dp = enc_to_intel_dp(connector->encoder);
+ 			if (intel_dp->compliance.test_type =
+ 			    DP_TEST_LINK_EDID_READ)
+@@ -3855,7 +3855,7 @@ static int i915_displayport_test_type_show(struct seq_file *m, void *data)
+ 			continue;
+ 
+ 		if (connector->status = connector_status_connected &&
+-		    connector->encoder != NULL) {
++		    connector->encoder) {
+ 			intel_dp = enc_to_intel_dp(connector->encoder);
+ 			seq_printf(m, "%02lx", intel_dp->compliance.test_type);
+ 		} else {
+-- 
+2.12.2
 
-
-> For now, I still wonder why you were unsure about grouping the changes
-> into one patch?
-
-I am varying the patch granularity for affected software areas to some degree.
-But I came also places along where I got an impression for higher uncertainty.
-
-
-> Maybe there is something to be learned?
-
-This is also generally possible.
-
-Would you like to extend the scope for the change pattern around questionable
-error messages from a single source file to whole subsystem trees in Linux?
-
-Regards,
-Markus
