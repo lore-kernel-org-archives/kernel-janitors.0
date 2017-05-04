@@ -1,42 +1,94 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 20:18:35 +0000
-Subject: [PATCH 5/5] atm: Use seq_putc() in lec_info()
-Message-Id: <b8b850c0-4a70-c36e-dffa-0e7ea27498fb@users.sourceforge.net>
+Date: Thu, 04 May 2017 17:21:45 +0000
+Subject: [PATCH] [media] bdisp-debug: Replace a seq_puts() call by seq_putc() in seven functions
+Message-Id: <e47a5e4b-9a4a-97fc-931a-20ab5742fdd0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
-In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+To: linux-media@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 21:50:44 +0200
+Date: Thu, 4 May 2017 19:14:15 +0200
 
-A single space character should be put into a sequence.
+Seven single characters (line breaks) should be put into a sequence.
 Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/atm/lec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/sti/bdisp/bdisp-debug.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/net/atm/lec.c b/net/atm/lec.c
-index 752891434074..1d4edf093987 100644
---- a/net/atm/lec.c
-+++ b/net/atm/lec.c
-@@ -796,7 +796,7 @@ static void lec_info(struct seq_file *seq, struct lec_arp_table *entry)
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-debug.c b/drivers/media/platform/sti/bdisp/bdisp-debug.c
+index 7af66860d624..2cc289e4dea1 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-debug.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-debug.c
+@@ -104,7 +104,7 @@ static void bdisp_dbg_dump_ins(struct seq_file *s, u32 val)
+ 	if (val & BLT_INS_IRQ)
+ 		seq_puts(s, "IRQ - ");
  
- 	for (i = 0; i < ETH_ALEN; i++)
- 		seq_printf(seq, "%2.2x", entry->mac_addr[i] & 0xff);
--	seq_printf(seq, " ");
-+	seq_putc(seq, ' ');
- 	for (i = 0; i < ATM_ESA_LEN; i++)
- 		seq_printf(seq, "%2.2x", entry->atm_addr[i] & 0xff);
- 	seq_printf(seq, " %s %4.4x", lec_arp_get_status_string(entry->status),
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_tty(struct seq_file *s, u32 val)
+@@ -153,7 +153,7 @@ static void bdisp_dbg_dump_tty(struct seq_file *s, u32 val)
+ 	if (val & BLT_TTY_BIG_END)
+ 		seq_puts(s, "BigEndian - ");
+ 
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_xy(struct seq_file *s, u32 val, char *name)
+@@ -230,7 +230,7 @@ static void bdisp_dbg_dump_sty(struct seq_file *s,
+ 		seq_puts(s, "BigEndian - ");
+ 
+ done:
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_fctl(struct seq_file *s, u32 val)
+@@ -247,7 +247,7 @@ static void bdisp_dbg_dump_fctl(struct seq_file *s, u32 val)
+ 	else if ((val & BLT_FCTL_HV_SCALE) = BLT_FCTL_HV_SAMPLE)
+ 		seq_puts(s, "Sample Chroma");
+ 
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_rsf(struct seq_file *s, u32 val, char *name)
+@@ -266,7 +266,7 @@ static void bdisp_dbg_dump_rsf(struct seq_file *s, u32 val, char *name)
+ 	seq_printf(s, "V: %d(6.10) / scale~%dx0.1", inc, 1024 * 10 / inc);
+ 
+ done:
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_rzi(struct seq_file *s, u32 val, char *name)
+@@ -281,7 +281,7 @@ static void bdisp_dbg_dump_rzi(struct seq_file *s, u32 val, char *name)
+ 	seq_printf(s, "V: init=%d repeat=%d", val & 0x3FF, (val >> 12) & 7);
+ 
+ done:
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void bdisp_dbg_dump_ivmx(struct seq_file *s,
+@@ -293,7 +293,7 @@ static void bdisp_dbg_dump_ivmx(struct seq_file *s,
+ 	seq_printf(s, "IVMX3\t0x%08X\t", c3);
+ 
+ 	if (!c0 && !c1 && !c2 && !c3) {
+-		seq_puts(s, "\n");
++		seq_putc(s, '\n');
+ 		return;
+ 	}
+ 
 -- 
-2.13.0
+2.12.2
 
