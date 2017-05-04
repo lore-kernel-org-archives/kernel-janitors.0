@@ -1,23 +1,76 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 23 May 2017 21:11:49 +0000
-Subject: Re: [PATCH 0/5] MIPS-kernel: Adjustments for some function implementations
-Message-Id: <1495573909.2093.82.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 04 May 2017 20:10:46 +0000
+Subject: [PATCH 1/9] mtd: cfi_cmdset_0020: Drop unnecessary static
+Message-Id: <1493928654-18768-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
-In-Reply-To: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mips@linux-mips.org, Ingo Molnar <mingo@kernel.org>, James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>, Marcin Nowakowski <marcin.nowakowski@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Ralf =?ISO-8859-1?Q?B=E4chle?= <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-05-23 at 22:50 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 23 May 2017 22:40:04 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+Drop static on a local variable, when the variable is initialized before
+any use on every possible execution path through the function.  The static
+has no benefit, and dropping it reduces the code size.
 
-Stop sending new patches until you handle the
-feedback you receive on old patches.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+The change in code size is indicates by the following output from the size
+command.
+
+before:
+   text    data     bss     dec     hex filename
+  16671      48      16   16735    415f drivers/mtd/chips/cfi_cmdset_0020.o
+
+after:
+   text    data     bss     dec     hex filename
+  16639      48       8   16695    4137 drivers/mtd/chips/cfi_cmdset_0020.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mtd/chips/cfi_cmdset_0020.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
+index 94d3eb4..7d34296 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0020.c
++++ b/drivers/mtd/chips/cfi_cmdset_0020.c
+@@ -666,7 +666,7 @@ static int cfi_staa_write_buffers (struct mtd_info *mtd, loff_t to,
+ 	size_t	 totlen = 0, thislen;
+ 	int	 ret = 0;
+ 	size_t	 buflen = 0;
+-	static char *buffer;
++	char *buffer;
+ 
+ 	if (!ECCBUF_SIZE) {
+ 		/* We should fall back to a general writev implementation.
 
