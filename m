@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 May 2017 02:42:48 +0000
-Subject: Re: [PATCH net] qed: Unlock on error in qed_vf_pf_acquire()
-Message-Id: <20170430.224248.763979997313093994.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 May 2017 12:11:00 +0000
+Subject: [PATCH] mtd: nand: make nand_ooblayout_lp_hamming_ops static
+Message-Id: <20170504121100.2709-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428125608.djln5r7h4d53it5s@mwanda>
-In-Reply-To: <20170428125608.djln5r7h4d53it5s@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Yuval.Mintz@cavium.com, Ariel.Elior@cavium.com, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 15:56:09 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> My static checker complains that we're holding a mutex on this error
-> path.  Let's goto exit instead of returning directly.
-> 
-> Fixes: b0bccb69eba3 ("qed: Change locking scheme for VF channel")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+nand_ooblayout_lp_hamming_ops can be made static as it does not need to be
+in global scope.
 
-Applied.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nand/nand_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index d474378ed810..d3a735012b81 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -202,7 +202,7 @@ static int nand_ooblayout_free_lp_hamming(struct mtd_info *mtd, int section,
+ 	return 0;
+ }
+ 
+-const struct mtd_ooblayout_ops nand_ooblayout_lp_hamming_ops = {
++static const struct mtd_ooblayout_ops nand_ooblayout_lp_hamming_ops = {
+ 	.ecc = nand_ooblayout_ecc_lp_hamming,
+ 	.free = nand_ooblayout_free_lp_hamming,
+ };
+-- 
+2.11.0
+
