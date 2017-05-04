@@ -1,50 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 17:50:05 +0000
-Subject: [PATCH 3/4] ueagle-atm: Delete unnecessary return statements in two functions
-Message-Id: <82bfa764-34d9-3150-6503-00079b27cd54@users.sourceforge.net>
+Date: Thu, 04 May 2017 20:35:16 +0000
+Subject: [PATCH 5/6] cxgb4: Use seq_puts() in cim_qcfg_show()
+Message-Id: <2695f4a2-8201-1ae5-d93d-e4f41544c76c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
-In-Reply-To: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
+References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
+In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthieu Castet <castet.matthieu@free.fr>, Stanislaw Gruszka <stf_xl@wp.pl>
+To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 19:22:12 +0200
+Date: Thu, 4 May 2017 21:52:32 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected functions.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/atm/ueagle-atm.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/atm/ueagle-atm.c b/drivers/usb/atm/ueagle-atm.c
-index 9725e6f2f301..0ca4ff3e6683 100644
---- a/drivers/usb/atm/ueagle-atm.c
-+++ b/drivers/usb/atm/ueagle-atm.c
-@@ -1058,7 +1058,6 @@ static void __uea_load_page_e4(struct uea_softc *sc, u8 pageno, int boot)
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index 2bc40d89f874..32add8dfc253 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -357,9 +357,8 @@ static int cim_qcfg_show(struct seq_file *seq, void *v)
+ 		return i;
  
- bad:
- 	uea_err(INS_TO_USBDEV(sc), "sending DSP block %u failed\n", blockno);
--	return;
- }
- 
- static void uea_load_page_e4(struct work_struct *work)
-@@ -2101,7 +2100,6 @@ static void uea_dispatch_cmv_e4(struct uea_softc *sc, struct intr_pkt *intr)
- 			E4_FUNCTION_TYPE(cmv->wFunction),
- 			E4_FUNCTION_SUBTYPE(cmv->wFunction));
- 	uea_leaves(INS_TO_USBDEV(sc));
--	return;
- }
- 
- static void uea_schedule_load_page_e1(struct uea_softc *sc,
+ 	t4_read_cimq_cfg(adap, base, size, thres);
+-
+-	seq_printf(seq,
+-		   "  Queue  Base  Size Thres  RdPtr WrPtr  SOP  EOP Avail\n");
++	seq_puts(seq,
++		 "  Queue  Base  Size Thres  RdPtr WrPtr  SOP  EOP Avail\n");
+ 	for (i = 0; i < CIM_NUM_IBQ; i++, p += 4)
+ 		seq_printf(seq, "%7s %5x %5u %5u %6x  %4x %4u %4u %5u\n",
+ 			   qname[i], base[i], size[i], thres[i],
 -- 
-2.13.0
+2.12.2
 
