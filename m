@@ -1,60 +1,24 @@
-From: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Date: Wed, 03 May 2017 21:40:09 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 May 2017 06:45:17 +0000
 Subject: Re: [PATCH] mtd: spi-nor: Potential oops on error path in quad_enable()
-Message-Id: <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
+Message-Id: <20170504064517.vemoe3k4z6e3rbwn@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170428130614.w4cmbwvprgzv7sky@mwanda>
-In-Reply-To: <20170428130614.w4cmbwvprgzv7sky@mwanda>
+ <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
+In-Reply-To: <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Huang Shijie <b32955@freescale.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: Huang Shijie <b32955@freescale.com>, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Wed, May 03, 2017 at 11:40:09PM +0200, Cyrille Pitchen wrote:
+> However, I think we could return the return code of
+> spi_nor_wait_till_ready() instead, like already done in
+> spansion_quad_enable().
 
-Le 28/04/2017 =E0 15:06, Dan Carpenter a =E9crit :
-> Before commit cff959958832 ("mtd: spi-nor: introduce SPI 1-2-2 and SPI
-> 1-4-4 protocols") then we treated 1 as -EINVAL in the caller but after
-> that commit we changed to propagate the return.  My static checker
-> complains that it's eventually passed to an ERR_PTR() and later
-> dereferenced, but I'm not totally certain if that's true.  Regardless,
-> returning 1 is wrong.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 060a59e716be..a05db3371ebb 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1390,7 +1390,7 @@ static int macronix_quad_enable(struct spi_nor *nor)
->  	write_sr(nor, val | SR_QUAD_EN_MX);
-> =20
->  	if (spi_nor_wait_till_ready(nor))
-> -		return 1;
-> +		return -EINVAL;
->
+Ah, yes, of course.  I will resend.
 
-Good catch!
+regards,
+dan carpenter
 
-However, I think we could return the return code of
-spi_nor_wait_till_ready() instead, like already done in
-spansion_quad_enable().
-
-Looking at the source code of spi_nor_wait_till_ready() /
-spi_nor_wait_till_ready_with_timeout(), both function return 0 when
-successful, a negative error code otherwise.
-
-Best regards,
-
-Cyrille
-
->  	ret =3D read_sr(nor);
->  	if (!(ret > 0 && (ret & SR_QUAD_EN_MX))) {
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
