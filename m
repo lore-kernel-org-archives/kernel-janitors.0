@@ -1,24 +1,75 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 20 May 2017 15:02:39 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: 23b 1ant: initialize bt_disabled to false
-Message-Id: <8cacfc28-17e4-b0b1-8667-e59f37c777e0@lwfinger.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 04 May 2017 20:10:51 +0000
+Subject: [PATCH 6/9] regulator: palmas: Drop unnecessary static
+Message-Id: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170519212539.cihnvwl7irchxoaj@mwanda>
-In-Reply-To: <20170519212539.cihnvwl7irchxoaj@mwanda>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/19/2017 04:25 PM, Dan Carpenter wrote:
-> We only want to disable this if bt_disable_cnt is >= 2.
-> 
-> Fixes: f66509e3d7c2 ("rtlwifi: btcoex: Remove 23b 1ant configuration parameter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Drop static on a local variable, when the variable is initialized before
+any use, on every possible execution path through the function.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
 
-Larry
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+There is no reduction in code size in this case, but the change does reduce
+the size of the bss segment, containing uninitialized static data.
+
+before:
+   text    data     bss     dec     hex filename
+  12882    3480       8   16370    3ff2 drivers/regulator/palmas-regulator.o
+
+after:
+   text    data     bss     dec     hex filename
+  12882    3480       0   16362    3fea drivers/regulator/palmas-regulator.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/regulator/palmas-regulator.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
+index 31ae5ee..34d4a62 100644
+--- a/drivers/regulator/palmas-regulator.c
++++ b/drivers/regulator/palmas-regulator.c
+@@ -1491,7 +1491,7 @@ static int palmas_dt_to_pdata(struct device *dev,
+ 	}
+ 
+ 	for (idx = 0; idx < ddata->max_reg; idx++) {
+-		static struct of_regulator_match *match;
++		struct of_regulator_match *match;
+ 		struct palmas_reg_init *rinit;
+ 		struct device_node *np;
+ 
+
