@@ -1,58 +1,81 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 10 May 2017 04:30:39 +0000
-Subject: Re: [PATCH] net: dsa: loop: Free resources if initialization is deferred
-Message-Id: <alpine.DEB.2.20.1705101229410.3326@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 May 2017 16:55:36 +0000
+Subject: [PATCH 4/9] drm/i915: Delete unnecessary braces in three functions
+Message-Id: <c730d90c-0d71-50ed-d15d-a4d5c22712d0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170510041503.29363-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170510041503.29363-1-christophe.jaillet@wanadoo.fr>
+References: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
+In-Reply-To: <39c8a155-cf89-1aa5-9ca6-4e9ccf3aa602@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 May 2017 13:40:53 +0200
 
+Do not use curly brackets at some source code places
+where a single statement should be sufficient.
 
-On Wed, 10 May 2017, Christophe JAILLET wrote:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-> Free some devm'allocated memory in case of deferred driver initialization.
-> This avoid to waste some memory in such a case.
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 296108464f2b..bf9a2e8d8c16 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -565,13 +565,13 @@ static int i915_gem_pageflip_info(struct seq_file *m, void *data)
+ 			u32 addr;
+ 
+ 			pending = atomic_read(&work->pending);
+-			if (pending) {
++			if (pending)
+ 				seq_printf(m, "Flip ioctl preparing on pipe %c (plane %c)\n",
+ 					   pipe, plane);
+-			} else {
++			else
+ 				seq_printf(m, "Flip pending (waiting for vsync) on pipe %c (plane %c)\n",
+ 					   pipe, plane);
+-			}
++
+ 			if (work->flip_queued_req) {
+ 				struct intel_engine_cs *engine = work->flip_queued_req->engine;
+ 
+@@ -3130,13 +3130,11 @@ static void intel_plane_info(struct seq_file *m, struct intel_crtc *intel_crtc)
+ 		}
+ 
+ 		state = plane->state;
+-
+-		if (state->fb) {
++		if (state->fb)
+ 			drm_get_format_name(state->fb->format->format,
+ 					    &format_name);
+-		} else {
++		else
+ 			sprintf(format_name.str, "N/A");
+-		}
+ 
+ 		seq_printf(m, "\t--Plane id %d: type=%s, crtc_pos=%4dx%4d, crtc_size=%4dx%4d, src_pos=%d.%04ux%d.%04u, src_size=%d.%04ux%d.%04u, format=%s, rotation=%s\n",
+ 			   plane->base.id,
+@@ -4636,13 +4634,12 @@ static int i915_sseu_status(struct seq_file *m, void *unused)
+ 
+ 	intel_runtime_pm_get(dev_priv);
+ 
+-	if (IS_CHERRYVIEW(dev_priv)) {
++	if (IS_CHERRYVIEW(dev_priv))
+ 		cherryview_sseu_device_status(dev_priv, &sseu);
+-	} else if (IS_BROADWELL(dev_priv)) {
++	else if (IS_BROADWELL(dev_priv))
+ 		broadwell_sseu_device_status(dev_priv, &sseu);
+-	} else if (INTEL_GEN(dev_priv) >= 9) {
++	else if (INTEL_GEN(dev_priv) >= 9)
+ 		gen9_sseu_device_status(dev_priv, &sseu);
+-	}
+ 
+ 	intel_runtime_pm_put(dev_priv);
+ 
+-- 
+2.12.2
 
-I really think it would be helpful to mention the special behavior of
--EPROBE_DEFER.  It doesn't take much space, and it coud be helpful to
-someone in the future.
-
-julia
-
->
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/dsa/dsa_loop.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
-> index a19e1781e9bb..557afb418320 100644
-> --- a/drivers/net/dsa/dsa_loop.c
-> +++ b/drivers/net/dsa/dsa_loop.c
-> @@ -260,8 +260,11 @@ static int dsa_loop_drv_probe(struct mdio_device *mdiodev)
->  		return -ENOMEM;
->
->  	ps->netdev = dev_get_by_name(&init_net, pdata->netdev);
-> -	if (!ps->netdev)
-> +	if (!ps->netdev) {
-> +		devm_kfree(&mdiodev->dev, ps);
-> +		devm_kfree(&mdiodev->dev, ds);
->  		return -EPROBE_DEFER;
-> +	}
->
->  	pdata->cd.netdev[DSA_LOOP_CPU_PORT] = &ps->netdev->dev;
->
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
