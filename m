@@ -1,44 +1,42 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 15 May 2017 17:44:59 +0000
-Subject: Re: [PATCH 2/3] coresight: etb10: Fix a typo in a comment line
-Message-Id: <CANLsYkzqzFjZnQsVsYNXCH-HLYrUkqjzTtgo4muQ8ODv7ZD=xg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 May 2017 20:31:13 +0000
+Subject: [PATCH 1/6] cxgb4vf: Use seq_putc() in mboxlog_show()
+Message-Id: <210c924f-3e13-10ec-9f6e-b63003798240@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
- <800735a2-6947-0760-59f5-d53401f4b0cc@users.sourceforge.net>
-In-Reply-To: <800735a2-6947-0760-59f5-d53401f4b0cc@users.sourceforge.net>
+References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
+In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12 May 2017 at 12:52, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 May 2017 20:30:42 +0200
->
-> Delete a character in this description for a condition check.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/hwtracing/coresight/coresight-etb10.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-> index 837aebf22c45..d5b96423e1a5 100644
-> --- a/drivers/hwtracing/coresight/coresight-etb10.c
-> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-> @@ -375,7 +375,7 @@ static void etb_update_buffer(struct coresight_device *csdev,
->
->         /*
->          * Entries should be aligned to the frame size.  If they are not
-> -        * go back to the last alignement point to give decoding tools a
-> +        * go back to the last alignment point to give decoding tools a
->          * chance to fix things.
->          */
->         if (write_ptr % ETB_FRAME_SIZE_WORDS) {
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 May 2017 20:02:04 +0200
 
-Applied - thanks.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-> --
-> 2.12.3
->
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+index ac7a150c54e9..4ac9316f3081 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+@@ -1818,7 +1818,7 @@ static int mboxlog_show(struct seq_file *seq, void *v)
+ 
+ 		seq_printf(seq, "  %08x %08x", hi, lo);
+ 	}
+-	seq_puts(seq, "\n");
++	seq_putc(seq, '\n');
+ 	return 0;
+ }
+ 
+-- 
+2.12.2
+
