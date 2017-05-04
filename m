@@ -1,53 +1,76 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 19 May 2017 08:32:46 +0000
-Subject: Re: [PATCH] mmc: atmel-mci: Delete an error message for a failed memory allocation in atmci_of_init(
-Message-Id: <CAPDyKFrgjdwd2Z_19GC1us+SA-4-sjNOnyFWsnPCzt=JGvtwNw@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 04 May 2017 20:10:52 +0000
+Subject: [PATCH 7/9] iio: hid-sensor-accel-3d: Drop unnecessary static
+Message-Id: <1493928654-18768-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <199b33a2-6722-fba1-e7ec-5ac016c5bad0@users.sourceforge.net>
-In-Reply-To: <199b33a2-6722-fba1-e7ec-5ac016c5bad0@users.sourceforge.net>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13 May 2017 at 15:17, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 May 2017 15:05:28 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Drop static on a local variable, when the variable is initialized before
+use, on every possible execution path through the function.  The static has
+no benefit, and dropping it reduces the code size.
 
-Thanks applied for next!
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Kind regards
-Uffe
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
 
-> ---
->  drivers/mmc/host/atmel-mci.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-> index 388e4a3f13e6..584247464eb8 100644
-> --- a/drivers/mmc/host/atmel-mci.c
-> +++ b/drivers/mmc/host/atmel-mci.c
-> @@ -667,10 +667,8 @@ atmci_of_init(struct platform_device *pdev)
->         }
->
->         pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-> -       if (!pdata) {
-> -               dev_err(&pdev->dev, "could not allocate memory for pdata\n");
-> +       if (!pdata)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         for_each_child_of_node(np, cnp) {
->                 if (of_property_read_u32(cnp, "reg", &slot_id)) {
-> --
-> 2.12.3
->
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+The change in code size is indicates by the following output from the size
+command.
+
+before:
+   text    data     bss     dec     hex filename
+   3879     512       8    4399    112f drivers/iio/accel/hid-sensor-accel-3d.o
+
+after:
+   text    data     bss     dec     hex filename
+   3863     512       0    4375    1117 drivers/iio/accel/hid-sensor-accel-3d.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/accel/hid-sensor-accel-3d.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+index 43a6cb0..2238a26 100644
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -347,7 +347,7 @@ static int accel_3d_parse_report(struct platform_device *pdev,
+ static int hid_accel_3d_probe(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+-	static const char *name;
++	const char *name;
+ 	struct iio_dev *indio_dev;
+ 	struct accel_3d_state *accel_state;
+ 	const struct iio_chan_spec *channel_spec;
+
