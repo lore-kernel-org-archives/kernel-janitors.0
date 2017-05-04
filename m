@@ -1,25 +1,74 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 09 May 2017 02:18:00 +0000
-Subject: Re: [PATCH] scsi: pmcraid: remove redundant check to see if request_size is less than zero
-Message-Id: <yq1wp9qrcx3.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 04 May 2017 20:10:50 +0000
+Subject: [PATCH 5/9] mfd: Drop unnecessary static
+Message-Id: <1493928654-18768-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503162901.3623-1-colin.king@canonical.com>
-In-Reply-To: <20170503162901.3623-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 3 May 2017 17:29:01 +0100")
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Drop static on a local variable, when the variable is initialized before
+any use, on every possible execution path through the function.
 
-Colin,
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> The 2nd check to see if request_size is less than zero is redundant
-> because the first check takes error exit path on this condition. So,
-> since it is redundant, remove it.
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
 
-Applied to 4.12/scsi-fixes.
+static T x@p;
+...
+x = <+...x...+>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+The change increases the code size but decreases the size of the bss segment.
+
+before:
+   text    data     bss     dec     hex filename
+   3369     272     300    3941     f65 drivers/mfd/twl4030-irq.o
+
+after:
+   text    data     bss     dec     hex filename
+   3401     272      28    3701     e75 drivers/mfd/twl4030-irq.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mfd/twl4030-irq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+index b46c0cf..c775f27 100644
+--- a/drivers/mfd/twl4030-irq.c
++++ b/drivers/mfd/twl4030-irq.c
+@@ -683,7 +683,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base)
+ 
+ int twl4030_init_irq(struct device *dev, int irq_num)
+ {
+-	static struct irq_chip	twl4030_irq_chip;
++	struct irq_chip	twl4030_irq_chip;
+ 	int			status, i;
+ 	int			irq_base, irq_end, nr_irqs;
+ 	struct			device_node *node = dev->of_node;
+
