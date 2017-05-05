@@ -1,35 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 21:06:16 +0000
+Date: Fri, 05 May 2017 21:09:30 +0000
 Subject: [PATCH 6/7] kernel-trace: Adjust two checks for null pointers in uprobe_buffer_init()
-Message-Id: <108d781f-8dba-9bf8-1a44-adb3952d3b46@users.sourceforge.net>
+Message-Id: <b0ef0720-4ba4-1281-395f-e6ce639873d2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 May 2017 22:30:16 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+The script “checkpatch.pl” pointed information out like the following.
 
-Am 05.05.2017 um 23:00 schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 5 May 2017 22:50:05 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (7):
->   Combine two function calls into one in hist_trigger_entry_print()
->   Replace five seq_puts() calls by seq_putc()
->   Adjust two checks for null pointers in compatible_field()
->   Improve a size determination in create_hist_field()
->   Replace two seq_printf() calls by seq_puts() in probes_seq_show()
->   Adjust two checks for null pointers in uprobe_buffer_init()
->   Delete an error message for a failed memory allocation in create_trace_uprobe()
-> 
->  kernel/trace/trace_events_hist.c | 18 ++++++++----------
->  kernel/trace/trace_uprobe.c      | 10 ++++------
->  2 files changed, 12 insertions(+), 16 deletions(-)
-> 
+Comparison to NULL could be written !…
+
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/trace/trace_uprobe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 3e662d7ea6a4..e9c1865f7397 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -705,13 +705,13 @@ static int uprobe_buffer_init(void)
+ 	int cpu, err_cpu;
+ 
+ 	uprobe_cpu_buffer = alloc_percpu(struct uprobe_cpu_buffer);
+-	if (uprobe_cpu_buffer = NULL)
++	if (!uprobe_cpu_buffer)
+ 		return -ENOMEM;
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		struct page *p = alloc_pages_node(cpu_to_node(cpu),
+ 						  GFP_KERNEL, 0);
+-		if (p = NULL) {
++		if (!p) {
+ 			err_cpu = cpu;
+ 			goto err;
+ 		}
+-- 
+2.12.2
+
