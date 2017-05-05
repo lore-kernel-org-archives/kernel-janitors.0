@@ -1,26 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 12:01:00 +0000
-Subject: [PATCH 0/2] apparmorfs: Fine-tuning for three function implementations
-Message-Id: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
+Date: Fri, 05 May 2017 08:50:28 +0000
+Subject: [PATCH] IB/hfi1: Replace two seq_puts() calls by seq_putc() in sdma_seqfile_dump_cpu_list()
+Message-Id: <0bf8f61d-63c6-ba0a-df2f-00340b26afa7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 13:58:08 +0200
+Date: Fri, 5 May 2017 10:40:03 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Two single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-Markus Elfring (2):
-  Combine two function calls into one in aa_fs_seq_raw_abi_show()
-  Use seq_putc() in two functions
+This issue was detected by using the Coccinelle software.
 
- security/apparmor/apparmorfs.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/hfi1/sdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/infiniband/hw/hfi1/sdma.c b/drivers/infiniband/hw/hfi1/sdma.c
+index bfd0d5187e9b..7611a88b86cf 100644
+--- a/drivers/infiniband/hw/hfi1/sdma.c
++++ b/drivers/infiniband/hw/hfi1/sdma.c
+@@ -1130,7 +1130,7 @@ void sdma_seqfile_dump_cpu_list(struct seq_file *s,
+ 				continue;
+ 
+ 			if (j > 0)
+-				seq_puts(s, ",");
++				seq_putc(s, ',');
+ 
+ 			seq_printf(s, " sdma%2d",
+ 				   rht_node->map[i]->sde[j]->this_idx);
+@@ -1138,7 +1138,7 @@ void sdma_seqfile_dump_cpu_list(struct seq_file *s,
+ 		seq_puts(s, " ]");
+ 	}
+ 
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ /*
 -- 
 2.12.2
 
