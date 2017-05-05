@@ -1,45 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 May 2017 20:35:16 +0000
-Subject: [PATCH 5/6] cxgb4: Use seq_puts() in cim_qcfg_show()
-Message-Id: <2695f4a2-8201-1ae5-d93d-e4f41544c76c@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 05 May 2017 19:29:13 +0000
+Subject: [PATCH] i40e: Check for memory allocation failure
+Message-Id: <20170505192913.4905-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
-In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: jeffrey.t.kirsher@intel.com
+Cc: intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 May 2017 21:52:32 +0200
+If 'kzalloc' fails, a NULL pointer will be dereferenced. Return -ENOMEM
+instead.
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_client.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-index 2bc40d89f874..32add8dfc253 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-@@ -357,9 +357,8 @@ static int cim_qcfg_show(struct seq_file *seq, void *v)
- 		return i;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.c b/drivers/net/ethernet/intel/i40e/i40e_client.c
+index eb2896fd52a6..86e99ed7fb04 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_client.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_client.c
+@@ -595,6 +595,8 @@ static int i40e_client_setup_qvlist(struct i40e_info *ldev,
+ 	size = sizeof(struct i40e_qvlist_info) +
+ 	       (sizeof(struct i40e_qv_info) * (qvlist_info->num_vectors - 1));
+ 	ldev->qvlist_info = kzalloc(size, GFP_KERNEL);
++	if (!ldev->qvlist_info)
++		return -ENOMEM;
+ 	ldev->qvlist_info->num_vectors = qvlist_info->num_vectors;
  
- 	t4_read_cimq_cfg(adap, base, size, thres);
--
--	seq_printf(seq,
--		   "  Queue  Base  Size Thres  RdPtr WrPtr  SOP  EOP Avail\n");
-+	seq_puts(seq,
-+		 "  Queue  Base  Size Thres  RdPtr WrPtr  SOP  EOP Avail\n");
- 	for (i = 0; i < CIM_NUM_IBQ; i++, p += 4)
- 		seq_printf(seq, "%7s %5x %5u %5u %6x  %4x %4u %4u %5u\n",
- 			   qname[i], base[i], size[i], thres[i],
+ 	for (i = 0; i < qvlist_info->num_vectors; i++) {
 -- 
-2.12.2
+2.11.0
 
