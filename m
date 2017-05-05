@@ -1,75 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 14:29:39 +0000
-Subject: [PATCH 5/6] md: Adjust six function calls together with a variable assignment in faulty_status()
-Message-Id: <2af19638-e678-3386-f45e-ddaee2c6e9e1@users.sourceforge.net>
+Date: Fri, 05 May 2017 13:57:25 +0000
+Subject: [PATCH 5/5] drm/sti: Adjust two checks for null pointers in sti_hqvdp_probe()
+Message-Id: <918229e6-80fe-629f-8fec-bf60ac15275f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
-In-Reply-To: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net>
+References: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
+In-Reply-To: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: dri-devel@lists.freedesktop.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, David Airlie <airlied@linux.ie>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 15:35:35 +0200
+Date: Fri, 5 May 2017 15:33:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The script "checkpatch.pl" pointed information out like the following.
+The script “checkpatch.pl” pointed information out like the following.
 
-ERROR: do not use assignment in if condition
+Comparison to NULL could be written !…
 
 Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/faulty.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/sti/sti_hqvdp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/faulty.c b/drivers/md/faulty.c
-index f5536c91be5c..2573009b1265 100644
---- a/drivers/md/faulty.c
-+++ b/drivers/md/faulty.c
-@@ -231,28 +231,33 @@ static void faulty_status(struct seq_file *seq, struct mddev *mddev)
- 	struct faulty_conf *conf = mddev->private;
- 	int n;
+diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+index 372ea294da80..a1c161f77804 100644
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@ -1356,12 +1356,12 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
  
--	if ((n=atomic_read(&conf->counters[WriteTransient])) != 0)
-+	n = atomic_read(&conf->counters[WriteTransient]);
-+	if (n != 0)
- 		seq_printf(seq, " WriteTransient=%d(%d)",
- 			   n, conf->period[WriteTransient]);
- 
--	if ((n=atomic_read(&conf->counters[ReadTransient])) != 0)
-+	n = atomic_read(&conf->counters[ReadTransient]);
-+	if (n != 0)
- 		seq_printf(seq, " ReadTransient=%d(%d)",
- 			   n, conf->period[ReadTransient]);
- 
--	if ((n=atomic_read(&conf->counters[WritePersistent])) != 0)
-+	n = atomic_read(&conf->counters[WritePersistent]);
-+	if (n != 0)
- 		seq_printf(seq, " WritePersistent=%d(%d)",
- 			   n, conf->period[WritePersistent]);
- 
--	if ((n=atomic_read(&conf->counters[ReadPersistent])) != 0)
-+	n = atomic_read(&conf->counters[ReadPersistent]);
-+	if (n != 0)
- 		seq_printf(seq, " ReadPersistent=%d(%d)",
- 			   n, conf->period[ReadPersistent]);
- 
--
--	if ((n=atomic_read(&conf->counters[ReadFixable])) != 0)
-+	n = atomic_read(&conf->counters[ReadFixable]);
-+	if (n != 0)
- 		seq_printf(seq, " ReadFixable=%d(%d)",
- 			   n, conf->period[ReadFixable]);
- 
--	if ((n=atomic_read(&conf->counters[WriteAll])) != 0)
-+	n = atomic_read(&conf->counters[WriteAll]);
-+	if (n != 0)
- 		seq_puts(seq, " WriteAll");
- 
- 	seq_printf(seq, " nfaults=%d", conf->nfaults);
+ 	/* Get Memory resources */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
++	if (!res) {
+ 		DRM_ERROR("Get memory resource failed\n");
+ 		return -ENXIO;
+ 	}
+ 	hqvdp->regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (hqvdp->regs = NULL) {
++	if (!hqvdp->regs) {
+ 		DRM_ERROR("Register mapping failed\n");
+ 		return -ENXIO;
+ 	}
 -- 
 2.12.2
 
