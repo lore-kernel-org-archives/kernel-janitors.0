@@ -1,56 +1,35 @@
-From: Pavel Shilovsky <piastryyy@gmail.com>
-Date: Wed, 17 May 2017 20:05:30 +0000
-Subject: Re: [PATCH] CIFS: check if pages is null rather than bv for a failed allocation
-Message-Id: <CAKywueQko2NYXegHaRnXguxfZXnXyqqifCG866YYmO96U7OTwg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 May 2017 21:06:16 +0000
+Subject: [PATCH 6/7] kernel-trace: Adjust two checks for null pointers in uprobe_buffer_init()
+Message-Id: <108d781f-8dba-9bf8-1a44-adb3952d3b46@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170517182415.12081-1-colin.king@canonical.com>
-In-Reply-To: <20170517182415.12081-1-colin.king@canonical.com>
+References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
+In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Pavel Shilovsky <pshilov@microsoft.com>, Steve French <sfrench@samba.org>, linux-cifs <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-2017-05-17 11:24 GMT-07:00 Colin King <colin.king@canonical.com>:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> pages is being allocated however a null check on bv is being used
-> to see if the allocation failed. Fix this by checking if pages is
-> null.
->
-> Detected by CoverityScan, CID#1432974 ("Logically dead code")
->
-> Fixes: ccf7f4088af2dd ("CIFS: Add asynchronous context to support kernel AIO")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/misc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
-> index b08531977daa..3b147dc6af63 100644
-> --- a/fs/cifs/misc.c
-> +++ b/fs/cifs/misc.c
-> @@ -810,7 +810,7 @@ setup_aio_ctx_iter(struct cifs_aio_ctx *ctx, struct iov_iter *iter, int rw)
->
->         if (!pages) {
->                 pages = vmalloc(max_pages * sizeof(struct page *));
-> -               if (!bv) {
-> +               if (!pages) {
->                         kvfree(bv);
->                         return -ENOMEM;
->                 }
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thanks for catching this!
 
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-
---
-Best regards,
-Pavel Shilovsky
+Am 05.05.2017 um 23:00 schrieb SF Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 5 May 2017 22:50:05 +0200
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (7):
+>   Combine two function calls into one in hist_trigger_entry_print()
+>   Replace five seq_puts() calls by seq_putc()
+>   Adjust two checks for null pointers in compatible_field()
+>   Improve a size determination in create_hist_field()
+>   Replace two seq_printf() calls by seq_puts() in probes_seq_show()
+>   Adjust two checks for null pointers in uprobe_buffer_init()
+>   Delete an error message for a failed memory allocation in create_trace_uprobe()
+> 
+>  kernel/trace/trace_events_hist.c | 18 ++++++++----------
+>  kernel/trace/trace_uprobe.c      | 10 ++++------
+>  2 files changed, 12 insertions(+), 16 deletions(-)
+> 
