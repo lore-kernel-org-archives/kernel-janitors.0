@@ -1,86 +1,40 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 19 May 2017 07:49:59 +0000
-Subject: Re: [PATCH] mmc: core: Delete an error message for a failed memory allocation in three functions
-Message-Id: <CAPDyKFqhNQdfr19195YfL7f4Jh0u6pGZ9QtSff0C6fe6R9wdjw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 May 2017 05:33:56 +0000
+Subject: [PATCH v2] mtd: spi-nor: Potential oops on error path in quad_enable()
+Message-Id: <20170505053356.vcgboleyqigluhc3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
-In-Reply-To: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
+In-Reply-To: <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Uri Yanai <uri.yanai@sandisk.com>, Tomas Winkler <tomas.winkler@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On 13 May 2017 at 14:54, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 May 2017 14:40:08 +0200
->
-> Omit an extra message for a memory allocation failure in these functions.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Before commit cff959958832 ("mtd: spi-nor: introduce SPI 1-2-2 and SPI
+1-4-4 protocols") then we treated 1 as -EINVAL in the caller but after
+that commit we changed to propagate the return.  My static checker
+complains that it's eventually passed to an ERR_PTR() and later
+dereferenced, but I'm not totally certain if that's true.  Regardless,
+returning 1 is wrong.
 
-It's a nice cleanup. However I found one more occasion in mmc_test.c,
-please fix that and re-spin.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Propogate the error code from spi_nor_wait_till_ready() instead of
+    just returning -EINVAL
 
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/core/sd.c | 16 +++-------------
->  1 file changed, 3 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> index d109634fbfce..1d7542daecbe 100644
-> --- a/drivers/mmc/core/sd.c
-> +++ b/drivers/mmc/core/sd.c
-> @@ -294,12 +294,8 @@ static int mmc_read_switch(struct mmc_card *card)
->         err = -EIO;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n",
-> -                       mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         /*
->          * Find out the card's support bits with a mode 0 operation.
-> @@ -359,11 +355,8 @@ int mmc_sd_switch_hs(struct mmc_card *card)
->                 return 0;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n", mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         err = mmc_sd_switch(card, 1, 0, 1, status);
->         if (err)
-> @@ -596,11 +589,8 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
->                 return 0;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n", mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         /* Set 4-bit bus width */
->         if ((card->host->caps & MMC_CAP_4_BIT_DATA) &&
-> --
-> 2.12.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 060a59e716be..eef55b597ec7 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1389,8 +1389,9 @@ static int macronix_quad_enable(struct spi_nor *nor)
+ 
+ 	write_sr(nor, val | SR_QUAD_EN_MX);
+ 
+-	if (spi_nor_wait_till_ready(nor))
+-		return 1;
++	ret = spi_nor_wait_till_ready(nor);
++	if (ret)
++		return ret;
+ 
+ 	ret = read_sr(nor);
+ 	if (!(ret > 0 && (ret & SR_QUAD_EN_MX))) {
