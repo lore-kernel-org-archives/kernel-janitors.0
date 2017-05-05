@@ -1,44 +1,38 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Date: Mon, 22 May 2017 19:24:38 +0000
-Subject: Re: [PATCH 1/3] RDS: IB: Delete an error message for a failed memory allocation in rds_ib_add_one()
-Message-Id: <3b02a3d1-17c9-3d8b-7edb-db640c0ea017@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 May 2017 13:50:49 +0000
+Subject: [PATCH 0/5] GPU-DRM-STI: Fine-tuning for some function implementations
+Message-Id: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
- <e3491aaa-f471-c67c-43dc-41d592159c8e@users.sourceforge.net>
-In-Reply-To: <e3491aaa-f471-c67c-43dc-41d592159c8e-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rds-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Sowmini Varadhan <sowmini.varadhan-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel@lists.freedesktop.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, David Airlie <airlied@linux.ie>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 5/22/2017 7:11 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 15:34:28 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   net/rds/ib.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/net/rds/ib.c b/net/rds/ib.c
-> index 7a64c8db81ab..c5514d058171 100644
-> --- a/net/rds/ib.c
-> +++ b/net/rds/ib.c
-> @@ -166,8 +166,5 @@ static void rds_ib_add_one(struct ib_device *device)
-> -	if (!rds_ibdev->vector_load) {
-> -		pr_err("RDS/IB: %s failed to allocate vector memory\n",
-> -			__func__);
-> +	if (!rds_ibdev->vector_load)
->   		goto put_dev;
-> -	}
->   
-Well the ENOMEM is not carried here so the message was usefu
-but its not critical so its fine to clean that up.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 May 2017 15:45:45 +0200
 
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (5):
+  Reduce function calls for sequence output at five places
+  Replace 17 seq_puts() calls by seq_putc()
+  Fix a typo in a comment line
+  Fix typos in a comment line
+  Adjust two checks for null pointers in sti_hqvdp_probe()
+
+ drivers/gpu/drm/sti/sti_cursor.c |  5 ++---
+ drivers/gpu/drm/sti/sti_dvo.c    |  3 +--
+ drivers/gpu/drm/sti/sti_gdp.c    |  3 +--
+ drivers/gpu/drm/sti/sti_hda.c    |  9 +++------
+ drivers/gpu/drm/sti/sti_hdmi.c   | 23 ++++++++++-------------
+ drivers/gpu/drm/sti/sti_hqvdp.c  |  7 +++----
+ drivers/gpu/drm/sti/sti_mixer.c  |  3 +--
+ drivers/gpu/drm/sti/sti_tvout.c  |  7 +++----
+ drivers/gpu/drm/sti/sti_vid.c    |  5 ++---
+ 9 files changed, 26 insertions(+), 39 deletions(-)
+
+-- 
+2.12.2
+
