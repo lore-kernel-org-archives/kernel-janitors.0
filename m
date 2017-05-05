@@ -1,19 +1,30 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 02 May 2017 15:53:26 +0000
-Subject: Re: [PATCH] Btrfs: remove an unused variable
-Message-Id: <20170502155326.GP23260@twin.jikos.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 May 2017 15:04:40 +0000
+Subject: Re: GPU-DRM-STI: Fine-tuning for some function implementations
+Message-Id: <b859d1fb-bdf2-1738-8f28-28a31419b0d1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170502092527.rpb42y7ngvh5tkei@mwanda>
-In-Reply-To: <20170502092527.rpb42y7ngvh5tkei@mwanda>
+References: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
+ <20170505140916.zoe4sxe3xjtvdlag@art_vandelay>
+In-Reply-To: <20170505140916.zoe4sxe3xjtvdlag@art_vandelay>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>
 
-On Tue, May 02, 2017 at 12:25:27PM +0300, Dan Carpenter wrote:
-> "item" is never used.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> It seems like you're back to submitting cocci patches again :)
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+My contribution activities are varying also for Linux software over time.   ;-)
+
+The corresponding source code search patterns get different popularity.
+
+
+> I don't want to waste your time by ignoring your patches, so please ensure that
+> your patches provide value and that they are tested.
+
+Which benchmarks and system tests would you find representative for this patch series?
+
+How do you think generally about the proposed change possibilities?
+
+Regards,
+Markus
