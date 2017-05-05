@@ -1,28 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 08:23:52 +0000
-Subject: [PATCH 0/3] zswap: Adjustments for three function implementations
-Message-Id: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 May 2017 05:37:23 +0000
+Subject: [PATCH] firmware: tegra: fix locking bugs in bpmp
+Message-Id: <20170505053723.53qi4ob3df4ri2v4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org, Dan Streetman <ddstreet@ieee.org>, Seth Jennings <sjenning@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 10:20:03 +0200
+There are a bunch of error paths were we don't unlock the bpmp->threaded
+lock.  Also if __tegra_bpmp_channel_write() fails then we returned
+success instead of an error code.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Fixes: 983de5f97169 ("firmware: tegra: Add BPMP support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in zswap_pool_create()
-  Improve a size determination in zswap_frontswap_init()
-  Delete an error message for a failed memory allocation in zswap_dstmem_prepare()
-
- mm/zswap.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
--- 
-2.13.0
-
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 84e4c9a58a0c..dffdfb4e9da0 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -211,14 +211,17 @@ static ssize_t tegra_bpmp_channel_read(struct tegra_bpmp_channel *channel,
+ 	int index;
+ 
+ 	index = tegra_bpmp_channel_get_thread_index(channel);
+-	if (index < 0)
+-		return index;
++	if (index < 0) {
++		err = index;
++		goto unlock;
++	}
+ 
+ 	spin_lock_irqsave(&bpmp->lock, flags);
+ 	err = __tegra_bpmp_channel_read(channel, data, size);
+ 	clear_bit(index, bpmp->threaded.allocated);
+ 	spin_unlock_irqrestore(&bpmp->lock, flags);
+ 
++unlock:
+ 	up(&bpmp->threaded.lock);
+ 
+ 	return err;
+@@ -256,35 +259,40 @@ tegra_bpmp_write_threaded(struct tegra_bpmp *bpmp, unsigned int mrq,
+ 
+ 	index = find_first_zero_bit(bpmp->threaded.allocated, count);
+ 	if (index = count) {
+-		channel = ERR_PTR(-EBUSY);
+-		goto unlock;
++		err = -EBUSY;
++		goto err_unlock;
+ 	}
+ 
+ 	channel = tegra_bpmp_channel_get_thread(bpmp, index);
+ 	if (!channel) {
+-		channel = ERR_PTR(-EINVAL);
+-		goto unlock;
++		err = -EINVAL;
++		goto err_unlock;
+ 	}
+ 
+ 	if (!tegra_bpmp_master_free(channel)) {
+-		channel = ERR_PTR(-EBUSY);
+-		goto unlock;
++		err = -EBUSY;
++		goto err_unlock;
+ 	}
+ 
+ 	set_bit(index, bpmp->threaded.allocated);
+ 
+ 	err = __tegra_bpmp_channel_write(channel, mrq, MSG_ACK | MSG_RING,
+ 					 data, size);
+-	if (err < 0) {
+-		clear_bit(index, bpmp->threaded.allocated);
+-		goto unlock;
+-	}
++	if (err < 0)
++		goto err_clear_allocated;
+ 
+ 	set_bit(index, bpmp->threaded.busy);
+ 
+-unlock:
+ 	spin_unlock_irqrestore(&bpmp->lock, flags);
+ 	return channel;
++
++err_clear_allocated:
++	clear_bit(index, bpmp->threaded.allocated);
++err_unlock:
++	spin_unlock_irqrestore(&bpmp->lock, flags);
++	up(&bpmp->threaded.lock);
++
++	return ERR_PTR(err);
+ }
+ 
+ static ssize_t tegra_bpmp_channel_write(struct tegra_bpmp_channel *channel,
