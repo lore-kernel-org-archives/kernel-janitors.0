@@ -1,57 +1,42 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 19 May 2017 17:43:15 +0000
-Subject: NACK: [PATCH] [media] rainshadow-cec: ensure exit_loop is initialized
-Message-Id: <393f9ca7-3675-ee45-2bd3-378c10cb412e@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 05 May 2017 21:01:44 +0000
+Subject: [PATCH 1/7] kernel-trace: Combine two function calls into one in hist_trigger_entry_print()
+Message-Id: <7f9cad99-4eb5-7b3f-505d-8fa9265f476e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170519173939.6489-1-colin.king@canonical.com>
-In-Reply-To: <20170519173939.6489-1-colin.king@canonical.com>
+References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
+In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 19/05/17 18:39, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> exit_loop is not being initialized, so it contains garbage. Ensure it is
-> initialized to false.
-> 
-> Detected by CoverityScan, CID#1436409 ("Uninitialzed scalar variable")
-> 
-> Fixes: ea6a69defd3311 ("[media] rainshadow-cec: avoid -Wmaybe-uninitialized warning")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_v3d.c                     | 2 +-
->  drivers/media/usb/rainshadow-cec/rainshadow-cec.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-> index c53afec34586..c42210203f6e 100644
-> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
-> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-> @@ -218,7 +218,7 @@ int vc4_v3d_get_bin_slot(struct vc4_dev *vc4)
->   * overall CMA pool before they make scenes complicated enough to run
->   * out of bin space.
->   */
-> -int
-> +static int
->  vc4_allocate_bin_bo(struct drm_device *drm)
->  {
->  	struct vc4_dev *vc4 = to_vc4_dev(drm);
-> diff --git a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-> index 8d3ca2c8b20f..ad468efc4399 100644
-> --- a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-> +++ b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-> @@ -119,7 +119,7 @@ static void rain_irq_work_handler(struct work_struct *work)
->  
->  	while (true) {
->  		unsigned long flags;
-> -		bool exit_loop;
-> +		bool exit_loop = false;
->  		char data;
->  
->  		spin_lock_irqsave(&rain->buf_lock, flags);
-> 
-Sorry, got another fix included into that. I'll re-submit
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 5 May 2017 19:40:39 +0200
+
+A bit of data was put into a sequence by two separate function calls.
+Print the same data by a single function call instead.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/trace/trace_events_hist.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 1c21d0e2a145..94999934ffd5 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -1017,7 +1017,5 @@ hist_trigger_entry_print(struct seq_file *m,
+ 
+-	seq_puts(m, "}");
+-
+-	seq_printf(m, " hitcount: %10llu",
++	seq_printf(m, "} hitcount: %10llu",
+ 		   tracing_map_read_sum(elt, HITCOUNT_IDX));
+ 
+ 	for (i = 1; i < hist_data->n_vals; i++) {
+-- 
+2.12.2
 
