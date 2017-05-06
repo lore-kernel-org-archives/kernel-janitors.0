@@ -1,99 +1,58 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 16 May 2017 18:32:38 +0000
-Subject: Re: [PATCH 2/3] selinux: Return an error code only as a constant in sidtab_insert()
-Message-Id: <CAHC9VhQWbepC3Ba4zyXKOG5JpY-RA1vFCdMi+J1527HJTX10pA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:45:50 +0000
+Subject: [PATCH 08/10] dlm: Use kcalloc() in two functions
+Message-Id: <01b774a8-5f5a-8939-2b57-1fc99a864d11@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-	<61cd20e9-211e-b974-3525-fcb5fdf8fa7e@users.sourceforge.net>
-In-Reply-To: <61cd20e9-211e-b974-3525-fcb5fdf8fa7e@users.sourceforge.net>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 4, 2017 at 7:14 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 4 Apr 2017 11:33:53 +0200
->
-> * Return an error code without storing it in an intermediate variable.
->
-> * Delete the local variable "rc" and the jump label "out" which became
->   unnecessary with this refactoring.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/sidtab.c | 27 ++++++++++-----------------
->  1 file changed, 10 insertions(+), 17 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 May 2017 09:34:53 +0200
 
-Merged.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-> index f6915f257486..c5f436b15d19 100644
-> --- a/security/selinux/ss/sidtab.c
-> +++ b/security/selinux/ss/sidtab.c
-> @@ -32,13 +32,11 @@ int sidtab_init(struct sidtab *s)
->
->  int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->  {
-> -       int hvalue, rc = 0;
-> +       int hvalue;
->         struct sidtab_node *prev, *cur, *newnode;
->
-> -       if (!s) {
-> -               rc = -ENOMEM;
-> -               goto out;
-> -       }
-> +       if (!s)
-> +               return -ENOMEM;
->
->         hvalue = SIDTAB_HASH(sid);
->         prev = NULL;
-> @@ -48,21 +46,17 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->                 cur = cur->next;
->         }
->
-> -       if (cur && sid = cur->sid) {
-> -               rc = -EEXIST;
-> -               goto out;
-> -       }
-> +       if (cur && sid = cur->sid)
-> +               return -EEXIST;
->
->         newnode = kmalloc(sizeof(*newnode), GFP_ATOMIC);
-> -       if (!newnode) {
-> -               rc = -ENOMEM;
-> -               goto out;
-> -       }
-> +       if (!newnode)
-> +               return -ENOMEM;
-> +
->         newnode->sid = sid;
->         if (context_cpy(&newnode->context, context)) {
->                 kfree(newnode);
-> -               rc = -ENOMEM;
-> -               goto out;
-> +               return -ENOMEM;
->         }
->
->         if (prev) {
-> @@ -78,8 +72,7 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->         s->nel++;
->         if (sid >= s->next_sid)
->                 s->next_sid = sid + 1;
-> -out:
-> -       return rc;
-> +       return 0;
->  }
->
->  static struct context *sidtab_search_core(struct sidtab *s, u32 sid, int force)
-> --
-> 2.12.2
->
+  This issue was detected by using the Coccinelle software.
 
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determinations a bit safer according to
+  the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/dlm/member.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/fs/dlm/member.c b/fs/dlm/member.c
+index 89257699d4e4..92c601a11e38 100644
+--- a/fs/dlm/member.c
++++ b/fs/dlm/member.c
+@@ -217,8 +217,7 @@ int dlm_slots_assign(struct dlm_ls *ls, int *num_slots, int *slots_size,
+ 	}
+ 
+ 	array_size = max + need;
+-
+-	array = kzalloc(array_size * sizeof(struct dlm_slot), GFP_NOFS);
++	array = kcalloc(array_size, sizeof(*array), GFP_NOFS);
+ 	if (!array)
+ 		return -ENOMEM;
+ 
+@@ -491,8 +490,7 @@ void dlm_lsop_recover_done(struct dlm_ls *ls)
+ 		return;
+ 
+ 	num = ls->ls_num_nodes;
+-
+-	slots = kzalloc(num * sizeof(struct dlm_slot), GFP_KERNEL);
++	slots = kcalloc(num, sizeof(*slots), GFP_KERNEL);
+ 	if (!slots)
+ 		return;
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.12.2
+
