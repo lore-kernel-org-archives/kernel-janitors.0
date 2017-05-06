@@ -1,109 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 13:43:16 +0000
-Subject: [PATCH 3/3] ima: Replace nine seq_puts() calls by seq_putc()
-Message-Id: <1e549540-9160-6f9f-af39-d06b1c75a24d@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:39:22 +0000
+Subject: [PATCH 03/10] dlm: Improve a size determination in table_seq_start()
+Message-Id: <995aab89-a49a-fcf4-6d70-3b55580770e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
-In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 15:23:44 +0200
+Date: Sat, 6 May 2017 08:34:27 +0200
 
-Nine single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/integrity/ima/ima_policy.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/dlm/debug_fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 83446a383ace..b1ec6f2ce0ad 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1035,7 +1035,7 @@ static void policy_func_show(struct seq_file *m, enum ima_hooks func)
- 		seq_printf(m, pt(Opt_func), tbuf);
- 		break;
- 	}
--	seq_puts(m, " ");
-+	seq_putc(m, ' ');
- }
+diff --git a/fs/dlm/debug_fs.c b/fs/dlm/debug_fs.c
+index 551e0f8dbe0d..fa08448e35dd 100644
+--- a/fs/dlm/debug_fs.c
++++ b/fs/dlm/debug_fs.c
+@@ -435,7 +435,7 @@ static void *table_seq_start(struct seq_file *seq, loff_t *pos)
+ 	if (bucket >= ls->ls_rsbtbl_size)
+ 		return NULL;
  
- int ima_policy_show(struct seq_file *m, void *v)
-@@ -1057,7 +1057,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	if (entry->action & AUDIT)
- 		seq_puts(m, pt(Opt_audit));
- 
--	seq_puts(m, " ");
-+	seq_putc(m, ' ');
- 
- 	if (entry->flags & IMA_FUNC)
- 		policy_func_show(m, entry->func);
-@@ -1071,19 +1071,19 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			seq_printf(m, pt(Opt_mask), mt(mask_read));
- 		if (entry->mask & MAY_APPEND)
- 			seq_printf(m, pt(Opt_mask), mt(mask_append));
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	if (entry->flags & IMA_FSMAGIC) {
- 		snprintf(tbuf, sizeof(tbuf), "0x%lx", entry->fsmagic);
- 		seq_printf(m, pt(Opt_fsmagic), tbuf);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	if (entry->flags & IMA_FSUUID)
-@@ -1097,7 +1097,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			seq_printf(m, pt(Opt_uid_lt), tbuf);
- 		else
- 			seq_printf(m, pt(Opt_uid_eq), tbuf);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	if (entry->flags & IMA_EUID) {
-@@ -1108,7 +1108,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			seq_printf(m, pt(Opt_euid_lt), tbuf);
- 		else
- 			seq_printf(m, pt(Opt_euid_eq), tbuf);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	if (entry->flags & IMA_FOWNER) {
-@@ -1119,7 +1119,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			seq_printf(m, pt(Opt_fowner_lt), tbuf);
- 		else
- 			seq_printf(m, pt(Opt_fowner_eq), tbuf);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
- 
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
-@@ -1157,7 +1157,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
- 	rcu_read_unlock();
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- #endif	/* CONFIG_IMA_READ_POLICY */
+-	ri = kzalloc(sizeof(struct rsbtbl_iter), GFP_NOFS);
++	ri = kzalloc(sizeof(*ri), GFP_NOFS);
+ 	if (!ri)
+ 		return NULL;
+ 	if (n = 0)
 -- 
 2.12.2
 
