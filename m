@@ -1,39 +1,25 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 06 May 2017 05:29:45 +0000
-Subject: [PATCH] net: dsa: loop: Check for memory allocation failure
-Message-Id: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Sat, 06 May 2017 14:45:19 +0000
+Subject: Re: [PATCH] net: dsa: loop: Check for memory allocation failure
+Message-Id: <20170506144519.GA23180@lunn.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
-Return -ENOMEM instead, as done for some other memory allocation just a
-few lines above.
+On Sat, May 06, 2017 at 07:29:45AM +0200, Christophe JAILLET wrote:
+> If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+> Return -ENOMEM instead, as done for some other memory allocation just a
+> few lines above.
+> 
+> Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/dsa/dsa_loop.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
-index f0fc4de4fc9a..a19e1781e9bb 100644
---- a/drivers/net/dsa/dsa_loop.c
-+++ b/drivers/net/dsa/dsa_loop.c
-@@ -256,6 +256,9 @@ static int dsa_loop_drv_probe(struct mdio_device *mdiodev)
- 		return -ENOMEM;
- 
- 	ps = devm_kzalloc(&mdiodev->dev, sizeof(*ps), GFP_KERNEL);
-+	if (!ps)
-+		return -ENOMEM;
-+
- 	ps->netdev = dev_get_by_name(&init_net, pdata->netdev);
- 	if (!ps->netdev)
- 		return -EPROBE_DEFER;
--- 
-2.11.0
-
+    Andrew
