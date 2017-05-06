@@ -1,59 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 19:30:20 +0000
-Subject: [PATCH 3/3] soc-knav_dma: Delete error messages for a failed memory allocation in two functions
-Message-Id: <b37a7b6a-cee6-2536-1ffe-994a208d8d00@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:41:59 +0000
+Subject: [PATCH 05/10] dlm: Improve a size determination in dlm_recover_waiters_pre()
+Message-Id: <34dae3fb-31e8-d8a9-7beb-77b40dc94388@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
-In-Reply-To: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 21:14:48 +0200
+Date: Sat, 6 May 2017 08:48:29 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-WARNING: Possible unnecessary 'out of memory' message
-
-Thus remove such statements here.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/soc/ti/knav_dma.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/dlm/lock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index 410018d9054e..dd5adfbf9910 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -621,10 +621,9 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
- 	u32 i;
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index fd6fe55bedae..ffadb817ad39 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -5119,7 +5119,7 @@ void dlm_recover_waiters_pre(struct dlm_ls *ls)
+ 	int wait_type, stub_unlock_result, stub_cancel_result;
+ 	int dir_nodeid;
  
- 	dma = devm_kzalloc(kdev->dev, sizeof(*dma), GFP_KERNEL);
--	if (!dma) {
--		dev_err(kdev->dev, "could not allocate driver mem\n");
-+	if (!dma)
- 		return -ENOMEM;
--	}
-+
- 	INIT_LIST_HEAD(&dma->list);
- 	INIT_LIST_HEAD(&dma->chan_list);
- 
-@@ -740,10 +739,8 @@ static int knav_dma_probe(struct platform_device *pdev)
- 	}
- 
- 	kdev = devm_kzalloc(dev, sizeof(*kdev), GFP_KERNEL);
--	if (!kdev) {
--		dev_err(dev, "could not allocate driver mem\n");
-+	if (!kdev)
- 		return -ENOMEM;
--	}
- 
- 	kdev->dev = dev;
- 	INIT_LIST_HEAD(&kdev->list);
+-	ms_stub = kmalloc(sizeof(struct dlm_message), GFP_KERNEL);
++	ms_stub = kmalloc(sizeof(*ms_stub), GFP_KERNEL);
+ 	if (!ms_stub) {
+ 		log_error(ls, "dlm_recover_waiters_pre no mem");
+ 		return;
 -- 
 2.12.2
 
