@@ -1,40 +1,41 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 23 May 2017 16:23:24 +0000
-Subject: Re: [PATCH] libceph: NULL deref on crush_decode() error path
-Message-Id: <CAOi1vP98DgHKtYTXHaerz7PeooQYhM_9Ph2bVOQuHONRfGrbXg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 06 May 2017 08:23:59 +0000
+Subject: [PATCH] pinctrl: imx: Check for memory allocation failure
+Message-Id: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170523142430.GA28152@elgon.mountain>
-In-Reply-To: <20170523142430.GA28152@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linus.walleij@linaro.org, gary.bisson@boundarydevices.com, vladimir_zapolskiy@mentor.com, tony@atomide.com, vivien.didelot@savoirfairelinux.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, May 23, 2017 at 4:25 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> If there is not enough space then ceph_decode_32_safe() does a goto bad.
-> We need to return an error code in that situation.  The current code
-> returns ERR_PTR(0) which is NULL.  The callers are not expecting that
-> and it results in a NULL dereference.
->
-> Fixes: f24e9980eb86 ("ceph: OSD client")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index ffe9e904d4d1..55e3a477f92d 100644
-> --- a/net/ceph/osdmap.c
-> +++ b/net/ceph/osdmap.c
-> @@ -317,6 +317,7 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
->                 u32 yes;
->                 struct crush_rule *r;
->
-> +               err = -EINVAL;
->                 ceph_decode_32_safe(p, end, yes, bad);
->                 if (!yes) {
->                         dout("crush_decode NO rule %d off %x %p to %p\n",
+If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+Return -ENOMEM instead, as done for the other memory allocation just a
+few lines below.
+BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
 
-Applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 74bd90dfd7b1..90a946c028ff 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -581,9 +581,10 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
+ 		return -EINVAL;
+ 	}
+-	func->group_names = devm_kzalloc(info->dev,
+-					 func->num_group_names *
++	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
+ 					 sizeof(char *), GFP_KERNEL);
++	if (!func->group_names)
++		return -ENOMEM;
+ 
+ 	for_each_child_of_node(np, child) {
+ 		func->group_names[i] = child->name;
+-- 
+2.11.0
 
-                Ilya
