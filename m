@@ -1,68 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 May 2017 07:07:18 +0000
-Subject: Re: [PATCH] omapfb: Use devm_kcalloc() in vrfb_probe()
-Message-Id: <CAMuHMdXA3FV+NstypjCLVg78THQawt-s=xWHRJK+reNYa9Oqnw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 06 May 2017 05:29:45 +0000
+Subject: [PATCH] net: dsa: loop: Check for memory allocation failure
+Message-Id: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170426092018epcas4p343e69e32255faa796e7c55c3e89e40f2@epcas4p3.samsung.com>
- <4a7b1751-4319-4bde-cf26-2de2a4096c68@users.sourceforge.net>
- <1672837.1nPA5UjCzD@amdc3058> <2438676.F6TUoaB08n@amdc3058>
-In-Reply-To: <2438676.F6TUoaB08n@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, May 11, 2017 at 5:22 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> On Thursday, May 11, 2017 04:27:19 PM Bartlomiej Zolnierkiewicz wrote:
->
->> > @@ -358,11 +358,7 @@ static int __init vrfb_probe(struct platform_device *pdev)
->> >             return PTR_ERR(vrfb_base);
->> >
->> >     num_ctxs = pdev->num_resources - 1;
->> > -
->> > -   ctxs = devm_kzalloc(&pdev->dev,
->> > -                   sizeof(struct vrfb_ctx) * num_ctxs,
->> > -                   GFP_KERNEL);
->> > -
->> > +   ctxs = devm_kcalloc(&pdev->dev, num_ctxs, sizeof(*ctxs), GFP_KERNEL);
->>
->> This change makes the resulting binary larger by 24 bytes (probably
->> because of the need to have an additional function argument) and
->
-> 24 bytes seemed too much for just an additional function argument
-> so I've checked the source:
->
-> static inline void *devm_kzalloc(struct device *dev, size_t size, gfp_t gfp)
-> {
->         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-> }
-> static inline void *devm_kmalloc_array(struct device *dev,
->                                        size_t n, size_t size, gfp_t flags)
-> {
->         if (size != 0 && n > SIZE_MAX / size)
->                 return NULL;
->         return devm_kmalloc(dev, n * size, flags);
-> }
-> static inline void *devm_kcalloc(struct device *dev,
->                                  size_t n, size_t size, gfp_t flags)
-> {
->         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
-> }
->
-> The extra kcalloc() checks are inlined currently into each instance.
+If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+Return -ENOMEM instead, as done for some other memory allocation just a
+few lines above.
 
-And in this case the compiler cannot optimize them away as n is not
-known at compile time.
+Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
 
-Gr{oetje,eeting}s,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/dsa/dsa_loop.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-                        Geert
+diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
+index f0fc4de4fc9a..a19e1781e9bb 100644
+--- a/drivers/net/dsa/dsa_loop.c
++++ b/drivers/net/dsa/dsa_loop.c
+@@ -256,6 +256,9 @@ static int dsa_loop_drv_probe(struct mdio_device *mdiodev)
+ 		return -ENOMEM;
+ 
+ 	ps = devm_kzalloc(&mdiodev->dev, sizeof(*ps), GFP_KERNEL);
++	if (!ps)
++		return -ENOMEM;
++
+ 	ps->netdev = dev_get_by_name(&init_net, pdata->netdev);
+ 	if (!ps->netdev)
+ 		return -EPROBE_DEFER;
+-- 
+2.11.0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
