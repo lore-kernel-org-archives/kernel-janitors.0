@@ -1,42 +1,50 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 03 May 2017 17:48:17 +0000
-Subject: Re: [PATCH 3/9] pinctrl: Combine five seq_printf() calls into one call in pinconf_dbg_config_print()
-Message-Id: <CAHp75Vdrz91SD=xxBZS9_3kL3XPeVbgyaZpYy52TUixcYHx3vw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 May 2017 22:01:05 +0000
+Subject: [PATCH] btrfs: remove redundant assignment and check on variable ret
+Message-Id: <20170506220105.13206-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <fe725663-d873-b8e4-f364-9abec47ba17e@users.sourceforge.net>
-In-Reply-To: <fe725663-d873-b8e4-f364-9abec47ba17e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Tue, May 2, 2017 at 12:23 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 May 2017 22:52:29 +0200
->
-> Some data were put into a sequence by five separate function calls.
-> Print the same data by a single function call instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-> -               seq_printf(s, "No config found for dev/state/pin, expected:\n");
-> -               seq_printf(s, "Searched dev:%s\n", dbg->dev_name);
-> -               seq_printf(s, "Searched state:%s\n", dbg->state_name);
-> -               seq_printf(s, "Searched pin:%s\n", dbg->pin_name);
-> -               seq_printf(s, "Use: modify config_pin <devname> "\
-> -                               "<state> <pinname> <value>\n");
-> +               seq_printf(s,
-> +                          "No config found for dev/state/pin, expected:\n"
-> +                          "Searched dev:%s\n"
-> +                          "Searched state:%s\n"
-> +                          "Searched pin:%s\n"
-> +                          "Use: modify config_pin <devname> <state> <pinname> <value>\n",
-> +                          dbg->dev_name,
-> +                          dbg->state_name,
-> +                          dbg->pin_name);
+Variable ret is assigned to zero and is always zero throughout the
+function.  Thus the check for ret being less than zero is always
+false and so mapping_set_error always has an -EIO error passed to
+it.  Hence we can remove the redundant assignment and check on ret.
 
-Please, no.
+Detected by CoverityScan, CID#1414312 ("Logically dead code")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/extent_io.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index d8da3edf2ac3..7922cd34ba82 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2447,7 +2447,6 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
+ {
+ 	int uptodate = (err = 0);
+ 	struct extent_io_tree *tree;
+-	int ret = 0;
+ 
+ 	tree = &BTRFS_I(page->mapping->host)->io_tree;
+ 
+@@ -2458,8 +2457,7 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
+ 	if (!uptodate) {
+ 		ClearPageUptodate(page);
+ 		SetPageError(page);
+-		ret = ret < 0 ? ret : -EIO;
+-		mapping_set_error(page->mapping, ret);
++		mapping_set_error(page->mapping, -EIO);
+ 	}
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
