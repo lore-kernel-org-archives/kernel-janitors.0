@@ -1,50 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 20:08:10 +0000
-Subject: [PATCH 2/3] GPU-DRM-Radeon: Use seq_puts() in radeon_debugfs_pm_info()
-Message-Id: <85bb0532-b548-b3cc-4482-ce7a161c7d32@users.sourceforge.net>
+Date: Sat, 06 May 2017 12:16:22 +0000
+Subject: [PATCH 2/2] kcm: Use seq_puts() in kcm_format_psock()
+Message-Id: <5bb0b898-a506-1fdd-19ab-3c3988c077b2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
-In-Reply-To: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
+References: <d9601df3-94c8-f15c-3a54-770604caf6a6@users.sourceforge.net>
+In-Reply-To: <d9601df3-94c8-f15c-3a54-770604caf6a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>
+To: netdev@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, "David S. Miller" <davem@davemloft.net>, Jiri Slaby <jslaby@suse.cz>, Tom Herbert <tom@herbertland.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 21:50:14 +0200
+Date: Sat, 6 May 2017 14:04:02 +0200
 
-Two strings which did not contain data format specifications should be put
+A string which did not contain a data format specification should be put
 into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/radeon/radeon_pm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/kcm/kcmproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_pm.c b/drivers/gpu/drm/radeon/radeon_pm.c
-index 326ad068c15a..f84ddcc426c1 100644
---- a/drivers/gpu/drm/radeon/radeon_pm.c
-+++ b/drivers/gpu/drm/radeon/radeon_pm.c
-@@ -1869,13 +1869,14 @@ static int radeon_debugfs_pm_info(struct seq_file *m, void *data)
- 
- 	if  ((rdev->flags & RADEON_IS_PX) &&
- 	     (ddev->switch_power_state != DRM_SWITCH_POWER_ON)) {
--		seq_printf(m, "PX asic powered off\n");
-+		seq_puts(m, "PX asic powered off\n");
- 	} else if (rdev->pm.dpm_enabled) {
- 		mutex_lock(&rdev->pm.mutex);
- 		if (rdev->asic->dpm.debugfs_print_current_performance_level)
- 			radeon_dpm_debugfs_print_current_performance_level(rdev, m);
- 		else
--			seq_printf(m, "Debugfs support not implemented for this asic\n");
-+			seq_puts(m,
-+				 "Debugfs support not implemented for this asic\n");
- 		mutex_unlock(&rdev->pm.mutex);
- 	} else {
- 		seq_printf(m, "default engine clock: %u0 kHz\n", rdev->pm.default_sclk);
+diff --git a/net/kcm/kcmproc.c b/net/kcm/kcmproc.c
+index 46b8b5f6c57f..b59b46822d9e 100644
+--- a/net/kcm/kcmproc.c
++++ b/net/kcm/kcmproc.c
+@@ -182,7 +182,7 @@ static void kcm_format_psock(struct kcm_psock *psock, struct seq_file *seq,
+ 				seq_printf(seq, "RxWait=%u ",
+ 					   psock->strp.rx_need_bytes);
+ 			else
+-				seq_printf(seq, "RxWait ");
++				seq_puts(seq, "RxWait ");
+ 		}
+ 	} else  {
+ 		if (psock->strp.rx_paused)
 -- 
 2.12.2
 
