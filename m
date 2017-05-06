@@ -1,66 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 13:36:34 +0000
-Subject: [PATCH] S390-DASD: Delete an error message for a failed memory allocation in two functions
-Message-Id: <5708cda3-991c-e05c-85c4-5b2199395bb4@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:44:50 +0000
+Subject: [PATCH 07/10] dlm: Use kmalloc_array() in make_member_array()
+Message-Id: <d35ccada-c558-3ab1-1828-5c95b668f45c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 15:30:44 +0200
+Date: Sat, 6 May 2017 09:19:17 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/s390/block/dasd_eckd.c | 7 ++-----
- drivers/s390/block/dasd_fba.c  | 7 ++-----
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ fs/dlm/member.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 122456e4db89..99c73decae49 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -1721,12 +1721,9 @@ dasd_eckd_check_characteristics(struct dasd_device *device)
+diff --git a/fs/dlm/member.c b/fs/dlm/member.c
+index 9c47f1c14a8b..89257699d4e4 100644
+--- a/fs/dlm/member.c
++++ b/fs/dlm/member.c
+@@ -405,8 +405,7 @@ static void make_member_array(struct dlm_ls *ls)
  	}
- 	if (!private) {
- 		private = kzalloc(sizeof(*private), GFP_KERNEL | GFP_DMA);
--		if (!private) {
--			dev_warn(&device->cdev->dev,
--				 "Allocating memory for private DASD data "
--				 "failed\n");
-+		if (!private)
- 			return -ENOMEM;
--		}
-+
- 		device->private = private;
- 	} else {
- 		memset(private, 0, sizeof(*private));
-diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
-index 462cab5d4302..2b2f9b0da5c2 100644
---- a/drivers/s390/block/dasd_fba.c
-+++ b/drivers/s390/block/dasd_fba.c
-@@ -132,12 +132,9 @@ dasd_fba_check_characteristics(struct dasd_device *device)
  
- 	if (!private) {
- 		private = kzalloc(sizeof(*private), GFP_KERNEL | GFP_DMA);
--		if (!private) {
--			dev_warn(&device->cdev->dev,
--				 "Allocating memory for private DASD "
--				 "data failed\n");
-+		if (!private)
- 			return -ENOMEM;
--		}
-+
- 		device->private = private;
- 	} else {
- 		memset(private, 0, sizeof(*private));
+ 	ls->ls_total_weight = total;
+-
+-	array = kmalloc(sizeof(int) * total, GFP_NOFS);
++	array = kmalloc_array(total, sizeof(*array), GFP_NOFS);
+ 	if (!array)
+ 		return;
+ 
 -- 
-2.13.0
+2.12.2
 
