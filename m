@@ -1,52 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 13:57:25 +0000
-Subject: [PATCH 5/5] drm/sti: Adjust two checks for null pointers in sti_hqvdp_probe()
-Message-Id: <918229e6-80fe-629f-8fec-bf60ac15275f@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:40:19 +0000
+Subject: [PATCH 04/10] dlm: Use kcalloc() in dlm_scan_waiters()
+Message-Id: <9b591257-7dd1-97ca-b12d-55c963e0c528@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
-In-Reply-To: <f4a1bd89-50c4-ea2d-ea70-de5209b8a55a@users.sourceforge.net>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, David Airlie <airlied@linux.ie>, Fabien Dessenne <fabien.dessenne@st.com>, Vincent Abriou <vincent.abriou@st.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 May 2017 15:33:19 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sat, 6 May 2017 08:38:49 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kcalloc".
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/sti/sti_hqvdp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/dlm/lock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-index 372ea294da80..a1c161f77804 100644
---- a/drivers/gpu/drm/sti/sti_hqvdp.c
-+++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-@@ -1356,12 +1356,12 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 6df332296c66..fd6fe55bedae 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -1426,7 +1426,7 @@ void dlm_scan_waiters(struct dlm_ls *ls)
  
- 	/* Get Memory resources */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res = NULL) {
-+	if (!res) {
- 		DRM_ERROR("Get memory resource failed\n");
- 		return -ENXIO;
- 	}
- 	hqvdp->regs = devm_ioremap(dev, res->start, resource_size(res));
--	if (hqvdp->regs = NULL) {
-+	if (!hqvdp->regs) {
- 		DRM_ERROR("Register mapping failed\n");
- 		return -ENXIO;
- 	}
+ 		if (!num_nodes) {
+ 			num_nodes = ls->ls_num_nodes;
+-			warned = kzalloc(num_nodes * sizeof(int), GFP_KERNEL);
++			warned = kcalloc(num_nodes, sizeof(int), GFP_KERNEL);
+ 		}
+ 		if (!warned)
+ 			continue;
 -- 
 2.12.2
 
