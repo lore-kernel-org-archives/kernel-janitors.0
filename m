@@ -1,49 +1,40 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 27 May 2017 19:08:02 +0000
-Subject: Re: [PATCH 0/6] PNP: Adjustments for four function implementations
-Message-Id: <CAHp75VcX3JfU2X_Q3Y0embLbtFri+xnTOrJ40zQC9PSQU9OZwA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 06 May 2017 22:13:55 +0000
+Subject: [PATCH] scsi: lpfc: ensure els_wq is being checked before destroying it
+Message-Id: <20170506221355.13552-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
-In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, May 15, 2017 at 10:10 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 15 May 2017 21:03:21 +0200
->
-> A few update suggestions were taken into account
-> from static source code analysis.
+From: Colin Ian King <colin.king@canonical.com>
 
-You need to fold these 6 in to two:
-PNP: Improve a size determination
-PNP: Delete an error message for a failed memory allocation
+I believe there is a typo on the wq destroy of els_wq, currently
+the driver is checking if els_cq is not null and I think this
+should be a check on els_wq instead.
 
-And effectively after I'm not sure the first one even needed for now.
+Detected by CoverityScan, CID#1411629 ("Copy-paste error")
 
->
-> Markus Elfring (6):
->   Delete an error message for a failed memory allocation in pnp_alloc()
->   Improve a size determination in pnp_alloc_dev()
->   Improve a size determination in pnp_clone_dependent_set()
->   Delete an error message for a failed memory allocation in pnp_clone_dependent_set()
->   Improve a size determination in quirk_awe32_add_ports()
->   Delete an error message for a failed memory allocation in quirk_awe32_add_ports()
->
->  drivers/pnp/core.c   |  6 ++----
->  drivers/pnp/quirks.c | 15 ++++-----------
->  2 files changed, 6 insertions(+), 15 deletions(-)
->
-> --
-> 2.13.0
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 90ae354a9c45..c925bbe9b35d 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -8847,7 +8847,7 @@ lpfc_sli4_queue_unset(struct lpfc_hba *phba)
+ 		lpfc_wq_destroy(phba, phba->sli4_hba.nvmels_wq);
+ 
+ 	/* Unset ELS work queue */
+-	if (phba->sli4_hba.els_cq)
++	if (phba->sli4_hba.els_wq)
+ 		lpfc_wq_destroy(phba, phba->sli4_hba.els_wq);
+ 
+ 	/* Unset unsolicited receive queue */
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
