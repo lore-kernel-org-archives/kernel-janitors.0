@@ -1,27 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 18:50:06 +0000
-Subject: [PATCH 0/3] CoreSight-ETB10: Adjustments for three function implementations
-Message-Id: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
+Date: Sat, 06 May 2017 08:48:35 +0000
+Subject: [PATCH 10/10] dlm: Delete an unnecessary variable initialisation in dlm_ls_start()
+Message-Id: <c0122498-4a7f-d5f3-9a73-0f804d3b07d2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 20:46:54 +0200
+Date: Sat, 6 May 2017 09:56:55 +0200
 
-Three update suggestions were taken into account
-from static source code analysis.
+The local variable "rv" is reassigned by a statement at the beginning.
+Thus omit the explicit initialisation.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in etb_probe()
-  Fix a typo in a comment line
-  Improve a size determination in etb_alloc_buffer()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/dlm/member.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/hwtracing/coresight/coresight-etb10.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
+diff --git a/fs/dlm/member.c b/fs/dlm/member.c
+index 3e565034ff2e..3fda3832cf6a 100644
+--- a/fs/dlm/member.c
++++ b/fs/dlm/member.c
+@@ -670,7 +670,7 @@ int dlm_ls_stop(struct dlm_ls *ls)
+ 
+ int dlm_ls_start(struct dlm_ls *ls)
+ {
+-	struct dlm_recover *rv = NULL, *rv_old;
++	struct dlm_recover *rv, *rv_old;
+ 	struct dlm_config_node *nodes;
+ 	int error, count;
+ 
 -- 
-2.12.3
+2.12.2
 
