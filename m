@@ -1,43 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 20:15:10 +0000
-Subject: [PATCH 2/5] atm: Delete an error message for a failed memory allocation in make_entry()
-Message-Id: <d87a6c4a-c4ed-38b3-97cf-29edc3590f9b@users.sourceforge.net>
+Date: Sun, 07 May 2017 14:38:36 +0000
+Subject: [PATCH] powerpc/mm: Use seq_putc() in two functions
+Message-Id: <98cb37ed-adee-3e13-8501-baa500c27951@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
-In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Christophe Leroy <christophe.leroy@c-s.fr>, Michael Ellerman <mpe@ellerman.id.au>, Oliver O'Halloran <oohall@gmail.com>, Paul Mackerras <paulus@samba.org>, Rashmica Gupta <rashmica.g@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 21:24:45 +0200
+Date: Sun, 7 May 2017 16:32:04 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Two single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/atm/lec.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/powerpc/mm/dump_hashpagetable.c   | 2 +-
+ arch/powerpc/mm/dump_linuxpagetables.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/atm/lec.c b/net/atm/lec.c
-index 6ad3ca625a44..a11dbd3a5119 100644
---- a/net/atm/lec.c
-+++ b/net/atm/lec.c
-@@ -1556,7 +1556,6 @@ static struct lec_arp_table *make_entry(struct lec_priv *priv,
--	if (!to_return) {
--		pr_info("LEC: Arp entry kmalloc failed\n");
-+	if (!to_return)
- 		return NULL;
--	}
-+
- 	ether_addr_copy(to_return->mac_addr, mac_addr);
- 	INIT_HLIST_NODE(&to_return->next);
- 	setup_timer(&to_return->timer, lec_arp_expire_arp,
+diff --git a/arch/powerpc/mm/dump_hashpagetable.c b/arch/powerpc/mm/dump_hashpagetable.c
+index c6b900f54c07..31d248c82f95 100644
+--- a/arch/powerpc/mm/dump_hashpagetable.c
++++ b/arch/powerpc/mm/dump_hashpagetable.c
+@@ -205,7 +205,7 @@ static void dump_hpte_info(struct pg_state *st, unsigned long ea, u64 v, u64 r,
+ 	aps_index = calculate_pagesize(st, aps, "actual");
+ 	if (aps_index != 2)
+ 		seq_printf(st->seq, "LP enc: %lx", lp);
+-	seq_puts(st->seq, "\n");
++	seq_putc(st->seq, '\n');
+ }
+ 
+ 
+diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
+index d659345a98d6..5c08de16339d 100644
+--- a/arch/powerpc/mm/dump_linuxpagetables.c
++++ b/arch/powerpc/mm/dump_linuxpagetables.c
+@@ -349,7 +349,7 @@ static void note_page(struct pg_state *st, unsigned long addr,
+ 					  st->current_flags,
+ 					  pg_level[st->level].num);
+ 
+-			seq_puts(st->seq, "\n");
++			seq_putc(st->seq, '\n');
+ 		}
+ 
+ 		/*
 -- 
-2.13.0
+2.12.2
 
