@@ -1,36 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 May 2017 09:04:18 +0000
-Subject: [PATCH v2 2/2] perf/core: fix error handling in perf_event_alloc()
-Message-Id: <20170522090418.hvs6icgpdo53wkn5@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 May 2017 09:51:47 +0000
+Subject: [PATCH 1/3] thermal: tegra: Combine two function calls into one in regs_show()
+Message-Id: <4623bb17-1dd8-2038-e465-5fe3309e22ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
+In-Reply-To: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Eduardo Valentin <edubezval@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Wei Ni <wni@nvidia.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We don't set an error code here which means that perf_event_alloc()
-returns ERR_PTR(0) (in other words NULL).  The callers are not expecting
-that and would Oops.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 May 2017 10:50:35 +0200
 
-Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A bit of data was put into a sequence by two separate function calls
+at two places. Print the same data by single function calls instead.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v2: split up the patch
+ drivers/thermal/tegra/soctherm.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 13f5b942580b..4c24bc4c8a63 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9476,8 +9474,10 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		event->addr_filters_offs = kcalloc(pmu->nr_addr_filters,
- 						   sizeof(unsigned long),
- 						   GFP_KERNEL);
--		if (!event->addr_filters_offs)
-+		if (!event->addr_filters_offs) {
-+			err = -ENOMEM;
- 			goto err_per_task;
-+		}
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 7d2db23d71a3..c5871f9b6596 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -706,9 +706,7 @@ static int regs_show(struct seq_file *s, void *data)
+ 	seq_printf(s, "PDIV: 0x%x\n", r);
  
- 		/* force hw sync on the address filters */
- 		event->addr_filters_gen = 1;
+ 	r = readl(ts->regs + SENSOR_HOTSPOT_OFF);
+-	seq_printf(s, "HOTSPOT: 0x%x\n", r);
+-
+-	seq_puts(s, "\n");
++	seq_printf(s, "HOTSPOT: 0x%x\n\n", r);
+ 	seq_puts(s, "-----SOC_THERM-----\n");
+ 
+ 	r = readl(ts->regs + SENSOR_TEMP1);
+@@ -809,9 +807,7 @@ static int regs_show(struct seq_file *s, void *data)
+ 	}
+ 
+ 	r = readl(ts->regs + THROT_GLOBAL_CFG);
+-	seq_puts(s, "\n");
+-	seq_printf(s, "GLOBAL THROTTLE CONFIG: 0x%08x\n", r);
+-
++	seq_printf(s, "\nGLOBAL THROTTLE CONFIG: 0x%08x\n", r);
+ 	seq_puts(s, "---------------------------------------------------\n");
+ 	r = readl(ts->regs + THROT_STATUS);
+ 	state = REG_GET_MASK(r, THROT_STATUS_BREACH_MASK);
+-- 
+2.12.2
 
