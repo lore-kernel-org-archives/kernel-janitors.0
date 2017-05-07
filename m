@@ -1,64 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 16:49:36 +0000
-Subject: [PATCH 4/4] drm/dp: Adjust four checks for null pointers
-Message-Id: <311ce726-9941-9040-1368-cdd556f41e73@users.sourceforge.net>
+Date: Sun, 07 May 2017 20:15:37 +0000
+Subject: [PATCH] android: binder: Use seq_putc() in print_binder_node()
+Message-Id: <ac183437-7f90-d24f-d415-8d83d6f21845@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
-In-Reply-To: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: devel@driverdev.osuosl.org, =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Riley Andrews <riandrews@android.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 18:22:52 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sun, 7 May 2017 22:07:16 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index bcc76f15f1ce..f46bf5101d14 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -1405,13 +1405,12 @@ static int set_hdr_from_dst_qlock(struct drm_dp_sideband_msg_hdr *hdr,
- 			DRM_DEBUG_KMS("%s: failed to find slot\n", __func__);
- 			return -EAGAIN;
- 		}
--		if (mstb->tx_slots[0] = NULL && mstb->tx_slots[1] = NULL) {
-+		if (!mstb->tx_slots[0] && !mstb->tx_slots[1]) {
- 			txmsg->seqno = mstb->last_seqno;
- 			mstb->last_seqno ^= 1;
--		} else if (mstb->tx_slots[0] = NULL)
--			txmsg->seqno = 0;
--		else
--			txmsg->seqno = 1;
-+		} else {
-+			txmsg->seqno = mstb->tx_slots[0] ? 1 : 0;
-+		}
- 		mstb->tx_slots[txmsg->seqno] = txmsg;
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index aae4d8d4be36..041b49b0bbd9 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3871,7 +3871,7 @@ static void print_binder_node(struct seq_file *m, struct binder_node *node)
+ 		hlist_for_each_entry(ref, &node->refs, node_entry)
+ 			seq_printf(m, " %d", ref->proc->pid);
  	}
- 
-@@ -2044,7 +2043,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
- 
- 		/* add initial branch device at LCT 1 */
- 		mstb = drm_dp_add_mst_branch_device(1, NULL);
--		if (mstb = NULL) {
-+		if (!mstb) {
- 			ret = -ENOMEM;
- 			goto out_unlock;
- 		}
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	list_for_each_entry(w, &node->async_todo, entry)
+ 		print_binder_work(m, "    ",
+ 				  "    pending async transaction", w);
 -- 
 2.12.2
 
