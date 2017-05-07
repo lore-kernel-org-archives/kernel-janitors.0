@@ -1,42 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 13:01:40 +0000
-Subject: [PATCH] rtc-88pm80x: Delete an error message for a failed memory allocation in pm80x_rtc_probe()
-Message-Id: <79e5d766-2e58-4cea-7812-ea45995873ac@users.sourceforge.net>
+Date: Sun, 07 May 2017 13:41:14 +0000
+Subject: [PATCH 1/3] ima: Use seq_putc() in ima_ascii_measurements_show()
+Message-Id: <6d0e528b-dc78-7927-1820-a6eaf5c7cb02@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
+In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Chao Xie <chao.xie@marvell.com>, Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-security-module@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 14:54:13 +0200
+Date: Sun, 7 May 2017 14:45:01 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Two single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rtc/rtc-88pm80x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ security/integrity/ima/ima_fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
-index 466bf7f9a285..ae0e2561ecfa 100644
---- a/drivers/rtc/rtc-88pm80x.c
-+++ b/drivers/rtc/rtc-88pm80x.c
-@@ -266,10 +266,8 @@ static int pm80x_rtc_probe(struct platform_device *pdev)
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ca303e5d2b94..732b5cd27042 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -242,14 +242,14 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
  
- 	if (!pdata) {
- 		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&pdev->dev, "failed to allocate memory\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
+ 	/* 4th:  template specific data */
+ 	for (i = 0; i < e->template_desc->num_fields; i++) {
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 		if (e->template_data[i].len = 0)
+ 			continue;
+ 
+ 		e->template_desc->fields[i]->field_show(m, IMA_SHOW_ASCII,
+ 							&e->template_data[i]);
  	}
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
  
- 	info -- 
-2.13.0
+-- 
+2.12.2
 
