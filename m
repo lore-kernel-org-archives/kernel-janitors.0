@@ -1,27 +1,109 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 20:05:50 +0000
-Subject: [PATCH 0/2] regmap: Adjustments for two function implementations
-Message-Id: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
+Date: Sun, 07 May 2017 13:43:16 +0000
+Subject: [PATCH 3/3] ima: Replace nine seq_puts() calls by seq_putc()
+Message-Id: <1e549540-9160-6f9f-af39-d06b1c75a24d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
+In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 22:02:02 +0200
+Date: Sun, 7 May 2017 15:23:44 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Nine single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in regmap_bulk_write()
-  Adjust five checks for null pointers in __regmap_init()
+This issue was detected by using the Coccinelle software.
 
- drivers/base/regmap/regmap.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/integrity/ima/ima_policy.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 83446a383ace..b1ec6f2ce0ad 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1035,7 +1035,7 @@ static void policy_func_show(struct seq_file *m, enum ima_hooks func)
+ 		seq_printf(m, pt(Opt_func), tbuf);
+ 		break;
+ 	}
+-	seq_puts(m, " ");
++	seq_putc(m, ' ');
+ }
+ 
+ int ima_policy_show(struct seq_file *m, void *v)
+@@ -1057,7 +1057,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 	if (entry->action & AUDIT)
+ 		seq_puts(m, pt(Opt_audit));
+ 
+-	seq_puts(m, " ");
++	seq_putc(m, ' ');
+ 
+ 	if (entry->flags & IMA_FUNC)
+ 		policy_func_show(m, entry->func);
+@@ -1071,19 +1071,19 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			seq_printf(m, pt(Opt_mask), mt(mask_read));
+ 		if (entry->mask & MAY_APPEND)
+ 			seq_printf(m, pt(Opt_mask), mt(mask_append));
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	if (entry->flags & IMA_FSMAGIC) {
+ 		snprintf(tbuf, sizeof(tbuf), "0x%lx", entry->fsmagic);
+ 		seq_printf(m, pt(Opt_fsmagic), tbuf);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	if (entry->flags & IMA_FSUUID)
+@@ -1097,7 +1097,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			seq_printf(m, pt(Opt_uid_lt), tbuf);
+ 		else
+ 			seq_printf(m, pt(Opt_uid_eq), tbuf);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	if (entry->flags & IMA_EUID) {
+@@ -1108,7 +1108,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			seq_printf(m, pt(Opt_euid_lt), tbuf);
+ 		else
+ 			seq_printf(m, pt(Opt_euid_eq), tbuf);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	if (entry->flags & IMA_FOWNER) {
+@@ -1119,7 +1119,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			seq_printf(m, pt(Opt_fowner_lt), tbuf);
+ 		else
+ 			seq_printf(m, pt(Opt_fowner_eq), tbuf);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+ 
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+@@ -1157,7 +1157,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 	if (entry->flags & IMA_PERMIT_DIRECTIO)
+ 		seq_puts(m, "permit_directio ");
+ 	rcu_read_unlock();
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+ #endif	/* CONFIG_IMA_READ_POLICY */
 -- 
-2.13.0
+2.12.2
 
