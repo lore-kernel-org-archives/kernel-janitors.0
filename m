@@ -1,40 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 19 May 2017 11:10:18 +0000
-Subject: [PATCH] drm/pl111: make structure mode_config_funcs static
-Message-Id: <20170519111018.19641-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 May 2017 17:14:55 +0000
+Subject: [PATCH 2/4] s390/processor: Use seq_putc() in show_cpu_summary()
+Message-Id: <0d2e6c6c-00d9-b83e-0631-ee8bae32b750@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
+In-Reply-To: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tom Cooksey <tom.cooksey@arm.com>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Vegard Nossum <vegard.nossum@oracle.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 May 2017 18:03:11 +0200
 
-structure mode_config_funcs can be made static as it does not need to be
-in global scope.  Fixes sparse warning:
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-warning: symbol 'mode_config_funcs' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Fixes: bed41005e6174d ("drm/pl111: Initial drm/kms driver for pl111")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/pl111/pl111_drv.c | 2 +-
+ arch/s390/kernel/processor.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
-index 936403f65508..7012411071ba 100644
---- a/drivers/gpu/drm/pl111/pl111_drv.c
-+++ b/drivers/gpu/drm/pl111/pl111_drv.c
-@@ -72,7 +72,7 @@
- 
- #define DRIVER_DESC      "DRM module for PL111"
- 
--struct drm_mode_config_funcs mode_config_funcs = {
-+static struct drm_mode_config_funcs mode_config_funcs = {
- 	.fb_create = drm_fb_cma_create,
- 	.atomic_check = drm_atomic_helper_check,
- 	.atomic_commit = drm_atomic_helper_commit,
+diff --git a/arch/s390/kernel/processor.c b/arch/s390/kernel/processor.c
+index 778cd6536175..b9a40c81e3d8 100644
+--- a/arch/s390/kernel/processor.c
++++ b/arch/s390/kernel/processor.c
+@@ -128,7 +128,7 @@ static void show_cpu_summary(struct seq_file *m, void *v)
+ 	for (i = 0; i < ARRAY_SIZE(int_hwcap_str); i++)
+ 		if (int_hwcap_str[i] && (int_hwcap & (1UL << i)))
+ 			seq_printf(m, "%s ", int_hwcap_str[i]);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	show_facilities(m);
+ 	show_cacheinfo(m);
+ 	for_each_online_cpu(cpu) {
 -- 
-2.11.0
+2.12.2
 
