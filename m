@@ -1,35 +1,41 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Mon, 29 May 2017 23:08:47 +0000
-Subject: Re: [PATCH] scsi: lpfc: make a couple of functions static
-Message-Id: <3d1696a8-0f7b-20aa-b242-839b91cc7068@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 May 2017 18:05:16 +0000
+Subject: [PATCH] ipmi_ssif: remove redundant null check on array client->adapter->name
+Message-Id: <20170507180516.24887-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518093524.13549-1-colin.king@canonical.com>
-In-Reply-To: <20170518093524.13549-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>, openipmi-developer@lists.sourceforge.net
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Patch is fine.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: James Smart  <james.smart@broadcom.com>
+The null check on client->adapter->name is redundant as name is an
+array of I2C_NAME_SIZE chars and hence can never be null. We may as
+well remove this redundant check.
 
--- james
+Detected by CoverityScan, CID#1375918 ("Array compared against 0")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/ipmi/ipmi_ssif.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On 5/18/2017 2:35 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> functions lpfc_nvmet_cleanup_io_context and lpfc_nvmet_setup_io_context
-> can be made static as they do not need to be in global scope.
->
-> Cleans up sparse warnings:
->    "warning: symbol 'lpfc_nvmet_cleanup_io_context' was not declared.
->     Should it be static?"
->    "warning: symbol 'lpfc_nvmet_setup_io_context' was not declared.
->     Should it be static?"
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index 0b22a9be5029..d9243c5d2647 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -1417,8 +1417,7 @@ static int find_slave_address(struct i2c_client *client, int slave_addr)
+ 	list_for_each_entry(info, &ssif_infos, link) {
+ 		if (info->binfo.addr != client->addr)
+ 			continue;
+-		if (info->adapter_name && client->adapter->name &&
+-		    strcmp_nospace(info->adapter_name,
++		if (info->adapter_name && strcmp_nospace(info->adapter_name,
+ 				   client->adapter->name))
+ 			continue;
+ 		if (info->slave_addr) {
+-- 
+2.11.0
 
