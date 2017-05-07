@@ -1,34 +1,50 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Tue, 02 May 2017 13:15:10 +0000
-Subject: Re: [PATCH 0/3] net-SCTP: Fine-tuning for six function implementations
-Message-Id: <20170502131510.GA20565@hmswarspite.think-freely.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 07 May 2017 12:03:09 +0000
+Subject: [PATCH 2/2] apparmorfs: Use seq_putc() in two functions
+Message-Id: <22def82a-4cd8-a673-f35f-012cc36fe797@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
-In-Reply-To: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
+References: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
+In-Reply-To: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Vlad Yasevich <vyasevich@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On Mon, May 01, 2017 at 03:30:25PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 May 2017 15:25:05 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (3):
->   Replace six seq_printf() calls by seq_putc()
->   Combine two seq_printf() calls into one call in sctp_remaddr_seq_show()
->   Replace four seq_printf() calls by seq_puts()
-> 
->  net/sctp/proc.c | 39 ++++++++++++++++-----------------------
->  1 file changed, 16 insertions(+), 23 deletions(-)
-> 
-> -- 
-> 2.12.2
-> 
-> 
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 May 2017 13:50:28 +0200
+
+Two single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/apparmor/apparmorfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index b4d83e0bc651..41e427a4f051 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -494,7 +494,7 @@ static int aa_fs_seq_hash_show(struct seq_file *seq, void *v)
+ 	if (profile->hash) {
+ 		for (i = 0; i < size; i++)
+ 			seq_printf(seq, "%.2x", profile->hash[i]);
+-		seq_puts(seq, "\n");
++		seq_putc(seq, '\n');
+ 	}
+ 	aa_put_profile(profile);
+ 
+@@ -602,7 +602,7 @@ static int aa_fs_seq_raw_hash_show(struct seq_file *seq, void *v)
+ 	if (profile->rawdata->hash) {
+ 		for (i = 0; i < size; i++)
+ 			seq_printf(seq, "%.2x", profile->rawdata->hash[i]);
+-		seq_puts(seq, "\n");
++		seq_putc(seq, '\n');
+ 	}
+ 	aa_put_profile(profile);
+ 
+-- 
+2.12.2
 
