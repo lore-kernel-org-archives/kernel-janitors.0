@@ -1,48 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 13:41:14 +0000
-Subject: [PATCH 1/3] ima: Use seq_putc() in ima_ascii_measurements_show()
-Message-Id: <6d0e528b-dc78-7927-1820-a6eaf5c7cb02@users.sourceforge.net>
+Date: Sun, 07 May 2017 09:52:54 +0000
+Subject: [PATCH 2/3] thermal: tegra: Use seq_putc() in regs_show()
+Message-Id: <e9e495b9-897c-af37-4749-f175a7b9f7c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
-In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
+References: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
+In-Reply-To: <b0795133-ebb9-56b3-567d-b3773f298789-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 14:45:01 +0200
+Date: Sun, 7 May 2017 10:57:40 +0200
 
-Two single characters should be put into a sequence.
+A single character (line break) should be put into a sequence.
 Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/integrity/ima/ima_fs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca303e5d2b94..732b5cd27042 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -242,14 +242,14 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index c5871f9b6596..1b3915588bce 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -661,6 +661,6 @@ static int regs_show(struct seq_file *s, void *data)
  
- 	/* 4th:  template specific data */
- 	for (i = 0; i < e->template_desc->num_fields; i++) {
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 		if (e->template_data[i].len = 0)
+ 		if (!state) {
+-			seq_puts(s, "\n");
++			seq_putc(s, '\n');
  			continue;
- 
- 		e->template_desc->fields[i]->field_show(m, IMA_SHOW_ASCII,
- 							&e->template_data[i]);
- 	}
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
+ 		}
  
 -- 
 2.12.2
