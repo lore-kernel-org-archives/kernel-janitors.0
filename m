@@ -1,33 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 08:45:10 +0000
-Subject: Re: Clarification for general change acceptance
-Message-Id: <435021fd-ec99-eb58-c69a-a48cadd1f610@users.sourceforge.net>
+Date: Sun, 07 May 2017 12:02:07 +0000
+Subject: [PATCH 1/2] apparmorfs: Combine two function calls into one in aa_fs_seq_raw_abi_show()
+Message-Id: <b0ee52a7-06d7-2bbb-75dc-b4a17e3dccd3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
- <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
- <20170511093015.4cdfdb6c@xeon-e3> <20170512070909.xxa62d2cde3qoj4f@mwanda>
- <8d38547f-a086-438a-5b2a-4d11929530ec@users.sourceforge.net>
- <1494575540.2028.17.camel@perches.com>
- <a348c5f5-d2fd-0d30-f579-a5939eab2f2b@users.sourceforge.net>
- <alpine.DEB.2.20.1705121635000.2981@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1705121635000.2981@hadrien>
+References: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
+In-Reply-To: <b58df574-97f1-dbc5-2198-fe4734f24b8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Joe Perches <joe@perches.com>, Dan Carpenter <dan.carpenter@oracle.com>, Stephen Hemminger <stephen@networkplumber.org>, Wolfram Sang <wsa@the-dreams.de>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@linuxdriverproject.org
+To: linux-security-module@vger.kernel.org
 
-> When you make a patch, you are not obliged to eliminate all of the other
-> checkpatch warnings on the file.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 7 May 2017 13:43:50 +0200
 
-Your view is generally fine.
+A bit of data was put into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/apparmor/apparmorfs.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> I don't know where you got this idea from.
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 4f6ac9dbc65d..b4d83e0bc651 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -572,10 +572,9 @@ static int aa_fs_seq_raw_abi_show(struct seq_file *seq, void *v)
+ 	struct aa_proxy *proxy = seq->private;
+ 	struct aa_profile *profile = aa_get_profile_rcu(&proxy->profile);
+ 
+-	if (profile->rawdata->abi) {
+-		seq_printf(seq, "v%d", profile->rawdata->abi);
+-		seq_puts(seq, "\n");
+-	}
++	if (profile->rawdata->abi)
++		seq_printf(seq, "v%d\n", profile->rawdata->abi);
++
+ 	aa_put_profile(profile);
+ 
+ 	return 0;
+-- 
+2.12.2
 
-I got used as a professional software developer to some approaches for
-reducing development warnings to some degree. So I picked further update
-suggestions up also from this source code analysis tool.
-
-Regards,
-Markus
