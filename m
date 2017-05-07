@@ -1,41 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 21:04:29 +0000
-Subject: [PATCH 4/7] kernel-trace: Improve a size determination in create_hist_field()
-Message-Id: <8b0724f4-18aa-c31d-8969-883816efbd2b@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 May 2017 18:33:05 +0000
+Subject: [PATCH] [media] pvrusb2: remove redundant check on cnt > 8
+Message-Id: <20170507183305.25350-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
-In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mike Isely <isely@pobox.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 May 2017 20:15:46 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The 2nd check of cnt > 8 is redundant as cnt is already checked
+and thresholded to a maximum of 8 a few statements earlier.
+Remove this redundant 2nd check.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Detected by CoverityScan, CID#114281 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/trace_events_hist.c | 2 +-
+ drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 36412deac24c..a75223572374 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -353,7 +353,7 @@ static struct hist_field *create_hist_field(struct ftrace_event_field *field,
- 	if (field && is_function_field(field))
- 		return NULL;
- 
--	hist_field = kzalloc(sizeof(struct hist_field), GFP_KERNEL);
-+	hist_field = kzalloc(sizeof(*hist_field), GFP_KERNEL);
- 	if (!hist_field)
- 		return NULL;
- 
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+index f727b54a53c6..20a52b785fff 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+@@ -488,7 +488,7 @@ static int pvr2_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 			if ((ret > 0) || !(msgs[idx].flags & I2C_M_RD)) {
+ 				if (cnt > 8) cnt = 8;
+ 				printk(KERN_CONT " [");
+-				for (offs = 0; offs < (cnt>8?8:cnt); offs++) {
++				for (offs = 0; offs < cnt; offs++) {
+ 					if (offs) printk(KERN_CONT " ");
+ 					printk(KERN_CONT "%02x",msgs[idx].buf[offs]);
+ 				}
 -- 
-2.12.2
+2.11.0
 
