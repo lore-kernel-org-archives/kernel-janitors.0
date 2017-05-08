@@ -1,28 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 15:50:43 +0000
-Subject: [PATCH 0/3] S390-virtio: Adjustments for three function implementations
-Message-Id: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
+Date: Mon, 08 May 2017 15:10:03 +0000
+Subject: [PATCH 3/3] mtdswap: Improve a size determination in mtdswap_erase_block()
+Message-Id: <0afe37eb-71fe-2a40-7ed5-24b910906671@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
+In-Reply-To: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, virtualization@lists.linux-foundation.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Halil Pasic <pasic@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 17:43:21 +0200
+Date: Mon, 8 May 2017 16:51:30 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a name for
+a local variable as the parameter for the operator "sizeof" to make
+the corresponding size determination a bit safer.
 
-Markus Elfring (3):
-  Delete error messages for failed memory allocations in two functions
-  Improve a size determination in virtio_ccw_setup_vq()
-  Adjust a null pointer check in two functions
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/mtdswap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/s390/virtio/virtio_ccw.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+index f73fb0909b0c..c748515f8533 100644
+--- a/drivers/mtd/mtdswap.c
++++ b/drivers/mtd/mtdswap.c
+@@ -559,8 +559,7 @@ static int mtdswap_erase_block(struct mtdswap_dev *d, struct swap_eb *eb)
+ 
+ retry:
+ 	init_waitqueue_head(&wq);
+-	memset(&erase, 0, sizeof(struct erase_info));
+-
++	memset(&erase, 0, sizeof(erase));
+ 	erase.mtd	= mtd;
+ 	erase.callback	= mtdswap_erase_callback;
+ 	erase.addr	= mtdswap_eb_offset(d, eb);
 -- 
-2.13.0
+2.12.2
 
