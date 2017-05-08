@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 17:14:55 +0000
-Subject: [PATCH 2/4] s390/processor: Use seq_putc() in show_cpu_summary()
-Message-Id: <0d2e6c6c-00d9-b83e-0631-ee8bae32b750@users.sourceforge.net>
+Date: Mon, 08 May 2017 16:18:09 +0000
+Subject: [PATCH] fm10k: Use seq_putc() in fm10k_dbg_desc_break()
+Message-Id: <4f8686c6-76cb-3d12-934e-6af67b6f084b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
-In-Reply-To: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Vegard Nossum <vegard.nossum@oracle.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>
+To: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 18:03:11 +0200
+Date: Mon, 8 May 2017 18:10:39 +0200
 
-A single character (line break) should be put into a sequence.
+Two single characters should be put into a sequence.
 Thus use the corresponding function "seq_putc".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/kernel/processor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kernel/processor.c b/arch/s390/kernel/processor.c
-index 778cd6536175..b9a40c81e3d8 100644
---- a/arch/s390/kernel/processor.c
-+++ b/arch/s390/kernel/processor.c
-@@ -128,7 +128,7 @@ static void show_cpu_summary(struct seq_file *m, void *v)
- 	for (i = 0; i < ARRAY_SIZE(int_hwcap_str); i++)
- 		if (int_hwcap_str[i] && (int_hwcap & (1UL << i)))
- 			seq_printf(m, "%s ", int_hwcap_str[i]);
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	show_facilities(m);
- 	show_cacheinfo(m);
- 	for_each_online_cpu(cpu) {
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c b/drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c
+index 5116fd043630..14df09e2d964 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c
+@@ -52,9 +52,9 @@ static void fm10k_dbg_desc_seq_stop(struct seq_file __always_unused *s,
+ static void fm10k_dbg_desc_break(struct seq_file *s, int i)
+ {
+ 	while (i--)
+-		seq_puts(s, "-");
++		seq_putc(s, '-');
+ 
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static int fm10k_dbg_tx_desc_seq_show(struct seq_file *s, void *v)
 -- 
 2.12.2
 
