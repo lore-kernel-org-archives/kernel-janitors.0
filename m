@@ -1,59 +1,40 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Date: Mon, 22 May 2017 20:31:08 +0000
-Subject: Re: [PATCH] xprtrdma: Delete an error message for a failed memory allocation in xprt_rdma_bc_setup()
-Message-Id: <DC0EF67A-4AF8-415A-8EC0-F86F8E6F08FE@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 May 2017 10:44:40 +0000
+Subject: [PATCH] blk-mq: make __blk_mq_stop_hw_queues static
+Message-Id: <20170508104440.10945-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3c3f0067-1438-129c-d921-e2c056d5776b@users.sourceforge.net>
-In-Reply-To: <3c3f0067-1438-129c-d921-e2c056d5776b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-> On May 22, 2017, at 4:24 PM, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 22:18:28 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Making __blk_mq_stop_hw_queues static fixes sparse warning:
 
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+  block/blk-mq.c:6: warning: symbol '__blk_mq_stop_hw_queues' was not
+  declared. Should it be static?
 
+Fixes: 2719aa217e0d0 ("blk-mq: don't use sync workqueue flushing from drivers")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/blk-mq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
-> net/sunrpc/xprtrdma/backchannel.c | 6 ++----
-> 1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/sunrpc/xprtrdma/backchannel.c b/net/sunrpc/xprtrdma/backchannel.c
-> index 24fedd4b117e..03f6b5840764 100644
-> --- a/net/sunrpc/xprtrdma/backchannel.c
-> +++ b/net/sunrpc/xprtrdma/backchannel.c
-> @@ -119,11 +119,9 @@ int xprt_rdma_bc_setup(struct rpc_xprt *xprt, unsigned int reqs)
-> 
-> 	for (i = 0; i < (reqs << 1); i++) {
-> 		rqst = kzalloc(sizeof(*rqst), GFP_KERNEL);
-> -		if (!rqst) {
-> -			pr_err("RPC:       %s: Failed to create bc rpc_rqst\n",
-> -			       __func__);
-> +		if (!rqst)
-> 			goto out_free;
-> -		}
-> +
-> 		dprintk("RPC:       %s: new rqst %p\n", __func__, rqst);
-> 
-> 		rqst->rq_xprt = &r_xprt->rx_xprt;
-> -- 
-> 2.13.0
-
---
-Chuck Lever
-
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 5d4ce7eb8dbf..5385fc89a6d2 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1236,7 +1236,7 @@ void blk_mq_stop_hw_queue(struct blk_mq_hw_ctx *hctx)
+ }
+ EXPORT_SYMBOL(blk_mq_stop_hw_queue);
+ 
+-void __blk_mq_stop_hw_queues(struct request_queue *q, bool sync)
++static void __blk_mq_stop_hw_queues(struct request_queue *q, bool sync)
+ {
+ 	struct blk_mq_hw_ctx *hctx;
+ 	int i;
+-- 
+2.11.0
 
