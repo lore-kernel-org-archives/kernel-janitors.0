@@ -1,23 +1,61 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 18 May 2017 11:39:12 +0000
-Subject: Re: [PATCH 2/2] KVM: Tidy the whitespace in nested_svm_check_permissions()
-Message-Id: <20170518113912.GF1912@8bytes.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 08 May 2017 15:29:00 +0000
+Subject: [RFC] Spurious error handling code in 'vc4_get_hang_state_ioctl'
+Message-Id: <bba7889b-7f80-c973-0a1b-e56a4a88cb03@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518073853.b3dkw2zibj7ayvwh@mwanda>
- <20170518073953.uz6ix4azwlgvfa3k@mwanda>
-In-Reply-To: <20170518073953.uz6ix4azwlgvfa3k@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, May 18, 2017 at 10:39:53AM +0300, Dan Carpenter wrote:
-> I moved the || to the line before.  Also I replaced some spaces with a
-> tab on the "return 0;" line.  It looks OK in the diff but originally
-> that line was only indented 7 spaces.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi,
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
+While looking for labels with a spurious order in the linux kernel code, 
+I came across code around:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/vc4/vc4_gem.c#n106
+
+The error handling in this for loop looks spurious to me:
+    - if 'drm_gem_handle_create' fails, we leak 'bo_state'
+      This is freed after the 'copy_to_user'
+    - if 'drm_gem_handle_create' fails, then we have 'state->bo_count = 
+i - 1'
+      This looks odd. 'state->bo_count = i' sounds more logical to me.
+    - as 'state->bo_count' is updated, this could mean than the 
+'copy_to_user' should be performed.
+
+I don't have any idea if one of the above is true (unless the memory 
+leak), so I just send it as a RFC to get feed-back.
+
+The corresponding patch would look like:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -109,18 +109,19 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, 
+void *data,
+
+          ret = drm_gem_handle_create(file_priv, kernel_state->bo[i],
+                          &handle);
+
+          if (ret) {
+-            state->bo_count = i - 1;
+-            goto err;
++            state->bo_count = i;
++            goto do_copy;
+          }
+          bo_state[i].handle = handle;
+          bo_state[i].paddr = vc4_bo->base.paddr;
+          bo_state[i].size = vc4_bo->base.base.size;
+      }
+
++do_copy:
+      if (copy_to_user((void __user *)(uintptr_t)get_state->bo,
+               bo_state,
+               state->bo_count * sizeof(*bo_state)))
+          ret = -EFAULT;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Best regards,
+
+CJ
 
