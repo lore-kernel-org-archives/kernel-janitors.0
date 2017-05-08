@@ -1,31 +1,21 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 May 2017 13:27:40 +0000
-Subject: Re: [PATCH 7/9] pinctrl: Add spaces for better code readability
-Message-Id: <CACRpkdbUERE_acSeEie9eq=0Sx-WQy4puWa5xRk5=8eVvPoctw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 17:42:46 +0000
+Subject: Re: sky2: Use seq_putc() in sky2_debug_show()
+Message-Id: <a85959a8-a357-d8e0-d7e9-617e2052aed6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <9c9c3bf8-f8c2-955b-934d-535b09d988f7@users.sourceforge.net>
-In-Reply-To: <9c9c3bf8-f8c2-955b-934d-535b09d988f7@users.sourceforge.net>
+References: <1f36d45e-3ca9-bfb8-0634-901c42390e2c@users.sourceforge.net>
+ <8594c152-68a4-c0c7-b4c6-49c753b0c748@gmx.de>
+In-Reply-To: <8594c152-68a4-c0c7-b4c6-49c753b0c748@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>, netdev@vger.kernel.org
+Cc: Mirko Lindner <mlindner@marvell.com>, Stephen Hemminger <stephen@networkplumber.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, May 2, 2017 at 11:27 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+> Which issue do you mean? I dont see any issue you fix here.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 May 2017 10:32:19 +0200
->
-> The script "checkpatch.pl" pointed information out like the following.
->
-> CHECK: spaces preferred around that '+' (ctx:VxV)
->
-> Thus fix the affected source code places.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Are the run time characteristics a bit nicer for the function “seq_putc”
+in comparison to the function “seq_puts” for printing a single line break here?
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Regards,
+Markus
