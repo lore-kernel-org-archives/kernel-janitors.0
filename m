@@ -1,46 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 08 May 2017 11:42:14 +0000
-Subject: [PATCH] qlogicpti: Fix resource releasing in order handling path
-Message-Id: <20170508114214.17730-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 13:05:24 +0000
+Subject: [PATCH 2/3] Input: Use seq_puts() in input_devices_seq_show()
+Message-Id: <842c54f4-6ec4-9d39-5f10-e288db08c1b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
+In-Reply-To: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Reorder 'fail_free_irq' and 'fail_unmap_regs' in order to correctly free
-resources  in case of error.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 14:30:03 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/qlogicpti.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
-index 69bfc0a1aea3..e5aeb26bd9b1 100644
---- a/drivers/scsi/qlogicpti.c
-+++ b/drivers/scsi/qlogicpti.c
-@@ -1385,6 +1385,9 @@ static int qpti_sbus_probe(struct platform_device *op)
- 			  qpti->req_cpu, qpti->req_dvma);
- #undef QSIZE
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 0d204b841575..067a6edd643c 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -1144,7 +1144,7 @@ static int input_devices_seq_show(struct seq_file *seq, void *v)
+ 	seq_printf(seq, "P: Phys=%s\n", dev->phys ? dev->phys : "");
+ 	seq_printf(seq, "S: Sysfs=%s\n", path ? path : "");
+ 	seq_printf(seq, "U: Uniq=%s\n", dev->uniq ? dev->uniq : "");
+-	seq_printf(seq, "H: Handlers=");
++	seq_puts(seq, "H: Handlers=");
  
-+fail_free_irq:
-+	free_irq(qpti->irq, qpti);
-+
- fail_unmap_regs:
- 	of_iounmap(&op->resource[0], qpti->qregs,
- 		   resource_size(&op->resource[0]));
-@@ -1392,9 +1395,6 @@ static int qpti_sbus_probe(struct platform_device *op)
- 		of_iounmap(&op->resource[0], qpti->sreg,
- 			   sizeof(unsigned char));
- 
--fail_free_irq:
--	free_irq(qpti->irq, qpti);
--
- fail_unlink:
- 	scsi_host_put(host);
- 
+ 	list_for_each_entry(handle, &dev->h_list, d_node)
+ 		seq_printf(seq, "%s ", handle->name);
 -- 
-2.11.0
+2.12.2
 
