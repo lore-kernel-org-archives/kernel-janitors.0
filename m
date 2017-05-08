@@ -1,41 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 May 2017 09:12:31 +0000
-Subject: [PATCH 2/4] dma-buf: Improve a size determination in dma_buf_attach()
-Message-Id: <cff83dc6-4391-d9b1-6ac2-791d5a3e2eb4@users.sourceforge.net>
+From: Gustavo Padovan <gustavo@padovan.org>
+Date: Mon, 08 May 2017 14:31:51 +0000
+Subject: Re: [PATCH 2/4] dma-buf: Improve a size determination in dma_buf_attach()
+Message-Id: <20170508143151.GB28331@joana>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
-In-Reply-To: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
+ <cff83dc6-4391-d9b1-6ac2-791d5a3e2eb4@users.sourceforge.net>
+In-Reply-To: <cff83dc6-4391-d9b1-6ac2-791d5a3e2eb4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 10:50:09 +0200
+2017-05-08 SF Markus Elfring <elfring@users.sourceforge.net>:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 8 May 2017 10:50:09 +0200
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/dma-buf/dma-buf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/dma-buf/dma-buf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.com>                    
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 53257c166f4d..9887d72cf804 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -558,7 +558,7 @@ struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
- 	if (WARN_ON(!dmabuf || !dev))
- 		return ERR_PTR(-EINVAL);
+Gustavo
  
--	attach = kzalloc(sizeof(struct dma_buf_attachment), GFP_KERNEL);
-+	attach = kzalloc(sizeof(*attach), GFP_KERNEL);
- 	if (attach = NULL)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.12.2
-
