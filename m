@@ -1,25 +1,36 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Sun, 07 May 2017 23:22:44 +0000
-Subject: Re: [PATCH] net: dsa: loop: Check for memory allocation failure
-Message-Id: <8a792a74-f1f1-59a0-df46-5f6c3861fa20@gmail.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Mon, 08 May 2017 12:05:32 +0000
+Subject: RE: [PATCH] net: dsa: loop: Check for memory allocation failure
+Message-Id: <063D6719AE5E284EB5DD2968C1650D6DCFFE715E@AcuExch.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170506052945.2639-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, andrew@lunn.ch, vivien.didelot@savoirfairelinux.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>, "andrew@lunn.ch" <andrew@lunn.ch>, "vivien.didelot@savoirfairelinux.com" <vivien.didelot@savoirfairelinux.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Le 05/05/17 à 22:29, Christophe JAILLET a écrit :
+From: Christophe JAILLET
+> Sent: 06 May 2017 06:30
 > If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
 > Return -ENOMEM instead, as done for some other memory allocation just a
 > few lines above.
+...
+> --- a/drivers/net/dsa/dsa_loop.c
+> +++ b/drivers/net/dsa/dsa_loop.c
+> @@ -256,6 +256,9 @@ static int dsa_loop_drv_probe(struct mdio_device *mdiodev)
+>  		return -ENOMEM;
 > 
-> Fixes: 98cd1552ea27 ("net: dsa: Mock-up driver")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>  	ps = devm_kzalloc(&mdiodev->dev, sizeof(*ps), GFP_KERNEL);
+> +	if (!ps)
+> +		return -ENOMEM;
+> +
+>  	ps->netdev = dev_get_by_name(&init_net, pdata->netdev);
+>  	if (!ps->netdev)
+>  		return -EPROBE_DEFER;
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+On the face if it this code leaks like a sieve.
+
+	David
+
