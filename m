@@ -1,57 +1,46 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Date: Wed, 10 May 2017 10:43:43 +0000
-Subject: Re: [PATCH] soc: mediatek: PMIC wrap: Fix error handling
-Message-Id: <106d786b-165c-ae5e-5180-3b8126d9e8bc@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 15:09:04 +0000
+Subject: [PATCH 2/3] mtdswap: Improve two size determinations in mtdswap_add_mtd()
+Message-Id: <cfc8598b-9552-9321-9fad-497415c1b0ee@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170219131249.12010-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170219131249.12010-1-christophe.jaillet@wanadoo.fr>
+References: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
+In-Reply-To: <82e905b5-3958-be81-b0ee-d0a2805154df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 16:18:49 +0200
 
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-On 19/02/17 14:12, Christophe JAILLET wrote:
-> According to error handling in this function, it is likely that going to
-> 'err_out2' was expected here.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/mtdswap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to v4.12-next/soc
+diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+index 0805f45c5139..f73fb0909b0c 100644
+--- a/drivers/mtd/mtdswap.c
++++ b/drivers/mtd/mtdswap.c
+@@ -1485,11 +1485,11 @@ static void mtdswap_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
+ 		"%u spare, %u bad blocks\n",
+ 		MTDSWAP_PREFIX, part, swap_size / 1024, spare_cnt, bad_blocks);
+ 
+-	d = kzalloc(sizeof(struct mtdswap_dev), GFP_KERNEL);
++	d = kzalloc(sizeof(*d), GFP_KERNEL);
+ 	if (!d)
+ 		return;
+ 
+-	mbd_dev = kzalloc(sizeof(struct mtd_blktrans_dev), GFP_KERNEL);
++	mbd_dev = kzalloc(sizeof(*mbd_dev), GFP_KERNEL);
+ 	if (!mbd_dev) {
+ 		kfree(d);
+ 		return;
+-- 
+2.12.2
 
-Sorry for the delay.
-Matthias
-
-> ---
->   drivers/soc/mediatek/mtk-pmic-wrap.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index a5f10936fb9c..285b434449a6 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -1200,7 +1200,8 @@ static int pwrap_probe(struct platform_device *pdev)
->   
->   	if (!(pwrap_readl(wrp, PWRAP_WACS2_RDATA) & PWRAP_STATE_INIT_DONE0)) {
->   		dev_dbg(wrp->dev, "initialization isn't finished\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto err_out2;
->   	}
->   
->   	/* Initialize watchdog, may not be done by the bootloader */
-> @@ -1220,8 +1221,10 @@ static int pwrap_probe(struct platform_device *pdev)
->   		goto err_out2;
->   
->   	wrp->regmap = devm_regmap_init(wrp->dev, NULL, wrp, &pwrap_regmap_config);
-> -	if (IS_ERR(wrp->regmap))
-> -		return PTR_ERR(wrp->regmap);
-> +	if (IS_ERR(wrp->regmap)) {
-> +		ret = PTR_ERR(wrp->regmap);
-> +		goto err_out2;
-> +	}
->   
->   	ret = of_platform_populate(np, NULL, NULL, wrp->dev);
->   	if (ret) {
-> 
