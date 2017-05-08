@@ -1,46 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 19:52:59 +0000
-Subject: [PATCH] x86/intel_rdt: Use seq_putc() in show_doms()
-Message-Id: <65b43e5d-5721-8628-f77a-e39010d35f9a@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 08 May 2017 07:46:40 +0000
+Subject: [PATCH] drm/nouveau/secboot: fix some error handling in 'ls_ucode_img_load_gr'
+Message-Id: <20170508074640.16922-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: x86@kernel.org, Fenghua Yu <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 21:45:38 +0200
+The last goto looks spurious because it releases less resources than the
+previous one.
+Add a new label in order to free the memory allocated by the 'kmemdup'
+call.
 
-Two single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Fixes: 9d896f3e41a6 ("drm/nouveau/secboot: abstract LS firmware loading functions")
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/kernel/cpu/intel_rdt_schemata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This fix is just a guess. I don't have the hardware to test it.
+At first, I just wanted to change the last 'goto free_data' into a
+'goto free_img' in order to have a 'logical' goto layout.
+Then, I changed my mind and added another label to revert the 'kmemdup' a
+few lines above.
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_schemata.c b/arch/x86/kernel/cpu/intel_rdt_schemata.c
-index 406d7a6532f9..6202fd4f0f5f 100644
---- a/arch/x86/kernel/cpu/intel_rdt_schemata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_schemata.c
-@@ -256,12 +256,12 @@ static void show_doms(struct seq_file *s, struct rdt_resource *r, int closid)
- 	seq_printf(s, "%*s:", max_name_width, r->name);
- 	list_for_each_entry(dom, &r->domains, list) {
- 		if (sep)
--			seq_puts(s, ";");
-+			seq_putc(s, ';');
- 		seq_printf(s, r->format_str, dom->id, max_data_width,
- 			   dom->ctrl_val[closid]);
- 		sep = true;
+I hope I'm correct :)
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
+index d1cf02d22db1..1b83e1395c34 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
+@@ -116,6 +116,7 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
+ 	ret = nvkm_firmware_get(subdev->device, f, &sig);
+ 	if (ret)
+ 		goto free_data;
++
+ 	img->sig = kmemdup(sig->data, sig->size, GFP_KERNEL);
+ 	if (!img->sig) {
+ 		ret = -ENOMEM;
+@@ -127,10 +128,12 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
+ 					     &img->ucode_desc);
+ 	if (IS_ERR(img->ucode_data)) {
+ 		ret = PTR_ERR(img->ucode_data);
+-		goto free_data;
++		goto free_img_sig;
  	}
--	seq_puts(s, "\n");
-+	seq_putc(s, '\n');
- }
+ 	img->ucode_size = img->ucode_desc.image_size;
  
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
++free_img_sig:
++	kfree(img->sig);
+ free_sig:
+ 	nvkm_firmware_put(sig);
+ free_data:
 -- 
-2.12.2
+2.11.0
 
