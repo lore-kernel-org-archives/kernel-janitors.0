@@ -1,30 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 19:08:23 +0000
-Subject: [PATCH 0/5] fsl_hypervisor: Adjustments for two function implementations
-Message-Id: <38a9b933-4cdc-53e7-0a4c-20f96c57648c@users.sourceforge.net>
+Date: Mon, 08 May 2017 13:30:07 +0000
+Subject: [PATCH] misc: mic: Combine two function calls into one in mic_msi_irq_info_show()
+Message-Id: <10a8b73e-5766-d14a-dff4-8288b94cb093@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>, Jesper Nilsson <jesper.nilsson@axis.com>, Kumar Gala <galak@kernel.crashing.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Timur Tabi <timur@freescale.com>
+To: Ashutosh Dixit <ashutosh.dixit@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 20:36:54 +0200
+Date: Mon, 8 May 2017 15:21:39 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+A bit of data was put into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
-Markus Elfring (5):
-  Improve a size determination in fsl_hv_open()
-  Delete an error message for a failed memory allocation in fsl_hv_open()
-  Return the success indication only as a constant in fsl_hv_open()
-  Use kcalloc() in ioctl_memcpy()
-  Delete error messages for failed memory allocations in ioctl_memcpy()
+This issue was detected by using the Coccinelle software.
 
- drivers/virt/fsl_hypervisor.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/mic/host/mic_debugfs.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/drivers/misc/mic/host/mic_debugfs.c b/drivers/misc/mic/host/mic_debugfs.c
+index 0a9daba8bb5d..63df428ef150 100644
+--- a/drivers/misc/mic/host/mic_debugfs.c
++++ b/drivers/misc/mic/host/mic_debugfs.c
+@@ -126,10 +126,7 @@ static int mic_msi_irq_info_show(struct seq_file *s, void *pos)
+ 			seq_printf(s, "%-10s", "offset:");
+ 			for (j = (MIC_NUM_OFFSETS - 1); j >= 0; j--)
+ 				seq_printf(s, "%4d ", j);
+-			seq_puts(s, "\n");
+-
+-
+-			seq_printf(s, "%-10s", "count:");
++			seq_printf(s, "\n%-10s", "count:");
+ 			for (j = (MIC_NUM_OFFSETS - 1); j >= 0; j--)
+ 				seq_printf(s, "%4d ",
+ 					   (mdev->irq_info.mic_msi_map[i] &
 -- 
-2.13.0
+2.12.2
 
