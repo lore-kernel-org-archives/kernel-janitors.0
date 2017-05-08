@@ -1,61 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 07:29:04 +0000
-Subject: [PATCH 3/3] ath9k: Adjust a null pointer check in three functions
-Message-Id: <6c3d87e0-d758-6f9b-4b1f-156d890b788d@users.sourceforge.net>
+Date: Mon, 08 May 2017 11:22:30 +0000
+Subject: [PATCH 2/2] drm/etnaviv: Delete an error message for a failed memory allocation in etnaviv_bind()
+Message-Id: <782e850b-0376-c641-8ede-7b9ed6d385b9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
-In-Reply-To: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+References: <6652b09b-393b-01db-a0d4-de53dce8994e@users.sourceforge.net>
+In-Reply-To: <6652b09b-393b-01db-a0d4-de53dce8994e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 22:17:13 +0200
+Date: Mon, 8 May 2017 13:08:11 +0200
 
 The script "checkpatch.pl" pointed information out like the following.
 
-Comparison to NULL could be written "!buf"
+WARNING: Possible unnecessary 'out of memory' message
 
-Thus adjust this expression.
+Thus remove such a statement here.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ath/ath9k/debug.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
-index 0d215598193c..5f2c1d8e8e70 100644
---- a/drivers/net/wireless/ath/ath9k/debug.c
-+++ b/drivers/net/wireless/ath/ath9k/debug.c
-@@ -161,7 +161,7 @@ static ssize_t read_file_ani(struct file *file, char __user *user_buf,
- 	};
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index b4deb26e1e40..b121473622d0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -530,7 +530,6 @@ static int etnaviv_bind(struct device *dev)
  
- 	buf = kzalloc(size, GFP_KERNEL);
--	if (buf = NULL)
-+	if (!buf)
- 		return -ENOMEM;
- 
- 	len += scnprintf(buf + len, size - len, "%15s: %s\n", "ANI",
-@@ -315,7 +315,7 @@ static ssize_t read_file_antenna_diversity(struct file *file,
- 	};
- 
- 	buf = kzalloc(size, GFP_KERNEL);
--	if (buf = NULL)
-+	if (!buf)
- 		return -ENOMEM;
- 
- 	if (!(pCap->hw_caps & ATH9K_HW_CAP_ANT_DIV_COMB)) {
-@@ -1008,7 +1008,7 @@ static ssize_t read_file_btcoex(struct file *file, char __user *user_buf,
- 	size_t retval;
- 
- 	buf = kzalloc(size, GFP_KERNEL);
--	if (buf = NULL)
-+	if (!buf)
- 		return -ENOMEM;
- 
- 	if (!sc->sc_ah->common.btcoex_enabled) {
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv) {
+-		dev_err(dev, "failed to allocate private data\n");
+ 		ret = -ENOMEM;
+ 		goto out_unref;
+ 	}
 -- 
 2.12.2
 
