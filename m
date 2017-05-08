@@ -1,42 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 May 2017 20:31:13 +0000
-Subject: [PATCH 1/6] cxgb4vf: Use seq_putc() in mboxlog_show()
-Message-Id: <210c924f-3e13-10ec-9f6e-b63003798240@users.sourceforge.net>
+Date: Mon, 08 May 2017 13:03:33 +0000
+Subject: [PATCH 0/3] Input: Fine-tuning for six function implementations
+Message-Id: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
-In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 May 2017 20:02:04 +0200
+Date: Mon, 8 May 2017 15:00:15 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Use seq_putc() in input_seq_print_bitmap()
+  Use seq_puts() in input_devices_seq_show()
+  Improve a size determination in four functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/input.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-index ac7a150c54e9..4ac9316f3081 100644
---- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-@@ -1818,7 +1818,7 @@ static int mboxlog_show(struct seq_file *seq, void *v)
- 
- 		seq_printf(seq, "  %08x %08x", hi, lo);
- 	}
--	seq_puts(seq, "\n");
-+	seq_putc(seq, '\n');
- 	return 0;
- }
- 
 -- 
 2.12.2
 
