@@ -1,51 +1,27 @@
-From: Jason Gerecke <killertofu@gmail.com>
-Date: Mon, 15 May 2017 17:18:11 +0000
-Subject: Re: [PATCH 0/3] HID-Wacom: Fine-tuning for seven function implementations
-Message-Id: <CANRwn3TFV14iKV7riiFeOmGGv5rYLdXS3Tp1qZRVT09ksX3KoQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 11:20:06 +0000
+Subject: [PATCH 0/2] GPU-DRM-Etnaviv: Fine-tuning for two function implementations
+Message-Id: <6652b09b-393b-01db-a0d4-de53dce8994e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
-In-Reply-To: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux Input <linux-input@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Came across these and noticed that it doesn't appear anything has
-happened with them. The set looks good to me:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 13:16:15 +0200
 
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Jason
----
-Now instead of four in the eights place /
-you’ve got three, ‘Cause you added one  /
-(That is to say, eight) to the two,     /
-But you can’t take seven from three,    /
-So you look at the sixty-fours....
+Markus Elfring (2):
+  Use seq_putc() in etnaviv_buffer_dump()
+  Delete an error message for a failed memory allocation in etnaviv_bind()
 
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+-- 
+2.12.2
 
-On Tue, Apr 25, 2017 at 8:12 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 25 Apr 2017 17:07:07 +0200
->
-> Three update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (3):
->   Use devm_kcalloc() in two functions
->   Improve size determinations in three functions
->   Delete two unnecessary return statements
->
->  drivers/hid/wacom_sys.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
->
-> --
-> 2.12.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
