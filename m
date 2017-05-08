@@ -1,51 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 15 May 2017 10:54:50 +0000
-Subject: Re: [PATCH 6/9] regulator: palmas: Drop unnecessary static
-Message-Id: <20170515105450.5yllj7elaps5b64q@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gmlkpztewnivnjkz"
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 08 May 2017 10:36:43 +0000
+Subject: [PATCH] thermal: core: make thermal_emergency_poweroff static
+Message-Id: <20170508103643.10748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
- <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
- <20170514101323.235p6jflfproucmv@sirena.org.uk>
- <alpine.DEB.2.20.1705151838370.4315@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1705151838370.4315@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---gmlkpztewnivnjkz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Making thermal_emergency_poweroff static fixes sparse warning:
 
-On Mon, May 15, 2017 at 06:41:41PM +0800, Julia Lawall wrote:
+  drivers/thermal/thermal_core.c:6: warning: symbol
+  'thermal_emergency_poweroff' was not declared. Should it be static?
 
-> mailing lists.  If the patches are sent separately, then could there be a
-> cover letter for each one?  If the semantic patch is complicated, then I
-> typically put the whole thing there, and an abbreviated one in the actual
-> patch.  That is not relevant here, because the semantic patch is small.
+Fixes: ef1d87e06ab4 ("thermal: core: Add a back up thermal shutdown mechanism")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/thermal_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Well, if the cover letter is needed to understand the patch then it
-needs to go to everyone anyway...
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index b21b9cc2c8d6..5a51c740e372 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -359,7 +359,7 @@ static DECLARE_DELAYED_WORK(thermal_emergency_poweroff_work,
+  * This may be called from any critical situation to trigger a system shutdown
+  * after a known period of time. By default this is not scheduled.
+  */
+-void thermal_emergency_poweroff(void)
++static void thermal_emergency_poweroff(void)
+ {
+ 	int poweroff_delay_ms = CONFIG_THERMAL_EMERGENCY_POWEROFF_DELAY_MS;
+ 	/*
+-- 
+2.11.0
 
-> Part of the purpose of the cover letter was to allow people who were not
-> interested to skip over the whole thing at once.
-
-On the flip side things that lack context can get discarded easily.
-
---gmlkpztewnivnjkz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlkZiPkACgkQJNaLcl1U
-h9B3Gwf/VQIUQiU08U04HeY1F4iUIgWVESiBjtnlBF5fpWPe522uNDwfQYn3DFNX
-V4fwGUhaJw3nRXVNrqtVoM3ryYGNQHlK17irtv6ISSKxXNc9VFm0/CNk9zSx29VI
-dFfxxf+2Jcb/d2ye9tNMTc29rRnMX04xLL8BLwvpX+jnEVwVLCpkSdz0gXJ8YANT
-rYAwBv0cqNdGuSSWKdA49OpCozWyyiy92Ty5XRI+EI2YXHa1U0EOUngdwseXPP9x
-GDH6H2jmvyEhStGEa/2MueAqtyF9nXmeO9uzTacgvgiRaJx0guL9U716vPZElcHl
-1w0yjJXbhjyZIothdOOzlrRfB/EaJw==
-=9ZC+
------END PGP SIGNATURE-----
-
---gmlkpztewnivnjkz--
