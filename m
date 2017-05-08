@@ -1,49 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 May 2017 18:34:21 +0000
-Subject: Re: [PATCH] Bluetooth: add a check for kmalloc() failure
-Message-Id: <20170502183421.7tiazcibqcqfh2w7@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 09:13:16 +0000
+Subject: [PATCH 3/4] dma-buf: Adjust a null pointer check in dma_buf_attach()
+Message-Id: <1deb58e7-7eac-55d6-235a-baf72f392371@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170502092903.u7no6pizkakf454o@mwanda>
- <26554315-C6A5-4B85-B535-E6EB91499A61@holtmann.org>
-In-Reply-To: <26554315-C6A5-4B85-B535-E6EB91499A61@holtmann.org>
+References: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
+In-Reply-To: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Salvatore Benedetto <salvatore.benedetto@intel.com>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, Linux Bluetooth <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, May 02, 2017 at 07:58:11PM +0200, Marcel Holtmann wrote:
-> Hi Dan,
-> 
-> > We should check to see if this kmalloc() fails.
-> > 
-> > Fixes: e7c404c96c74 ("Bluetooth: allocate data for kpp on heap")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/net/bluetooth/ecdh_helper.c b/net/bluetooth/ecdh_helper.c
-> > index 80184476ff74..c8535845813d 100644
-> > --- a/net/bluetooth/ecdh_helper.c
-> > +++ b/net/bluetooth/ecdh_helper.c
-> > @@ -59,11 +59,15 @@ bool compute_ecdh_secret(const u8 public_key[64], const u8 private_key[32],
-> > 	struct ecdh p;
-> > 	struct ecdh_completion result;
-> > 	struct scatterlist src, dst;
-> > -	u8 *tmp = kmalloc(64, GFP_KERNEL);
-> > +	u8 *tmp;
-> > 	u8 *buf;
-> > 	unsigned int buf_len;
-> > 	int err = -ENOMEM;
-> > 
-> > +	tmp = kmalloc(64, GFP_KERNEL);
-> > +	if (!tmp)
-> > +		goto out;
-> > +
-> 
-> I thought that I already fixed this. Is this issue still present in bluetooth-next tree?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 10:54:17 +0200
 
-Ah yeah.  You already fixed this.
+The script "checkpatch.pl" pointed information out like the following.
 
-regards,
-dan carpenter
+Comparison to NULL could be written "!attach"
+
+Thus adjust this expression.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma-buf/dma-buf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 9887d72cf804..4a038dcf5361 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -559,7 +559,7 @@ struct dma_buf_attachment *dma_buf_attach(struct dma_buf *dmabuf,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	attach = kzalloc(sizeof(*attach), GFP_KERNEL);
+-	if (attach = NULL)
++	if (!attach)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	attach->dev = dev;
+-- 
+2.12.2
 
