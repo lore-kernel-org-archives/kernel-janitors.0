@@ -1,41 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:14:08 +0000
-Subject: [PATCH 2/6] PNP: Improve a size determination in pnp_alloc_dev()
-Message-Id: <85dba381-3e7d-7df1-9fac-458fe625d2f5@users.sourceforge.net>
+Date: Mon, 08 May 2017 13:04:36 +0000
+Subject: [PATCH 1/3] Input: Use seq_putc() in input_seq_print_bitmap()
+Message-Id: <7f53f603-1069-1e7a-67b6-78f8009aa0c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
-In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+References: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
+In-Reply-To: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:45:23 +0200
+Date: Mon, 8 May 2017 14:20:18 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+A single character should be put into a sequence.
+Thus use the corresponding function "seq_putc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pnp/core.c | 2 +-
+ drivers/input/input.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pnp/core.c b/drivers/pnp/core.c
-index 27945a2d9c4e..6ccec10aed11 100644
---- a/drivers/pnp/core.c
-+++ b/drivers/pnp/core.c
-@@ -141,7 +141,7 @@ struct pnp_dev *pnp_alloc_dev(struct pnp_protocol *protocol, int id,
- 	struct pnp_dev *dev;
- 	struct pnp_id *dev_id;
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 067d648028a2..0d204b841575 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -1126,7 +1126,7 @@ static void input_seq_print_bitmap(struct seq_file *seq, const char *name,
+ 	 * If no output was produced print a single 0.
+ 	 */
+ 	if (skip_empty)
+-		seq_puts(seq, "0");
++		seq_putc(seq, '0');
  
--	dev = kzalloc(sizeof(struct pnp_dev), GFP_KERNEL);
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
- 		return NULL;
- 
+ 	seq_putc(seq, '\n');
+ }
 -- 
-2.13.0
+2.12.2
 
