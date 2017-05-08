@@ -1,74 +1,56 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 04 May 2017 20:10:50 +0000
-Subject: [PATCH 5/9] mfd: Drop unnecessary static
-Message-Id: <1493928654-18768-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 17:29:12 +0000
+Subject: [PATCH] qca_debug: Reduce function calls for sequence output in qcaspi_info_show()
+Message-Id: <9932ee63-f766-49ce-d760-9a0bd06f0657@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Lindgren <tony@atomide.com>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Drop static on a local variable, when the variable is initialized before
-any use, on every possible execution path through the function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 19:21:27 +0200
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A bit of data was put into a sequence by separate function calls.
+Print the same data together with adjusted seq_printf() calls instead.
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-static T x@p;
-...
-x = <+...x...+>
-
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
-
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
-
-The change increases the code size but decreases the size of the bss segment.
-
-before:
-   text    data     bss     dec     hex filename
-   3369     272     300    3941     f65 drivers/mfd/twl4030-irq.o
-
-after:
-   text    data     bss     dec     hex filename
-   3401     272      28    3701     e75 drivers/mfd/twl4030-irq.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/twl4030-irq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qualcomm/qca_debug.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
-index b46c0cf..c775f27 100644
---- a/drivers/mfd/twl4030-irq.c
-+++ b/drivers/mfd/twl4030-irq.c
-@@ -683,7 +683,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base)
+diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ethernet/qualcomm/qca_debug.c
+index d145df98feff..27b5c1dd27d0 100644
+--- a/drivers/net/ethernet/qualcomm/qca_debug.c
++++ b/drivers/net/ethernet/qualcomm/qca_debug.c
+@@ -81,11 +81,7 @@ qcaspi_info_show(struct seq_file *s, void *what)
+ 	else
+ 		seq_puts(s, "in use");
  
- int twl4030_init_irq(struct device *dev, int irq_num)
- {
--	static struct irq_chip	twl4030_irq_chip;
-+	struct irq_chip	twl4030_irq_chip;
- 	int			status, i;
- 	int			irq_base, irq_end, nr_irqs;
- 	struct			device_node *node = dev->of_node;
+-	seq_puts(s, "\n");
+-
+-	seq_printf(s, "TX ring size     : %u\n",
+-		   qca->txr.size);
+-
++	seq_printf(s, "\nTX ring size     : %u\n", qca->txr.size);
+ 	seq_printf(s, "Sync state       : %u (",
+ 		   (unsigned int)qca->sync);
+ 	switch (qca->sync) {
+@@ -102,10 +98,8 @@ qcaspi_info_show(struct seq_file *s, void *what)
+ 		seq_puts(s, "INVALID");
+ 		break;
+ 	}
+-	seq_puts(s, ")\n");
+ 
+-	seq_printf(s, "IRQ              : %d\n",
+-		   qca->spi_dev->irq);
++	seq_printf(s, ")\nIRQ              : %d\n", qca->spi_dev->irq);
+ 	seq_printf(s, "INTR REQ         : %u\n",
+ 		   qca->intr_req);
+ 	seq_printf(s, "INTR SVC         : %u\n",
+-- 
+2.12.2
 
