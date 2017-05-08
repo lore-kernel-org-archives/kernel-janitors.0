@@ -1,35 +1,60 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Fri, 12 May 2017 20:17:03 +0000
-Subject: Re: [PATCH V2] serial: efm32: Fix parity management in 'efm32_uart_console_get_options()'
-Message-Id: <20170512201703.puk6xit34d3dnddv@pengutronix.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 May 2017 09:14:04 +0000
+Subject: [PATCH 4/4] dma-buf: Use seq_putc() in two functions
+Message-Id: <609254ac-000d-c87c-eabc-7ca8814daf5c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170512143545.15394-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170512143545.15394-1-christophe.jaillet@wanadoo.fr>
+References: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
+In-Reply-To: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, May 12, 2017 at 04:35:45PM +0200, Christophe JAILLET wrote:
-> UARTn_FRAME_PARITY_ODD is 0x0300
-> UARTn_FRAME_PARITY_EVEN is 0x0200
-> So if the UART is configured for EVEN parity, it would be reported as ODD.
-> Fix it by correctly testing if the 2 bits are set.
->=20
-> Fixes: 3afbd89c9639 ("serial/efm32: add new driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 8 May 2017 10:55:42 +0200
 
-Thanks for picking this topic up again.
+Three single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-Best regards
-Uwe
+This issue was detected by using the Coccinelle software.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma-buf/sync_debug.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+index c769dc653b34..a0d780ab68c3 100644
+--- a/drivers/dma-buf/sync_debug.c
++++ b/drivers/dma-buf/sync_debug.c
+@@ -110,7 +110,7 @@ static void sync_print_fence(struct seq_file *s,
+ 		}
+ 	}
+ 
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+ }
+ 
+ static void sync_print_obj(struct seq_file *s, struct sync_timeline *obj)
+@@ -161,7 +161,7 @@ static int sync_debugfs_show(struct seq_file *s, void *unused)
+ 				     sync_timeline_list);
+ 
+ 		sync_print_obj(s, obj);
+-		seq_puts(s, "\n");
++		seq_putc(s, '\n');
+ 	}
+ 	spin_unlock_irqrestore(&sync_timeline_list_lock, flags);
+ 
+@@ -173,7 +173,7 @@ static int sync_debugfs_show(struct seq_file *s, void *unused)
+ 			container_of(pos, struct sync_file, sync_file_list);
+ 
+ 		sync_print_sync_file(s, sync_file);
+-		seq_puts(s, "\n");
++		seq_putc(s, '\n');
+ 	}
+ 	spin_unlock_irqrestore(&sync_file_list_lock, flags);
+ 	return 0;
+-- 
+2.12.2
+
