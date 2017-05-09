@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 20:00:30 +0000
-Subject: [PATCH] vlynq: Delete an error message for a failed memory allocation in vlynq_probe()
-Message-Id: <412dece0-b79a-0587-9ee7-8cfd72c19a40@users.sourceforge.net>
+Date: Tue, 09 May 2017 11:55:35 +0000
+Subject: [PATCH 4/4] net: stmmac: Delete an unnecessary return statement in stmmac_get_tx_hwtstamp()
+Message-Id: <4d8b60f5-5d5f-8fa1-a896-d48c2b054ec4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
+In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 21:53:55 +0200
+Date: Tue, 9 May 2017 13:36:04 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus remove such a statement in the affected function.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/vlynq/vlynq.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-index c0227f9418eb..08173463e7eb 100644
---- a/drivers/vlynq/vlynq.c
-+++ b/drivers/vlynq/vlynq.c
-@@ -684,11 +684,8 @@ static int vlynq_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 4fa95234978c..9ab4cbfa67f1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -445,8 +445,6 @@ static void stmmac_get_tx_hwtstamp(struct stmmac_priv *priv,
+ 		/* pass tstamp to stack */
+ 		skb_tstamp_tx(skb, &shhwtstamp);
+ 	}
+-
+-	return;
+ }
  
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (!dev) {
--		printk(KERN_ERR
--		       "vlynq: failed to allocate device structure\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
- 
- 	dev->id = pdev->id;
- 	dev->dev.bus = &vlynq_bus_type;
+ /* stmmac_get_rx_hwtstamp - get HW RX timestamps
 -- 
-2.13.0
+2.12.2
 
