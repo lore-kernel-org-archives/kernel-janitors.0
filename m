@@ -1,62 +1,41 @@
-From: Nikola Pajkovsky <npajkovsky@suse.cz>
-Date: Wed, 03 May 2017 07:38:02 +0000
-Subject: Re: [PATCH 0/6] md: Fine-tuning for some function implementations
-Message-Id: <87pofq75lx.fsf@suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 May 2017 17:14:01 +0000
+Subject: [PATCH] btrfs: fix incorrect error return ret being passed to mapping_set_error
+Message-Id: <20170509171401.4641-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f05bfc4e-7935-7e87-cc85-f0d9c5e3846a@users.sourceforge.net> <87efw7q6tm.fsf@notabene.neil.brown.name>
-In-Reply-To: <87efw7q6tm.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: NeilBrown <neilb@suse.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, bo.li.liu@oracle.com, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-NeilBrown <neilb@suse.com> writes:
+The setting of return code ret should be based on the error code
+passed into function end_extent_writepage and not on ret. Thanks
+to Liu Bo for spotting this mistake in the original fix I submitted.
 
-> On Tue, May 02 2017, SF Markus Elfring wrote:
->
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 2 May 2017 16:12:34 +0200
->>
->> Some update suggestions were taken into account
->> from static source code analysis.
->>
->> Markus Elfring (6):
->>   Replace seven seq_printf() calls by seq_putc()
->>   Replace 17 seq_printf() calls by seq_puts()
->
-> Why does anyone care whether printf or putc/puts is used?  Really it
-> doesn't matter *at* *all*.
+Detected by CoverityScan, CID#1414312 ("Logically dead code")
 
-It could matter, but this patchset does not state it all. Does not
-have any perf tests and so on.
+Fixes: 5dca6eea91653e ("Btrfs: mark mapping with error flag to report errors to userspace")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/extent_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-f7a5f132b447 ("proc: faster /proc/*/status")
-68ba0326b4e1 ("proc: much faster /proc/vmstat")
-
-> I don't object to the patch but if it would up to me I probably wouldn't
-> bother applying it it either.
-> Sometimes I just want to "print" something and I don't want to care
-> whether it is a constant string or a single-byte constant string, or
-> something more general.
-> I see these changes as worse than white-space fixes.
->
-> NeilBrown
->
->
->>   Adjust four function calls together with a variable assignment
->>   Use seq_puts() in faulty_status()
->>   Adjust six function calls together with a variable assignment in faulty_status()
->>   Add some spaces for better code readability
->>
->>  drivers/md/faulty.c | 48 ++++++++++++++++++++++----------------
->>  drivers/md/md.c     | 66 +++++++++++++++++++++++++++++------------------------
->>  2 files changed, 64 insertions(+), 50 deletions(-)
->>
->> -- 
->> 2.12.2
-
-
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index d8da3edf2ac3..7c6a032df585 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2458,7 +2458,7 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
+ 	if (!uptodate) {
+ 		ClearPageUptodate(page);
+ 		SetPageError(page);
+-		ret = ret < 0 ? ret : -EIO;
++		ret = err < 0 ? err : -EIO;
+ 		mapping_set_error(page->mapping, ret);
+ 	}
+ }
 -- 
-Nikola
+2.11.0
+
