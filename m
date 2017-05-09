@@ -1,42 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 16:33:42 +0000
-Subject: [PATCH 1/2] oprofile_perf: Improve a size determination in oprofile_perf_init()
-Message-Id: <0fc2061c-a358-b158-898f-5aa6325cfe02@users.sourceforge.net>
+Date: Tue, 09 May 2017 07:29:04 +0000
+Subject: [PATCH 3/3] ath9k: Adjust a null pointer check in three functions
+Message-Id: <6c3d87e0-d758-6f9b-4b1f-156d890b788d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8e408a15-7884-e9a1-0df2-a7419987c450@users.sourceforge.net>
-In-Reply-To: <8e408a15-7884-e9a1-0df2-a7419987c450@users.sourceforge.net>
+References: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+In-Reply-To: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oprofile-list@lists.sf.net, Robert Richter <rric@kernel.org>
+To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 18:00:13 +0200
+Date: Mon, 8 May 2017 22:17:13 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
+
+Comparison to NULL could be written "!buf"
+
+Thus adjust this expression.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/oprofile/oprofile_perf.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath9k/debug.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/oprofile/oprofile_perf.c b/drivers/oprofile/oprofile_perf.c
-index d5b2732b1b81..033f2c26f2ad 100644
---- a/drivers/oprofile/oprofile_perf.c
-+++ b/drivers/oprofile/oprofile_perf.c
-@@ -285,7 +285,6 @@ int __init oprofile_perf_init(struct oprofile_operations *ops)
- 		goto out;
- 	}
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index 0d215598193c..5f2c1d8e8e70 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -161,7 +161,7 @@ static ssize_t read_file_ani(struct file *file, char __user *user_buf,
+ 	};
  
--	counter_config = kcalloc(num_counters,
--			sizeof(struct op_counter_config), GFP_KERNEL);
--
-+	counter_config = kcalloc(num_counters, sizeof(*counter_config),
-+				 GFP_KERNEL);
- 	if (!counter_config) {
+ 	buf = kzalloc(size, GFP_KERNEL);
+-	if (buf = NULL)
++	if (!buf)
+ 		return -ENOMEM;
+ 
+ 	len += scnprintf(buf + len, size - len, "%15s: %s\n", "ANI",
+@@ -315,7 +315,7 @@ static ssize_t read_file_antenna_diversity(struct file *file,
+ 	};
+ 
+ 	buf = kzalloc(size, GFP_KERNEL);
+-	if (buf = NULL)
++	if (!buf)
+ 		return -ENOMEM;
+ 
+ 	if (!(pCap->hw_caps & ATH9K_HW_CAP_ANT_DIV_COMB)) {
+@@ -1008,7 +1008,7 @@ static ssize_t read_file_btcoex(struct file *file, char __user *user_buf,
+ 	size_t retval;
+ 
+ 	buf = kzalloc(size, GFP_KERNEL);
+-	if (buf = NULL)
++	if (!buf)
+ 		return -ENOMEM;
+ 
+ 	if (!sc->sc_ah->common.btcoex_enabled) {
 -- 
-2.12.3
+2.12.2
 
