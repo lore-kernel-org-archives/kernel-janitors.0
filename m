@@ -1,27 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 May 2017 09:11:27 +0000
-Subject: Re: [PATCH] pinctrl: imx: Check for memory allocation failure
-Message-Id: <CACRpkdYAqmDDq-UgQUecfquBdSCVHR1=rd96Cx3LT=ySgBXqpg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 May 2017 09:34:50 +0000
+Subject: [PATCH] lightnvm: Remove an unused variable
+Message-Id: <20170509093450.dgj3qghdwefpg6li@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, ext Tony Lindgren <tony@atomide.com>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, May 6, 2017 at 10:23 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+"rq" is never used in nvme_nvm_rqtocmd().  We also recently shifted some
+code around so it's uninitialized and causes a static checker warning.
+Let's just remove it.
 
-> If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
-> Return -ENOMEM instead, as done for the other memory allocation just a
-> few lines below.
-> BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 8c4adac6fafc..765f07669ae3 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -464,8 +464,8 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
+ 	return ret;
+ }
+ 
+-static inline void nvme_nvm_rqtocmd(struct request *rq, struct nvm_rq *rqd,
+-				struct nvme_ns *ns, struct nvme_nvm_command *c)
++static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd,	struct nvme_ns *ns,
++				    struct nvme_nvm_command *c)
+ {
+ 	c->ph_rw.opcode = rqd->opcode;
+ 	c->ph_rw.nsid = cpu_to_le32(ns->ns_id);
+@@ -503,7 +503,7 @@ static int nvme_nvm_submit_io(struct nvm_dev *dev, struct nvm_rq *rqd)
+ 	if (!cmd)
+ 		return -ENOMEM;
+ 
+-	nvme_nvm_rqtocmd(rq, rqd, ns, cmd);
++	nvme_nvm_rqtocmd(rqd, ns, cmd);
+ 
+ 	rq = nvme_alloc_request(q, (struct nvme_command *)cmd, 0, NVME_QID_ANY);
+ 	if (IS_ERR(rq)) {
