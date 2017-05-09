@@ -1,60 +1,70 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 08 May 2017 07:46:40 +0000
-Subject: [PATCH] drm/nouveau/secboot: fix some error handling in 'ls_ucode_img_load_gr'
-Message-Id: <20170508074640.16922-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 09 May 2017 11:53:52 +0000
+Subject: [PATCH 2/4] net: stmmac: Replace five seq_printf() calls by seq_puts()
+Message-Id: <aaddd3eb-0659-3aed-7e42-5fae0f823ea3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
+In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The last goto looks spurious because it releases less resources than the
-previous one.
-Add a new label in order to free the memory allocated by the 'kmemdup'
-call.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 9 May 2017 13:20:03 +0200
 
-Fixes: 9d896f3e41a6 ("drm/nouveau/secboot: abstract LS firmware loading functions")
+Five strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This fix is just a guess. I don't have the hardware to test it.
-At first, I just wanted to change the last 'goto free_data' into a
-'goto free_img' in order to have a 'logical' goto layout.
-Then, I changed my mind and added another label to revert the 'kmemdup' a
-few lines above.
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I hope I'm correct :)
----
- drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-index d1cf02d22db1..1b83e1395c34 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-@@ -116,6 +116,7 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
- 	ret = nvkm_firmware_get(subdev->device, f, &sig);
- 	if (ret)
- 		goto free_data;
-+
- 	img->sig = kmemdup(sig->data, sig->size, GFP_KERNEL);
- 	if (!img->sig) {
- 		ret = -ENOMEM;
-@@ -127,10 +128,12 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
- 					     &img->ucode_desc);
- 	if (IS_ERR(img->ucode_data)) {
- 		ret = PTR_ERR(img->ucode_data);
--		goto free_data;
-+		goto free_img_sig;
- 	}
- 	img->ucode_size = img->ucode_desc.image_size;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 2949c9fc18fa..1f7022ce78b7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3748,11 +3748,11 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
+ 		seq_printf(seq, "RX Queue %d:\n", queue);
  
-+free_img_sig:
-+	kfree(img->sig);
- free_sig:
- 	nvkm_firmware_put(sig);
- free_data:
+ 		if (priv->extend_desc) {
+-			seq_printf(seq, "Extended descriptor ring:\n");
++			seq_puts(seq, "Extended descriptor ring:\n");
+ 			sysfs_display_ring((void *)rx_q->dma_erx,
+ 					   DMA_RX_SIZE, 1, seq);
+ 		} else {
+-			seq_printf(seq, "Descriptor ring:\n");
++			seq_puts(seq, "Descriptor ring:\n");
+ 			sysfs_display_ring((void *)rx_q->dma_rx,
+ 					   DMA_RX_SIZE, 0, seq);
+ 		}
+@@ -3764,11 +3764,11 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
+ 		seq_printf(seq, "TX Queue %d:\n", queue);
+ 
+ 		if (priv->extend_desc) {
+-			seq_printf(seq, "Extended descriptor ring:\n");
++			seq_puts(seq, "Extended descriptor ring:\n");
+ 			sysfs_display_ring((void *)tx_q->dma_etx,
+ 					   DMA_TX_SIZE, 1, seq);
+ 		} else {
+-			seq_printf(seq, "Descriptor ring:\n");
++			seq_puts(seq, "Descriptor ring:\n");
+ 			sysfs_display_ring((void *)tx_q->dma_tx,
+ 					   DMA_TX_SIZE, 0, seq);
+ 		}
+@@ -3798,7 +3798,7 @@ static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+ 
+ 	if (!priv->hw_cap_support) {
+-		seq_printf(seq, "DMA HW features not supported\n");
++		seq_puts(seq, "DMA HW features not supported\n");
+ 		return 0;
+ 	}
+ 
 -- 
-2.11.0
+2.12.2
 
