@@ -1,42 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 May 2017 20:37:53 +0000
-Subject: [PATCH 2/6] lockdep: Use seq_putc() in seq_header()
-Message-Id: <49523826-875c-fcc7-9b47-40f3816136f4@users.sourceforge.net>
+Date: Tue, 09 May 2017 07:25:24 +0000
+Subject: [PATCH 0/3] ath9k: Fine-tuning for some function implementations
+Message-Id: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
-In-Reply-To: <3f95acb5-c037-b6fa-7a9b-258b4ae465fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 May 2017 21:30:26 +0200
+Date: Tue, 9 May 2017 09:19:09 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Reduce function calls for sequence output in read_file_dma()
+  Replace four seq_printf() calls by seq_putc()
+  Adjust a null pointer check in three functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- kernel/locking/lockdep_proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/debug.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 825496ece766..b1fa2ae31c0b 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -560,7 +560,7 @@ static void seq_header(struct seq_file *m)
- 			"holdtime-total",
- 			"holdtime-avg");
- 	seq_line(m, '-', 0, 40 + 1 + 12 * (14 + 1));
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- }
- 
- static void *ls_start(struct seq_file *m, loff_t *pos)
 -- 
 2.12.2
 
