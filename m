@@ -1,45 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 20:37:13 +0000
-Subject: [PATCH] ezusb: Delete an error message for a failed memory allocation in ezusb_writememory()
-Message-Id: <8f0123de-6703-4c9c-5a34-b3930262aaec@users.sourceforge.net>
+Date: Tue, 09 May 2017 11:52:54 +0000
+Subject: [PATCH 1/4] net: stmmac: Combine three seq_printf() calls into a seq_puts() in stmmac_sysfs_dma_cap_
+Message-Id: <22603603-758e-ed97-6d39-0af8c2ce9cd6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
+In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 22:30:21 +0200
+Date: Tue, 9 May 2017 13:10:28 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+A bit of text was put into a sequence by three separate function calls.
+Print the same data by a single function call instead.
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/misc/ezusb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/misc/ezusb.c b/drivers/usb/misc/ezusb.c
-index 837208f14f86..6d5e468dc897 100644
---- a/drivers/usb/misc/ezusb.c
-+++ b/drivers/usb/misc/ezusb.c
-@@ -41,11 +41,9 @@ static int ezusb_writememory(struct usb_device *dev, int address,
- 		return -ENODEV;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index cd8c60132390..2949c9fc18fa 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3802,10 +3802,10 @@ static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
+ 		return 0;
+ 	}
  
- 	transfer_buffer = kmemdup(data, length, GFP_KERNEL);
--	if (!transfer_buffer) {
--		dev_err(&dev->dev, "%s - kmalloc(%d) failed.\n",
--							__func__, length);
-+	if (!transfer_buffer)
- 		return -ENOMEM;
--	}
-+
- 	result = usb_control_msg(dev, usb_sndctrlpipe(dev, 0), request,
- 				 USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
- 				 address, 0, transfer_buffer, length, 3000);
+-	seq_printf(seq, "===============\n");
+-	seq_printf(seq, "\tDMA HW features\n");
+-	seq_printf(seq, "===============\n");
+-
++	seq_puts(seq,
++		 "===============\n"
++		 "\tDMA HW features\n"
++		 "===============\n");
+ 	seq_printf(seq, "\t10/100 Mbps: %s\n",
+ 		   (priv->dma_cap.mbps_10_100) ? "Y" : "N");
+ 	seq_printf(seq, "\t1000 Mbps: %s\n",
 -- 
-2.13.0
+2.12.2
 
