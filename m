@@ -1,75 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 13:33:29 +0000
-Subject: [PATCH 3/3] sctp: Replace four seq_printf() calls by seq_puts()
-Message-Id: <e1c75816-be5a-2ddb-101e-4abf08e140f1@users.sourceforge.net>
+Date: Tue, 09 May 2017 14:23:20 +0000
+Subject: [PATCH 2/4] hamradio: Adjust four function calls together with a variable assignment
+Message-Id: <28005de5-baf6-9db0-7eaa-7ef14d4e7142@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
-In-Reply-To: <ea9206ca-2a2f-095e-d764-3f819610d5e8@users.sourceforge.net>
+References: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
+In-Reply-To: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
+To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Jean-Paul Roubelat <jpr@f6fbb.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 14:54:18 +0200
+Date: Tue, 9 May 2017 15:15:16 +0200
 
-Strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix affected source code places.
+Improve a size determination.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/sctp/proc.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/net/hamradio/yam.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/net/sctp/proc.c b/net/sctp/proc.c
-index 458087681490..a9dc4538db44 100644
---- a/net/sctp/proc.c
-+++ b/net/sctp/proc.c
-@@ -184,7 +184,8 @@ static void *sctp_eps_seq_start(struct seq_file *seq, loff_t *pos)
- 		*pos = 0;
- 
- 	if (*pos = 0)
--		seq_printf(seq, " ENDPT     SOCK   STY SST HBKT LPORT   UID INODE LADDRS\n");
-+		seq_puts(seq,
-+			 " ENDPT     SOCK   STY SST HBKT LPORT   UID INODE LADDRS\n");
- 
- 	return (void *)pos;
- }
-@@ -326,11 +327,8 @@ static int sctp_assocs_seq_show(struct seq_file *seq, void *v)
- 	struct sock *sk;
- 
- 	if (v = SEQ_START_TOKEN) {
--		seq_printf(seq, " ASSOC     SOCK   STY SST ST HBKT "
--				"ASSOC-ID TX_QUEUE RX_QUEUE UID INODE LPORT "
--				"RPORT LADDRS <-> RADDRS "
--				"HBINT INS OUTS MAXRT T1X T2X RTXC "
--				"wmema wmemq sndbuf rcvbuf\n");
-+		seq_puts(seq,
-+			 " ASSOC     SOCK   STY SST ST HBKT ASSOC-ID TX_QUEUE RX_QUEUE UID INODE LPORT RPORT LADDRS <-> RADDRS HBINT INS OUTS MAXRT T1X T2X RTXC wmema wmemq sndbuf rcvbuf\n");
- 		return 0;
+diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
+index 542f1e511df1..c792b0f116a5 100644
+--- a/drivers/net/hamradio/yam.c
++++ b/drivers/net/hamradio/yam.c
+@@ -401,7 +401,8 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
  	}
  
-@@ -357,5 +355,5 @@ static int sctp_assocs_seq_show(struct seq_file *seq, void *v)
- 	sctp_seq_dump_local_addrs(seq, epb);
--	seq_printf(seq, "<-> ");
-+	seq_puts(seq, "<-> ");
- 	sctp_seq_dump_remote_addrs(seq, assoc);
- 	seq_printf(seq, "\t%8lu %5d %5d %4d %4d %4d %8d "
- 		   "%8d %8d %8d %8d",
-@@ -419,8 +417,8 @@ static int sctp_remaddr_seq_show(struct seq_file *seq, void *v)
- 	struct sctp_transport *transport, *tsp;
- 
- 	if (v = SEQ_START_TOKEN) {
--		seq_printf(seq, "ADDR ASSOC_ID HB_ACT RTO MAX_PATH_RTX "
--				"REM_ADDR_RTX START STATE\n");
-+		seq_puts(seq,
-+			 "ADDR ASSOC_ID HB_ACT RTO MAX_PATH_RTX REM_ADDR_RTX START STATE\n");
- 		return 0;
+ 	/* Allocate a new mcs */
+-	if ((p = kmalloc(sizeof(struct yam_mcs), GFP_KERNEL)) = NULL) {
++	p = kmalloc(sizeof(*p), GFP_KERNEL);
++	if (!p) {
+ 		release_firmware(fw);
+ 		return NULL;
  	}
- 
+@@ -549,7 +550,8 @@ static inline void yam_rx_flag(struct net_device *dev, struct yam_port *yp)
+ 		if ((yp->rx_crch & yp->rx_crcl) != 0xFF) {
+ 			/* Bad crc */
+ 		} else {
+-			if (!(skb = dev_alloc_skb(pkt_len))) {
++			skb = dev_alloc_skb(pkt_len);
++			if (!skb) {
+ 				printk(KERN_WARNING "%s: memory squeeze, dropping packet\n", dev->name);
+ 				++dev->stats.rx_dropped;
+ 			} else {
+@@ -670,7 +672,8 @@ static void yam_tx_byte(struct net_device *dev, struct yam_port *yp)
+ 		break;
+ 	case TX_HEAD:
+ 		if (--yp->tx_count <= 0) {
+-			if (!(skb = skb_dequeue(&yp->send_queue))) {
++			skb = skb_dequeue(&yp->send_queue);
++			if (!skb) {
+ 				ptt_off(dev);
+ 				yp->tx_state = TX_OFF;
+ 				break;
+@@ -879,7 +882,8 @@ static int yam_open(struct net_device *dev)
+ 		printk(KERN_ERR "%s: cannot 0x%lx busy\n", dev->name, dev->base_addr);
+ 		return -EACCES;
+ 	}
+-	if ((u = yam_check_uart(dev->base_addr)) = c_uart_unknown) {
++	u = yam_check_uart(dev->base_addr);
++	if (u = c_uart_unknown) {
+ 		printk(KERN_ERR "%s: cannot find uart type\n", dev->name);
+ 		ret = -EIO;
+ 		goto out_release_base;
 -- 
 2.12.2
 
