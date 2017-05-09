@@ -1,51 +1,55 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 15 May 2017 17:44:37 +0000
-Subject: Re: [PATCH 1/3] coresight: etb10: Delete an error message for a failed memory allocation in etb_prob
-Message-Id: <CANLsYky=-vmB+xMEZ4M0vWRx0Yimfb5E+whfJeTQ1jndj6GBUQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 09 May 2017 08:43:56 +0000
+Subject: Re: S390: Fine-tuning for six function implementations
+Message-Id: <4fd54bfb-d681-ae6f-d92c-795a6bc67a80@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
- <df23f2fa-ad4a-8338-8641-96782e50f6a7@users.sourceforge.net>
-In-Reply-To: <df23f2fa-ad4a-8338-8641-96782e50f6a7@users.sourceforge.net>
+References: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
+ <51ba03f7-d1d8-8064-7dee-b5a910ad47de@oracle.com>
+In-Reply-To: <51ba03f7-d1d8-8064-7dee-b5a910ad47de@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Vegard Nossum <vegard.nossum@oracle.com>, linux-s390@vger.kernel.org
+Cc: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12 May 2017 at 12:51, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 May 2017 20:23:43 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/hwtracing/coresight/coresight-etb10.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-> index 979ea6ec7902..837aebf22c45 100644
-> --- a/drivers/hwtracing/coresight/coresight-etb10.c
-> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-> @@ -675,11 +675,8 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
->
->         drvdata->buf = devm_kzalloc(dev,
->                                     drvdata->buffer_depth * 4, GFP_KERNEL);
-> -       if (!drvdata->buf) {
-> -               dev_err(dev, "Failed to allocate %u bytes for buffer data\n",
-> -                       drvdata->buffer_depth * 4);
-> +       if (!drvdata->buf)
->                 return -ENOMEM;
-> -       }
->
->         desc.type = CORESIGHT_DEV_TYPE_SINK;
->         desc.subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
+> It would be different if your patches fixed actual bugs.
 
-Applied - thanks.
+I dare to point change possibilities out which correspond to a special error category.
+There can be different opinions about their relevance for further software improvements.
 
-> --
-> 2.12.3
->
+
+> This is just mindless code transformations that MAY in the best case save a few bytes
+> of code here and there (I don't know; you didn't say).
+
+Do you know the run time characteristics for the discussed functions good enough?
+http://elixir.free-electrons.com/linux/v4.11/source/fs/seq_file.c#L405
+
+
+> But the potential gains from these incredibly numerous and tiny patches
+> that don't fix anything are so small, it's a waste of time, bandwidth,
+> and mental capacity for you and for everybody involved.
+
+I suggest a bit of code reduction at various places once more.
+
+
+> I just searched my inbox for patches from you and you sent literally
+> _hundreds_ over the past few days,
+
+I sent update suggestions in this scale since the year 2014.
+
+
+> all doing this crazy printf/puts/putc transformation.
+
+I agree that the corresponding number could be remarkable.
+But there are also other source code search patterns involved besides information
+around these logging functions.
+
+
+> Another bit of searching and I see that I'm not the first one giving you
+> this response:
+
+You are right that some agreements and disagreements were expressed already
+(depending on the software area).
+
+Regards,
+Markus
