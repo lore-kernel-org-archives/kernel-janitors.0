@@ -1,52 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 23 May 2017 20:52:20 +0000
-Subject: [PATCH 2/5] MIPS: smp-cps: Delete error messages for failed memory allocations in cps_prepare_cpus()
-Message-Id: <3e8f04ae-8457-0531-e38e-0e682b99ed3f@users.sourceforge.net>
+Date: Tue, 09 May 2017 14:25:07 +0000
+Subject: [PATCH 4/4] hamradio: Adjust four function calls together with a variable assignment
+Message-Id: <20f62ffa-b12a-f14c-df7b-96a750153823@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
-In-Reply-To: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
+References: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
+In-Reply-To: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mips@linux-mips.org, Ingo Molnar <mingo@kernel.org>, James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>, Marcin Nowakowski <marcin.nowakowski@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Jean-Paul Roubelat <jpr@f6fbb.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 23 May 2017 21:41:32 +0200
+Date: Tue, 9 May 2017 15:57:17 +0200
 
-Omit two extra messages for memory allocation failures in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus fix affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/mips/kernel/smp-cps.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/net/hamradio/bpqether.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 36954ddd0b9f..bc8d7f6a62c2 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -171,7 +171,5 @@ static void __init cps_prepare_cpus(unsigned int max_cpus)
--	if (!mips_cps_core_bootcfg) {
--		pr_err("Failed to allocate boot config for %u cores\n", ncores);
-+	if (!mips_cps_core_bootcfg)
- 		goto err_out;
--	}
+diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
+index eaa0f2e8e561..5e234e0ca256 100644
+--- a/drivers/net/hamradio/bpqether.c
++++ b/drivers/net/hamradio/bpqether.c
+@@ -185,7 +185,8 @@ static int bpq_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_ty
+ 	if (!net_eq(dev_net(dev), &init_net))
+ 		goto drop;
  
- 	/* Allocate VPE boot configuration structs */
- 	for (c = 0; c < ncores; c++) {
-@@ -182,8 +180,5 @@ static void __init cps_prepare_cpus(unsigned int max_cpus)
--		if (!mips_cps_core_bootcfg[c].vpe_config) {
--			pr_err("Failed to allocate %u VPE boot configs\n",
--			       core_vpes);
-+		if (!mips_cps_core_bootcfg[c].vpe_config)
- 			goto err_out;
--		}
- 	}
+-	if ((skb = skb_share_check(skb, GFP_ATOMIC)) = NULL)
++	skb = skb_share_check(skb, GFP_ATOMIC);
++	if (!skb)
+ 		return NET_RX_DROP;
  
- 	/* Mark this CPU as booted */
+ 	if (!pskb_may_pull(skb, sizeof(struct ethhdr)))
+@@ -286,7 +287,8 @@ static netdev_tx_t bpq_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	bpq = netdev_priv(dev);
+ 
+ 	orig_dev = dev;
+-	if ((dev = bpq_get_ether_dev(dev)) = NULL) {
++	dev = bpq_get_ether_dev(dev);
++	if (!dev) {
+ 		orig_dev->stats.tx_dropped++;
+ 		kfree_skb(skb);
+ 		return NETDEV_TX_OK;
+@@ -565,12 +567,14 @@ static int bpq_device_event(struct notifier_block *this,
+ 		break;
+ 
+ 	case NETDEV_DOWN:	/* ethernet device closed -> close BPQ interface */
+-		if ((dev = bpq_get_ax25_dev(dev)) != NULL)
++		dev = bpq_get_ax25_dev(dev);
++		if (dev)
+ 			dev_close(dev);
+ 		break;
+ 
+ 	case NETDEV_UNREGISTER:	/* ethernet device removed -> free BPQ interface */
+-		if ((dev = bpq_get_ax25_dev(dev)) != NULL)
++		dev = bpq_get_ax25_dev(dev);
++		if (dev)
+ 			bpq_free_device(dev);
+ 		break;
+ 	default:
 -- 
-2.13.0
+2.12.2
 
