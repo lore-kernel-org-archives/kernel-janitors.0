@@ -1,43 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 20:00:29 +0000
-Subject: [PATCH] IB/usnic: Delete an error message for a failed memory allocation in usnic_transport_init()
-Message-Id: <c7e810c9-703e-6d08-c885-d0ce9209ca04@users.sourceforge.net>
+Date: Tue, 09 May 2017 14:24:18 +0000
+Subject: [PATCH 3/4] hamradio: Use seq_puts() in bpq_seq_show()
+Message-Id: <ef61af8b-a3b1-9d74-22e4-1df1bac08f98@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
+In-Reply-To: <4c5c939a-bd55-7b88-8e41-49f5544b7658@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Christian Benvenuti <benve@cisco.com>, Dave Goodell <dgoodell@cisco.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Jean-Paul Roubelat <jpr@f6fbb.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 21:53:51 +0200
+Date: Tue, 9 May 2017 15:45:09 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/usnic/usnic_transport.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/hamradio/bpqether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_transport.c b/drivers/infiniband/hw/usnic/usnic_transport.c
-index de318389a301..2e9bba52a686 100644
---- a/drivers/infiniband/hw/usnic/usnic_transport.c
-+++ b/drivers/infiniband/hw/usnic/usnic_transport.c
-@@ -201,10 +201,8 @@ int usnic_transport_sock_get_addr(struct socket *sock, int *proto,
- int usnic_transport_init(void)
- {
- 	roce_bitmap = kzalloc(ROCE_BITMAP_SZ, GFP_KERNEL);
--	if (!roce_bitmap) {
--		usnic_err("Failed to allocate bit map");
-+	if (!roce_bitmap)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
+index f62e7f325cf9..eaa0f2e8e561 100644
+--- a/drivers/net/hamradio/bpqether.c
++++ b/drivers/net/hamradio/bpqether.c
+@@ -434,7 +434,7 @@ static int bpq_seq_show(struct seq_file *seq, void *v)
+ 			bpqdev->dest_addr);
  
- 	/* Do not ever allocate bit 0, hence set it here */
- 	bitmap_set(roce_bitmap, 0, 1);
+ 		if (is_multicast_ether_addr(bpqdev->acpt_addr))
+-			seq_printf(seq, "*\n");
++			seq_puts(seq, "*\n");
+ 		else
+ 			seq_printf(seq, "%pM\n", bpqdev->acpt_addr);
+ 
 -- 
-2.12.3
+2.12.2
 
