@@ -1,55 +1,35 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 08:43:56 +0000
+Date: Tue, 09 May 2017 10:54:09 +0000
 Subject: Re: S390: Fine-tuning for six function implementations
-Message-Id: <4fd54bfb-d681-ae6f-d92c-795a6bc67a80@users.sourceforge.net>
+Message-Id: <44beba0d-2a1c-9afc-58a7-bba750641cf5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
  <51ba03f7-d1d8-8064-7dee-b5a910ad47de@oracle.com>
-In-Reply-To: <51ba03f7-d1d8-8064-7dee-b5a910ad47de@oracle.com>
+ <20170509103031.onbbgnuptd73j7ya@gmail.com>
+In-Reply-To: <20170509103031.onbbgnuptd73j7ya@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vegard Nossum <vegard.nossum@oracle.com>, linux-s390@vger.kernel.org
-Cc: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>, linux-s390@vger.kernel.org
+Cc: Vegard Nossum <vegard.nossum@oracle.com>, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, "David S. Miller" <davem@davemloft.net>
 
-> It would be different if your patches fixed actual bugs.
+> ... they might also be acceptable if they came from a genuine newbie 
+> who does his first patch,
 
-I dare to point change possibilities out which correspond to a special error category.
-There can be different opinions about their relevance for further software improvements.
-
-
-> This is just mindless code transformations that MAY in the best case save a few bytes
-> of code here and there (I don't know; you didn't say).
-
-Do you know the run time characteristics for the discussed functions good enough?
-http://elixir.free-electrons.com/linux/v4.11/source/fs/seq_file.c#L405
+How would you really react if such Linux development beginners would dare
+to pick any of the shown software change opportunities up?
 
 
-> But the potential gains from these incredibly numerous and tiny patches
-> that don't fix anything are so small, it's a waste of time, bandwidth,
-> and mental capacity for you and for everybody involved.
+> or if these patches represented genuine interest in the subsystem in question,
 
-I suggest a bit of code reduction at various places once more.
-
-
-> I just searched my inbox for patches from you and you sent literally
-> _hundreds_ over the past few days,
-
-I sent update suggestions in this scale since the year 2014.
+I am interested in various improvements where their size is varying between small
+and big as usual.
 
 
-> all doing this crazy printf/puts/putc transformation.
+> by being part of a larger work that adds new features or does some meaningful
+> code transformations.
 
-I agree that the corresponding number could be remarkable.
-But there are also other source code search patterns involved besides information
-around these logging functions.
-
-
-> Another bit of searching and I see that I'm not the first one giving you
-> this response:
-
-You are right that some agreements and disagreements were expressed already
-(depending on the software area).
+These updates happened also several times.
 
 Regards,
 Markus
