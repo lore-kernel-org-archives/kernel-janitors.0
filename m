@@ -1,27 +1,24 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Wed, 03 May 2017 21:46:43 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 09 May 2017 01:51:01 +0000
 Subject: Re: [PATCH] scsi: lpfc: double lock typo in lpfc_ns_rsp()
-Message-Id: <62ab0dcd-bf74-677d-7ee5-15a02230b2b6@broadcom.com>
+Message-Id: <yq1vapassqi.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170503212215.m2t2rfrkoktugkg4@mwanda>
-In-Reply-To: <20170503212215.m2t2rfrkoktugkg4@mwanda>
+In-Reply-To: <20170503212215.m2t2rfrkoktugkg4@mwanda> (Dan Carpenter's message
+        of "Thu, 4 May 2017 00:22:16 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 5/3/2017 2:22 PM, Dan Carpenter wrote:
+
+Dan,
+
 > There is a double lock bug here so this will deadlock instead of
 > unlocking.
->
-> Fixes: 1c5b12f76301 ("Fix implicit logo and RSCN handling for NVMET")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
->
-Yep. looks good
 
-Reviewed-by: James Smart <james.smart@broadcom.com>
+Applied to 4.12/scsi-fixes.
 
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
