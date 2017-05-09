@@ -1,39 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 18:54:29 +0000
-Subject: [PATCH 1/2] sh/intc: Improve a size determination in add_virq_to_pirq()
-Message-Id: <359e6a4f-66e3-87a2-0c55-8d57e9d1101f@users.sourceforge.net>
+Date: Tue, 09 May 2017 07:26:49 +0000
+Subject: [PATCH 1/3] ath9k: Reduce function calls for sequence output in read_file_dma()
+Message-Id: <2bae9fbe-a5a7-f2bb-0769-0d035738650c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e24933d7-b887-e443-af74-327a2d37d6fa@users.sourceforge.net>
-In-Reply-To: <e24933d7-b887-e443-af74-327a2d37d6fa@users.sourceforge.net>
+References: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+In-Reply-To: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>, Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 19:56:47 +0200
+Date: Mon, 8 May 2017 21:55:09 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Some data were put into a sequence by separate function calls.
+Print the same data with two function calls less.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/sh/intc/virq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/debug.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/sh/intc/virq.c b/drivers/sh/intc/virq.c
-index 35bbe288ddb4..2079425c95ed 100644
---- a/drivers/sh/intc/virq.c
-+++ b/drivers/sh/intc/virq.c
-@@ -93,5 +93,5 @@ static int add_virq_to_pirq(unsigned int irq, unsigned int virq)
- 		last = &entry->next;
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index 2e64977a8ab6..981b38a1e352 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -427,9 +427,7 @@ static int read_file_dma(struct seq_file *file, void *data)
+ 		seq_printf(file, "%d: %08x ", i, val[i]);
  	}
  
--	entry = kzalloc(sizeof(struct intc_virq_list), GFP_ATOMIC);
-+	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
- 	if (!entry) {
+-	seq_puts(file, "\n\n");
+-	seq_puts(file, "Num QCU: chain_st fsp_ok fsp_st DCU: chain_st\n");
+-
++	seq_puts(file, "\n\nNum QCU: chain_st fsp_ok fsp_st DCU: chain_st\n");
+ 	for (i = 0; i < ATH9K_NUM_QUEUES; i++, qcuOffset += 4, dcuOffset += 5) {
+ 		if (i = 8) {
+ 			qcuOffset = 0;
+@@ -448,9 +446,8 @@ static int read_file_dma(struct seq_file *file, void *data)
+ 			   (*dcuBase & (0x1f << dcuOffset)) >> dcuOffset);
+ 	}
+ 
+-	seq_puts(file, "\n");
+-
+-	seq_printf(file, "qcu_stitch state:   %2x    qcu_fetch state:        %2x\n",
++	seq_printf(file,
++		   "\nqcu_stitch state:   %2x    qcu_fetch state:        %2x\n",
+ 		   (val[3] & 0x003c0000) >> 18, (val[3] & 0x03c00000) >> 22);
+ 	seq_printf(file, "qcu_complete state: %2x    dcu_complete state:     %2x\n",
+ 		   (val[3] & 0x1c000000) >> 26, (val[6] & 0x3));
 -- 
-2.13.0
+2.12.2
 
