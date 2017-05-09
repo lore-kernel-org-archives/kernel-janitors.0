@@ -1,22 +1,41 @@
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 04 May 2017 16:09:00 +0000
-Subject: Re: [PATCH] of/unittest: Missing unlocks on error
-Message-Id: <CAL_JsqKfXL6A=QbCrF=6tyn6HwZa5MafNvZtS-HbBBxkBqO7bw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 09 May 2017 15:45:04 +0000
+Subject: [PATCH] mmc: sdricoh_cs: remove redundant check if len is non-zero
+Message-Id: <20170509154504.31901-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503194950.4xbdbwybvx6dkadx@mwanda>
-In-Reply-To: <20170503194950.4xbdbwybvx6dkadx@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Frank Rowand <frank.rowand@sony.com>, Frank Rowand <frowand.list@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sascha Sommer <saschasommer@freenet.de>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 3, 2017 at 2:49 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Static checkers complain that we should unlock before returning.  Which
-> is true.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+At the end of either of the read or write loops len is always zero
+and hence the non-zero check on len and return of -EIO is redundant
+and can be removed.
 
-Rob
+Detected by CoverityScan, CID#114293 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sdricoh_cs.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/mmc/host/sdricoh_cs.c b/drivers/mmc/host/sdricoh_cs.c
+index 5ff26ab81eb1..70cb00aa79a0 100644
+--- a/drivers/mmc/host/sdricoh_cs.c
++++ b/drivers/mmc/host/sdricoh_cs.c
+@@ -256,9 +256,6 @@ static int sdricoh_blockio(struct sdricoh_host *host, int read,
+ 		}
+ 	}
+ 
+-	if (len)
+-		return -EIO;
+-
+ 	return 0;
+ }
+ 
+-- 
+2.11.0
+
