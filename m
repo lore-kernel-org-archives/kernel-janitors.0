@@ -1,44 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2017 15:13:08 +0000
-Subject: [PATCH 03/25] net: mvneta: Use kmalloc_array() in mvneta_txq_init()
-Message-Id: <d3e0290e-78fe-9134-4e1f-6f09d82c2a56@users.sourceforge.net>
+Date: Wed, 10 May 2017 18:01:17 +0000
+Subject: [PATCH 1/3] s390/dasd: Adjust buffer output in dasd_hosts_print()
+Message-Id: <deb83447-9b77-d297-135c-a8af8055b3af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
-In-Reply-To: <d6f26bba-c678-5b66-4f5d-85f56d895190@users.sourceforge.net>
+References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Jarod Wilson <jarod@redhat.com>, Jisheng Zhang <jszhang@marvell.com>, Mirko Lindner <mlindner@marvell.com>, Philippe Reynes <tremyfr@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Stephen Hemminger <stephen@networkplumber.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Apr 2017 22:11:22 +0200
+Date: Wed, 10 May 2017 18:52:28 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+* Use a special format string specification for the desired output of the
+  array "pgid" into a sequence.
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
 
+* Delete the local variable "j" and a call of the function "seq_puts"
+  wich became unnecessary with this refactoring.
+
+Fixes: 5a3b7b112884f80ff19b18028fabeb4f9c035518 ("s390/dasd: add query host access to volume support")
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/block/dasd_eckd.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 9c9eed5a8e28..9c2ddd22a86f 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2933,7 +2933,8 @@ static int mvneta_txq_init(struct mvneta_port *pp,
- 	mvreg_write(pp, MVNETA_TXQ_BASE_ADDR_REG(txq->id), txq->descs_phys);
- 	mvreg_write(pp, MVNETA_TXQ_SIZE_REG(txq->id), txq->size);
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index 122456e4db89..b3709d3cba54 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -5288,7 +5288,7 @@ static int dasd_hosts_print(struct dasd_device *device, struct seq_file *m)
+ 	struct dasd_ckd_path_group_entry *entry;
+ 	struct dasd_ckd_host_information *info;
+ 	char sysplex[9] = "";
+-	int rc, i, j;
++	int rc, i;
  
--	txq->tx_skb = kmalloc(txq->size * sizeof(*txq->tx_skb), GFP_KERNEL);
-+	txq->tx_skb = kmalloc_array(txq->size, sizeof(*txq->tx_skb),
-+				    GFP_KERNEL);
- 	if (txq->tx_skb = NULL) {
- 		dma_free_coherent(pp->dev->dev.parent,
- 				  txq->size * MVNETA_DESC_ALIGNED_SIZE,
+ 	access = kzalloc(sizeof(*access), GFP_NOIO);
+ 	if (!access) {
+@@ -5308,10 +5308,8 @@ static int dasd_hosts_print(struct dasd_device *device, struct seq_file *m)
+ 		entry = (struct dasd_ckd_path_group_entry *)
+ 			(info->entry + i * info->entry_size);
+ 		/* PGID */
+-		seq_puts(m, "pgid ");
+-		for (j = 0; j < 11; j++)
+-			seq_printf(m, "%02x", entry->pgid[j]);
+-		seq_putc(m, '\n');
++		seq_printf(m, "pgid %*phN\n",
++			   ARRAY_SIZE(entry->pgid), entry->pgid);
+ 		/* FLAGS */
+ 		seq_printf(m, "status_flags %02x\n", entry->status_flags);
+ 		/* SYSPLEX NAME */
 -- 
-2.12.2
+2.12.3
 
