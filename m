@@ -1,57 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 17:47:27 +0000
-Subject: [PATCH 1/4] ueagle-atm: Delete error messages for failed memory allocations in two functions
-Message-Id: <e465c4ba-fe61-24c0-6e5b-b37abcf87d2c@users.sourceforge.net>
+Date: Wed, 10 May 2017 18:02:16 +0000
+Subject: [PATCH 2/3] s390/dasd: Fix typos in two comment lines
+Message-Id: <a37840d9-5e2f-f2da-176f-53beea1c69ae@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
-In-Reply-To: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
+References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthieu Castet <castet.matthieu@free.fr>, Stanislaw Gruszka <stf_xl@wp.pl>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 May 2017 19:02:01 +0200
+Date: Wed, 10 May 2017 19:19:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit two extra messages for memory allocation failures in these functions.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+CHECK: '…' may be misspelled - perhaps '…'?
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus fix two descriptions.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/atm/ueagle-atm.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/s390/block/dasd_eckd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/atm/ueagle-atm.c b/drivers/usb/atm/ueagle-atm.c
-index df67815f74e6..16fd87df69e1 100644
---- a/drivers/usb/atm/ueagle-atm.c
-+++ b/drivers/usb/atm/ueagle-atm.c
-@@ -868,10 +868,8 @@ static int uea_idma_write(struct uea_softc *sc, const void *data, u32 size)
- 	int bytes_read;
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index b3709d3cba54..e78601d97a67 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -3863,7 +3863,7 @@ static struct dasd_ccw_req *dasd_raw_build_cp(struct dasd_device *startdev,
+ 	unsigned int pfx_datasize;
  
- 	xfer_buff = kmemdup(data, size, GFP_KERNEL);
--	if (!xfer_buff) {
--		uea_err(INS_TO_USBDEV(sc), "can't allocate xfer_buff\n");
-+	if (!xfer_buff)
- 		return ret;
--	}
+ 	/*
+-	 * raw track access needs to be mutiple of 64k and on 64k boundary
++	 * Raw track access needs to be multiple of 64k and on 64k boundary.
+ 	 * For read requests we can fix an incorrect alignment by padding
+ 	 * the request with dummy pages.
+ 	 */
+@@ -4143,7 +4143,7 @@ dasd_eckd_fill_info(struct dasd_device * device,
  
- 	ret = usb_bulk_msg(sc->usb_dev,
- 			 usb_sndbulkpipe(sc->usb_dev, UEA_IDMA_PIPE),
-@@ -1147,10 +1145,8 @@ static int uea_request(struct uea_softc *sc,
- 	int ret = -ENOMEM;
- 
- 	xfer_buff = kmemdup(data, size, GFP_KERNEL);
--	if (!xfer_buff) {
--		uea_err(INS_TO_USBDEV(sc), "can't allocate xfer_buff\n");
-+	if (!xfer_buff)
- 		return ret;
--	}
- 
- 	ret = usb_control_msg(sc->usb_dev, usb_sndctrlpipe(sc->usb_dev, 0),
- 			      UCDC_SEND_ENCAPSULATED_COMMAND,
+ /*
+  * Release device ioctl.
+- * Buils a channel programm to releases a prior reserved
++ * Builds a channel program to release a prior reserved
+  * (see dasd_eckd_reserve) device.
+  */
+ static int
 -- 
-2.13.0
+2.12.3
 
