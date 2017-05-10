@@ -1,44 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 11 May 2017 15:01:34 +0000
-Subject: Re: [PATCH 0/3] SATA: Fine-tuning for two function implementations
-Message-Id: <3428511.iH6kg31xz3@amdc3058>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 10 May 2017 15:29:35 +0000
+Subject: [PATCH] elevator: eliminate unused result build warning
+Message-Id: <20170510152935.24968-1-yongming.yang@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df754c7a-2100-7169-0d40-b981ccd952a1@users.sourceforge.net>
- <20170428215334.GH22354@htj.duckdns.org>
- <CGME20170511150136epcas5p4549f5ae51303ef506c0f7f91b5dd1317@epcas5p4.samsung.com>
-In-Reply-To: <20170428215334.GH22354@htj.duckdns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <yongming.yang@windriver.com>, Firo Yang <firogm@gmail.com>
 
+Gcc complains about ignoring return value of ‘strstrip’; Fix it by
+just using the strstrip() as the function parameter.
 
-Hi,
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ block/elevator.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Friday, April 28, 2017 05:53:34 PM Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Apr 18, 2017 at 10:00:37PM +0200, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 18 Apr 2017 21:54:32 +0200
-> > 
-> > A few update suggestions were taken into account
-> > from static source code analysis.
-> 
-> Hmmm, allocs -> callocs.  Are these actually beneficial?  If so, why?
-> Because one multiplication is rolled into the call?
-
-Each conversion (i.e. I tried the one from patch #1) seems to add
-an extra 24 bytes to the resulting code size (using gcc 4.8.4 for
-ARM32 cross-compilation) so I don't see much point in the automatic
-conversions. Only instances containing size calculations with
-real possibility for integer overflows should be converted and
-the patchset under discussion contains no such instances.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/block/elevator.c b/block/elevator.c
+index fda6be9..dd0ed19 100644
+--- a/block/elevator.c
++++ b/block/elevator.c
+@@ -1099,8 +1099,7 @@ ssize_t elv_iosched_store(struct request_queue *q, const char *name,
+ 		return count;
+ 
+ 	strlcpy(elevator_name, skip_spaces(name), sizeof(elevator_name));
+-	strstrip(elevator_name);
+-	ret = __elevator_change(q, elevator_name);
++	ret = __elevator_change(q, strstrip(elevator_name));
+ 	if (!ret)
+ 		return count;
+ 
+-- 
+2.9.3
 
