@@ -1,52 +1,32 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 15 May 2017 15:07:10 +0000
-Subject: Re: [PATCH] scsi: aacraid: fix leak of data from stack back to userspace
-Message-Id: <5919C41E.7090309@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 May 2017 19:43:17 +0000
+Subject: [PATCH] kvm: nVMX: off by one in vmx_write_pml_buffer()
+Message-Id: <20170510194317.uh72h3ez7hnvn62v@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170515145605.21461-1-colin.king@canonical.com>
-In-Reply-To: <20170515145605.21461-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paolo Bonzini <pbonzini@redhat.com>, Bandan Das <bsd@redhat.com>
+Cc: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+There are PML_ENTITY_NUM elements in the pml_address[] array so the >
+should be >= or we write beyond the end of the array when we do:
 
+	pml_address[vmcs12->guest_pml_index--] = gpa;
 
-Am 15.05.2017 16:56, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The fields sense_data_size and sense_data are unitialized garbage from
-> the stack and are being copied back to userspace.  Fix this leak of
-> stack information by ensuring they are zero'd.
-> 
-> Detected by CoverityScan, CID#1435473 ("Uninitialized scalar variable")
-> 
-> Fixes: 423400e64d377 ("scsi: aacraid: Include HBA direct interface")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/aacraid/commctrl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-> index 106b9332f718..6bb6ed48e31d 100644
-> --- a/drivers/scsi/aacraid/commctrl.c
-> +++ b/drivers/scsi/aacraid/commctrl.c
-> @@ -955,6 +955,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
->  			reply.srb_status = SRB_STATUS_SUCCESS;
->  			reply.scsi_status = 0;
->  			reply.data_xfer_length = byte_count;
-> +			reply.sense_data_size = 0;
-> +			memset(reply.sense_data, 0, AAC_SENSE_BUFFERSIZE);
->  		} else {
->  			reply.srb_status = err->service_response;
->  			reply.scsi_status = err->status;
+Fixes: c5f983f6e845 ("nVMX: Implement emulated Page Modification Logging")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-an other idea would be initialize the reply with zero:
-struct aac_srb_reply reply={0};
-
-maybe that is more future proof but i have no idea about the speed penalty.
-
-just my 2 cents,
- wh
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index c6f4ad44aa95..7698e8f321bf 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11213,7 +11213,7 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
+ 		if (!nested_cpu_has_pml(vmcs12))
+ 			return 0;
+ 
+-		if (vmcs12->guest_pml_index > PML_ENTITY_NUM) {
++		if (vmcs12->guest_pml_index >= PML_ENTITY_NUM) {
+ 			vmx->nested.pml_full = true;
+ 			return 1;
+ 		}
