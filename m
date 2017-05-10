@@ -1,40 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 May 2017 11:54:29 +0000
-Subject: [PATCH 1/2] spi-bfin5xx: Delete an error message for a failed memory allocation in bfin_spi_setup()
-Message-Id: <e3b3b509-7db7-ac85-c2ff-3a02d7cd900d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 May 2017 13:04:31 +0000
+Subject: [PATCH] crypto: glue_helper: remove redundant check on nbytes < bsize
+Message-Id: <20170510130431.21236-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f8ad3eb5-d6aa-3e82-1265-a63ed2c7cb88@users.sourceforge.net>
-In-Reply-To: <f8ad3eb5-d6aa-3e82-1265-a63ed2c7cb88-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 May 2017 13:00:34 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+There is a check to see if nbytes < bsize (and a jump to label 'done' if
+it is true) inside the proceeding do-while loop so it is impossible for
+the second nbytes < bsize check to be true, hence is it redundant and
+can be removed. Remove it.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#712347 ("Logically dead code")
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/spi/spi-bfin5xx.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/crypto/glue_helper.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
-index 249c7a3677c9..3265f4967d2b 100644
---- a/drivers/spi/spi-bfin5xx.c
-+++ b/drivers/spi/spi-bfin5xx.c
-@@ -983,6 +983,5 @@ static int bfin_spi_setup(struct spi_device *spi)
- 		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
- 		if (!chip) {
--			dev_err(&spi->dev, "cannot allocate chip data\n");
- 			ret = -ENOMEM;
- 			goto error;
+diff --git a/arch/x86/crypto/glue_helper.c b/arch/x86/crypto/glue_helper.c
+index 24ac9fad832d..d61e57960fe0 100644
+--- a/arch/x86/crypto/glue_helper.c
++++ b/arch/x86/crypto/glue_helper.c
+@@ -176,9 +176,6 @@ __glue_cbc_decrypt_128bit(const struct common_glue_ctx *gctx,
+ 				src -= 1;
+ 				dst -= 1;
+ 			} while (nbytes >= func_bytes);
+-
+-			if (nbytes < bsize)
+-				goto done;
  		}
+ 	}
+ 
 -- 
-2.13.0
+2.11.0
 
