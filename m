@@ -1,28 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 04 May 2017 20:10:45 +0000
-Subject: [PATCH 0/9] Drop unnecessary static
-Message-Id: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 May 2017 09:18:44 +0000
+Subject: [PATCH][V2] dm ioctl: make dm_open and dm_release release static
+Message-Id: <20170510091844.18045-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com, linux-omap@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These patches fix cases where there is a static on a local variable, but
-the variable is either first initialized or never used, on every possible
-execution path through the function.  The static has no benefit, and
-dropping it reduces the code size.
+From: Colin Ian King <colin.king@canonical.com>
 
+Making dm_open and dm_release static fixes the sparse warnings:
+
+warning: symbol 'dm_open' was not declared. Should it be static?
+warning: symbol 'dm_release' was not declared. Should it be static?
+
+Fixes: ab2c6224f4c0c ("dm: a basic support for using the select or poll function")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/md/dm-ioctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/block/drbd/drbd_nl.c            |    2 +-
- drivers/clocksource/timer-fttmr010.c    |    2 +-
- drivers/iio/accel/hid-sensor-accel-3d.c |    2 +-
- drivers/mfd/max8925-i2c.c               |    2 +-
- drivers/mfd/twl4030-irq.c               |    2 +-
- drivers/mtd/chips/cfi_cmdset_0020.c     |    2 +-
- drivers/mtd/maps/physmap_of_gemini.c    |    2 +-
- drivers/power/supply/axp20x_usb_power.c |    2 +-
- drivers/regulator/palmas-regulator.c    |    2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index 70dc5db90ef2..d45c68115d4c 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1893,7 +1893,7 @@ static long dm_compat_ctl_ioctl(struct file *file, uint command, ulong u)
+ #define dm_compat_ctl_ioctl NULL
+ #endif
+ 
+-int dm_open(struct inode *inode, struct file *filp)
++static int dm_open(struct inode *inode, struct file *filp)
+ {
+ 	int r;
+ 	struct dm_file *priv;
+@@ -1911,7 +1911,7 @@ int dm_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
+-int dm_release(struct inode *inode, struct file *filp)
++static int dm_release(struct inode *inode, struct file *filp)
+ {
+ 	kfree(filp->private_data);
+ 	return 0;
+-- 
+2.11.0
+
