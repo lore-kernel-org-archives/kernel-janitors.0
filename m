@@ -1,28 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 09:50:23 +0000
-Subject: [PATCH 0/3] thermal-Tegra: Fine-tuning for regs_show()
-Message-Id: <b0795133-ebb9-56b3-567d-b3773f298789@users.sourceforge.net>
+Date: Wed, 10 May 2017 19:30:29 +0000
+Subject: [PATCH] net-procfs: Adjust buffer output in dev_mc_seq_show()
+Message-Id: <f4834759-37aa-14d7-e000-6526a3a4071f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Eduardo Valentin <edubezval@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Wei Ni <wni@nvidia.com>, Zhang Rui <rui.zhang@intel.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 11:40:04 +0200
+Date: Wed, 10 May 2017 21:17:43 +0200
 
-Three update suggestions were taken into account
-from static source code analysis.
+* Use a special format string specification for the desired output of the
+  array "addr" into a sequence.
 
-Markus Elfring (3):
-  Combine two function calls into one
-  Use seq_putc() in regs_show()
-  Combine two seq_printf() calls into one
+  This issue was detected by using the Coccinelle software.
 
- drivers/thermal/tegra/soctherm.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+* Delete the local variable "i" and a call of the function "seq_putc"
+  which became unnecessary with this refactoring.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/core/net-procfs.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/net/core/net-procfs.c b/net/core/net-procfs.c
+index 14d09345f00d..6aa427a2fb98 100644
+--- a/net/core/net-procfs.c
++++ b/net/core/net-procfs.c
+@@ -363,15 +363,9 @@ static int dev_mc_seq_show(struct seq_file *seq, void *v)
+ 
+ 	netif_addr_lock_bh(dev);
+ 	netdev_for_each_mc_addr(ha, dev) {
+-		int i;
+-
+ 		seq_printf(seq, "%-4d %-15s %-5d %-5d ", dev->ifindex,
+ 			   dev->name, ha->refcount, ha->global_use);
+-
+-		for (i = 0; i < dev->addr_len; i++)
+-			seq_printf(seq, "%02x", ha->addr[i]);
+-
+-		seq_putc(seq, '\n');
++		seq_printf(seq, "%*phN\n", dev->addr_len, ha->addr);
+ 	}
+ 	netif_addr_unlock_bh(dev);
+ 	return 0;
 -- 
-2.12.2
+2.12.3
 
