@@ -1,50 +1,71 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 18 May 2017 07:15:51 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: ensure loop does not wraparound on decrement
-Message-Id: <591D4A27.7020402@bfs.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 10 May 2017 03:53:56 +0000
+Subject: [PATCH] drm/vc4: Fix resource leak in 'vc4_get_hang_state_ioctl()' in error handling path
+Message-Id: <20170510035356.24415-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170517181346.11715-1-colin.king@canonical.com>
-In-Reply-To: <20170517181346.11715-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?B?Q2hyaXN0aWFuIEvDtg==?= =?UTF-8?B?bmln?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Eric Huang <JinHuiEric.Huang@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: eric@anholt.net, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If one 'drm_gem_handle_create()' fails, we leak somes handles and some
+memory.
 
+In order to fix it:
+  - move the 'free(bo_state)' at the end of the function in the error
+    handling path. This has the side effect to also try to free it if the
+    first 'kcalloc' fails. This is harmless.
+  - delete already allocated handles
+  - remove the now useless 'err' label
 
-Am 17.05.2017 20:13, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current for loop decrements i when it is zero and this causes
-> a wrap-around back to ~0 because i is unsigned. In the unlikely event
-> that mask is 0, the loop will run forever. Fix this so we can't loop
-> forever.
-> 
-> Detected by CoverityScan, CID#1435469 ("Unsigned compared against 0")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> index ad30f5d3a10d..d92c9b9b15be 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> @@ -4199,7 +4199,7 @@ static int vega10_force_clock_level(struct pp_hwmgr *hwmgr,
->  		}
->  		data->smc_state_table.gfx_boot_level = i;
->  
-> -		for (i = 31; i >= 0; i--) {
-> +		for (i = 32; --i; ) {
->  			if (mask & (1 << i))
->  				break;
->  		}
+The way the code is now written will also delete the handles if the
+'copy_to_user()' call fails.
 
-nitpicking:
-we notices at several points that programmers are bad at counting backwards.
-Is there a reason not to start with i=0 ?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch also add the 'vc4_free_hang_state()' call in the error
+handling path. It sounds logical to me, but I'm not sure of it.
+---
+ drivers/gpu/drm/vc4/vc4_gem.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-re,
- wh
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index e9c381c42139..891c7a22cf81 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -111,8 +111,8 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 					    &handle);
+ 
+ 		if (ret) {
+-			state->bo_count = i - 1;
+-			goto err;
++			state->bo_count = i;
++			goto err_free;
+ 		}
+ 		bo_state[i].handle = handle;
+ 		bo_state[i].paddr = vc4_bo->base.paddr;
+@@ -124,13 +124,16 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 			 state->bo_count * sizeof(*bo_state)))
+ 		ret = -EFAULT;
+ 
+-	kfree(bo_state);
+-
+ err_free:
+-
+ 	vc4_free_hang_state(dev, kernel_state);
+ 
+-err:
++	if (ret) {
++		for (i = 0; i < state->bo_count; i++)
++			drm_gem_handle_delete(file_priv, bo_state[i].handle);
++	}
++
++	kfree(bo_state);
++
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
+
