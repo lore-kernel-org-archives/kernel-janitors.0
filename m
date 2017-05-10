@@ -1,47 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 06:40:24 +0000
-Subject: Re: ipack: Improve a size determination in ipack_bus_register()
-Message-Id: <161221bf-26a7-6f45-6e2e-b166654aaee8@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 May 2017 05:52:26 +0000
+Subject: [PATCH] crypto: glue_helper - Delete some dead code
+Message-Id: <20170510055226.5mlkw654cl6djc65@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b3fea957-b1bf-f681-8f70-d9d85106651b@users.sourceforge.net>
- <4c250243-7441-3c07-764d-1a23f950def7@users.sourceforge.net>
- <1494823967.2172.1.camel@igalia.com> <20170515055653.GA5658@kroah.com>
-In-Reply-To: <20170515055653.GA5658@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?Q?Samuel_Iglesias_Gons=c3=a1lvez?= <siglesias@igalia.com>, industrypack-devel@lists.sourceforge.net, Jens Taprogge <jens.taprogge@taprogge.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Greg, Would you mind picking this patch series through your char-misc tree?
-> 
-> I'm sorry, but this person is in my blacklist
+We checked (nbytes < bsize) inside the loops so it's not possible to hit
+the "goto done;" here.  This code is cut and paste from other slightly
+different loops where we don't have the check inside the loop.
 
-Some developers know this communication setting in the meantime.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> and I don't have any of their emails, so I don't have these patches anywhere.
-
-I find this kind of feedback inappropriate.
-
-You chose to exclude my update suggestions at a specific point in time.
-They are still publicly available as they were stored also by other
-information systems despite my messages vanish from your personal mail in-box
-for a while.
-
-
-> If you wish to have them applied, please resend them with your acked-by,
-
-I am curious how other contributors will think about the shown change patterns.
-
-
-> or just ignore them, it's up to you.
-
-This reaction is also a possible option depending on your development priorities
-for the affected software modules.
-
-I hope that remaining open issues can be improved as desired after a bit of
-constructive software development discussion.
-
-Regards,
-Markus
+diff --git a/arch/x86/crypto/glue_helper.c b/arch/x86/crypto/glue_helper.c
+index 24ac9fad832d..d61e57960fe0 100644
+--- a/arch/x86/crypto/glue_helper.c
++++ b/arch/x86/crypto/glue_helper.c
+@@ -176,9 +176,6 @@ __glue_cbc_decrypt_128bit(const struct common_glue_ctx *gctx,
+ 				src -= 1;
+ 				dst -= 1;
+ 			} while (nbytes >= func_bytes);
+-
+-			if (nbytes < bsize)
+-				goto done;
+ 		}
+ 	}
+ 
