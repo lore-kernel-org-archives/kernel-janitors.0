@@ -1,51 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 May 2017 07:09:09 +0000
-Subject: Re: [PATCH 2/4] vmbus: Delete an error message for a failed memory allocation in vmbus_device_create
-Message-Id: <20170512070909.xxa62d2cde3qoj4f@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 May 2017 09:18:21 +0000
+Subject: [PATCH] dm ioctl: make dm_open and dm_release release
+Message-Id: <20170510091821.17995-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
- <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
- <20170511093015.4cdfdb6c@xeon-e3>
-In-Reply-To: <20170511093015.4cdfdb6c@xeon-e3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Stephen Hemminger <sthemmin@microsoft.com>, Wolfram Sang <wsa@the-dreams.de>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@linuxdriverproject.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 11, 2017 at 09:30:15AM -0700, Stephen Hemminger wrote:
-> > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > index 6802d74f162c..96328aebae5a 100644
-> > --- a/drivers/hv/vmbus_drv.c
-> > +++ b/drivers/hv/vmbus_drv.c
-> > @@ -1149,7 +1149,5 @@ struct hv_device *vmbus_device_create(const uuid_le *type,
-> > -	if (!child_device_obj) {
-> > -		pr_err("Unable to allocate device object for child device\n");
-> > +	if (!child_device_obj)
-> >  		return NULL;
-> > -	}
-> >  
-> >  	child_device_obj->channel = channel;
-> >  	memcpy(&child_device_obj->dev_type, type, sizeof(uuid_le));
-> 
-> Taking out the message assumes that all callers of this function either log an
-> error or pass appropriate error code back to userspace. Did you walk back
-> through all the callers?
-> 
-> Just because an automated tool says that this needs to change does not
-> mean it has to.
+From: Colin Ian King <colin.king@canonical.com>
 
-Checkpatch.pl is correct here.  This message is useless.  It's during
-init so it's unlikely to fail ever.  In current kernels small kmallocs
-are quaranteed to succeed so it can't actually fail currently.  The
-stack trace is more useful than this message because it tells you a lot
-about what memory is free and the whole call tree.
+Making dm_open and dm_release static fixes the sparse warnings:
 
-The error message is dead useless code.
+warning: symbol 'dm_open' was not declared. Should it be static?
+warning: symbol 'dm_release' was not declared. Should it be static?
 
-This patch is not going to be merged because Markus doesn't listen to
-feedback and he's blocked but otherwise it's an OK patch.
+Fixes: ab2c6224f4c0c ("dm: a basic support for using the select or poll function")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/dm-ioctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index 70dc5db90ef2..d45c68115d4c 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1893,7 +1893,7 @@ static long dm_compat_ctl_ioctl(struct file *file, uint command, ulong u)
+ #define dm_compat_ctl_ioctl NULL
+ #endif
+ 
+-int dm_open(struct inode *inode, struct file *filp)
++static int dm_open(struct inode *inode, struct file *filp)
+ {
+ 	int r;
+ 	struct dm_file *priv;
+@@ -1911,7 +1911,7 @@ int dm_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
+-int dm_release(struct inode *inode, struct file *filp)
++static int dm_release(struct inode *inode, struct file *filp)
+ {
+ 	kfree(filp->private_data);
+ 	return 0;
+-- 
+2.11.0
 
