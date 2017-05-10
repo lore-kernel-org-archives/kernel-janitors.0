@@ -1,26 +1,34 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 08 May 2017 14:09:57 +0000
-Subject: Re: [PATCH] blk-mq: make __blk_mq_stop_hw_queues static
-Message-Id: <11c54006-03bf-4532-970f-2d5fecf734a6@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 May 2017 19:40:06 +0000
+Subject: [PATCH] PowerCap: Fix an error code in powercap_register_zone()
+Message-Id: <20170510194006.vsr5r5eyvjry4cka@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170508104440.10945-1-colin.king@canonical.com>
-In-Reply-To: <20170508104440.10945-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/08/2017 04:44 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Making __blk_mq_stop_hw_queues static fixes sparse warning:
-> 
->   block/blk-mq.c:6: warning: symbol '__blk_mq_stop_hw_queues' was not
->   declared. Should it be static?
+In the current code we accidentally return the successful result from
+idr_alloc() instead of a negative error pointer.  The caller is looking
+for an error pointer and so it treats the returned value as a valid
+pointer.
 
-Thanks, added.
+This one might be a bit serious because if it lets people get around the
+kernel's protection for remapping NULL.  I'm not sure.
 
--- 
-Jens Axboe
+Fixes: 75d2364ea0ca ("PowerCap: Add class driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+index 14bde0db8c24..5b10b50f8686 100644
+--- a/drivers/powercap/powercap_sys.c
++++ b/drivers/powercap/powercap_sys.c
+@@ -538,6 +538,7 @@ struct powercap_zone *powercap_register_zone(
+ 
+ 	power_zone->id = result;
+ 	idr_init(&power_zone->idr);
++	result = -ENOMEM;
+ 	power_zone->name = kstrdup(name, GFP_KERNEL);
+ 	if (!power_zone->name)
+ 		goto err_name_alloc;
