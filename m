@@ -1,42 +1,31 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Date: Thu, 11 May 2017 01:41:30 +0000
-Subject: Re: [PATCH] PowerCap: Fix an error code in powercap_register_zone()
-Message-Id: <1494466890.440.3.camel@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 May 2017 05:51:09 +0000
+Subject: [PATCH] iio: adc: ti_am335x_adc: allocating too much in probe
+Message-Id: <20170510055109.i2aql4xg4rovcqmw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170510194006.vsr5r5eyvjry4cka@mwanda>
-In-Reply-To: <20170510194006.vsr5r5eyvjry4cka@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, "Andrew F. Davis" <afd@ti.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Vignesh R <vigneshr@ti.com>, Mugunthan V N <mugunthanvnm@ti.com>, Lee Jones <lee.jones@linaro.org>, Michael Engl <michael.engl@wjw-solutions.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2017-05-10 at 22:40 +0300, Dan Carpenter wrote:
-> In the current code we accidentally return the successful result from
-> idr_alloc() instead of a negative error pointer.  The caller is
-> looking
-> for an error pointer and so it treats the returned value as a valid
-> pointer.
-> 
-> This one might be a bit serious because if it lets people get around
-> the
-> kernel's protection for remapping NULL.  I'm not sure.
-> 
-> Fixes: 75d2364ea0ca ("PowerCap: Add class driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+We should be allocating enough information for a tiadc_device struct
+which is about 400 bytes but instead we allocate enough for a second
+iio_dev struct which is over 2000 bytes.
 
-> 
-> diff --git a/drivers/powercap/powercap_sys.c
-> b/drivers/powercap/powercap_sys.c
-> index 14bde0db8c24..5b10b50f8686 100644
-> --- a/drivers/powercap/powercap_sys.c
-> +++ b/drivers/powercap/powercap_sys.c
-> @@ -538,6 +538,7 @@ struct powercap_zone *powercap_register_zone(
->  
->  	power_zone->id = result;
->  	idr_init(&power_zone->idr);
-> +	result = -ENOMEM;
->  	power_zone->name = kstrdup(name, GFP_KERNEL);
->  	if (!power_zone->name)
->  		goto err_name_alloc;
+Fixes: fea89e2dfcea ("iio: adc: ti_am335x_adc: use variable names for sizeof() operator")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
+index 4282ceca3d8f..6cbed7eb118a 100644
+--- a/drivers/iio/adc/ti_am335x_adc.c
++++ b/drivers/iio/adc/ti_am335x_adc.c
+@@ -614,7 +614,7 @@ static int tiadc_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*indio_dev));
++	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*adc_dev));
+ 	if (indio_dev = NULL) {
+ 		dev_err(&pdev->dev, "failed to allocate iio device\n");
+ 		return -ENOMEM;
