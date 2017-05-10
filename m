@@ -1,38 +1,40 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Tue, 09 May 2017 07:07:52 +0000
-Subject: Re: [PATCH] qca_debug: Reduce function calls for sequence output in qcaspi_info_show()
-Message-Id: <290d2473-73bd-70db-b6ef-c50331812f31@i2se.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 10 May 2017 04:15:03 +0000
+Subject: [PATCH] net: dsa: loop: Free resources if initialization is deferred
+Message-Id: <20170510041503.29363-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9932ee63-f766-49ce-d760-9a0bd06f0657@users.sourceforge.net>
-In-Reply-To: <9932ee63-f766-49ce-d760-9a0bd06f0657@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Philippe Reynes <tremyfr@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Am 08.05.2017 um 19:29 schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 8 May 2017 19:21:27 +0200
->
-> A bit of data was put into a sequence by separate function calls.
-> Print the same data together with adjusted seq_printf() calls instead.
+Free some devm'allocated memory in case of deferred driver initialization.
+This avoid to waste some memory in such a case.
 
-Sorry, i'm not happy with this patch. It doesn't increase readabilityand
-mixes the output of multiple lines.
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/dsa/dsa_loop.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-The only benefit is a little bit higher performance. But for debugfs
-this won't be necessary.
-
-Stefan
-
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/ethernet/qualcomm/qca_debug.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
-
+diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
+index a19e1781e9bb..557afb418320 100644
+--- a/drivers/net/dsa/dsa_loop.c
++++ b/drivers/net/dsa/dsa_loop.c
+@@ -260,8 +260,11 @@ static int dsa_loop_drv_probe(struct mdio_device *mdiodev)
+ 		return -ENOMEM;
+ 
+ 	ps->netdev = dev_get_by_name(&init_net, pdata->netdev);
+-	if (!ps->netdev)
++	if (!ps->netdev) {
++		devm_kfree(&mdiodev->dev, ps);
++		devm_kfree(&mdiodev->dev, ds);
+ 		return -EPROBE_DEFER;
++	}
+ 
+ 	pdata->cd.netdev[DSA_LOOP_CPU_PORT] = &ps->netdev->dev;
+ 
+-- 
+2.11.0
 
