@@ -1,27 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 14:30:15 +0000
-Subject: [PATCH 0/2] vhost/scsi: Adjustments for five function implementations
-Message-Id: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Date: Wed, 10 May 2017 10:43:43 +0000
+Subject: Re: [PATCH] soc: mediatek: PMIC wrap: Fix error handling
+Message-Id: <106d786b-165c-ae5e-5180-3b8126d9e8bc@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170219131249.12010-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170219131249.12010-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 16:25:04 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
 
-Markus Elfring (2):
-  Improve a size determination in four functions
-  Delete error messages for failed memory allocations in five functions
+On 19/02/17 14:12, Christophe JAILLET wrote:
+> According to error handling in this function, it is likely that going to
+> 'err_out2' was expected here.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
- drivers/vhost/scsi.c | 33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+Applied to v4.12-next/soc
 
--- 
-2.13.0
+Sorry for the delay.
+Matthias
 
+> ---
+>   drivers/soc/mediatek/mtk-pmic-wrap.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index a5f10936fb9c..285b434449a6 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -1200,7 +1200,8 @@ static int pwrap_probe(struct platform_device *pdev)
+>   
+>   	if (!(pwrap_readl(wrp, PWRAP_WACS2_RDATA) & PWRAP_STATE_INIT_DONE0)) {
+>   		dev_dbg(wrp->dev, "initialization isn't finished\n");
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_out2;
+>   	}
+>   
+>   	/* Initialize watchdog, may not be done by the bootloader */
+> @@ -1220,8 +1221,10 @@ static int pwrap_probe(struct platform_device *pdev)
+>   		goto err_out2;
+>   
+>   	wrp->regmap = devm_regmap_init(wrp->dev, NULL, wrp, &pwrap_regmap_config);
+> -	if (IS_ERR(wrp->regmap))
+> -		return PTR_ERR(wrp->regmap);
+> +	if (IS_ERR(wrp->regmap)) {
+> +		ret = PTR_ERR(wrp->regmap);
+> +		goto err_out2;
+> +	}
+>   
+>   	ret = of_platform_populate(np, NULL, NULL, wrp->dev);
+>   	if (ret) {
+> 
