@@ -1,55 +1,86 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 20:06:35 +0000
-Subject: [PATCH 1/3] GPU-DRM-Radeon: Use seq_putc() in radeon_sa_bo_dump_debug_info()
-Message-Id: <a3bf9b46-ca44-d9b3-d0de-bf580fbf265b@users.sourceforge.net>
+Date: Wed, 10 May 2017 18:03:08 +0000
+Subject: [PATCH 3/3] s390/dasd: Adjust six checks for null pointers
+Message-Id: <1395faca-9953-5873-0892-3d2eedbef2b6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
-In-Reply-To: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
+References: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
+In-Reply-To: <4af00744-1c8a-6b33-22c8-d26d569f6c5f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Haberland <sth@linux.vnet.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 21:35:48 +0200
+Date: Wed, 10 May 2017 19:29:17 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-A few single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/radeon/radeon_sa.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/s390/block/dasd_eckd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_sa.c b/drivers/gpu/drm/radeon/radeon_sa.c
-index 197b157b73d0..67bc3618798d 100644
---- a/drivers/gpu/drm/radeon/radeon_sa.c
-+++ b/drivers/gpu/drm/radeon/radeon_sa.c
-@@ -406,18 +406,15 @@ void radeon_sa_bo_dump_debug_info(struct radeon_sa_manager *sa_manager,
- 	list_for_each_entry(i, &sa_manager->olist, olist) {
- 		uint64_t soffset = i->soffset + sa_manager->gpu_addr;
- 		uint64_t eoffset = i->eoffset + sa_manager->gpu_addr;
--		if (&i->olist = sa_manager->hole) {
--			seq_printf(m, ">");
--		} else {
--			seq_printf(m, " ");
--		}
-+
-+		seq_putc(m, (&i->olist = sa_manager->hole) ? '>' : ' ');
- 		seq_printf(m, "[0x%010llx 0x%010llx] size %8lld",
- 			   soffset, eoffset, eoffset - soffset);
- 		if (i->fence) {
- 			seq_printf(m, " protected by 0x%016llx on ring %d",
- 				   i->fence->seq, i->fence->ring);
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index e78601d97a67..d02f3bbbd552 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -1080,7 +1080,7 @@ static int dasd_eckd_read_conf(struct dasd_device *device)
+ 					"error %d", rc);
+ 			return rc;
  		}
--		seq_printf(m, "\n");
-+		seq_putc(m, '\n');
+-		if (conf_data = NULL) {
++		if (!conf_data) {
+ 			DBF_EVENT_DEVID(DBF_WARNING, device->cdev, "%s",
+ 					"No configuration data "
+ 					"retrieved");
+@@ -2049,7 +2049,7 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
+ 				 "Track 0 has no records following the VTOC\n");
  	}
- 	spin_unlock(&sa_manager->wq.lock);
- }
+ 
+-	if (count_area != NULL && count_area->kl = 0) {
++	if (count_area && count_area->kl = 0) {
+ 		/* we found notthing violating our disk layout */
+ 		if (dasd_check_blocksize(count_area->dl) = 0)
+ 			block->bp_block = count_area->dl;
+@@ -2649,10 +2649,10 @@ static int dasd_eckd_format_process_data(struct dasd_device *base,
+ 	old_start = fdata->start_unit;
+ 	old_stop = fdata->stop_unit;
+ 
+-	if (!tpm && fmt_buffer != NULL) {
++	if (!tpm && fmt_buffer) {
+ 		/* Command Mode / Format Check */
+ 		format_step = 1;
+-	} else if (tpm && fmt_buffer != NULL) {
++	} else if (tpm && fmt_buffer) {
+ 		/* Transport Mode / Format Check */
+ 		format_step = DASD_CQR_MAX_CCW / rpt;
+ 	} else {
+@@ -4681,7 +4681,7 @@ static void dasd_eckd_dump_sense_ccw(struct dasd_device *device,
+ 	int len, sl, sct;
+ 
+ 	page = (char *) get_zeroed_page(GFP_ATOMIC);
+-	if (page = NULL) {
++	if (!page) {
+ 		DBF_DEV_EVENT(DBF_WARNING, device, "%s",
+ 			      "No memory to dump sense data\n");
+ 		return;
+@@ -4785,7 +4785,7 @@ static void dasd_eckd_dump_sense_tcw(struct dasd_device *device,
+ 	u8 *sense, *rcq;
+ 
+ 	page = (char *) get_zeroed_page(GFP_ATOMIC);
+-	if (page = NULL) {
++	if (!page) {
+ 		DBF_DEV_EVENT(DBF_WARNING, device, " %s",
+ 			    "No memory to dump sense data");
+ 		return;
 -- 
-2.12.2
+2.12.3
 
