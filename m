@@ -1,55 +1,44 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 16 May 2017 18:41:05 +0000
-Subject: Re: [PATCH 3/3] selinux: Use an other error code for an input validation failure in sidtab_insert()
-Message-Id: <CAHC9VhQY7-Ls5bX_wbna1S6PjV2Ck_1+AR5R8Pngn1tivXxCdg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 11:55:54 +0000
+Subject: [PATCH 2/2] alpha-module: Delete an error message for a failed memory allocation in module_frob_arch
+Message-Id: <98da03ff-97b5-af3a-f129-a212591fc3d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
-	<38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
-In-Reply-To: <38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
+References: <21258632-0cde-f750-5864-406dc6dfad20@users.sourceforge.net>
+In-Reply-To: <21258632-0cde-f750-5864-406dc6dfad20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-alpha@vger.kernel.org, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Richard Henderson <rth@twiddle.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On Tue, Apr 4, 2017 at 7:16 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 4 Apr 2017 12:23:41 +0200
->
-> The error code "-ENOMEM" was also returned so far when the parameter "s"
-> of this function contained a null pointer.
-> Now I find that the code "-EINVAL" is more appropriate in this case.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/sidtab.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 13:00:34 +0200
 
-Have you tested this to determine any impact it may have on the
-SELinux userspace?  I would agree that EINVAL is probably more
-appropriate in this case, but changing this return code has very
-little value and may disrupt userspace if it assumes EINVAL means
-something else when the policy load fails.  Without a demonstration
-that all the code paths have been tested I'm not inclined to merge
-this patch.
+Omit an extra message for a memory allocation failure in this function.
 
-> diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-> index c5f436b15d19..2eb2a54b88d2 100644
-> --- a/security/selinux/ss/sidtab.c
-> +++ b/security/selinux/ss/sidtab.c
-> @@ -36,7 +36,7 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
->         struct sidtab_node *prev, *cur, *newnode;
->
->         if (!s)
-> -               return -ENOMEM;
-> +               return -EINVAL;
->
->         hvalue = SIDTAB_HASH(sid);
->         prev = NULL;
-> --
-> 2.12.2
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/alpha/kernel/module.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/alpha/kernel/module.c b/arch/alpha/kernel/module.c
+index 387d9c500e48..211e62e9a0af 100644
+--- a/arch/alpha/kernel/module.c
++++ b/arch/alpha/kernel/module.c
+@@ -109,9 +109,5 @@ module_frob_arch_sections(Elf64_Ehdr *hdr, Elf64_Shdr *sechdrs,
+-	if (!chains) {
+-		printk(KERN_ERR
+-		       "module %s: no memory for symbol chain buffer\n",
+-		       me->name);
++	if (!chains)
+ 		return -ENOMEM;
+-	}
+ 
+ 	got->sh_size = 0;
+ 	got->sh_addralign = 8;
 -- 
-paul moore
-www.paul-moore.com
+2.12.3
+
