@@ -1,40 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:48:35 +0000
-Subject: [PATCH 10/10] dlm: Delete an unnecessary variable initialisation in dlm_ls_start()
-Message-Id: <c0122498-4a7f-d5f3-9a73-0f804d3b07d2@users.sourceforge.net>
+Date: Thu, 11 May 2017 13:45:13 +0000
+Subject: [PATCH 0/4] C64x+ Megamodule PIC: Adjustments for three functions
+Message-Id: <1b8c2efb-1096-3b78-9100-e20c55b6ecf1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+To: linux-c6x-dev@linux-c6x.org, Aurelien Jacquiot <a-jacquiot@ti.com>, Mark Salter <msalter@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 09:56:55 +0200
+Date: Thu, 11 May 2017 15:20:35 +0200
 
-The local variable "rv" is reassigned by a statement at the beginning.
-Thus omit the explicit initialisation.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/dlm/member.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (4):
+  Improve a size determination in init_megamod_pic()
+  Delete an error message for a failed memory allocation in init_megamod_pic()
+  Delete an unnecessary return statement in megamod_pic_init()
+  Fix a typo in a comment line
 
-diff --git a/fs/dlm/member.c b/fs/dlm/member.c
-index 3e565034ff2e..3fda3832cf6a 100644
---- a/fs/dlm/member.c
-+++ b/fs/dlm/member.c
-@@ -670,7 +670,7 @@ int dlm_ls_stop(struct dlm_ls *ls)
- 
- int dlm_ls_start(struct dlm_ls *ls)
- {
--	struct dlm_recover *rv = NULL, *rv_old;
-+	struct dlm_recover *rv, *rv_old;
- 	struct dlm_config_node *nodes;
- 	int error, count;
- 
+ arch/c6x/platforms/megamod-pic.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
 -- 
-2.12.2
+2.12.3
 
