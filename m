@@ -1,29 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 14:10:18 +0000
-Subject: [PATCH 0/3] RDS: Adjustments for two function implementations
-Message-Id: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
+Date: Thu, 11 May 2017 13:48:36 +0000
+Subject: [PATCH 3/4] C6X/megamode-pic: Delete an unnecessary return statement in megamod_pic_init()
+Message-Id: <7f92b7a6-1814-02f5-4026-8cfcdc1dfc6a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1b8c2efb-1096-3b78-9100-e20c55b6ecf1@users.sourceforge.net>
+In-Reply-To: <1b8c2efb-1096-3b78-9100-e20c55b6ecf1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rds-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Sowmini Varadhan <sowmini.varadhan-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-c6x-dev@linux-c6x.org, Aurelien Jacquiot <a-jacquiot@ti.com>, Mark Salter <msalter@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 16:02:03 +0200
+Date: Thu, 11 May 2017 15:05:41 +0200
 
-Three update suggestions were taken into account
-from static source code analysis.
+The script "checkpatch.pl" pointed information out like the following.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in rds_ib_add_one()
-  Improve a size determination in rds_ib_add_one()
-  Delete an error message for a failed memory allocation in rds_tcp_init_net()
+WARNING: void function return statements are not generally useful
 
- net/rds/ib.c  | 7 ++-----
- net/rds/tcp.c | 5 ++---
- 2 files changed, 4 insertions(+), 8 deletions(-)
+Thus remove such a statement in the affected function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/c6x/platforms/megamod-pic.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/c6x/platforms/megamod-pic.c b/arch/c6x/platforms/megamod-pic.c
+index cf0ebf25e42f..c49aa63289fa 100644
+--- a/arch/c6x/platforms/megamod-pic.c
++++ b/arch/c6x/platforms/megamod-pic.c
+@@ -339,6 +339,4 @@ void __init megamod_pic_init(void)
+ 
+ 	soc_ops.get_exception = get_exception;
+ 	soc_ops.assert_event = assert_event;
+-
+-	return;
+ }
 -- 
-2.13.0
+2.12.3
 
