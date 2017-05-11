@@ -1,82 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 09:25:07 +0000
-Subject: [PATCH 5/9] pinctrl: Adjust five checks for null pointers
-Message-Id: <080f6ec0-7796-d802-7b64-8ea9b5488a7a@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 11 May 2017 13:25:25 +0000
+Subject: Re: [PATCH 5/9] pinctrl: Adjust five checks for null pointers
+Message-Id: <CACRpkdatAch4Nh_npvdB4stqH6RRKVL3LHoHFhkpoTO5LhokoA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
-In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <080f6ec0-7796-d802-7b64-8ea9b5488a7a@users.sourceforge.net>
+In-Reply-To: <080f6ec0-7796-d802-7b64-8ea9b5488a7a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 10:01:57 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+On Tue, May 2, 2017 at 11:25 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-The script “checkpatch.pl” pointed information out like the following.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 May 2017 10:01:57 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+>
+> The script “checkpatch.pl” pointed information out like the following.
+>
+> Comparison to NULL could be written !…
+>
+> Thus fix the affected source code places.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Comparison to NULL could be written !…
+Patch applied.
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinconf.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index dfa782e19f37..f2168b6e3418 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -319,7 +319,7 @@ static int pinconf_pins_show(struct seq_file *s, void *what)
- 		pin = pctldev->desc->pins[i].number;
- 		desc = pin_desc_get(pctldev, pin);
- 		/* Skip if we cannot search the pin */
--		if (desc = NULL)
-+		if (!desc)
- 			continue;
- 
- 		seq_printf(s, "pin %d (%s): ", pin, desc->name);
-@@ -528,7 +528,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
- 
- 	/* get arg 'device_name' */
- 	token = strsep(&b, " ");
--	if (token = NULL)
-+	if (!token)
- 		return -EINVAL;
- 	if (strlen(token) >= MAX_NAME_LEN)
- 		return -EINVAL;
-@@ -536,7 +536,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
- 
- 	/* get arg 'state_name' */
- 	token = strsep(&b, " ");
--	if (token = NULL)
-+	if (!token)
- 		return -EINVAL;
- 	if (strlen(token) >= MAX_NAME_LEN)
- 		return -EINVAL;
-@@ -544,7 +544,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
- 
- 	/* get arg 'pin_name' */
- 	token = strsep(&b, " ");
--	if (token = NULL)
-+	if (!token)
- 		return -EINVAL;
- 	if (strlen(token) >= MAX_NAME_LEN)
- 		return -EINVAL;
-@@ -552,7 +552,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
- 
- 	/* get new_value of config' */
- 	token = strsep(&b, " ");
--	if (token = NULL)
-+	if (!token)
- 		return -EINVAL;
- 	if (strlen(token) >= MAX_NAME_LEN)
- 		return -EINVAL;
--- 
-2.12.2
-
+Yours,
+Linus Walleij
