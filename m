@@ -1,70 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 11:53:52 +0000
-Subject: [PATCH 2/4] net: stmmac: Replace five seq_printf() calls by seq_puts()
-Message-Id: <aaddd3eb-0659-3aed-7e42-5fae0f823ea3@users.sourceforge.net>
+Date: Thu, 11 May 2017 16:14:25 +0000
+Subject: [PATCH 0/4] VMBus: Adjustments for some function implementations
+Message-Id: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
-In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
+To: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 May 2017 13:20:03 +0200
+Date: Thu, 11 May 2017 18:00:18 +0200
 
-Five strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Improve a size determination in vmbus_device_create()
+  Delete an error message for a failed memory allocation in vmbus_device_create()
+  Fix a typo in a comment line
+  Adjust five checks for null pointers
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/hv/vmbus_drv.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 2949c9fc18fa..1f7022ce78b7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3748,11 +3748,11 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
- 		seq_printf(seq, "RX Queue %d:\n", queue);
- 
- 		if (priv->extend_desc) {
--			seq_printf(seq, "Extended descriptor ring:\n");
-+			seq_puts(seq, "Extended descriptor ring:\n");
- 			sysfs_display_ring((void *)rx_q->dma_erx,
- 					   DMA_RX_SIZE, 1, seq);
- 		} else {
--			seq_printf(seq, "Descriptor ring:\n");
-+			seq_puts(seq, "Descriptor ring:\n");
- 			sysfs_display_ring((void *)rx_q->dma_rx,
- 					   DMA_RX_SIZE, 0, seq);
- 		}
-@@ -3764,11 +3764,11 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
- 		seq_printf(seq, "TX Queue %d:\n", queue);
- 
- 		if (priv->extend_desc) {
--			seq_printf(seq, "Extended descriptor ring:\n");
-+			seq_puts(seq, "Extended descriptor ring:\n");
- 			sysfs_display_ring((void *)tx_q->dma_etx,
- 					   DMA_TX_SIZE, 1, seq);
- 		} else {
--			seq_printf(seq, "Descriptor ring:\n");
-+			seq_puts(seq, "Descriptor ring:\n");
- 			sysfs_display_ring((void *)tx_q->dma_tx,
- 					   DMA_TX_SIZE, 0, seq);
- 		}
-@@ -3798,7 +3798,7 @@ static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
- 	struct stmmac_priv *priv = netdev_priv(dev);
- 
- 	if (!priv->hw_cap_support) {
--		seq_printf(seq, "DMA HW features not supported\n");
-+		seq_puts(seq, "DMA HW features not supported\n");
- 		return 0;
- 	}
- 
 -- 
-2.12.2
+2.12.3
 
