@@ -1,41 +1,40 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 30 May 2017 03:21:43 +0000
-Subject: Re: [PATCH] Input: synaptics-rmi4 - change a char type to u8
-Message-Id: <20170530032143.GG32841@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 May 2017 10:16:16 +0000
+Subject: [PATCH] target/iscsi: make function target_parse_xcopy_cmd static
+Message-Id: <20170511101616.19790-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503212319.frj4k66dzezlleey@mwanda>
-In-Reply-To: <20170503212319.frj4k66dzezlleey@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nick Dyer <nick@shmanahar.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A . Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 04, 2017 at 12:23:19AM +0300, Dan Carpenter wrote:
-> Smatch doesn't like when we use "%02X" to print char types because,
-> what about if it's a negative?
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you. Furthermore, I think we could reduce it to using %ph
-instead of that loop.
+Making target_parse_xcopy_cmd static fixes sparse warning:
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/input/rmi4/rmi_f34v7.c b/drivers/input/rmi4/rmi_f34v7.c
-> index 10c0d11b72c9..ae2db1c3aebf 100644
-> --- a/drivers/input/rmi4/rmi_f34v7.c
-> +++ b/drivers/input/rmi4/rmi_f34v7.c
-> @@ -518,7 +518,7 @@ static int rmi_f34v7_read_queries(struct f34_data *f34)
->  			query_1_7.partition_support[1] & HAS_GUEST_CODE;
->  
->  	if (query_0 & HAS_CONFIG_ID) {
-> -		char f34_ctrl[CONFIG_ID_SIZE];
-> +		u8 f34_ctrl[CONFIG_ID_SIZE];
->  		int i = 0;
->  		u8 *p = f34->configuration_id;
->  		*p = '\0';
+"warning: symbol 'target_parse_xcopy_cmd' was not declared.  Should
+it be static?"
 
-Thanks.
+Fixes: 1bd05294519f76 ("target/iscsi: Fix a deadlock between the XCOPY code and session shutdown")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/target/target_core_xcopy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
+index aecb36d955f0..00e0269e6be4 100644
+--- a/drivers/target/target_core_xcopy.c
++++ b/drivers/target/target_core_xcopy.c
+@@ -886,7 +886,7 @@ static void target_xcopy_do_work(struct work_struct *work)
+  * Returns TCM_NO_SENSE upon success or a sense code != TCM_NO_SENSE if parsing
+  * fails.
+  */
+-sense_reason_t target_parse_xcopy_cmd(struct xcopy_op *xop)
++static sense_reason_t target_parse_xcopy_cmd(struct xcopy_op *xop)
+ {
+ 	struct se_cmd *se_cmd = xop->xop_se_cmd;
+ 	unsigned char *p = NULL, *seg_desc;
 -- 
-Dmitry
+2.11.0
+
