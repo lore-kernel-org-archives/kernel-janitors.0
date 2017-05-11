@@ -1,36 +1,22 @@
-From: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Date: Wed, 10 May 2017 06:56:59 +0000
-Subject: Re: [PATCH 0/4] net: stmmac: Fine-tuning for four function implementations
-Message-Id: <97182590-698a-6c30-6143-9a9c9b1140aa@st.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 16:36:44 +0000
+Subject: Re: vmbus: Delete an error message for a failed memory allocation in vmbus_device_create()
+Message-Id: <2182bf8e-b48a-d3bb-6f26-d4af8c4f1507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
-In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
+References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
+ <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
+ <20170511093015.4cdfdb6c@xeon-e3>
+In-Reply-To: <20170511093015.4cdfdb6c@xeon-e3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
-Hello Markus
+> Taking out the message assumes that all callers of this function either log an
+> error or pass appropriate error code back to userspace.
 
-Thanks a lot for your effort on stmmac
+Do you like the default error response by Linux memory allocation functions?
 
-On 5/9/2017 1:51 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 9 May 2017 13:48:03 +0200
->
-> A few update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (4):
->    Combine three seq_printf() calls into a seq_puts() in stmmac_sysfs_dma_cap_read()
->    Replace five seq_printf() calls by seq_puts()
->    Use seq_putc() in sysfs_display_ring()
->    Delete an unnecessary return statement in stmmac_get_tx_hwtstamp()
->
->   drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 22 ++++++++++------------
->   1 file changed, 10 insertions(+), 12 deletions(-)
-
-Acked-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-
-
+Regards,
+Markus
