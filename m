@@ -1,45 +1,107 @@
-From: Vlad Yasevich <vyasevic@redhat.com>
-Date: Mon, 22 May 2017 21:00:36 +0000
-Subject: Re: [PATCH 4/5] sctp: Improve a size determination in sctp_inetaddr_event()
-Message-Id: <90582e7d-1e22-cf23-2f51-6630ab1b9bf4@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 May 2017 17:29:29 +0000
+Subject: [PATCH] ethernet: aquantia: remove redundant checks on error status
+Message-Id: <20170511172929.12951-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
- <a96c883f-0495-ad8c-e3a4-c80f27b76ed2@users.sourceforge.net>
-In-Reply-To: <a96c883f-0495-ad8c-e3a4-c80f27b76ed2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Pavel Belous <pavel.belous@aquantia.com>, Dmitrii Tarakanov <Dmitrii.Tarakanov@aquantia.com>, Alexander Loktionov <Alexander.Loktionov@aquantia.com>, David VomLehn <vomlehn@texas.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/22/2017 12:40 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 18:08:24 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/sctp/protocol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-> index 64756c42cec9..057479b7bd72 100644
-> --- a/net/sctp/protocol.c
-> +++ b/net/sctp/protocol.c
-> @@ -784,7 +784,7 @@ static int sctp_inetaddr_event(struct notifier_block *this, unsigned long ev,
->  
->  	switch (ev) {
->  	case NETDEV_UP:
-> -		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-> +		addr = kmalloc(sizeof(*addr), GFP_ATOMIC);
->  		if (addr) {
->  			addr->a.v4.sin_family = AF_INET;
->  			addr->a.v4.sin_port = 0;
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Vlad Yasevich <vyasevich@gmail.com>
+The error status err is initialized as zero and then being checked
+several times to see if it is less than zero even when it has not
+been updated. Since these checks are redundant we can remove these
+as well as err and the error exit label err_exit.
 
--vlad
+Detected by CoverityScan, CID#1398313 and CID#1398306 ("Logically
+dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c | 13 +------------
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 12 +-----------
+ 2 files changed, 2 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+index 4ee15ff06a44..faeb4935ef3e 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+@@ -200,29 +200,18 @@ static int hw_atl_a0_hw_rss_set(struct aq_hw_s *self,
+ static int hw_atl_a0_hw_offload_set(struct aq_hw_s *self,
+ 				    struct aq_nic_cfg_s *aq_nic_cfg)
+ {
+-	int err = 0;
+-
+ 	/* TX checksums offloads*/
+ 	tpo_ipv4header_crc_offload_en_set(self, 1);
+ 	tpo_tcp_udp_crc_offload_en_set(self, 1);
+-	if (err < 0)
+-		goto err_exit;
+ 
+ 	/* RX checksums offloads*/
+ 	rpo_ipv4header_crc_offload_en_set(self, 1);
+ 	rpo_tcp_udp_crc_offload_en_set(self, 1);
+-	if (err < 0)
+-		goto err_exit;
+ 
+ 	/* LSO offloads*/
+ 	tdm_large_send_offload_en_set(self, 0xFFFFFFFFU);
+-	if (err < 0)
+-		goto err_exit;
+-
+-	err = aq_hw_err_from_flags(self);
+ 
+-err_exit:
+-	return err;
++	return aq_hw_err_from_flags(self);
+ }
+ 
+ static int hw_atl_a0_hw_init_tx_path(struct aq_hw_s *self)
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 42150708191d..1bceb7358e5c 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -200,25 +200,18 @@ static int hw_atl_b0_hw_rss_set(struct aq_hw_s *self,
+ static int hw_atl_b0_hw_offload_set(struct aq_hw_s *self,
+ 				    struct aq_nic_cfg_s *aq_nic_cfg)
+ {
+-	int err = 0;
+ 	unsigned int i;
+ 
+ 	/* TX checksums offloads*/
+ 	tpo_ipv4header_crc_offload_en_set(self, 1);
+ 	tpo_tcp_udp_crc_offload_en_set(self, 1);
+-	if (err < 0)
+-		goto err_exit;
+ 
+ 	/* RX checksums offloads*/
+ 	rpo_ipv4header_crc_offload_en_set(self, 1);
+ 	rpo_tcp_udp_crc_offload_en_set(self, 1);
+-	if (err < 0)
+-		goto err_exit;
+ 
+ 	/* LSO offloads*/
+ 	tdm_large_send_offload_en_set(self, 0xFFFFFFFFU);
+-	if (err < 0)
+-		goto err_exit;
+ 
+ /* LRO offloads */
+ 	{
+@@ -245,10 +238,7 @@ static int hw_atl_b0_hw_offload_set(struct aq_hw_s *self,
+ 
+ 		rpo_lro_en_set(self, aq_nic_cfg->is_lro ? 0xFFFFFFFFU : 0U);
+ 	}
+-	err = aq_hw_err_from_flags(self);
+-
+-err_exit:
+-	return err;
++	return aq_hw_err_from_flags(self);
+ }
+ 
+ static int hw_atl_b0_hw_init_tx_path(struct aq_hw_s *self)
+-- 
+2.11.0
+
