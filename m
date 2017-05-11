@@ -1,45 +1,82 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 14 May 2017 15:22:02 +0000
-Subject: Re: [PATCH] iio: adc: ti_am335x_adc: allocating too much in probe
-Message-Id: <217724b6-7331-dc10-61eb-05ce489ae375@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 16:19:21 +0000
+Subject: [PATCH 4/4] vmbus: Adjust five checks for null pointers
+Message-Id: <bca350e0-9523-dd6e-4dd8-a0f8ee93dc87@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170510055109.i2aql4xg4rovcqmw@mwanda>
-In-Reply-To: <20170510055109.i2aql4xg4rovcqmw@mwanda>
+References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
+In-Reply-To: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Andrew F. Davis" <afd@ti.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Vignesh R <vigneshr@ti.com>, Mugunthan V N <mugunthanvnm@ti.com>, Lee Jones <lee.jones@linaro.org>, Michael Engl <michael.engl@wjw-solutions.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 10/05/17 06:51, Dan Carpenter wrote:
-> We should be allocating enough information for a tiadc_device struct
-> which is about 400 bytes but instead we allocate enough for a second
-> iio_dev struct which is over 2000 bytes.
-> 
-> Fixes: fea89e2dfcea ("iio: adc: ti_am335x_adc: use variable names for sizeof() operator")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied to the fixes-togreg branch of iio.git.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 17:52:38 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Thanks,
+The script “checkpatch.pl” pointed information out like the following.
 
-Jonathan
-> 
-> diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
-> index 4282ceca3d8f..6cbed7eb118a 100644
-> --- a/drivers/iio/adc/ti_am335x_adc.c
-> +++ b/drivers/iio/adc/ti_am335x_adc.c
-> @@ -614,7 +614,7 @@ static int tiadc_probe(struct platform_device *pdev)
->   		return -EINVAL;
->   	}
->   
-> -	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*indio_dev));
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*adc_dev));
->   	if (indio_dev = NULL) {
->   		dev_err(&pdev->dev, "failed to allocate iio device\n");
->   		return -ENOMEM;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hv/vmbus_drv.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index ff94b111ed8d..b55b979ecf8a 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -93,7 +93,7 @@ static DEFINE_SEMAPHORE(hyperv_mmio_lock);
+ 
+ static int vmbus_exists(void)
+ {
+-	if (hv_acpi_dev = NULL)
++	if (!hv_acpi_dev)
+ 		return -ENODEV;
+ 
+ 	return 0;
+@@ -568,7 +568,7 @@ static const struct hv_vmbus_device_id *hv_vmbus_get_id(struct hv_driver *drv,
+ 		return id;
+ 
+ 	id = drv->id_table;
+-	if (id = NULL)
++	if (!id)
+ 		return NULL; /* empty device table */
+ 
+ 	for (; !is_null_guid(&id->guid); id++)
+@@ -871,7 +871,7 @@ void vmbus_on_msg_dpc(unsigned long data)
+ 	entry = &channel_message_table[hdr->msgtype];
+ 	if (entry->handler_type	= VMHT_BLOCKING) {
+ 		ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
+-		if (ctx = NULL)
++		if (!ctx)
+ 			return;
+ 
+ 		INIT_WORK(&ctx->work, vmbus_onmessage_work);
+@@ -894,7 +894,7 @@ static void vmbus_channel_isr(struct vmbus_channel *channel)
+ 	void (*callback_fn)(void *);
+ 
+ 	callback_fn = READ_ONCE(channel->onchannel_callback);
+-	if (likely(callback_fn != NULL))
++	if (likely(callback_fn))
+ 		(*callback_fn)(channel->channel_callback_context);
+ }
+ 
+@@ -970,7 +970,7 @@ static void vmbus_isr(void)
+ 	union hv_synic_event_flags *event;
+ 	bool handled = false;
+ 
+-	if (unlikely(page_addr = NULL))
++	if (unlikely(!page_addr))
+ 		return;
+ 
+ 	event = (union hv_synic_event_flags *)page_addr +
+-- 
+2.12.3
 
