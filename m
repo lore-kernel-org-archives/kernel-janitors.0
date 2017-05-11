@@ -1,56 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 20:10:07 +0000
-Subject: [PATCH 3/3] GPU-DRM-Radeon: Use seq_puts() in r100_debugfs_cp_csq_fifo()
-Message-Id: <c80a0c58-2da4-2531-fdd6-677c7a9638cb@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 May 2017 08:49:55 +0000
+Subject: [bug report] tee: add OP-TEE driver
+Message-Id: <20170511084955.kazkfvsx5r33e6wg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
-In-Reply-To: <74d2df52-f509-e6d2-5b35-e25b7cbd1fbe@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 21:54:49 +0200
+Hello Jens Wiklander,
 
-Strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+The patch 4fb0a5eb364d: "tee: add OP-TEE driver" from Apr 14, 2015,
+leads to the following static checker warning:
 
-This issue was detected by using the Coccinelle software.
+	drivers/tee/optee/core.c:243 optee_release()
+	error: uninitialized symbol 'parg'.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/radeon/r100.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+drivers/tee/optee/core.c
+   209  static void optee_release(struct tee_context *ctx)
+   210  {
+   211          struct optee_context_data *ctxdata = ctx->data;
+   212          struct tee_device *teedev = ctx->teedev;
+   213          struct optee *optee = tee_get_drvdata(teedev);
+   214          struct tee_shm *shm;
+   215          struct optee_msg_arg *arg = NULL;
+   216          phys_addr_t parg;
+   217          struct optee_session *sess;
+   218          struct optee_session *sess_tmp;
+   219  
+   220          if (!ctxdata)
+   221                  return;
+   222  
+   223          shm = tee_shm_alloc(ctx, sizeof(struct optee_msg_arg), TEE_SHM_MAPPED);
+   224          if (!IS_ERR(shm)) {
+   225                  arg = tee_shm_get_va(shm, 0);
+   226                  /*
+   227                   * If va2pa fails for some reason, we can't call
+   228                   * optee_close_session(), only free the memory. Secure OS
+   229                   * will leak sessions and finally refuse more sessions, but
+   230                   * we will at least let normal world reclaim its memory.
+   231                   */
+   232                  if (!IS_ERR(arg))
+   233                          tee_shm_va2pa(shm, arg, &parg);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This function can fail but we don't check for that.
 
-diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
-index c31e660e35db..09b88738aa07 100644
---- a/drivers/gpu/drm/radeon/r100.c
-+++ b/drivers/gpu/drm/radeon/r100.c
-@@ -2992,19 +2992,19 @@ static int r100_debugfs_cp_csq_fifo(struct seq_file *m, void *data)
- 	seq_printf(m, "Indirect2 wptr %u\n", ib2_wptr);
- 	/* FIXME: 0, 128, 640 depends on fifo setup see cp_init_kms
- 	 * 128 = indirect1_start * 8 & 640 = indirect2_start * 8 */
--	seq_printf(m, "Ring fifo:\n");
-+	seq_puts(m, "Ring fifo:\n");
- 	for (i = 0; i < 256; i++) {
- 		WREG32(RADEON_CP_CSQ_ADDR, i << 2);
- 		tmp = RREG32(RADEON_CP_CSQ_DATA);
- 		seq_printf(m, "rfifo[%04d]=0x%08X\n", i, tmp);
- 	}
--	seq_printf(m, "Indirect1 fifo:\n");
-+	seq_puts(m, "Indirect1 fifo:\n");
- 	for (i = 256; i <= 512; i++) {
- 		WREG32(RADEON_CP_CSQ_ADDR, i << 2);
- 		tmp = RREG32(RADEON_CP_CSQ_DATA);
- 		seq_printf(m, "ib1fifo[%04d]=0x%08X\n", i, tmp);
- 	}
--	seq_printf(m, "Indirect2 fifo:\n");
-+	seq_puts(m, "Indirect2 fifo:\n");
- 	for (i = 640; i < ib1_wptr; i++) {
- 		WREG32(RADEON_CP_CSQ_ADDR, i << 2);
- 		tmp = RREG32(RADEON_CP_CSQ_DATA);
--- 
-2.12.2
+   234          }
+   235  
+   236          list_for_each_entry_safe(sess, sess_tmp, &ctxdata->sess_list,
+   237                                   list_node) {
+   238                  list_del(&sess->list_node);
+   239                  if (!IS_ERR_OR_NULL(arg)) {
+   240                          memset(arg, 0, sizeof(*arg));
+   241                          arg->cmd = OPTEE_MSG_CMD_CLOSE_SESSION;
+   242                          arg->session = sess->session_id;
+   243                          optee_do_call_with_arg(ctx, parg);
+                                                            ^^^^
+Warning.
 
+   244                  }
+   245                  kfree(sess);
+   246          }
+   247          kfree(ctxdata);
+
+regards,
+dan carpenter
