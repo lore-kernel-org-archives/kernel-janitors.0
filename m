@@ -1,110 +1,39 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 22 May 2017 12:03:13 +0000
-Subject: Re: [PATCH v2] mmc: core: Delete an error message for a failed memory allocation in four functions
-Message-Id: <CAPDyKFpWXvUenCr3ki3qc80MH3hBKhEgwiu9RMNuqtU-WThJ3w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 16:18:12 +0000
+Subject: [PATCH 3/4] vmbus: Fix a typo in a comment line
+Message-Id: <f190c37a-4ea1-d9da-6f25-bd7728cc03e7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
- <CAPDyKFqhNQdfr19195YfL7f4Jh0u6pGZ9QtSff0C6fe6R9wdjw@mail.gmail.com>
- <50f3c642-b866-27f3-1201-5490225116f4@users.sourceforge.net>
- <CAPDyKFraTYQWAqSNdZG_bRpbDiLFw4nigVzC1nkmrfnr2aw2og@mail.gmail.com> <0ce8f8ac-d340-3f15-a698-ddfa449508e1@users.sourceforge.net>
-In-Reply-To: <0ce8f8ac-d340-3f15-a698-ddfa449508e1@users.sourceforge.net>
+References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
+In-Reply-To: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Tomas Winkler <tomas.winkler@intel.com>, Uri Yanai <uri.yanai@sandisk.com>, Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-On 19 May 2017 at 13:34, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 19 May 2017 13:15:27 +0200
->
-> Omit an extra message for a memory allocation failure in these functions.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 17:43:55 +0200
 
-Thanks, applied for next!
+Add a missing character in this description.
 
-Kind regards
-Uffe
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hv/vmbus_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->
-> v2:
-> This refactoring superseded the update suggestion "mmc: core: Delete
-> an error message for a failed memory allocation in three functions"
-> from 2017-05-13 because another adjustment was requested by Ulf Hansson.
-> https://patchwork.kernel.org/patch/9725233/
-> https://lkml.org/lkml/2017/5/19/308
->
->  drivers/mmc/core/mmc_test.c |  2 --
->  drivers/mmc/core/sd.c       | 16 +++-------------
->  2 files changed, 3 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index fd1b4b8510b9..7a304a6e5bf1 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -3220,8 +3220,6 @@ static int __mmc_test_register_dbgfs_file(struct mmc_card *card,
->         df = kmalloc(sizeof(*df), GFP_KERNEL);
->         if (!df) {
->                 debugfs_remove(file);
-> -               dev_err(&card->dev,
-> -                       "Can't allocate memory for internal usage.\n");
->                 return -ENOMEM;
->         }
->
-> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> index d109634fbfce..1d7542daecbe 100644
-> --- a/drivers/mmc/core/sd.c
-> +++ b/drivers/mmc/core/sd.c
-> @@ -294,12 +294,8 @@ static int mmc_read_switch(struct mmc_card *card)
->         err = -EIO;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n",
-> -                       mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         /*
->          * Find out the card's support bits with a mode 0 operation.
-> @@ -359,11 +355,8 @@ int mmc_sd_switch_hs(struct mmc_card *card)
->                 return 0;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n", mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         err = mmc_sd_switch(card, 1, 0, 1, status);
->         if (err)
-> @@ -596,11 +589,8 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
->                 return 0;
->
->         status = kmalloc(64, GFP_KERNEL);
-> -       if (!status) {
-> -               pr_err("%s: could not allocate a buffer for "
-> -                       "switch capabilities.\n", mmc_hostname(card->host));
-> +       if (!status)
->                 return -ENOMEM;
-> -       }
->
->         /* Set 4-bit bus width */
->         if ((card->host->caps & MMC_CAP_4_BIT_DATA) &&
-> --
-> 2.13.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 96328aebae5a..ff94b111ed8d 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -991,7 +991,7 @@ static void vmbus_isr(void)
+ 		/*
+ 		 * Our host is win8 or above. The signaling mechanism
+ 		 * has changed and we can directly look at the event page.
+-		 * If bit n is set then we have an interrup on the channel
++		 * If bit n is set then we have an interrupt on the channel
+ 		 * whose id is n.
+ 		 */
+ 		handled = true;
+-- 
+2.12.3
+
