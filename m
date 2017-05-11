@@ -1,28 +1,57 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 07:25:24 +0000
-Subject: [PATCH 0/3] ath9k: Fine-tuning for some function implementations
-Message-Id: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+Date: Thu, 11 May 2017 15:12:11 +0000
+Subject: [PATCH] crypto-testmgr: Delete an error message for a failed memory allocation in two functions
+Message-Id: <0168ce01-446b-a1f0-8a3f-55da49bdbd86@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 May 2017 09:19:09 +0200
+Date: Thu, 11 May 2017 17:05:17 +0200
 
-Three update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (3):
-  Reduce function calls for sequence output in read_file_dma()
-  Replace four seq_printf() calls by seq_putc()
-  Adjust a null pointer check in three functions
+This issue was detected by using the Coccinelle software.
 
- drivers/net/wireless/ath/ath9k/debug.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ crypto/testmgr.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 6f5f3ed8376c..392bb4f95024 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -217,10 +217,9 @@ static int ahash_partial_update(struct ahash_request **preq,
+ 	statesize = crypto_ahash_statesize(
+ 			crypto_ahash_reqtfm(req));
+ 	state = kmalloc(statesize + sizeof(guard), GFP_KERNEL);
+-	if (!state) {
+-		pr_err("alt: hash: Failed to alloc state for %s\n", algo);
++	if (!state)
+ 		goto out_nostate;
+-	}
++
+ 	memcpy(state + statesize, guard, sizeof(guard));
+ 	ret = crypto_ahash_export(req, state);
+ 	WARN_ON(memcmp(state + statesize, guard, sizeof(guard)));
+@@ -1632,11 +1631,8 @@ static int test_cprng(struct crypto_rng *tfm,
+ 	seedsize = crypto_rng_seedsize(tfm);
+ 
+ 	seed = kmalloc(seedsize, GFP_KERNEL);
+-	if (!seed) {
+-		printk(KERN_ERR "alg: cprng: Failed to allocate seed space "
+-		       "for %s\n", algo);
++	if (!seed)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < tcount; i++) {
+ 		memset(result, 0, 32);
 -- 
-2.12.2
+2.12.3
 
