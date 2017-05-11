@@ -1,90 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 04 May 2017 14:36:04 +0000
-Subject: Re: [PATCH] hwmon: (pmbus) Add missing break statements
-Message-Id: <590B3C54.1060700@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 16:17:01 +0000
+Subject: [PATCH 2/4] vmbus: Delete an error message for a failed memory allocation in vmbus_device_create()
+Message-Id: <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503193140.zbxcdgda7k3rnr2m@mwanda> <590AD813.6030805@bfs.de> <20170504073109.b2etej6kg3dzt4vb@mwanda> <d0dd78fd-5c40-180f-aa48-000cfe6c0674@roeck-us.net>
-In-Reply-To: <d0dd78fd-5c40-180f-aa48-000cfe6c0674@roeck-us.net>
+References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
+In-Reply-To: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Samuel Mendoza-Jonas <sam@mendozajonas.com>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 May 2017 17:33:14 +0200
 
+Omit an extra message for a memory allocation failure in this function.
 
-Am 04.05.2017 15:42, schrieb Guenter Roeck:
-> On 05/04/2017 12:31 AM, Dan Carpenter wrote:
->> On Thu, May 04, 2017 at 09:28:19AM +0200, walter harms wrote:
->>>
->>>
->>> Am 03.05.2017 21:31, schrieb Dan Carpenter:
->>>> Static checkers complain about these missing break statements.
->>>>
->>>> Fixes: 6eaaea144dc5 ("hwmon: (pmbus) Add client driver for IR35221")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>
->>>> diff --git a/drivers/hwmon/pmbus/ir35221.c
->>>> b/drivers/hwmon/pmbus/ir35221.c
->>>> index cc7b3b542531..00e4a1e264e2 100644
->>>> --- a/drivers/hwmon/pmbus/ir35221.c
->>>> +++ b/drivers/hwmon/pmbus/ir35221.c
->>>> @@ -129,6 +129,7 @@ static int ir35221_read_word_data(struct
->>>> i2c_client *client, int page, int reg)
->>>>      case PMBUS_IIN_OC_WARN_LIMIT:
->>>>          ret = pmbus_read_word_data(client, page, reg);
->>>>          ret = ir35221_scale_result(ret, -1, PSC_CURRENT_IN);
->>>> +        break;
->>>>      case PMBUS_READ_VIN:
->>>>          ret = pmbus_read_word_data(client, page, PMBUS_READ_VIN);
->>>>          ret = ir35221_scale_result(ret, -5, PSC_VOLTAGE_IN);
->>>
->>> Just a remark:
->>> the naming of the variable for pmbus_read_word_data() is unfortunate.
->>> It would be nice to have it like below: val
->>>
->>
->> Yeah.  I thought so too.
->>
-> 
-> The real problem here is that ret < 0 should return an error without
-> rescale,
-> which I overlooked. That is a real bug, which isn't fixed by adding a new
-> variable to this function. So it would have to be
-> 
->     ret = pmbus_read_word_data();
->     if (ret < 0)
->         break;    // or return ret;
->     ret = ir35221_scale_result();
->     break;
-> 
-> or
->     val = pmbus_read_word_data();
->     if (val < 0)
->         return val;
->     ret = ir35221_scale_result();
->     break;
-> 
-> or
->     val = pmbus_read_word_data();
->     if (val < 0) {
->         ret = val;
->         break;
->     }
->     ret = ir35221_scale_result();
->     break;
-> 
-> Out of those, I personally prefer the first. I don't really see how adding
-> a variable would improve the code.
-> 
+This issue was detected by using the Coccinelle software.
 
-the "if" changes everything. Is all about naming the variables. With
-ret you give the impression that it may contain an error indicator,
-but with val you say "this is a value".
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hv/vmbus_drv.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-short: if "if" gets added everything is fine
-
-hope that helps,
- wh
-
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 6802d74f162c..96328aebae5a 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -1149,7 +1149,5 @@ struct hv_device *vmbus_device_create(const uuid_le *type,
+-	if (!child_device_obj) {
+-		pr_err("Unable to allocate device object for child device\n");
++	if (!child_device_obj)
+ 		return NULL;
+-	}
+ 
+ 	child_device_obj->channel = channel;
+ 	memcpy(&child_device_obj->dev_type, type, sizeof(uuid_le));
+-- 
+2.12.3
 
