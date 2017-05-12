@@ -1,42 +1,71 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 24 May 2017 13:47:21 +0000
-Subject: Re: ssb: Delete an error message for a failed memory allocation in ssb_devices_register()
-Message-Id: <20170524134721.3D33D60711@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 May 2017 12:38:03 +0000
+Subject: [PATCH v2] drm/vc4: Fix resource leak in 'vc4_get_hang_state_ioctl()' in error handling path
+Message-Id: <20170512123803.1886-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b8db3326-5f45-04c0-a6c3-d5183d602e8d@users.sourceforge.net>
-In-Reply-To: <b8db3326-5f45-04c0-a6c3-d5183d602e8d@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: eric@anholt.net, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 17 May 2017 18:12:16 +0200
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-R=
-efactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Acked-by: Michael B=C3=BCsch <m@bues.ch>
+If one 'drm_gem_handle_create()' fails, we leak somes handles and some
+memory.
 
-Patch applied to wireless-drivers-next.git, thanks.
+In order to fix it:
+  - move the 'free(bo_state)' at the end of the function so that it is also
+    called in the eror handling path. This has the side effect to also try 
+    to free it if the first 'kcalloc' fails. This is harmless.
+  - add a new label, err_delete_handle, in order to delete already
+    allocated handles in error handling path
+  - remove the now useless 'err' label
 
-c6c092dcb21e ssb: Delete an error message for a failed memory allocation in=
- ssb_devices_register()
+The way the code is now written will also delete the handles if the
+'copy_to_user()' call fails.
 
---=20
-https://patchwork.kernel.org/patch/9731583/
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: reorder code and add a 'err_delete_handle' label in order to free
+    resources in the correct order and avoid NULL pointer dereference
+---
+ drivers/gpu/drm/vc4/vc4_gem.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index e9c381c42139..891c7a22cf81 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -111,8 +111,8 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 					    &handle);
+ 
+ 		if (ret) {
+-			state->bo_count = i - 1;
+-			goto err;
++			state->bo_count = i;
++			goto err_delete_handle;
+ 		}
+ 		bo_state[i].handle = handle;
+ 		bo_state[i].paddr = vc4_bo->base.paddr;
+@@ -124,13 +124,16 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 			 state->bo_count * sizeof(*bo_state)))
+ 		ret = -EFAULT;
+ 
+-	kfree(bo_state);
++err_delete_handle:
++	if (ret) {
++		for (i = 0; i < state->bo_count; i++)
++			drm_gem_handle_delete(file_priv, bo_state[i].handle);
++	}
+ 
+ err_free:
+-
+ 	vc4_free_hang_state(dev, kernel_state);
++	kfree(bo_state);
+ 
+-err:
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
