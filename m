@@ -1,78 +1,64 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 09 May 2017 17:01:09 +0000
-Subject: Re: [PATCH] btrfs: remove redundant assignment and check on variable ret
-Message-Id: <6474c97a-3a91-43ef-3c55-4ad1df9947fc@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 May 2017 15:59:32 +0000
+Subject: [PATCH V2] SMB2: Fix share type handling
+Message-Id: <20170512155932.20120-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170506220105.13206-1-colin.king@canonical.com>
- <20170509165552.GA15294@lim.localdomain>
-In-Reply-To: <20170509165552.GA15294@lim.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bo.li.liu@oracle.com
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On 09/05/17 17:55, Liu Bo wrote:
-> On Sat, May 06, 2017 at 11:01:05PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Variable ret is assigned to zero and is always zero throughout the
->> function.  Thus the check for ret being less than zero is always
->> false and so mapping_set_error always has an -EIO error passed to
->> it.  Hence we can remove the redundant assignment and check on ret.
->>
->> Detected by CoverityScan, CID#1414312 ("Logically dead code")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  fs/btrfs/extent_io.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
->> index d8da3edf2ac3..7922cd34ba82 100644
->> --- a/fs/btrfs/extent_io.c
->> +++ b/fs/btrfs/extent_io.c
->> @@ -2447,7 +2447,6 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
->>  {
->>  	int uptodate = (err = 0);
->>  	struct extent_io_tree *tree;
->> -	int ret = 0;
->>  
->>  	tree = &BTRFS_I(page->mapping->host)->io_tree;
->>  
->> @@ -2458,8 +2457,7 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
->>  	if (!uptodate) {
->>  		ClearPageUptodate(page);
->>  		SetPageError(page);
->> -		ret = ret < 0 ? ret : -EIO;
->> -		mapping_set_error(page->mapping, ret);
->> +		mapping_set_error(page->mapping, -EIO);
-> 
-> The passed 'err' should be used as what ret did, ie.
-> ret = err < 0 ? err : -EIO;
+In fs/cifs/smb2pdu.h, we have:
+#define SMB2_SHARE_TYPE_DISK    0x01
+#define SMB2_SHARE_TYPE_PIPE    0x02
+#define SMB2_SHARE_TYPE_PRINT   0x03
 
-Ah, so the err passed into the function should be used instead of ret,
-which makes more sense. Got it. I'll send a fix for that.
+Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
+never trigger and printer share would be interpreted as disk share.
 
-Colin
+So, test the ShareType value for equality instead.
 
-> 
-> Thanks,
-> 
-> -liubo
->>  	}
->>  }
->>  
->> -- 
->> 2.11.0
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Fixes: faaf946a7d5b ("CIFS: Add tree connect/disconnect capability for SMB2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2: use a 'switch' instead of some 'if'
+
+The v1 and related comments are quite old. They can be found at:
+   http://marc.info/?t7976541800001&r=1&w=4
+---
+ fs/cifs/smb2pdu.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index e0517f499c38..e4afdaae743f 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1240,15 +1240,19 @@ SMB2_tcon(const unsigned int xid, struct cifs_ses *ses, const char *tree,
+ 		goto tcon_exit;
+ 	}
+ 
+-	if (rsp->ShareType & SMB2_SHARE_TYPE_DISK)
++	switch (rsp->ShareType) {
++	case SMB2_SHARE_TYPE_DISK:
+ 		cifs_dbg(FYI, "connection to disk share\n");
+-	else if (rsp->ShareType & SMB2_SHARE_TYPE_PIPE) {
++		break;
++	case SMB2_SHARE_TYPE_PIPE:
+ 		tcon->ipc = true;
+ 		cifs_dbg(FYI, "connection to pipe share\n");
+-	} else if (rsp->ShareType & SMB2_SHARE_TYPE_PRINT) {
+-		tcon->print = true;
++		break;
++	case SMB2_SHARE_TYPE_PRINT:
++		tcon->ipc = true;
+ 		cifs_dbg(FYI, "connection to printer\n");
+-	} else {
++		break;
++	default:
+ 		cifs_dbg(VFS, "unknown share type %d\n", rsp->ShareType);
+ 		rc = -EOPNOTSUPP;
+ 		goto tcon_error_exit;
+-- 
+2.11.0
 
