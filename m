@@ -1,53 +1,64 @@
-From: Ganesh GR <ganeshgr@chelsio.com>
-Date: Tue, 09 May 2017 09:40:47 +0000
-Subject: Re: [PATCH 0/6] cxgb4: Fine-tuning for some function implementations
-Message-Id: <CY4PR12MB1432C4CD9C354BF03E4B1776C1EF0@CY4PR12MB1432.namprd12.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 May 2017 14:35:45 +0000
+Subject: [PATCH V2] serial: efm32: Fix parity management in 'efm32_uart_console_get_options()'
+Message-Id: <20170512143545.15394-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
-In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Casey Leedom <leedom@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+UARTn_FRAME_PARITY_ODD is 0x0300
+UARTn_FRAME_PARITY_EVEN is 0x0200
+So if the UART is configured for EVEN parity, it would be reported as ODD.
+Fix it by correctly testing if the 2 bits are set.
 
-Acked-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Fixes: 3afbd89c9639 ("serial/efm32: add new driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: Add UARTn_FRAME_PARITY__MASK
+    Test the 2 parity bits in the EVEN case
 
+v1 and related comment are quite old and can be found at:
+   http://marc.info/?t8676095800005&r=1&w=4
+I also added a __MASK to the proposed constant name to be consistent with
+UARTn_FRAME_DATABITS__MASK
+---
+ drivers/tty/serial/efm32-uart.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/tty/serial/efm32-uart.c b/drivers/tty/serial/efm32-uart.c
+index ebd8569f9ad5..9fff25be87f9 100644
+--- a/drivers/tty/serial/efm32-uart.c
++++ b/drivers/tty/serial/efm32-uart.c
+@@ -27,6 +27,7 @@
+ #define UARTn_FRAME		0x04
+ #define UARTn_FRAME_DATABITS__MASK	0x000f
+ #define UARTn_FRAME_DATABITS(n)		((n) - 3)
++#define UARTn_FRAME_PARITY__MASK	0x0300
+ #define UARTn_FRAME_PARITY_NONE		0x0000
+ #define UARTn_FRAME_PARITY_EVEN		0x0200
+ #define UARTn_FRAME_PARITY_ODD		0x0300
+@@ -572,12 +573,16 @@ static void efm32_uart_console_get_options(struct efm32_uart_port *efm_port,
+ 			16 * (4 + (clkdiv >> 6)));
+ 
+ 	frame = efm32_uart_read32(efm_port, UARTn_FRAME);
+-	if (frame & UARTn_FRAME_PARITY_ODD)
++	switch (frame & UARTn_FRAME_PARITY__MASK) {
++	case UARTn_FRAME_PARITY_ODD:
+ 		*parity = 'o';
+-	else if (frame & UARTn_FRAME_PARITY_EVEN)
++		break;
++	case UARTn_FRAME_PARITY_EVEN:
+ 		*parity = 'e';
+-	else
++		break;
++	default:
+ 		*parity = 'n';
++	}
+ 
+ 	*bits = (frame & UARTn_FRAME_DATABITS__MASK) -
+ 			UARTn_FRAME_DATABITS(4) + 4;
+-- 
+2.11.0
 
-
-
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Sent: Friday, May 5, 2017 2:00 AM
-To: netdev@vger.kernel.org; Casey Leedom; Ganesh GR
-Cc: LKML; kernel-janitors@vger.kernel.org
-Subject: [PATCH 0/6] cxgb4: Fine-tuning for some function implementations
-=A0  =20
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 May 2017 22:23:45 +0200
-
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (6):
-=A0 Use seq_putc() in mboxlog_show()
-=A0 Combine substrings for 24 messages
-=A0 Adjust five checks for null pointers
-=A0 Replace seven seq_puts() calls by seq_putc()
-=A0 Use seq_puts() in cim_qcfg_show()
-=A0 Combine substrings for two messages
-
-=A0drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c |=A0 42 +++----
-=A0.../net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c=A0=A0=A0 | 125 +++++++++=
-+++---------
-=A02 files changed, 86 insertions(+), 81 deletions(-)
-
---=20
-2.12.2
-
-    --
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
