@@ -1,49 +1,85 @@
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Mon, 22 May 2017 09:37:02 +0000
-Subject: Re: [PATCH 1/2] vhost/scsi: Improve a size determination in four functions
-Message-Id: <20170522093702.GD12205@stefanha-x1.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="sgneBHv3152wZ8jf"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 May 2017 08:23:37 +0000
+Subject: Re: Clarification for general change acceptance
+Message-Id: <a348c5f5-d2fd-0d30-f579-a5939eab2f2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
-	<68e78c4b-9b18-7607-f8c8-327fdd51f20b@users.sourceforge.net>
-In-Reply-To: <68e78c4b-9b18-7607-f8c8-327fdd51f20b@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, virtualization@lists.linux-foundation.org
+References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
+ <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
+ <20170511093015.4cdfdb6c@xeon-e3> <20170512070909.xxa62d2cde3qoj4f@mwanda>
+ <8d38547f-a086-438a-5b2a-4d11929530ec@users.sourceforge.net>
+ <1494575540.2028.17.camel@perches.com>
+In-Reply-To: <1494575540.2028.17.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stephen Hemminger <stephen@networkplumber.org>, Wolfram Sang <wsa@the-dreams.de>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@linuxdriverproject.org
+
+> Developer reputation matters for somewhat controversial
+> patches being applied as well as non-controversial and
+> obviously correct patches being ignored.
+
+I am aware that there are more factors involved.
 
 
---sgneBHv3152wZ8jf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Your reputation means most all of your patches fall into
+> the latter category.
 
-On Sat, May 20, 2017 at 04:31:13PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 20 May 2017 13:48:44 +0200
->=20
-> Replace the specification of four data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/vhost/scsi.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+I hope that this situation will evolve into directions which you would prefer more.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
---sgneBHv3152wZ8jf
-Content-Type: application/pgp-signature; name="signature.asc"
+> You have produced many trivial patches
 
------BEGIN PGP SIGNATURE-----
+This is true.
 
-iQEcBAEBAgAGBQJZIrE+AAoJEJykq7OBq3PI7NUIAJRqk4L9pEmGl/h4UnMMo4sv
-oWi8DRxeI/X0z18VfHeIitB90AIHiH0nkhIYcjoIbA+BX+vI5iDHGeOg5oFkYoBs
-Jz7BMyA0PMD2ej2K4eQgvfK+hfieZMRUpLGcFwIzZnhJKZNUDwh1BLTnH7IyejgN
-x07PCKkWhiNXXzV9/lnXd62h1M0fTPEjvVZVC3wqtj+nMiUosqD26fSSNj4b6xnX
-QDhxIU/lvyPAXRx95FtjqzdbRe9apoT6r0T3/Y3QyZY+WmlCgBB4quascvWxKAq1
-LYf48MteIT30aZg0sHzj3avOmlnxyLmfdNSfQ2ip2F586bIAnYro8gBl+dBBkM0=
-=NEHr
------END PGP SIGNATURE-----
+I started my concrete contributions to Linux software modules with simple
+source code search patterns.
 
---sgneBHv3152wZ8jf--
+
+> that have caused new defects.
+
+A few unwanted programming mistakes just happened somehow.
+
+
+> That is simply unacceptable.
+
+Glitches are not desired as usual.
+
+
+
+> Especially when you don't immediately fix the problems you cause.
+
+I find my response times reasonable to some degree so far.
+
+Remaining open issues can be clarified by a corresponding constructive
+development dialogue, can't they?
+
+
+
+> If you would stop producing the trivial and instead
+> channel your efforts into actual bug fixing and logic
+> corrections and not just style modifications with no
+> code impact, your patch acceptance rate would increase.
+
+I find your conclusion appropriate.
+
+But I will come along source code places where I am going to update details
+which are also trivial.
+
+
+> I have given you many suggestions for actual structural
+> improvements to kernel code.
+
+I have got an other impression. There were a few occasions where advanced
+change possibilities were proposed.
+
+
+> You have ignored _all_ of them and I am unlikely to try
+> to interact with you any longer until your wheat:chaff
+> ratio changes.
+
+Can the efforts for deleting questionable error messages around Linux memory
+allocation functions improve this situation?
+
+Regards,
+Markus
