@@ -1,24 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 May 2017 06:45:17 +0000
-Subject: Re: [PATCH] mtd: spi-nor: Potential oops on error path in quad_enable()
-Message-Id: <20170504064517.vemoe3k4z6e3rbwn@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 May 2017 18:51:26 +0000
+Subject: [PATCH 1/3] coresight: etb10: Delete an error message for a failed memory allocation in etb_probe()
+Message-Id: <df23f2fa-ad4a-8338-8641-96782e50f6a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428130614.w4cmbwvprgzv7sky@mwanda>
- <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
-In-Reply-To: <82655033-06b0-a310-07b4-1c8fa2591da2@wedev4u.fr>
+References: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
+In-Reply-To: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Huang Shijie <b32955@freescale.com>, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, May 03, 2017 at 11:40:09PM +0200, Cyrille Pitchen wrote:
-> However, I think we could return the return code of
-> spi_nor_wait_till_ready() instead, like already done in
-> spansion_quad_enable().
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 May 2017 20:23:43 +0200
 
-Ah, yes, of course.  I will resend.
+Omit an extra message for a memory allocation failure in this function.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hwtracing/coresight/coresight-etb10.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 979ea6ec7902..837aebf22c45 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -675,11 +675,8 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	drvdata->buf = devm_kzalloc(dev,
+ 				    drvdata->buffer_depth * 4, GFP_KERNEL);
+-	if (!drvdata->buf) {
+-		dev_err(dev, "Failed to allocate %u bytes for buffer data\n",
+-			drvdata->buffer_depth * 4);
++	if (!drvdata->buf)
+ 		return -ENOMEM;
+-	}
+ 
+ 	desc.type = CORESIGHT_DEV_TYPE_SINK;
+ 	desc.subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
+-- 
+2.12.3
 
