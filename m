@@ -1,71 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 12:54:10 +0000
-Subject: [PATCH] mmc: core: Delete an error message for a failed memory allocation in three functions
-Message-Id: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+Date: Sat, 13 May 2017 17:24:35 +0000
+Subject: RE: [PATCH] mmc: core: Delete an error message for a failed memory allocation in three functions
+Message-Id: <5B8DA87D05A7694D9FA63FD143655C1B641D7ABC@hasmsx108.ger.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
+In-Reply-To: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mmc@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Uri Yanai <uri.yanai@sandisk.com>, Tomas Winkler <tomas.winkler@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Uri Yanai <uri.yanai@sandisk.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 14:40:08 +0200
-
-Omit an extra message for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mmc/core/sd.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index d109634fbfce..1d7542daecbe 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -294,12 +294,8 @@ static int mmc_read_switch(struct mmc_card *card)
- 	err = -EIO;
- 
- 	status = kmalloc(64, GFP_KERNEL);
--	if (!status) {
--		pr_err("%s: could not allocate a buffer for "
--			"switch capabilities.\n",
--			mmc_hostname(card->host));
-+	if (!status)
- 		return -ENOMEM;
--	}
- 
- 	/*
- 	 * Find out the card's support bits with a mode 0 operation.
-@@ -359,11 +355,8 @@ int mmc_sd_switch_hs(struct mmc_card *card)
- 		return 0;
- 
- 	status = kmalloc(64, GFP_KERNEL);
--	if (!status) {
--		pr_err("%s: could not allocate a buffer for "
--			"switch capabilities.\n", mmc_hostname(card->host));
-+	if (!status)
- 		return -ENOMEM;
--	}
- 
- 	err = mmc_sd_switch(card, 1, 0, 1, status);
- 	if (err)
-@@ -596,11 +589,8 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
- 		return 0;
- 
- 	status = kmalloc(64, GFP_KERNEL);
--	if (!status) {
--		pr_err("%s: could not allocate a buffer for "
--			"switch capabilities.\n", mmc_hostname(card->host));
-+	if (!status)
- 		return -ENOMEM;
--	}
- 
- 	/* Set 4-bit bus width */
- 	if ((card->host->caps & MMC_CAP_4_BIT_DATA) &&
--- 
-2.12.3
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU0YgTWFya3VzIEVsZnJp
+bmcgW21haWx0bzplbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldF0NCj4gU2VudDogU2F0dXJk
+YXksIE1heSAxMywgMjAxNyAxNTo1NA0KPiBUbzogbGludXgtbW1jQHZnZXIua2VybmVsLm9yZzsg
+Qm9qYW4gUHJ0dmFyIDxwcnR2YXIuYkBnbWFpbC5jb20+OyBMaW51cw0KPiBXYWxsZWlqIDxsaW51
+cy53YWxsZWlqQGxpbmFyby5vcmc+OyBQYXVsIEJ1cnRvbiA8cGF1bC5idXJ0b25AaW1ndGVjLmNv
+bT47DQo+IFNoYXduIExpbiA8c2hhd24ubGluQHJvY2stY2hpcHMuY29tPjsgVWxmIEhhbnNzb24N
+Cj4gPHVsZi5oYW5zc29uQGxpbmFyby5vcmc+OyBVcmkgWWFuYWkgPHVyaS55YW5haUBzYW5kaXNr
+LmNvbT47IFdpbmtsZXIsDQo+IFRvbWFzIDx0b21hcy53aW5rbGVyQGludGVsLmNvbT4NCj4gQ2M6
+IExLTUwgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF0gbW1jOiBjb3JlOiBEZWxldGUgYW4gZXJy
+b3IgbWVzc2FnZSBmb3IgYSBmYWlsZWQgbWVtb3J5DQo+IGFsbG9jYXRpb24gaW4gdGhyZWUgZnVu
+Y3Rpb25zDQo+IA0KPiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vm
+b3JnZS5uZXQ+DQo+IERhdGU6IFNhdCwgMTMgTWF5IDIwMTcgMTQ6NDA6MDggKzAyMDANCj4gDQo+
+IE9taXQgYW4gZXh0cmEgbWVzc2FnZSBmb3IgYSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlIGlu
+IHRoZXNlIGZ1bmN0aW9ucy4NCj4gDQo+IFRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5n
+IHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLg0KPiANCj4gTGluazogaHR0cDovL2V2ZW50cy5saW51
+eGZvdW5kYXRpb24ub3JnL3NpdGVzL2V2ZW50cy9maWxlcy9zbGlkZXMvTENKMTYtDQo+IFJlZmFj
+dG9yX1N0cmluZ3MtV1NhbmdfMC5wZGYNCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcg
+PGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KDQpMb29rcywgT0sgdG8gbWUuDQpUb21h
+cw0KDQo+IC0tLQ0KPiAgZHJpdmVycy9tbWMvY29yZS9zZC5jIHwgMTYgKysrLS0tLS0tLS0tLS0t
+LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvY29yZS9zZC5jIGIvZHJpdmVycy9tbWMvY29y
+ZS9zZC5jIGluZGV4DQo+IGQxMDk2MzRmYmZjZS4uMWQ3NTQyZGFlY2JlIDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL21tYy9jb3JlL3NkLmMNCj4gKysrIGIvZHJpdmVycy9tbWMvY29yZS9zZC5jDQo+
+IEBAIC0yOTQsMTIgKzI5NCw4IEBAIHN0YXRpYyBpbnQgbW1jX3JlYWRfc3dpdGNoKHN0cnVjdCBt
+bWNfY2FyZCAqY2FyZCkNCj4gIAllcnIgPSAtRUlPOw0KPiANCj4gIAlzdGF0dXMgPSBrbWFsbG9j
+KDY0LCBHRlBfS0VSTkVMKTsNCj4gLQlpZiAoIXN0YXR1cykgew0KPiAtCQlwcl9lcnIoIiVzOiBj
+b3VsZCBub3QgYWxsb2NhdGUgYSBidWZmZXIgZm9yICINCj4gLQkJCSJzd2l0Y2ggY2FwYWJpbGl0
+aWVzLlxuIiwNCj4gLQkJCW1tY19ob3N0bmFtZShjYXJkLT5ob3N0KSk7DQo+ICsJaWYgKCFzdGF0
+dXMpDQo+ICAJCXJldHVybiAtRU5PTUVNOw0KPiAtCX0NCj4gDQo+ICAJLyoNCj4gIAkgKiBGaW5k
+IG91dCB0aGUgY2FyZCdzIHN1cHBvcnQgYml0cyB3aXRoIGEgbW9kZSAwIG9wZXJhdGlvbi4NCj4g
+QEAgLTM1OSwxMSArMzU1LDggQEAgaW50IG1tY19zZF9zd2l0Y2hfaHMoc3RydWN0IG1tY19jYXJk
+ICpjYXJkKQ0KPiAgCQlyZXR1cm4gMDsNCj4gDQo+ICAJc3RhdHVzID0ga21hbGxvYyg2NCwgR0ZQ
+X0tFUk5FTCk7DQo+IC0JaWYgKCFzdGF0dXMpIHsNCj4gLQkJcHJfZXJyKCIlczogY291bGQgbm90
+IGFsbG9jYXRlIGEgYnVmZmVyIGZvciAiDQo+IC0JCQkic3dpdGNoIGNhcGFiaWxpdGllcy5cbiIs
+IG1tY19ob3N0bmFtZShjYXJkLQ0KPiA+aG9zdCkpOw0KPiArCWlmICghc3RhdHVzKQ0KPiAgCQly
+ZXR1cm4gLUVOT01FTTsNCj4gLQl9DQo+IA0KPiAgCWVyciA9IG1tY19zZF9zd2l0Y2goY2FyZCwg
+MSwgMCwgMSwgc3RhdHVzKTsNCj4gIAlpZiAoZXJyKQ0KPiBAQCAtNTk2LDExICs1ODksOCBAQCBz
+dGF0aWMgaW50IG1tY19zZF9pbml0X3Voc19jYXJkKHN0cnVjdCBtbWNfY2FyZA0KPiAqY2FyZCkN
+Cj4gIAkJcmV0dXJuIDA7DQo+IA0KPiAgCXN0YXR1cyA9IGttYWxsb2MoNjQsIEdGUF9LRVJORUwp
+Ow0KPiAtCWlmICghc3RhdHVzKSB7DQo+IC0JCXByX2VycigiJXM6IGNvdWxkIG5vdCBhbGxvY2F0
+ZSBhIGJ1ZmZlciBmb3IgIg0KPiAtCQkJInN3aXRjaCBjYXBhYmlsaXRpZXMuXG4iLCBtbWNfaG9z
+dG5hbWUoY2FyZC0NCj4gPmhvc3QpKTsNCj4gKwlpZiAoIXN0YXR1cykNCj4gIAkJcmV0dXJuIC1F
+Tk9NRU07DQo+IC0JfQ0KPiANCj4gIAkvKiBTZXQgNC1iaXQgYnVzIHdpZHRoICovDQo+ICAJaWYg
+KChjYXJkLT5ob3N0LT5jYXBzICYgTU1DX0NBUF80X0JJVF9EQVRBKSAmJg0KPiAtLQ0KPiAyLjEy
+LjMNCg0K
