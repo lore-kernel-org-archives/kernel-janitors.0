@@ -1,23 +1,71 @@
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Sat, 06 May 2017 01:04:48 +0000
-Subject: Re: [PATCH net] bnxt_en: allocate enough space for ->ntp_fltr_bmap
-Message-Id: <CACKFLin+_b2wVk_8Jvy7znR4Ny8QqOwz=A=wE8BvtZ-47FmUNA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 12:54:10 +0000
+Subject: [PATCH] mmc: core: Delete an error message for a failed memory allocation in three functions
+Message-Id: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170506004901.ruf3g47szijai4yk@mwanda>
-In-Reply-To: <20170506004901.ruf3g47szijai4yk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Uri Yanai <uri.yanai@sandisk.com>, Tomas Winkler <tomas.winkler@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, May 5, 2017 at 5:49 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We have the number of longs, but we need to calculate the number of
-> bytes required.
->
-> Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 14:40:08 +0200
 
-Acked-by: Michael Chan <michael.chan@broadcom.com>
+Omit an extra message for a memory allocation failure in these functions.
 
-David, please send this to -stable as well.  Thanks.
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/sd.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index d109634fbfce..1d7542daecbe 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -294,12 +294,8 @@ static int mmc_read_switch(struct mmc_card *card)
+ 	err = -EIO;
+ 
+ 	status = kmalloc(64, GFP_KERNEL);
+-	if (!status) {
+-		pr_err("%s: could not allocate a buffer for "
+-			"switch capabilities.\n",
+-			mmc_hostname(card->host));
++	if (!status)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * Find out the card's support bits with a mode 0 operation.
+@@ -359,11 +355,8 @@ int mmc_sd_switch_hs(struct mmc_card *card)
+ 		return 0;
+ 
+ 	status = kmalloc(64, GFP_KERNEL);
+-	if (!status) {
+-		pr_err("%s: could not allocate a buffer for "
+-			"switch capabilities.\n", mmc_hostname(card->host));
++	if (!status)
+ 		return -ENOMEM;
+-	}
+ 
+ 	err = mmc_sd_switch(card, 1, 0, 1, status);
+ 	if (err)
+@@ -596,11 +589,8 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
+ 		return 0;
+ 
+ 	status = kmalloc(64, GFP_KERNEL);
+-	if (!status) {
+-		pr_err("%s: could not allocate a buffer for "
+-			"switch capabilities.\n", mmc_hostname(card->host));
++	if (!status)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* Set 4-bit bus width */
+ 	if ((card->host->caps & MMC_CAP_4_BIT_DATA) &&
+-- 
+2.12.3
+
