@@ -1,50 +1,41 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 22 May 2017 14:57:32 +0000
-Subject: Re: [PATCH] staging: speakup: Replace simple_strtoul by kstrtoul
-Message-Id: <CA+_b7D+9qZkoD_e2ATB4PvO_s27=0zqKas_0CBkkH1anfhPWOg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 08:55:16 +0000
+Subject: [PATCH 1/2] ipack: Delete an error message for a failed memory allocation in ipack_device_read_id()
+Message-Id: <2ef624df-6872-a0eb-90bd-4db6b2a248ae@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170427164032.GA1578@gmail.com>
-In-Reply-To: <20170427164032.GA1578@gmail.com>
+References: <b3fea957-b1bf-f681-8f70-d9d85106651b@users.sourceforge.net>
+In-Reply-To: <b3fea957-b1bf-f681-8f70-d9d85106651b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: industrypack-devel@lists.sourceforge.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jens Taprogge <jens.taprogge@taprogge.org>, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-I happened to search my gmail spam box for patches and found this.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 10:20:07 +0200
 
-On Fri, Apr 28, 2017 at 6:50 AM, Shekhar Bhandakkar
-<cs14btech11006@iith.ac.in> wrote:
-> The simple_strtoul function is obsolete.
-> This patch replaces it with kstrtoul.
->
-> Signed-off-by: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
-> ---
->  drivers/staging/speakup/kobjects.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
-> index ca85476..8a1ebe6 100644
-> --- a/drivers/staging/speakup/kobjects.c
-> +++ b/drivers/staging/speakup/kobjects.c
-> @@ -127,6 +127,7 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
->         int do_characters = !strcmp(attr->attr.name, "characters");
->         size_t desc_length = 0;
->         int i;
-> +       int err;
->
->         spin_lock_irqsave(&speakup_info.spinlock, flags);
->         while (cp < end) {
-> @@ -153,7 +154,10 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
->                         continue;
->                 }
->
-> -               index = simple_strtoul(cp, &temp, 10);
-> +               temp = cp;
-> +               err = kstrtoul(temp, 10, &index);
-> +               if (err)
-> +                       return err;
+Omit an extra message for a memory allocation failure in this function.
 
-This is buggy.  "temp" is supposed to point to the end of the number.
+This issue was detected by using the Coccinelle software.
 
-regards,
-dan carpenter
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ipack/ipack.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/ipack/ipack.c b/drivers/ipack/ipack.c
+index 12102448fddd..575c4f29e0f7 100644
+--- a/drivers/ipack/ipack.c
++++ b/drivers/ipack/ipack.c
+@@ -402,7 +402,6 @@ static int ipack_device_read_id(struct ipack_device *dev)
+ 	 * ID ROM contents */
+ 	dev->id = kmalloc(dev->id_avail, GFP_KERNEL);
+ 	if (!dev->id) {
+-		dev_err(&dev->dev, "dev->id alloc failed.\n");
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.12.3
+
