@@ -1,32 +1,36 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Tue, 09 May 2017 14:26:58 +0000
-Subject: RE: sky2: Use seq_putc() in sky2_debug_show()
-Message-Id: <063D6719AE5E284EB5DD2968C1650D6DCFFE7F45@AcuExch.aculab.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 13 May 2017 22:41:50 +0000
+Subject: [PATCH] drm/sti:fix spelling mistake: "compoment" -> "component"
+Message-Id: <20170513224150.19955-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1f36d45e-3ca9-bfb8-0634-901c42390e2c@users.sourceforge.net>
-        <8594c152-68a4-c0c7-b4c6-49c753b0c748@gmx.de>
-        <a85959a8-a357-d8e0-d7e9-617e2052aed6@users.sourceforge.net>
- <20170508225012.508f24c0@xeon-e3>
-In-Reply-To: <20170508225012.508f24c0@xeon-e3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Stephen Hemminger' <stephen@networkplumber.org>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Lino Sanfilippo <LinoSanfilippo@gmx.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Mirko Lindner <mlindner@marvell.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBIZW1taW5nZXINCj4gU2VudDogMDkgTWF5IDIwMTcgMDY6NTANCj4gT24g
-TW9uLCA4IE1heSAyMDE3IDE5OjQyOjQ2ICswMjAwDQo+IFNGIE1hcmt1cyBFbGZyaW5nIDxlbGZy
-aW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4gd3JvdGU6DQo+IA0KPiA+ID4gV2hpY2ggaXNzdWUg
-ZG8geW91IG1lYW4/IEkgZG9udCBzZWUgYW55IGlzc3VlIHlvdSBmaXggaGVyZS4NCj4gPg0KPiA+
-IEFyZSB0aGUgcnVuIHRpbWUgY2hhcmFjdGVyaXN0aWNzIGEgYml0IG5pY2VyIGZvciB0aGUgZnVu
-Y3Rpb24gc2VxX3B1dGMNCj4gPiBpbiBjb21wYXJpc29uIHRvIHRoZSBmdW5jdGlvbiBzZXFfcHV0
-cyBmb3IgcHJpbnRpbmcgYSBzaW5nbGUgbGluZSBicmVhayBoZXJlPw0KPiA+DQo+ID4gUmVnYXJk
-cywNCj4gPiBNYXJrdXMNCj4gDQo+IEkgd291bGQgcHV0IHRoaXMgaW4gd2h5IGJvdGhlciBjYXRl
-Z29yeS4gc2VxX3B1dHMgaXMgY29ycmVjdCBhbmQgdGhpcyBpcyBvbmx5DQo+IGluIGRpYWdub3N0
-aWMgb3V0cHV0IHVzZWZ1bCB0byBkZXZlbG9wZXIgYW5kIGRpc2FibGVkIG9uIG1vc3QgZGlzdHJv
-IGtlcm5lbHMNCg0KU29tZXRpbWVzIGNvbnNpc3RlbmN5IGlzIGJlc3QuDQpPdXRwdXQgZXZlcnl0
-aGluZyB3aXRoIHNlcV9wcmludGYoKSwgdXNpbmcgYSBmb3JtYXQgIiVzIiBpZiBuZWNlc3Nhcnku
-DQpUaGUgcGVyZm9ybWFuY2UgcmVhbGx5IGRvZXNuJ3QgbWF0dGVyIGhlcmUgYXQgYWxsLg0KDQpJ
-dCBpcyBhbHNvIChwcm9iYWJseSkgcG9zc2libGUgdG8gZ2V0IGdjYyB0byBkbyB0aGUgY29udmVy
-c2lvbnMgLSBhcyBpdCBkb2VzIGZvciBwcmludGYoKS4NCihBIHJpZ2h0IFBJVEEgZm9yIGVtYmVk
-ZGVkIHN5c3RlbXMgd2hlcmUgb25seSBwcmludGYoKSBleGlzdHMuKQ0KDQoJRGF2aWQNCg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+Trivial fix to spelling mistake in DRM_ERROR message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/sti/sti_compositor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sti/sti_compositor.c b/drivers/gpu/drm/sti/sti_compositor.c
+index 11d4e885893a..6e4bf68262db 100644
+--- a/drivers/gpu/drm/sti/sti_compositor.c
++++ b/drivers/gpu/drm/sti/sti_compositor.c
+@@ -129,7 +129,7 @@ static int sti_compositor_bind(struct device *dev,
+ 			}
+ 			break;
+ 		default:
+-			DRM_ERROR("Unknown subdev compoment type\n");
++			DRM_ERROR("Unknown subdev component type\n");
+ 			return 1;
+ 		}
+ 
+-- 
+2.11.0
+
