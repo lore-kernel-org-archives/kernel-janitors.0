@@ -1,31 +1,43 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Mon, 08 May 2017 20:19:20 +0000
-Subject: Re: [PATCH] xtensa: Use seq_puts() in c_show()
-Message-Id: <CAMo8BfL7UDjXzBc6k5KwEGbEb_hkqtt=HHOP_q8A3M__dBwQBQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 13:17:56 +0000
+Subject: [PATCH] mmc: atmel-mci: Delete an error message for a failed memory allocation in atmci_of_init()
+Message-Id: <199b33a2-6722-fba1-e7ec-5ac016c5bad0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f4fc3f37-799c-397e-62b8-c7f4a7d974f9@users.sourceforge.net>
-In-Reply-To: <f4fc3f37-799c-397e-62b8-c7f4a7d974f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Chris Zankel <chris@zankel.net>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Kefeng Wang <wangkefeng.wang@huawei.com>, Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On Sun, May 7, 2017 at 12:33 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 May 2017 21:24:51 +0200
->
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function "seq_puts".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/xtensa/kernel/setup.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 May 2017 15:05:28 +0200
 
-Thanks, applied to my xtensa-fixes branch.
+Omit an extra message for a memory allocation failure in this function.
 
--- Max
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/host/atmel-mci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index 388e4a3f13e6..584247464eb8 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -667,10 +667,8 @@ atmci_of_init(struct platform_device *pdev)
+ 	}
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "could not allocate memory for pdata\n");
++	if (!pdata)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	for_each_child_of_node(np, cnp) {
+ 		if (of_property_read_u32(cnp, "reg", &slot_id)) {
+-- 
+2.12.3
+
