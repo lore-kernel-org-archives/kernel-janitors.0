@@ -1,72 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 17:18:06 +0000
-Subject: [PATCH 4/4] s390/sysinfo: Combine two function calls into one
-Message-Id: <04517191-f1f5-19ca-d4bc-d3d5331b4556@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 14 May 2017 16:36:41 +0000
+Subject: [PATCH] fsl_udc_core: fix spelling mistake: "Dectected" -> "Detected"
+Message-Id: <20170514163641.6113-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
-In-Reply-To: <fac68081-f0bb-2574-ba52-11ad78d792c3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Sascha Silbe <silbe@linux.vnet.ibm.com>, Vegard Nossum <vegard.nossum@oracle.com>, Viktor Mihajlovski <mihajlov@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Li Yang <leoli@freescale.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 18:48:39 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A bit of data was put into a sequence by two separate function calls
-at four places. Print the same data by single function calls instead.
+Trivial fix to spelling mistake in seq_printf text
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/s390/kernel/sysinfo.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/sysinfo.c b/arch/s390/kernel/sysinfo.c
-index e7061fcd047a..7f81d40c8f90 100644
---- a/arch/s390/kernel/sysinfo.c
-+++ b/arch/s390/kernel/sysinfo.c
-@@ -98,8 +98,7 @@ static void stsi_1_1_1(struct seq_file *m, struct sysinfo_1_1_1 *info)
- 	seq_printf(m, "Model:                %-16.16s", info->model_capacity);
- 	if (info->model[0] != '\0')
- 		seq_printf(m, " %-16.16s", info->model);
--	seq_putc(m, '\n');
--	seq_printf(m, "Sequence Code:        %-16.16s\n", info->sequence);
-+	seq_printf(m, "\nSequence Code:        %-16.16s\n", info->sequence);
- 	seq_printf(m, "Plant:                %-4.4s\n", info->plant);
- 	seq_printf(m, "Model Capacity:       %-16.16s %08u\n",
- 		   info->model_capacity, info->model_cap_rating);
-@@ -200,8 +199,7 @@ static void stsi_2_2_2(struct seq_file *m, struct sysinfo_2_2_2 *info)
- 	if (stsi(info, 2, 2, 2))
- 		return;
- 	EBCASC(info->name, sizeof(info->name));
--	seq_putc(m, '\n');
--	seq_printf(m, "LPAR Number:          %d\n", info->lpar_number);
-+	seq_printf(m, "\nLPAR Number:          %d\n", info->lpar_number);
- 	seq_puts(m, "LPAR Characteristics: ");
- 	if (info->characteristics & LPAR_CHAR_DEDICATED)
- 		seq_puts(m, "Dedicated ");
-@@ -209,8 +207,7 @@ static void stsi_2_2_2(struct seq_file *m, struct sysinfo_2_2_2 *info)
- 		seq_puts(m, "Shared ");
- 	if (info->characteristics & LPAR_CHAR_LIMITED)
- 		seq_puts(m, "Limited ");
--	seq_putc(m, '\n');
--	seq_printf(m, "LPAR Name:            %-8.8s\n", info->name);
-+	seq_printf(m, "\nLPAR Name:            %-8.8s\n", info->name);
- 	seq_printf(m, "LPAR Adjustment:      %d\n", info->caf);
- 	seq_printf(m, "LPAR CPUs Total:      %d\n", info->cpus_total);
- 	seq_printf(m, "LPAR CPUs Configured: %d\n", info->cpus_configured);
-@@ -256,8 +253,8 @@ static void stsi_3_2_2(struct seq_file *m, struct sysinfo_3_2_2 *info)
- 	for (i = 0; i < info->count; i++) {
- 		EBCASC(info->vm[i].name, sizeof(info->vm[i].name));
- 		EBCASC(info->vm[i].cpi, sizeof(info->vm[i].cpi));
--		seq_putc(m, '\n');
--		seq_printf(m, "VM%02d Name:            %-8.8s\n", i, info->vm[i].name);
-+		seq_printf(m, "\nVM%02d Name:            %-8.8s\n",
-+			   i, info->vm[i].name);
- 		seq_printf(m, "VM%02d Control Program: %-16.16s\n", i, info->vm[i].cpi);
- 		seq_printf(m, "VM%02d Adjustment:      %d\n", i, info->vm[i].caf);
- 		seq_printf(m, "VM%02d CPUs Total:      %d\n", i, info->vm[i].cpus_total);
+diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
+index 6f2f71c054be..63ab3d50f3f6 100644
+--- a/drivers/usb/gadget/udc/fsl_udc_core.c
++++ b/drivers/usb/gadget/udc/fsl_udc_core.c
+@@ -2067,7 +2067,7 @@ static int fsl_proc_read(struct seq_file *m, void *v)
+ 			"Sleep Enable: %d SOF Received Enable: %d "
+ 			"Reset Enable: %d\n"
+ 			"System Error Enable: %d "
+-			"Port Change Dectected Enable: %d\n"
++			"Port Change Detected Enable: %d\n"
+ 			"USB Error Intr Enable: %d USB Intr Enable: %d\n\n",
+ 			(tmp_reg & USB_INTR_DEVICE_SUSPEND) ? 1 : 0,
+ 			(tmp_reg & USB_INTR_SOF_EN) ? 1 : 0,
 -- 
-2.12.2
+2.11.0
 
