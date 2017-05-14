@@ -1,75 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 04 May 2017 20:10:51 +0000
-Subject: [PATCH 6/9] regulator: palmas: Drop unnecessary static
-Message-Id: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 14 May 2017 10:13:23 +0000
+Subject: Re: [PATCH 6/9] regulator: palmas: Drop unnecessary static
+Message-Id: <20170514101323.235p6jflfproucmv@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="7umbma5pm3ap6xio"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tony Lindgren <tony@atomide.com>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+ <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop static on a local variable, when the variable is initialized before
-any use, on every possible execution path through the function.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+--7umbma5pm3ap6xio
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+On Thu, May 04, 2017 at 10:10:51PM +0200, Julia Lawall wrote:
+> Drop static on a local variable, when the variable is initialized before
+> any use, on every possible execution path through the function.
 
-static T x@p;
-...
-x = <+...x...+>
+When sending a bunch of changes like this please either send the cover
+letter to everyone or send each patch separately (this seems like it
+stands alone just fine).  The first question when only one patch in a
+series is visible is always what are the interdependencies.
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
+--7umbma5pm3ap6xio
+Content-Type: application/pgp-signature; name="signature.asc"
 
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
+-----BEGIN PGP SIGNATURE-----
 
-There is no reduction in code size in this case, but the change does reduce
-the size of the bss segment, containing uninitialized static data.
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlkYLcIACgkQJNaLcl1U
+h9BsWgf8DkF8kyGJlAqKsU2kTDfRZeovyuQK4RK8YZtgrZRlXC/cLnObCQMpTpiu
+JtvnmRk3gNvG/klpdXOJfEEIkBk9KsEjYJ0XrUHqWsXjUy898O0OkwaD9wAc3FWk
+ne0QSmaAcMJyqzuz79UORRvPoac/wSB8S7rOyAfO/qbTQ/k4hlpRwbirexkaFqCQ
+g8cX2gcnrIEuTP2S1tYnUCSeAzlFrykFe47oG2MUCoue5QNmXc/D2G26jPs0loxN
+FpI2lQG/KF6psXYxaJ3Ah9yla+B3SqrJ/wWz+fr9ZXaXoLkyWf4QFStCmJnnj7Cm
+PsZaG1FjwFqarz3KQ9kvU/jiBJQ0tg==
+=0afU
+-----END PGP SIGNATURE-----
 
-before:
-   text    data     bss     dec     hex filename
-  12882    3480       8   16370    3ff2 drivers/regulator/palmas-regulator.o
-
-after:
-   text    data     bss     dec     hex filename
-  12882    3480       0   16362    3fea drivers/regulator/palmas-regulator.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/regulator/palmas-regulator.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index 31ae5ee..34d4a62 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -1491,7 +1491,7 @@ static int palmas_dt_to_pdata(struct device *dev,
- 	}
- 
- 	for (idx = 0; idx < ddata->max_reg; idx++) {
--		static struct of_regulator_match *match;
-+		struct of_regulator_match *match;
- 		struct palmas_reg_init *rinit;
- 		struct device_node *np;
- 
-
+--7umbma5pm3ap6xio--
