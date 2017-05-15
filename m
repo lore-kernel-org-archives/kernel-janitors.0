@@ -1,26 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 May 2017 11:53:14 +0000
-Subject: [PATCH 0/2] spi-bfin5xx: Adjustments for four function implementations
-Message-Id: <f8ad3eb5-d6aa-3e82-1265-a63ed2c7cb88@users.sourceforge.net>
+Date: Mon, 15 May 2017 12:25:13 +0000
+Subject: [PATCH 0/4] PCMCIA-PD6729: Adjustments for four function implementations
+Message-Id: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pcmcia@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 May 2017 13:45:45 +0200
+Date: Mon, 15 May 2017 14:05:06 +0200
 
 A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in bfin_spi_setup()
-  Adjust 14 checks for null pointers
+Markus Elfring (4):
+  Use kcalloc() in pd6729_pci_probe()
+  Delete an error message for a failed memory allocation in pd6729_pci_probe()
+  Add the macro "pr_fmt"
+  Combine substrings for six messages
 
- drivers/spi/spi-bfin5xx.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
+ drivers/pcmcia/pd6729.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
 -- 
 2.13.0
