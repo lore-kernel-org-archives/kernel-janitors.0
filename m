@@ -1,71 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 07:28:00 +0000
-Subject: [PATCH 2/3] ath9k: Replace four seq_printf() calls by seq_putc()
-Message-Id: <1498ba8a-8776-6380-f791-669f4440cc12@users.sourceforge.net>
+Date: Mon, 15 May 2017 12:29:01 +0000
+Subject: [PATCH 3/4] pcmcia: pd6729: Add the macro "pr_fmt"
+Message-Id: <6afb72fc-18c4-3fbd-17c6-54fb535f495c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
-In-Reply-To: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+References: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
+In-Reply-To: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+To: linux-pcmcia@lists.infradead.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 22:04:47 +0200
+Date: Mon, 15 May 2017 13:15:33 +0200
 
-Four single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
-
-This issue was detected by using the Coccinelle software.
+Add a definition for the macro "pr_fmt" so that its information can be used
+for consistent message output.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/ath/ath9k/debug.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/pcmcia/pd6729.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
-index 981b38a1e352..0d215598193c 100644
---- a/drivers/net/wireless/ath/ath9k/debug.c
-+++ b/drivers/net/wireless/ath/ath9k/debug.c
-@@ -421,7 +421,7 @@ static int read_file_dma(struct seq_file *file, void *data)
+diff --git a/drivers/pcmcia/pd6729.c b/drivers/pcmcia/pd6729.c
+index a723ffbbd691..b3422119820a 100644
+--- a/drivers/pcmcia/pd6729.c
++++ b/drivers/pcmcia/pd6729.c
+@@ -7,6 +7,8 @@
+  * the GNU General Public License, incorporated herein by reference.
+  */
  
- 	for (i = 0; i < ATH9K_NUM_DMA_DEBUG_REGS; i++) {
- 		if (i % 4 = 0)
--			seq_puts(file, "\n");
-+			seq_putc(file, '\n');
- 
- 		val[i] = REG_READ_D(ah, AR_DMADBG_0 + (i * sizeof(u32)));
- 		seq_printf(file, "%d: %08x ", i, val[i]);
-@@ -702,8 +702,7 @@ static int read_file_misc(struct seq_file *file, void *data)
- 	if (rxfilter & ATH9K_RX_FILTER_CONTROL_WRAPPER)
- 		seq_puts(file, " CONTROL_WRAPPER");
- 
--	seq_puts(file, "\n");
--
-+	seq_putc(file, '\n');
- 	reg = sc->sc_ah->imask;
- 
- 	seq_printf(file, "INTERRUPT-MASK: 0x%x", reg);
-@@ -723,8 +722,7 @@ static int read_file_misc(struct seq_file *file, void *data)
- 	if (reg & ATH9K_INT_BB_WATCHDOG)
- 		seq_puts(file, " BB_WATCHDOG");
- 
--	seq_puts(file, "\n");
--
-+	seq_putc(file, '\n');
- 	i = 0;
- 	ath_for_each_chanctx(sc, ctx) {
- 		if (list_empty(&ctx->vifs))
-@@ -981,7 +979,7 @@ static int read_file_dump_nfcal(struct seq_file *file, void *data)
- 		seq_printf(file, " %d\t %d\t %d\t\t", i, h[i].privNF, nread);
- 		for (j = 0; j < nread; j++)
- 			seq_printf(file, " %d", h[i].nfCalBuffer[j]);
--		seq_puts(file, "\n");
-+		seq_putc(file, '\n');
- 	}
- 
- 	return 0;
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
 -- 
-2.12.2
+2.13.0
 
