@@ -1,37 +1,39 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Tue, 23 May 2017 09:34:31 +0000
-Subject: Re: [PATCH 0/3] Extcon: Fine-tuning for three functions
-Message-Id: <59240227.4030505@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 May 2017 19:20:10 +0000
+Subject: [PATCH 5/6] PNP: Improve a size determination in quirk_awe32_add_ports()
+Message-Id: <0ee3d21a-98c7-be4a-d2c6-9256622e183a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170424123857epcas2p24390d04885c9fc4c1980838ed8a4db06@epcas2p2.samsung.com>
-        <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
-In-Reply-To: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, patches@opensource.wolfsonmicro.com, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 2017년 04월 24일 21:38, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 24 Apr 2017 14:26:54 +0200
-> 
-> Three update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (3):
->   Use devm_kcalloc() in extcon_dev_register()
->   Fix a typo in three comment lines
->   Use devm_kcalloc() in arizona_extcon_get_micd_configs()
-> 
->  drivers/extcon/extcon-arizona.c |  4 +---
->  drivers/extcon/extcon.c         | 11 +++++------
->  2 files changed, 6 insertions(+), 9 deletions(-)
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 May 2017 20:32:12 +0200
 
-Applied these patches.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pnp/quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
+index 34e2d4563bbd..f9be5f3fb7ea 100644
+--- a/drivers/pnp/quirks.c
++++ b/drivers/pnp/quirks.c
+@@ -29,5 +29,5 @@ static void quirk_awe32_add_ports(struct pnp_dev *dev,
+ {
+ 	struct pnp_option *new_option;
+ 
+-	new_option = kmalloc(sizeof(struct pnp_option), GFP_KERNEL);
++	new_option = kmalloc(sizeof(*new_option), GFP_KERNEL);
+ 	if (!new_option) {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.13.0
+
