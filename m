@@ -1,56 +1,100 @@
-From: Bob Peterson <rpeterso@redhat.com>
-Date: Mon, 08 May 2017 20:08:37 +0000
-Subject: Re: [Cluster-devel] [PATCH 00/10] fs-DLM: Fine-tuning for several function implementations
-Message-Id: <1281357904.5439026.1494274117018.JavaMail.zimbra@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 May 2017 12:30:08 +0000
+Subject: [PATCH 4/4] pcmcia: pd6729: Combine substrings for six messages
+Message-Id: <ad220bb8-63ef-fcdf-c39f-8da5ce7a242a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+References: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
+In-Reply-To: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-pcmcia@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
------ Original Message -----
-| From: Markus Elfring <elfring@users.sourceforge.net>
-| Date: Sat, 6 May 2017 10:15:25 +0200
-| 
-| Some update suggestions were taken into account
-| from static source code analysis.
-| 
-| Markus Elfring (10):
-|   Replace six seq_puts() calls by seq_putc()
-|   Add spaces for better code readability
-|   Improve a size determination in table_seq_start()
-|   Use kcalloc() in dlm_scan_waiters()
-|   Improve a size determination in dlm_recover_waiters_pre()
-|   Delete an error message for a failed memory allocation in
-|   dlm_recover_waiters_pre()
-|   Use kmalloc_array() in make_member_array()
-|   Use kcalloc() in two functions
-|   Improve a size determination in two functions
-|   Delete an unnecessary variable initialisation in dlm_ls_start()
-| 
-|  fs/dlm/debug_fs.c | 25 ++++++++++++-------------
-|  fs/dlm/lock.c     |  8 +++-----
-|  fs/dlm/member.c   | 15 ++++++---------
-|  3 files changed, 21 insertions(+), 27 deletions(-)
-| 
-| --
-| 2.12.2
-| 
-| 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 May 2017 13:50:52 +0200
 
-I'm not a DLM maintainer, but I've reviewed your patch set and ACK them.
-They seem to fit the spirit of:
+The script "checkpatch.pl" pointed information out like the following.
 
-https://www.kernel.org/doc/html/v4.10/process/coding-style.html#allocating-memory
+WARNING: quoted string split across lines
 
-I've actually got a bunch of similar cleanups myself, but I don't think
-there's any overlap.
+Thus fix the affected source code places.
+Prefer usage of the macros "pr_err" and "pr_info" over
+the interface "printk".
 
-Regards,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pcmcia/pd6729.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-Bob Peterson
-Red Hat File Systems
+diff --git a/drivers/pcmcia/pd6729.c b/drivers/pcmcia/pd6729.c
+index b3422119820a..841f413c0d03 100644
+--- a/drivers/pcmcia/pd6729.c
++++ b/drivers/pcmcia/pd6729.c
+@@ -183,8 +183,7 @@ static irqreturn_t pd6729_interrupt(int irq, void *dev)
+ 	while (1) {
+ 		loopcount++;
+ 		if (loopcount > 20) {
+-			printk(KERN_ERR "pd6729: infinite eventloop "
+-			       "in interrupt\n");
++			pr_err("infinite event loop in interrupt\n");
+ 			break;
+ 		}
+ 
+@@ -348,8 +347,8 @@ static int pd6729_set_socket(struct pcmcia_socket *sock, socket_state_t *state)
+ 		break;
+ 	default:
+ 		dev_dbg(&sock->dev,
+-			"pd6729_set_socket called with invalid VCC power "
+-			"value: %i\n", state->Vcc);
++			"%s called with invalid VCC power value: %i\n",
++			__func__, state->Vcc);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -369,8 +368,9 @@ static int pd6729_set_socket(struct pcmcia_socket *sock, socket_state_t *state)
+ 		reg |= I365_VPP1_12V;
+ 		break;
+ 	default:
+-		dev_dbg(&sock->dev, "pd6729: pd6729_set_socket called with "
+-			"invalid VPP power value: %i\n", state->Vpp);
++		dev_dbg(&sock->dev,
++			"%s called with invalid VPP power value: %i\n",
++			__func__, state->Vpp);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -597,8 +597,7 @@ static u_int pd6729_isa_scan(void)
+ 	int i;
+ 
+ 	if (irq_mode = 1) {
+-		printk(KERN_INFO "pd6729: PCI card interrupts, "
+-		       "PCI status changes\n");
++		pr_info("PCI card interrupts, PCI status changes\n");
+ 		return 0;
+ 	}
+ 
+@@ -641,15 +640,15 @@ static int pd6729_pci_probe(struct pci_dev *dev,
+ 	}
+ 
+ 	if (!pci_resource_start(dev, 0)) {
+-		dev_warn(&dev->dev, "refusing to load the driver as the "
+-			"io_base is NULL.\n");
++		dev_warn(&dev->dev,
++			 "refusing to load the driver as the io_base is NULL.\n");
+ 		ret = -ENOMEM;
+ 		goto err_out_disable;
+ 	}
+ 
+-	dev_info(&dev->dev, "Cirrus PD6729 PCI to PCMCIA Bridge at 0x%llx "
+-		"on irq %d\n",
+-		(unsigned long long)pci_resource_start(dev, 0), dev->irq);
++	dev_info(&dev->dev,
++		 "Cirrus PD6729 PCI to PCMCIA Bridge at 0x%llx on irq %d\n",
++		 (unsigned long long)pci_resource_start(dev, 0), dev->irq);
+ 	/*
+ 	 * Since we have no memory BARs some firmware may not
+ 	 * have had PCI_COMMAND_MEMORY enabled, yet the device needs it.
+-- 
+2.13.0
+
