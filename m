@@ -1,40 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 07 May 2017 20:33:52 +0000
-Subject: [PATCH] PM / Domains: Use seq_putc() in pm_genpd_summary_one()
-Message-Id: <32253f14-d602-7036-0256-6ca9439fcf23@users.sourceforge.net>
+Date: Mon, 15 May 2017 17:17:00 +0000
+Subject: [PATCH] drivers/perf/arm_pmu: Delete an error message for a failed memory allocation in armpmu_alloc
+Message-Id: <24951908-0642-33e8-877b-06988f433a67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 7 May 2017 22:26:19 +0200
+Date: Mon, 15 May 2017 19:09:03 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/base/power/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/arm_pmu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index da49a8383dc3..b971fbb404be 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2266,7 +2266,7 @@ static int pm_genpd_summary_one(struct seq_file *s,
- 		kfree(kobj_path);
- 	}
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index dc459eb1246b..30f24bb0a1d1 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -787,10 +787,8 @@ struct arm_pmu *armpmu_alloc(void)
+ 	int cpu;
  
--	seq_puts(s, "\n");
-+	seq_putc(s, '\n');
- exit:
- 	genpd_unlock(genpd);
+ 	pmu = kzalloc(sizeof(*pmu), GFP_KERNEL);
+-	if (!pmu) {
+-		pr_info("failed to allocate PMU device!\n");
++	if (!pmu)
+ 		goto out;
+-	}
  
+ 	pmu->hw_events = alloc_percpu(struct pmu_hw_events);
+ 	if (!pmu->hw_events) {
 -- 
-2.12.2
+2.13.0
 
