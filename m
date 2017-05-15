@@ -1,37 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:34:23 +0000
-Subject: [PATCH 00/10] fs-DLM: Fine-tuning for several function implementations
-Message-Id: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+Date: Mon, 15 May 2017 19:14:08 +0000
+Subject: [PATCH 2/6] PNP: Improve a size determination in pnp_alloc_dev()
+Message-Id: <85dba381-3e7d-7df1-9fac-458fe625d2f5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 10:15:25 +0200
+Date: Mon, 15 May 2017 19:45:23 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (10):
-  Replace six seq_puts() calls by seq_putc()
-  Add spaces for better code readability
-  Improve a size determination in table_seq_start()
-  Use kcalloc() in dlm_scan_waiters()
-  Improve a size determination in dlm_recover_waiters_pre()
-  Delete an error message for a failed memory allocation in dlm_recover_waiters_pre()
-  Use kmalloc_array() in make_member_array()
-  Use kcalloc() in two functions
-  Improve a size determination in two functions
-  Delete an unnecessary variable initialisation in dlm_ls_start()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pnp/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- fs/dlm/debug_fs.c | 25 ++++++++++++-------------
- fs/dlm/lock.c     |  8 +++-----
- fs/dlm/member.c   | 15 ++++++---------
- 3 files changed, 21 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/pnp/core.c b/drivers/pnp/core.c
+index 27945a2d9c4e..6ccec10aed11 100644
+--- a/drivers/pnp/core.c
++++ b/drivers/pnp/core.c
+@@ -141,7 +141,7 @@ struct pnp_dev *pnp_alloc_dev(struct pnp_protocol *protocol, int id,
+ 	struct pnp_dev *dev;
+ 	struct pnp_id *dev_id;
+ 
+-	dev = kzalloc(sizeof(struct pnp_dev), GFP_KERNEL);
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+ 		return NULL;
+ 
 -- 
-2.12.2
+2.13.0
 
