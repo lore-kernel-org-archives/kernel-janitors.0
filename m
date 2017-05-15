@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 May 2017 13:04:36 +0000
-Subject: [PATCH 1/3] Input: Use seq_putc() in input_seq_print_bitmap()
-Message-Id: <7f53f603-1069-1e7a-67b6-78f8009aa0c1@users.sourceforge.net>
+Date: Mon, 15 May 2017 19:18:31 +0000
+Subject: [PATCH 4/6] PNP: Delete an error message for a failed memory allocation in pnp_clone_dependent_set()
+Message-Id: <77feb0e9-ef3b-15bb-bc0b-666c9632c9e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
-In-Reply-To: <85bf6874-661a-9cab-1e9b-ea9e312b94de@users.sourceforge.net>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 14:20:18 +0200
+Date: Mon, 15 May 2017 20:00:38 +0200
 
-A single character should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pnp/quirks.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 067d648028a2..0d204b841575 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -1126,7 +1126,7 @@ static void input_seq_print_bitmap(struct seq_file *seq, const char *name,
- 	 * If no output was produced print a single 0.
- 	 */
- 	if (skip_empty)
--		seq_puts(seq, "0");
-+		seq_putc(seq, '0');
+diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
+index 215a50723243..34e2d4563bbd 100644
+--- a/drivers/pnp/quirks.c
++++ b/drivers/pnp/quirks.c
+@@ -159,8 +159,5 @@ static struct pnp_option *pnp_clone_dependent_set(struct pnp_dev *dev,
+-			if (!new_option) {
+-				dev_err(&dev->dev, "couldn't clone dependent "
+-					"set %d\n", set);
++			if (!new_option)
+ 				return NULL;
+-			}
  
- 	seq_putc(seq, '\n');
- }
+ 			*new_option = *option;
+ 			new_option->flags = flags;
 -- 
-2.12.2
+2.13.0
 
