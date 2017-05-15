@@ -1,76 +1,83 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 04 May 2017 20:10:47 +0000
-Subject: [PATCH 2/9] mtd: physmap_of: Drop unnecessary static
-Message-Id: <1493928654-18768-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 15 May 2017 08:04:17 +0000
+Subject: Applied "regulator: max8997/8966: fix charger cv voltage set bug" to the regulator tree
+Message-Id: <E1dAAzJ-0002bJ-Cu@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <20170508054544epcms1p6d3d429e6f062e987adf72fc2c04ed159@epcms1p6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>"broonie@kernel.org" <broonie@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, "krzk@kernel.org" <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>linux-kernel@vger.kernel.org
 
-Drop static on a local variable, when the variable is initialized before
-any use on every possible execution path through the function.  The static
-has no benefit, and dropping it reduces the code size.
+The patch
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+   regulator: max8997/8966: fix charger cv voltage set bug
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+has been applied to the regulator tree at
 
-static T x@p;
-...
-x = <+...x...+>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-The change in code size is indicates by the following output from the size
-command.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-before:
-   text    data     bss     dec     hex filename
-    835      80       8     923     39b drivers/mtd/maps/physmap_of_gemini.o
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-after:
-   text    data     bss     dec     hex filename
-    823      80       0     903     387 drivers/mtd/maps/physmap_of_gemini.o
+Thanks,
+Mark
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From f74521ca578f38daa3e800efde7fdb2ac3ba76ef Mon Sep 17 00:00:00 2001
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Date: Mon, 8 May 2017 05:45:44 +0000
+Subject: [PATCH] regulator: max8997/8966: fix charger cv voltage set bug
 
+When min charger-CV is <= 4.0V and max charger-CV is >= 4.0V,
+we can use 4.00V as CV (register value = 0x1).`
+
+The original code had a typo that wrote ">=" (max_uV >= 4000000),
+which should've been "<", which is not necessary anyway
+as mentioned by Dan Carpenter.
+
+Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/mtd/maps/physmap_of_gemini.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/max8997-regulator.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mtd/maps/physmap_of_gemini.c b/drivers/mtd/maps/physmap_of_gemini.c
-index 9d371cd..05b286b 100644
---- a/drivers/mtd/maps/physmap_of_gemini.c
-+++ b/drivers/mtd/maps/physmap_of_gemini.c
-@@ -59,7 +59,7 @@ int of_flash_probe_gemini(struct platform_device *pdev,
- 			  struct device_node *np,
- 			  struct map_info *map)
- {
--	static struct regmap *rmap;
-+	struct regmap *rmap;
- 	struct device *dev = &pdev->dev;
- 	u32 val;
- 	int ret;
+diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
+index efabc0ea0e96..559b9ac45404 100644
+--- a/drivers/regulator/max8997-regulator.c
++++ b/drivers/regulator/max8997-regulator.c
+@@ -428,12 +428,9 @@ static int max8997_set_voltage_charger_cv(struct regulator_dev *rdev,
+ 	if (max_uV < 4000000 || min_uV > 4350000)
+ 		return -EINVAL;
+ 
+-	if (min_uV <= 4000000) {
+-		if (max_uV >= 4000000)
+-			return -EINVAL;
+-		else
+-			val = 0x1;
+-	} else if (min_uV <= 4200000 && max_uV >= 4200000)
++	if (min_uV <= 4000000)
++		val = 0x1;
++	else if (min_uV <= 4200000 && max_uV >= 4200000)
+ 		val = 0x0;
+ 	else {
+ 		lb = (min_uV - 4000001) / 20000 + 2;
+-- 
+2.11.0
 
