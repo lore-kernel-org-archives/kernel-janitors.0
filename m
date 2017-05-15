@@ -1,42 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 11:54:52 +0000
-Subject: [PATCH 3/4] net: stmmac: Use seq_putc() in sysfs_display_ring()
-Message-Id: <adf65033-79bd-ed8d-57e1-6c7c1460a009@users.sourceforge.net>
+Date: Mon, 15 May 2017 19:12:26 +0000
+Subject: [PATCH 1/6] PNP: Delete an error message for a failed memory allocation in pnp_alloc()
+Message-Id: <8e1a8099-5f0b-d8f4-d039-7c3ecdf8b508@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
-In-Reply-To: <aa58027a-a39c-963e-4376-a4d5312ee118@users.sourceforge.net>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 9 May 2017 13:24:27 +0200
+Date: Mon, 15 May 2017 19:35:29 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pnp/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 1f7022ce78b7..4fa95234978c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3730,7 +3730,7 @@ static void sysfs_display_ring(void *head, int size, int extend_desc,
- 				   le32_to_cpu(p->des2), le32_to_cpu(p->des3));
- 			p++;
- 		}
--		seq_printf(seq, "\n");
-+		seq_putc(seq, '\n');
- 	}
+diff --git a/drivers/pnp/core.c b/drivers/pnp/core.c
+index b54620e53830..27945a2d9c4e 100644
+--- a/drivers/pnp/core.c
++++ b/drivers/pnp/core.c
+@@ -35,10 +35,8 @@ void *pnp_alloc(long size)
+ 	void *result;
+ 
+ 	result = kzalloc(size, GFP_KERNEL);
+-	if (!result) {
+-		printk(KERN_ERR "pnp: Out of Memory\n");
++	if (!result)
+ 		return NULL;
+-	}
+ 	return result;
  }
  
 -- 
-2.12.2
+2.13.0
 
