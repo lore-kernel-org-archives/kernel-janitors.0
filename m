@@ -1,41 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:41:59 +0000
-Subject: [PATCH 05/10] dlm: Improve a size determination in dlm_recover_waiters_pre()
-Message-Id: <34dae3fb-31e8-d8a9-7beb-77b40dc94388@users.sourceforge.net>
+Date: Mon, 15 May 2017 12:26:39 +0000
+Subject: [PATCH 1/4] pcmcia: pd6729: Use kcalloc() in pd6729_pci_probe()
+Message-Id: <efe4fbad-19da-55ba-678f-eb325e060dc9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+References: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
+In-Reply-To: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+To: linux-pcmcia@lists.infradead.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 08:48:29 +0200
+Date: Mon, 15 May 2017 11:41:00 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/dlm/lock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pcmcia/pd6729.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index fd6fe55bedae..ffadb817ad39 100644
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -5119,7 +5119,7 @@ void dlm_recover_waiters_pre(struct dlm_ls *ls)
- 	int wait_type, stub_unlock_result, stub_cancel_result;
- 	int dir_nodeid;
+diff --git a/drivers/pcmcia/pd6729.c b/drivers/pcmcia/pd6729.c
+index 0f70b4d58f9e..289a5e74e852 100644
+--- a/drivers/pcmcia/pd6729.c
++++ b/drivers/pcmcia/pd6729.c
+@@ -628,6 +628,5 @@ static int pd6729_pci_probe(struct pci_dev *dev,
+ 	char configbyte;
+ 	struct pd6729_socket *socket;
  
--	ms_stub = kmalloc(sizeof(struct dlm_message), GFP_KERNEL);
-+	ms_stub = kmalloc(sizeof(*ms_stub), GFP_KERNEL);
- 	if (!ms_stub) {
- 		log_error(ls, "dlm_recover_waiters_pre no mem");
- 		return;
+-	socket = kzalloc(sizeof(struct pd6729_socket) * MAX_SOCKETS,
+-			 GFP_KERNEL);
++	socket = kcalloc(MAX_SOCKETS, sizeof(*socket), GFP_KERNEL);
+ 	if (!socket) {
 -- 
-2.12.2
+2.13.0
 
