@@ -1,53 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 14:03:38 +0000
-Subject: [PATCH 2/2] pcmcia: Delete an error message for a failed memory allocation in two functions
-Message-Id: <735d7330-c00d-618f-54c2-ddf54f3e06cc@users.sourceforge.net>
+Date: Mon, 15 May 2017 06:40:24 +0000
+Subject: Re: ipack: Improve a size determination in ipack_bus_register()
+Message-Id: <161221bf-26a7-6f45-6e2e-b166654aaee8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d48eee5-11d8-e44e-8c11-6370ae7a7ea1@users.sourceforge.net>
-In-Reply-To: <0d48eee5-11d8-e44e-8c11-6370ae7a7ea1@users.sourceforge.net>
+References: <b3fea957-b1bf-f681-8f70-d9d85106651b@users.sourceforge.net>
+ <4c250243-7441-3c07-764d-1a23f950def7@users.sourceforge.net>
+ <1494823967.2172.1.camel@igalia.com> <20170515055653.GA5658@kroah.com>
+In-Reply-To: <20170515055653.GA5658@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?Q?Samuel_Iglesias_Gons=c3=a1lvez?= <siglesias@igalia.com>, industrypack-devel@lists.sourceforge.net, Jens Taprogge <jens.taprogge@taprogge.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 15:23:42 +0200
+>> Greg, Would you mind picking this patch series through your char-misc tree?
+> 
+> I'm sorry, but this person is in my blacklist
 
-Omit an extra message for a memory allocation failure in these functions.
+Some developers know this communication setting in the meantime.
 
-This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pcmcia/rsrc_nonstatic.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> and I don't have any of their emails, so I don't have these patches anywhere.
 
-diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
-index 2e03dd8f1157..7b5bc6f6f496 100644
---- a/drivers/pcmcia/rsrc_nonstatic.c
-+++ b/drivers/pcmcia/rsrc_nonstatic.c
-@@ -124,7 +124,6 @@ static int add_interval(struct resource_map *map, u_long base, u_long num)
--	if (!q) {
--		printk(KERN_WARNING "out of memory to update resources\n");
-+	if (!q)
- 		return -ENOMEM;
--	}
-+
- 	q->base = base; q->num = num;
- 	q->next = p->next; p->next = q;
- 	return 0;
-@@ -162,7 +161,6 @@ static int sub_interval(struct resource_map *map, u_long base, u_long num)
--				if (!p) {
--					printk(KERN_WARNING "out of memory to update resources\n");
-+				if (!p)
- 					return -ENOMEM;
--				}
-+
- 				p->base = base+num;
- 				p->num = q->base+q->num - p->base;
- 				q->num = base - q->base;
--- 
-2.13.0
+I find this kind of feedback inappropriate.
 
+You chose to exclude my update suggestions at a specific point in time.
+They are still publicly available as they were stored also by other
+information systems despite my messages vanish from your personal mail in-box
+for a while.
+
+
+> If you wish to have them applied, please resend them with your acked-by,
+
+I am curious how other contributors will think about the shown change patterns.
+
+
+> or just ignore them, it's up to you.
+
+This reaction is also a possible option depending on your development priorities
+for the affected software modules.
+
+I hope that remaining open issues can be improved as desired after a bit of
+constructive software development discussion.
+
+Regards,
+Markus
