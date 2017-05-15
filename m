@@ -1,48 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 08 May 2017 11:21:04 +0000
-Subject: [PATCH 1/2] drm/etnaviv: Use seq_putc() in etnaviv_buffer_dump()
-Message-Id: <ca952d88-058e-d6bd-dcdf-77f1fba1b346@users.sourceforge.net>
+Date: Mon, 15 May 2017 19:16:04 +0000
+Subject: [PATCH 3/6] PNP: Improve a size determination in pnp_clone_dependent_set()
+Message-Id: <2a61f08a-54f2-c8c9-1aa0-4cc9b51715db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6652b09b-393b-01db-a0d4-de53dce8994e@users.sourceforge.net>
-In-Reply-To: <6652b09b-393b-01db-a0d4-de53dce8994e@users.sourceforge.net>
+References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
+In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 13:00:28 +0200
+Date: Mon, 15 May 2017 19:52:26 +0200
 
-Two single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pnp/quirks.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 5255278dde56..b4deb26e1e40 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -182,12 +182,12 @@ static void etnaviv_buffer_dump(struct etnaviv_gpu *gpu, struct seq_file *m)
- 
- 	for (i = 0; i < size / 4; i++) {
- 		if (i && !(i % 4))
--			seq_puts(m, "\n");
-+			seq_putc(m, '\n');
- 		if (i % 4 = 0)
- 			seq_printf(m, "\t0x%p: ", ptr + i);
- 		seq_printf(m, "%08x ", *(ptr + i));
- 	}
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- }
- 
- static int etnaviv_ring_show(struct etnaviv_gpu *gpu, struct seq_file *m)
+diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
+index d28e3ab9479c..215a50723243 100644
+--- a/drivers/pnp/quirks.c
++++ b/drivers/pnp/quirks.c
+@@ -155,6 +155,5 @@ static struct pnp_option *pnp_clone_dependent_set(struct pnp_dev *dev,
+ 	list_for_each_entry(option, &dev->options, list) {
+ 		if (pnp_option_is_dependent(option) &&
+ 		    pnp_option_set(option) = set) {
+-			new_option = kmalloc(sizeof(struct pnp_option),
+-					     GFP_KERNEL);
++			new_option = kmalloc(sizeof(*new_option), GFP_KERNEL);
+ 			if (!new_option) {
 -- 
-2.12.2
+2.13.0
 
