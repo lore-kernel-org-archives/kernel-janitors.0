@@ -1,57 +1,41 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 12 May 2017 07:52:20 +0000
-Subject: Re: vmbus: Delete an error message for a failed memory allocation in vmbus_device_create()
-Message-Id: <1494575540.2028.17.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 May 2017 14:56:05 +0000
+Subject: [PATCH] scsi: aacraid: fix leak of data from stack back to userspace
+Message-Id: <20170515145605.21461-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
-         <587dbcf5-8b12-fac7-693e-5f471e6d5167@users.sourceforge.net>
-         <20170511093015.4cdfdb6c@xeon-e3> <20170512070909.xxa62d2cde3qoj4f@mwanda>
-         <8d38547f-a086-438a-5b2a-4d11929530ec@users.sourceforge.net>
-In-Reply-To: <8d38547f-a086-438a-5b2a-4d11929530ec@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Wolfram Sang <wsa@the-dreams.de>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@linuxdriverproject.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2017-05-12 at 09:32 +0200, SF Markus Elfring wrote:
-> Will patches be picked up also from contributors who got a special
-> development reputation anyhow?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes.
+The fields sense_data_size and sense_data are unitialized garbage from
+the stack and are being copied back to userspace.  Fix this leak of
+stack information by ensuring they are zero'd.
 
-Developer reputation matters for somewhat controversial
-patches being applied as well as non-controversial and
-obviously correct patches being ignored.
+Detected by CoverityScan, CID#1435473 ("Uninitialized scalar variable")
 
-Your reputation means most all of your patches fall into
-the latter category.
+Fixes: 423400e64d377 ("scsi: aacraid: Include HBA direct interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/commctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Look up "wheat and chaff".
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index 106b9332f718..6bb6ed48e31d 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -955,6 +955,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 			reply.srb_status = SRB_STATUS_SUCCESS;
+ 			reply.scsi_status = 0;
+ 			reply.data_xfer_length = byte_count;
++			reply.sense_data_size = 0;
++			memset(reply.sense_data, 0, AAC_SENSE_BUFFERSIZE);
+ 		} else {
+ 			reply.srb_status = err->service_response;
+ 			reply.scsi_status = err->status;
+-- 
+2.11.0
 
-Your patches are mostly chaff.
-
-You have produced many trivial patches that have caused
-new defects.  That is simply unacceptable.  Especially
-when you don't immediately fix the problems you cause.
-
-If you would stop producing the trivial and instead
-channel your efforts into actual=A0bug fixing and logic
-corrections and not just style modifications with no
-code impact, your patch acceptance rate would increase.
-
-Yes, your daily patch production rate would fall.
-Likely every reader of LKML but you would be happy.
-
-I have given you many suggestions for actual structural
-improvements to kernel code.
-
-You have ignored _all_ of them and I am unlikely to try
-to interact with you any longer until your wheat:chaff
-ratio changes.
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
