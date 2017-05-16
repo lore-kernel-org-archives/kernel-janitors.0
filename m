@@ -1,43 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 09:46:37 +0000
-Subject: [PATCH] pwm-bfin: Delete an error message for a failed memory allocation in bfin_pwm_probe()
-Message-Id: <98188bf2-25b4-b784-6d98-21d51ba5c432@users.sourceforge.net>
+Date: Tue, 16 May 2017 15:50:43 +0000
+Subject: [PATCH 0/3] S390-virtio: Adjustments for three function implementations
+Message-Id: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pwm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, virtualization@lists.linux-foundation.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Halil Pasic <pasic@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 11:40:09 +0200
+Date: Tue, 16 May 2017 17:43:21 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete error messages for failed memory allocations in two functions
+  Improve a size determination in virtio_ccw_setup_vq()
+  Adjust a null pointer check in two functions
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pwm/pwm-bfin.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/s390/virtio/virtio_ccw.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pwm/pwm-bfin.c b/drivers/pwm/pwm-bfin.c
-index d2ed0a2a18e8..a9a88137f2cb 100644
---- a/drivers/pwm/pwm-bfin.c
-+++ b/drivers/pwm/pwm-bfin.c
-@@ -118,10 +118,8 @@ static int bfin_pwm_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
--	if (!pwm) {
--		dev_err(&pdev->dev, "failed to allocate memory\n");
-+	if (!pwm)
- 		return -ENOMEM;
--	}
- 
- 	platform_set_drvdata(pdev, pwm);
- 
 -- 
 2.13.0
 
