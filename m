@@ -1,55 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 15:53:55 +0000
-Subject: [PATCH 3/3] s390: virtio: Adjust a null pointer check in two functions
-Message-Id: <078ad841-544f-b989-4fdc-5f33acc220e7@users.sourceforge.net>
+Date: Tue, 16 May 2017 12:08:47 +0000
+Subject: [PATCH 2/2] regulator: fixed: Improve a size determination in two functions
+Message-Id: <481ddb47-4d4d-6acc-ed31-f66079483179@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
-In-Reply-To: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
+References: <83b84f24-503b-4b45-3e4d-9c88c6b0252b@users.sourceforge.net>
+In-Reply-To: <83b84f24-503b-4b45-3e4d-9c88c6b0252b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, virtualization@lists.linux-foundation.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Halil Pasic <pasic@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 May 2017 17:14:26 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 16 May 2017 13:43:11 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/s390/virtio/virtio_ccw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/fixed.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-index bfb845d7faa7..27ab0f0b59cd 100644
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -513,7 +513,7 @@ static struct virtqueue *virtio_ccw_setup_vq(struct virtio_device *vdev,
- 	}
- 	size = PAGE_ALIGN(vring_size(info->num, KVM_VIRTIO_CCW_RING_ALIGN));
- 	info->queue = alloc_pages_exact(size, GFP_KERNEL | __GFP_ZERO);
--	if (info->queue = NULL) {
-+	if (!info->queue) {
- 		dev_warn(&vcdev->cdev->dev, "no queue\n");
- 		err = -ENOMEM;
- 		goto out_err;
-@@ -1388,7 +1388,7 @@ static void __init no_auto_parse(void)
- 				 &from_ssid, &from);
- 		if (rc)
- 			continue;
--		if (parm != NULL) {
-+		if (parm) {
- 			rc = parse_busid(parm, &to_cssid,
- 					 &to_ssid, &to);
- 			if ((from_ssid > to_ssid) ||
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index a947f357d0f8..c33e930c9587 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -54,8 +54,7 @@ of_get_fixed_voltage_config(struct device *dev,
+ 	struct device_node *np = dev->of_node;
+ 	struct regulator_init_data *init_data;
+ 
+-	config = devm_kzalloc(dev, sizeof(struct fixed_voltage_config),
+-								 GFP_KERNEL);
++	config = devm_kzalloc(dev, sizeof(*config), GFP_KERNEL);
+ 	if (!config)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -104,8 +103,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	struct regulator_config cfg = { };
+ 	int ret;
+ 
+-	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct fixed_voltage_data),
+-			       GFP_KERNEL);
++	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
+ 	if (!drvdata)
+ 		return -ENOMEM;
+ 
 -- 
 2.13.0
 
