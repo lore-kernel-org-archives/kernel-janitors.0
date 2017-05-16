@@ -1,56 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 14:02:20 +0000
-Subject: [PATCH 1/2] pcmcia: Improve a size determination in three functions
-Message-Id: <8be57460-344a-8393-9300-8ef164784a0c@users.sourceforge.net>
+Date: Tue, 16 May 2017 13:01:40 +0000
+Subject: [PATCH] rtc-88pm80x: Delete an error message for a failed memory allocation in pm80x_rtc_probe()
+Message-Id: <79e5d766-2e58-4cea-7812-ea45995873ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d48eee5-11d8-e44e-8c11-6370ae7a7ea1@users.sourceforge.net>
-In-Reply-To: <0d48eee5-11d8-e44e-8c11-6370ae7a7ea1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Chao Xie <chao.xie@marvell.com>, Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 15:13:00 +0200
+Date: Tue, 16 May 2017 14:54:13 +0200
 
-Replace the specification of three data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pcmcia/rsrc_nonstatic.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/rtc/rtc-88pm80x.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
-index 5ef7b46a2578..2e03dd8f1157 100644
---- a/drivers/pcmcia/rsrc_nonstatic.c
-+++ b/drivers/pcmcia/rsrc_nonstatic.c
-@@ -120,5 +120,5 @@ static int add_interval(struct resource_map *map, u_long base, u_long num)
- 		if ((p->next = map) || (p->next->base > base+num-1))
- 			break;
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index 466bf7f9a285..ae0e2561ecfa 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -266,10 +266,8 @@ static int pm80x_rtc_probe(struct platform_device *pdev)
+ 
+ 	if (!pdata) {
+ 		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&pdev->dev, "failed to allocate memory\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
  	}
--	q = kmalloc(sizeof(struct resource_map), GFP_KERNEL);
-+	q = kmalloc(sizeof(*q), GFP_KERNEL);
- 	if (!q) {
-@@ -158,6 +158,5 @@ static int sub_interval(struct resource_map *map, u_long base, u_long num)
- 				q->num = base - q->base;
- 			} else {
- 				/* Split the block into two pieces */
--				p = kmalloc(sizeof(struct resource_map),
--					GFP_KERNEL);
-+				p = kmalloc(sizeof(*p), GFP_KERNEL);
- 				if (!p) {
-@@ -1018,7 +1017,7 @@ static int nonstatic_init(struct pcmcia_socket *s)
- {
- 	struct socket_data *data;
  
--	data = kzalloc(sizeof(struct socket_data), GFP_KERNEL);
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--- 
+ 	info -- 
 2.13.0
 
