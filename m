@@ -1,34 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 May 2017 12:30:32 +0000
-Subject: [PATCH] atomisp2: off by one in atomisp_s_input()
-Message-Id: <20170522123032.ikxms4grh7wmgj5d@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 May 2017 19:57:36 +0000
+Subject: Re: selinux: Use an other error code for an input validation failure in sidtab_insert()
+Message-Id: <bd7cc69d-0b1b-010a-0a07-c287d25b8d6c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+	<5704e656-708a-b611-5611-70fc65dc67e8@users.sourceforge.net>
+	<38273216-97ad-7955-941a-68485534d39f@users.sourceforge.net>
+	<CAHC9VhQY7-Ls5bX_wbna1S6PjV2Ck_1+AR5R8Pngn1tivXxCdg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQY7-Ls5bX_wbna1S6PjV2Ck_1+AR5R8Pngn1tivXxCdg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-The isp->inputs[] array has isp->input_cnt elements which have been
-initialized so this > should be >=.
+> Have you tested this to determine any impact it may have on the
+> SELinux userspace?
 
-This bug is harmless.  The check against ATOM_ISP_MAX_INPUTS prevents us
-from reading beyond the end of the array.  The uninitialized elements
-are zeroed out so we will end up returning -EINVAL a few lines later
-because the .camera pointer is NULL.
+Not yet.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
-index 6064bb823a47..aa0526ebaff1 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
-@@ -683,7 +683,7 @@ static int atomisp_s_input(struct file *file, void *fh, unsigned int input)
- 	int ret;
- 
- 	rt_mutex_lock(&isp->mutex);
--	if (input >= ATOM_ISP_MAX_INPUTS || input > isp->input_cnt) {
-+	if (input >= ATOM_ISP_MAX_INPUTS || input >= isp->input_cnt) {
- 		dev_dbg(isp->dev, "input_cnt: %d\n", isp->input_cnt);
- 		ret = -EINVAL;
- 		goto error;
+> I would agree that EINVAL is probably more appropriate in this case,
+
+Thanks that a part of your view seems to fit also to mine.
+
+
+> but changing this return code has very little value
+
+I would appreciate if this aspect can clarified a bit more.
+
+
+> and may disrupt userspace if it assumes EINVAL means something else
+> when the policy load fails.
+
+Would you find an other error code better there?
+
+Do you care to distinguish an input validation failure in a specific
+function implementation from other error situations?
+
+Regards,
+Markus
