@@ -1,40 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 18:12:58 +0000
-Subject: [PATCH] drbd: Use seq_putc() once more in drbd_syncer_progress()
-Message-Id: <2bb2d7fe-b27d-db5a-db0d-6159bc753599@users.sourceforge.net>
+Date: Tue, 16 May 2017 15:52:46 +0000
+Subject: [PATCH 2/3] s390: virtio: Improve a size determination in virtio_ccw_setup_vq()
+Message-Id: <20b190c9-6ca9-4536-645a-10f7753fb53e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
+In-Reply-To: <d02fd34c-da59-0c33-d859-e49ecb4eb1c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, virtualization@lists.linux-foundation.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Halil Pasic <pasic@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 20:05:08 +0200
+Date: Tue, 16 May 2017 17:05:01 +0200
 
-A single dot should be put into a sequence.
-Thus use the corresponding function "seq_putc".
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_proc.c | 2 +-
+ drivers/s390/virtio/virtio_ccw.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
-index 8378142f7a55..fc0f627567fd 100644
---- a/drivers/block/drbd/drbd_proc.c
-+++ b/drivers/block/drbd/drbd_proc.c
-@@ -127,7 +127,7 @@ static void drbd_syncer_progress(struct drbd_device *device, struct seq_file *se
- 		seq_putc(seq, '=');
- 	seq_putc(seq, '>');
- 	for (i = 0; i < y; i++)
--		seq_printf(seq, ".");
-+		seq_putc(seq, '.');
- 	seq_puts(seq, "] ");
+diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
+index 447fe718c0ab..bfb845d7faa7 100644
+--- a/drivers/s390/virtio/virtio_ccw.c
++++ b/drivers/s390/virtio/virtio_ccw.c
+@@ -495,5 +495,5 @@ static struct virtqueue *virtio_ccw_setup_vq(struct virtio_device *vdev,
+ 	unsigned long flags;
  
- 	if (state.conn = C_VERIFY_S || state.conn = C_VERIFY_T)
+ 	/* Allocate queue. */
+-	info = kzalloc(sizeof(struct virtio_ccw_vq_info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info) {
 -- 
-2.12.2
+2.13.0
 
