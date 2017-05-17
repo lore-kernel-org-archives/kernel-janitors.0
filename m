@@ -1,26 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 04 May 2017 15:01:47 +0000
-Subject: Re: [PATCH] net/sched: remove redundant null check on head
-Message-Id: <20170504.110147.2043314141111893708.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 12:51:56 +0000
+Subject: [PATCH] tools/power x86_energy_perf_policy: fix resource leak on file descriptor
+Message-Id: <20170517125156.10977-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503135040.32023-1-colin.king@canonical.com>
-In-Reply-To: <20170503135040.32023-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Len Brown <len.brown@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  3 May 2017 14:50:40 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> head is previously null checked and so the 2nd null check on head
-> is redundant and therefore can be removed.
-> 
-> Detected by CoverityScan, CID#1399505 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Function get_pkg_num is leaking an open file, fix this with a fclose().
 
-Applied.
+Detected with static analysis by cppcheck:
+[tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c:1115]:
+   (error) Resource leak: fp
+
+Fixes: 4beec1d7519691 ("tools/power x86_energy_perf_policy: support HWP.EPP")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+index 65bbe627a425..26a5b5265290 100644
+--- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
++++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+@@ -1110,6 +1110,7 @@ unsigned int get_pkg_num(int cpu)
+ 
+ 	fp = fopen_or_die(pathname, "r");
+ 	retval = fscanf(fp, "%d\n", &pkg);
++	fclose(fp);
+ 	if (retval != 1)
+ 		errx(1, "%s: failed to parse", pathname);
+ 	return pkg;
+-- 
+2.11.0
+
