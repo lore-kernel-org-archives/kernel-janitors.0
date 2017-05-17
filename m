@@ -1,31 +1,39 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Mon, 22 May 2017 08:25:48 +0000
-Subject: Re: [PATCH] Bluetooth: Delete error messages for failed memory allocations in two functions
-Message-Id: <A01E2BDB-7FD3-4258-9F6F-941EFA76935E@holtmann.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 21:58:50 +0000
+Subject: [PATCH][V2] dmaengine: bcm-scm-raid: remove redundant null check on req
+Message-Id: <20170517215850.5077-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
-In-Reply-To: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anup Patel <anup.patel@broadcom.com>, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hallo Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-> Omit two extra messages for memory allocation failures in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> net/bluetooth/ecdh_helper.c | 11 +++--------
-> 1 file changed, 3 insertions(+), 8 deletions(-)
+Req is never null on at the point of the null check, so
+remove this redundant check and just return &req->tx.
 
-patch has been applied to bluetooth-next tree.
+Detected by CoverityScan, CID#1436147 ("Logically dead code")
 
-Regards
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/bcm-sba-raid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Marcel
+diff --git a/drivers/dma/bcm-sba-raid.c b/drivers/dma/bcm-sba-raid.c
+index 7daa883eeded..8246c26eabe5 100644
+--- a/drivers/dma/bcm-sba-raid.c
++++ b/drivers/dma/bcm-sba-raid.c
+@@ -582,7 +582,7 @@ sba_prep_dma_interrupt(struct dma_chan *dchan, unsigned long flags)
+ 	req->tx.flags = flags;
+ 	req->tx.cookie = -EBUSY;
+ 
+-	return (req) ? &req->tx : NULL;
++	return &req->tx;
+ }
+ 
+ static void sba_fillup_memcpy_msg(struct sba_request *req,
+-- 
+2.11.0
 
