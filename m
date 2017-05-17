@@ -1,25 +1,39 @@
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Date: Tue, 16 May 2017 13:56:18 +0000
-Subject: Re: [PATCH] kvm: nVMX: off by one in vmx_write_pml_buffer()
-Message-Id: <20170516135617.GB13731@potion>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 13:35:49 +0000
+Subject: [PATCH] dmaengine: remove redundant null check on req
+Message-Id: <20170517133549.7157-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170510194317.uh72h3ez7hnvn62v@mwanda>
-In-Reply-To: <20170510194317.uh72h3ez7hnvn62v@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Bandan Das <bsd@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anup Patel <anup.patel@broadcom.com>, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2017-05-10 22:43+0300, Dan Carpenter:
-> There are PML_ENTITY_NUM elements in the pml_address[] array so the >
-> should be >= or we write beyond the end of the array when we do:
-> 
-> 	pml_address[vmcs12->guest_pml_index--] = gpa;
-> 
-> Fixes: c5f983f6e845 ("nVMX: Implement emulated Page Modification Logging")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to kvm/master, thanks.
+Req is never null on at the point of the null check, so
+remove this redundant check and just return &req->tx.
 
-(v1 was deemed better after all.)
+Detected by CoverityScan, CID#1436147 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/bcm-sba-raid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/bcm-sba-raid.c b/drivers/dma/bcm-sba-raid.c
+index 7daa883eeded..8246c26eabe5 100644
+--- a/drivers/dma/bcm-sba-raid.c
++++ b/drivers/dma/bcm-sba-raid.c
+@@ -582,7 +582,7 @@ sba_prep_dma_interrupt(struct dma_chan *dchan, unsigned long flags)
+ 	req->tx.flags = flags;
+ 	req->tx.cookie = -EBUSY;
+ 
+-	return (req) ? &req->tx : NULL;
++	return &req->tx;
+ }
+ 
+ static void sba_fillup_memcpy_msg(struct sba_request *req,
+-- 
+2.11.0
+
