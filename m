@@ -1,24 +1,41 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 09 May 2017 01:51:01 +0000
-Subject: Re: [PATCH] scsi: lpfc: double lock typo in lpfc_ns_rsp()
-Message-Id: <yq1vapassqi.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 18:13:46 +0000
+Subject: [PATCH] drm/amd/powerplay: ensure loop does not wraparound on decrement
+Message-Id: <20170517181346.11715-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503212215.m2t2rfrkoktugkg4@mwanda>
-In-Reply-To: <20170503212215.m2t2rfrkoktugkg4@mwanda> (Dan Carpenter's message
-        of "Thu, 4 May 2017 00:22:16 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Eric Huang <JinHuiEric.Huang@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+The current for loop decrements i when it is zero and this causes
+a wrap-around back to ~0 because i is unsigned. In the unlikely event
+that mask is 0, the loop will run forever. Fix this so we can't loop
+forever.
 
-> There is a double lock bug here so this will deadlock instead of
-> unlocking.
+Detected by CoverityScan, CID#1435469 ("Unsigned compared against 0")
 
-Applied to 4.12/scsi-fixes.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+index ad30f5d3a10d..d92c9b9b15be 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+@@ -4199,7 +4199,7 @@ static int vega10_force_clock_level(struct pp_hwmgr *hwmgr,
+ 		}
+ 		data->smc_state_table.gfx_boot_level = i;
+ 
+-		for (i = 31; i >= 0; i--) {
++		for (i = 32; --i; ) {
+ 			if (mask & (1 << i))
+ 				break;
+ 		}
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
