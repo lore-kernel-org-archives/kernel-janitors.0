@@ -1,34 +1,41 @@
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Thu, 11 May 2017 16:34:47 +0000
-Subject: Re: [PATCH 4/4] vmbus: Adjust five checks for null pointers
-Message-Id: <20170511093447.7e5b66e4@xeon-e3>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 18:24:15 +0000
+Subject: [PATCH] CIFS: check if pages is null rather than bv for a failed allocation
+Message-Id: <20170517182415.12081-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
-        <bca350e0-9523-dd6e-4dd8-a0f8ee93dc87@users.sourceforge.net>
-In-Reply-To: <bca350e0-9523-dd6e-4dd8-a0f8ee93dc87@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pavel Shilovsky <pshilov@microsoft.com>, Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 11 May 2017 18:19:21 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 May 2017 17:52:38 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written …
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+pages is being allocated however a null check on bv is being used
+to see if the allocation failed. Fix this by checking if pages is
+null.
 
-Please don't do these kind of checkpatch "fix ups" on existing code.
-The comparison with NULL is fine, doing this is just useless churn.
+Detected by CoverityScan, CID#1432974 ("Logically dead code")
+
+Fixes: ccf7f4088af2dd ("CIFS: Add asynchronous context to support kernel AIO")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index b08531977daa..3b147dc6af63 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -810,7 +810,7 @@ setup_aio_ctx_iter(struct cifs_aio_ctx *ctx, struct iov_iter *iter, int rw)
+ 
+ 	if (!pages) {
+ 		pages = vmalloc(max_pages * sizeof(struct page *));
+-		if (!bv) {
++		if (!pages) {
+ 			kvfree(bv);
+ 			return -ENOMEM;
+ 		}
+-- 
+2.11.0
 
