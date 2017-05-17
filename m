@@ -1,62 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 May 2017 20:36:11 +0000
-Subject: [PATCH 6/6] cxgb4: Combine substrings for two messages
-Message-Id: <5e89d06b-3f3b-2c78-ab7c-40cce15e7f74@users.sourceforge.net>
+Date: Wed, 17 May 2017 17:14:09 +0000
+Subject: [PATCH] staging: netlogic: Delete an error message for a failed memory allocation in xlr_config_spil
+Message-Id: <de9c7ee7-564a-c941-37bf-ae2d1a339dfa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
-In-Reply-To: <a3216042-2461-b397-dfa1-1de178d58513@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Casey Leedom <leedom@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jay Vosburgh <jay.vosburgh@canonical.com>, Julia Lawall <julia.lawall@lip6.fr>, Mihaela Muraru <mihaela.muraru21@gmail.com>, Mike Kofron <mpkofron@gmail.com>, Philippe Reynes <tremyfr@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Tobias Klauser <tklauser@distanz.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 May 2017 22:16:57 +0200
+Date: Wed, 17 May 2017 19:01:10 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-WARNING: quoted string split across lines
+This issue was detected by using the Coccinelle software.
 
-Thus fix two source code places.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/staging/netlogic/xlr_net.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-index 32add8dfc253..f9384d8b680d 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-@@ -1353,8 +1353,9 @@ static int mps_trc_show(struct seq_file *seq, void *v)
- 	if (tp.port < 8) {
- 		i = adap->chan_map[tp.port & 3];
- 		if (i >= MAX_NPORTS) {
--			dev_err(adap->pdev_dev, "tracer %u is assigned "
--				"to non-existing port\n", trcidx);
-+			dev_err(adap->pdev_dev,
-+				"tracer %u is assigned to non-existing port\n",
-+				trcidx);
- 			return -EINVAL;
- 		}
- 		seq_printf(seq, "tracer is capturing %s %s, ",
-@@ -1798,11 +1799,11 @@ static int mps_tcam_show(struct seq_file *seq, void *v)
- 				      FW_LDST_CMD_IDX_V(idx));
- 			ret = t4_wr_mbox(adap, adap->mbox, &ldst_cmd,
- 					 sizeof(ldst_cmd), &ldst_cmd);
--			if (ret)
--				dev_warn(adap->pdev_dev, "Can't read MPS "
--					 "replication map for idx %d: %d\n",
-+			if (ret) {
-+				dev_warn(adap->pdev_dev,
-+					 "Can't read MPS replication map for idx %d: %d\n",
- 					 idx, -ret);
--			else {
-+			} else {
- 				mps_rplc = ldst_cmd.u.mps.rplc;
- 				rplc[0] = ntohl(mps_rplc.rplc31_0);
- 				rplc[1] = ntohl(mps_rplc.rplc63_32);
+diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
+index 781ef623233e..864304eb5f36 100644
+--- a/drivers/staging/netlogic/xlr_net.c
++++ b/drivers/staging/netlogic/xlr_net.c
+@@ -420,10 +420,8 @@ static void *xlr_config_spill(struct xlr_net_priv *priv, int reg_start_0,
+ 	base = priv->base_addr;
+ 	spill_size = size;
+ 	spill = kmalloc(spill_size + SMP_CACHE_BYTES, GFP_ATOMIC);
+-	if (!spill) {
+-		pr_err("Unable to allocate memory for spill area!\n");
++	if (!spill)
+ 		return ZERO_SIZE_PTR;
+-	}
+ 
+ 	spill = PTR_ALIGN(spill, SMP_CACHE_BYTES);
+ 	phys_addr = virt_to_phys(spill);
 -- 
-2.12.2
+2.13.0
 
