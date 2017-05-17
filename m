@@ -1,27 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 May 2017 18:34:10 +0000
-Subject: [PATCH 0/2] blk-mq-debugfs: Fine-tuning for five function implementations
-Message-Id: <507a3eee-6dfe-c218-1056-38221bd22be7@users.sourceforge.net>
+Date: Wed, 17 May 2017 11:53:14 +0000
+Subject: [PATCH 0/2] spi-bfin5xx: Adjustments for four function implementations
+Message-Id: <f8ad3eb5-d6aa-3e82-1265-a63ed2c7cb88@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 May 2017 20:30:40 +0200
+Date: Wed, 17 May 2017 13:45:45 +0200
 
-Two update suggestions were taken into account
+A few update suggestions were taken into account
 from static source code analysis.
 
 Markus Elfring (2):
-  Replace seven seq_puts() calls by seq_putc()
-  Add spaces in queue_poll_stat_show()
+  Delete an error message for a failed memory allocation in bfin_spi_setup()
+  Adjust 14 checks for null pointers
 
- block/blk-mq-debugfs.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/spi/spi-bfin5xx.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
 -- 
-2.12.2
+2.13.0
 
