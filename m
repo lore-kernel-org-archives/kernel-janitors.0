@@ -1,53 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 May 2017 21:09:30 +0000
-Subject: [PATCH 6/7] kernel-trace: Adjust two checks for null pointers in uprobe_buffer_init()
-Message-Id: <b0ef0720-4ba4-1281-395f-e6ce639873d2@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 08:50:36 +0000
+Subject: [PATCH] udp: make function udp_skb_dtor_locked static
+Message-Id: <20170517085036.15261-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
-In-Reply-To: <3419381c-6a8f-f0f6-86e8-3ee7f9af0076@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Abeni <pabeni@redhat.com>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 5 May 2017 22:30:16 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+Function udp_skb_dtor_locked does not need to be in global scope
+so make it static to fix sparse warning:
 
-Comparison to NULL could be written !…
+net/ipv4/udp.c: warning: symbol 'udp_skb_dtor_locked' was not
+declared. Should it be static?
 
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 6dfb4367cd911d ("udp: keep the sk_receive_queue held when splicing")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/trace_uprobe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/udp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 3e662d7ea6a4..e9c1865f7397 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -705,13 +705,13 @@ static int uprobe_buffer_init(void)
- 	int cpu, err_cpu;
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 7bd56c9889b3..922a62d45714 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1218,7 +1218,7 @@ void udp_skb_destructor(struct sock *sk, struct sk_buff *skb)
+ EXPORT_SYMBOL(udp_skb_destructor);
  
- 	uprobe_cpu_buffer = alloc_percpu(struct uprobe_cpu_buffer);
--	if (uprobe_cpu_buffer = NULL)
-+	if (!uprobe_cpu_buffer)
- 		return -ENOMEM;
- 
- 	for_each_possible_cpu(cpu) {
- 		struct page *p = alloc_pages_node(cpu_to_node(cpu),
- 						  GFP_KERNEL, 0);
--		if (p = NULL) {
-+		if (!p) {
- 			err_cpu = cpu;
- 			goto err;
- 		}
+ /* as above, but the caller held the rx queue lock, too */
+-void udp_skb_dtor_locked(struct sock *sk, struct sk_buff *skb)
++static void udp_skb_dtor_locked(struct sock *sk, struct sk_buff *skb)
+ {
+ 	udp_rmem_release(sk, skb->dev_scratch, 1, true);
+ }
 -- 
-2.12.2
+2.11.0
 
