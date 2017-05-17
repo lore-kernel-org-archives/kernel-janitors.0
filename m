@@ -1,25 +1,33 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 12 May 2017 05:04:40 +0000
-Subject: Re: [PATCH 1/2] alpha-module: Improve a size determination in module_frob_arch_sections()
-Message-Id: <20170512050440.GO390@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 17 May 2017 19:44:46 +0000
+Subject: rcu: Call mod_timer() correctly in wake_nocb_leader_defer()
+Message-Id: <20170517194446.yz42z4wwrplbngxn@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <21258632-0cde-f750-5864-406dc6dfad20@users.sourceforge.net>
- <7e1572c7-8c8e-7b1b-ae56-cbdf1ad23fbc@users.sourceforge.net>
-In-Reply-To: <7e1572c7-8c8e-7b1b-ae56-cbdf1ad23fbc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-alpha@vger.kernel.org, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Richard Henderson <rth@twiddle.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, May 11, 2017 at 01:54:42PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 May 2017 12:54:29 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
+Smatch complains that:
 
-It's also making it harder to grep for.  For the record: any patches of
-that sort in VFS will be dropped.  Preferably - on their author's toes,
-after forcing said author to engrave them on bricks.  Ideally - lead ones...
+	kernel/rcu/tree_plugin.h:1838 wake_nocb_leader_defer()
+	warn: mod_timer() takes an absolute time not an offset.
+
+which is true.
+
+Fixes: ebf7068a4396 ("rcu: Use timer as backstop for NOCB deferred wakeups")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 34dbd0aad732..74492f20c252 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -1835,7 +1835,7 @@ static void wake_nocb_leader_defer(struct rcu_data *rdp, int waketype,
+ 	trace_rcu_nocb_wake(rdp->rsp->name, rdp->cpu, reason);
+ 	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+ 	if (needtimer)
+-		mod_timer(&rdp->nocb_timer, 1);
++		mod_timer(&rdp->nocb_timer, jiffies + 1);
+ }
+ 
+ /*
