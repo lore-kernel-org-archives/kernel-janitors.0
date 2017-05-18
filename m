@@ -1,17 +1,19 @@
-From: Paolo Abeni <pabeni@redhat.com>
-Date: Wed, 17 May 2017 09:19:33 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 18 May 2017 14:13:18 +0000
 Subject: Re: [PATCH] udp: make function udp_skb_dtor_locked static
-Message-Id: <1495012773.2644.7.camel@redhat.com>
+Message-Id: <20170518.101318.1804846322170851657.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170517085036.15261-1-colin.king@canonical.com>
 In-Reply-To: <20170517085036.15261-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: pabeni@redhat.com, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2017-05-17 at 09:50 +0100, Colin King wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 17 May 2017 09:50:36 +0100
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Function udp_skb_dtor_locked does not need to be in global scope
@@ -22,22 +24,10 @@ On Wed, 2017-05-17 at 09:50 +0100, Colin King wrote:
 > 
 > Fixes: 6dfb4367cd911d ("udp: keep the sk_receive_queue held when splicing")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/ipv4/udp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-> index 7bd56c9889b3..922a62d45714 100644
-> --- a/net/ipv4/udp.c
-> +++ b/net/ipv4/udp.c
-> @@ -1218,7 +1218,7 @@ void udp_skb_destructor(struct sock *sk, struct sk_buff *skb)
->  EXPORT_SYMBOL(udp_skb_destructor);
->  
->  /* as above, but the caller held the rx queue lock, too */
-> -void udp_skb_dtor_locked(struct sock *sk, struct sk_buff *skb)
-> +static void udp_skb_dtor_locked(struct sock *sk, struct sk_buff *skb)
->  {
->  	udp_rmem_release(sk, skb->dev_scratch, 1, true);
->  }
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+Applied.
+
+Please explcitily say "[PATCH net-next]" in your Subject line next time
+so that it is clear what tree your patch is targetting.
+
+Thanks.
