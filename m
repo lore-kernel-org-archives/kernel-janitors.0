@@ -1,29 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 12:25:13 +0000
-Subject: [PATCH 0/4] PCMCIA-PD6729: Adjustments for four function implementations
-Message-Id: <07cd817c-3045-72d8-34e2-e81b73efc291@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 May 2017 07:34:31 +0000
+Subject: [PATCH] vfio: Use ERR_CAST() instead of open coding it
+Message-Id: <20170518073431.sc6x2at4n4j7hngu@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 14:05:06 +0200
+It's a small cleanup to use ERR_CAST() here.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (4):
-  Use kcalloc() in pd6729_pci_probe()
-  Delete an error message for a failed memory allocation in pd6729_pci_probe()
-  Add the macro "pr_fmt"
-  Combine substrings for six messages
-
- drivers/pcmcia/pd6729.c | 34 ++++++++++++++++------------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
-
--- 
-2.13.0
-
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 561084ab387f..6a49485eb49d 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -382,7 +382,7 @@ static struct vfio_group *vfio_create_group(struct iommu_group *iommu_group)
+ 	if (IS_ERR(dev)) {
+ 		vfio_free_group_minor(minor);
+ 		vfio_group_unlock_and_free(group);
+-		return (struct vfio_group *)dev; /* ERR_PTR */
++		return ERR_CAST(dev);
+ 	}
+ 
+ 	group->minor = minor;
