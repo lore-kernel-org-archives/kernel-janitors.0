@@ -1,43 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:18:31 +0000
-Subject: [PATCH 4/6] PNP: Delete an error message for a failed memory allocation in pnp_clone_dependent_set()
-Message-Id: <77feb0e9-ef3b-15bb-bc0b-666c9632c9e0@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 May 2017 07:42:59 +0000
+Subject: [PATCH] phy: phy-brcm-sata: Fix a loop timeout
+Message-Id: <20170518074258.ywzdmtuxjxykabs2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
-In-Reply-To: <94f6ec12-0092-e1e6-3fb1-81f9630eae1f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: Kishon Vijay Abraham I <kishon@ti.com>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Krzysztof Kozlowski <krzk@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Florian Fainelli <f.fainelli@gmail.com>, Axel Lin <axel.lin@ingics.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 20:00:38 +0200
+We expect to timeout with "try" set to zero but it's a post-op so
+actually it ends with it set to -1.  I've fixed this by changing it to a
+pre-op.
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: 024812889ad1 ("phy: Add SATA3 PHY support for Broadcom NSP SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pnp/quirks.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
-index 215a50723243..34e2d4563bbd 100644
---- a/drivers/pnp/quirks.c
-+++ b/drivers/pnp/quirks.c
-@@ -159,8 +159,5 @@ static struct pnp_option *pnp_clone_dependent_set(struct pnp_dev *dev,
--			if (!new_option) {
--				dev_err(&dev->dev, "couldn't clone dependent "
--					"set %d\n", set);
-+			if (!new_option)
- 				return NULL;
--			}
+diff --git a/drivers/phy/broadcom/phy-brcm-sata.c b/drivers/phy/broadcom/phy-brcm-sata.c
+index ccbc3d994998..48fb016ce689 100644
+--- a/drivers/phy/broadcom/phy-brcm-sata.c
++++ b/drivers/phy/broadcom/phy-brcm-sata.c
+@@ -329,7 +329,7 @@ static int brcm_nsp_sata_init(struct brcm_sata_port *port)
  
- 			*new_option = *option;
- 			new_option->flags = flags;
--- 
-2.13.0
-
+ 	/* Wait for pll_seq_done bit */
+ 	try = 50;
+-	while (try--) {
++	while (--try) {
+ 		val = brcm_sata_phy_rd(base, BLOCK0_REG_BANK,
+ 					BLOCK0_XGXSSTATUS);
+ 		if (val & BLOCK0_XGXSSTATUS_PLL_LOCK)
