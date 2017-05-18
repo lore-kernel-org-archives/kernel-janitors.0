@@ -1,29 +1,41 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 03 May 2017 17:47:31 +0000
-Subject: Re: [PATCH 2/9] pinctrl: Combine two seq_puts() calls into one call in two functions
-Message-Id: <CAHp75Vf1_qMZG98CuXBMD64f401AsRqO30TNKbf4Kcsako39tQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 May 2017 14:34:45 +0000
+Subject: Re: spidev: Adjust five checks for null pointers
+Message-Id: <5d9f71d4-2f0d-7083-fd28-fb505841b502@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net> <64ab3ba9-6cfa-fd59-976c-8f22b2b9a2c5@users.sourceforge.net>
-In-Reply-To: <64ab3ba9-6cfa-fd59-976c-8f22b2b9a2c5@users.sourceforge.net>
+References: <c5452d8c-d123-d5e9-b2cc-a386d1325aec@users.sourceforge.net>
+ <df3e58c6-f70d-a5d3-102e-4fab2f7df126@users.sourceforge.net>
+ <20170518112846.tcirhguyps3kk3ra@sirena.org.uk>
+In-Reply-To: <20170518112846.tcirhguyps3kk3ra@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, May 2, 2017 at 12:22 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 1 May 2017 22:42:13 +0200
->
-> Some text was put into a sequence by two separate function calls.
-> Print the same data by a single function call instead.
+>> MIME-Version: 1.0
+>> Content-Type: text/plain; charset=UTF-8
+>> Content-Transfer-Encoding: 8bit
+> 
+> Please fix however you're sending things out to avoid this noise.
 
-I don't see a benefit here, sorry.
-This is slow path in any case (printing is slow). Currently code is
-neat, you do it slightly harder to parse.
+The Git software generated such extra information because my commit message
+contained a few special characters.
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+>> The script “checkpatch.pl” pointed information out like the following.
+>>
+>> Comparison to NULL could be written !…
+>>
+>> Thus fix the affected source code places.
+> 
+> This changelog does not describe any purpose in making this change,
+> we could equally well say the exact opposite.  Why should we do this?
+
+How do you think about to reduce the usage of the preprocessor symbol “NULL”?
+
+Can it help if the source code is a little bit shorter after the
+proposed adjustment?
+
+Regards,
+Markus
