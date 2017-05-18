@@ -1,76 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 20:08:25 +0000
-Subject: [PATCH 2/2] regmap: Adjust five checks for null pointers in __regmap_init()
-Message-Id: <4bca89e5-9d86-4ec9-1105-cc921c50f910@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 18 May 2017 14:15:22 +0000
+Subject: Re: rtlwifi: rtl8723ae: fix spelling mistake: "Coexistance" -> "Coexistence"
+Message-Id: <20170518141522.BBDC360F73@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
-In-Reply-To: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
+References: <20170513223702.19748-1-colin.king@canonical.com>
+In-Reply-To: <20170513223702.19748-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Joe Perches <joe@perches.com>, Christian Engelmayer <cengelma@gmx.at>, Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 May 2017 21:52:42 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Colin Ian King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in RT_TRACE text
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Comparison to NULL could be written !…
+e8dc072dd50d rtlwifi: rtl8723ae: fix spelling mistake: "Coexistance" -> "Coexistence"
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/base/regmap/regmap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 096499e1f223..2b1f073b72a6 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -618,7 +618,7 @@ struct regmap *__regmap_init(struct device *dev,
- 		goto err;
- 
- 	map = kzalloc(sizeof(*map), GFP_KERNEL);
--	if (map = NULL) {
-+	if (!map) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
-@@ -918,7 +918,7 @@ struct regmap *__regmap_init(struct device *dev,
- 		goto err_map;
- 
- 	map->work_buf = kzalloc(map->format.buf_size, GFP_KERNEL);
--	if (map->work_buf = NULL) {
-+	if (!map->work_buf) {
- 		ret = -ENOMEM;
- 		goto err_map;
- 	}
-@@ -993,7 +993,7 @@ struct regmap *__regmap_init(struct device *dev,
- 		}
- 
- 		new = kzalloc(sizeof(*new), GFP_KERNEL);
--		if (new = NULL) {
-+		if (!new) {
- 			ret = -ENOMEM;
- 			goto err_range;
- 		}
-@@ -1014,10 +1014,10 @@ struct regmap *__regmap_init(struct device *dev,
- 			goto err_range;
- 		}
- 
--		if (map->selector_work_buf = NULL) {
-+		if (!map->selector_work_buf) {
- 			map->selector_work_buf  				kzalloc(map->format.buf_size, GFP_KERNEL);
--			if (map->selector_work_buf = NULL) {
-+			if (!map->selector_work_buf) {
- 				ret = -ENOMEM;
- 				goto err_range;
- 			}
 -- 
-2.13.0
+https://patchwork.kernel.org/patch/9725457/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
