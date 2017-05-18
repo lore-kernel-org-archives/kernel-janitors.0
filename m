@@ -1,49 +1,43 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 30 May 2017 13:12:27 +0000
-Subject: Re: [PATCH][V2] gpiolib: remove unused variable 'i'
-Message-Id: <CAHp75Vf2NuqPOGak4az41L3LHR0F2Mcerw4b-1p5gNLyLxctZA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 May 2017 07:39:53 +0000
+Subject: [PATCH 2/2] KVM: Tidy the whitespace in nested_svm_check_permissions()
+Message-Id: <20170518073953.uz6ix4azwlgvfa3k@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170530110206.785-1-colin.king@canonical.com>
-In-Reply-To: <20170530110206.785-1-colin.king@canonical.com>
+References: <20170518073853.b3dkw2zibj7ayvwh@mwanda>
+In-Reply-To: <20170518073853.b3dkw2zibj7ayvwh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 30, 2017 at 2:02 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Fixes smatch warning:unused variable 'i' [-Wunused-variable]
+I moved the || to the line before.  Also I replaced some spaces with a
+tab on the "return 0;" line.  It looks OK in the diff but originally
+that line was only indented 7 spaces.
 
-Arnd was faster :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://lkml.org/lkml/2017/5/30/224
-
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpio/gpiolib.c                   | 2 --
->  sound/soc/generic/audio-graph-scu-card.c | 2 +-
->  2 files changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index be8097097326..62ffb4e293d2 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1471,8 +1471,6 @@ static struct gpio_chip *find_chip_by_name(const char *name)
->
->  static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
->  {
-> -       int i;
-> -
->         if (!gpiochip->irq_need_valid_mask)
->                 return 0;
->
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index c27ac6923a18..226954f8106f 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2370,8 +2371,8 @@ static void nested_svm_uninit_mmu_context(struct kvm_vcpu *vcpu)
+ 
+ static int nested_svm_check_permissions(struct vcpu_svm *svm)
+ {
+-	if (!(svm->vcpu.arch.efer & EFER_SVME)
+-	    || !is_paging(&svm->vcpu)) {
++	if (!(svm->vcpu.arch.efer & EFER_SVME) ||
++	    !is_paging(&svm->vcpu)) {
+ 		kvm_queue_exception(&svm->vcpu, UD_VECTOR);
+ 		return 1;
+ 	}
+@@ -2381,7 +2382,7 @@ static int nested_svm_check_permissions(struct vcpu_svm *svm)
+ 		return 1;
+ 	}
+ 
+-       return 0;
++	return 0;
+ }
+ 
+ static int nested_svm_check_exception(struct vcpu_svm *svm, unsigned nr,
