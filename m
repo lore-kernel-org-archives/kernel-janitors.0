@@ -1,79 +1,32 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 30 May 2017 11:02:44 +0000
-Subject: Re: [PATCH] gpiolib: remove unused variable 'i'
-Message-Id: <27b3397e-ab06-9e50-1b17-8127f9f72418@canonical.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="45sS2E1AiDQiWoIcepKHNj1DKThIwrm9a"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 May 2017 07:38:53 +0000
+Subject: [PATCH 1/2] KVM: Silence underflow warning in avic_get_physical_id_entry()
+Message-Id: <20170518073853.b3dkw2zibj7ayvwh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170530094420.31076-1-colin.king@canonical.com>
- <20170530105811.xaoomponlr2rwn4i@sirena.org.uk>
-In-Reply-To: <20170530105811.xaoomponlr2rwn4i@sirena.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---45sS2E1AiDQiWoIcepKHNj1DKThIwrm9a
-Content-Type: multipart/mixed; boundary="noPbq7PdJl89N6ajbrTkAsCUcRMRHXIEi";
- protected-headers="v1"
-From: Colin Ian King <colin.king@canonical.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <27b3397e-ab06-9e50-1b17-8127f9f72418@canonical.com>
-Subject: Re: [PATCH] gpiolib: remove unused variable 'i'
-References: <20170530094420.31076-1-colin.king@canonical.com>
- <20170530105811.xaoomponlr2rwn4i@sirena.org.uk>
-In-Reply-To: <20170530105811.xaoomponlr2rwn4i@sirena.org.uk>
+Smatch complains that we check cap the upper bound of "index" but don't
+check for negatives.  It's a false positive because "index" is never
+negative.  But it's also simple enough to make it unsigned which makes
+the code easier to audit.
 
---noPbq7PdJl89N6ajbrTkAsCUcRMRHXIEi
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 30/05/17 11:58, Mark Brown wrote:
-> On Tue, May 30, 2017 at 10:44:20AM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Fixes smatch warning: unused variable 'i' [-Wunused-variable]
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpio/gpiolib.c                   | 2 --
->>  sound/soc/generic/audio-graph-scu-card.c | 2 +-
->>  2 files changed, 1 insertion(+), 3 deletions(-)
->=20
-> You've got two unrelated patches in one here (as a quick review of your=
-
-> CC list would probably have warned you...).
->=20
-Oops, my bad. V2 resent.
-
-
---noPbq7PdJl89N6ajbrTkAsCUcRMRHXIEi--
-
---45sS2E1AiDQiWoIcepKHNj1DKThIwrm9a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQI2BAEBCAAgBQJZLVFUGRxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20ACgkQaMKH
-38aoAiYgsQ/8DA2+Q42+K1DA0ky1rNUiCzcHyQPFinFgVhELj83HzRsKTA5GSfSh
-BB7RZmaIV9I4SjxlUta3CPOBaiz58PVAmGK+Nl/stQ4XcGM20Vo1FGA6utf0p7mf
-jpRk3oOMY7XqCFqfseiKXk1TYwmNME31xn8wE6i0Cy8wbgOkwWOdEPz4+nix8Mg5
-aIT7BK2gQsxIdcaWPlxqS5sFVQSc0h73R+mngxAShlGTWDcCTDgMV1t1D2SMQNdN
-3IFsKgwK7Dam3Jld4kukJSt7GUqM0NxMui64ZVeWrnUGyrPssDKyK4++gNKtGWEa
-vLURIKHS/IzP/3L4Hy3B0s2We69vBRJ1a7WIM+8a4+SDRkrweXfqdbhG2v8lI4YO
-gT6s40kTiJ4OYo2aPJIzRkDXxBdazQTQjUZbA2r/oZbWipDqYUvPi+b9Fj5Yoy2p
-C6nkh3r1Vv9q3eXoYWdlL6fBKt0rd7z8GUTMy3x3w8Bv+L3ILiwlxMKjLtOBFVXm
-vfVkj12EHRazBASeVLj1fPxUZzbm09wg20ljSenYrzyo18xtFcBxtAMGkvbWXcPf
-2LtJK3Clw5cbckIzyYe/wvHjz6JuLHpr+0CsexAkE6Q8uKb3/33qCntLcM2WdmcB
-EjAcILVp90ZLIR17NZXASR+aG4pUDmH2Cl6KBoaWkY2KjCA7TjM+hWU=
-=2yOj
------END PGP SIGNATURE-----
-
---45sS2E1AiDQiWoIcepKHNj1DKThIwrm9a--
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index c27ac6923a18..183ddb235fb4 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1272,7 +1272,8 @@ static void init_vmcb(struct vcpu_svm *svm)
+ 
+ }
+ 
+-static u64 *avic_get_physical_id_entry(struct kvm_vcpu *vcpu, int index)
++static u64 *avic_get_physical_id_entry(struct kvm_vcpu *vcpu,
++				       unsigned int index)
+ {
+ 	u64 *avic_physical_id_table;
+ 	struct kvm_arch *vm_data = &vcpu->kvm->arch;
