@@ -1,41 +1,40 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 02 May 2017 03:37:12 +0000
-Subject: Re: [PATCH 0/5] target: Fine-tuning for some function implementations
-Message-Id: <1493696232.23202.1.camel@haakon3.risingtidesystems.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 19 May 2017 17:45:15 +0000
+Subject: [PATCH][V2] [media] rainshadow-cec: ensure exit_loop is intialized
+Message-Id: <20170519174515.6695-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
-In-Reply-To: <337dfdee-8a9f-9bb3-639a-ea47758966f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-Apologies for the delayed follow-up here as well.
+exit_loop is not being initialized, so it contains garbage. Ensure it is
+initialized to false.
 
-On Sun, 2017-04-09 at 21:43 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 9 Apr 2017 21:33:21 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (5):
->   rd: Use kcalloc() in two functions
->   rd: Delete error messages for failed memory allocations
->   rd: Improve size determinations in two functions
->   sbc: Use kmalloc_array() in compare_and_write_callback()
->   transport: Use kmalloc_array() in transport_kmap_data_sg()
-> 
->  drivers/target/target_core_rd.c        | 33 +++++++++------------------------
->  drivers/target/target_core_sbc.c       |  4 ++--
->  drivers/target/target_core_transport.c |  2 +-
->  3 files changed, 12 insertions(+), 27 deletions(-)
-> 
+Detected by CoverityScan, CID#1436409 ("Uninitialized scalar variable")
 
-Applied.
+Fixes: ea6a69defd3311 ("[media] rainshadow-cec: avoid -Wmaybe-uninitialized warning")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/rainshadow-cec/rainshadow-cec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you.
+diff --git a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
+index 8d3ca2c8b20f..ad468efc4399 100644
+--- a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
++++ b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
+@@ -119,7 +119,7 @@ static void rain_irq_work_handler(struct work_struct *work)
+ 
+ 	while (true) {
+ 		unsigned long flags;
+-		bool exit_loop;
++		bool exit_loop = false;
+ 		char data;
+ 
+ 		spin_lock_irqsave(&rain->buf_lock, flags);
+-- 
+2.11.0
 
