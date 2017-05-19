@@ -1,88 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 May 2017 18:35:23 +0000
-Subject: [PATCH 1/2] blk-mq-debugfs: Replace seven seq_puts() calls by seq_putc()
-Message-Id: <caf15567-45d2-2062-9fae-cf1d098f2f3c@users.sourceforge.net>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Fri, 19 May 2017 07:52:27 +0000
+Subject: Re: ath5k: fix memory leak on buf on failed eeprom read
+Message-Id: <31364cad256e4b409906f66efd7dd6d0@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <507a3eee-6dfe-c218-1056-38221bd22be7@users.sourceforge.net>
-In-Reply-To: <507a3eee-6dfe-c218-1056-38221bd22be7@users.sourceforge.net>
+References: <20170503142600.32609-1-colin.king@canonical.com>
+In-Reply-To: <20170503142600.32609-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R . Rodriguez" <mcgrof@do-not-panic.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 May 2017 20:00:49 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The AR5K_EEPROM_READ macro returns with -EIO if a read error
+> occurs causing a memory leak on the allocated buffer buf. Fix
+> this by explicitly calling ath5k_hw_nvram_read and exiting on
+> the via the freebuf label that performs the necessary free'ing
+> of buf when a read error occurs.
+> 
+> Detected by CoverityScan, CID#1248782 ("Resource Leak")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-A few single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Patch applied to ath-next branch of ath.git, thanks.
 
-This issue was detected by using the Coccinelle software.
+8fed6823e06e ath5k: fix memory leak on buf on failed eeprom read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- block/blk-mq-debugfs.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index bcd2a7d4a3a5..2265b70b1121 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -53,7 +53,7 @@ static int blk_flags_show(struct seq_file *m, const unsigned long flags,
- 		if (!(flags & BIT(i)))
- 			continue;
- 		if (sep)
--			seq_puts(m, " ");
-+			seq_putc(m, ' ');
- 		sep = true;
- 		if (i < flag_name_count && flag_name[i])
- 			seq_puts(m, flag_name[i]);
-@@ -101,7 +101,7 @@ static int blk_queue_flags_show(struct seq_file *m, void *v)
- 
- 	blk_flags_show(m, q->queue_flags, blk_queue_flag_name,
- 		       ARRAY_SIZE(blk_queue_flag_name));
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
-@@ -159,11 +159,10 @@ static int queue_poll_stat_show(struct seq_file *m, void *v)
- 	for (bucket = 0; bucket < BLK_MQ_POLL_STATS_BKTS/2; bucket++) {
- 		seq_printf(m, "read  (%d Bytes): ", 1 << (9+bucket));
- 		print_stat(m, &q->poll_stat[2*bucket]);
--		seq_puts(m, "\n");
--
-+		seq_putc(m, '\n');
- 		seq_printf(m, "write (%d Bytes): ",  1 << (9+bucket));
- 		print_stat(m, &q->poll_stat[2*bucket+1]);
--		seq_puts(m, "\n");
-+		seq_putc(m, '\n');
- 	}
- 	return 0;
- }
-@@ -193,7 +192,7 @@ static int hctx_state_show(struct seq_file *m, void *v)
- 
- 	blk_flags_show(m, hctx->state, hctx_state_name,
- 		       ARRAY_SIZE(hctx_state_name));
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
-@@ -233,11 +232,11 @@ static int hctx_flags_show(struct seq_file *m, void *v)
- 		seq_puts(m, alloc_policy_name[alloc_policy]);
- 	else
- 		seq_printf(m, "%d", alloc_policy);
--	seq_puts(m, " ");
-+	seq_putc(m, ' ');
- 	blk_flags_show(m,
- 		       hctx->flags ^ BLK_ALLOC_POLICY_TO_MQ_FLAG(alloc_policy),
- 		       hctx_flag_name, ARRAY_SIZE(hctx_flag_name));
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
 -- 
-2.12.2
+https://patchwork.kernel.org/patch/9709935/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
