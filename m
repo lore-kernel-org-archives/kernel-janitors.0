@@ -1,25 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 May 2017 02:42:59 +0000
-Subject: Re: [PATCH net-next] lwtunnel: fix error path in lwtunnel_fill_encap()
-Message-Id: <20170430.224259.758720932636802809.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 19 May 2017 11:02:03 +0000
+Subject: [PATCH][drm-next] drm/pl111: make structure pl111_display_funcs static
+Message-Id: <20170519110203.19417-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428130347.53hagk77wh6scmcs@mwanda>
-In-Reply-To: <20170428130347.53hagk77wh6scmcs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: bianpan2016@163.com, roopa@cumulusnetworks.com, dsa@cumulusnetworks.com, rshearma@brocade.com, tom@herbertland.com, david.lebrun@uclouvain.be, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tom Cooksey <tom.cooksey@arm.com>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 16:03:48 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> We recently added a check to see if nla_nest_start() fails.  There are
-> two issues with that.  First, if it fails then I don't think we should
-> call nla_nest_cancel().  Second, it's slightly convoluted but the
-> current code returns success but we should return -EMSGSIZE instead.
-> 
-> Fixes: a50fe0ffd76f ("lwtunnel: check return value of nla_nest_start")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+structure pl111_display_funcs can be made static as it does not need to be
+in global scope.  Fixes sparse warning:
 
-Applied.
+"warning: symbol 'pl111_display_funcs' was not declared. Should it
+be static?"
+
+Fixes: bed41005e6174d ("drm/pl111: Initial drm/kms driver for pl111")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/pl111/pl111_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
+index 39a5c33bce7d..bd8ff82c2fd9 100644
+--- a/drivers/gpu/drm/pl111/pl111_display.c
++++ b/drivers/gpu/drm/pl111/pl111_display.c
+@@ -280,7 +280,7 @@ static int pl111_display_prepare_fb(struct drm_simple_display_pipe *pipe,
+ 	return drm_fb_cma_prepare_fb(&pipe->plane, plane_state);
+ }
+ 
+-const struct drm_simple_display_pipe_funcs pl111_display_funcs = {
++static const struct drm_simple_display_pipe_funcs pl111_display_funcs = {
+ 	.check = pl111_display_check,
+ 	.enable = pl111_display_enable,
+ 	.disable = pl111_display_disable,
+-- 
+2.11.0
+
