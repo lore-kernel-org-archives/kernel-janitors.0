@@ -1,54 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 19 May 2017 17:39:39 +0000
-Subject: [PATCH] [media] rainshadow-cec: ensure exit_loop is initialized
-Message-Id: <20170519173939.6489-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 May 2017 17:49:07 +0000
+Subject: [PATCH 2/4] ueagle-atm: Improve a size determination in uea_bind()
+Message-Id: <0cf69514-9270-2e34-a9f1-6af2644ac48e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
+In-Reply-To: <d1c7c5d1-68b8-bbfc-8d0b-71a8e6cdd152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthieu Castet <castet.matthieu@free.fr>, Stanislaw Gruszka <stf_xl@wp.pl>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 May 2017 19:09:28 +0200
 
-exit_loop is not being initialized, so it contains garbage. Ensure it is
-initialized to false.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected by CoverityScan, CID#1436409 ("Uninitialzed scalar variable")
-
-Fixes: ea6a69defd3311 ("[media] rainshadow-cec: avoid -Wmaybe-uninitialized warning")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/vc4/vc4_v3d.c                     | 2 +-
- drivers/media/usb/rainshadow-cec/rainshadow-cec.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/atm/ueagle-atm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-index c53afec34586..c42210203f6e 100644
---- a/drivers/gpu/drm/vc4/vc4_v3d.c
-+++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-@@ -218,7 +218,7 @@ int vc4_v3d_get_bin_slot(struct vc4_dev *vc4)
-  * overall CMA pool before they make scenes complicated enough to run
-  * out of bin space.
-  */
--int
-+static int
- vc4_allocate_bin_bo(struct drm_device *drm)
- {
- 	struct vc4_dev *vc4 = to_vc4_dev(drm);
-diff --git a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-index 8d3ca2c8b20f..ad468efc4399 100644
---- a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-+++ b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-@@ -119,7 +119,7 @@ static void rain_irq_work_handler(struct work_struct *work)
+diff --git a/drivers/usb/atm/ueagle-atm.c b/drivers/usb/atm/ueagle-atm.c
+index 16fd87df69e1..9725e6f2f301 100644
+--- a/drivers/usb/atm/ueagle-atm.c
++++ b/drivers/usb/atm/ueagle-atm.c
+@@ -2551,7 +2551,7 @@ static int uea_bind(struct usbatm_data *usbatm, struct usb_interface *intf,
+ 			return ret;
+ 	}
  
- 	while (true) {
- 		unsigned long flags;
--		bool exit_loop;
-+		bool exit_loop = false;
- 		char data;
+-	sc = kzalloc(sizeof(struct uea_softc), GFP_KERNEL);
++	sc = kzalloc(sizeof(*sc), GFP_KERNEL);
+ 	if (!sc)
+ 		return -ENOMEM;
  
- 		spin_lock_irqsave(&rain->buf_lock, flags);
 -- 
-2.11.0
+2.13.0
 
