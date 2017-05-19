@@ -1,46 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 06:14:38 +0000
-Subject: [PATCH 2/2] ieee802154: ca8210: Delete an error message for a failed memory allocation in ca8210_skb
-Message-Id: <a0c71307-4777-fd52-9f4c-cafd0f4d43a0@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 19 May 2017 17:43:15 +0000
+Subject: NACK: [PATCH] [media] rainshadow-cec: ensure exit_loop is initialized
+Message-Id: <393f9ca7-3675-ee45-2bd3-378c10cb412e@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55fddbc7-28c4-8866-67d3-ff1ff1a4eeb7@users.sourceforge.net>
-In-Reply-To: <55fddbc7-28c4-8866-67d3-ff1ff1a4eeb7@users.sourceforge.net>
+References: <20170519173939.6489-1-colin.king@canonical.com>
+In-Reply-To: <20170519173939.6489-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxdev@cascoda.com, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, Alexander Aring <aar@pengutronix.de>, Harry Morris <h.morris@cascoda.com>, Stefan Schmidt <stefan@osg.samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 08:03:17 +0200
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ieee802154/ca8210.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index 25ed11bb5ed3..f6df75e80a60 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -1808,10 +1808,9 @@ static int ca8210_skb_rx(
- 
- 	/* Allocate mtu size buffer for every rx packet */
- 	skb = dev_alloc_skb(IEEE802154_MTU + sizeof(hdr));
--	if (!skb) {
--		dev_crit(&priv->spi->dev, "dev_alloc_skb failed\n");
-+	if (!skb)
- 		return -ENOMEM;
--	}
-+
- 	skb_reserve(skb, sizeof(hdr));
- 
- 	msdulen = data_ind[22]; /* msdu_length */
--- 
-2.13.0
+On 19/05/17 18:39, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> exit_loop is not being initialized, so it contains garbage. Ensure it is
+> initialized to false.
+> 
+> Detected by CoverityScan, CID#1436409 ("Uninitialzed scalar variable")
+> 
+> Fixes: ea6a69defd3311 ("[media] rainshadow-cec: avoid -Wmaybe-uninitialized warning")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/vc4/vc4_v3d.c                     | 2 +-
+>  drivers/media/usb/rainshadow-cec/rainshadow-cec.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
+> index c53afec34586..c42210203f6e 100644
+> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
+> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
+> @@ -218,7 +218,7 @@ int vc4_v3d_get_bin_slot(struct vc4_dev *vc4)
+>   * overall CMA pool before they make scenes complicated enough to run
+>   * out of bin space.
+>   */
+> -int
+> +static int
+>  vc4_allocate_bin_bo(struct drm_device *drm)
+>  {
+>  	struct vc4_dev *vc4 = to_vc4_dev(drm);
+> diff --git a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
+> index 8d3ca2c8b20f..ad468efc4399 100644
+> --- a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
+> +++ b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
+> @@ -119,7 +119,7 @@ static void rain_irq_work_handler(struct work_struct *work)
+>  
+>  	while (true) {
+>  		unsigned long flags;
+> -		bool exit_loop;
+> +		bool exit_loop = false;
+>  		char data;
+>  
+>  		spin_lock_irqsave(&rain->buf_lock, flags);
+> 
+Sorry, got another fix included into that. I'll re-submit
 
