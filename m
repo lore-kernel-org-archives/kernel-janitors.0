@@ -1,46 +1,55 @@
-From: Keerthy <j-keerthy@ti.com>
-Date: Tue, 09 May 2017 03:47:31 +0000
-Subject: Re: [PATCH] thermal: core: make thermal_emergency_poweroff static
-Message-Id: <fa978f44-732b-c7bb-33d6-8d4df8e31155@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 May 2017 21:29:55 +0000
+Subject: [PATCH] perf/core: potential NULL deref if perf_event_alloc() fails
+Message-Id: <20170519212955.t723zbuywm4x2uwt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170508103643.10748-1-colin.king@canonical.com>
-In-Reply-To: <20170508103643.10748-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+I found this bug by looking for places where we do ERR_PTR(0).  The
+callers for perf_event_alloc() don't expect NULL returns and will oops.
+At first it looked like perf_init_event() can return NULL, but that's
+actually dead code.  I removed it.  But if the kcalloc() fails then we
+do need to set err = -ENOMEM.
 
+Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Monday 08 May 2017 04:06 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Making thermal_emergency_poweroff static fixes sparse warning:
-> 
->   drivers/thermal/thermal_core.c:6: warning: symbol
->   'thermal_emergency_poweroff' was not declared. Should it be static?
-
-Acked-by: Keerthy <j-keerthy@ti.com>
-
-> 
-> Fixes: ef1d87e06ab4 ("thermal: core: Add a back up thermal shutdown mechanism")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/thermal/thermal_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index b21b9cc2c8d6..5a51c740e372 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -359,7 +359,7 @@ static DECLARE_DELAYED_WORK(thermal_emergency_poweroff_work,
->   * This may be called from any critical situation to trigger a system shutdown
->   * after a known period of time. By default this is not scheduled.
->   */
-> -void thermal_emergency_poweroff(void)
-> +static void thermal_emergency_poweroff(void)
->  {
->  	int poweroff_delay_ms = CONFIG_THERMAL_EMERGENCY_POWEROFF_DELAY_MS;
->  	/*
-> 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 13f5b942580b..4c24bc4c8a63 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9177,7 +9177,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 
+ static struct pmu *perf_init_event(struct perf_event *event)
+ {
+-	struct pmu *pmu = NULL;
++	struct pmu *pmu;
+ 	int idx;
+ 	int ret;
+ 
+@@ -9461,9 +9461,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	}
+ 
+ 	pmu = perf_init_event(event);
+-	if (!pmu)
+-		goto err_ns;
+-	else if (IS_ERR(pmu)) {
++	if (IS_ERR(pmu)) {
+ 		err = PTR_ERR(pmu);
+ 		goto err_ns;
+ 	}
+@@ -9476,8 +9474,10 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 		event->addr_filters_offs = kcalloc(pmu->nr_addr_filters,
+ 						   sizeof(unsigned long),
+ 						   GFP_KERNEL);
+-		if (!event->addr_filters_offs)
++		if (!event->addr_filters_offs) {
++			err = -ENOMEM;
+ 			goto err_per_task;
++		}
+ 
+ 		/* force hw sync on the address filters */
+ 		event->addr_filters_gen = 1;
