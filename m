@@ -1,25 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 09 May 2017 02:12:27 +0000
-Subject: Re: [PATCH] scsi: lpfc: ensure els_wq is being checked before destroying it
-Message-Id: <yq11srysrqs.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 May 2017 21:27:18 +0000
+Subject: [PATCH] staging: speakup: signedness bug in spk_ttyio_in_nowait()
+Message-Id: <20170519212718.3pa52aiihtk4o6t2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170506221355.13552-1-colin.king@canonical.com>
-In-Reply-To: <20170506221355.13552-1-colin.king@canonical.com> (Colin King's
-        message of "Sat, 6 May 2017 23:13:55 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+On most of the common arches char is signed so it can't ever = 0xff.
+Let's fix this by making it a u8.
 
-Colin,
+Fixes: 6b9ad1c742bf ("staging: speakup: add send_xchar, tiocmset and input functionality for tty")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> I believe there is a typo on the wq destroy of els_wq, currently the
-> driver is checking if els_cq is not null and I think this should be a
-> check on els_wq instead.
-
-Applied to 4.12/scsi-fixes. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
+index 6e0f042f6a44..8ed7c71c712f 100644
+--- a/drivers/staging/speakup/spk_ttyio.c
++++ b/drivers/staging/speakup/spk_ttyio.c
+@@ -220,7 +220,7 @@ static unsigned char spk_ttyio_in(void)
+ 
+ static unsigned char spk_ttyio_in_nowait(void)
+ {
+-	char rv = ttyio_in(0);
++	u8 rv = ttyio_in(0);
+ 
+ 	return (rv = 0xff) ? 0 : rv;
+ }
