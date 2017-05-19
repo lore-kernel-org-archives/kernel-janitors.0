@@ -1,43 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:43:47 +0000
-Subject: [PATCH 06/10] dlm: Delete an error message for a failed memory allocation in dlm_recover_waiters_pre
-Message-Id: <115ac618-840d-1be4-0e1d-c07f2541bd58@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 May 2017 21:28:48 +0000
+Subject: [PATCH] aoe: harmless underflow in minor_get_static()
+Message-Id: <20170519212848.xba4nc2zvr5xcjxg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: "Ed L. Cashin" <ed.cashin@acm.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 08:55:43 +0200
+The "aoemin" comes from revalidate() in drivers/block/aoe/aoechr.c.  It
+can be negative.  We cap the upper bound but not the lower bound so
+that's an underflow bug.  But it doesn't matter because we check "n"
+against N_DEVS so it all works out fine in the end.
 
-Omit an extra message for a memory allocation failure in this function.
+Anyway, let's silence the static checker warning.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/dlm/lock.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index ffadb817ad39..d4aaddec1b16 100644
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -5120,10 +5120,8 @@ void dlm_recover_waiters_pre(struct dlm_ls *ls)
- 	int dir_nodeid;
+diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
+index ffd1947500c6..eddd0ecc9e0b 100644
+--- a/drivers/block/aoe/aoedev.c
++++ b/drivers/block/aoe/aoedev.c
+@@ -58,7 +58,7 @@ minor_get_dyn(ulong *sysminor)
+ }
  
- 	ms_stub = kmalloc(sizeof(*ms_stub), GFP_KERNEL);
--	if (!ms_stub) {
--		log_error(ls, "dlm_recover_waiters_pre no mem");
-+	if (!ms_stub)
- 		return;
--	}
- 
- 	mutex_lock(&ls->ls_waiters_mutex);
- 
--- 
-2.12.2
-
+ static int
+-minor_get_static(ulong *sysminor, ulong aoemaj, int aoemin)
++minor_get_static(ulong *sysminor, ulong aoemaj, unsigned int aoemin)
+ {
+ 	ulong flags;
+ 	ulong n;
