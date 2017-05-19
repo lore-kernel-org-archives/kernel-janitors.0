@@ -1,47 +1,43 @@
-From: =?UTF-8?q?Samuel=20Iglesias=20Gons=C3=A1lvez?=  <siglesias@igalia.com>
-Date: Mon, 15 May 2017 09:08:10 +0000
-Subject: [PATCH 2/2] ipack: Improve a size determination in ipack_bus_register()
-Message-Id: <20170515090810.15404-2-siglesias@igalia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 May 2017 21:26:54 +0000
+Subject: [PATCH] KVM: irqchip: make a variable unsigned
+Message-Id: <20170519212654.tg6ilfod6n5pqrb6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170515090810.15404-1-siglesias@igalia.com>
-In-Reply-To: <20170515090810.15404-1-siglesias@igalia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: gregkh@linuxfoundation.org
-Cc: Markus Elfring <elfring@users.sourceforge.net>, jens.taprogge@taprogge.org, industrypack-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andre Przywara <andre.przywara@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, David Hildenbrand <david@redhat.com>, Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+This doesn't change runtime behavior, but we're passing u32 values to
+here so let's make everything consistent.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Samuel Iglesias Gons=C3=A1lvez <siglesias@igalia.com>
----
- drivers/ipack/ipack.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/ipack/ipack.c b/drivers/ipack/ipack.c
-index 575c4f29e0f7..a1e07a77d4e6 100644
---- a/drivers/ipack/ipack.c
-+++ b/drivers/ipack/ipack.c
-@@ -212,7 +212,7 @@ struct ipack_bus_device *ipack_bus_register(struct devi=
-ce *parent, int slots,
- 	int bus_nr;
- 	struct ipack_bus_device *bus;
-=20
--	bus =3D kzalloc(sizeof(struct ipack_bus_device), GFP_KERNEL);
-+	bus =3D kzalloc(sizeof(*bus), GFP_KERNEL);
- 	if (!bus)
- 		return NULL;
-=20
---=20
-2.11.0
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 8c0664309815..e9ee5f17ae8d 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -875,7 +875,7 @@ struct kvm_irq_ack_notifier {
+ };
+ 
+ int kvm_irq_map_gsi(struct kvm *kvm,
+-		    struct kvm_kernel_irq_routing_entry *entries, int gsi);
++		    struct kvm_kernel_irq_routing_entry *entries, u32 gsi);
+ int kvm_irq_map_chip_pin(struct kvm *kvm, unsigned irqchip, unsigned pin);
+ 
+ int kvm_set_irq(struct kvm *kvm, int irq_source_id, u32 irq, int level,
+diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
+index 31e40c9e81df..493a7cdba1d7 100644
+--- a/virt/kvm/irqchip.c
++++ b/virt/kvm/irqchip.c
+@@ -32,7 +32,8 @@
+ #include "irq.h"
+ 
+ int kvm_irq_map_gsi(struct kvm *kvm,
+-		    struct kvm_kernel_irq_routing_entry *entries, int gsi)
++		    struct kvm_kernel_irq_routing_entry *entries,
++		    u32 gsi)
+ {
+ 	struct kvm_irq_routing_table *irq_rt;
+ 	struct kvm_kernel_irq_routing_entry *e;
