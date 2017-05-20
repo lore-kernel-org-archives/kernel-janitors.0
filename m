@@ -1,36 +1,32 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Date: Mon, 08 May 2017 14:33:33 +0000
-Subject: Re: [PATCH 4/4] dma-buf: Use seq_putc() in two functions
-Message-Id: <20170508143333.GD28331@joana>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 20 May 2017 09:49:04 +0000
+Subject: [PATCH] fs/seq_file: remove some dead code
+Message-Id: <20170520094904.45h7klchyzki2ini@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
- <609254ac-000d-c87c-eabc-7ca8814daf5c@users.sourceforge.net>
-In-Reply-To: <609254ac-000d-c87c-eabc-7ca8814daf5c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+We have never used this "err = PTR_ERR(p);" assignment and it annoys
+static checkers.
 
-Thank for your patches.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-2017-05-08 SF Markus Elfring <elfring@users.sourceforge.net>:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 8 May 2017 10:55:42 +0200
-> 
-> Three single characters (line breaks) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/dma-buf/sync_debug.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-
-Gustavo
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 13e8c092d4d2..d6f82ce288f4 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -261,10 +261,8 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
+ 		size_t offs = m->count;
+ 		loff_t next = pos;
+ 		p = m->op->next(m, p, &next);
+-		if (!p || IS_ERR(p)) {
+-			err = PTR_ERR(p);
++		if (!p || IS_ERR(p))
+ 			break;
+-		}
+ 		err = m->op->show(m, p);
+ 		if (seq_has_overflowed(m) || err) {
+ 			m->count = offs;
