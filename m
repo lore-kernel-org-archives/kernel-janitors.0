@@ -1,54 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 17:48:18 +0000
-Subject: [PATCH 2/3] net/atm: Use seq_putc() in mpc_show()
-Message-Id: <e445e058-15cd-787c-0717-efd7faed999a@users.sourceforge.net>
+Date: Sat, 20 May 2017 20:20:37 +0000
+Subject: [PATCH] init: Delete an error message for a failed memory allocation in rd_load_image()
+Message-Id: <b08e4c5c-0d6e-ae13-5c5d-a4860e8199eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
-In-Reply-To: <d9577c1f-07d1-b43a-df16-8626acfb1043@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Nicolas Schichan <nicolas.schichan@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 18:58:08 +0200
+Date: Sat, 20 May 2017 22:14:36 +0200
 
-Single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/atm/mpoa_proc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ init/do_mounts_rd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/net/atm/mpoa_proc.c b/net/atm/mpoa_proc.c
-index 6ea6028fd865..324c4f95f4bf 100644
---- a/net/atm/mpoa_proc.c
-+++ b/net/atm/mpoa_proc.c
-@@ -161,7 +161,7 @@ static int mpc_show(struct seq_file *m, void *v)
- 			seq_printf(m, "   %-3d  %-3d",
- 				   in_entry->shortcut->vpi,
- 				   in_entry->shortcut->vci);
--		seq_printf(m, "\n");
-+		seq_putc(m, '\n');
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index dd4104c9aa12..47cafb189ad3 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -245,10 +245,8 @@ int __init rd_load_image(char *from)
  	}
  
- 	seq_printf(m,
-@@ -185,9 +185,9 @@ static int mpc_show(struct seq_file *m, void *v)
- 			seq_printf(m, " %-3d %-3d",
- 				   eg_entry->shortcut->vpi,
- 				   eg_entry->shortcut->vci);
--		seq_printf(m, "\n");
-+		seq_putc(m, '\n');
- 	}
--	seq_printf(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
+ 	buf = kmalloc(BLOCK_SIZE, GFP_KERNEL);
+-	if (!buf) {
+-		printk(KERN_ERR "RAMDISK: could not allocate buffer\n");
++	if (!buf)
+ 		goto done;
+-	}
  
+ 	printk(KERN_NOTICE "RAMDISK: Loading %dKiB [%ld disk%s] into ram disk... ",
+ 		nblocks, ((nblocks-1)/devblocks)+1, nblocks>devblocks ? "s" : "");
 -- 
-2.12.2
+2.13.0
 
