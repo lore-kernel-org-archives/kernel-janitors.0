@@ -1,109 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 23 May 2017 11:24:56 +0000
-Subject: Applied "regulator: palmas: Drop unnecessary static" to the regulator tree
-Message-Id: <E1dD7vs-0004V7-Lb@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 May 2017 19:16:45 +0000
+Subject: [PATCH 5/5] fsl_hypervisor: Delete error messages for failed memory allocations in ioctl_memcpy()
+Message-Id: <b2665375-17e1-6c7d-94c6-d1ff8938bfc3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <38a9b933-4cdc-53e7-0a4c-20f96c57648c@users.sourceforge.net>
+In-Reply-To: <38a9b933-4cdc-53e7-0a4c-20f96c57648c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>, Jesper Nilsson <jesper.nilsson@axis.com>, Kumar Gala <galak@kernel.crashing.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Timur Tabi <timur@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 May 2017 20:27:23 +0200
 
-   regulator: palmas: Drop unnecessary static
+Omit two extra messages for memory allocation failures in this function.
 
-has been applied to the regulator tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 96e4f5232c8cdb64cb18721ea0871c849346cbf5 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 4 May 2017 22:10:51 +0200
-Subject: [PATCH] regulator: palmas: Drop unnecessary static
-
-Drop static on a local variable, when the variable is initialized before
-any use, on every possible execution path through the function.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
-
-static T x@p;
-...
-x = <+...x...+>
-
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
-
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
-
-There is no reduction in code size in this case, but the change does reduce
-the size of the bss segment, containing uninitialized static data.
-
-before:
-   text    data     bss     dec     hex filename
-  12882    3480       8   16370    3ff2 drivers/regulator/palmas-regulator.o
-
-after:
-   text    data     bss     dec     hex filename
-  12882    3480       0   16362    3fea drivers/regulator/palmas-regulator.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/regulator/palmas-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/virt/fsl_hypervisor.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index 31ae5ee3a80d..34d4a62283d7 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -1491,7 +1491,7 @@ static int palmas_dt_to_pdata(struct device *dev,
+diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
+index 4031632b8c9d..db07c76f1ff7 100644
+--- a/drivers/virt/fsl_hypervisor.c
++++ b/drivers/virt/fsl_hypervisor.c
+@@ -227,7 +227,5 @@ static long ioctl_memcpy(struct fsl_hv_ioctl_memcpy __user *p)
+-	if (!pages) {
+-		pr_debug("fsl-hv: could not allocate page list\n");
++	if (!pages)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * sg_list is the list of fh_sg_list objects that we pass to the
+@@ -238,5 +236,4 @@ static long ioctl_memcpy(struct fsl_hv_ioctl_memcpy __user *p)
+ 	if (!sg_list_unaligned) {
+-		pr_debug("fsl-hv: could not allocate S/G list\n");
+ 		ret = -ENOMEM;
+ 		goto exit;
  	}
- 
- 	for (idx = 0; idx < ddata->max_reg; idx++) {
--		static struct of_regulator_match *match;
-+		struct of_regulator_match *match;
- 		struct palmas_reg_init *rinit;
- 		struct device_node *np;
- 
 -- 
-2.11.0
+2.13.0
 
