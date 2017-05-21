@@ -1,48 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 19:16:45 +0000
-Subject: [PATCH 5/5] fsl_hypervisor: Delete error messages for failed memory allocations in ioctl_memcpy()
-Message-Id: <b2665375-17e1-6c7d-94c6-d1ff8938bfc3@users.sourceforge.net>
+Date: Sun, 21 May 2017 20:17:31 +0000
+Subject: [PATCH 4/5] atm: Use seq_puts() in lec_info()
+Message-Id: <4cd2b4a4-135a-0b79-9025-061c313d6cff@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <38a9b933-4cdc-53e7-0a4c-20f96c57648c@users.sourceforge.net>
-In-Reply-To: <38a9b933-4cdc-53e7-0a4c-20f96c57648c@users.sourceforge.net>
+References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
+In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>, Jesper Nilsson <jesper.nilsson@axis.com>, Kumar Gala <galak@kernel.crashing.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Timur Tabi <timur@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 20:27:23 +0200
+Date: Sun, 21 May 2017 21:49:10 +0200
 
-Omit two extra messages for memory allocation failures in this function.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/virt/fsl_hypervisor.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ net/atm/lec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
-index 4031632b8c9d..db07c76f1ff7 100644
---- a/drivers/virt/fsl_hypervisor.c
-+++ b/drivers/virt/fsl_hypervisor.c
-@@ -227,7 +227,5 @@ static long ioctl_memcpy(struct fsl_hv_ioctl_memcpy __user *p)
--	if (!pages) {
--		pr_debug("fsl-hv: could not allocate page list\n");
-+	if (!pages)
- 		return -ENOMEM;
--	}
- 
- 	/*
- 	 * sg_list is the list of fh_sg_list objects that we pass to the
-@@ -238,5 +236,4 @@ static long ioctl_memcpy(struct fsl_hv_ioctl_memcpy __user *p)
- 	if (!sg_list_unaligned) {
--		pr_debug("fsl-hv: could not allocate S/G list\n");
- 		ret = -ENOMEM;
- 		goto exit;
- 	}
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index ca3aec0c0743..752891434074 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -804,7 +804,7 @@ static void lec_info(struct seq_file *seq, struct lec_arp_table *entry)
+ 	if (entry->vcc)
+ 		seq_printf(seq, "%3d %3d ", entry->vcc->vpi, entry->vcc->vci);
+ 	else
+-		seq_printf(seq, "        ");
++		seq_puts(seq, "        ");
+ 	if (entry->recv_vcc) {
+ 		seq_printf(seq, "     %3d %3d", entry->recv_vcc->vpi,
+ 			   entry->recv_vcc->vci);
 -- 
 2.13.0
 
