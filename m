@@ -1,30 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 19:40:36 +0000
-Subject: [PATCH 0/3] kernel-sched: Fine-tuning for eight function implementations
-Message-Id: <ece07743-9bbb-e396-b562-ba161c3eb9b8@users.sourceforge.net>
+Date: Sun, 21 May 2017 20:14:11 +0000
+Subject: [PATCH 1/5] atm: Improve a size determination in four functions
+Message-Id: <83404a6d-c7bc-7b06-fa93-0971b1116b9d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
+In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 21:35:45 +0200
+Date: Sun, 21 May 2017 21:20:44 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of four data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (3):
-  Use seq_putc() in three functions
-  Adjust four checks for null pointers
-  Combine two seq_printf() calls into one in show_schedstat()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/atm/lec.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- kernel/sched/cpuacct.c |  6 +++---
- kernel/sched/debug.c   | 11 +++++------
- kernel/sched/stats.c   | 14 +++++---------
- 3 files changed, 13 insertions(+), 18 deletions(-)
-
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index 09cfe87f0a44..6ad3ca625a44 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -518,5 +518,5 @@ send_to_lecd(struct lec_priv *priv, atmlec_msg_type type,
+ 		return -1;
+ 	skb->len = sizeof(struct atmlec_msg);
+ 	mesg = (struct atmlec_msg *)skb->data;
+-	memset(mesg, 0, sizeof(struct atmlec_msg));
++	memset(mesg, 0, sizeof(*mesg));
+ 	mesg->type = type;
+@@ -690,5 +690,5 @@ static int lec_vcc_attach(struct atm_vcc *vcc, void __user *arg)
+ 	if (ioc_data.dev_num < 0 || ioc_data.dev_num >= MAX_LEC_ITF ||
+ 	    !dev_lec[ioc_data.dev_num])
+ 		return -EINVAL;
+-	vpriv = kmalloc(sizeof(struct lec_vcc_priv), GFP_KERNEL);
++	vpriv = kmalloc(sizeof(*vpriv), GFP_KERNEL);
+ 	if (!vpriv)
+@@ -1552,5 +1552,5 @@ static struct lec_arp_table *make_entry(struct lec_priv *priv,
+ {
+ 	struct lec_arp_table *to_return;
+ 
+-	to_return = kzalloc(sizeof(struct lec_arp_table), GFP_ATOMIC);
++	to_return = kzalloc(sizeof(*to_return), GFP_ATOMIC);
+ 	if (!to_return) {
+@@ -2156,5 +2156,5 @@ static int lec_mcast_make(struct lec_priv *priv, struct atm_vcc *vcc)
+ 	struct lec_vcc_priv *vpriv;
+ 	int err = 0;
+ 
+-	vpriv = kmalloc(sizeof(struct lec_vcc_priv), GFP_KERNEL);
++	vpriv = kmalloc(sizeof(*vpriv), GFP_KERNEL);
+ 	if (!vpriv)
 -- 
-2.12.2
+2.13.0
 
