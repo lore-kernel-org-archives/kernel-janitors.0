@@ -1,27 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 16:32:35 +0000
-Subject: [PATCH 0/2] oprofile_perf: Adjustments for oprofile_perf_init()
-Message-Id: <8e408a15-7884-e9a1-0df2-a7419987c450@users.sourceforge.net>
+Date: Sun, 21 May 2017 11:05:36 +0000
+Subject: [PATCH] KEYS: Delete an error message for a failed memory allocation in get_derived_key()
+Message-Id: <12d1c638-5cf6-71be-b1b7-486b8663e022@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oprofile-list@lists.sf.net, Robert Richter <rric@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 May 2017 18:28:38 +0200
+Date: Sun, 21 May 2017 11:23:55 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Improve a size determination
-  Delete error messages for a failed memory allocation
+This issue was detected by using the Coccinelle software.
 
- drivers/oprofile/oprofile_perf.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/keys/encrypted-keys/encrypted.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 1ca895e7e56a..ad57914452c1 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -385,10 +385,9 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
+ 		derived_buf_len = HASH_SIZE;
+ 
+ 	derived_buf = kzalloc(derived_buf_len, GFP_KERNEL);
+-	if (!derived_buf) {
+-		pr_err("encrypted_key: out of memory\n");
++	if (!derived_buf)
+ 		return -ENOMEM;
+-	}
++
+ 	if (key_type)
+ 		strcpy(derived_buf, "AUTH_KEY");
+ 	else
 -- 
-2.12.3
+2.13.0
 
