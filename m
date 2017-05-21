@@ -1,32 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 06 May 2017 08:40:04 +0000
-Subject: Re: [PATCH] firmware: Google VPD: Fix memory allocation error handling
-Message-Id: <20170506084004.awyhl2w2b2qnbvt2@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 08:27:30 +0000
+Subject: [PATCH 3/3] zswap: Delete an error message for a failed memory allocation in zswap_dstmem_prepare()
+Message-Id: <bae25b04-2ce2-7137-a71c-50d7b4f06431@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170505190844.2945-1-christophe.jaillet@wanadoo.fr>
- <20170505195647.GB7351@kroah.com>
-In-Reply-To: <20170505195647.GB7351@kroah.com>
+References: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
+In-Reply-To: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, thierry.escande@collabora.com, wnhuang@google.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-mm@kvack.org, Dan Streetman <ddstreet@ieee.org>, Seth Jennings <sjenning@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
-On Fri, May 05, 2017 at 12:56:47PM -0700, Greg KH wrote:
-> On Fri, May 05, 2017 at 09:08:44PM +0200, Christophe JAILLET wrote:
-> > This patch fixes several issues:
-> >    - if the 1st 'kzalloc' fails, we dereference a NULL pointer
-> >    - if the 2nd 'kzalloc' fails, there is a memory leak
-> >    - if 'sysfs_create_bin_file' fails there is also a memory leak
-> 
-> Then it should be multiple patches, not fixing 3 things in one patch,
-> right?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 09:29:25 +0200
 
-I agree with Christophe that this is basically one thing.  Otherwise you
-end up breaking it up how Elfring does it into tiny tiny snippets that I
-can't read.  Doing it this way is easier to review for me.
+Omit an extra message for a memory allocation failure in this function.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ mm/zswap.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 3f0a9a1daef4..ed7312291df9 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -374,7 +374,6 @@ static int zswap_dstmem_prepare(unsigned int cpu)
+-	if (!dst) {
+-		pr_err("can't allocate compressor buffer\n");
++	if (!dst)
+ 		return -ENOMEM;
+-	}
++
+ 	per_cpu(zswap_dstmem, cpu) = dst;
+ 	return 0;
+ }
+-- 
+2.13.0
 
