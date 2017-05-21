@@ -1,35 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 29 May 2017 13:26:22 +0000
-Subject: [PATCH v2] X.509: Fix error code in x509_cert_parse()
-Message-Id: <20170529132622.6tapug7i7aqmvnqz@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 20:12:40 +0000
+Subject: [PATCH 0/5] atm: Adjustments for some function implementations
+Message-Id: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4045.1495558143@warthog.procyon.org.uk>
-In-Reply-To: <4045.1495558143@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We forgot to set the error code on this path so it could result in
-returning NULL which leads to a NULL dereference.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 22:09:11 +0200
 
-Fixes: db6c43bd2132 ("crypto: KEYS: convert public key and digsig asym to the akcipher api")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  Style change
+A few update suggestions were taken into account
+from static source code analysis.
 
-Sorry for the delay, I'm been out of office.
+Markus Elfring (5):
+  Improve a size determination in four functions
+  Delete an error message for a failed memory allocation in make_entry()
+  Adjust 19 checks for null pointers
+  Use seq_puts() in lec_info()
+  Use seq_putc() in lec_info()
 
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index c80765b211cf..dd03fead1ca3 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -102,6 +102,7 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
- 		}
- 	}
- 
-+	ret = -ENOMEM;
- 	cert->pub->key = kmemdup(ctx->key, ctx->key_size, GFP_KERNEL);
- 	if (!cert->pub->key)
- 		goto error_decode;
+ net/atm/lec.c | 55 +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 27 insertions(+), 28 deletions(-)
+
+-- 
+2.13.0
+
