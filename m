@@ -1,54 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 May 2017 18:52:55 +0000
-Subject: [PATCH] bonding: Use seq_putc() in bond_info_show_master()
-Message-Id: <9395231f-2ebb-dae9-4ef0-514d933fa387@users.sourceforge.net>
+Date: Sun, 21 May 2017 20:15:10 +0000
+Subject: [PATCH 2/5] atm: Delete an error message for a failed memory allocation in make_entry()
+Message-Id: <d87a6c4a-c4ed-38b3-97cf-29edc3590f9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
+In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>, Jay Vosburgh <j.vosburgh@gmail.com>, Veaceslav Falico <vfalico@gmail.com>
+To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 20:48:36 +0200
+Date: Sun, 21 May 2017 21:24:45 +0200
 
-A few single characters should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/bonding/bond_procfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/atm/lec.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_procfs.c b/drivers/net/bonding/bond_procfs.c
-index d8d4ada034b7..bdc4db184d94 100644
---- a/drivers/net/bonding/bond_procfs.c
-+++ b/drivers/net/bonding/bond_procfs.c
-@@ -72,7 +72,7 @@ static void bond_info_show_master(struct seq_file *seq)
- 		seq_printf(seq, " (fail_over_mac %s)", optval->string);
- 	}
- 
--	seq_printf(seq, "\n");
-+	seq_putc(seq, '\n');
- 
- 	if (bond_mode_uses_xmit_hash(bond)) {
- 		optval = bond_opt_get_val(BOND_OPT_XMIT_HASH,
-@@ -117,11 +117,11 @@ static void bond_info_show_master(struct seq_file *seq)
- 			if (!bond->params.arp_targets[i])
- 				break;
- 			if (printed)
--				seq_printf(seq, ",");
-+				seq_putc(seq, ',');
- 			seq_printf(seq, " %pI4", &bond->params.arp_targets[i]);
- 			printed = 1;
- 		}
--		seq_printf(seq, "\n");
-+		seq_putc(seq, '\n');
- 	}
- 
- 	if (BOND_MODE(bond) = BOND_MODE_8023AD) {
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index 6ad3ca625a44..a11dbd3a5119 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -1556,7 +1556,6 @@ static struct lec_arp_table *make_entry(struct lec_priv *priv,
+-	if (!to_return) {
+-		pr_info("LEC: Arp entry kmalloc failed\n");
++	if (!to_return)
+ 		return NULL;
+-	}
++
+ 	ether_addr_copy(to_return->mac_addr, mac_addr);
+ 	INIT_HLIST_NODE(&to_return->next);
+ 	setup_timer(&to_return->timer, lec_arp_expire_arp,
 -- 
-2.12.2
+2.13.0
 
