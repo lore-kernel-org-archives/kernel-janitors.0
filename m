@@ -1,36 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 14 May 2017 16:36:41 +0000
-Subject: [PATCH] fsl_udc_core: fix spelling mistake: "Dectected" -> "Detected"
-Message-Id: <20170514163641.6113-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 20:18:35 +0000
+Subject: [PATCH 5/5] atm: Use seq_putc() in lec_info()
+Message-Id: <b8b850c0-4a70-c36e-dffa-0e7ea27498fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
+In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Li Yang <leoli@freescale.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 21:50:44 +0200
 
-Trivial fix to spelling mistake in seq_printf text
+A single space character should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
+ net/atm/lec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
-index 6f2f71c054be..63ab3d50f3f6 100644
---- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -2067,7 +2067,7 @@ static int fsl_proc_read(struct seq_file *m, void *v)
- 			"Sleep Enable: %d SOF Received Enable: %d "
- 			"Reset Enable: %d\n"
- 			"System Error Enable: %d "
--			"Port Change Dectected Enable: %d\n"
-+			"Port Change Detected Enable: %d\n"
- 			"USB Error Intr Enable: %d USB Intr Enable: %d\n\n",
- 			(tmp_reg & USB_INTR_DEVICE_SUSPEND) ? 1 : 0,
- 			(tmp_reg & USB_INTR_SOF_EN) ? 1 : 0,
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index 752891434074..1d4edf093987 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -796,7 +796,7 @@ static void lec_info(struct seq_file *seq, struct lec_arp_table *entry)
+ 
+ 	for (i = 0; i < ETH_ALEN; i++)
+ 		seq_printf(seq, "%2.2x", entry->mac_addr[i] & 0xff);
+-	seq_printf(seq, " ");
++	seq_putc(seq, ' ');
+ 	for (i = 0; i < ATM_ESA_LEN; i++)
+ 		seq_printf(seq, "%2.2x", entry->atm_addr[i] & 0xff);
+ 	seq_printf(seq, " %s %4.4x", lec_arp_get_status_string(entry->status),
 -- 
-2.11.0
+2.13.0
 
