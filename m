@@ -1,25 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 09 May 2017 01:52:02 +0000
-Subject: Re: [PATCH] scsi: qedf: Cleanup the type of io_log->op
-Message-Id: <yq1r2zyssot.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 May 2017 08:26:22 +0000
+Subject: [PATCH 2/3] zswap: Improve a size determination in zswap_frontswap_init()
+Message-Id: <19f9da22-092b-f867-bdf6-f4dbad7ccf1f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170503212357.cdl4e43ihpyzl2w6@mwanda>
-In-Reply-To: <20170503212357.cdl4e43ihpyzl2w6@mwanda> (Dan Carpenter's message
-        of "Thu, 4 May 2017 00:23:57 +0300")
+References: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
+In-Reply-To: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QLogic-Storage-Upstream@cavium.com, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-mm@kvack.org, Dan Streetman <ddstreet@ieee.org>, Seth Jennings <sjenning@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 May 2017 22:44:03 +0200
 
-Dan,
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> We store sc_cmd->cmnd[0] which is an unsigned char in io_log->op so
-> this should also be unsigned char.  The other thing is that this is
-> displayed in the debugfs:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ mm/zswap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.12/scsi-fixes, thanks!
-
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 18d8e87119a6..a6e67633be03 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1156,5 +1156,5 @@ static void zswap_frontswap_init(unsigned type)
+ {
+ 	struct zswap_tree *tree;
+ 
+-	tree = kzalloc(sizeof(struct zswap_tree), GFP_KERNEL);
++	tree = kzalloc(sizeof(*tree), GFP_KERNEL);
+ 	if (!tree) {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.13.0
+
