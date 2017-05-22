@@ -1,46 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 14:13:11 +0000
-Subject: [PATCH 3/3] RDS: TCP: Delete an error message for a failed memory allocation in rds_tcp_init_net()
-Message-Id: <5d523cf8-1540-e704-2301-a5e0205cb536@users.sourceforge.net>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Date: Mon, 22 May 2017 14:26:51 +0000
+Subject: Re: [PATCH 3/3] RDS: TCP: Delete an error message for a failed memory allocation in rds_tcp_init_net
+Message-Id: <20170522142651.GA29434@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
-In-Reply-To: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
+ <5d523cf8-1540-e704-2301-a5e0205cb536@users.sourceforge.net>
+In-Reply-To: <5d523cf8-1540-e704-2301-a5e0205cb536-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, netdev@vger.kernel.org, rds-devel@oss.oracle.com, "David S. Miller" <davem@davemloft.net>, Santosh Shilimkar <santosh.shilimkar@oracle.com>, Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rds-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 15:45:31 +0200
+On (05/22/17 16:13), SF Markus Elfring wrote:
+> 
+> Omit an extra message for a memory allocation failure in this function.
 
-Omit an extra message for a memory allocation failure in this function.
+The change itself is harmless,  but I'm curious about the "extra"
+part: "extra" from what? If this happens, hopefully this will be logged
+somewhere? Note that this type of (infrequent) logging noise is useful
+in some cases, e.g., with 8ce675ff, when one is trying to do the
+post-mortem of where things first went wrong.
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/rds/tcp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/net/rds/tcp.c b/net/rds/tcp.c
-index 431404dbdad1..b0348697dee5 100644
---- a/net/rds/tcp.c
-+++ b/net/rds/tcp.c
-@@ -431,10 +431,9 @@ static __net_init int rds_tcp_init_net(struct net *net)
- 	} else {
- 		tbl = kmemdup(rds_tcp_sysctl_table,
- 			      sizeof(rds_tcp_sysctl_table), GFP_KERNEL);
--		if (!tbl) {
--			pr_warn("could not set allocate syctl table\n");
-+		if (!tbl)
- 			return -ENOMEM;
--		}
-+
- 		rtn->ctl_table = tbl;
- 	}
- 	tbl[RDS_TCP_SNDBUF].data = &rtn->sndbuf_size;
--- 
-2.13.0
+--Sowmini
 
