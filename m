@@ -1,53 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 06:54:49 +0000
-Subject: [PATCH] Bluetooth: Delete error messages for failed memory allocations in two functions
-Message-Id: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Mon, 22 May 2017 08:25:48 +0000
+Subject: Re: [PATCH] Bluetooth: Delete error messages for failed memory allocations in two functions
+Message-Id: <A01E2BDB-7FD3-4258-9F6F-941EFA76935E@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
+In-Reply-To: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 08:42:28 +0200
+Hallo Markus,
 
-Omit two extra messages for memory allocation failures in these functions.
+> Omit two extra messages for memory allocation failures in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> net/bluetooth/ecdh_helper.c | 11 +++--------
+> 1 file changed, 3 insertions(+), 8 deletions(-)
 
-This issue was detected by using the Coccinelle software.
+patch has been applied to bluetooth-next tree.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/bluetooth/ecdh_helper.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+Regards
 
-diff --git a/net/bluetooth/ecdh_helper.c b/net/bluetooth/ecdh_helper.c
-index 24d4e60f8c48..c7b1a9aee579 100644
---- a/net/bluetooth/ecdh_helper.c
-+++ b/net/bluetooth/ecdh_helper.c
-@@ -92,8 +92,6 @@ bool compute_ecdh_secret(const u8 public_key[64], const u8 private_key[32],
--	if (!buf) {
--		pr_err("alg: kpp: Failed to allocate %d bytes for buf\n",
--		       buf_len);
-+	if (!buf)
- 		goto free_req;
--	}
-+
- 	crypto_ecdh_encode_key(buf, buf_len, &p);
- 
- 	/* Set A private Key */
-@@ -173,8 +171,5 @@ bool generate_ecdh_keys(u8 public_key[64], u8 private_key[32])
--	if (!buf) {
--		pr_err("alg: kpp: Failed to allocate %d bytes for buf\n",
--		       buf_len);
-+	if (!buf)
- 		goto free_req;
--	}
- 
- 	do {
- 		if (tries++ >= max_tries)
--- 
-2.13.0
-
+Marcel
 
