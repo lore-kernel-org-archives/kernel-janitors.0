@@ -1,90 +1,53 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 07 May 2017 12:57:01 +0000
-Subject: Re: [PATCH 7/9] iio: hid-sensor-accel-3d: Drop unnecessary static
-Message-Id: <dfd867a9-935f-62f2-f952-6e4ddd33c8e6@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 06:54:49 +0000
+Subject: [PATCH] Bluetooth: Delete error messages for failed memory allocations in two functions
+Message-Id: <0afbfdb7-48f1-4d15-d5bd-8ea40b1eb52a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
- <1493928654-18768-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-8-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Jiri Kosina <jikos@kernel.org>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 04/05/17 21:10, Julia Lawall wrote:
-> Drop static on a local variable, when the variable is initialized before
-> use, on every possible execution path through the function.  The static has
-> no benefit, and dropping it reduces the code size.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> 
-> static T x@p;
-> ...
-> x = <+...x...+>
-> 
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p != bad.p;
-> @@
-> 
-> -static
->  T x@p;
->  ... when != x
->      when strict
-> ?x = e;
-> // </smpl>
-> 
-> The change in code size is indicates by the following output from the size
-> command.
-> 
-> before:
->    text    data     bss     dec     hex filename
->    3879     512       8    4399    112f drivers/iio/accel/hid-sensor-accel-3d.o
-> 
-> after:
->    text    data     bss     dec     hex filename
->    3863     512       0    4375    1117 drivers/iio/accel/hid-sensor-accel-3d.o
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 08:42:28 +0200
 
-Thanks,
+Omit two extra messages for memory allocation failures in these functions.
 
-Jonathan
-> 
-> ---
->  drivers/iio/accel/hid-sensor-accel-3d.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
-> index 43a6cb0..2238a26 100644
-> --- a/drivers/iio/accel/hid-sensor-accel-3d.c
-> +++ b/drivers/iio/accel/hid-sensor-accel-3d.c
-> @@ -347,7 +347,7 @@ static int accel_3d_parse_report(struct platform_device *pdev,
->  static int hid_accel_3d_probe(struct platform_device *pdev)
->  {
->  	int ret = 0;
-> -	static const char *name;
-> +	const char *name;
->  	struct iio_dev *indio_dev;
->  	struct accel_3d_state *accel_state;
->  	const struct iio_chan_spec *channel_spec;
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/bluetooth/ecdh_helper.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/net/bluetooth/ecdh_helper.c b/net/bluetooth/ecdh_helper.c
+index 24d4e60f8c48..c7b1a9aee579 100644
+--- a/net/bluetooth/ecdh_helper.c
++++ b/net/bluetooth/ecdh_helper.c
+@@ -92,8 +92,6 @@ bool compute_ecdh_secret(const u8 public_key[64], const u8 private_key[32],
+-	if (!buf) {
+-		pr_err("alg: kpp: Failed to allocate %d bytes for buf\n",
+-		       buf_len);
++	if (!buf)
+ 		goto free_req;
+-	}
++
+ 	crypto_ecdh_encode_key(buf, buf_len, &p);
+ 
+ 	/* Set A private Key */
+@@ -173,8 +171,5 @@ bool generate_ecdh_keys(u8 public_key[64], u8 private_key[32])
+-	if (!buf) {
+-		pr_err("alg: kpp: Failed to allocate %d bytes for buf\n",
+-		       buf_len);
++	if (!buf)
+ 		goto free_req;
+-	}
+ 
+ 	do {
+ 		if (tries++ >= max_tries)
+-- 
+2.13.0
+
 
