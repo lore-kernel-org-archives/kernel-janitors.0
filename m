@@ -1,43 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:40:19 +0000
-Subject: [PATCH 04/10] dlm: Use kcalloc() in dlm_scan_waiters()
-Message-Id: <9b591257-7dd1-97ca-b12d-55c963e0c528@users.sourceforge.net>
+Date: Mon, 22 May 2017 12:58:54 +0000
+Subject: [PATCH 1/2] NFC: digital: Improve a size determination in four functions
+Message-Id: <d8b16bd5-7acf-6ca4-69cb-6f7b2b43c807@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+References: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
+In-Reply-To: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Escande <thierry.escande@collabora.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 08:38:49 +0200
+Date: Mon, 22 May 2017 14:11:01 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kcalloc".
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of four data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/dlm/lock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/nfc/digital_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index 6df332296c66..fd6fe55bedae 100644
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -1426,7 +1426,7 @@ void dlm_scan_waiters(struct dlm_ls *ls)
+diff --git a/net/nfc/digital_core.c b/net/nfc/digital_core.c
+index 0fd5518bf252..3baf91f3ef80 100644
+--- a/net/nfc/digital_core.c
++++ b/net/nfc/digital_core.c
+@@ -240,5 +240,5 @@ int digital_send_cmd(struct nfc_digital_dev *ddev, u8 cmd_type,
+ {
+ 	struct digital_cmd *cmd;
  
- 		if (!num_nodes) {
- 			num_nodes = ls->ls_num_nodes;
--			warned = kzalloc(num_nodes * sizeof(int), GFP_KERNEL);
-+			warned = kcalloc(num_nodes, sizeof(int), GFP_KERNEL);
- 		}
- 		if (!warned)
- 			continue;
+-	cmd = kzalloc(sizeof(struct digital_cmd), GFP_KERNEL);
++	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+ 	if (!cmd)
+@@ -287,5 +287,5 @@ static int digital_tg_listen_mdaa(struct nfc_digital_dev *ddev, u8 rf_tech)
+ {
+ 	struct digital_tg_mdaa_params *params;
+ 
+-	params = kzalloc(sizeof(struct digital_tg_mdaa_params), GFP_KERNEL);
++	params = kzalloc(sizeof(*params), GFP_KERNEL);
+ 	if (!params)
+@@ -706,5 +706,5 @@ static int digital_in_send(struct nfc_dev *nfc_dev, struct nfc_target *target,
+ 	struct digital_data_exch *data_exch;
+ 	int rc;
+ 
+-	data_exch = kzalloc(sizeof(struct digital_data_exch), GFP_KERNEL);
++	data_exch = kzalloc(sizeof(*data_exch), GFP_KERNEL);
+ 	if (!data_exch) {
+@@ -764,5 +764,5 @@ struct nfc_digital_dev *nfc_digital_allocate_device(struct nfc_digital_ops *ops,
+ 	    !ops->switch_rf || (ops->tg_listen_md && !ops->tg_get_rf_tech))
+ 		return NULL;
+ 
+-	ddev = kzalloc(sizeof(struct nfc_digital_dev), GFP_KERNEL);
++	ddev = kzalloc(sizeof(*ddev), GFP_KERNEL);
+ 	if (!ddev)
 -- 
-2.12.2
+2.13.0
 
