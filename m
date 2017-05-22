@@ -1,35 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 May 2017 19:34:33 +0000
-Subject: Re: [PATCH 3/3] coresight: etb10: Improve a size determination in etb_alloc_buffer()
-Message-Id: <483aafb4-c864-058b-6e61-1189be427d27@users.sourceforge.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 May 2017 14:57:32 +0000
+Subject: Re: [PATCH] staging: speakup: Replace simple_strtoul by kstrtoul
+Message-Id: <CA+_b7D+9qZkoD_e2ATB4PvO_s27=0zqKas_0CBkkH1anfhPWOg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5d5cd752-f2f2-b511-6b1e-daf5bf1bc522@users.sourceforge.net>
- <b8ed57f7-cdcf-9b35-4fdd-8833db008ff0@users.sourceforge.net>
- <CANLsYkwxkXZ5t5L1_=2e9FLdkwOg7KUT=u2o-KeEfH8QYOfStA@mail.gmail.com>
-In-Reply-To: <CANLsYkwxkXZ5t5L1_=2e9FLdkwOg7KUT=u2o-KeEfH8QYOfStA@mail.gmail.com>
+References: <20170427164032.GA1578@gmail.com>
+In-Reply-To: <20170427164032.GA1578@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
->> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
->> @@ -278,8 +278,7 @@ static void *etb_alloc_buffer(struct coresight_device *csdev, int cpu,
->>         if (cpu = -1)
->>                 cpu = smp_processor_id();
->>         node = cpu_to_node(cpu);
->> -
->> -       buf = kzalloc_node(sizeof(struct cs_buffers), GFP_KERNEL, node);
->> +       buf = kzalloc_node(sizeof(*buf), GFP_KERNEL, node);
-> 
-> I'm fine with this change but if it's going to happen, it has to be in
-> all the coresight drivers and not just this one - please respin with
-> all instances fixed.  One patch per driver would be much appreciated.
+I happened to search my gmail spam box for patches and found this.
 
-Do you imagine that any more modules are affected in a similar way
-for this software area?
+On Fri, Apr 28, 2017 at 6:50 AM, Shekhar Bhandakkar
+<cs14btech11006@iith.ac.in> wrote:
+> The simple_strtoul function is obsolete.
+> This patch replaces it with kstrtoul.
+>
+> Signed-off-by: Shekhar Bhandakkar <cs14btech11006@iith.ac.in>
+> ---
+>  drivers/staging/speakup/kobjects.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+> index ca85476..8a1ebe6 100644
+> --- a/drivers/staging/speakup/kobjects.c
+> +++ b/drivers/staging/speakup/kobjects.c
+> @@ -127,6 +127,7 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+>         int do_characters = !strcmp(attr->attr.name, "characters");
+>         size_t desc_length = 0;
+>         int i;
+> +       int err;
+>
+>         spin_lock_irqsave(&speakup_info.spinlock, flags);
+>         while (cp < end) {
+> @@ -153,7 +154,10 @@ static ssize_t chars_chartab_store(struct kobject *kobj,
+>                         continue;
+>                 }
+>
+> -               index = simple_strtoul(cp, &temp, 10);
+> +               temp = cp;
+> +               err = kstrtoul(temp, 10, &index);
+> +               if (err)
+> +                       return err;
 
-How do you think about other update suggestions from my selection
-which are waiting for a corresponding review?
+This is buggy.  "temp" is supposed to point to the end of the number.
 
-Regards,
-Markus
+regards,
+dan carpenter
