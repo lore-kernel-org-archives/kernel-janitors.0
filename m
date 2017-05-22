@@ -1,22 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 May 2017 02:42:53 +0000
-Subject: Re: [PATCH net] liquidio: silence a locking static checker warning
-Message-Id: <20170430.224253.1115826536369554016.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 16:37:19 +0000
+Subject: [PATCH 1/5] sctp: Use kmalloc_array() in sctp_init()
+Message-Id: <24442429-99f7-7d83-5f56-f84776a81880@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428125715.h6d5ttnfq7rdnpni@mwanda>
-In-Reply-To: <20170428125715.h6d5ttnfq7rdnpni@mwanda>
+References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
+In-Reply-To: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: derek.chickles@caviumnetworks.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Apr 2017 15:57:15 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 17:20:11 +0200
 
-> Presumably we never hit this return, but static checkers complain that
-> we need to unlock so we may as well fix that.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-Applied.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/sctp/protocol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 989a900383b5..2b1a6215bd2f 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1442,6 +1442,6 @@ static __init int sctp_init(void)
+ 
+ 	/* Allocate and initialize the endpoint hash table.  */
+ 	sctp_ep_hashsize = 64;
+-	sctp_ep_hashtable -		kmalloc(64 * sizeof(struct sctp_hashbucket), GFP_KERNEL);
++	sctp_ep_hashtable = kmalloc_array(64, sizeof(*sctp_ep_hashtable),
++					  GFP_KERNEL);
+ 	if (!sctp_ep_hashtable) {
+-- 
+2.13.0
+
