@@ -1,68 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 22 May 2017 12:33:59 +0000
-Subject: Re: spidev: Adjust five checks for null pointers
-Message-Id: <20170522123359.vc4mmxncove6cup3@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3tttw5w2z75wvwga"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 05:09:02 +0000
+Subject: [PATCH 1/2] usbnet: Delete an error message for a failed memory allocation in usbnet_write_cmd_async
+Message-Id: <3b831fce-93ed-c017-2549-967a39c2d1da@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c5452d8c-d123-d5e9-b2cc-a386d1325aec@users.sourceforge.net>
- <df3e58c6-f70d-a5d3-102e-4fab2f7df126@users.sourceforge.net>
- <20170518112846.tcirhguyps3kk3ra@sirena.org.uk>
- <5d9f71d4-2f0d-7083-fd28-fb505841b502@users.sourceforge.net>
-In-Reply-To: <5d9f71d4-2f0d-7083-fd28-fb505841b502-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <a81c2551-ce6c-967d-1120-4307f95b1e65@users.sourceforge.net>
+In-Reply-To: <a81c2551-ce6c-967d-1120-4307f95b1e65@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 06:33:48 +0200
 
---3tttw5w2z75wvwga
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Omit an extra message for a memory allocation failure in this function.
 
-On Thu, May 18, 2017 at 04:34:45PM +0200, SF Markus Elfring wrote:
+This issue was detected by using the Coccinelle software.
 
-> >> The script =E2=80=9Ccheckpatch.pl=E2=80=9D pointed information out lik=
-e the following.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/usb/usbnet.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> >> Comparison to NULL could be written !=E2=80=A6
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 79048e72c1bd..802ba68d37d1 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -2124,10 +2124,7 @@ int usbnet_write_cmd_async(struct usbnet *dev, u8 cmd, u8 reqtype,
+ 
+ 	if (data) {
+ 		buf = kmemdup(data, size, GFP_ATOMIC);
+-		if (!buf) {
+-			netdev_err(dev->net, "Error allocating buffer"
+-				   " in %s!\n", __func__);
++		if (!buf)
+ 			goto fail_free;
+-		}
+ 	}
+ 
+-- 
+2.13.0
 
-> >> Thus fix the affected source code places.
-
-> > This changelog does not describe any purpose in making this change,
-> > we could equally well say the exact opposite.  Why should we do this?
-
-> How do you think about to reduce the usage of the preprocessor symbol =E2=
-=80=9CNULL=E2=80=9D?
-
-Why would that matter?
-
-> Can it help if the source code is a little bit shorter after the
-> proposed adjustment?
-
-Not really - clarity is important but the size of code isn't too
-meaningful in and of itself.
-
-Please if you don't really understand what you're sending try to
-understand it first, don't throw things out without that.  I know a
-number of other maintainers have already raised concerns about the
-quality of what's being sent and the effort required to review them in
-relation to their value.  There's nothing wrong with doing small
-cleanups but if that's all you're sending and there's often problems
-then it becomes more trouble than it's worth to review your changes.
-
---3tttw5w2z75wvwga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlki2rYACgkQJNaLcl1U
-h9AxmQf/bd5U5IKJPlS+wkcz/80U8IQYwkkUe7th/TLPIVmFx0nzY5MlfR1JlN8g
-/VMExoMD80bciscx/lA7SXNbEMbQ2a6oAzAsFvDxiLQfcKMPstyo3vdwzKgCC/Eq
-CLdm3bbBHnXzjC/zChbyEtM/CrPYWb3aD4G3Z6LI5eMw4z/oP3c2+w3Eo4fOkcjD
-uxj0dUt6FunHEPNLay8A/ZHkU4Pnm0RCA3IwZHOY07Uac1LrTdg6hwyK1/b5T6uC
-h0fm4yg7Vv5Va0JlF1U1CX4bboP41C5YPSFI0pGd3QPfZYC8uFQsDJkTCFWMX0bW
-cjx9wAazyUTvbzUUvkj/FQq80Lx4SA==
-=4hCV
------END PGP SIGNATURE-----
-
---3tttw5w2z75wvwga--
