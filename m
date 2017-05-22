@@ -1,42 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 20:17:31 +0000
-Subject: [PATCH 4/5] atm: Use seq_puts() in lec_info()
-Message-Id: <4cd2b4a4-135a-0b79-9025-061c313d6cff@users.sourceforge.net>
+Date: Mon, 22 May 2017 13:00:17 +0000
+Subject: [PATCH 2/2] NFC: digital: Delete an error message for a failed memory allocation in digital_in_send(
+Message-Id: <94b99b09-8f6f-3532-0738-b2edba96dd26@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
-In-Reply-To: <49543220-93e4-781c-877b-381277837152@users.sourceforge.net>
+References: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
+In-Reply-To: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Augusto Mecking Caringi <augustocaringi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Kees Cook <keescook@chromium.org>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Escande <thierry.escande@collabora.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 May 2017 21:49:10 +0200
+Date: Mon, 22 May 2017 14:24:24 +0200
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/atm/lec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/nfc/digital_core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/net/atm/lec.c b/net/atm/lec.c
-index ca3aec0c0743..752891434074 100644
---- a/net/atm/lec.c
-+++ b/net/atm/lec.c
-@@ -804,7 +804,7 @@ static void lec_info(struct seq_file *seq, struct lec_arp_table *entry)
- 	if (entry->vcc)
- 		seq_printf(seq, "%3d %3d ", entry->vcc->vpi, entry->vcc->vci);
- 	else
--		seq_printf(seq, "        ");
-+		seq_puts(seq, "        ");
- 	if (entry->recv_vcc) {
- 		seq_printf(seq, "     %3d %3d", entry->recv_vcc->vpi,
- 			   entry->recv_vcc->vci);
+diff --git a/net/nfc/digital_core.c b/net/nfc/digital_core.c
+index 3baf91f3ef80..8e02a3e1b319 100644
+--- a/net/nfc/digital_core.c
++++ b/net/nfc/digital_core.c
+@@ -710,7 +710,5 @@ static int digital_in_send(struct nfc_dev *nfc_dev, struct nfc_target *target,
+-	if (!data_exch) {
+-		pr_err("Failed to allocate data_exch struct\n");
++	if (!data_exch)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data_exch->cb = cb;
+ 	data_exch->cb_context = cb_context;
 -- 
 2.13.0
 
