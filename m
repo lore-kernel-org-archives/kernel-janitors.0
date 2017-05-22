@@ -1,44 +1,34 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Thu, 18 May 2017 12:28:55 +0000
-Subject: Re: [PATCH] drm/sti:fix spelling mistake: "compoment" -> "component"
-Message-Id: <CA+M3ks4Y28qYaTV5z9=V=+k+tqgFcaAZwE8L3UJzPf0-smdY1A@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 11:34:34 +0000
+Subject: Re: vhost/scsi: Delete error messages for failed memory allocations in five functions
+Message-Id: <e6658e56-a2b0-4ecc-0a95-0ba193ff2c97@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170513224150.19955-1-colin.king@canonical.com>
-In-Reply-To: <20170513224150.19955-1-colin.king@canonical.com>
+References: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
+ <babc429d-6440-92aa-e1d0-eee2636a8d0f@users.sourceforge.net>
+ <20170522094320.GE12205@stefanha-x1.localdomain>
+ <557bdff4-6dc2-756d-0d59-9f688ef11f0a@users.sourceforge.net>
+ <20170522112320.GA22806@stefanha-x1.localdomain>
+In-Reply-To: <20170522112320.GA22806@stefanha-x1.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Vincent Abriou <vincent.abriou@st.com>, David Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stefan Hajnoczi <stefanha@gmail.com>
+Cc: kvm@vger.kernel.org, netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
-2017-05-14 0:41 GMT+02:00 Colin King <colin.king@canonical.com>:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in DRM_ERROR message
+>> Do you find information from a Linux allocation failure report sufficient
+>> for any function implementations here?
+> 
+> If kmalloc() and friends guarantee to print a warning and backtrace on
+> every allocation failure, then there's no need for error messages in
+> callers.
+> 
+> That seems like good justification that can go in the commit
+> description, but I'm not sure if kmalloc() and friends guarantee to show
+> a message (not just the first time, but for every failed allocation)?
 
-Thanks for your patch, I merged it in drm-misc-next branch
+I am also looking for a more complete and easier accessible documentation
+for this aspect of the desired exception handling.
+How would we like to resolve any remaining open issues there?
 
-Benjamin
-
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/sti/sti_compositor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/sti/sti_compositor.c b/drivers/gpu/drm/sti/sti_compositor.c
-> index 11d4e885893a..6e4bf68262db 100644
-> --- a/drivers/gpu/drm/sti/sti_compositor.c
-> +++ b/drivers/gpu/drm/sti/sti_compositor.c
-> @@ -129,7 +129,7 @@ static int sti_compositor_bind(struct device *dev,
->                         }
->                         break;
->                 default:
-> -                       DRM_ERROR("Unknown subdev compoment type\n");
-> +                       DRM_ERROR("Unknown subdev component type\n");
->                         return 1;
->                 }
->
-> --
-> 2.11.0
->
+Regards,
+Markus
