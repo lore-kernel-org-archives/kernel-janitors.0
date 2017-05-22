@@ -1,16 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 20:20:37 +0000
-Subject: [PATCH] init: Delete an error message for a failed memory allocation in rd_load_image()
-Message-Id: <b08e4c5c-0d6e-ae13-5c5d-a4860e8199eb@users.sourceforge.net>
+Date: Mon, 22 May 2017 06:14:38 +0000
+Subject: [PATCH 2/2] ieee802154: ca8210: Delete an error message for a failed memory allocation in ca8210_skb
+Message-Id: <a0c71307-4777-fd52-9f4c-cafd0f4d43a0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <55fddbc7-28c4-8866-67d3-ff1ff1a4eeb7@users.sourceforge.net>
+In-Reply-To: <55fddbc7-28c4-8866-67d3-ff1ff1a4eeb7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Schichan <nicolas.schichan@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: linuxdev@cascoda.com, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, Alexander Aring <aar@pengutronix.de>, Harry Morris <h.morris@cascoda.com>, Stefan Schmidt <stefan@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 22:14:36 +0200
+Date: Mon, 22 May 2017 08:03:17 +0200
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -19,25 +21,26 @@ This issue was detected by using the Coccinelle software.
 Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- init/do_mounts_rd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ieee802154/ca8210.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index dd4104c9aa12..47cafb189ad3 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -245,10 +245,8 @@ int __init rd_load_image(char *from)
- 	}
+diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+index 25ed11bb5ed3..f6df75e80a60 100644
+--- a/drivers/net/ieee802154/ca8210.c
++++ b/drivers/net/ieee802154/ca8210.c
+@@ -1808,10 +1808,9 @@ static int ca8210_skb_rx(
  
- 	buf = kmalloc(BLOCK_SIZE, GFP_KERNEL);
--	if (!buf) {
--		printk(KERN_ERR "RAMDISK: could not allocate buffer\n");
-+	if (!buf)
- 		goto done;
+ 	/* Allocate mtu size buffer for every rx packet */
+ 	skb = dev_alloc_skb(IEEE802154_MTU + sizeof(hdr));
+-	if (!skb) {
+-		dev_crit(&priv->spi->dev, "dev_alloc_skb failed\n");
++	if (!skb)
+ 		return -ENOMEM;
 -	}
++
+ 	skb_reserve(skb, sizeof(hdr));
  
- 	printk(KERN_NOTICE "RAMDISK: Loading %dKiB [%ld disk%s] into ram disk... ",
- 		nblocks, ((nblocks-1)/devblocks)+1, nblocks>devblocks ? "s" : "");
+ 	msdulen = data_ind[22]; /* msdu_length */
 -- 
 2.13.0
 
