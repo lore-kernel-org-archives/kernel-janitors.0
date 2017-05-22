@@ -1,44 +1,41 @@
-From: Dan Streetman <ddstreet@ieee.org>
-Date: Tue, 30 May 2017 23:19:33 +0000
-Subject: Re: [PATCH 2/3] zswap: Improve a size determination in zswap_frontswap_init()
-Message-Id: <CALZtOND7iFpCHQJPGpH21p+N5dcHiVM29ij=DTvJC33U9176=w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 14:12:21 +0000
+Subject: [PATCH 2/3] RDS: IB: Improve a size determination in rds_ib_add_one()
+Message-Id: <e8486283-62ac-ea77-1169-edca3e630637@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net> <19f9da22-092b-f867-bdf6-f4dbad7ccf1f@users.sourceforge.net>
-In-Reply-To: <19f9da22-092b-f867-bdf6-f4dbad7ccf1f@users.sourceforge.net>
+References: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
+In-Reply-To: <44b46c51-3665-5f14-dd3b-6e6f230258a7-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux-MM <linux-mm@kvack.org>, Seth Jennings <sjenning@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rds-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Sowmini Varadhan <sowmini.varadhan-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, May 21, 2017 at 4:26 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 20 May 2017 22:44:03 +0200
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 15:40:21 +0200
 
-Acked-by: Dan Streetman <ddstreet@ieee.org>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> ---
->  mm/zswap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 18d8e87119a6..a6e67633be03 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1156,5 +1156,5 @@ static void zswap_frontswap_init(unsigned type)
->  {
->         struct zswap_tree *tree;
->
-> -       tree = kzalloc(sizeof(struct zswap_tree), GFP_KERNEL);
-> +       tree = kzalloc(sizeof(*tree), GFP_KERNEL);
->         if (!tree) {
-> --
-> 2.13.0
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/rds/ib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/rds/ib.c b/net/rds/ib.c
+index c5514d058171..ed37bf011704 100644
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -131,7 +131,7 @@ static void rds_ib_add_one(struct ib_device *device)
+ 	if (device->node_type != RDMA_NODE_IB_CA)
+ 		return;
+ 
+-	rds_ibdev = kzalloc_node(sizeof(struct rds_ib_device), GFP_KERNEL,
++	rds_ibdev = kzalloc_node(sizeof(*rds_ibdev), GFP_KERNEL,
+ 				 ibdev_to_node(device));
+ 	if (!rds_ibdev)
+ 		return;
+-- 
+2.13.0
+
