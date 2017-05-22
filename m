@@ -1,47 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 10:50:39 +0000
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Mon, 22 May 2017 11:23:20 +0000
 Subject: Re: [PATCH 2/2] vhost/scsi: Delete error messages for failed memory allocations in five functions
-Message-Id: <557bdff4-6dc2-756d-0d59-9f688ef11f0a@users.sourceforge.net>
+Message-Id: <20170522112320.GA22806@stefanha-x1.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
  <babc429d-6440-92aa-e1d0-eee2636a8d0f@users.sourceforge.net>
  <20170522094320.GE12205@stefanha-x1.localdomain>
-In-Reply-To: <20170522094320.GE12205@stefanha-x1.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stefan Hajnoczi <stefanha@gmail.com>, kvm@vger.kernel.org, netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
-Cc: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
-
->> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> 
-> Please include an actual explanation for this change instead of linking
-> to slides.
-
-Do you care for a bit of code size reduction by removal of questionable
-error messages?
+ <557bdff4-6dc2-756d-0d59-9f688ef11f0a@users.sourceforge.net>
+In-Reply-To: <557bdff4-6dc2-756d-0d59-9f688ef11f0a@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kvm@vger.kernel.org, netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 
 
-> Why are you trying to get rid of memory allocation failure messages?
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Do you find information from a Linux allocation failure report sufficient
-for any function implementations here?
+On Mon, May 22, 2017 at 12:50:39PM +0200, SF Markus Elfring wrote:
+> > Why are you trying to get rid of memory allocation failure messages?
+>=20
+> Do you find information from a Linux allocation failure report sufficient
+> for any function implementations here?
 
+If kmalloc() and friends guarantee to print a warning and backtrace on
+every allocation failure, then there's no need for error messages in
+callers.
 
->> +++ b/drivers/vhost/scsi.c
->> @@ -417,5 +417,4 @@ vhost_scsi_allocate_evt(struct vhost_scsi *vs,
->>  	if (!evt) {
->> -		vq_err(vq, "Failed to allocate vhost_scsi_evt\n");
-> 
-> #define vq_err(vq, fmt, ...) do {                                  \
->                 pr_debug(pr_fmt(fmt), ##__VA_ARGS__);       \
->                 if ((vq)->error_ctx)                               \
->                                 eventfd_signal((vq)->error_ctx, 1);\
->         } while (0)
-> 
-> You silently dropped the eventfd_signal() call.
+That seems like good justification that can go in the commit
+description, but I'm not sure if kmalloc() and friends guarantee to show
+a message (not just the first time, but for every failed allocation)?
 
-Do you prefer to preserve this special error handling then?
+> >> +++ b/drivers/vhost/scsi.c
+> >> @@ -417,5 +417,4 @@ vhost_scsi_allocate_evt(struct vhost_scsi *vs,
+> >>  	if (!evt) {
+> >> -		vq_err(vq, "Failed to allocate vhost_scsi_evt\n");
+> >=20
+> > #define vq_err(vq, fmt, ...) do {                                  \
+> >                 pr_debug(pr_fmt(fmt), ##__VA_ARGS__);       \
+> >                 if ((vq)->error_ctx)                               \
+> >                                 eventfd_signal((vq)->error_ctx, 1);\
+> >         } while (0)
+> >=20
+> > You silently dropped the eventfd_signal() call.
+>=20
+> Do you prefer to preserve this special error handling then?
 
-Regards,
-Markus
+Yes, please leave vq_err() calls.
+
+Stefan
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJZIsooAAoJEJykq7OBq3PI48MH/2SBVJUIO7vINQTZv9NB3QY1
+hVDMY0sUVSJ3paY40CVqN6yRyVUc3UjO1UnhDVY8rVbLQsmfkC3BQibiARHTDbdM
+bczzrUq14IZ02R12gRrsfPUNOVmCZR7VdxkZ2U42h4TFqADx6UThHfMqv47aOZZU
+IDoafGkNLKkVI3U31Yd99J7KwIWN1U7Tes1Tt6M29vBgm7YgdE/QaW0mpk+Df2+O
+zZEONqjKC1DrI2etKnFUJ08w/eh0EtWEigPdrBK7G04b7atiVw6PK1fgKJ4mFn9u
+5/5xn/N52JcXKiUOotffPgY9WXmseBkGkEogBCuhyaayVc66fAD5l1neFx4X4eE=
+=0dh5
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
