@@ -1,41 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 19:27:39 +0000
-Subject: [PATCH 1/3] soc-knav_dma: Use seq_putc() in dma_debug_show_channels()
-Message-Id: <54a54866-6828-1ae5-6524-ca3f0dc4ab33@users.sourceforge.net>
+Date: Mon, 22 May 2017 12:57:42 +0000
+Subject: [PATCH 0/2] NFC-digital: Adjustments for four function implementations
+Message-Id: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
-In-Reply-To: <eddc35f7-a04b-42f5-ad8b-d345ca0b57b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Escande <thierry.escande@collabora.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 20:55:55 +0200
+Date: Mon, 22 May 2017 14:50:05 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Improve a size determination in four functions
+  Delete an error message for a failed memory allocation in digital_in_send()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/soc/ti/knav_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/nfc/digital_core.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index ecebe2eecc3a..a66671a93199 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -333,7 +333,7 @@ static void dma_debug_show_channels(struct seq_file *s,
- 			chan->cfg.u.rx.thresh);
- 		for (i = 0; i < KNAV_DMA_FDQ_PER_CHAN; i++)
- 			seq_printf(s, "[%d]", chan->cfg.u.rx.fdq[i]);
--		seq_printf(s, "\n");
-+		seq_putc(s, '\n');
- 	}
- }
- 
 -- 
-2.12.2
+2.13.0
 
