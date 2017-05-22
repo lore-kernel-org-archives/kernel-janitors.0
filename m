@@ -1,43 +1,40 @@
-From: Vlad Yasevich <vyasevic@redhat.com>
-Date: Mon, 22 May 2017 21:00:13 +0000
-Subject: Re: [PATCH 3/5] sctp: Fix a typo in a comment line in sctp_init()
-Message-Id: <3f5bbba7-4731-ab21-1f10-9fa7e9d9701e@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 05:10:19 +0000
+Subject: [PATCH 2/2] usbnet: Improve a size determination in usbnet_write_cmd_async()
+Message-Id: <d5ae61d4-8339-29e4-e91c-90ba644d69aa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
- <9dca8ae4-fd7f-d1de-af7b-87b92bf6411a@users.sourceforge.net>
-In-Reply-To: <9dca8ae4-fd7f-d1de-af7b-87b92bf6411a@users.sourceforge.net>
+References: <a81c2551-ce6c-967d-1120-4307f95b1e65@users.sourceforge.net>
+In-Reply-To: <a81c2551-ce6c-967d-1120-4307f95b1e65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
+To: linux-usb@vger.kernel.org, netdev@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 05/22/2017 12:39 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 17:43:44 +0200
-> 
-> Add a missing character in this description.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/sctp/protocol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-> index 5e7c8a344770..64756c42cec9 100644
-> --- a/net/sctp/protocol.c
-> +++ b/net/sctp/protocol.c
-> @@ -1454,7 +1454,7 @@ static __init int sctp_init(void)
->  	}
->  
->  	/* Allocate and initialize the SCTP port hash table.
-> -	 * Note that order is initalized to start at the max sized
-> +	 * Note that order is initialized to start at the max sized
->  	 * table we want to support.  If we can't get that many pages
->  	 * reduce the order and try again
->  	 */
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 06:42:33 +0200
 
-Acked-by: Vlad Yasevich <vyasevich@gmail.com.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
--vlad
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/usb/usbnet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 802ba68d37d1..b73c2a40501c 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -2129,6 +2129,6 @@ int usbnet_write_cmd_async(struct usbnet *dev, u8 cmd, u8 reqtype,
+ 	}
+ 
+-	req = kmalloc(sizeof(struct usb_ctrlrequest), GFP_ATOMIC);
++	req = kmalloc(sizeof(*req), GFP_ATOMIC);
+ 	if (!req)
+ 		goto fail_free_buf;
+ 
+-- 
+2.13.0
+
