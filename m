@@ -1,40 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 19 May 2017 17:45:15 +0000
-Subject: [PATCH][V2] [media] rainshadow-cec: ensure exit_loop is intialized
-Message-Id: <20170519174515.6695-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 May 2017 09:03:49 +0000
+Subject: [PATCH v2 1/2] perf/core: remove some dead code
+Message-Id: <20170522090348.5g7yyld5en3yeky4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+perf_init_event() can't return NULL.  If it did, the error handling is
+incomplete and we would crash.  I have removed this confusing dead code.
 
-exit_loop is not being initialized, so it contains garbage. Ensure it is
-initialized to false.
-
-Detected by CoverityScan, CID#1436409 ("Uninitialized scalar variable")
-
-Fixes: ea6a69defd3311 ("[media] rainshadow-cec: avoid -Wmaybe-uninitialized warning")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/rainshadow-cec/rainshadow-cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: split it up
 
-diff --git a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-index 8d3ca2c8b20f..ad468efc4399 100644
---- a/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-+++ b/drivers/media/usb/rainshadow-cec/rainshadow-cec.c
-@@ -119,7 +119,7 @@ static void rain_irq_work_handler(struct work_struct *work)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 13f5b942580b..4c24bc4c8a63 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9177,7 +9177,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
  
- 	while (true) {
- 		unsigned long flags;
--		bool exit_loop;
-+		bool exit_loop = false;
- 		char data;
+ static struct pmu *perf_init_event(struct perf_event *event)
+ {
+-	struct pmu *pmu = NULL;
++	struct pmu *pmu;
+ 	int idx;
+ 	int ret;
  
- 		spin_lock_irqsave(&rain->buf_lock, flags);
--- 
-2.11.0
-
+@@ -9461,9 +9461,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	}
+ 
+ 	pmu = perf_init_event(event);
+-	if (!pmu)
+-		goto err_ns;
+-	else if (IS_ERR(pmu)) {
++	if (IS_ERR(pmu)) {
+ 		err = PTR_ERR(pmu);
+ 		goto err_ns;
+ 	}
