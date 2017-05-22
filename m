@@ -1,46 +1,54 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Date: Fri, 19 May 2017 22:41:24 +0000
-Subject: Re: [PATCH] staging: speakup: signedness bug in spk_ttyio_in_nowait()
-Message-Id: <20170519224124.ekuvlposspgqelfr@var.youpi.perso.aquilenet.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 May 2017 12:08:31 +0000
+Subject: [PATCH] orangefs: off by ones in xattr size checks
+Message-Id: <20170522120831.GA27513@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170519212718.3pa52aiihtk4o6t2@mwanda>
-In-Reply-To: <20170519212718.3pa52aiihtk4o6t2@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter, on sam. 20 mai 2017 00:27:18 +0300, wrote:
-> On most of the common arches char is signed so it can't ever = 0xff.
-> Let's fix this by making it a u8.
-> 
-> Fixes: 6b9ad1c742bf ("staging: speakup: add send_xchar, tiocmset and input functionality for tty")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A previous patch which claimed to remove off by ones actually introduced
+them.
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+strlen() returns the length of the string not including the NUL
+character.  We are using strcpy() to copy "name" into a buffer which is
+ORANGEFS_MAX_XATTR_NAMELEN characters long.  We should make sure to
+leave space for the NUL, otherwise we're writing one character beyond
+the end of the buffer.
 
-> diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-> index 6e0f042f6a44..8ed7c71c712f 100644
-> --- a/drivers/staging/speakup/spk_ttyio.c
-> +++ b/drivers/staging/speakup/spk_ttyio.c
-> @@ -220,7 +220,7 @@ static unsigned char spk_ttyio_in(void)
->  
->  static unsigned char spk_ttyio_in_nowait(void)
->  {
-> -	char rv = ttyio_in(0);
-> +	u8 rv = ttyio_in(0);
->  
->  	return (rv = 0xff) ? 0 : rv;
->  }
-> 
+Fixes: e675c5ec51fe ("orangefs: clean up oversize xattr validation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Samuel
-Now, it we had this sort of thing:
-  yield -a     for yield to all traffic
-  yield -t     for yield to trucks
-  yield -f     for yield to people walking (yield foot)
-  yield -d t*  for yield on days starting with t
-...you'd have a lot of dead people at intersections, and traffic jams you
-wouldn't believe...
-(Discussion in comp.os.linux.misc on the intuitiveness of commands.)
+diff --git a/fs/orangefs/xattr.c b/fs/orangefs/xattr.c
+index 237c9c04dc3b..a34b25be39c5 100644
+--- a/fs/orangefs/xattr.c
++++ b/fs/orangefs/xattr.c
+@@ -76,7 +76,7 @@ ssize_t orangefs_inode_getxattr(struct inode *inode, const char *name,
+ 	if (S_ISLNK(inode->i_mode))
+ 		return -EOPNOTSUPP;
+ 
+-	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
++	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
+ 		return -EINVAL;
+ 
+ 	fsuid = from_kuid(&init_user_ns, current_fsuid());
+@@ -169,7 +169,7 @@ static int orangefs_inode_removexattr(struct inode *inode, const char *name,
+ 	struct orangefs_kernel_op_s *new_op = NULL;
+ 	int ret = -ENOMEM;
+ 
+-	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
++	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
+ 		return -EINVAL;
+ 
+ 	down_write(&orangefs_inode->xattr_sem);
+@@ -233,7 +233,7 @@ int orangefs_inode_setxattr(struct inode *inode, const char *name,
+ 
+ 	if (size > ORANGEFS_MAX_XATTR_VALUELEN)
+ 		return -EINVAL;
+-	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
++	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
+ 		return -EINVAL;
+ 
+ 	internal_flag = convert_to_internal_xattr_flags(flags);
