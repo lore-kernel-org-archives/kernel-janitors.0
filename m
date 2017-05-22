@@ -1,43 +1,43 @@
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Thu, 11 May 2017 16:33:41 +0000
-Subject: Re: [PATCH 3/4] vmbus: Fix a typo in a comment line
-Message-Id: <20170511093341.72b0cf7a@xeon-e3>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 14:11:37 +0000
+Subject: [PATCH 1/3] RDS: IB: Delete an error message for a failed memory allocation in rds_ib_add_one()
+Message-Id: <e3491aaa-f471-c67c-43dc-41d592159c8e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dea9c6a3-0ae6-f3fe-c0d3-7f5b856e2638@users.sourceforge.net>
-        <f190c37a-4ea1-d9da-6f25-bd7728cc03e7@users.sourceforge.net>
-In-Reply-To: <f190c37a-4ea1-d9da-6f25-bd7728cc03e7@users.sourceforge.net>
+References: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
+In-Reply-To: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, netdev@vger.kernel.org, rds-devel@oss.oracle.com, "David S. Miller" <davem@davemloft.net>, Santosh Shilimkar <santosh.shilimkar@oracle.com>, Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 11 May 2017 18:18:12 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 15:34:28 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 May 2017 17:43:55 +0200
-> 
-> Add a missing character in this description.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/hv/vmbus_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 96328aebae5a..ff94b111ed8d 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -991,7 +991,7 @@ static void vmbus_isr(void)
->  		/*
->  		 * Our host is win8 or above. The signaling mechanism
->  		 * has changed and we can directly look at the event page.
-> -		 * If bit n is set then we have an interrup on the channel
-> +		 * If bit n is set then we have an interrupt on the channel
->  		 * whose id is n.
->  		 */
->  		handled = true;
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/rds/ib.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/net/rds/ib.c b/net/rds/ib.c
+index 7a64c8db81ab..c5514d058171 100644
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -166,8 +166,5 @@ static void rds_ib_add_one(struct ib_device *device)
+-	if (!rds_ibdev->vector_load) {
+-		pr_err("RDS/IB: %s failed to allocate vector memory\n",
+-			__func__);
++	if (!rds_ibdev->vector_load)
+ 		goto put_dev;
+-	}
+ 
+ 	rds_ibdev->dev = device;
+ 	rds_ibdev->pd = ib_alloc_pd(device, 0);
+-- 
+2.13.0
+
