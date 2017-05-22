@@ -1,48 +1,39 @@
-From: Dan Streetman <ddstreet@ieee.org>
-Date: Tue, 30 May 2017 23:20:00 +0000
-Subject: Re: [PATCH 3/3] zswap: Delete an error message for a failed memory allocation in zswap_dstmem_prepar
-Message-Id: <CALZtONA5gyeqioF=F4BWpJ8T8-kc-BNsuas0gK4555GS-GkApQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 16:39:29 +0000
+Subject: [PATCH 3/5] sctp: Fix a typo in a comment line in sctp_init()
+Message-Id: <9dca8ae4-fd7f-d1de-af7b-87b92bf6411a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05101843-91f6-3243-18ea-acac8e8ef6af@users.sourceforge.net> <bae25b04-2ce2-7137-a71c-50d7b4f06431@users.sourceforge.net>
-In-Reply-To: <bae25b04-2ce2-7137-a71c-50d7b4f06431@users.sourceforge.net>
+References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
+In-Reply-To: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux-MM <linux-mm@kvack.org>, Seth Jennings <sjenning@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, May 21, 2017 at 4:27 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 21 May 2017 09:29:25 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 17:43:44 +0200
 
-Acked-by: Dan Streetman <ddstreet@ieee.org>
+Add a missing character in this description.
 
-> ---
->  mm/zswap.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 3f0a9a1daef4..ed7312291df9 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -374,7 +374,6 @@ static int zswap_dstmem_prepare(unsigned int cpu)
-> -       if (!dst) {
-> -               pr_err("can't allocate compressor buffer\n");
-> +       if (!dst)
->                 return -ENOMEM;
-> -       }
-> +
->         per_cpu(zswap_dstmem, cpu) = dst;
->         return 0;
->  }
-> --
-> 2.13.0
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/sctp/protocol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 5e7c8a344770..64756c42cec9 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1454,7 +1454,7 @@ static __init int sctp_init(void)
+ 	}
+ 
+ 	/* Allocate and initialize the SCTP port hash table.
+-	 * Note that order is initalized to start at the max sized
++	 * Note that order is initialized to start at the max sized
+ 	 * table we want to support.  If we can't get that many pages
+ 	 * reduce the order and try again
+ 	 */
+-- 
+2.13.0
+
