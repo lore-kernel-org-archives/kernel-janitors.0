@@ -1,91 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 14:32:17 +0000
-Subject: [PATCH 2/2] vhost/scsi: Delete error messages for failed memory allocations in five functions
-Message-Id: <babc429d-6440-92aa-e1d0-eee2636a8d0f@users.sourceforge.net>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Mon, 22 May 2017 09:43:20 +0000
+Subject: Re: [PATCH 2/2] vhost/scsi: Delete error messages for failed memory allocations in five functions
+Message-Id: <20170522094320.GE12205@stefanha-x1.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="brEuL7wsLY8+TuWz"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
-In-Reply-To: <bafa65e4-08fe-efdb-d836-7657e8a64749@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+	<babc429d-6440-92aa-e1d0-eee2636a8d0f@users.sourceforge.net>
+In-Reply-To: <babc429d-6440-92aa-e1d0-eee2636a8d0f@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, virtualization@lists.linux-foundation.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 May 2017 15:50:30 +0200
 
-Omit seven extra messages for memory allocation failures in these functions.
+--brEuL7wsLY8+TuWz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Sat, May 20, 2017 at 04:32:17PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 20 May 2017 15:50:30 +0200
+>=20
+> Omit seven extra messages for memory allocation failures in these functio=
+ns.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-R=
+efactor_Strings-WSang_0.pdf
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/vhost/scsi.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+Please include an actual explanation for this change instead of linking
+to slides.  Why are you trying to get rid of memory allocation failure
+messages?
 
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index 650533916c19..49d07950e2e5 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -417,5 +417,4 @@ vhost_scsi_allocate_evt(struct vhost_scsi *vs,
- 	if (!evt) {
--		vq_err(vq, "Failed to allocate vhost_scsi_evt\n");
- 		vs->vs_events_missed = true;
- 		return NULL;
- 	}
-@@ -1722,21 +1721,15 @@ static int vhost_scsi_nexus_cb(struct se_portal_group *se_tpg,
--		if (!tv_cmd->tvc_sgl) {
--			pr_err("Unable to allocate tv_cmd->tvc_sgl\n");
-+		if (!tv_cmd->tvc_sgl)
- 			goto out;
--		}
- 
- 		tv_cmd->tvc_upages = kzalloc(sizeof(struct page *) *
- 				VHOST_SCSI_PREALLOC_UPAGES, GFP_KERNEL);
--		if (!tv_cmd->tvc_upages) {
--			pr_err("Unable to allocate tv_cmd->tvc_upages\n");
-+		if (!tv_cmd->tvc_upages)
- 			goto out;
--		}
- 
- 		tv_cmd->tvc_prot_sgl = kzalloc(sizeof(struct scatterlist) *
- 				VHOST_SCSI_PREALLOC_PROT_SGLS, GFP_KERNEL);
--		if (!tv_cmd->tvc_prot_sgl) {
--			pr_err("Unable to allocate tv_cmd->tvc_prot_sgl\n");
-+		if (!tv_cmd->tvc_prot_sgl)
- 			goto out;
--		}
- 	}
- 	return 0;
- out:
-@@ -1760,6 +1753,5 @@ static int vhost_scsi_make_nexus(struct vhost_scsi_tpg *tpg,
- 	if (!tv_nexus) {
- 		mutex_unlock(&tpg->tv_tpg_mutex);
--		pr_err("Unable to allocate struct vhost_scsi_nexus\n");
- 		return -ENOMEM;
- 	}
- 	/*
-@@ -1961,7 +1953,6 @@ vhost_scsi_make_tpg(struct se_wwn *wwn,
--	if (!tpg) {
--		pr_err("Unable to allocate struct vhost_scsi_tpg");
-+	if (!tpg)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	mutex_init(&tpg->tv_tpg_mutex);
- 	INIT_LIST_HEAD(&tpg->tv_tpg_list);
- 	tpg->tport = tport;
-@@ -2015,7 +2006,6 @@ vhost_scsi_make_tport(struct target_fabric_configfs *tf,
--	if (!tport) {
--		pr_err("Unable to allocate struct vhost_scsi_tport");
-+	if (!tport)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	tport->tport_wwpn = wwpn;
- 	/*
- 	 * Determine the emulated Protocol Identifier and Target Port Name
--- 
-2.13.0
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/vhost/scsi.c | 24 +++++++-----------------
+>  1 file changed, 7 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+> index 650533916c19..49d07950e2e5 100644
+> --- a/drivers/vhost/scsi.c
+> +++ b/drivers/vhost/scsi.c
+> @@ -417,5 +417,4 @@ vhost_scsi_allocate_evt(struct vhost_scsi *vs,
+>  	if (!evt) {
+> -		vq_err(vq, "Failed to allocate vhost_scsi_evt\n");
 
+#define vq_err(vq, fmt, ...) do {                                  \
+                pr_debug(pr_fmt(fmt), ##__VA_ARGS__);       \
+                if ((vq)->error_ctx)                               \
+                                eventfd_signal((vq)->error_ctx, 1);\
+        } while (0)
+
+You silently dropped the eventfd_signal() call.  Please explain.
+
+--brEuL7wsLY8+TuWz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJZIrK4AAoJEJykq7OBq3PIR6gH/iErbMWvzcSjDhiYspNTQ3L5
+81uxAo7qujqQqTQQZMUqKwqKjLMQqJPcJ8ytjXN6eoGRvoJ2QfUlkct0RmBoj6zM
+c34igRQi1GTHtctOm58z74O9955PZQWa0jUlXN7gd1CSslat7xqm8H+Bl1rWl2Ti
+gbOW/qDewsGwGL3zjoFK+/p8TiCBg+wg4a/R9QOupIS/gy61CNHfVNnztoU0Ts5j
+tA2be0BsHm1O4sKSLIlIS7ehhkL11eAknqIy79mAGviHl/lyX0MJ7qBYWCEsHQhp
+bzAYU4qWnrpmCQDvx942dUnjs2Z/dFXH9Cvuoxi1XNsaz0lH10LEsfikwqr3DXs=
+=Y9sL
+-----END PGP SIGNATURE-----
+
+--brEuL7wsLY8+TuWz--
