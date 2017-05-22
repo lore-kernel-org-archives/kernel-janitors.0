@@ -1,68 +1,44 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Date: Wed, 17 May 2017 10:15:36 +0000
-Subject: Re: [PATCH 2/2] ARM: davinci: PM: Do not free useful resources in normal path in 'davinci_pm_init'
-Message-Id: <68b895dc-1bcf-fb59-0e19-e69b2e72f8c1@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 16:41:45 +0000
+Subject: [PATCH 5/5] sctp: Adjust one function call together with a variable assignment
+Message-Id: <197333e8-b528-ef34-bd16-01e415acdf52@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170513114020.23668-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170513114020.23668-1-christophe.jaillet@wanadoo.fr>
+References: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
+In-Reply-To: <2845df67-d35d-536a-0a53-b2eb83fe1ba5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Saturday 13 May 2017 05:10 PM, Christophe JAILLET wrote:
-> This looks spurious to iounmap resources in the normal path of this init
-> function.
-> The 3 ioremap'ed fields of 'pm_config' can be accessed later on in other
-> functions, so it is likely that we should return 'success' before unrolling
-> everything.
-> 
-> Fixes: aa9aa1ec2df6 ("ARM: davinci: PM: rework init, remove platform device")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is just a *guess*. The end of the function looks more like a
-> error handling code rather than a normal path.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 18:15:12 +0200
 
-The patch is correct.
+The script "checkpatch.pl" pointed information out like the following.
 
-> ---
->  arch/arm/mach-davinci/pm.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/mach-davinci/pm.c b/arch/arm/mach-davinci/pm.c
-> index d282b0783ecf..163d865abbf9 100644
-> --- a/arch/arm/mach-davinci/pm.c
-> +++ b/arch/arm/mach-davinci/pm.c
-> @@ -161,6 +161,7 @@ int __init davinci_pm_init(void)
->  						davinci_cpu_suspend_sz);
->  
->  	suspend_set_ops(&davinci_pm_ops);
-> +	return 0;
+ERROR: do not use assignment in if condition
 
-We normally have an empty line before return. I added that while 
-applying. Also, I modified the patch description to be more "sure" in 
-its language. Here is the final description:
+Thus fix the affected source code place.
 
-    ARM: davinci: PM: Do not free useful resources in normal path in 'davinci_pm_init'
-    
-    It is wrong to iounmap resources in the normal path of davinci_pm_init()
-    
-    The 3 ioremap'ed fields of 'pm_config' can be accessed later on in other
-    functions, so we should return 'success' instead of unrolling everything.
-    
-    Fixes: aa9aa1ec2df6 ("ARM: davinci: PM: rework init, remove platform device")
-    Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    [nsekhar@ti.com: commit message and minor style fixes]
-    Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/sctp/protocol.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I will let this go through some testing before sending for inclusion in 
-v4.12 kernel. Thanks for catching these.
-
-For future, when sending more than one patch, please add a cover 
-letter. And have the patches appear as replies to the cover letter. 
-This happens if you send the patches together with cover letter using 
-git-send-email and have chainreplyto set to false in your .gitconfig
-
-Thanks,
-Sekhar
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index 057479b7bd72..be2fe3ebae78 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -141,7 +141,8 @@ static void sctp_v4_copy_addrlist(struct list_head *addrlist,
+ 	struct sctp_sockaddr_entry *addr;
+ 
+ 	rcu_read_lock();
+-	if ((in_dev = __in_dev_get_rcu(dev)) = NULL) {
++	in_dev = __in_dev_get_rcu(dev);
++	if (!in_dev) {
+ 		rcu_read_unlock();
+ 		return;
+ 	}
+-- 
+2.13.0
 
