@@ -1,65 +1,46 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Fri, 26 May 2017 16:31:40 +0000
-Subject: Re: [PATCH v2 1/1] w1: Add subsystem kernel public interface
-Message-Id: <cffe100e-1883-858a-51a1-236da282b8c0@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 14:13:11 +0000
+Subject: [PATCH 3/3] RDS: TCP: Delete an error message for a failed memory allocation in rds_tcp_init_net()
+Message-Id: <5d523cf8-1540-e704-2301-a5e0205cb536@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170516200814.12360-1-afd@ti.com>
- <20170516200814.12360-2-afd@ti.com> <20170525130056.GB30447@kroah.com>
- <1399ebdb-337e-43b7-9e4d-a0c088bc8c7b@ti.com>
- <1499591495717767@web38g.yandex.ru>
- <299fe87d-d0fd-6f16-2f7e-ba56096e5021@ti.com>
- <1604131495718924@web38g.yandex.ru>
- <adfa6c6b-84b8-d652-c76b-04138e4248fb@ti.com>
- <3947221495815182@web23o.yandex.ru>
-In-Reply-To: <3947221495815182@web23o.yandex.ru>
+References: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
+In-Reply-To: <44b46c51-3665-5f14-dd3b-6e6f230258a7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sebastian Reichel <sre@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-rdma@vger.kernel.org, netdev@vger.kernel.org, rds-devel@oss.oracle.com, "David S. Miller" <davem@davemloft.net>, Santosh Shilimkar <santosh.shilimkar@oracle.com>, Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 05/26/2017 11:13 AM, Evgeniy Polyakov wrote:
-> 
-> 
-> 25.05.2017, 16:50, "Andrew F. Davis" <afd@ti.com>:
-> 
->>>  Why do you have to create a pseudo-platform device driver to connect w1 and power/supply?
->>>
->>>  I'm not against creating w1 drivers in different places than drivers/w1, but so far
->>>  it was only power drivers which have problem with it (and they easily work it out),
->>>  and this rises a flag.
->>
->> We could keep it in w1 if we really wanted, but then things like Kconfig
->> will get difficult to manage (we will jump between menus and have odd
->> dependencies).
-> 
-> One still has to jump between kconfig menus to enable w1 and power devices,
-> or to use 'select', nothing really changes.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 May 2017 15:45:31 +0200
 
-Well, one less step in that we get to drop the platform shim driver, but
-I see what you mean.
+Omit an extra message for a memory allocation failure in this function.
 
->> The other w1/slaves seem to mostly be simple EEPROMs and Gauges that
->> would otherwise end up in misc/ so it is fine if they live in w1, but
->> BQ27xxx does have a proper home in power/supplies and its i2c interface
->> is already there, so moving the w1 interface there also makes sense to me.
->>
->>>  I would rather move w1 header into include/linux, will it be enough?
->>
->> That's what this patch does, we just also re-organize things a bit so
->> only things that need to be public end up in include/linux. It seems to
->> be all that is needed for my use-case at least.
-> 
-> Ok, lets merge it.
+This issue was detected by using the Coccinelle software.
 
-Great, thanks!
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/rds/tcp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> 
-> My personal note: please drop TI copyright from headers, at least from those which already exist
-> and you move them around, it is your work and not TI. It is up to you to put into driver itself.
-> 
+diff --git a/net/rds/tcp.c b/net/rds/tcp.c
+index 431404dbdad1..b0348697dee5 100644
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -431,10 +431,9 @@ static __net_init int rds_tcp_init_net(struct net *net)
+ 	} else {
+ 		tbl = kmemdup(rds_tcp_sysctl_table,
+ 			      sizeof(rds_tcp_sysctl_table), GFP_KERNEL);
+-		if (!tbl) {
+-			pr_warn("could not set allocate syctl table\n");
++		if (!tbl)
+ 			return -ENOMEM;
+-		}
++
+ 		rtn->ctl_table = tbl;
+ 	}
+ 	tbl[RDS_TCP_SNDBUF].data = &rtn->sndbuf_size;
+-- 
+2.13.0
 
-9-5 TI owns everything I touch :) so I just figured I should add it, but
-I have no personal problem dropping the copyright notice (actually I
-already did this as you requested this in v1).
