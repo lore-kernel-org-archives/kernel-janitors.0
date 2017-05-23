@@ -1,60 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 09:12:55 +0000
-Subject: [PATCH 1/3] net: pktgen: Improve four size determinations
-Message-Id: <08d6e27c-dcc3-5e24-7ec9-ba1587309658@users.sourceforge.net>
+Date: Tue, 23 May 2017 20:54:18 +0000
+Subject: [PATCH 4/5] MIPS: VPE: Improve a size determination in two functions
+Message-Id: <cf85a732-6901-4eca-2848-71e35e7ce95d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <79472009-7764-bb92-5f29-60bb21793cec@users.sourceforge.net>
-In-Reply-To: <79472009-7764-bb92-5f29-60bb21793cec@users.sourceforge.net>
+References: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
+In-Reply-To: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, John Fastabend <john.fastabend@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>
+To: linux-mips@linux-mips.org, Ingo Molnar <mingo@kernel.org>, James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>, Marcin Nowakowski <marcin.nowakowski@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 10:34:11 +0200
+Date: Tue, 23 May 2017 22:04:17 +0200
 
-Replace the specification of four data structures by pointer dereferences
+Replace the specification of two data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/core/pktgen.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/mips/kernel/vpe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 96947f5d41e4..c89f4ad21187 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -2995,10 +2995,10 @@ static struct sk_buff *fill_packet_ipv6(struct net_device *odev,
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 721b1523b740..ed019218496b 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -93,7 +93,7 @@ struct vpe *alloc_vpe(int minor)
+ {
+ 	struct vpe *v;
  
- 	skb_reset_mac_header(skb);
- 	skb_set_network_header(skb, skb->len);
--	iph = (struct ipv6hdr *) skb_put(skb, sizeof(struct ipv6hdr));
-+	iph = (struct ipv6hdr *)skb_put(skb, sizeof(*iph));
+-	v = kzalloc(sizeof(struct vpe), GFP_KERNEL);
++	v = kzalloc(sizeof(*v), GFP_KERNEL);
+ 	if (v = NULL)
+ 		goto out;
  
- 	skb_set_transport_header(skb, skb->len);
--	udph = (struct udphdr *) skb_put(skb, sizeof(struct udphdr));
-+	udph = (struct udphdr *)skb_put(skb, sizeof(*udph));
- 	skb_set_queue_mapping(skb, queue_map);
- 	skb->priority = pkt_dev->skb_priority;
+@@ -114,7 +114,7 @@ struct tc *alloc_tc(int index)
+ {
+ 	struct tc *tc;
  
-@@ -3678,5 +3678,5 @@ static int pktgen_add_device(struct pktgen_thread *t, const char *ifname)
- 		return -EBUSY;
- 	}
+-	tc = kzalloc(sizeof(struct tc), GFP_KERNEL);
++	tc = kzalloc(sizeof(*tc), GFP_KERNEL);
+ 	if (tc = NULL)
+ 		goto out;
  
--	pkt_dev = kzalloc_node(sizeof(struct pktgen_dev), GFP_KERNEL, node);
-+	pkt_dev = kzalloc_node(sizeof(*pkt_dev), GFP_KERNEL, node);
- 	if (!pkt_dev)
-@@ -3756,6 +3756,5 @@ static int __net_init pktgen_create_thread(int cpu, struct pktgen_net *pn)
- 	struct proc_dir_entry *pe;
- 	struct task_struct *p;
- 
--	t = kzalloc_node(sizeof(struct pktgen_thread), GFP_KERNEL,
--			 cpu_to_node(cpu));
-+	t = kzalloc_node(sizeof(*t), GFP_KERNEL, cpu_to_node(cpu));
- 	if (!t) {
 -- 
 2.13.0
 
