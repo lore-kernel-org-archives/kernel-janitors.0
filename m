@@ -1,60 +1,39 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Tue, 09 May 2017 23:33:31 +0000
-Subject: Re: [PATCH] regulator: max8997/8966: fix charger cv voltage set bug
-Message-Id: <591251CB.6000505@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 May 2017 18:10:26 +0000
+Subject: [PATCH] MIPS: Octeon: Delete an error message for a failed memory allocation in octeon_irq_init_gpio
+Message-Id: <7995eb17-f2ec-54ad-f4d4-7b3dd8337d33@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170428141103.llm5t44o2vf46y5c@mwanda>
-        <CGME20170428141118epcas2p42c864cf574cc6fa3ffedbef22029e3ef@epcms1p6>
-        <20170508054544epcms1p6d3d429e6f062e987adf72fc2c04ed159@epcms1p6>
-In-Reply-To: <20170508054544epcms1p6d3d429e6f062e987adf72fc2c04ed159@epcms1p6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: myungjoo.ham@samsung.com, Dan Carpenter <dan.carpenter@oracle.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mips@linux-mips.org, Dan Carpenter <dan.carpenter@oracle.com>, David Daney <david.daney@cavium.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, "Steven J. Hill" <steven.hill@cavium.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 May 2017 20:00:06 +0200
 
-On 2017년 05월 08일 14:45, MyungJoo Ham wrote:
-> 
-> When min charger-CV is <= 4.0V and max charger-CV is >= 4.0V,
-> we can use 4.00V as CV (register value = 0x1).`
-> 
-> The original code had a typo that wrote ">=" (max_uV >= 4000000),
-> which should've been "<", which is not necessary anyway
-> as mentioned by Dan Carpenter.
-> 
-> Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> ---
->  drivers/regulator/max8997-regulator.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/regulator/max8997-regulator.c b/drivers/regulator/max8997-regulator.c
-> index efabc0e..559b9ac 100644
-> --- a/drivers/regulator/max8997-regulator.c
-> +++ b/drivers/regulator/max8997-regulator.c
-> @@ -428,12 +428,9 @@ static int max8997_set_voltage_charger_cv(struct regulator_dev *rdev,
->  	if (max_uV < 4000000 || min_uV > 4350000)
->  		return -EINVAL;
->  
-> -	if (min_uV <= 4000000) {
-> -		if (max_uV >= 4000000)
-> -			return -EINVAL;
-> -		else
-> -			val = 0x1;
-> -	} else if (min_uV <= 4200000 && max_uV >= 4200000)
-> +	if (min_uV <= 4000000)
-> +		val = 0x1;
-> +	else if (min_uV <= 4200000 && max_uV >= 4200000)
->  		val = 0x0;
->  	else {
->  		lb = (min_uV - 4000001) / 20000 + 2;
-> 
+Omit an extra message for a memory allocation failure in this function.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/mips/cavium-octeon/octeon-irq.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
+index c1eb1ff7c800..050c08ece5b6 100644
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -1615,7 +1615,6 @@ static int __init octeon_irq_init_gpio(
+ 		irq_domain_add_linear(
+ 			gpio_node, 16, &octeon_irq_domain_gpio_ops, gpiod);
+ 	} else {
+-		pr_warn("Cannot allocate memory for GPIO irq_domain.\n");
+ 		return -ENOMEM;
+ 	}
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.13.0
+
