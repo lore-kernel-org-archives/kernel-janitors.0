@@ -1,27 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 12:57:42 +0000
-Subject: [PATCH 0/2] NFC-digital: Adjustments for four function implementations
-Message-Id: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
+From: CK Hu <ck.hu@mediatek.com>
+Date: Tue, 23 May 2017 06:55:28 +0000
+Subject: Re: [PATCH] drm/mediatek: re-phrase DRM_INFO error message
+Message-Id: <1495522528.20811.17.camel@mtksdaap41>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170411134419.21277-1-colin.king@canonical.com>
+In-Reply-To: <20170411134419.21277-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Escande <thierry.escande@collabora.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 May 2017 14:50:05 +0200
+Hi, Colin:
 
-Two update suggestions were taken into account
-from static source code analysis.
+Sorry for my late reply. I've applied this patch to my branch
+mediatek-drm-next-4.13, thanks.
 
-Markus Elfring (2):
-  Improve a size determination in four functions
-  Delete an error message for a failed memory allocation in digital_in_send()
+Regards,
+CK
 
- net/nfc/digital_core.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+On Tue, 2017-04-11 at 14:44 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The current message contains a spelling mistake and is not easily
+> parsable. Re-phrase it to be more understandable.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dsi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> index 808b995a990f..79d240ff1331 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -933,7 +933,7 @@ static u32 mtk_dsi_recv_cnt(u8 type, u8 *read_data)
+>  		DRM_INFO("type is 0x02, try again\n");
+>  		break;
+>  	default:
+> -		DRM_INFO("type(0x%x) cannot be non-recognite\n", type);
+> +		DRM_INFO("type(0x%x) not recognized\n", type);
+>  		break;
+>  	}
+>  
 
--- 
-2.13.0
 
