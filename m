@@ -1,29 +1,33 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 19 May 2017 10:00:09 +0000
-Subject: Re: mmc: core: Delete an error message for a failed memory allocation in three functions
-Message-Id: <CAPDyKFraTYQWAqSNdZG_bRpbDiLFw4nigVzC1nkmrfnr2aw2og@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 May 2017 14:27:17 +0000
+Subject: [PATCH] X.509: Fix error code in x509_cert_parse()
+Message-Id: <20170523142717.GA28346@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0978766-199a-942e-43d8-58d2a8a17e1a@users.sourceforge.net>
- <CAPDyKFqhNQdfr19195YfL7f4Jh0u6pGZ9QtSff0C6fe6R9wdjw@mail.gmail.com> <50f3c642-b866-27f3-1201-5490225116f4@users.sourceforge.net>
-In-Reply-To: <50f3c642-b866-27f3-1201-5490225116f4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Bojan Prtvar <prtvar.b@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>, Shawn Lin <shawn.lin@rock-chips.com>, Tomas Winkler <tomas.winkler@intel.com>, Uri Yanai <uri.yanai@sandisk.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Howells <dhowells@redhat.com>, Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 19 May 2017 at 11:39, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> It's a nice cleanup. However I found one more occasion in mmc_test.c,
->> please fix that and re-spin.
->
-> To which source code place does this feedback refer?
->
-> Does it mean that another message removal would make sense in the
-> function “__mmc_test_register_dbgfs_file”?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mmc/core/mmc_test.c?h=v4.11#n3202
+We forgot to set the error code on this path so it could result in
+returning NULL which leads to a NULL dereference.
 
-Yes!
+Fixes: db6c43bd2132 ("crypto: KEYS: convert public key and digsig asym to the akcipher api")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Br
-Uffe
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index c80765b211cf..1f69e948fb34 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -103,8 +103,10 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
+ 	}
+ 
+ 	cert->pub->key = kmemdup(ctx->key, ctx->key_size, GFP_KERNEL);
+-	if (!cert->pub->key)
++	if (!cert->pub->key) {
++		ret = -ENOMEM;
+ 		goto error_decode;
++	}
+ 
+ 	cert->pub->keylen = ctx->key_size;
+ 
