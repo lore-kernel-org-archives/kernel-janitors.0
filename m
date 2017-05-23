@@ -1,45 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 May 2017 18:43:43 +0000
-Subject: [PATCH v3] cifs: small underflow in cnvrtDosUnixTm()
-Message-Id: <20170501184343.lkkv43vzwsyrty3d@mwanda>
+From: Sven Eckelmann <sven@narfation.org>
+Date: Tue, 23 May 2017 10:14:04 +0000
+Subject: Re: [B.A.T.M.A.N.] [PATCH 0/2] batman-adv: Fine-tuning for three function implementations
+Message-Id: <17596488.icP3obENQD@bentobox>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart2267927.tk46vfJtNm"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+References: <512d2e7c-0967-9303-2b68-6c9ef53d6ed2@users.sourceforge.net>
+In-Reply-To: <512d2e7c-0967-9303-2b68-6c9ef53d6ed2@users.sourceforge.net>
+To: b.a.t.m.a.n@lists.open-mesh.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Antonio Quartulli <a@unstable.cc>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--nextPart2267927.tk46vfJtNm
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>, walter harms <wharms@bfs.de>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-January is month 1.  There is no zero-th month.  If someone passes a
-zero month then it means we read from one space before the start of the
-total_days_of_prev_months[] array.
+On Samstag, 6. Mai 2017 18:12:46 CEST SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 6 May 2017 18:03:45 +0200
+> 
+> Two update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (2):
+>   Replace a seq_puts() call by seq_putc() in two functions
+>   Combine two seq_puts() calls into one call in batadv_nc_nodes_seq_print_text()
 
-We may as well also be strict about days as well.
+Patches applied as 626caae9f257 [1] and 912eeed9f520 [2]
 
-Fixes: 1bd5bbcb6531 ("[CIFS] Legacy time handling for Win9x and OS/2 part 1") 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: be stricter about days.
-v3: style cleanup.
+Thanks,
+	Sven
 
-Being stricter about days is slightly riskier than simply preventing the
-out ouf bounds array access.  Please review carefully, etc.
+[1] https://git.open-mesh.org/linux-merge.git/commit/626caae9f25746c39b0a1204f8b8f532c1746f10
+[2] https://git.open-mesh.org/linux-merge.git/commit/912eeed9f5208515b75103e91ff8b64cfdcca7b9
+--nextPart2267927.tk46vfJtNm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index abae6dd2c6b9..cc88f4f0325e 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -980,10 +980,10 @@ struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
- 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
- 	days = sd->Day;
- 	month = sd->Month;
--	if ((days > 31) || (month > 12)) {
-+	if (days < 1 || days > 31 || month < 1 || month > 12) {
- 		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
--		if (month > 12)
--			month = 12;
-+		days = clamp(days, 1, 31);
-+		month = clamp(month, 1, 12);
- 	}
- 	month -= 1;
- 	days += total_days_of_prev_months[month];
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlkkC2wACgkQXYcKB8Em
+e0bTDw/+LCVRYOqMsNF2I928UxmdREyqpsXD+bDvDwv9LCSlHjlANMP2Pd3p1isJ
+LuOIct85wgbPfeloYhxbvSiul7NCzpzye+FdqvCIEP5Q3n2DU0EXeS38naH/mg5l
+T82t6o8B5gDbYowU4AeUAdPNTn02i7PU1I/hLtWG7q3oKuufWLhytsZWY7jbjhMm
+dH6Ko8O9uzCxoEUHjjOxOKKV5uvySaYNbzIsQ20pYDbFDhJcwwc04jCQyPdqb5Pq
+E/gVxuhBdruHrL0BJt/dD/XLd3FQAVamb93WHrmtnKmUL9jsr6JoFSl66uui3ciJ
+Wc0NoI5X4UE0yRmzPONe0WflxRvI9dZG1BxfuhUqqU+SbwULna9zSvYdEJ+pOxCz
+rYzGErwpUDEEsb+Qs/p0nrYLihRS00lbeQaFmNO7s39/Tq+bJY/poDS6h6D+es97
+V4C49XACCIgTCUKo+XCpToArHnwGwHQiBRyBeO342vZ0kvFfphFsI7BCW6wnEa+C
+39xPFmt6QhdB1x84uFnhIIKbXBKNlkBYqPbf2uA7T2EFxixTbjTYdQr4CM7uaKrd
+r14z6snctYp0VYKtQaY0btqET63OVYrE1pKof6nE4GZ574HoUKyeD1P+S3hVKj0m
+OUFwBmzyT3/rQHSXgM0lAZ/jNo00GQkjLYa5NHcjw5+vI9yDVqc=
+=q8YE
+-----END PGP SIGNATURE-----
+
+--nextPart2267927.tk46vfJtNm--
+
