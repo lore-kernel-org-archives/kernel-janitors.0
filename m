@@ -1,41 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 06 May 2017 08:39:22 +0000
-Subject: [PATCH 03/10] dlm: Improve a size determination in table_seq_start()
-Message-Id: <995aab89-a49a-fcf4-6d70-3b55580770e5@users.sourceforge.net>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Tue, 23 May 2017 09:34:31 +0000
+Subject: Re: [PATCH 0/3] Extcon: Fine-tuning for three functions
+Message-Id: <59240227.4030505@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
-In-Reply-To: <4bd895d7-9448-928d-1e4c-42326ce20607@users.sourceforge.net>
+References: <CGME20170424123857epcas2p24390d04885c9fc4c1980838ed8a4db06@epcas2p2.samsung.com>
+        <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
+In-Reply-To: <b650292b-4f5f-c50d-f0a3-604ba26bcbef@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: cluster-devel@redhat.com, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, patches@opensource.wolfsonmicro.com, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 6 May 2017 08:34:27 +0200
+On 2017년 04월 24일 21:38, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 24 Apr 2017 14:26:54 +0200
+> 
+> Three update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (3):
+>   Use devm_kcalloc() in extcon_dev_register()
+>   Fix a typo in three comment lines
+>   Use devm_kcalloc() in arizona_extcon_get_micd_configs()
+> 
+>  drivers/extcon/extcon-arizona.c |  4 +---
+>  drivers/extcon/extcon.c         | 11 +++++------
+>  2 files changed, 6 insertions(+), 9 deletions(-)
+> 
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Applied these patches.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/dlm/debug_fs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/dlm/debug_fs.c b/fs/dlm/debug_fs.c
-index 551e0f8dbe0d..fa08448e35dd 100644
---- a/fs/dlm/debug_fs.c
-+++ b/fs/dlm/debug_fs.c
-@@ -435,7 +435,7 @@ static void *table_seq_start(struct seq_file *seq, loff_t *pos)
- 	if (bucket >= ls->ls_rsbtbl_size)
- 		return NULL;
- 
--	ri = kzalloc(sizeof(struct rsbtbl_iter), GFP_NOFS);
-+	ri = kzalloc(sizeof(*ri), GFP_NOFS);
- 	if (!ri)
- 		return NULL;
- 	if (n = 0)
 -- 
-2.12.2
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
