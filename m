@@ -1,33 +1,24 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Date: Mon, 08 May 2017 14:31:15 +0000
-Subject: Re: [PATCH 1/4] dma-buf: Combine two function calls into one in dma_buf_debug_show()
-Message-Id: <20170508143115.GA28331@joana>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 May 2017 16:23:17 +0000
+Subject: Re: tipc: Delete error messages for failed memory allocations in three functions
+Message-Id: <d07d0b1f-0038-e91d-4748-ea3e6dfb93f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3d972fa2-787a-d1f2-ff86-5c05494e00d3@users.sourceforge.net>
- <b8a85220-039a-e4bb-c74b-d76baab234e8@users.sourceforge.net>
-In-Reply-To: <b8a85220-039a-e4bb-c74b-d76baab234e8@users.sourceforge.net>
+References: <7ac9d513-6f9f-a096-e68f-81a722c2723c@users.sourceforge.net>
+ <1495548133.2093.58.camel@perches.com>
+In-Reply-To: <1495548133.2093.58.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org
+To: Joe Perches <joe@perches.com>, tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-2017-05-08 SF Markus Elfring <elfring@users.sourceforge.net>:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 8 May 2017 10:32:44 +0200
+> tipc_subseq_alloc does a kcalloc (memset to 0),
+> half of which is immediately overwritten.
 > 
-> A bit of data was put into a sequence by two separate function calls.
-> Print the same data by a single function call instead.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/dma-buf/dma-buf.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> In other words, don't just blindly remove stuff,
+> understand what it does and improve it.
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Do you suggest another specific source code transformation pattern here?
 
-Gustavo
-
+Regards,
+Markus
