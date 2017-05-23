@@ -1,37 +1,32 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 May 2017 19:38:52 +0000
-Subject: Re: [PATCH] MIPS: Octeon: Delete an error message for a failed memory allocation in octeon_irq_init_
-Message-Id: <CAMuHMdXHuiaQ02Bmv_ig=kTTSHnhK=-64t9yv-rn5tFo=cn1hg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 May 2017 20:50:23 +0000
+Subject: [PATCH 0/5] MIPS-kernel: Adjustments for some function implementations
+Message-Id: <e866716c-5ce4-3658-f944-e310007db127@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7995eb17-f2ec-54ad-f4d4-7b3dd8337d33@users.sourceforge.net>
- <1495565752.2093.69.camel@perches.com> <71a2ce6a-968c-b13c-95b0-610f0c1bab03@users.sourceforge.net>
- <1495655035.2093.86.camel@perches.com>
-In-Reply-To: <1495655035.2093.86.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, Dan Carpenter <dan.carpenter@oracle.com>, David Daney <david.daney@cavium.com>, =?UTF-8?B?UmFsZiBCw6RjaGxl?= <ralf@linux-mips.org>, "Steven J. Hill" <steven.hill@cavium.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-mips@linux-mips.org, Ingo Molnar <mingo@kernel.org>, James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>, Marcin Nowakowski <marcin.nowakowski@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, May 24, 2017 at 9:43 PM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2017-05-24 at 18:01 +0200, SF Markus Elfring wrote:
->> I am curious if I will stumble on a similar change possibility once more
->> for remaining update candidates in other software areas.
->
-> Only if you keep your eyes open to the possibilities.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 May 2017 22:40:04 +0200
 
-It's like a puzzle: how to fold the if/else trees and forests to achieve
-the longest linear path and the smallest indentation ;-)
+A few update suggestions were taken into account
+from static source code analysis.
 
-And... goto (to the end/cleanup phase!) is your friend...
+Markus Elfring (5):
+  Delete an error message for a failed memory allocation in cps_pm_online_cpu()
+  Delete error messages for failed memory allocations in cps_prepare_cpus()
+  Delete an error message for a failed memory allocation in vpe_open()
+  Improve a size determination in two functions
+  Adjust 13 checks for null pointers
 
-Gr{oetje,eeting}s,
+ arch/mips/kernel/pm-cps.c  |  5 ++---
+ arch/mips/kernel/smp-cps.c |  9 ++-------
+ arch/mips/kernel/vpe.c     | 37 +++++++++++++++++--------------------
+ 3 files changed, 21 insertions(+), 30 deletions(-)
 
-                        Geert
+-- 
+2.13.0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
