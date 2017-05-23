@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 23 May 2017 15:19:52 +0000
+From: John Johansen <john.johansen@canonical.com>
+Date: Tue, 23 May 2017 18:38:57 +0000
 Subject: Re: [PATCH] apparmor: Fix error cod in __aa_fs_profile_mkdir()
-Message-Id: <59245318.4000809@bfs.de>
+Message-Id: <276ad893-7c4b-5980-fd4a-8bfaab8af0bb@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170523143346.GB28152@elgon.mountain>
 In-Reply-To: <20170523143346.GB28152@elgon.mountain>
@@ -10,15 +10,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-
-
-Am 23.05.2017 16:33, schrieb Dan Carpenter:
+On 05/23/2017 07:33 AM, Dan Carpenter wrote:
 > We can either return PTR_ERR(NULL) or a PTR_ERR(a valid pointer) here.
 > Returning NULL is probably not good, but since this happens at boot
 > then we are probably already toasted if we were to hit this bug in real
 > life.  In other words, it seems like a very low severity bug to me.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+yep,
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+and puled into my tree
+
 > 
 > diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
 > index 4f6ac9dbc65d..18f0d105084d 100644
@@ -37,19 +42,5 @@ Am 23.05.2017 16:33, schrieb Dan Carpenter:
 >  
 >  		mangle_name(profile->base.name, profile->dirname);
 >  		sprintf(profile->dirname + len, ".%ld", profile->ns->uniq_id++);
-
-Can mangle_name made to return a propper string ?
-IFF this can be reduced to
-	profile->dirname =kasprintf(GFP_KERNEL,"%s.%ld",mangle_name(),profile->ns->uniq_id);
-	if (!profile->dirname) ....
-
-just a hint.
-
-re,
- wh
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
+
