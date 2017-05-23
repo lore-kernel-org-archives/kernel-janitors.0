@@ -1,88 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 23 May 2017 13:07:01 +0000
-Subject: [PATCH] tipc: Delete error messages for failed memory allocations in three functions
-Message-Id: <7ac9d513-6f9f-a096-e68f-81a722c2723c@users.sourceforge.net>
+From: Joe Perches <joe@perches.com>
+Date: Tue, 23 May 2017 14:02:13 +0000
+Subject: Re: [PATCH] tipc: Delete error messages for failed memory allocations in three functions
+Message-Id: <1495548133.2093.58.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7ac9d513-6f9f-a096-e68f-81a722c2723c@users.sourceforge.net>
+In-Reply-To: <7ac9d513-6f9f-a096-e68f-81a722c2723c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 23 May 2017 14:45:25 +0200
+On Tue, 2017-05-23 at 15:07 +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 23 May 2017 14:45:25 +0200
+> 
+> Omit four extra messages for memory allocation failures in these functions.
 
-Omit four extra messages for memory allocation failures in these functions.
+This is fine but you should look to optimize or figure out
+whether optimization is desirable for the effective realloc.
 
-This issue was detected by using the Coccinelle software.
+> diff --git a/net/tipc/name_table.c b/net/tipc/name_table.c
+[]
+> @@ -270,11 +268,9 @@ static struct publication *tipc_nameseq_insert_publ(struct net *net,
+>  		if (nseq->first_free = nseq->alloc) {
+>  			struct sub_seq *sseqs = tipc_subseq_alloc(nseq->alloc * 2);
+>  
+> -			if (!sseqs) {
+> -				pr_warn("Cannot publish {%u,%u,%u}, no memory\n",
+> -					type, lower, upper);
+> +			if (!sseqs)
+>  				return NULL;
+> -			}
+> +
+>  			memcpy(sseqs, nseq->sseqs,
+>  			       nseq->alloc * sizeof(struct sub_seq));
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/tipc/name_table.c | 15 ++++-----------
- net/tipc/node.c       |  5 ++---
- 2 files changed, 6 insertions(+), 14 deletions(-)
+tipc_subseq_alloc does a kcalloc (memset to 0),
+half of which is immediately overwritten.
 
-diff --git a/net/tipc/name_table.c b/net/tipc/name_table.c
-index bd0aac87b41a..7e731af8a1a7 100644
---- a/net/tipc/name_table.c
-+++ b/net/tipc/name_table.c
-@@ -117,10 +117,8 @@ static struct publication *publ_create(u32 type, u32 lower, u32 upper,
- 				       u32 key)
- {
- 	struct publication *publ = kzalloc(sizeof(*publ), GFP_ATOMIC);
--	if (publ = NULL) {
--		pr_warn("Publication creation failure, no memory\n");
-+	if (!publ)
- 		return NULL;
--	}
- 
- 	publ->type = type;
- 	publ->lower = lower;
-@@ -270,11 +268,9 @@ static struct publication *tipc_nameseq_insert_publ(struct net *net,
- 		if (nseq->first_free = nseq->alloc) {
- 			struct sub_seq *sseqs = tipc_subseq_alloc(nseq->alloc * 2);
- 
--			if (!sseqs) {
--				pr_warn("Cannot publish {%u,%u,%u}, no memory\n",
--					type, lower, upper);
-+			if (!sseqs)
- 				return NULL;
--			}
-+
- 			memcpy(sseqs, nseq->sseqs,
- 			       nseq->alloc * sizeof(struct sub_seq));
- 			kfree(nseq->sseqs);
-@@ -283,11 +279,8 @@ static struct publication *tipc_nameseq_insert_publ(struct net *net,
- 		}
- 
- 		info = kzalloc(sizeof(*info), GFP_ATOMIC);
--		if (!info) {
--			pr_warn("Cannot publish {%u,%u,%u}, no memory\n",
--				type, lower, upper);
-+		if (!info)
- 			return NULL;
--		}
- 
- 		INIT_LIST_HEAD(&info->node_list);
- 		INIT_LIST_HEAD(&info->cluster_list);
-diff --git a/net/tipc/node.c b/net/tipc/node.c
-index aeef8011ac7d..0c7f5f755a28 100644
---- a/net/tipc/node.c
-+++ b/net/tipc/node.c
-@@ -324,10 +324,9 @@ struct tipc_node *tipc_node_create(struct net *net, u32 addr, u16 capabilities)
- 		goto exit;
- 	}
- 	n = kzalloc(sizeof(*n), GFP_ATOMIC);
--	if (!n) {
--		pr_warn("Node creation failed, no memory\n");
-+	if (!n)
- 		goto exit;
--	}
-+
- 	n->addr = addr;
- 	n->net = net;
- 	n->capabilities = capabilities;
--- 
-2.13.0
+In other words, don't just blindly remove stuff,
+understand what it does and improve it.
 
