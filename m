@@ -1,63 +1,109 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Mon, 08 May 2017 09:46:02 +0000
-Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot: fix some error handling in 'ls_ucode_img_load_gr'
-Message-Id: <CACvgo51qBNs7brqa1SEig+XoSom6J=MBnX1rs8Gsswmp=q4HrA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 23 May 2017 11:24:56 +0000
+Subject: Applied "regulator: palmas: Drop unnecessary static" to the regulator tree
+Message-Id: <E1dD7vs-0004V7-Lb@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: ML nouveau <nouveau@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org@vger.kernel.org
 
-Hi Christophe,
+The patch
 
-s/fix some error handling in 'ls_ucode_img_load_gr/plug memory leak in
-ls_ucode_img_load_gr() error path/
+   regulator: palmas: Drop unnecessary static
 
-On 8 May 2017 at 08:46, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> The last goto looks spurious because it releases less resources than the
-> previous one.
-> Add a new label in order to free the memory allocated by the 'kmemdup'
-> call.
->
-> Fixes: 9d896f3e41a6 ("drm/nouveau/secboot: abstract LS firmware loading functions")
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This fix is just a guess. I don't have the hardware to test it.
-> At first, I just wanted to change the last 'goto free_data' into a
-> 'goto free_img' in order to have a 'logical' goto layout.
-> Then, I changed my mind and added another label to revert the 'kmemdup' a
-> few lines above.
->
-> I hope I'm correct :)
-Coffee hasn't kicked in fully, but I think this is off. This free()
-will be called even on success leading to issues.
+has been applied to the regulator tree at
 
-> ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-> index d1cf02d22db1..1b83e1395c34 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/ls_ucode_gr.c
-> @@ -116,6 +116,7 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
->         ret = nvkm_firmware_get(subdev->device, f, &sig);
->         if (ret)
->                 goto free_data;
-> +
->         img->sig = kmemdup(sig->data, sig->size, GFP_KERNEL);
->         if (!img->sig) {
->                 ret = -ENOMEM;
-> @@ -127,10 +128,12 @@ ls_ucode_img_load_gr(const struct nvkm_subdev *subdev, struct ls_ucode_img *img,
->                                              &img->ucode_desc);
->         if (IS_ERR(img->ucode_data)) {
->                 ret = PTR_ERR(img->ucode_data);
-> -               goto free_data;
-> +               goto free_img_sig;
-Thus I'd just move the free here and use goto free_sig.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-Regards,
-Emil
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 96e4f5232c8cdb64cb18721ea0871c849346cbf5 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 4 May 2017 22:10:51 +0200
+Subject: [PATCH] regulator: palmas: Drop unnecessary static
+
+Drop static on a local variable, when the variable is initialized before
+any use, on every possible execution path through the function.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+There is no reduction in code size in this case, but the change does reduce
+the size of the bss segment, containing uninitialized static data.
+
+before:
+   text    data     bss     dec     hex filename
+  12882    3480       8   16370    3ff2 drivers/regulator/palmas-regulator.o
+
+after:
+   text    data     bss     dec     hex filename
+  12882    3480       0   16362    3fea drivers/regulator/palmas-regulator.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/palmas-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
+index 31ae5ee3a80d..34d4a62283d7 100644
+--- a/drivers/regulator/palmas-regulator.c
++++ b/drivers/regulator/palmas-regulator.c
+@@ -1491,7 +1491,7 @@ static int palmas_dt_to_pdata(struct device *dev,
+ 	}
+ 
+ 	for (idx = 0; idx < ddata->max_reg; idx++) {
+-		static struct of_regulator_match *match;
++		struct of_regulator_match *match;
+ 		struct palmas_reg_init *rinit;
+ 		struct device_node *np;
+ 
+-- 
+2.11.0
+
