@@ -1,57 +1,34 @@
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Date: Thu, 18 May 2017 08:41:08 +0000
-Subject: Re: [PATCH] power: ltc3651-charger: fix some error codes in probe
-Message-Id: <63d81057-f6b2-1fea-003d-3fa29638f89d@topic.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 May 2017 14:33:46 +0000
+Subject: [PATCH] apparmor: Fix error cod in __aa_fs_profile_mkdir()
+Message-Id: <20170523143346.GB28152@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518074346.flhmb7xi6m7j2cni@mwanda>
-In-Reply-To: <20170518074346.flhmb7xi6m7j2cni@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8-sig"
-Content-Transfer-Encoding: base64
-To: Dan Carpenter <dan.carpenter@oracle.com>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-security-module@vger.kernel.org
 
-77u/R29vZCBjYXRjaCwgeW91IGNhbiBhZGQgbXkKCkFja2VkLWJ5OiBNaWtlIExvb2lqbWFucyA8
-bWlrZS5sb29pam1hbnNAdG9waWMubmw+CgpPbiAxOC0wNS0xNyAwOTo0MywgRGFuIENhcnBlbnRl
-ciB3cm90ZToKPiBUaGVyZSBhcmUgc2V2ZXJhbCBjdXQgYW5kIHBhc3QgYnVncyBoZXJlLiAgbHRj
-MzY1MV9jaGFyZ2VyLT5jaGFyZ2VyIGlzCj4gTlVMTCBhdCB0aGlzIHBvaW50LCBzbyB3ZSByZXR1
-cm4gc3VjY2VzcyBpbnN0ZWFkIG9mIHRoZSBpbnRlbmRlZCBlcnJvcgo+IGNvZGVzLgo+Cj4gRml4
-ZXM6IGM5NGQ0ZWQwMTdhZSAoInBvd2VyOiBzdXBwbHk6IEFkZCBsdGMzNjUxLWNoYXJnZXIgZHJp
-dmVyIikKPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNs
-ZS5jb20+Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wb3dlci9zdXBwbHkvbHRjMzY1MS1jaGFy
-Z2VyLmMgYi9kcml2ZXJzL3Bvd2VyL3N1cHBseS9sdGMzNjUxLWNoYXJnZXIuYwo+IGluZGV4IDVm
-OGQ1YzBiNTcyMS4uZWVhNjNmZjIxMWM0IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvcG93ZXIvc3Vw
-cGx5L2x0YzM2NTEtY2hhcmdlci5jCj4gKysrIGIvZHJpdmVycy9wb3dlci9zdXBwbHkvbHRjMzY1
-MS1jaGFyZ2VyLmMKPiBAQCAtMTEwLDIxICsxMTAsMjEgQEAgc3RhdGljIGludCBsdGMzNjUxX2No
-YXJnZXJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCWx0YzM2NTFfY2hh
-cmdlci0+YWNwcl9ncGlvID0gZGV2bV9ncGlvZF9nZXQoJnBkZXYtPmRldiwKPiAgCQkJCQkibGx0
-YyxhY3ByIiwgR1BJT0RfSU4pOwo+ICAJaWYgKElTX0VSUihsdGMzNjUxX2NoYXJnZXItPmFjcHJf
-Z3BpbykpIHsKPiAtCQlyZXQgPSBQVFJfRVJSKGx0YzM2NTFfY2hhcmdlci0+Y2hhcmdlcik7Cj4g
-KwkJcmV0ID0gUFRSX0VSUihsdGMzNjUxX2NoYXJnZXItPmFjcHJfZ3Bpbyk7Cj4gIAkJZGV2X2Vy
-cigmcGRldi0+ZGV2LCAiRmFpbGVkIHRvIGFjcXVpcmUgYWNwciBHUElPOiAlZFxuIiwgcmV0KTsK
-PiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+ICAJbHRjMzY1MV9jaGFyZ2VyLT5mYXVsdF9ncGlvID0g
-ZGV2bV9ncGlvZF9nZXRfb3B0aW9uYWwoJnBkZXYtPmRldiwKPiAgCQkJCQkibGx0YyxmYXVsdCIs
-IEdQSU9EX0lOKTsKPiAgCWlmIChJU19FUlIobHRjMzY1MV9jaGFyZ2VyLT5mYXVsdF9ncGlvKSkg
-ewo+IC0JCXJldCA9IFBUUl9FUlIobHRjMzY1MV9jaGFyZ2VyLT5jaGFyZ2VyKTsKPiArCQlyZXQg
-PSBQVFJfRVJSKGx0YzM2NTFfY2hhcmdlci0+ZmF1bHRfZ3Bpbyk7Cj4gIAkJZGV2X2VycigmcGRl
-di0+ZGV2LCAiRmFpbGVkIHRvIGFjcXVpcmUgZmF1bHQgR1BJTzogJWRcbiIsIHJldCk7Cj4gIAkJ
-cmV0dXJuIHJldDsKPiAgCX0KPiAgCWx0YzM2NTFfY2hhcmdlci0+Y2hyZ19ncGlvID0gZGV2bV9n
-cGlvZF9nZXRfb3B0aW9uYWwoJnBkZXYtPmRldiwKPiAgCQkJCQkibGx0YyxjaHJnIiwgR1BJT0Rf
-SU4pOwo+ICAJaWYgKElTX0VSUihsdGMzNjUxX2NoYXJnZXItPmNocmdfZ3BpbykpIHsKPiAtCQly
-ZXQgPSBQVFJfRVJSKGx0YzM2NTFfY2hhcmdlci0+Y2hhcmdlcik7Cj4gKwkJcmV0ID0gUFRSX0VS
-UihsdGMzNjUxX2NoYXJnZXItPmNocmdfZ3Bpbyk7Cj4gIAkJZGV2X2VycigmcGRldi0+ZGV2LCAi
-RmFpbGVkIHRvIGFjcXVpcmUgY2hyZyBHUElPOiAlZFxuIiwgcmV0KTsKPiAgCQlyZXR1cm4gcmV0
-Owo+ICAJfQo+CgoKCktpbmQgcmVnYXJkcywKCk1pa2UgTG9vaWptYW5zClN5c3RlbSBFeHBlcnQK
-ClRPUElDIFByb2R1Y3RzCk1hdGVyaWFhbHdlZyA0LCBOTC01NjgxIFJKIEJlc3QKUG9zdGJ1cyA0
-NDAsIE5MLTU2ODAgQUsgQmVzdApUZWxlZm9vbjogKzMxICgwKSA0OTkgMzMgNjkgNzkKRS1tYWls
-OiBtaWtlLmxvb2lqbWFuc0B0b3BpY3Byb2R1Y3RzLmNvbQpXZWJzaXRlOiB3d3cudG9waWNwcm9k
-dWN0cy5jb20KClBsZWFzZSBjb25zaWRlciB0aGUgZW52aXJvbm1lbnQgYmVmb3JlIHByaW50aW5n
-IHRoaXMgZS1tYWlsCgoKCkpvaW4gb3VyIHByZXNlbnRhdGlvbiBhdCBFbGVjdHJvbmljcyAmIEFw
-cGxpY2F0aW9ucyAyMDE3OgpGUEdBIGZvciByZWFsLXRpbWUgZGF0YSBwcm9jZXNzaW5nLCBzdWJq
-ZWN0IOKAnEhhcmR3YXJlIHBsYXRmb3JtIGZvciBpbmR1c3RyaWFsIHVsdHJhc291bmQgc3RlZWwg
-cGxhdGUgSW5zcGVjdGlvbuKAnSBUb3BpYyBFbWJlZGRlZCBTeXN0ZW1zIC0gSGVybWFuIEt1c3Rl
-ciwgMXN0IEp1bmUgMTAgQU0KClZpc2l0IGh0dHA6Ly9lYWJldXJzLm5sL2F1dGhvci82MTI4ODQv
-IGZvciBtb3JlIGluZm9ybWF0aW9uCgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
-c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBv
-ZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBp
-bmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+We can either return PTR_ERR(NULL) or a PTR_ERR(a valid pointer) here.
+Returning NULL is probably not good, but since this happens at boot
+then we are probably already toasted if we were to hit this bug in real
+life.  In other words, it seems like a very low severity bug to me.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 4f6ac9dbc65d..18f0d105084d 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -728,8 +728,10 @@ int __aa_fs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+ 		id_len = snprintf(NULL, 0, ".%ld", profile->ns->uniq_id);
+ 
+ 		profile->dirname = kmalloc(len + id_len + 1, GFP_KERNEL);
+-		if (!profile->dirname)
+-			goto fail;
++		if (!profile->dirname) {
++			error = -ENOMEM;
++			goto fail2;
++		}
+ 
+ 		mangle_name(profile->base.name, profile->dirname);
+ 		sprintf(profile->dirname + len, ".%ld", profile->ns->uniq_id++);
