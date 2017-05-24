@@ -1,81 +1,23 @@
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 13 May 2017 01:11:38 +0000
-Subject: Re: [PATCH V2] SMB2: Fix share type handling
-Message-Id: <CAH2r5ms30x8Hk8Zc63n3yzd8muwYV+JdVrhwVzGNfpnT7vttYQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 20:26:44 +0000
+Subject: Re: MIPS: Alchemy: Delete an error message for a failed memory allocation in alchemy_pci_probe()
+Message-Id: <1c82a72d-b4f4-68d8-c814-7e44aa3705f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170512155932.20120-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170512155932.20120-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+References: <6ebb5193-239f-5c34-c5f6-2be8a2fa79a5@users.sourceforge.net>
+ <CAOLZvyHq-7q0XxiBsyX3q0g0J3kjfFv4SU7amX1hpjRDyK+feQ@mail.gmail.com>
+ <796029e7-60a3-a94b-8b5c-4686a0656560@users.sourceforge.net>
+ <98579b27-3052-0300-ec67-84f75f761a35@infradead.org>
+In-Reply-To: <98579b27-3052-0300-ec67-84f75f761a35@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, samba-technical <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Manuel Lauss <manuel.lauss@gmail.com>, linux-mips@linux-mips.org
+Cc: Paul Burton <paul.burton@imgtec.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Merged into cifs-2.6.git for-next
+> Why just this one error message when there are many in this function?
 
-On Fri, May 12, 2017 at 10:59 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> In fs/cifs/smb2pdu.h, we have:
-> #define SMB2_SHARE_TYPE_DISK    0x01
-> #define SMB2_SHARE_TYPE_PIPE    0x02
-> #define SMB2_SHARE_TYPE_PRINT   0x03
->
-> Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
-> never trigger and printer share would be interpreted as disk share.
->
-> So, test the ShareType value for equality instead.
->
-> Fixes: faaf946a7d5b ("CIFS: Add tree connect/disconnect capability for SMB2")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> V2: use a 'switch' instead of some 'if'
->
-> The v1 and related comments are quite old. They can be found at:
->    http://marc.info/?t7976541800001&r=1&w=4
-> ---
->  fs/cifs/smb2pdu.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index e0517f499c38..e4afdaae743f 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -1240,15 +1240,19 @@ SMB2_tcon(const unsigned int xid, struct cifs_ses *ses, const char *tree,
->                 goto tcon_exit;
->         }
->
-> -       if (rsp->ShareType & SMB2_SHARE_TYPE_DISK)
-> +       switch (rsp->ShareType) {
-> +       case SMB2_SHARE_TYPE_DISK:
->                 cifs_dbg(FYI, "connection to disk share\n");
-> -       else if (rsp->ShareType & SMB2_SHARE_TYPE_PIPE) {
-> +               break;
-> +       case SMB2_SHARE_TYPE_PIPE:
->                 tcon->ipc = true;
->                 cifs_dbg(FYI, "connection to pipe share\n");
-> -       } else if (rsp->ShareType & SMB2_SHARE_TYPE_PRINT) {
-> -               tcon->print = true;
-> +               break;
-> +       case SMB2_SHARE_TYPE_PRINT:
-> +               tcon->ipc = true;
->                 cifs_dbg(FYI, "connection to printer\n");
-> -       } else {
-> +               break;
-> +       default:
->                 cifs_dbg(VFS, "unknown share type %d\n", rsp->ShareType);
->                 rc = -EOPNOTSUPP;
->                 goto tcon_error_exit;
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+A bigger software update depends on corresponding change acceptance
+and consensus for the evolution of affected error handling, doesn't it?
 
-
-
--- 
-Thanks,
-
-Steve
+Regards,
+Markus
