@@ -1,76 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 04 May 2017 20:10:53 +0000
-Subject: [PATCH 8/9] clocksource/drivers/fttmr010: Drop unnecessary static
-Message-Id: <1493928654-18768-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 18:04:54 +0000
+Subject: [PATCH 2/2] blackfin: Delete an error message for a failed memory allocation in isram_test_init()
+Message-Id: <c4e70db8-2f26-6704-c918-babf99d950bd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a8f92213-f0c5-8a4f-2b9e-60645f426210@users.sourceforge.net>
+In-Reply-To: <a8f92213-f0c5-8a4f-2b9e-60645f426210@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+To: adi-buildroot-devel@lists.sourceforge.net, Ingo Molnar <mingo@kernel.org>, Steven Miao <realmz6@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Drop static on a local variable, when the variable is initialized before
-any use, on every possible execution path through the function.  The static
-has no benefit, and dropping it reduces the code size.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 19:39:32 +0200
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Omit an extra message for a memory allocation failure in this function.
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-static T x@p;
-...
-x = <+...x...+>
-
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
-
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
-
-The change in code size is indicates by the following output from the size
-command.
-
-before:
-   text    data     bss     dec     hex filename
-   1777    4352      20    6149    1805 drivers/clocksource/timer-fttmr010.o
-
-after:
-   text    data     bss     dec     hex filename
-   1770    4352      12    6134    17f6 drivers/clocksource/timer-fttmr010.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clocksource/timer-fttmr010.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/blackfin/mm/isram-driver.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
-index b4a6f1e..055c65e 100644
---- a/drivers/clocksource/timer-fttmr010.c
-+++ b/drivers/clocksource/timer-fttmr010.c
-@@ -263,7 +263,7 @@ static int __init fttmr010_timer_of_init(struct device_node *np)
+diff --git a/arch/blackfin/mm/isram-driver.c b/arch/blackfin/mm/isram-driver.c
+index aaa1e64b753b..4221b07a61dc 100644
+--- a/arch/blackfin/mm/isram-driver.c
++++ b/arch/blackfin/mm/isram-driver.c
+@@ -374,6 +374,5 @@ static __init int isram_test_init(void)
+ 	if (!sdram) {
+ 		sram_free(l1inst);
+-		pr_warning("SKIP: could not allocate sdram\n");
+ 		return 0;
+ 	}
  
- static int __init gemini_timer_of_init(struct device_node *np)
- {
--	static struct regmap *map;
-+	struct regmap *map;
- 	int ret;
- 	u32 val;
- 
+-- 
+2.13.0
 
