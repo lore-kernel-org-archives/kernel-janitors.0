@@ -1,26 +1,39 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Mon, 08 May 2017 14:26:37 +0000
-Subject: Re: [PATCH 0/3] IMA: Fine-tuning for three function implementations
-Message-Id: <1494253597.4078.13.camel@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 16:42:58 +0000
+Subject: [PATCH] MIPS: Alchemy: Delete an error message for a failed memory allocation in alchemy_pci_probe()
+Message-Id: <6ebb5193-239f-5c34-c5f6-2be8a2fa79a5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
-In-Reply-To: <416e6b01-7abb-d894-3bd6-d8bda05ed6b2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-mips@linux-mips.org, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 18:32:21 +0200
 
-On Sun, 2017-05-07 at 15:40 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 May 2017 15:35:15 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Sorry, these changes make backporting and upstreaming other changes
-more difficult without much benefit.
+This issue was detected by using the Coccinelle software.
 
-Mimi
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/mips/pci/pci-alchemy.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/mips/pci/pci-alchemy.c b/arch/mips/pci/pci-alchemy.c
+index e99ca7702d8a..a58c3290bd4e 100644
+--- a/arch/mips/pci/pci-alchemy.c
++++ b/arch/mips/pci/pci-alchemy.c
+@@ -377,7 +377,6 @@ static int alchemy_pci_probe(struct platform_device *pdev)
+ 
+ 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx) {
+-		dev_err(&pdev->dev, "no memory for pcictl context\n");
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.13.0
 
