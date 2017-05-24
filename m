@@ -1,51 +1,45 @@
-From: Ari Kauppi <Ari.Kauppi@synopsys.com>
-Date: Wed, 10 May 2017 05:24:54 +0000
-Subject: Re: [PATCH] nfsd: avoid out of bounds read on array nfsd4_layout_ops
-Message-Id: <6B1C9D91-4238-4103-9C0B-F9A2AFFDCC3B@synopsys.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 18:03:45 +0000
+Subject: [PATCH 1/2] blackfin: Delete an error message for a failed memory allocation in bfin_pm_suspend_mem_
+Message-Id: <ba3c2de3-a43d-0725-90c2-9c3b465eeb84@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170509133121.26529-1-colin.king@canonical.com>
- <20170509140414.ycw4z6zsdevbkozm@mwanda>
- <20170509210350.GD6289@fieldses.org>
- <5d21cd12-c842-d0ce-34bb-f037d0fd52ba@canonical.com>
-In-Reply-To: <5d21cd12-c842-d0ce-34bb-f037d0fd52ba@canonical.com>
+References: <a8f92213-f0c5-8a4f-2b9e-60645f426210@users.sourceforge.net>
+In-Reply-To: <a8f92213-f0c5-8a4f-2b9e-60645f426210@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, "J . Bruce Fields" <bfields@fieldses.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ari Kauppi <Ari.Kauppi@synopsys.com>, Jeff Layton <jlayton@poochiereds.net>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: adi-buildroot-devel@lists.sourceforge.net, Ingo Molnar <mingo@kernel.org>, Steven Miao <realmz6@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 May 2017 19:29:25 +0200
 
-> On 10.5.2017, at 0.14, Colin Ian King <colin.king@canonical.com> wrote:
-> 
-> On 09/05/17 22:03, J . Bruce Fields wrote:
->> On Tue, May 09, 2017 at 05:04:14PM +0300, Dan Carpenter wrote:
->>> On Tue, May 09, 2017 at 02:31:21PM +0100, Colin King wrote:
->>>> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
->>>> index 1dbf62190bee..c453a1998e00 100644
->>>> --- a/fs/nfsd/nfs4proc.c
->>>> +++ b/fs/nfsd/nfs4proc.c
->>>> @@ -1259,7 +1259,8 @@ nfsd4_layout_verify(struct svc_export *exp, unsigned int layout_type)
->>>> 		return NULL;
->>>> 	}
->>>> 
->>>> -	if (layout_type >= 32 || !(exp->ex_layout_types & (1 << layout_type))) {
->>>> +	if (layout_type >= LAYOUT_TYPE_MAX ||
->>>> +	    !(exp->ex_layout_types & (1 << layout_type))) {
->>> 
->>> The 32 is there to prevent a shift wrapping bug.  The bit test prevents
->>> a buffer overflow so this can't actually overflow.
->> 
->> Yes, looks like a false positive for coverity.
->> 
->>> But this change doesn't hurt and is probably cleaner.
->> 
->> Sure.  Hope it's OK if I just merge this into the previous commit:
-> 
-> Fine by me.  Colin
+Omit an extra message for a memory allocation failure in this function.
 
-Looks good to me.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/blackfin/mach-common/pm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---
-Ari
+diff --git a/arch/blackfin/mach-common/pm.c b/arch/blackfin/mach-common/pm.c
+index 5ece38a5b758..f4d442b7a1a1 100644
+--- a/arch/blackfin/mach-common/pm.c
++++ b/arch/blackfin/mach-common/pm.c
+@@ -151,10 +151,8 @@ int bfin_pm_suspend_mem_enter(void)
+ 					 + L1_DATA_B_LENGTH + L1_SCRATCH_LENGTH,
+ 					  GFP_ATOMIC);
+ 
+-	if (memptr = NULL) {
+-		panic("bf53x_suspend_l1_mem malloc failed");
++	if (!memptr)
+ 		return -ENOMEM;
+-	}
+ 
+ #ifndef CONFIG_BF60x
+ 	wakeup = bfin_read_VR_CTL() & ~FREQ;
+-- 
+2.13.0
+
