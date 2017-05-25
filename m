@@ -1,44 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 20:34:20 +0000
-Subject: [PATCH] IB/IPoIB: Delete an error message for a failed memory allocation in ipoib_dev_init_default()
-Message-Id: <cceafed0-9dd5-259a-634e-b93dae57e92b@users.sourceforge.net>
+Date: Thu, 25 May 2017 20:08:25 +0000
+Subject: [PATCH 2/2] regmap: Adjust five checks for null pointers in __regmap_init()
+Message-Id: <4bca89e5-9d86-4ec9-1105-cc921c50f910@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
+In-Reply-To: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>, Don Hiatt <don.hiatt@intel.com>, Doug Ledford <dledford@redhat.com>, Erez Shitrit <erezsh@mellanox.com>, Feras Daoud <ferasda@mellanox.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch <markb@mellanox.com>, Paolo Abeni <pabeni@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Shamir Rabinovitch <shamir.rabinovitch@oracle.com>, Zhu Yanjun <yanjun.zhu@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 May 2017 22:22:43 +0200
+Date: Thu, 25 May 2017 21:52:42 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus fix the affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/base/regmap/regmap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-index 2869d1adb1de..e31237af2d57 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -1618,11 +1618,8 @@ static int ipoib_dev_init_default(struct net_device *dev)
- 		goto out;
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 096499e1f223..2b1f073b72a6 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -618,7 +618,7 @@ struct regmap *__regmap_init(struct device *dev,
+ 		goto err;
  
- 	priv->tx_ring = vzalloc(ipoib_sendq_size * sizeof *priv->tx_ring);
--	if (!priv->tx_ring) {
--		printk(KERN_WARNING "%s: failed to allocate TX ring (%d entries)\n",
--		       priv->ca->name, ipoib_sendq_size);
-+	if (!priv->tx_ring)
- 		goto out_rx_ring_cleanup;
--	}
+ 	map = kzalloc(sizeof(*map), GFP_KERNEL);
+-	if (map = NULL) {
++	if (!map) {
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -918,7 +918,7 @@ struct regmap *__regmap_init(struct device *dev,
+ 		goto err_map;
  
- 	/* priv->tx_head, tx_tail & tx_outstanding are already 0 */
+ 	map->work_buf = kzalloc(map->format.buf_size, GFP_KERNEL);
+-	if (map->work_buf = NULL) {
++	if (!map->work_buf) {
+ 		ret = -ENOMEM;
+ 		goto err_map;
+ 	}
+@@ -993,7 +993,7 @@ struct regmap *__regmap_init(struct device *dev,
+ 		}
  
+ 		new = kzalloc(sizeof(*new), GFP_KERNEL);
+-		if (new = NULL) {
++		if (!new) {
+ 			ret = -ENOMEM;
+ 			goto err_range;
+ 		}
+@@ -1014,10 +1014,10 @@ struct regmap *__regmap_init(struct device *dev,
+ 			goto err_range;
+ 		}
+ 
+-		if (map->selector_work_buf = NULL) {
++		if (!map->selector_work_buf) {
+ 			map->selector_work_buf  				kzalloc(map->format.buf_size, GFP_KERNEL);
+-			if (map->selector_work_buf = NULL) {
++			if (!map->selector_work_buf) {
+ 				ret = -ENOMEM;
+ 				goto err_range;
+ 			}
 -- 
-2.12.3
+2.13.0
 
