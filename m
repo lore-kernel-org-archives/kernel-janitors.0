@@ -1,29 +1,38 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 20 May 2017 15:01:24 +0000
-Subject: Re: [PATCH] rtlwifi: btcoex: 23b 1ant: fix halbtc8723b1ant_action_wifi_only()
-Message-Id: <643aa5f9-5634-d910-e10f-51523e464b50@lwfinger.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 25 May 2017 13:45:03 +0000
+Subject: [PATCH][net-next] qtnfmac: remove duplicated assignment to mac
+Message-Id: <20170525134503.12106-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170520053343.gwdinyn447bwpia2@mwanda>
-In-Reply-To: <20170520053343.gwdinyn447bwpia2@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Kalle Valo <kvalo@codeaurora.org>, Huizhao Wang <hwang@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/20/2017 12:33 AM, Dan Carpenter wrote:
-> The parameters are in the wrong order when we call
-> halbtc8723b1ant_set_ant_path() so it's equivalent of calling:
-> 
-> 	halbtc8723b1ant_set_ant_path(btcoexist, BTC_ANT_PATH_WIFI, false, true);
-> 
-> Fixes: f66509e3d7c2 ("rtlwifi: btcoex: Remove 23b 1ant configuration parameter")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Now I know why I did not see the Sparse error. This problem was fixed in 
-https://patchwork.kernel.org/patch/9737583/, which is waiting to be merged. Once 
-that one is merged, this patch will no longer apply.
+mac is being assigned twice, remove redundant 2nd assignment.
 
-NACK.
+Detected by CoverityScan, CID#1437554 ("Incorrect expression")
 
-Larry
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index fc0ce2c09097..e3c090008125 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -922,7 +922,7 @@ void qtnf_netdev_updown(struct net_device *ndev, bool up)
+ void qtnf_virtual_intf_cleanup(struct net_device *ndev)
+ {
+ 	struct qtnf_vif *vif = qtnf_netdev_get_priv(ndev);
+-	struct qtnf_wmac *mac = mac = wiphy_priv(vif->wdev.wiphy);
++	struct qtnf_wmac *mac = wiphy_priv(vif->wdev.wiphy);
+ 
+ 	if (vif->wdev.iftype = NL80211_IFTYPE_STATION) {
+ 		switch (vif->sta_state) {
+-- 
+2.11.0
+
