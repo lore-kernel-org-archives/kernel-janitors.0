@@ -1,27 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 May 2017 15:24:51 +0000
-Subject: Re: [PATCH] liquidio: make the spinlock octeon_devices_lock static
-Message-Id: <20170518.112451.1077297322113539139.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 May 2017 17:18:03 +0000
+Subject: [PATCH] s390: kernel: Delete an error message for a failed memory allocation in cpcmd()
+Message-Id: <225c2a55-eb6e-35cb-285a-cb664a34bc7e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518091401.13013-1-colin.king@canonical.com>
-In-Reply-To: <20170518091401.13013-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: derek.chickles@caviumnetworks.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 18 May 2017 10:14:01 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 May 2017 19:09:50 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> octeon_devices_lock can be made static as it does not need to be
-> in global scope.
-> 
-> Cleans up sparse warning: "warning: symbol 'octeon_devices_lock'
-> was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/kernel/cpcmd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/s390/kernel/cpcmd.c b/arch/s390/kernel/cpcmd.c
+index 9f0e4a2785f7..2f9c97813846 100644
+--- a/arch/s390/kernel/cpcmd.c
++++ b/arch/s390/kernel/cpcmd.c
+@@ -95,10 +95,9 @@ int cpcmd(const char *cmd, char *response, int rlen, int *response_code)
+ 	if ((virt_to_phys(response) != (unsigned long) response) ||
+ 			(((unsigned long)response + rlen) >> 31)) {
+ 		lowbuf = kmalloc(rlen, GFP_KERNEL | GFP_DMA);
+-		if (!lowbuf) {
+-			pr_warn("The cpcmd kernel function failed to allocate a response buffer\n");
++		if (!lowbuf)
+ 			return -ENOMEM;
+-		}
++
+ 		spin_lock_irqsave(&cpcmd_lock, flags);
+ 		len = __cpcmd(cmd, lowbuf, rlen, response_code);
+ 		spin_unlock_irqrestore(&cpcmd_lock, flags);
+-- 
+2.13.0
+
