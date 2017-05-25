@@ -1,44 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 May 2017 16:47:21 +0000
-Subject: [PATCH 2/4] drm/dp: Combine two seq_printf() calls into one call in drm_dp_mst_dump_topology()
-Message-Id: <0632f7bd-e58c-0b7d-163d-7e1a6e97ff25@users.sourceforge.net>
+Date: Thu, 25 May 2017 20:07:18 +0000
+Subject: [PATCH 1/2] regmap: Delete an error message for a failed memory allocation in regmap_bulk_write()
+Message-Id: <56cba529-03eb-9088-3fea-8fbb50c355af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
-In-Reply-To: <1949e36b-5039-a7b6-5774-6ada7eb05ea6@users.sourceforge.net>
+References: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
+In-Reply-To: <7d7b8131-5aea-cb33-994f-f410dc7cd615@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 17:15:43 +0200
+Date: Thu, 25 May 2017 21:43:58 +0200
 
-Some data were put into a sequence by two separate function calls.
-Print the same data by a single function call instead.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/regmap/regmap.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 89fc05fa6a74..2ddcb3d2f65a 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2861,8 +2861,8 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
- 		for (i = 0x3; i < 0x8 && buf[i]; i++)
- 			seq_printf(m, "%c", buf[i]);
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index b9a779a4a739..096499e1f223 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1945,10 +1945,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 			return -EINVAL;
  
--		seq_printf(m, " revision: hw: %x.%x sw: %x.%x", buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
--		seq_printf(m, "\n");
-+		seq_printf(m, " revision: hw: %x.%x sw: %x.%x\n",
-+			   buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
- 		bret = dump_dp_payload_table(mgr, buf);
- 		if (bret = true) {
- 			seq_printf(m, "payload table: ");
+ 		wval = kmemdup(val, val_count * val_bytes, map->alloc_flags);
+-		if (!wval) {
+-			dev_err(map->dev, "Error in memory allocation\n");
++		if (!wval)
+ 			return -ENOMEM;
+-		}
++
+ 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
+ 			map->format.parse_inplace(wval + i);
+ 
 -- 
-2.12.2
+2.13.0
 
