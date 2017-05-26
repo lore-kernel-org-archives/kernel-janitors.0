@@ -1,44 +1,36 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Fri, 05 May 2017 19:40:15 +0000
-Subject: Re: [PATCH] ipmi_ssif: unlock on allocation failure
-Message-Id: <13fb5ee9-589a-b8a5-ca0d-2224d01896ea@acm.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 26 May 2017 10:11:37 +0000
+Subject: [PATCH] scsi: lpfc: fix spelling mistake "entrys" -> "entries"
+Message-Id: <20170526101137.14282-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170505053324.uvufggdlbml2c56e@mwanda>
-In-Reply-To: <20170505053324.uvufggdlbml2c56e@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/05/2017 12:33 AM, Dan Carpenter wrote:
-> We should unlock and re-enable IRQs if this allocation fails.
->
-> Fixes: 259307074bfc ("ipmi: Add SMBus interface driver (SSIF) ")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, Dan, in queue for 4.13.
+Trivial fix to spelling mistake in debugfs message
 
--corey
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index 0b22a9be5029..6dd6476ea5d3 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -408,6 +408,7 @@ static void start_event_fetch(struct ssif_info *ssif_info, unsigned long *flags)
->   	msg = ipmi_alloc_smi_msg();
->   	if (!msg) {
->   		ssif_info->ssif_state = SSIF_NORMAL;
-> +		ipmi_ssif_unlock_cond(ssif_info, flags);
->   		return;
->   	}
->   
-> @@ -430,6 +431,7 @@ static void start_recv_msg_fetch(struct ssif_info *ssif_info,
->   	msg = ipmi_alloc_smi_msg();
->   	if (!msg) {
->   		ssif_info->ssif_state = SSIF_NORMAL;
-> +		ipmi_ssif_unlock_cond(ssif_info, flags);
->   		return;
->   	}
->   
-
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index 4bcb92c844ca..efd8a17ac2e5 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -323,7 +323,7 @@ lpfc_debugfs_hbqinfo_data(struct lpfc_hba *phba, char *buf, int size)
+ 	raw_index = phba->hbq_get[i];
+ 	getidx = le32_to_cpu(raw_index);
+ 	len +=  snprintf(buf+len, size-len,
+-		"entrys:%d bufcnt:%d Put:%d nPut:%d localGet:%d hbaGet:%d\n",
++		"entries:%d bufcnt:%d Put:%d nPut:%d localGet:%d hbaGet:%d\n",
+ 		hbqs->entry_count, hbqs->buffer_count, hbqs->hbqPutIdx,
+ 		hbqs->next_hbqPutIdx, hbqs->local_hbqGetIdx, getidx);
+ 
+-- 
+2.11.0
 
