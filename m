@@ -1,56 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 09 May 2017 07:26:49 +0000
-Subject: [PATCH 1/3] ath9k: Reduce function calls for sequence output in read_file_dma()
-Message-Id: <2bae9fbe-a5a7-f2bb-0769-0d035738650c@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 26 May 2017 11:42:18 +0000
+Subject: Applied "spi: omap2-mcspi: remove redundant check for error status" to the spi tree
+Message-Id: <E1dEDdK-0000r7-Nf@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
-In-Reply-To: <03575993-754d-924c-9736-2a8d19e98fa5@users.sourceforge.net>
+References: <20170525165134.18103-1-colin.king@canonical.com>
+In-Reply-To: <20170525165134.18103-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 21:55:09 +0200
+The patch
 
-Some data were put into a sequence by separate function calls.
-Print the same data with two function calls less.
+   spi: omap2-mcspi: remove redundant check for error status
 
-This issue was detected by using the Coccinelle software.
+has been applied to the spi tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ad7449969d827965484306ad8cc56edc7e55687c Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 25 May 2017 17:51:34 +0100
+Subject: [PATCH] spi: omap2-mcspi: remove redundant check for error status
+
+The check to see if status is less than zero is actually redundant
+as all previous places where it is -ve have already branched to the
+exit paths, so it is never less than zero at the check.
+
+Detected by CoverityScan, CID#1357119 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/debug.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/spi/spi-omap2-mcspi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
-index 2e64977a8ab6..981b38a1e352 100644
---- a/drivers/net/wireless/ath/ath9k/debug.c
-+++ b/drivers/net/wireless/ath/ath9k/debug.c
-@@ -427,9 +427,7 @@ static int read_file_dma(struct seq_file *file, void *data)
- 		seq_printf(file, "%d: %08x ", i, val[i]);
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index 7275223dbcd4..e048268d8ba2 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -1412,9 +1412,6 @@ static int omap2_mcspi_probe(struct platform_device *pdev)
+ 		sprintf(mcspi->dma_channels[i].dma_tx_ch_name, "tx%d", i);
  	}
  
--	seq_puts(file, "\n\n");
--	seq_puts(file, "Num QCU: chain_st fsp_ok fsp_st DCU: chain_st\n");
+-	if (status < 0)
+-		goto free_master;
 -
-+	seq_puts(file, "\n\nNum QCU: chain_st fsp_ok fsp_st DCU: chain_st\n");
- 	for (i = 0; i < ATH9K_NUM_QUEUES; i++, qcuOffset += 4, dcuOffset += 5) {
- 		if (i = 8) {
- 			qcuOffset = 0;
-@@ -448,9 +446,8 @@ static int read_file_dma(struct seq_file *file, void *data)
- 			   (*dcuBase & (0x1f << dcuOffset)) >> dcuOffset);
- 	}
- 
--	seq_puts(file, "\n");
--
--	seq_printf(file, "qcu_stitch state:   %2x    qcu_fetch state:        %2x\n",
-+	seq_printf(file,
-+		   "\nqcu_stitch state:   %2x    qcu_fetch state:        %2x\n",
- 		   (val[3] & 0x003c0000) >> 18, (val[3] & 0x03c00000) >> 22);
- 	seq_printf(file, "qcu_complete state: %2x    dcu_complete state:     %2x\n",
- 		   (val[3] & 0x1c000000) >> 26, (val[6] & 0x3));
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, SPI_AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_enable(&pdev->dev);
 -- 
-2.12.2
+2.11.0
 
