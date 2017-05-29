@@ -1,43 +1,35 @@
-From: Jens Axboe <axboe@fb.com>
-Date: Tue, 09 May 2017 14:50:17 +0000
-Subject: Re: [PATCH] lightnvm: Remove an unused variable
-Message-Id: <ff06f5a2-bff2-a366-34d4-53b993c13602@fb.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 29 May 2017 13:26:22 +0000
+Subject: [PATCH v2] X.509: Fix error code in x509_cert_parse()
+Message-Id: <20170529132622.6tapug7i7aqmvnqz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170509093450.dgj3qghdwefpg6li@mwanda>
- <79988EFB-7909-4234-B4D9-435AAFAE2E07@lightnvm.io>
-In-Reply-To: <79988EFB-7909-4234-B4D9-435AAFAE2E07@lightnvm.io>
+References: <4045.1495558143@warthog.procyon.org.uk>
+In-Reply-To: <4045.1495558143@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/09/2017 04:19 AM, Javier Gonz=E1lez wrote:
->> On 9 May 2017, at 11.34, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> "rq" is never used in nvme_nvm_rqtocmd().  We also recently shifted some
->> code around so it's uninitialized and causes a static checker warning.
->> Let's just remove it.
->>
->=20
-> Looks good. I didn't see it when I refactored that part.
-> Matias: If it is ok with you, can you pick it up?
->=20
-> Reviewed-by: Javier Gonz=E1lez <javier@cnexlabs.com>
+We forgot to set the error code on this path so it could result in
+returning NULL which leads to a NULL dereference.
 
-Geert sent in a similar fix two days ago, it's already queued up:
+Fixes: db6c43bd2132 ("crypto: KEYS: convert public key and digsig asym to the akcipher api")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  Style change
 
-commit 629b1b2e0e6c8285fdc21624af60e8190fa4417e
-Author: Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun May 7 16:14:44 2017 +0200
+Sorry for the delay, I'm been out of office.
 
-    lightnvm: remove unused rq parameter of nvme_nvm_rqtocmd() to kill warn=
-ing
-
---=20
-Jens Axboe
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index c80765b211cf..dd03fead1ca3 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -102,6 +102,7 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
+ 		}
+ 	}
+ 
++	ret = -ENOMEM;
+ 	cert->pub->key = kmemdup(ctx->key, ctx->key_size, GFP_KERNEL);
+ 	if (!cert->pub->key)
+ 		goto error_decode;
