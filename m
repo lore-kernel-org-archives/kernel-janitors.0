@@ -1,39 +1,50 @@
-From: Eric Huang <jinhuieric.huang@amd.com>
-Date: Thu, 18 May 2017 16:28:09 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: fix a signedness bugs
-Message-Id: <ef4ba551-a52b-d2e0-5ba4-7271ee6f4e85@amd.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 May 2017 09:44:20 +0000
+Subject: [PATCH] gpiolib: remove unused variable 'i'
+Message-Id: <20170530094420.31076-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170516144253.vvu3i6mbx3rv5uki@mwanda>
-In-Reply-To: <20170516144253.vvu3i6mbx3rv5uki@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>
-Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Ken Wang <Qingqing.wang@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Reviewed-by: Eric Huang <JinHuiEric.Huang@amd.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+Fixes smatch warning: unused variable 'i' [-Wunused-variable]
 
-On 2017-05-16 10:42 AM, Dan Carpenter wrote:
-> Smatch complains about a signedness bug here:
->
-> 	vega10_hwmgr.c:4202 vega10_force_clock_level()
-> 	warn: always true condition '(i >= 0) => (0-u32max >= 0)'
->
-> Fixes: 7b52db39a4c2 ("drm/amd/powerplay: fix bug sclk/mclk level can't be set on vega10.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> index ad30f5d3a10d..2614af2f553f 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> @@ -4186,7 +4186,7 @@ static int vega10_force_clock_level(struct pp_hwmgr *hwmgr,
->   		enum pp_clock_type type, uint32_t mask)
->   {
->   	struct vega10_hwmgr *data = (struct vega10_hwmgr *)(hwmgr->backend);
-> -	uint32_t i;
-> +	int i;
->   
->   	if (hwmgr->dpm_level != AMD_DPM_FORCED_LEVEL_MANUAL)
->   		return -EINVAL;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpiolib.c                   | 2 --
+ sound/soc/generic/audio-graph-scu-card.c | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index be8097097326..62ffb4e293d2 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1471,8 +1471,6 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+ 
+ static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+ {
+-	int i;
+-
+ 	if (!gpiochip->irq_need_valid_mask)
+ 		return 0;
+ 
+diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
+index c5c52d1f500c..e15f63c74f59 100644
+--- a/sound/soc/generic/audio-graph-scu-card.c
++++ b/sound/soc/generic/audio-graph-scu-card.c
+@@ -246,7 +246,7 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
+ 			continue;
+ 
+ 		if (rcpu_ep != cpu_ep) {
+-			dev_err(dev, "remote-endpoint missmatch (%s/%s/%s)\n",
++			dev_err(dev, "remote-endpoint mismatch (%s/%s/%s)\n",
+ 				cpu_ep->name, codec_ep->name, rcpu_ep->name);
+ 			ret = -EINVAL;
+ 			goto parse_of_err;
+-- 
+2.11.0
 
