@@ -1,66 +1,88 @@
-From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Date: Fri, 05 May 2017 15:29:46 +0000
-Subject: Re: [PATCH] cxl: Unlock on error in probe
-Message-Id: <88932312-cbb5-40b0-da84-430535314389@linux.vnet.ibm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 30 May 2017 09:58:30 +0000
+Subject: [PATCH] ALSA: sound/core/pcm_timer.c: include pcm_local.h and remove some extraneous tabs
+Message-Id: <20170530095830.31534-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170505053458.csrwd2kjber44r4o@mwanda>
-In-Reply-To: <20170505053458.csrwd2kjber44r4o@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ian Munsie <imunsie@au1.ibm.com>, Christophe Lombard <clombard@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+We need to include pcm_local.h to clean up some smatch warnings:
 
-Le 05/05/2017 =E0 07:34, Dan Carpenter a =E9crit :
-> We should unlock if get_cxl_adapter() fails.
->
-> Fixes: 594ff7d067ca ("cxl: Support to flash a new image on the adapter fr=
-om a guest")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+symbol 'snd_pcm_timer_done' was not declared. Should it be static?
+symbol 'snd_pcm_timer_init' was not declared. Should it be static?
+symbol 'snd_pcm_timer_resolution_change' was not declared. Should
+  it be static?
 
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Also remove some extraneous tabs on empty lines.
 
-Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/pcm_timer.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-   Fred
+diff --git a/sound/core/pcm_timer.c b/sound/core/pcm_timer.c
+index 20ecd8f18080..b182cac00dd8 100644
+--- a/sound/core/pcm_timer.c
++++ b/sound/core/pcm_timer.c
+@@ -25,6 +25,8 @@
+ #include <sound/pcm.h>
+ #include <sound/timer.h>
+ 
++#include "pcm_local.h"
++
+ /*
+  *  Timer functions
+  */
+@@ -33,7 +35,7 @@ void snd_pcm_timer_resolution_change(struct snd_pcm_substream *substream)
+ {
+ 	unsigned long rate, mult, fsize, l, post;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+-	
++
+         mult = 1000000000;
+ 	rate = runtime->rate;
+ 	if (snd_BUG_ON(!rate))
+@@ -65,7 +67,7 @@ void snd_pcm_timer_resolution_change(struct snd_pcm_substream *substream)
+ static unsigned long snd_pcm_timer_resolution(struct snd_timer * timer)
+ {
+ 	struct snd_pcm_substream *substream;
+-	
++
+ 	substream = timer->private_data;
+ 	return substream->runtime ? substream->runtime->timer_resolution : 0;
+ }
+@@ -73,7 +75,7 @@ static unsigned long snd_pcm_timer_resolution(struct snd_timer * timer)
+ static int snd_pcm_timer_start(struct snd_timer * timer)
+ {
+ 	struct snd_pcm_substream *substream;
+-	
++
+ 	substream = snd_timer_chip(timer);
+ 	substream->timer_running = 1;
+ 	return 0;
+@@ -82,7 +84,7 @@ static int snd_pcm_timer_start(struct snd_timer * timer)
+ static int snd_pcm_timer_stop(struct snd_timer * timer)
+ {
+ 	struct snd_pcm_substream *substream;
+-	
++
+ 	substream = snd_timer_chip(timer);
+ 	substream->timer_running = 0;
+ 	return 0;
+@@ -112,7 +114,7 @@ void snd_pcm_timer_init(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_timer_id tid;
+ 	struct snd_timer *timer;
+-	
++
+ 	tid.dev_sclass = SNDRV_TIMER_SCLASS_NONE;
+ 	tid.dev_class = SNDRV_TIMER_CLASS_PCM;
+ 	tid.card = substream->pcm->card->number;
+-- 
+2.11.0
 
-
-
-> diff --git a/drivers/misc/cxl/flash.c b/drivers/misc/cxl/flash.c
-> index 7c61c70ba3f6..37475abea3e6 100644
-> --- a/drivers/misc/cxl/flash.c
-> +++ b/drivers/misc/cxl/flash.c
-> @@ -401,8 +401,10 @@ static int device_open(struct inode *inode, struct f=
-ile *file)
->  	if (down_interruptible(&sem) !=3D 0)
->  		return -EPERM;
->
-> -	if (!(adapter =3D get_cxl_adapter(adapter_num)))
-> -		return -ENODEV;
-> +	if (!(adapter =3D get_cxl_adapter(adapter_num))) {
-> +		rc =3D -ENODEV;
-> +		goto err_unlock;
-> +	}
->
->  	file->private_data =3D adapter;
->  	continue_token =3D 0;
-> @@ -446,6 +448,8 @@ static int device_open(struct inode *inode, struct fi=
-le *file)
->  		free_page((unsigned long) le);
->  err:
->  	put_device(&adapter->dev);
-> +err_unlock:
-> +	up(&sem);
->
->  	return rc;
->  }
->
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
