@@ -1,40 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 17 May 2017 12:51:56 +0000
-Subject: [PATCH] tools/power x86_energy_perf_policy: fix resource leak on file descriptor
-Message-Id: <20170517125156.10977-1-colin.king@canonical.com>
+From: "Brown, Len" <len.brown@intel.com>
+Date: Wed, 31 May 2017 17:24:43 +0000
+Subject: RE: [PATCH] tools/power x86_energy_perf_policy: fix resource leak on file descriptor
+Message-Id: <1A7043D5F58CCB44A599DFD55ED4C94846B8B6E5@fmsmsx115.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170517125156.10977-1-colin.king@canonical.com>
+In-Reply-To: <20170517125156.10977-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <len.brown@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Colin King <colin.king@canonical.com>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Function get_pkg_num is leaking an open file, fix this with a fclose().
-
-Detected with static analysis by cppcheck:
-[tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c:1115]:
-   (error) Resource leak: fp
-
-Fixes: 4beec1d7519691 ("tools/power x86_energy_perf_policy: support HWP.EPP")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index 65bbe627a425..26a5b5265290 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -1110,6 +1110,7 @@ unsigned int get_pkg_num(int cpu)
- 
- 	fp = fopen_or_die(pathname, "r");
- 	retval = fscanf(fp, "%d\n", &pkg);
-+	fclose(fp);
- 	if (retval != 1)
- 		errx(1, "%s: failed to parse", pathname);
- 	return pkg;
--- 
-2.11.0
-
+QWNrZWQtYnk6IExlbiBCcm93biA8bGVuLmJyb3duQGludGVsLmNvbT4NCg0KDQotLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyBbbWFpbHRvOmNvbGluLmtpbmdAY2Fu
+b25pY2FsLmNvbV0gDQpTZW50OiBXZWRuZXNkYXksIE1heSAxNywgMjAxNyA4OjUyIEFNDQpUbzog
+QnJvd24sIExlbiA8bGVuLmJyb3duQGludGVsLmNvbT4NCkNjOiBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBbUEFU
+Q0hdIHRvb2xzL3Bvd2VyIHg4Nl9lbmVyZ3lfcGVyZl9wb2xpY3k6IGZpeCByZXNvdXJjZSBsZWFr
+IG9uIGZpbGUgZGVzY3JpcHRvcg0KDQpGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPg0KDQpGdW5jdGlvbiBnZXRfcGtnX251bSBpcyBsZWFraW5nIGFuIG9wZW4g
+ZmlsZSwgZml4IHRoaXMgd2l0aCBhIGZjbG9zZSgpLg0KDQpEZXRlY3RlZCB3aXRoIHN0YXRpYyBh
+bmFseXNpcyBieSBjcHBjaGVjazoNClt0b29scy9wb3dlci94ODYveDg2X2VuZXJneV9wZXJmX3Bv
+bGljeS94ODZfZW5lcmd5X3BlcmZfcG9saWN5LmM6MTExNV06DQogICAoZXJyb3IpIFJlc291cmNl
+IGxlYWs6IGZwDQoNCkZpeGVzOiA0YmVlYzFkNzUxOTY5MSAoInRvb2xzL3Bvd2VyIHg4Nl9lbmVy
+Z3lfcGVyZl9wb2xpY3k6IHN1cHBvcnQgSFdQLkVQUCIpDQpTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJ
+YW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KLS0tDQogdG9vbHMvcG93ZXIveDg2
+L3g4Nl9lbmVyZ3lfcGVyZl9wb2xpY3kveDg2X2VuZXJneV9wZXJmX3BvbGljeS5jIHwgMSArDQog
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS90b29scy9wb3dl
+ci94ODYveDg2X2VuZXJneV9wZXJmX3BvbGljeS94ODZfZW5lcmd5X3BlcmZfcG9saWN5LmMgYi90
+b29scy9wb3dlci94ODYveDg2X2VuZXJneV9wZXJmX3BvbGljeS94ODZfZW5lcmd5X3BlcmZfcG9s
+aWN5LmMNCmluZGV4IDY1YmJlNjI3YTQyNS4uMjZhNWI1MjY1MjkwIDEwMDY0NA0KLS0tIGEvdG9v
+bHMvcG93ZXIveDg2L3g4Nl9lbmVyZ3lfcGVyZl9wb2xpY3kveDg2X2VuZXJneV9wZXJmX3BvbGlj
+eS5jDQorKysgYi90b29scy9wb3dlci94ODYveDg2X2VuZXJneV9wZXJmX3BvbGljeS94ODZfZW5l
+cmd5X3BlcmZfcG9saWN5LmMNCkBAIC0xMTEwLDYgKzExMTAsNyBAQCB1bnNpZ25lZCBpbnQgZ2V0
+X3BrZ19udW0oaW50IGNwdSkNCiANCiAJZnAgPSBmb3Blbl9vcl9kaWUocGF0aG5hbWUsICJyIik7
+DQogCXJldHZhbCA9IGZzY2FuZihmcCwgIiVkXG4iLCAmcGtnKTsNCisJZmNsb3NlKGZwKTsNCiAJ
+aWYgKHJldHZhbCAhPSAxKQ0KIAkJZXJyeCgxLCAiJXM6IGZhaWxlZCB0byBwYXJzZSIsIHBhdGhu
+YW1lKTsNCiAJcmV0dXJuIHBrZzsNCi0tIA0KMi4xMS4wDQoNCg=
