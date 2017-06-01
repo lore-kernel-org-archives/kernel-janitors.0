@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 20:52:10 +0000
-Subject: [PATCH 5/5] ARM: OMAP1: Fix a typo in a comment line
-Message-Id: <664000ee-e49f-17cf-19fb-ec639833deab@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 20:49:06 +0000
+Subject: [PATCH 2/5] ARM: OMAP1: DMA: Delete an error message for a failed memory allocation in omap1_system_
+Message-Id: <cda37778-b59c-ae5e-529d-b435750dcd8f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
@@ -11,28 +11,29 @@ Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 22:17:03 +0200
+Date: Thu, 1 Jun 2017 21:54:36 +0200
 
-Adjust a line in this description for the software module.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-omap1/timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap1/dma.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/timer.c b/arch/arm/mach-omap1/timer.c
-index 637f8c9d9f10..8fb1ec6fa999 100644
---- a/arch/arm/mach-omap1/timer.c
-+++ b/arch/arm/mach-omap1/timer.c
-@@ -3,7 +3,7 @@
-  *
-  * Contains first level initialization routines which internally
-  * generates timer device information and registers with linux
-- * device model. It also has low level function to chnage the timer
-+ * device model. It also has a low level function to change the timer
-  * input clock source.
-  *
-  * Copyright (C) 2011 Texas Instruments Incorporated - http://www.ti.com/
+diff --git a/arch/arm/mach-omap1/dma.c b/arch/arm/mach-omap1/dma.c
+index 823dba3dc033..c545b4e01d53 100644
+--- a/arch/arm/mach-omap1/dma.c
++++ b/arch/arm/mach-omap1/dma.c
+@@ -343,6 +343,4 @@ static int __init omap1_system_dma_init(void)
+ 	if (!d) {
+-		dev_err(&pdev->dev, "%s: Unable to allocate 'd' for %s\n",
+-			__func__, pdev->name);
+ 		ret = -ENOMEM;
+ 		goto exit_iounmap;
+ 	}
 -- 
 2.13.0
 
