@@ -1,74 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Jun 2017 14:18:31 +0000
-Subject: Applied "ASoC: max9867: make array ni_div static const" to the asoc tree
-Message-Id: <E1dO2wJ-0007YV-09@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 20:51:04 +0000
+Subject: [PATCH 4/5] ARM: OMAP1: Delete an error message for a failed memory allocation in omap1_dm_timer_ini
+Message-Id: <3a130a87-96e7-792b-29b7-f43f93ae78bc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622093231.11389-1-colin.king@canonical.com>
-In-Reply-To: <20170622093231.11389-1-colin.king@canonical.com>
+References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
+In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-arm-kernel@lists.infradead.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 22:04:29 +0200
 
-   ASoC: max9867: make array ni_div static const
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1943b0661184a5d17f31624dc8ac2c02a086c998 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 22 Jun 2017 10:32:31 +0100
-Subject: [PATCH] ASoC: max9867: make array ni_div static const
-
-The array ni_div does not need to be in global scope and is not
-modified, so make it static const.
-
-Cleans up sparse warning:
-"symbol 'ni_div' was not declared. Should it be static?"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/max9867.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap1/timer.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
-index 0247edc9c84e..2a40a69a7513 100644
---- a/sound/soc/codecs/max9867.c
-+++ b/sound/soc/codecs/max9867.c
-@@ -132,7 +132,7 @@ enum rates {
- 	pcm_rate_48, max_pcm_rate,
- };
- 
--struct ni_div_rates {
-+static const struct ni_div_rates {
- 	u32 mclk;
- 	u16 ni[max_pcm_rate];
- } ni_div[] = {
+diff --git a/arch/arm/mach-omap1/timer.c b/arch/arm/mach-omap1/timer.c
+index 06c5ba7574a5..637f8c9d9f10 100644
+--- a/arch/arm/mach-omap1/timer.c
++++ b/arch/arm/mach-omap1/timer.c
+@@ -136,6 +136,4 @@ static int __init omap1_dm_timer_init(void)
+ 		if (!pdata) {
+-			dev_err(&pdev->dev, "%s: Failed to allocate pdata.\n",
+-				__func__);
+ 			ret = -ENOMEM;
+ 			goto err_free_pdata;
+ 		}
 -- 
-2.11.0
+2.13.0
 
