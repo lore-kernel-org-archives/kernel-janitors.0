@@ -1,35 +1,55 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 23 Jun 2017 19:38:11 +0000
-Subject: [PATCH] thermal: bcm2835:
-Message-Id: <20170623193811.8016-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 16:02:15 +0000
+Subject: [PATCH 3/3] ARM: dmabounce: Combine substrings for two messages
+Message-Id: <f31af146-5988-6834-8a38-a274da70cf95@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
+In-Reply-To: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-'tz' is a valid pointer at this point, so calling PTR_ERR on it is
-pointless.
-This 'err = PTR_ERR(tz)' looks like a cut'n'paste from a few lines above.
-So remove it. 'err' is already the error we want to report.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 17:23:52 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: quoted string split across lines
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/broadcom/bcm2835_thermal.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/common/dmabounce.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 0ecf80890c84..e6863c841662 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 		 */
- 		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
- 		if (err < 0) {
--			err = PTR_ERR(tz);
- 			dev_err(&pdev->dev,
- 				"Not able to read trip_temp: %d\n",
- 				err);
+diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+index 9ef7ab64b3d8..e2fbdab41810 100644
+--- a/arch/arm/common/dmabounce.c
++++ b/arch/arm/common/dmabounce.c
+@@ -227,8 +227,9 @@ static int needs_bounce(struct device *dev, dma_addr_t dma_addr, size_t size)
+ 
+ 		limit = (mask + 1) & ~mask;
+ 		if (limit && size > limit) {
+-			dev_err(dev, "DMA mapping too big (requested %#x "
+-				"mask %#Lx)\n", size, *dev->dma_mask);
++			dev_err(dev,
++				"DMA mapping too big (requested %#x mask %#Lx)\n",
++				size, *dev->dma_mask);
+ 			return -E2BIG;
+ 		}
+ 
+@@ -546,8 +547,7 @@ void dmabounce_unregister_dev(struct device *dev)
+ 
+ 	if (!device_info) {
+ 		dev_warn(dev,
+-			 "Never registered with dmabounce but attempting"
+-			 "to unregister!\n");
++			 "Never registered with dmabounce but attempting to unregister!\n");
+ 		return;
+ 	}
+ 
 -- 
-2.11.0
+2.13.0
 
