@@ -1,25 +1,41 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Date: Mon, 26 Jun 2017 11:07:09 +0000
-Subject: Re: [PATCH][sound-next] ASoC: zx_aud96p22: make aud96p22_dt_ids static
-Message-Id: <CAAQ0ZWR5apOX3D-7TiFSauo6=nMHpngFp6ex_-khAea8Se8rig@mail.gmail.com>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Thu, 01 Jun 2017 12:23:06 +0000
+Subject: [PATCH] Eliminate extra 'out_free' label from fcoe_init function
+Message-Id: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170626090014.8977-1-colin.king@canonical.com>
-In-Reply-To: <20170626090014.8977-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Baoyou Xie <baoyou.xie@linaro.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
 
-On Mon, Jun 26, 2017 at 5:00 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The structure aud96p22_dt_ids does not need to be in global scope,
-> so make it static.
->
-> Cleans up sparse warning:
-> "warning: symbol 'aud96p22_dt_ids' was not declared. Should it be static?"
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Simplify the check for return code of fcoe_if_init routine
+in fcoe_init function such that we could eliminate need for
+extra 'out_free' label.
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+---
+ drivers/scsi/fcoe/fcoe.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index ea21e7b..fb2a4c9 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -2523,13 +2523,11 @@ static int __init fcoe_init(void)
+ 	fcoe_dev_setup();
+ 
+ 	rc = fcoe_if_init();
+-	if (rc)
+-		goto out_free;
+-
+-	mutex_unlock(&fcoe_config_mutex);
+-	return 0;
++	if (rc = 0) {
++		mutex_unlock(&fcoe_config_mutex);
++		return 0;
++	}
+ 
+-out_free:
+ 	mutex_unlock(&fcoe_config_mutex);
+ out_destroy:
+ 	destroy_workqueue(fcoe_wq);
