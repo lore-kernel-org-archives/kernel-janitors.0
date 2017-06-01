@@ -1,20 +1,28 @@
-From: <Woojung.Huh@microchip.com>
-Date: Thu, 01 Jun 2017 13:53:15 +0000
-Subject: RE: [PATCH][net-next] net: dsa: make function ksz_rcv static
-Message-Id: <9235D6609DB808459E95D78E17F2E43D40AA7BD2@CHN-SV-EXMX02.mchp-main.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 01 Jun 2017 16:12:58 +0000
+Subject: Re: [PATCH][net-next] net: dsa: make function ksz_rcv static
+Message-Id: <20170601.121258.1089374239881121559.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170601122242.14341-1-colin.king@canonical.com>
 In-Reply-To: <20170601122242.14341-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, davem@davemloft.net, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: Woojung.Huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiBmdW5jdGlvbiBrc3pfcmN2IGNhbiBiZSBtYWRlIHN0YXRpYyBhcyBpdCBkb2VzIG5vdCBuZWVk
-IHRvIGJlDQo+IGluIGdsb2JhbCBzY29wZS4gUmVmb3JtYXQgYXJndW1lbnRzIHRvIG1ha2UgaXQg
-Y2hlY2twYXRjaCB3YXJuaW5nDQo+IGZyZWUgdG9vLg0KPiANCj4gQ2xlYW5zIHVwIHNwYXJzZSB3
-YXJuaW5nOiAic3ltYm9sICdrc3pfcmN2JyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQNCj4gaXQg
-YmUgc3RhdGljPyINCj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
-aW5nQGNhbm9uaWNhbC5jb20+DQoNClJldmlld2VkLWJ5OiBXb29qdW5nIEh1aCA8V29vanVuZy5I
-dWhAbWljcm9jaGlwLmNvbT4NCg=
+From: Colin King <colin.king@canonical.com>
+Date: Thu,  1 Jun 2017 13:22:42 +0100
+
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> function ksz_rcv can be made static as it does not need to be
+> in global scope. Reformat arguments to make it checkpatch warning
+> free too.
+> 
+> Cleans up sparse warning: "symbol 'ksz_rcv' was not declared. Should
+> it be static?"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied.
