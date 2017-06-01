@@ -1,32 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jun 2017 11:45:00 +0000
-Subject: [PATCH] tools/power x86_energy_perf_policy: remove unneeded check
-Message-Id: <20170628114500.bw2yhctvm6feo3hp@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 20:46:28 +0000
+Subject: [PATCH 0/5] ARM-OMAP1: Adjustments for three function implementations
+Message-Id: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170517125156.10977-1-colin.king@canonical.com>
-In-Reply-To: <20170517125156.10977-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <len.brown@intel.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-"i" is an int so this test is only ever possible with 32 bit systems.
-The error message is not very useful and there are better tests directly
-afterward so this test isn't needed.  Let's just delete these lines.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 22:40:04 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A few update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index 65bbe627a425..de4a888f1a3e 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -332,8 +332,6 @@ int parse_optarg_string(char *s)
- 		fprintf(stderr, "no digits in \"%s\"\n", s);
- 		usage();
- 	}
--	if (i = LONG_MIN || i = LONG_MAX)
--		errx(-1, "%s", s);
- 
- 	if (i > 0xFF)
- 		errx(-1, "%d (0x%x) must be < 256", i, i);
+Markus Elfring (5):
+  Improve a size determination in omap1_system_dma_init()
+  Delete an error message for a failed memory allocation in omap1_system_dma_init()
+  Delete an unnecessary return statement in omap1_show_dma_caps()
+  Delete an error message for a failed memory allocation in omap1_dm_timer_init()
+  Fix a typo in a comment line
+
+ arch/arm/mach-omap1/dma.c   | 5 +----
+ arch/arm/mach-omap1/timer.c | 4 +---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
+
+-- 
+2.13.0
+
