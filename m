@@ -1,25 +1,27 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 19 Jun 2017 06:40:26 +0000
-Subject: Re: [PATCH] crypto: glue_helper - Delete some dead code
-Message-Id: <20170619064026.GA13800@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 15:56:20 +0000
+Subject: [PATCH 0/3] ARM: dmabounce: Adjustments for four function implementations
+Message-Id: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170510055226.5mlkw654cl6djc65@mwanda>
-In-Reply-To: <20170510055226.5mlkw654cl6djc65@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, May 10, 2017 at 08:52:26AM +0300, Dan Carpenter wrote:
-> We checked (nbytes < bsize) inside the loops so it's not possible to hit
-> the "goto done;" here.  This code is cut and paste from other slightly
-> different loops where we don't have the check inside the loop.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 17:34:56 +0200
 
-Patch applied.  Thanks.
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (3):
+  Improve a size determination in two functions
+  Delete an error message for a failed memory allocation in two functions
+  Combine substrings for two messages
+
+ arch/arm/common/dmabounce.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.13.0
+
