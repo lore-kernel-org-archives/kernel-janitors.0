@@ -1,39 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jun 2017 11:48:18 +0000
-Subject: [PATCH 2/2] bcache: Update continue_at() documentation
-Message-Id: <20170628114818.c7avv5773pa4gb37@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 20:52:10 +0000
+Subject: [PATCH 5/5] ARM: OMAP1: Fix a typo in a comment line
+Message-Id: <664000ee-e49f-17cf-19fb-ec639833deab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628114707.5oy4wmslmrethlzn@mwanda>
-In-Reply-To: <20170628114707.5oy4wmslmrethlzn@mwanda>
+References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
+In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@fb.com>, Ingo Molnar <mingo@kernel.org>, Coly Li <colyli@suse.de>, Yijing Wang <wangyijing@huawei.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-continue_at() doesn't have a return statement anymore.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 22:17:03 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Adjust a line in this description for the software module.
 
-diff --git a/drivers/md/bcache/closure.h b/drivers/md/bcache/closure.h
-index 1ec84ca81146..295b7e43f92c 100644
---- a/drivers/md/bcache/closure.h
-+++ b/drivers/md/bcache/closure.h
-@@ -312,8 +312,6 @@ static inline void closure_wake_up(struct closure_waitlist *list)
-  * been dropped with closure_put()), it will resume execution at @fn running out
-  * of @wq (or, if @wq is NULL, @fn will be called by closure_put() directly).
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap1/timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap1/timer.c b/arch/arm/mach-omap1/timer.c
+index 637f8c9d9f10..8fb1ec6fa999 100644
+--- a/arch/arm/mach-omap1/timer.c
++++ b/arch/arm/mach-omap1/timer.c
+@@ -3,7 +3,7 @@
   *
-- * NOTE: This macro expands to a return in the calling function!
-- *
-  * This is because after calling continue_at() you no longer have a ref on @cl,
-  * and whatever @cl owns may be freed out from under you - a running closure fn
-  * has a ref on its own closure which continue_at() drops.
-@@ -340,8 +338,6 @@ do {									\
-  * Causes @fn to be executed out of @cl, in @wq context (or called directly if
-  * @wq is NULL).
+  * Contains first level initialization routines which internally
+  * generates timer device information and registers with linux
+- * device model. It also has low level function to chnage the timer
++ * device model. It also has a low level function to change the timer
+  * input clock source.
   *
-- * NOTE: like continue_at(), this macro expands to a return in the caller!
-- *
-  * The ref the caller of continue_at_nobarrier() had on @cl is now owned by @fn,
-  * thus it's not safe to touch anything protected by @cl after a
-  * continue_at_nobarrier().
+  * Copyright (C) 2011 Texas Instruments Incorporated - http://www.ti.com/
+-- 
+2.13.0
+
