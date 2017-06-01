@@ -1,55 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 26 Jun 2017 09:10:03 +0000
-Subject: [PATCH][-next] platform/chrome: make a couple of structures static
-Message-Id: <20170626091003.9341-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 15:59:55 +0000
+Subject: [PATCH 1/3] ARM: dmabounce: Improve a size determination in two functions
+Message-Id: <d78ce917-3920-7858-b866-48a61b1c8fc3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
+In-Reply-To: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Olof Johansson <olof@lixom.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Jun 2017 17:00:17 +0200
 
-The structures cros_ec_console_log_fops and cros_ec_lpc_pm_ops do
-not need to be in global scope, so make them static.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Cleans up sparse warnings:
-"symbol 'cros_ec_console_log_fops' was not declared. Should it be static?"
-"symbol 'cros_ec_lpc_pm_ops' was not declared. Should it be static?"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/platform/chrome/cros_ec_debugfs.c | 2 +-
- drivers/platform/chrome/cros_ec_lpc.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/common/dmabounce.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 4cc66f405760..c4717017f935 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -214,7 +214,7 @@ static int cros_ec_console_log_release(struct inode *inode, struct file *file)
- 	return 0;
- }
+diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+index 9b1b7be2ec0e..fcdecb2de242 100644
+--- a/arch/arm/common/dmabounce.c
++++ b/arch/arm/common/dmabounce.c
+@@ -123,5 +123,5 @@ alloc_safe_buffer(struct dmabounce_device_info *device_info, void *ptr,
+ 		pool = NULL;
+ 	}
  
--const struct file_operations cros_ec_console_log_fops = {
-+static const struct file_operations cros_ec_console_log_fops = {
- 	.owner = THIS_MODULE,
- 	.open = cros_ec_console_log_open,
- 	.read = cros_ec_console_log_read,
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index eeb187e558ce..3eb110bb4424 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -381,7 +381,7 @@ static int cros_ec_lpc_resume(struct device *dev)
- }
- #endif
+-	buf = kmalloc(sizeof(struct safe_buffer), GFP_ATOMIC);
++	buf = kmalloc(sizeof(*buf), GFP_ATOMIC);
+ 	if (buf = NULL) {
+@@ -487,5 +487,5 @@ int dmabounce_register_dev(struct device *dev, unsigned long small_buffer_size,
+ 	struct dmabounce_device_info *device_info;
+ 	int ret;
  
--const struct dev_pm_ops cros_ec_lpc_pm_ops = {
-+static const struct dev_pm_ops cros_ec_lpc_pm_ops = {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(cros_ec_lpc_suspend, cros_ec_lpc_resume)
- };
- 
+-	device_info = kmalloc(sizeof(struct dmabounce_device_info), GFP_ATOMIC);
++	device_info = kmalloc(sizeof(*device_info), GFP_ATOMIC);
+ 	if (!device_info) {
 -- 
-2.11.0
+2.13.0
 
