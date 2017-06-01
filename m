@@ -1,35 +1,44 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 08 Jun 2017 01:37:52 +0000
-Subject: Re: [PATCH] rtc: rtc-max8925: remove redundant check on ret
-Message-Id: <CAHp75VfBLQjtZPgY9pDxu4Lp__u+E+bfS=A6-id9cpPCX_ZQoQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 01 Jun 2017 12:22:42 +0000
+Subject: [PATCH][net-next] net: dsa: make function ksz_rcv static
+Message-Id: <20170601122242.14341-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170607152615.2072-1-colin.king@canonical.com>
-In-Reply-To: <20170607152615.2072-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Woojung Huh <Woojung.Huh@microchip.com>, Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 7, 2017 at 6:26 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check on ret < 0 is redundant as the goto destination is the
-> next statment.  Remove this redudant check and goto.
->
-> Detected by CoverityScan, CID#1268785 ("Identical code for different
-> branches")
+From: Colin Ian King <colin.king@canonical.com>
 
->                 ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
->         else
->                 ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x0);
-> -       if (ret < 0)
-> -               goto out;
->  out:
->         return ret;
+function ksz_rcv can be made static as it does not need to be
+in global scope. Reformat arguments to make it checkpatch warning
+free too.
 
-...and label (w/ replacing it by inplace return ret;) ?
+Cleans up sparse warning: "symbol 'ksz_rcv' was not declared. Should
+it be static?"
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/dsa/tag_ksz.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/dsa/tag_ksz.c b/net/dsa/tag_ksz.c
+index 0b08a40b493a..dfcd2fff5b13 100644
+--- a/net/dsa/tag_ksz.c
++++ b/net/dsa/tag_ksz.c
+@@ -72,8 +72,9 @@ static struct sk_buff *ksz_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	return nskb;
+ }
+ 
+-struct sk_buff *ksz_rcv(struct sk_buff *skb, struct net_device *dev,
+-			struct packet_type *pt, struct net_device *orig_dev)
++static struct sk_buff *ksz_rcv(struct sk_buff *skb, struct net_device *dev,
++			       struct packet_type *pt,
++			       struct net_device *orig_dev)
+ {
+ 	struct dsa_switch_tree *dst = dev->dsa_ptr;
+ 	struct dsa_switch *ds;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
