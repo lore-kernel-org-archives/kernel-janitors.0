@@ -1,55 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 16:02:15 +0000
-Subject: [PATCH 3/3] ARM: dmabounce: Combine substrings for two messages
-Message-Id: <f31af146-5988-6834-8a38-a274da70cf95@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 01 Jun 2017 09:50:30 +0000
+Subject: Re: [net-next] qtnfmac: remove duplicated assignment to mac
+Message-Id: <20170601095030.463D260779@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
-In-Reply-To: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
+References: <20170525134503.12106-1-colin.king@canonical.com>
+In-Reply-To: <20170525134503.12106-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Huizhao Wang <hwang@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 17:23:52 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The script "checkpatch.pl" pointed information out like the following.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> mac is being assigned twice, remove redundant 2nd assignment.
+> 
+> Detected by CoverityScan, CID#1437554 ("Incorrect expression")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-WARNING: quoted string split across lines
+Patch applied to wireless-drivers-next.git, thanks.
 
-Thus fix the affected source code places.
+4f8e25458cb6 qtnfmac: remove duplicated assignment to mac
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/common/dmabounce.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
-index 9ef7ab64b3d8..e2fbdab41810 100644
---- a/arch/arm/common/dmabounce.c
-+++ b/arch/arm/common/dmabounce.c
-@@ -227,8 +227,9 @@ static int needs_bounce(struct device *dev, dma_addr_t dma_addr, size_t size)
- 
- 		limit = (mask + 1) & ~mask;
- 		if (limit && size > limit) {
--			dev_err(dev, "DMA mapping too big (requested %#x "
--				"mask %#Lx)\n", size, *dev->dma_mask);
-+			dev_err(dev,
-+				"DMA mapping too big (requested %#x mask %#Lx)\n",
-+				size, *dev->dma_mask);
- 			return -E2BIG;
- 		}
- 
-@@ -546,8 +547,7 @@ void dmabounce_unregister_dev(struct device *dev)
- 
- 	if (!device_info) {
- 		dev_warn(dev,
--			 "Never registered with dmabounce but attempting"
--			 "to unregister!\n");
-+			 "Never registered with dmabounce but attempting to unregister!\n");
- 		return;
- 	}
- 
 -- 
-2.13.0
+https://patchwork.kernel.org/patch/9748407/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
