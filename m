@@ -1,31 +1,57 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Jun 2017 01:05:29 +0000
-Subject: Re: [PATCH] scsi: lpfc: make a couple of functions static
-Message-Id: <yq1poe8zoh2.fsf@oracle.com>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Thu, 01 Jun 2017 12:17:49 +0000
+Subject: [PATCH] Fix few small typos in fcoe.c
+Message-Id: <656c7fa1-fce4-8a72-1cbe-32a47da5cec2@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170518093524.13549-1-colin.king@canonical.com>
-In-Reply-To: <20170518093524.13549-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 18 May 2017 10:35:24 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Laurence Oberman <loberman@redhat.com>, Johannes Thumshirn <jth@kernel.org>
 
+This patch does a cleanup and fixes few small typos in fcoe.c
 
-Colin,
+Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+---
+ drivers/scsi/fcoe/fcoe.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> functions lpfc_nvmet_cleanup_io_context and
-> lpfc_nvmet_setup_io_context can be made static as they do not need to
-> be in global scope.
->
-> Cleans up sparse warnings:
->   "warning: symbol 'lpfc_nvmet_cleanup_io_context' was not declared.
->    Should it be static?"
->   "warning: symbol 'lpfc_nvmet_setup_io_context' was not declared.
->    Should it be static?"
-
-Applied to 4.13/scsi-queue, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index 90939f6..7b960d3 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -519,7 +519,7 @@ static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
+  * @skb:      The receive skb
+  * @netdev:   The associated net device
+  * @ptype:    The packet_type structure which was used to register this handler
+- * @orig_dev: The original net_device the the skb was received on.
++ * @orig_dev: The original net_device the skb was received on.
+  *	      (in case dev is a bond)
+  *
+  * Returns: 0 for success
+@@ -542,7 +542,7 @@ static int fcoe_fip_recv(struct sk_buff *skb, struct net_device *netdev,
+  * @skb:      The receive skb
+  * @netdev:   The associated net device
+  * @ptype:    The packet_type structure which was used to register this handler
+- * @orig_dev: The original net_device the the skb was received on.
++ * @orig_dev: The original net_device the skb was received on.
+  *	      (in case dev is a bond)
+  *
+  * Returns: 0 for success
+@@ -2590,7 +2590,7 @@ module_exit(fcoe_exit);
+  * fcoe_flogi_resp() - FCoE specific FLOGI and FDISC response handler
+  * @seq: active sequence in the FLOGI or FDISC exchange
+  * @fp: response frame, or error encoded in a pointer (timeout)
+- * @arg: pointer the the fcoe_ctlr structure
++ * @arg: pointer to the fcoe_ctlr structure
+  *
+  * This handles MAC address management for FCoE, then passes control on to
+  * the libfc FLOGI response handler.
+@@ -2619,7 +2619,7 @@ static void fcoe_flogi_resp(struct fc_seq *seq, struct fc_frame *fp, void *arg)
+  * fcoe_logo_resp() - FCoE specific LOGO response handler
+  * @seq: active sequence in the LOGO exchange
+  * @fp: response frame, or error encoded in a pointer (timeout)
+- * @arg: pointer the the fcoe_ctlr structure
++ * @arg: pointer to the fcoe_ctlr structure
+  *
+  * This handles MAC address management for FCoE, then passes control on to
+  * the libfc LOGO response handler.
