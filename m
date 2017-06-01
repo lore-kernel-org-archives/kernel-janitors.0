@@ -1,41 +1,30 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Thu, 01 Jun 2017 12:23:06 +0000
-Subject: [PATCH] Eliminate extra 'out_free' label from fcoe_init function
-Message-Id: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Date: Thu, 01 Jun 2017 13:07:20 +0000
+Subject: Re: [PATCH] Eliminate extra 'out_free' label from fcoe_init function
+Message-Id: <2b91bd28-61f9-9db0-68d4-7fd25ed6eaa1@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
+In-Reply-To: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mgandhi@redhat.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
 
-Simplify the check for return code of fcoe_if_init routine
-in fcoe_init function such that we could eliminate need for
-extra 'out_free' label.
+On 06/01/2017 02:11 PM, Milan P. Gandhi wrote:
+> Simplify the check for return code of fcoe_if_init routine
+> in fcoe_init function such that we could eliminate need for
+> extra 'out_free' label.
+> 
+> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+> ---
 
-Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
----
- drivers/scsi/fcoe/fcoe.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Ahm and what happens to the fcoe_wq then?
 
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index ea21e7b..fb2a4c9 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -2523,13 +2523,11 @@ static int __init fcoe_init(void)
- 	fcoe_dev_setup();
- 
- 	rc = fcoe_if_init();
--	if (rc)
--		goto out_free;
--
--	mutex_unlock(&fcoe_config_mutex);
--	return 0;
-+	if (rc = 0) {
-+		mutex_unlock(&fcoe_config_mutex);
-+		return 0;
-+	}
- 
--out_free:
- 	mutex_unlock(&fcoe_config_mutex);
- out_destroy:
- 	destroy_workqueue(fcoe_wq);
+
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
