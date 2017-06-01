@@ -1,57 +1,29 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Thu, 01 Jun 2017 12:17:49 +0000
-Subject: [PATCH] Fix few small typos in fcoe.c
-Message-Id: <656c7fa1-fce4-8a72-1cbe-32a47da5cec2@redhat.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Date: Thu, 01 Jun 2017 13:04:24 +0000
+Subject: Re: [PATCH] Fix few small typos in fcoe.c
+Message-Id: <f1c8a503-d212-1a87-9cac-927060a2170f@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <656c7fa1-fce4-8a72-1cbe-32a47da5cec2@redhat.com>
+In-Reply-To: <656c7fa1-fce4-8a72-1cbe-32a47da5cec2@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Laurence Oberman <loberman@redhat.com>, Johannes Thumshirn <jth@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mgandhi@redhat.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Laurence Oberman <loberman@redhat.com>, Johannes Thumshirn <jth@kernel.org>
 
-This patch does a cleanup and fixes few small typos in fcoe.c
+On 06/01/2017 02:05 PM, Milan P. Gandhi wrote:
+> This patch does a cleanup and fixes few small typos in fcoe.c
+> 
+> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+> ---
 
-Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
----
- drivers/scsi/fcoe/fcoe.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Looks good,
+Acked-by: Johannes Thumshirn <jth@kernel.org>
 
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index 90939f6..7b960d3 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -519,7 +519,7 @@ static void fcoe_interface_cleanup(struct fcoe_interface *fcoe)
-  * @skb:      The receive skb
-  * @netdev:   The associated net device
-  * @ptype:    The packet_type structure which was used to register this handler
-- * @orig_dev: The original net_device the the skb was received on.
-+ * @orig_dev: The original net_device the skb was received on.
-  *	      (in case dev is a bond)
-  *
-  * Returns: 0 for success
-@@ -542,7 +542,7 @@ static int fcoe_fip_recv(struct sk_buff *skb, struct net_device *netdev,
-  * @skb:      The receive skb
-  * @netdev:   The associated net device
-  * @ptype:    The packet_type structure which was used to register this handler
-- * @orig_dev: The original net_device the the skb was received on.
-+ * @orig_dev: The original net_device the skb was received on.
-  *	      (in case dev is a bond)
-  *
-  * Returns: 0 for success
-@@ -2590,7 +2590,7 @@ module_exit(fcoe_exit);
-  * fcoe_flogi_resp() - FCoE specific FLOGI and FDISC response handler
-  * @seq: active sequence in the FLOGI or FDISC exchange
-  * @fp: response frame, or error encoded in a pointer (timeout)
-- * @arg: pointer the the fcoe_ctlr structure
-+ * @arg: pointer to the fcoe_ctlr structure
-  *
-  * This handles MAC address management for FCoE, then passes control on to
-  * the libfc FLOGI response handler.
-@@ -2619,7 +2619,7 @@ static void fcoe_flogi_resp(struct fc_seq *seq, struct fc_frame *fp, void *arg)
-  * fcoe_logo_resp() - FCoE specific LOGO response handler
-  * @seq: active sequence in the LOGO exchange
-  * @fp: response frame, or error encoded in a pointer (timeout)
-- * @arg: pointer the the fcoe_ctlr structure
-+ * @arg: pointer to the fcoe_ctlr structure
-  *
-  * This handles MAC address management for FCoE, then passes control on to
-  * the libfc LOGO response handler.
+
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
