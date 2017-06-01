@@ -1,36 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:30:14 +0000
-Subject: [PATCH 4/9] ARM: OMAP2+: McBSP: Improve a size determination in omap_init_mcbsp()
-Message-Id: <b83f5bc2-c6a2-a53e-5dec-33e31f9addeb@users.sourceforge.net>
+Date: Thu, 01 Jun 2017 16:00:53 +0000
+Subject: [PATCH 2/3] ARM: dmabounce: Delete an error message for a failed memory allocation in two functions
+Message-Id: <f03717c9-9cc8-d339-0e04-b6888a4ce90b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+References: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
+In-Reply-To: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 17:56:57 +0200
+Date: Thu, 1 Jun 2017 17:10:39 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in these functions.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-omap2/mcbsp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/common/dmabounce.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/mcbsp.c b/arch/arm/mach-omap2/mcbsp.c
-index 53c4a30e2963..408793d14fc5 100644
---- a/arch/arm/mach-omap2/mcbsp.c
-+++ b/arch/arm/mach-omap2/mcbsp.c
-@@ -66,3 +66,3 @@ static int __init omap_init_mcbsp(struct omap_hwmod *oh, void *unused)
+diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+index fcdecb2de242..9ef7ab64b3d8 100644
+--- a/arch/arm/common/dmabounce.c
++++ b/arch/arm/common/dmabounce.c
+@@ -127,7 +127,5 @@ alloc_safe_buffer(struct dmabounce_device_info *device_info, void *ptr,
+-	if (buf = NULL) {
+-		dev_warn(dev, "%s: kmalloc failed\n", __func__);
++	if (!buf)
+ 		return NULL;
+-	}
  
--	pdata = kzalloc(sizeof(struct omap_mcbsp_platform_data), GFP_KERNEL);
-+	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata) {
+ 	buf->ptr = ptr;
+ 	buf->size = size;
+@@ -491,8 +489,5 @@ int dmabounce_register_dev(struct device *dev, unsigned long small_buffer_size,
+-	if (!device_info) {
+-		dev_err(dev,
+-			"Could not allocated dmabounce_device_info\n");
++	if (!device_info)
+ 		return -ENOMEM;
+-	}
+ 
+ 	ret = dmabounce_init_pool(&device_info->small, dev,
+ 				  "small_dmabounce_pool", small_buffer_size);
 -- 
 2.13.0
 
