@@ -1,43 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 11 Jun 2017 08:34:47 +0000
-Subject: Re: [PATCH 1/2] scsi: qedi: Fix a return value in case of error in 'qedi_alloc_global_queues'
-Message-Id: <593D00A7.1090507@bfs.de>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Fri, 02 Jun 2017 12:51:05 +0000
+Subject: [PATCH RESEND] Eliminate extra 'out_free' label from fcoe_init function
+Message-Id: <8e1e75c4-3a80-00c3-2697-37fb1c86f7a1@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1497162751.git.christophe.jaillet@wanadoo.fr> <aafc9e362592524150d11f61dc7ab0b49e75f698.1497162751.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aafc9e362592524150d11f61dc7ab0b49e75f698.1497162751.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>, Laurence Oberman <loberman@redhat.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
+Simplify the check for return code of fcoe_if_init routine
+in fcoe_init function such that we could eliminate need for
+extra 'out_free' label and duplicate mutex_unlock statement.
 
+Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+---
+ drivers/scsi/fcoe/fcoe.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Am 11.06.2017 08:40, schrieb Christophe JAILLET:
-> We should return -ENOMEM in case of memory allocation error, as done
-> elsewhere in this function.
-> 
-> Fixes: ace7f46ba5fde ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/scsi/qedi/qedi_main.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-> index f46880315ba8..c81e494a9067 100644
-> --- a/drivers/scsi/qedi/qedi_main.c
-> +++ b/drivers/scsi/qedi/qedi_main.c
-> @@ -1319,6 +1319,7 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
->  		if (!qedi->global_queues[i]) {
->  			QEDI_ERR(&qedi->dbg_ctx,
->  				 "Unable to allocation global queue %d.\n", i);
-> +			status = -ENOMEM;
->  			goto mem_alloc_failure;
->  		}
->  
-
-copy of  "[PATCH 1/3] scsi: qedf: Fix a return value in case ..." ?
-
-same strange error message
-re,
- wh
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index ea21e7b..a2cf3d0 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -2523,14 +2523,13 @@ static int __init fcoe_init(void)
+ 	fcoe_dev_setup();
+ 
+ 	rc = fcoe_if_init();
++	mutex_unlock(&fcoe_config_mutex);
++
+ 	if (rc)
+-		goto out_free;
++		goto out_destroy;
+ 
+-	mutex_unlock(&fcoe_config_mutex);
+ 	return 0;
+ 
+-out_free:
+-	mutex_unlock(&fcoe_config_mutex);
+ out_destroy:
+ 	destroy_workqueue(fcoe_wq);
+ 	return rc;
