@@ -1,35 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Jun 2017 09:39:05 +0000
-Subject: Re: [PATCH] drm/i915/selftests: silence a bogus spammy warning
-Message-Id: <20170614093905.3spcvhrorjakn3oe@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Jun 2017 15:40:45 +0000
+Subject: [PATCH][wireless-next] qtnfmac: check band before allocating cmd_skb to avoid resource leak
+Message-Id: <20170602154045.28948-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614091452.GE29394@elgon.mountain>
- <149743259737.8322.6017982413149967347@mail.alporthouse.com>
-In-Reply-To: <149743259737.8322.6017982413149967347@mail.alporthouse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Matthew Auld <matthew.auld@intel.com>, Daniel Vetter <daniel.vetter@intel.com>
+To: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Kalle Valo <kvalo@codeaurora.org>, Dmitrii Lebed <dlebed@quantenna.com>, Huizhao Wang <hwang@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 10:29:57AM +0100, Chris Wilson wrote:
-> Quoting Dan Carpenter (2017-06-14 10:14:52)
-> > These tests are reversed so it complains on every successful call and
-> > stays quiet for every failure.  Also we may as well preserve the error
-> > code.
-> 
-> The test is correct. The expectation here is that i915_gem_object_ggtt_pin()
-> fails and reports ENOSPC as we have already allocated the entire GGTT. If it
-> doesn't then we report the test failure.
-> -Chris
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah.  Ok.  Thanks.
+The current code allocates cmd_skb and then will leak this if band->band
+is an illegal value. It is simpler to sanity check the band first before
+allocating cmd_skb so that we don't have to free cmd_skb if an invalid
+band occurs.
 
-This was triggering a static checker warning because we're passing a
-valid pointer to PTR_ERR().  Probably the easiest thing is just to
-ignore the warning...
+Detected by CoverityScan, CID#1437561 ("Resource Leak")
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/commands.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index f0a0cfa7d8a1..cce62f39edaf 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -1300,12 +1300,6 @@ int qtnf_cmd_get_mac_chan_info(struct qtnf_wmac *mac,
+ 	int ret = 0;
+ 	u8 qband;
+ 
+-	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, 0,
+-					    QLINK_CMD_CHANS_INFO_GET,
+-					    sizeof(*cmd));
+-	if (!cmd_skb)
+-		return -ENOMEM;
+-
+ 	switch (band->band) {
+ 	case NL80211_BAND_2GHZ:
+ 		qband = QLINK_BAND_2GHZ;
+@@ -1320,6 +1314,12 @@ int qtnf_cmd_get_mac_chan_info(struct qtnf_wmac *mac,
+ 		return -EINVAL;
+ 	}
+ 
++	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, 0,
++					    QLINK_CMD_CHANS_INFO_GET,
++					    sizeof(*cmd));
++	if (!cmd_skb)
++		return -ENOMEM;
++
+ 	cmd = (struct qlink_cmd_chans_info_get *)cmd_skb->data;
+ 	cmd->band = qband;
+ 	ret = qtnf_cmd_send_with_reply(mac->bus, cmd_skb, &resp_skb, &res_code,
+-- 
+2.11.0
 
