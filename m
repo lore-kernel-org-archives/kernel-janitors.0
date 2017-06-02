@@ -1,69 +1,82 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Fri, 02 Jun 2017 03:47:11 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 02 Jun 2017 05:49:17 +0000
 Subject: Re: [PATCH] Eliminate extra 'out_free' label from fcoe_init function
-Message-Id: <e318d328-71f4-5212-c697-f71e5c77b660@redhat.com>
+Message-Id: <alpine.DEB.2.20.1706020748480.2312@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
- <20170601150233.2j6lxormywlvu7fa@mwanda>
-In-Reply-To: <20170601150233.2j6lxormywlvu7fa@mwanda>
+References: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com> <20170601150233.2j6lxormywlvu7fa@mwanda> <e318d328-71f4-5212-c697-f71e5c77b660@redhat.com>
+In-Reply-To: <e318d328-71f4-5212-c697-f71e5c77b660@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
-
-On 06/01/2017 08:32 PM, Dan Carpenter wrote:
-> On Thu, Jun 01, 2017 at 05:41:06PM +0530, Milan P. Gandhi wrote:
->> Simplify the check for return code of fcoe_if_init routine
->> in fcoe_init function such that we could eliminate need for
->> extra 'out_free' label.
->>
->> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
->> ---
->>  drivers/scsi/fcoe/fcoe.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
->> index ea21e7b..fb2a4c9 100644
->> --- a/drivers/scsi/fcoe/fcoe.c
->> +++ b/drivers/scsi/fcoe/fcoe.c
->> @@ -2523,13 +2523,11 @@ static int __init fcoe_init(void)
->>  	fcoe_dev_setup();
->>  
->>  	rc = fcoe_if_init();
->> -	if (rc)
->> -		goto out_free;
->> -
->> -	mutex_unlock(&fcoe_config_mutex);
->> -	return 0;
->> +	if (rc = 0) {
->> +		mutex_unlock(&fcoe_config_mutex);
->> +		return 0;
->> +	}
->>  
->> -out_free:
->>  	mutex_unlock(&fcoe_config_mutex);
-> 
-> Gar...  Stop!  No1  Don't do this.
-> 
-> Do failure handling, not success handling.
-> 
-> People always think they should get creative with the last if statement
-> in a function.  This leads to spaghetti code and it's confusing.  Please
-> never do this again.
-> 
-> The original is correct and the new code is bad rubbish code.
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
-Oops, my bad sir. Will keep this in mind.
-
-Thanks,
-Milan.
+To: "Milan P. Gandhi" <mgandhi@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
 
 
-Thanks,
-Milan.
+
+On Fri, 2 Jun 2017, Milan P. Gandhi wrote:
+
+> On 06/01/2017 08:32 PM, Dan Carpenter wrote:
+> > On Thu, Jun 01, 2017 at 05:41:06PM +0530, Milan P. Gandhi wrote:
+> >> Simplify the check for return code of fcoe_if_init routine
+> >> in fcoe_init function such that we could eliminate need for
+> >> extra 'out_free' label.
+> >>
+> >> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+> >> ---
+> >>  drivers/scsi/fcoe/fcoe.c | 10 ++++------
+> >>  1 file changed, 4 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> >> index ea21e7b..fb2a4c9 100644
+> >> --- a/drivers/scsi/fcoe/fcoe.c
+> >> +++ b/drivers/scsi/fcoe/fcoe.c
+> >> @@ -2523,13 +2523,11 @@ static int __init fcoe_init(void)
+> >>  	fcoe_dev_setup();
+> >>
+> >>  	rc = fcoe_if_init();
+> >> -	if (rc)
+> >> -		goto out_free;
+> >> -
+> >> -	mutex_unlock(&fcoe_config_mutex);
+> >> -	return 0;
+> >> +	if (rc = 0) {
+> >> +		mutex_unlock(&fcoe_config_mutex);
+> >> +		return 0;
+> >> +	}
+> >>
+> >> -out_free:
+> >>  	mutex_unlock(&fcoe_config_mutex);
+> >
+> > Gar...  Stop!  No1  Don't do this.
+> >
+> > Do failure handling, not success handling.
+> >
+> > People always think they should get creative with the last if statement
+> > in a function.  This leads to spaghetti code and it's confusing.  Please
+> > never do this again.
+> >
+> > The original is correct and the new code is bad rubbish code.
+> >
+> > regards,
+> > dan carpenter
+> >
+> >
+>
+> Oops, my bad sir. Will keep this in mind.
+
+Still, does the mutex_unlock really need to be duplicated?
+
+julia
+
+>
+> Thanks,
+> Milan.
+>
+>
+> Thanks,
+> Milan.
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
