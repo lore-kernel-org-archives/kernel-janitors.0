@@ -1,44 +1,38 @@
-From: Tahsin Erdogan <tahsin@google.com>
-Date: Fri, 30 Jun 2017 11:17:58 +0000
-Subject: Re: [PATCH] ext4: don't free an error pointer
-Message-Id: <CAAeU0aN=qsJAHrmowwv499mkUCpTrA54yMdJP-NM8g7kZ3OFyQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Jun 2017 15:22:27 +0000
+Subject: [PATCH][net-next] rxrpc: remove redundant proc_remove call
+Message-Id: <20170602152227.3626-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630075652.gsvvzybinoee2biw@mwanda>
-In-Reply-To: <20170630075652.gsvvzybinoee2biw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Ext4 Developers List <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Reviewed-by: Tahsin Erdogan <tahsin@google.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-On Fri, Jun 30, 2017 at 12:56 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> "goto out;" calls brelse(bh); which will oops on this this path where
-> "bh" is an error pointer.
->
-> Fixes: 2851a40a5d71 ("ext4: xattr-in-inode support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Oops.  I wrote a bug report and a patch for this...  Probably we only
-> need the patch.
->
->
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index ce12c3fb7e59..f7d6845e147b 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -1305,10 +1305,8 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
->                 csize = (bufsize - wsize) > blocksize ? blocksize :
->                                                                 bufsize - wsize;
->                 bh = ext4_getblk(handle, ea_inode, block, 0);
-> -               if (IS_ERR(bh)) {
-> -                       ret = PTR_ERR(bh);
-> -                       goto out;
-> -               }
-> +               if (IS_ERR(bh))
-> +                       return PTR_ERR(bh);
->                 ret = ext4_journal_get_write_access(handle, bh);
->                 if (ret)
->                         goto out;
+The proc_remove call is dead code as it occurs after a return and
+hence can never be called. Remove it.
+
+Detected by CoverityScan, CID#1437743 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rxrpc/net_ns.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/net/rxrpc/net_ns.c b/net/rxrpc/net_ns.c
+index 26449a6bb076..7edceb8522f5 100644
+--- a/net/rxrpc/net_ns.c
++++ b/net/rxrpc/net_ns.c
+@@ -59,7 +59,6 @@ static __net_init int rxrpc_init_net(struct net *net)
+ 	proc_create("conns", 0444, rxnet->proc_net, &rxrpc_connection_seq_fops);
+ 	return 0;
+ 
+-	proc_remove(rxnet->proc_net);
+ err_proc:
+ 	return ret;
+ }
+-- 
+2.11.0
+
