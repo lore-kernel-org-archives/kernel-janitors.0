@@ -1,16 +1,40 @@
-From: "Steve Wise" <swise@opengridcomputing.com>
-Date: Sat, 10 Jun 2017 12:30:32 +0000
-Subject: RE: [PATCH] cxgb4: Remove some dead code
-Message-Id: <047801d2e1e5$5a645190$0f2cf4b0$@opengridcomputing.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Jun 2017 14:58:27 +0000
+Subject: [PATCH] net: stmmac: ensure jumbo_frm error return is correctly checked for -ve value
+Message-Id: <20170602145827.21151-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170610091920.24746-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170610091920.24746-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>, dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Steve Wise <swise@opengridcomputing.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+The current comparison of entry < 0 will never be true since entry is an
+unsigned integer. Cast entry to an int to ensure -ve error return values
+from the call to jumbo_frm are correctly being caught.
+
+Detected by CoverityScan, CID#1238760 ("Macro compares unsigned to 0")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 68a188e74c54..5cc19506ba85 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2996,7 +2996,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	if (unlikely(is_jumbo) && likely(priv->synopsys_id <
+ 					 DWMAC_CORE_4_00)) {
+ 		entry = priv->hw->mode->jumbo_frm(tx_q, skb, csum_insertion);
+-		if (unlikely(entry < 0))
++		if (unlikely((int)entry < 0))
+ 			goto dma_map_err;
+ 	}
+ 
+-- 
+2.11.0
 
