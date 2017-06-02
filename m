@@ -1,25 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 20 Jun 2017 15:59:31 +0000
-Subject: Re: [PATCH] crypto: cavium: make several functions static
-Message-Id: <20170620.115931.349171159880534656.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 02 Jun 2017 08:56:39 +0000
+Subject: [PATCH][-next] mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
+Message-Id: <20170602085639.29338-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170620103550.7660-1-colin.king@canonical.com>
-In-Reply-To: <20170620103550.7660-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: george.cherian@cavium.com, herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 20 Jun 2017 11:35:50 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions cvm_encrypt, cvm_decrypt, cvm_xts_setkey and
-> cvm_enc_dec_init does not need to be in global scope, so make
-> them static.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+function mwifiex_ret_pkt_aggr_ctrl can be made static as it does not
+need to be in global scope.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Cleans up sparse warning: "symbol 'mwifiex_ret_pkt_aggr_ctrl' was not
+declared. Should it be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+index 3348fb3a7514..2945775e83c5 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+@@ -1154,8 +1154,8 @@ static int mwifiex_ret_chan_region_cfg(struct mwifiex_private *priv,
+ 	return 0;
+ }
+ 
+-int mwifiex_ret_pkt_aggr_ctrl(struct mwifiex_private *priv,
+-			      struct host_cmd_ds_command *resp)
++static int mwifiex_ret_pkt_aggr_ctrl(struct mwifiex_private *priv,
++				     struct host_cmd_ds_command *resp)
+ {
+ 	struct host_cmd_ds_pkt_aggr_ctrl *pkt_aggr_ctrl  					&resp->params.pkt_aggr_ctrl;
+-- 
+2.11.0
+
