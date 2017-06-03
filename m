@@ -1,17 +1,17 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 20:08:55 +0000
-Subject: [PATCH 1/3] ARM: pxa: Delete an error message for a failed memory allocation in pxa_pm_init()
-Message-Id: <9fb09355-13c4-cad3-a539-55ae7979aa11@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:36:10 +0000
+Subject: [PATCH 9/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in omap_timer_init()
+Message-Id: <a673b257-4750-2135-2c4e-bc0e5937f4b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
-In-Reply-To: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 21:34:48 +0200
+Date: Sat, 3 Jun 2017 19:23:59 +0200
 
 Omit an extra message for a memory allocation failure in this function.
 
@@ -20,22 +20,22 @@ This issue was detected by using the Coccinelle software.
 Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-pxa/pm.c | 4 +---
+ arch/arm/mach-omap2/timer.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/pm.c b/arch/arm/mach-pxa/pm.c
-index e7450fb49d24..f2237f471750 100644
---- a/arch/arm/mach-pxa/pm.c
-+++ b/arch/arm/mach-pxa/pm.c
-@@ -110,7 +110,5 @@ static int __init pxa_pm_init(void)
--	if (!sleep_save) {
--		printk(KERN_ERR "failed to alloc memory for pm save\n");
-+	if (!sleep_save)
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 07dd692c4737..f6b5ccfe4653 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -693,7 +693,5 @@ static int __init omap_timer_init(struct omap_hwmod *oh, void *unused)
+-	if (!pdata) {
+-		pr_err("%s: No memory for [%s]\n", __func__, oh->name);
++	if (!pdata)
  		return -ENOMEM;
 -	}
  
- 	suspend_set_ops(&pxa_pm_ops);
- 	return 0;
+ 	/*
+ 	 * Extract the IDs from name field in hwmod database
 -- 
 2.13.0
 
