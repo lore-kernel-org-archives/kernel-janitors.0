@@ -1,40 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Jun 2017 13:24:17 +0000
-Subject: [PATCH][target-devel-next] tcmu: make array tcmu_attrib_attrs static const
-Message-Id: <20170613132417.20397-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:28:30 +0000
+Subject: [PATCH 2/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in two functions
+Message-Id: <9e8c21ba-0c34-7a7b-2583-59d7a8c19af6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A . Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 17:24:27 +0200
 
-The guid intel_dsm_guid does not need to be in global scope, so make
-it static.
+Omit an extra message for a memory allocation failure in these functions.
 
-Cleans up sparse warning:
-"symbol 'tcmu_attrib_attrs' was not declared. Should it be static?"
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/target_core_user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap2/hsmmc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
-index afc1fd6bacaf..04fb3f720895 100644
---- a/drivers/target/target_core_user.c
-+++ b/drivers/target/target_core_user.c
-@@ -1672,7 +1672,7 @@ static ssize_t tcmu_emulate_write_cache_store(struct config_item *item,
- }
- CONFIGFS_ATTR(tcmu_, emulate_write_cache);
+diff --git a/arch/arm/mach-omap2/hsmmc.c b/arch/arm/mach-omap2/hsmmc.c
+index cb754c46747e..be517b048762 100644
+--- a/arch/arm/mach-omap2/hsmmc.c
++++ b/arch/arm/mach-omap2/hsmmc.c
+@@ -155,5 +155,4 @@ static int __init omap_hsmmc_pdata_init(struct omap2_hsmmc_info *c,
+ 	if (!hc_name) {
+-		pr_err("Cannot allocate memory for controller slot name\n");
+ 		kfree(hc_name);
+ 		return -ENOMEM;
+ 	}
+@@ -318,7 +317,5 @@ static void __init omap_hsmmc_init_one(struct omap2_hsmmc_info *hsmmcinfo,
+-	if (!mmc_data) {
+-		pr_err("Cannot allocate memory for mmc device!\n");
++	if (!mmc_data)
+ 		return;
+-	}
  
--struct configfs_attribute *tcmu_attrib_attrs[] = {
-+static struct configfs_attribute *tcmu_attrib_attrs[] = {
- 	&tcmu_attr_cmd_time_out,
- 	&tcmu_attr_dev_path,
- 	&tcmu_attr_dev_size,
+ 	res = omap_hsmmc_pdata_init(hsmmcinfo, mmc_data);
+ 	if (res < 0)
 -- 
-2.11.0
+2.13.0
 
