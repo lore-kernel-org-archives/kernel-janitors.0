@@ -1,88 +1,51 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 11 Jun 2017 06:16:04 +0000
-Subject: [PATCH 3/3] scsi: qedf: Merge a few quoted strings split across lines
-Message-Id: <fdd13b3850e2b50f1f7f71b98aeb381b77546f1b.1497160148.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:34:07 +0000
+Subject: [PATCH 8/9] ARM: OMAP2+: SmartReflex: Delete an error message for a failed memory allocation in two 
+Message-Id: <13210fb0-3a22-07f5-0bc5-b338b1ccfdeb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1497160148.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1497160148.git.christophe.jaillet@wanadoo.fr>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-Merge some quoted strings to improve readability and to save some lines
-of code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 19:16:27 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/qedf/qedf_main.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ arch/arm/mach-omap2/sr_device.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 19a2bbc65f54..d1e8b167a117 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -975,8 +975,7 @@ static int qedf_alloc_sq(struct qedf_ctx *qedf, struct qedf_rport *fcport)
- 	fcport->sq = dma_zalloc_coherent(&qedf->pdev->dev,
- 	    fcport->sq_mem_size, &fcport->sq_dma, GFP_KERNEL);
- 	if (!fcport->sq) {
--		QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate send "
--			   "queue.\n");
-+		QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate send queue.\n");
- 		rval = 1;
- 		goto out;
- 	}
-@@ -984,8 +983,7 @@ static int qedf_alloc_sq(struct qedf_ctx *qedf, struct qedf_rport *fcport)
- 	fcport->sq_pbl = dma_zalloc_coherent(&qedf->pdev->dev,
- 	    fcport->sq_pbl_size, &fcport->sq_pbl_dma, GFP_KERNEL);
- 	if (!fcport->sq_pbl) {
--		QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate send "
--			   "queue PBL.\n");
-+		QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate send queue PBL.\n");
- 		rval = 1;
- 		goto out_free_sq;
- 	}
-@@ -2598,8 +2596,7 @@ static int qedf_alloc_bdq(struct qedf_ctx *qedf)
- 	qedf->bdq_pbl_list = dma_zalloc_coherent(&qedf->pdev->dev,
- 	    QEDF_PAGE_SIZE, &qedf->bdq_pbl_list_dma, GFP_KERNEL);
- 	if (!qedf->bdq_pbl_list) {
--		QEDF_ERR(&(qedf->dbg_ctx), "Could not allocate list of PBL "
--		    "pages.\n");
-+		QEDF_ERR(&(qedf->dbg_ctx), "Could not allocate list of PBL pages.\n");
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+index 65775c6e8c27..eef6935e0403 100644
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -48,7 +48,5 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
+-	if (!nvalue_table) {
+-		pr_err("OMAP: SmartReflex: cannot allocate memory for n-value table\n");
++	if (!nvalue_table)
+ 		return;
+-	}
+ 
+ 	for (i = 0, j = 0; i < count; i++) {
+ 		u32 v;
+@@ -104,8 +102,5 @@ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
+-	if (!sr_data) {
+-		pr_err("%s: Unable to allocate memory for %s sr_data\n",
+-		       __func__, oh->name);
++	if (!sr_data)
  		return -ENOMEM;
- 	}
+-	}
  
-@@ -2691,8 +2688,7 @@ static int qedf_alloc_global_queues(struct qedf_ctx *qedf)
- 			&qedf->global_queues[i]->cq_dma, GFP_KERNEL);
- 
- 		if (!qedf->global_queues[i]->cq) {
--			QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate "
--				   "cq.\n");
-+			QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate cq.\n");
- 			status = -ENOMEM;
- 			goto mem_alloc_failure;
- 		}
-@@ -2703,8 +2699,7 @@ static int qedf_alloc_global_queues(struct qedf_ctx *qedf)
- 			&qedf->global_queues[i]->cq_pbl_dma, GFP_KERNEL);
- 
- 		if (!qedf->global_queues[i]->cq_pbl) {
--			QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate "
--				   "cq PBL.\n");
-+			QEDF_WARN(&(qedf->dbg_ctx), "Could not allocate cq PBL.\n");
- 			status = -ENOMEM;
- 			goto mem_alloc_failure;
- 		}
-@@ -2800,8 +2795,7 @@ static int qedf_set_fcoe_pf_param(struct qedf_ctx *qedf)
- 	cq_mem_size = ALIGN(cq_mem_size, QEDF_PAGE_SIZE);
- 	cq_num_entries = cq_mem_size / sizeof(struct fcoe_cqe);
- 
--	memset(&(qedf->pf_params), 0,
--	    sizeof(qedf->pf_params));
-+	memset(&(qedf->pf_params), 0, sizeof(qedf->pf_params));
- 
- 	/* Setup the value for fcoe PF */
- 	qedf->pf_params.fcoe_pf_params.num_cons = QEDF_MAX_SESSIONS;
+ 	sr_dev_attr = (struct omap_smartreflex_dev_attr *)oh->dev_attr;
+ 	if (!sr_dev_attr || !sr_dev_attr->sensor_voltdm_name) {
 -- 
-2.11.0
+2.13.0
 
