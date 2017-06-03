@@ -1,31 +1,46 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 21 Jun 2017 13:48:08 +0000
-Subject: Re: [PATCH] btrfs: use new block error code
-Message-Id: <2bd7fd59-71ad-8ff5-65f7-3b6f1d51ccbd@kernel.dk>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sat, 03 Jun 2017 10:22:33 +0000
+Subject: Re: [PATCH v2 1/1] w1: Add subsystem kernel public interface
+Message-Id: <20170603102233.GA19112@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170619105536.GA24075@elgon.mountain>
- <20170621131723.GH21388@twin.jikos.cz>
-In-Reply-To: <20170621131723.GH21388@twin.jikos.cz>
+References: <20170516200814.12360-1-afd@ti.com>
+ <20170516200814.12360-2-afd@ti.com>
+In-Reply-To: <20170516200814.12360-2-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dsterba@suse.cz, Dan Carpenter <dan.carpenter@oracle.com>, Chris Mason <clm@fb.com>, Christoph Hellwig <hch@lst.de>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Evgeniy Polyakov <zbr@ioremap.net>, Sebastian Reichel <sre@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/21/2017 07:17 AM, David Sterba wrote:
-> On Mon, Jun 19, 2017 at 01:55:37PM +0300, Dan Carpenter wrote:
->> This function is supposed to return blk_status_t error codes now but
->> there was a stray -ENOMEM left behind.
->>
->> Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Tue, May 16, 2017 at 03:08:14PM -0500, Andrew F. Davis wrote:
+> Like other subsystems we should be able to define slave devices outside
+> of the w1 directory. To do this we move public facing interface
+> definitions to include/linux/w1.h and rename the internal definition
+> file to w1_internal.h.
 > 
-> Acked-by: David Sterba <dsterba@suse.com>
+> As w1_family.h and w1_int.h contained almost entirely public
+> driver interface definitions we simply removed these files and
+> moved the remaining definitions into w1_internal.h.
 > 
-> The patch depends on the blk_status_t patchset, so I expect that it's
-> going to be merged to that.
+> With this we can now start to move slave devices out of w1/slaves and
+> into the subsystem based on the function they implement, again like
+> other drivers.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Reviewed-by: Sebastian Reichel <sre@kernel.org>
 
-Added, thanks.
+This breaks the build for me:
+  CC [M]  drivers/power/supply/ds2760_battery.o
+drivers/power/supply/ds2760_battery.c:31:10: fatal error: ../../w1/w1.h: No such file or directory
+ #include "../../w1/w1.h"
+          ^~~~~~~~~~~~~~~
+compilation terminated.
 
--- 
-Jens Axboe
 
+So there was w1 drivers outside of the drivers/w1/ directory :)
+
+Please fix and resend.
+
+thanks,
+
+greg k-h
