@@ -1,55 +1,41 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 13 Jun 2017 14:48:23 +0000
-Subject: Re: [PATCH] soc/tegra: flowctrl: Fix error handling
-Message-Id: <20170613144823.GA20577@ulmo.fritz.box>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="k+w/mQv8wyuph6w0"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:31:10 +0000
+Subject: [PATCH 5/9] ARM: OMAP2+: McBSP: Delete an error message for a failed memory allocation in omap_init_
+Message-Id: <57bb7074-8283-23fe-6112-822bd40098dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170411034041.18662-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 18:03:25 +0200
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Omit an extra message for a memory allocation failure in this function.
 
-On Tue, Apr 11, 2017 at 05:40:41AM +0200, Christophe JAILLET wrote:
-> It is likely that returning returned by 'devm_ioremap_resource()' is
-> expected here instead of something related to 'base' which should be a
-> valid pointer at this point.
->=20
-> Fixes: 841fd94c43a4 ("soc/tegra: flowctrl: Add basic platform driver")
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/soc/tegra/flowctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This issue was detected by using the Coccinelle software.
 
-Applied, thanks.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/mcbsp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thierry
+diff --git a/arch/arm/mach-omap2/mcbsp.c b/arch/arm/mach-omap2/mcbsp.c
+index 408793d14fc5..0372e3358ec1 100644
+--- a/arch/arm/mach-omap2/mcbsp.c
++++ b/arch/arm/mach-omap2/mcbsp.c
+@@ -68,7 +68,5 @@ static int __init omap_init_mcbsp(struct omap_hwmod *oh, void *unused)
+-	if (!pdata) {
+-		pr_err("%s: No memory for mcbsp\n", __func__);
++	if (!pdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pdata->reg_step = 4;
+ 	if (oh->class->rev < MCBSP_CONFIG_TYPE2) {
+-- 
+2.13.0
 
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/+zUACgkQ3SOs138+
-s6Eqlg//c4Ucj9KzgESneiTqAPK1es9Kvesl9eckqADNF9vULWwRMA0PCIlbXZyV
-Jy96w9dn1/dugdXgS2QftCYMbmLmI3ikwEsCmUrdXqMyfq7pl80isKju2SkvzToq
-9L9/fpgG+GVYhcK+o6Wh2Ys83htA3WExZffHMVNiAoYmbwq1yPzoy0ztOiIt4XoM
-CIkrMOc8O110KAyOp8KlpIfXUeRwEI4lNE7m/Us0isTiflz4XziXTfvLnXMz54y+
-TMiEpp45NRwd2pA+H6zL1U94TjrdCobV+Coj3JEHwxK3MRsmhljTnPHMr23qetIV
-34z5PZD9/lWNCqmFwnrgLLekSj0BrL/B1WrosmMxssmY1S30BZnwkaLYt8+yq/pe
-gzwoqXFFY3YLVL3OU6Xy7dMlQ1dF3Vc/PHjB/HGKROP5sxNP3UBkI+dkL8JNAxJx
-dtZ5Ib9b9XgZ7Aps85arjtUQfyAB4tD9YDm6sSPSTH3IrWEi5f60Iex1xLVFs4z1
-gn1vwKfZrQoSSB3XtAntjSKiVRchJasmg6e2JJCMGO9EWakPykJTseOaiVW2iPRN
-tycPf46EasB413vN6513SibkwtM1tTUc+MsbfDcL0eXh5epLDQpW5OsQAD1CkWsv
-sOet7AwliEO0UhCUeuHrE8fUrHRwxfyUKzqjzfgXasuGL4DObOU=
-=OQko
------END PGP SIGNATURE-----
-
---k+w/mQv8wyuph6w0--
