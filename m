@@ -1,36 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 28 Jun 2017 17:50:30 +0000
-Subject: Re: [net-next] qtnfmac: fix uninitialized return code in ret
-Message-Id: <20170628175030.F05F460AFB@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:27:17 +0000
+Subject: [PATCH 1/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in omap_mcspi_init()
+Message-Id: <2e685abe-2544-f996-4756-9836b8ecd450@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170621132530.11937-1-colin.king@canonical.com>
-In-Reply-To: <20170621132530.11937-1-colin.king@canonical.com>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, "David S . Miller" <davem@davemloft.net>, Bindu Therthala <btherthala@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, Sergei Maksimenko <smaksimenko@quantenna.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 16:45:12 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The return value ret is unitialized and garbage is being returned
-> for the three different error conditions when setting up the PCIe
-> BARs. Fix this by initializing ret to  -ENOMEM to indicate that
-> the BARs failed to be setup correctly.
-> 
-> Detected by CoverityScan, CID#1437563 ("Unitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+This issue was detected by using the Coccinelle software.
 
-3e3d8aa61107 qtnfmac: fix uninitialized return code in ret
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/devices.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/arch/arm/mach-omap2/devices.c b/arch/arm/mach-omap2/devices.c
+index 473951203104..cf1fc0d162c4 100644
+--- a/arch/arm/mach-omap2/devices.c
++++ b/arch/arm/mach-omap2/devices.c
+@@ -82,7 +82,5 @@ static int __init omap_mcspi_init(struct omap_hwmod *oh, void *unused)
+-	if (!pdata) {
+-		pr_err("Memory allocation for McSPI device failed\n");
++	if (!pdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pdata->num_cs = mcspi_attrib->num_chipselect;
+ 	switch (oh->class->rev) {
 -- 
-https://patchwork.kernel.org/patch/9801833/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.13.0
 
