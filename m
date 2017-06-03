@@ -1,24 +1,46 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Thu, 08 Jun 2017 04:07:36 +0000
-Subject: Re: cxl: Unlock on error in probe
-Message-Id: <3wjsMX598Gz9s9Y@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:33:10 +0000
+Subject: [PATCH 7/9] ARM: OMAP2+: Use kcalloc() in sr_set_nvalues()
+Message-Id: <201e94ac-bbd7-5fb0-582b-4a6b2585bdab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170505053458.csrwd2kjber44r4o@mwanda>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ian Munsie <imunsie@au1.ibm.com>, Christophe Lombard <clombard@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 2017-05-05 at 05:34:58 UTC, Dan Carpenter wrote:
-> We should unlock if get_cxl_adapter() fails.
-> 
-> Fixes: 594ff7d067ca ("cxl: Support to flash a new image on the adapter from a guest")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 19:09:07 +0200
 
-Applied to powerpc next, thanks.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-https://git.kernel.org/powerpc/c/58d876fa7181f2f393190c1d32c056
+  This issue was detected by using the Coccinelle software.
 
-cheers
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/sr_device.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+index 01df4907c0e3..65775c6e8c27 100644
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -44,7 +44,5 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
+ 	while (volt_data[count].volt_nominal)
+ 		count++;
+ 
+-	nvalue_table = kzalloc(sizeof(struct omap_sr_nvalue_table)*count,
+-			GFP_KERNEL);
+-
++	nvalue_table = kcalloc(count, sizeof(*nvalue_table), GFP_KERNEL);
+ 	if (!nvalue_table) {
+-- 
+2.13.0
+
