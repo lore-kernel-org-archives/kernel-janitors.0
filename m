@@ -1,29 +1,38 @@
-From: INFO <mguerrero@huv.gov.co>
-Date: Mon, 19 Jun 2017 19:34:05 +0000
-Subject: Re: Reply Urgent
-Message-Id: <20170619143405.19925mst0beukmy5@correo.huv.gov.co>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:32:06 +0000
+Subject: [PATCH 6/9] ARM: OMAP2+: Improve a size determination in sr_dev_init()
+Message-Id: <82c5d47e-5b98-5e6d-c161-fbd0093a38db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 19:02:24 +0200
 
-How are you doing? I have been sent to inform you that, We have an  
-inheritance of a deceased client with your surname. Contact Mr Andrew  
-Bailey Reply Email To: myinfand@gmail.com with your "Full Names" for  
-more info.  Thanks for your understanding.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Reply ASAP thank you.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/sr_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Melissa.
-----------------------------------
-Correo Corporativo Hospital Universitario del Valle E.S.E
-*******************************************************************************
-
-"Estamos re-dimensionandonos para crecer!"
-
-******************************************************************************
-
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+index d7cff2632d1e..01df4907c0e3 100644
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -102,5 +102,5 @@ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
+ 	char *name = "smartreflex";
+ 	static int i;
+ 
+-	sr_data = kzalloc(sizeof(struct omap_sr_data), GFP_KERNEL);
++	sr_data = kzalloc(sizeof(*sr_data), GFP_KERNEL);
+ 	if (!sr_data) {
+-- 
+2.13.0
 
