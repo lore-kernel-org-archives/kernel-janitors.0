@@ -1,95 +1,37 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Jun 2017 23:49:52 +0000
-Subject: Re: [PATCH 3/9] drbd: Drop unnecessary static
-Message-Id: <CAGXu5jKzvy2deqGYTjHh6z2SUcbneJmRr9hs0zoYsxyuiqfP9A@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Jun 2017 18:29:20 +0000
+Subject: [PATCH 3/9] ARM: OMAP2+: McBSP: Delete an unnecessary variable initialisation in omap_init_mcbsp()
+Message-Id: <9d9bee0e-01b2-ff5d-1bb4-76b401208cd4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
- <1493928654-18768-4-git-send-email-Julia.Lawall@lip6.fr> <20170505071945.GB6818@rck.sh>
-In-Reply-To: <20170505071945.GB6818@rck.sh>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Kammerer <roland.kammerer@linbit.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Philipp Reisner <philipp.reisner@linbit.com>, kernel-janitors@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, May 5, 2017 at 12:19 AM, Roland Kammerer
-<roland.kammerer@linbit.com> wrote:
-> On Thu, May 04, 2017 at 10:10:48PM +0200, Julia Lawall wrote:
->> Drop static on a local variable, when the variable is initialized before
->> any use, on every possible execution path through the function.  The static
->> has no benefit, and dropping it reduces the code size.
->>
->> The semantic patch that fixes this problem is as follows:
->> (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @bad exists@
->> position p;
->> identifier x;
->> type T;
->> @@
->>
->> static T x@p;
->> ...
->> x = <+...x...+>
->>
->> @@
->> identifier x;
->> expression e;
->> type T;
->> position p != bad.p;
->> @@
->>
->> -static
->>  T x@p;
->>  ... when != x
->>      when strict
->> ?x = e;
->> // </smpl>
->>
->> The change in code size is indicates by the following output from the size
->> command.
->>
->> before:
->>    text    data     bss     dec     hex filename
->>   67299    2291    1056   70646   113f6 drivers/block/drbd/drbd_nl.o
->>
->> after:
->>    text    data     bss     dec     hex filename
->>   67283    2291    1056   70630   113e6 drivers/block/drbd/drbd_nl.o
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> ---
->>  drivers/block/drbd/drbd_nl.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
->> index 02255a0..ad0fcb4 100644
->> --- a/drivers/block/drbd/drbd_nl.c
->> +++ b/drivers/block/drbd/drbd_nl.c
->> @@ -2294,7 +2294,7 @@ static bool conn_ov_running(struct drbd_connection *connection)
->>  static enum drbd_ret_code
->>  check_net_options(struct drbd_connection *connection, struct net_conf *new_net_conf)
->>  {
->> -     static enum drbd_ret_code rv;
->> +     enum drbd_ret_code rv;
->>       struct drbd_peer_device *peer_device;
->>       int i;
->
-> Yes, that already got dropped for drbd9 and is obviously correct for
-> in-tree drbd8.
->
-> Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
->
-> Regards, rck
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jun 2017 17:54:19 +0200
 
-Which tree should this go through? Jens, I think yours?
+The local variable "pdata" is reassigned by a statement at the beginning.
+Thus omit the explicit initialisation.
 
-Thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/mcbsp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Kees
-
+diff --git a/arch/arm/mach-omap2/mcbsp.c b/arch/arm/mach-omap2/mcbsp.c
+index fc04be74e064..53c4a30e2963 100644
+--- a/arch/arm/mach-omap2/mcbsp.c
++++ b/arch/arm/mach-omap2/mcbsp.c
+@@ -59,5 +59,5 @@ static int __init omap_init_mcbsp(struct omap_hwmod *oh, void *unused)
+ 	int id, count = 1;
+ 	char *name = "omap-mcbsp";
+ 	struct omap_hwmod *oh_device[2];
+-	struct omap_mcbsp_platform_data *pdata = NULL;
++	struct omap_mcbsp_platform_data *pdata;
+ 	struct platform_device *pdev;
 -- 
-Kees Cook
-Pixel Security
+2.13.0
+
