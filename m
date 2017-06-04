@@ -1,50 +1,38 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 28 Jun 2017 17:18:05 +0000
-Subject: Re: [PATCH] drm/gma500: remove an unneeded NULL check
-Message-Id: <20170628171805.hz5y72x2m7fxy7ix@phenom.ffwll.local>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jun 2017 21:05:35 +0000
+Subject: [PATCH 1/3] arm/xen: Improve a size determination in __set_phys_to_machine_multi()
+Message-Id: <7f2ec975-9a2b-132d-77f0-559fd7eadc30@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628124100.3pw2gyitsfopaib5@mwanda>
-In-Reply-To: <20170628124100.3pw2gyitsfopaib5@mwanda>
+References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
+In-Reply-To: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Jun 28, 2017 at 03:41:01PM +0300, Dan Carpenter wrote:
-> "connector" is the list iterator and it can't be NULL.  It causes a
-> static checker warning because we dereference the iterator to get the
-> next item in the list.  Let's remove this check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jun 2017 20:50:55 +0200
 
-gma500 is always good for some surprises. Pushed to drm-misc-next for
-4.14, thanks.
--Daniel
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> 
-> diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-> index 63c6e08600ae..531e4450c000 100644
-> --- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-> +++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-> @@ -737,11 +737,7 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
->  					sizeof(struct drm_display_mode));
->  
->  	list_for_each_entry(connector, &mode_config->connector_list, head) {
-> -		if (!connector)
-> -			continue;
-> -
->  		encoder = connector->encoder;
-> -
->  		if (!encoder)
->  			continue;
->  
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/xen/p2m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
+index 0ed01f2d5ee4..11e78432b663 100644
+--- a/arch/arm/xen/p2m.c
++++ b/arch/arm/xen/p2m.c
+@@ -144,5 +144,5 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
+ 		return true;
+ 	}
+ 
+-	p2m_entry = kzalloc(sizeof(struct xen_p2m_entry), GFP_NOWAIT);
++	p2m_entry = kzalloc(sizeof(*p2m_entry), GFP_NOWAIT);
+ 	if (!p2m_entry) {
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.13.0
+
