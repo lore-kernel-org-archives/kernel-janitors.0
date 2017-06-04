@@ -1,50 +1,27 @@
-From: Luca Abeni <luca.abeni@santannapisa.it>
-Date: Fri, 09 Jun 2017 11:25:47 +0000
-Subject: Re: [PATCH][-next] sched/deadline: make new function grub_reclaim static
-Message-Id: <20170609132547.42891867@luca>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jun 2017 21:04:16 +0000
+Subject: [PATCH 0/3] ARM-XEN: Adjustments for __set_phys_to_machine_multi()
+Message-Id: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170609110851.16822-1-colin.king@canonical.com>
-In-Reply-To: <20170609110851.16822-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri,  9 Jun 2017 12:08:51 +0100
-Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jun 2017 22:45:54 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Make function grub_reclaim static to clean up the following sparse
-> warning:
-> 
-> "warning: symbol 'grub_reclaim' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  kernel/sched/deadline.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index e12f85975857..2ddb4e6d820f 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1052,7 +1052,7 @@ extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
->   * should be larger than 2^(64 - 20 - 8), which is more than 64 seconds.
->   * So, overflow is not an issue here.
->   */
-> -u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
-> +static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
->  {
->  	u64 u_inact = rq->dl.this_bw - rq->dl.running_bw; /* Utot - Uact */
->  	u64 u_act;
+Three update suggestions were taken into account
+from static source code analysis.
 
-Looks good; thanks for fixing this (and sorry for introducing the
-warning).
+Markus Elfring (3):
+  Improve a size determination
+  Delete an error message for a failed memory allocation
+  Adjust one function call together with a variable assignment
 
-Acked-by: Luca Abeni <luca.abeni@santannapisa.it>
+ arch/arm/xen/p2m.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+-- 
+2.13.0
 
-
-				Luca
