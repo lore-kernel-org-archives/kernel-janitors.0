@@ -1,43 +1,42 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 22 Jun 2017 22:47:57 +0000
-Subject: Re: [PATCH] NFC: nci: Remove an unneeded NULL check
-Message-Id: <20170622224757.GJ21214@zurbaran.ger.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jun 2017 21:06:29 +0000
+Subject: [PATCH 2/3] arm/xen: Delete an error message for a failed memory allocation in __set_phys_to_machine
+Message-Id: <004250a0-d94b-7587-ae5d-524ba2911a16@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614074945.GA29233@elgon.mountain>
-In-Reply-To: <20170614074945.GA29233@elgon.mountain>
+References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
+In-Reply-To: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christophe Ricard <christophe.ricard@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jun 2017 21:12:36 +0200
 
-On Wed, Jun 14, 2017 at 10:49:46AM +0300, Dan Carpenter wrote:
-> "conn_info" can't be NULL here.  Also we just dereferenced it a couple
-> lines earlier, so that makes static checkers complain.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-> index 61fff422424f..5542fc72f020 100644
-> --- a/net/nfc/nci/core.c
-> +++ b/net/nfc/nci/core.c
-> @@ -73,11 +73,9 @@ int nci_get_conn_info_by_dest_type_params(struct nci_dev *ndev, u8 dest_type,
->  		if (conn_info->dest_type = dest_type) {
->  			if (!params)
->  				return conn_info->conn_id;
-> -			if (conn_info) {
-> -				if (params->id = conn_info->dest_params->id &&
-> -				    params->protocol = conn_info->dest_params->protocol)
-> -					return conn_info->conn_id;
-> -			}
-> +			if (params->id = conn_info->dest_params->id &&
-> +			    params->protocol = conn_info->dest_params->protocol)
-> +				return conn_info->conn_id;
-A similar patch was sent earlier and is now applied:
-https://git.kernel.org/pub/scm/linux/kernel/git/sameo/nfc-next.git/commit/?id036184e9d4a5b2b42a70b66db9455808dd5da9
+Omit an extra message for a memory allocation failure in this function.
 
-Cheers,
-Samuel.
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/xen/p2m.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
+index 11e78432b663..f5f74ac637b9 100644
+--- a/arch/arm/xen/p2m.c
++++ b/arch/arm/xen/p2m.c
+@@ -148,7 +148,6 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
+-	if (!p2m_entry) {
+-		pr_warn("cannot allocate xen_p2m_entry\n");
++	if (!p2m_entry)
+ 		return false;
+-	}
++
+ 	p2m_entry->pfn = pfn;
+ 	p2m_entry->nr_pages = nr_pages;
+ 	p2m_entry->mfn = mfn;
+-- 
+2.13.0
 
