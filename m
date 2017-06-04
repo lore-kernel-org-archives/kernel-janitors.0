@@ -1,19 +1,19 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Fri, 02 Jun 2017 16:48:29 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 04 Jun 2017 23:55:49 +0000
 Subject: Re: [PATCH][V2] net: phy: marvell: make some functions static
-Message-Id: <5268b842-3784-36f7-7c6f-e1b4b670f8b5@gmail.com>
+Message-Id: <20170604.195549.1999857552284832975.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170602141334.26506-1-colin.king@canonical.com>
 In-Reply-To: <20170602141334.26506-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin King <colin.king@canonical.com>
+Date: Fri,  2 Jun 2017 15:13:34 +0100
 
-
-On 06/02/2017 07:13 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > functions m88e1510_get_temp_critical, m88e1510_set_temp_critical and
@@ -27,6 +27,4 @@ On 06/02/2017 07:13 AM, Colin King wrote:
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Applied to net-next, thanks.
