@@ -1,44 +1,43 @@
-From: Stefano Stabellini <sstabellini@kernel.org>
-Date: Mon, 05 Jun 2017 17:16:46 +0000
-Subject: Re: [PATCH 1/3] arm/xen: Improve a size determination in __set_phys_to_machine_multi()
-Message-Id: <alpine.DEB.2.10.1706051016310.2941@sstabellini-ThinkPad-X260>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jun 2017 21:07:29 +0000
+Subject: [PATCH 3/3] arm/xen: Adjust one function call together with a variable assignment
+Message-Id: <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
- <7f2ec975-9a2b-132d-77f0-559fd7eadc30@users.sourceforge.net>
-In-Reply-To: <7f2ec975-9a2b-132d-77f0-559fd7eadc30@users.sourceforge.net>
+In-Reply-To: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Sun, 4 Jun 2017, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Jun 2017 20:50:55 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jun 2017 21:21:20 +0200
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+The script "checkpatch.pl" pointed information out like the following.
 
+ERROR: do not use assignment in if condition
 
-> ---
->  arch/arm/xen/p2m.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
-> index 0ed01f2d5ee4..11e78432b663 100644
-> --- a/arch/arm/xen/p2m.c
-> +++ b/arch/arm/xen/p2m.c
-> @@ -144,5 +144,5 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
->  		return true;
->  	}
->  
-> -	p2m_entry = kzalloc(sizeof(struct xen_p2m_entry), GFP_NOWAIT);
-> +	p2m_entry = kzalloc(sizeof(*p2m_entry), GFP_NOWAIT);
->  	if (!p2m_entry) {
-> -- 
-> 2.13.0
-> 
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/xen/p2m.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
+index f5f74ac637b9..e71eefa2e427 100644
+--- a/arch/arm/xen/p2m.c
++++ b/arch/arm/xen/p2m.c
+@@ -153,7 +153,8 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
+ 	p2m_entry->mfn = mfn;
+ 
+ 	write_lock_irqsave(&p2m_lock, irqflags);
+-	if ((rc = xen_add_phys_to_mach_entry(p2m_entry)) < 0) {
++	rc = xen_add_phys_to_mach_entry(p2m_entry);
++	if (rc < 0) {
+ 		write_unlock_irqrestore(&p2m_lock, irqflags);
+ 		return false;
+ 	}
+-- 
+2.13.0
+
