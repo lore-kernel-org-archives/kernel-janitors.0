@@ -1,41 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 02 Jun 2017 08:56:39 +0000
-Subject: [PATCH][-next] mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
-Message-Id: <20170602085639.29338-1-colin.king@canonical.com>
+From: Xinming Hu <huxm@marvell.com>
+Date: Mon, 05 Jun 2017 08:23:13 +0000
+Subject: Re:  [PATCH][-next] mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
+Message-Id: <0edf9f73cf2f49788ef767658cd038d0@SC-EXCH02.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170602085639.29338-1-colin.king@canonical.com>
+In-Reply-To: <20170602085639.29338-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Cathy Luo <cluo@marvell.com>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-function mwifiex_ret_pkt_aggr_ctrl can be made static as it does not
-need to be in global scope.
-
-Cleans up sparse warning: "symbol 'mwifiex_ret_pkt_aggr_ctrl' was not
-declared. Should it be static?"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-index 3348fb3a7514..2945775e83c5 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
-@@ -1154,8 +1154,8 @@ static int mwifiex_ret_chan_region_cfg(struct mwifiex_private *priv,
- 	return 0;
- }
- 
--int mwifiex_ret_pkt_aggr_ctrl(struct mwifiex_private *priv,
--			      struct host_cmd_ds_command *resp)
-+static int mwifiex_ret_pkt_aggr_ctrl(struct mwifiex_private *priv,
-+				     struct host_cmd_ds_command *resp)
- {
- 	struct host_cmd_ds_pkt_aggr_ctrl *pkt_aggr_ctrl  					&resp->params.pkt_aggr_ctrl;
--- 
-2.11.0
-
+SGkgQ29saW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4g
+S2luZyBbbWFpbHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogMjAxN+W5tDbm
+nIgy5pelIDE2OjU3DQo+IFRvOiBBbWl0a3VtYXIgS2Fyd2FyOyBOaXNoYW50IFNhcm11a2FkYW07
+IEdhbmFwYXRoaSBCaGF0OyBYaW5taW5nIEh1Ow0KPiBLYWxsZSBWYWxvOyBsaW51eC13aXJlbGVz
+c0B2Z2VyLmtlcm5lbC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1q
+YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogW0VYVF0gW1BBVENIXVstbmV4dF0gbXdpZmlleDogbWFrZSBmdW5jdGlvbg0KPiBt
+d2lmaWV4X3JldF9wa3RfYWdncl9jdHJsIHN0YXRpYw0KPiANCj4gRXh0ZXJuYWwgRW1haWwNCj4g
+DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fu
+b25pY2FsLmNvbT4NCj4gDQo+IGZ1bmN0aW9uIG13aWZpZXhfcmV0X3BrdF9hZ2dyX2N0cmwgY2Fu
+IGJlIG1hZGUgc3RhdGljIGFzIGl0IGRvZXMgbm90IG5lZWQgdG8NCj4gYmUgaW4gZ2xvYmFsIHNj
+b3BlLg0KPiANCj4gQ2xlYW5zIHVwIHNwYXJzZSB3YXJuaW5nOiAic3ltYm9sICdtd2lmaWV4X3Jl
+dF9wa3RfYWdncl9jdHJsJyB3YXMgbm90DQo+IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGlj
+PyINCg0KWWVzLCBpdCBzaG91bGQgYmUgc3RhdGljLCBUaGFua3MsDQoNClJlZ2FyZHMsDQpTaW1v
+bg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25p
+Y2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213aWZpZXgv
+c3RhX2NtZHJlc3AuYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVz
+cy9tYXJ2ZWxsL213aWZpZXgvc3RhX2NtZHJlc3AuYw0KPiBiL2RyaXZlcnMvbmV0L3dpcmVsZXNz
+L21hcnZlbGwvbXdpZmlleC9zdGFfY21kcmVzcC5jDQo+IGluZGV4IDMzNDhmYjNhNzUxNC4uMjk0
+NTc3NWU4M2M1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213
+aWZpZXgvc3RhX2NtZHJlc3AuYw0KPiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxs
+L213aWZpZXgvc3RhX2NtZHJlc3AuYw0KPiBAQCAtMTE1NCw4ICsxMTU0LDggQEAgc3RhdGljIGlu
+dCBtd2lmaWV4X3JldF9jaGFuX3JlZ2lvbl9jZmcoc3RydWN0DQo+IG13aWZpZXhfcHJpdmF0ZSAq
+cHJpdiwNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gDQo+IC1pbnQgbXdpZmlleF9yZXRfcGt0X2Fn
+Z3JfY3RybChzdHJ1Y3QgbXdpZmlleF9wcml2YXRlICpwcml2LA0KPiAtCQkJICAgICAgc3RydWN0
+IGhvc3RfY21kX2RzX2NvbW1hbmQgKnJlc3ApDQo+ICtzdGF0aWMgaW50IG13aWZpZXhfcmV0X3Br
+dF9hZ2dyX2N0cmwoc3RydWN0IG13aWZpZXhfcHJpdmF0ZSAqcHJpdiwNCj4gKwkJCQkgICAgIHN0
+cnVjdCBob3N0X2NtZF9kc19jb21tYW5kICpyZXNwKQ0KPiAgew0KPiAgCXN0cnVjdCBob3N0X2Nt
+ZF9kc19wa3RfYWdncl9jdHJsICpwa3RfYWdncl9jdHJsID0NCj4gIAkJCQkJJnJlc3AtPnBhcmFt
+cy5wa3RfYWdncl9jdHJsOw0KPiAtLQ0KPiAyLjExLjANCg0K
