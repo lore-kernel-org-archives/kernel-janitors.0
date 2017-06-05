@@ -1,37 +1,46 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Fri, 30 Jun 2017 14:56:55 +0000
-Subject: Re: [PATCH 2/2] scsi: lpfc: don't double count abort errors
-Message-Id: <69a42b12-8d69-9ecd-cbd3-dd146938bd4e@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Jun 2017 17:29:58 +0000
+Subject: [PATCH][scsi-next] scsi: qla2xxx: remove redundant null check on tgt
+Message-Id: <20170605172958.12844-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080352.mmfyjjxsznzx75yf@mwanda>
-In-Reply-To: <20170630080352.mmfyjjxsznzx75yf@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 6/30/2017 1:03 AM, Dan Carpenter wrote:
-> If lpfc_nvmet_unsol_fcp_issue_abort() fails then we accidentally
-> increment "tgtp->xmt_abort_rsp_error" and then two lines later we
-> increment it a second time.
->
-> Fixes: 547077a44b3b ("scsi: lpfc: Adding additional stats counters for nvme.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-> index 7dc061a14f95..fbeec344c6cc 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvmet.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-> @@ -2583,7 +2583,6 @@ lpfc_nvmet_unsol_fcp_issue_abort(struct lpfc_hba *phba,
->   	}
->   
->   aerr:
-> -	atomic_inc(&tgtp->xmt_abort_rsp_error);
->   	ctxp->flag &= ~LPFC_NVMET_ABORT_OP;
->   	atomic_inc(&tgtp->xmt_abort_rsp_error);
->   	lpfc_printf_log(phba, KERN_ERR, LOG_NVME_ABTS,
+From: Colin Ian King <colin.king@canonical.com>
 
-looks good.
+An earlier commit ed7fb808477b846bb2 ("scsi: qla2xxx: Remove
+redundant wait when target is stopped.") removed a null check
+on ha->tgt.tgt_ops and replaced it with a new check that null
+checked tgt, thus making the subsequent null check on tgt
+totally redundant. Remove it.
 
-Signed-off-By: James Smart <james.smart@broadcom.com>
+Detected by CoverityScan, CID#1440452 ("Logically Dead Code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qla2xxx/qla_target.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index cb33ca87ca37..3594a76f6155 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -5519,12 +5519,6 @@ void qlt_async_event(uint16_t code, struct scsi_qla_host *vha,
+ 	if (!tgt || tgt->tgt_stop || tgt->tgt_stopped)
+ 		return;
+ 
+-	if (unlikely(tgt = NULL)) {
+-		ql_dbg(ql_dbg_tgt, vha, 0xe03a,
+-		    "ASYNC EVENT %#x, but no tgt (ha %p)\n", code, ha);
+-		return;
+-	}
+-
+ 	if (((code = MBA_POINT_TO_POINT) || (code = MBA_CHG_IN_CONNECTION)) &&
+ 	    IS_QLA2100(ha))
+ 		return;
+-- 
+2.11.0
+
