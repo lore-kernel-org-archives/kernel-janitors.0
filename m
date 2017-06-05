@@ -1,52 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 03 Jun 2017 02:35:38 +0000
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Mon, 05 Jun 2017 04:24:00 +0000
 Subject: Re: [PATCH RESEND] Eliminate extra 'out_free' label from fcoe_init function
-Message-Id: <20170603023537.gv5c763tmmxr445y@mwanda>
+Message-Id: <0beb716f-a283-f63f-cab6-6013b3f98da5@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <8e1e75c4-3a80-00c3-2697-37fb1c86f7a1@redhat.com>
- <593161A9.9000100@bfs.de>
-In-Reply-To: <593161A9.9000100@bfs.de>
+ <20170603023418.c3vtjelbqsmgxyq7@mwanda>
+In-Reply-To: <20170603023418.c3vtjelbqsmgxyq7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: mgandhi@redhat.com, Johannes Thumshirn <jth@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Laurence Oberman <loberman@redhat.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Johannes Thumshirn <jth@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Laurence Oberman <loberman@redhat.com>, wharms@bfs.de
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 02, 2017 at 03:01:29PM +0200, walter harms wrote:
+On 06/03/2017 08:04 AM, Dan Carpenter wrote:
+> I'm fine with this version...
 > 
+> regards,
+> dan carpenter
 > 
-> Am 02.06.2017 14:39, schrieb Milan P. Gandhi:
-> > Simplify the check for return code of fcoe_if_init routine
-> > in fcoe_init function such that we could eliminate need for
-> > extra 'out_free' label and duplicate mutex_unlock statement.
-> > 
-> > Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
-> > ---
-> >  drivers/scsi/fcoe/fcoe.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-> > index ea21e7b..a2cf3d0 100644
-> > --- a/drivers/scsi/fcoe/fcoe.c
-> > +++ b/drivers/scsi/fcoe/fcoe.c
-> > @@ -2523,14 +2523,13 @@ static int __init fcoe_init(void)
-> >  	fcoe_dev_setup();
-> >  
-> >  	rc = fcoe_if_init();
-> > +	mutex_unlock(&fcoe_config_mutex);
-> > +
-> >  	if (rc)
-> > -		goto out_free;
-> > +		goto out_destroy;
-> >  
-> > -	mutex_unlock(&fcoe_config_mutex);
-> >  	return 0;
-> >  
-> if you do that, why not
-> if (!rc) return 0;
+Thanks everyone for the review and suggestions!!
 
-Gar...  No.  Please don't get creative with the last if statement.
+Regards,
 
-regards,
-dan carpenter
-
+Milan.
