@@ -1,52 +1,82 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 13 Jun 2017 14:21:56 +0000
-Subject: Re: [PATCH] firmware: tegra: fix locking bugs in bpmp
-Message-Id: <20170613142156.GA20181@ulmo.fritz.box>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cNdxnHkX5QqsyA0e"
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Mon, 05 Jun 2017 13:52:07 +0000
+Subject: [PATCH v3 0/1] Add public w1 driver interface
+Message-Id: <20170605135208.24807-1-afd@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170505053723.53qi4ob3df4ri2v4@mwanda>
-In-Reply-To: <20170505053723.53qi4ob3df4ri2v4@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Evgeniy Polyakov <zbr@ioremap.net>, Sebastian Reichel <sre@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 
+Hi All,
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As part of continuing work to cleanup the BQ27xxx driver I am attempting
+to remove the need for the platform driver interface. For this we first
+need the w1 subsystem to act more like a traditional bus subsystem
+and allow drivers for attached devices to live outside of the w1
+directory.
 
-On Fri, May 05, 2017 at 08:37:23AM +0300, Dan Carpenter wrote:
-> There are a bunch of error paths were we don't unlock the bpmp->threaded
-> lock.  Also if __tegra_bpmp_channel_write() fails then we returned
-> success instead of an error code.
->=20
-> Fixes: 983de5f97169 ("firmware: tegra: Add BPMP support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This should make no functional change, just a re-organization of
+header files.
 
-Applied, though I did omit the err_ prefixes from the labels for
-consistency.
+Thanks,
+Andrew
 
-Thierry
+Changes from v2:
+ - Fix include path for out of directory references
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes from v1:
+ - Dropped taken first two patches
+ - Added support for the new ds2438 chip driver
+ - Removed TI copywrite addition at maintainer's request
+ - Rebased on v4.12-rc1
 
------BEGIN PGP SIGNATURE-----
+Andrew F. Davis (1):
+  w1: Add subsystem kernel public interface
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/9QEACgkQ3SOs138+
-s6GThxAAhjznPNt1rb83yH2UGJtMMR7Plf/AjdPK2ZeZlZ1k1VGfZQZrKRjH9Tp9
-XkMpRzHxx9THDg9TO8JrwSXfN/Pj/8FMXdMJMFYQkhdSyLPTgM5UWp2iwuKr2yQz
-QSQIJdil5p3Quo3W73Ennh7LePUPDk6RfqgaOUrkeJErVfw0ez7wGks9ZlzC1Tsy
-H/kceV6pM+giicNxfobB080dwSA4RF3tfP7GaVRUwf9Dh6+l/Pb7f3GxVckl5nts
-cjM+VJPxbVHjArV3hqrqV3rDUHzhzPCTvjpEwPsw3ODSp1Rtf5o+BCr4CsuEDoqg
-TLd+4yXHpzNrR/UCDIPOzCEgVJDwIu2JKnsL4MsUiQRhze7ffdgjg4zGKcQAdUqI
-N1PzAlGEQZa+uw4D9lyMms9P3ANu3yWk3x04WReqNqa425yAPunEZnEsn2Wjve2K
-18CLAcU6yBrVVmIfCzLlHvvwe/ClvD+9S3Lx6NQK4ntlSCRfpORnJyT6MGbPc1MT
-CjvUfFirKSGv2hqeLJQ12hFV2wJP2t/+E4XLrRxhW6qZAvjtQEN/DUTEj8/TuJcz
-WAnmtKSsMVbxf+eiuLVbQKsIP6KbECc515CsXzHIg9yigkhRQJwS0UcELJ3zwdvP
-QLrkBXs8DYga9LRVclBYkLz2pioYp5WHoNyjc3+F7cg5wKJVCNA=
-=vqu7
------END PGP SIGNATURE-----
+ MAINTAINERS                           |   1 +
+ drivers/power/supply/ds2760_battery.c |   2 +-
+ drivers/power/supply/ds2780_battery.c |   2 +-
+ drivers/power/supply/ds2781_battery.c |   2 +-
+ drivers/w1/masters/ds1wm.c            |   3 +-
+ drivers/w1/masters/ds2482.c           |   3 +-
+ drivers/w1/masters/ds2490.c           |   3 +-
+ drivers/w1/masters/matrox_w1.c        |   3 +-
+ drivers/w1/masters/mxc_w1.c           |   3 +-
+ drivers/w1/masters/omap_hdq.c         |   3 +-
+ drivers/w1/masters/w1-gpio.c          |   3 +-
+ drivers/w1/slaves/w1_bq27000.c        |   6 +-
+ drivers/w1/slaves/w1_ds2405.c         |   5 +-
+ drivers/w1/slaves/w1_ds2406.c         |   6 +-
+ drivers/w1/slaves/w1_ds2408.c         |   6 +-
+ drivers/w1/slaves/w1_ds2413.c         |   6 +-
+ drivers/w1/slaves/w1_ds2423.c         |   6 +-
+ drivers/w1/slaves/w1_ds2431.c         |   6 +-
+ drivers/w1/slaves/w1_ds2433.c         |   6 +-
+ drivers/w1/slaves/w1_ds2438.c         |   5 +-
+ drivers/w1/slaves/w1_ds2760.c         |   7 ++-
+ drivers/w1/slaves/w1_ds2780.c         |   7 ++-
+ drivers/w1/slaves/w1_ds2781.c         |   7 ++-
+ drivers/w1/slaves/w1_ds28e04.c        |   6 +-
+ drivers/w1/slaves/w1_smem.c           |   7 ++-
+ drivers/w1/slaves/w1_therm.c          |  10 ++-
+ drivers/w1/w1.c                       |   6 +-
+ drivers/w1/w1_family.c                |   3 +-
+ drivers/w1/w1_family.h                |  98 -----------------------------
+ drivers/w1/w1_int.c                   |   3 +-
+ drivers/w1/w1_int.h                   |  27 --------
+ drivers/w1/w1_internal.h              |  87 ++++++++++++++++++++++++++
+ drivers/w1/w1_io.c                    |   2 +-
+ drivers/w1/w1_netlink.c               |   2 +-
+ drivers/w1/w1_netlink.h               |   2 +-
+ {drivers/w1 => include/linux}/w1.h    | 114 +++++++++++++++-------------------
+ 36 files changed, 208 insertions(+), 260 deletions(-)
+ delete mode 100644 drivers/w1/w1_family.h
+ delete mode 100644 drivers/w1/w1_int.h
+ create mode 100644 drivers/w1/w1_internal.h
+ rename {drivers/w1 => include/linux}/w1.h (76%)
 
---cNdxnHkX5QqsyA0e--
+-- 
+2.13.0
+
