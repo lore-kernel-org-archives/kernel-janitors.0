@@ -1,35 +1,31 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 28 Jun 2017 14:55:09 +0000
-Subject: Re: [PATCH] phy: cpcap-usb: remove a stray tab
-Message-Id: <20170628145508.GD3730@atomide.com>
+From: "Milan P. Gandhi" <mgandhi@redhat.com>
+Date: Mon, 05 Jun 2017 08:52:46 +0000
+Subject: [PATCH] Remove white spaces from fcoe.h
+Message-Id: <0f8b6a7b-c1d2-bc95-7970-7572991495cb@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628121936.mjupfdpqh7tl3bnk@mwanda>
-In-Reply-To: <20170628121936.mjupfdpqh7tl3bnk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
 
-* Dan Carpenter <dan.carpenter@oracle.com> [170628 05:20]:
-> This line was indented further that it should have been.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove the white spaces in do/while loop used for checking fcoe
+debug logging
 
-Thanks for fixing it:
+Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+---
+ drivers/scsi/fcoe/fcoe.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Tony Lindgren <tony@atomide.com>
-
-> diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
-> index 9b63efa5ae4d..accaaaccb662 100644
-> --- a/drivers/phy/motorola/phy-cpcap-usb.c
-> +++ b/drivers/phy/motorola/phy-cpcap-usb.c
-> @@ -506,7 +506,7 @@ static void cpcap_usb_init_optional_gpios(struct cpcap_phy_ddata *ddata)
->  		if (IS_ERR(ddata->gpio[i])) {
->  			dev_info(ddata->dev, "no mode change GPIO%i: %li\n",
->  				 i, PTR_ERR(ddata->gpio[i]));
-> -				 ddata->gpio[i] = NULL;
-> +			ddata->gpio[i] = NULL;
->  		}
->  	}
->  }
+diff --git a/drivers/scsi/fcoe/fcoe.h b/drivers/scsi/fcoe/fcoe.h
+index 6aa4820..7406376 100644
+--- a/drivers/scsi/fcoe/fcoe.h
++++ b/drivers/scsi/fcoe/fcoe.h
+@@ -46,7 +46,7 @@ extern unsigned int fcoe_debug_logging;
+ #define FCOE_NETDEV_LOGGING 0x02 /* Netdevice logging */
+ 
+ #define FCOE_CHECK_LOGGING(LEVEL, CMD)					\
+-do {                                                            	\
++do {									\
+ 	if (unlikely(fcoe_debug_logging & LEVEL))			\
+ 		do {							\
+ 			CMD;						\
