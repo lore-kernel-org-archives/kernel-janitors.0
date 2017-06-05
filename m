@@ -1,30 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jun 2017 15:16:25 +0000
-Subject: [PATCH] NFS: silence a uninitialized variable warning
-Message-Id: <20170623151625.imfq5p6nwyv2nf3k@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 05 Jun 2017 18:08:04 +0000
+Subject: [PATCH][netdev-next] mdio: mux: fix an incorrect less than zero error check using a u32
+Message-Id: <20170605180804.13765-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Static checkers have gotten clever enough to complain that "id_long" is
-uninitialized on the failure path.  It's harmless, but simple to fix.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The u32 variable v is being checked to see if an error return is
+less than zero and this check has no effect because it is unsigned.
+Fix this by making v and int (this also matches the type of
+cb->bus_number which is assigned to the value in v).
 
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index 835c163f61af..dd5d27da8c0c 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -364,7 +364,8 @@ static int nfs_idmap_lookup_id(const char *name, size_t namelen, const char *typ
- 		ret = -EINVAL;
- 	} else {
- 		ret = kstrtol(id_str, 10, &id_long);
--		*id = (__u32)id_long;
-+		if (!ret)
-+			*id = (__u32)id_long;
- 	}
- 	return ret;
- }
+Detected by CoverityScan, CID#1440454 ("Unsigned compared against zero")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/phy/mdio-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/mdio-mux.c b/drivers/net/phy/mdio-mux.c
+index 47ded3904050..00755b6a42cf 100644
+--- a/drivers/net/phy/mdio-mux.c
++++ b/drivers/net/phy/mdio-mux.c
+@@ -133,7 +133,7 @@ int mdio_mux_init(struct device *dev,
+ 
+ 	ret_val = -ENODEV;
+ 	for_each_available_child_of_node(dev->of_node, child_bus_node) {
+-		u32 v;
++		int v;
+ 
+ 		v = of_mdio_parse_addr(dev, child_bus_node);
+ 		if (v < 0) {
+-- 
+2.11.0
+
