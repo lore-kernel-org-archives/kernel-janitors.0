@@ -1,43 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jun 2017 21:07:29 +0000
-Subject: [PATCH 3/3] arm/xen: Adjust one function call together with a variable assignment
-Message-Id: <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
+From: Stefano Stabellini <sstabellini@kernel.org>
+Date: Mon, 05 Jun 2017 17:18:17 +0000
+Subject: Re: [PATCH 3/3] arm/xen: Adjust one function call together with a variable assignment
+Message-Id: <alpine.DEB.2.10.1706051018100.2941@sstabellini-ThinkPad-X260>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
-In-Reply-To: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
+ <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
+In-Reply-To: <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Jun 2017 21:21:20 +0200
+On Sun, 4 Jun 2017, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 4 Jun 2017 21:21:20 +0200
+> 
+> The script "checkpatch.pl" pointed information out like the following.
+> 
+> ERROR: do not use assignment in if condition
+> 
+> Thus fix the affected source code place.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The script "checkpatch.pl" pointed information out like the following.
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
-ERROR: do not use assignment in if condition
-
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/xen/p2m.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
-index f5f74ac637b9..e71eefa2e427 100644
---- a/arch/arm/xen/p2m.c
-+++ b/arch/arm/xen/p2m.c
-@@ -153,7 +153,8 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
- 	p2m_entry->mfn = mfn;
- 
- 	write_lock_irqsave(&p2m_lock, irqflags);
--	if ((rc = xen_add_phys_to_mach_entry(p2m_entry)) < 0) {
-+	rc = xen_add_phys_to_mach_entry(p2m_entry);
-+	if (rc < 0) {
- 		write_unlock_irqrestore(&p2m_lock, irqflags);
- 		return false;
- 	}
--- 
-2.13.0
-
+> ---
+>  arch/arm/xen/p2m.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
+> index f5f74ac637b9..e71eefa2e427 100644
+> --- a/arch/arm/xen/p2m.c
+> +++ b/arch/arm/xen/p2m.c
+> @@ -153,7 +153,8 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
+>  	p2m_entry->mfn = mfn;
+>  
+>  	write_lock_irqsave(&p2m_lock, irqflags);
+> -	if ((rc = xen_add_phys_to_mach_entry(p2m_entry)) < 0) {
+> +	rc = xen_add_phys_to_mach_entry(p2m_entry);
+> +	if (rc < 0) {
+>  		write_unlock_irqrestore(&p2m_lock, irqflags);
+>  		return false;
+>  	}
+> -- 
+> 2.13.0
+> 
