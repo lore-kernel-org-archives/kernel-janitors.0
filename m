@@ -1,91 +1,40 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 26 Jun 2017 21:03:09 +0000
-Subject: Re: endian bitshift defects [ was: staging: fusb302: don't bitshift __le16 type ]
-Message-Id: <alpine.DEB.2.20.1706261702520.3413@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Jun 2017 13:10:49 +0000
+Subject: [PATCH] net: stmmac: fix a broken u32 less than zero check
+Message-Id: <20170606131049.26887-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170616174556.2358-1-fransklaver@gmail.com> <1497653077.10546.23.camel@perches.com> <CAH6sp9NMnVzBXZcaU=q4oBV5tAoSqyO6GEfmSgtA0U+N+ibK=w@mail.gmail.com> <alpine.DEB.2.20.1706231936440.2989@hadrien> <20170626205748.GA1899@bugger>
-In-Reply-To: <20170626205748.GA1899@bugger>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frans Klaver <fransklaver@gmail.com>
-Cc: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Yueyao Zhu <yueyao.zhu@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, Guru Das Srinagesh <gurooodas@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, devel@driverdev.osuosl.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The check that queue is less or equal to zero is always true
+because queue is a u32; queue is decremented and will wrap around
+and never go -ve. Fix this by making queue an int.
 
-On Mon, 26 Jun 2017, Frans Klaver wrote:
+Detected by CoverityScan, CID#1428988 ("Unsigned compared against 0")
 
-> On Fri, Jun 23, 2017 at 07:37:28PM -0400, Julia Lawall wrote:
-> >
-> >
-> > On Sat, 24 Jun 2017, Frans Klaver wrote:
-> >
-> > > Hm. For some reason the great mail filtering scheme decided to push
-> > > this past my inbox :-/
-> > >
-> > > On Sat, Jun 17, 2017 at 12:44 AM, Joe Perches <joe@perches.com> wrote:
-> > > > On Fri, 2017-06-16 at 19:45 +0200, Frans Klaver wrote:
-> > > >> The header field in struct pd_message is declared as an __le16 type. The
-> > > >> data in the message is supposed to be little endian. This means we don't
-> > > >> have to go and shift the individual bytes into position when we're
-> > > >> filling the buffer, we can just copy the contents right away. As an
-> > > >> added benefit we don't get fishy results on big endian systems anymore.
-> > > >
-> > > > Thanks for pointing this out.
-> > > >
-> > > > There are several instances of this class of error.
-> > >
-> > > There are other smells around __(le|be) types that show up in staging
-> > > that might be worth checking in the rest of the kernel as well. e.g.
-> > > converting to cpu and storing it back into itself (possibly with its
-> > > bytes reversed), direct assignments without conversion and what else
-> > > you might have. sparse obviously already flags anything fishy going on
-> > > with these types, but cannot distinguish between the classes of
-> > > errors. I'll need to acquaint myself with spatch a bit more to be able
-> > > to track that down.
-> >
-> > If you have concrete code examples, even fake ones, illustrating a class
-> > of problem, then that would be great.
->
-> Alright, I'll describe two fairly simple cases for starters.
->
-> One class of issue that I have on top of mind is simply
->
-> 	__le16 val;
->
-> 	val = le16_to_cpu(val);
->
-> The problem there obviously being that val is supposed to be guaranteed
-> little endian. Sparse will throw a warning at this. It may also appear
-> as (or be 'fixed' as)
->
-> 	__le16 val;
->
-> 	le16_to_cpus(val);
->
-> Sparse doesn't flag this second version as an issue, while it causes the
-> same problem. It is especially a potential problem when the value is
-> stored in driver data.
->
-> Another smell that is prevalent, at least in staging, is
->
-> 	u16 in;
-> 	u16 out;
->
-> 	out = cpu_to_le16(in);
->
-> or in one instance (drivers/staging/fbtft/fbtft-io.c) I saw
->
-> 	u64 tmp;
->
-> 	*(u64*)dst = cpu_to_be64(tmp);
->
-> Now these aren't necessarily problematic. Usually this typo of code is
-> preparing the data to be sent out in a specific byte ordering, but again
-> issues may arise if this specifically ordered data is stored somewhere.
->
-> I'll leave it at that for now.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OK, thanks!
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 68a188e74c54..05b1ec9194da 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1207,7 +1207,7 @@ static int init_dma_rx_desc_rings(struct net_device *dev, gfp_t flags)
+ 	u32 rx_count = priv->plat->rx_queues_to_use;
+ 	unsigned int bfsize = 0;
+ 	int ret = -ENOMEM;
+-	u32 queue;
++	int queue;
+ 	int i;
+ 
+ 	if (priv->hw->mode->set_16kib_bfsize)
+-- 
+2.11.0
 
-julia
