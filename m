@@ -1,57 +1,40 @@
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 20 Jun 2017 00:01:42 +0000
-Subject: Re: [PATCH][next] ASoC: rsnd: make main_rate signed to check for -ve error return codes
-Message-Id: <87injra5wh.wl%kuninori.morimoto.gx@renesas.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Jun 2017 23:33:45 +0000
+Subject: [PATCH] cifs: remove redundant return in cifs_creation_time_get
+Message-Id: <20170606233345.5980-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170619163523.2208-1-colin.king@canonical.com>
-In-Reply-To: <20170619163523.2208-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Julia Lawall <Julia.Lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Colin
+There is a redundant return in function cifs_creation_time_get
+that appears to be old vestigial code than can be removed. So
+remove it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The comparison of main_rate < 0 has no effect because main_rate is
-> an unsigned int. Make it signed so that any -ve error returns from the
-> call to rsnd_clk_query can be detected.
-> 
-> Detected by CoverityScan, CID#1446152 ("Unsigned compared against 0")
-> 
-> Fixes: ef4cf5d6a143e0 ("ASoC: rsnd: add rsnd_ssi_clk_query()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Detected by CoverityScan, CID#1361924 ("Structurally dead code")
 
-Thank you for your patch.
-But, I posted this fixup patch (not yet accepted)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/xattr.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-To: Mark Brown <broonie@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] ASoC: rsnd: fixup unsigned expression compared with zero: main_rate
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC: Linux-ALSA <alsa-devel@alsa-project.org>, Simon <horms@verge.net.au>,
- <linux-renesas-soc@vger.kernel.org>
-Date: Fri, 16 Jun 2017 00:02:59 +0000
+diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
+index 3cb5c9e2d4e7..de50e749ff05 100644
+--- a/fs/cifs/xattr.c
++++ b/fs/cifs/xattr.c
+@@ -188,8 +188,6 @@ static int cifs_creation_time_get(struct dentry *dentry, struct inode *inode,
+ 	pcreatetime = (__u64 *)value;
+ 	*pcreatetime = CIFS_I(inode)->createtime;
+ 	return sizeof(__u64);
+-
+-	return rc;
+ }
+ 
+ 
+-- 
+2.11.0
 
->  sound/soc/sh/rcar/ssi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-> index c8956c3484dd..d220512918f9 100644
-> --- a/sound/soc/sh/rcar/ssi.c
-> +++ b/sound/soc/sh/rcar/ssi.c
-> @@ -258,7 +258,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
->  	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
->  	int chan = rsnd_runtime_channel_for_ssi(io);
->  	int idx, ret;
-> -	unsigned int main_rate;
-> +	int main_rate;
->  	unsigned int rate = rsnd_io_is_play(io) ?
->  		rsnd_src_get_out_rate(priv, io) :
->  		rsnd_src_get_in_rate(priv, io);
-> -- 
-> 2.11.0
-> 
