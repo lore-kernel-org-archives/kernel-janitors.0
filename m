@@ -1,25 +1,41 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Fri, 16 Jun 2017 13:50:35 +0000
-Subject: Re: [PATCH] reconnect_one(): fix a missing error code
-Message-Id: <20170616135035.GB12030@fieldses.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 06 Jun 2017 23:54:07 +0000
+Subject: [PATCH] i40evf: remove redundant null check on key
+Message-Id: <20170606235407.6478-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614093002.GG29394@elgon.mountain>
- <20170614203414.GC32208@fieldses.org>
- <87lgou6xqm.fsf@notabene.neil.brown.name>
- <20170615214002.GA6195@fieldses.org>
- <87injw7unk.fsf@notabene.neil.brown.name>
-In-Reply-To: <87injw7unk.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: NeilBrown <neilb@suse.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "J. Bruce Fields" <bfields@redhat.com>, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 16, 2017 at 08:28:31AM +1000, NeilBrown wrote:
-> It wouldn't be too hard to create that scenario.  It might be harder to
-> find a way to expose the corruption.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes.  Well, in any case, I assume this Al's to take.  ACK to the patch,
-and it should go to stable as well.
+key has previously been null checked so the subsequent null check
+is redundant as key can never be null at that point, so remove it.
 
---b.
+Detected by CoverityScan, CID#1357164 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
+index 9bb2cc7dd4e4..838e57c6e176 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
+@@ -732,9 +732,7 @@ static int i40evf_set_rxfh(struct net_device *netdev, const u32 *indir,
+ 	if (!indir)
+ 		return 0;
+ 
+-	if (key) {
+-		memcpy(adapter->rss_key, key, adapter->rss_key_size);
+-	}
++	memcpy(adapter->rss_key, key, adapter->rss_key_size);
+ 
+ 	/* Each 32 bits pointed by 'indir' is stored with a lut entry */
+ 	for (i = 0; i < adapter->rss_lut_size; i++)
+-- 
+2.11.0
+
