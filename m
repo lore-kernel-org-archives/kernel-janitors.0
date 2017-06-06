@@ -1,28 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 20:07:49 +0000
-Subject: [PATCH 0/3] ARM-pxa: Adjustments for two function implementations
-Message-Id: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Date: Tue, 06 Jun 2017 10:53:25 +0000
+Subject: Re: [PATCH 0/3] ARM-pxa: Adjustments for two function implementations
+Message-Id: <87y3t5z8t6.fsf@belgarion.home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
+In-Reply-To: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net> (SF
+ Markus Elfring's message of "Sat, 3 Jun 2017 22:07:49 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 22:02:34 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> writes:
 
-Three update suggestions were taken into account
-from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 3 Jun 2017 22:02:34 +0200
+>
+> Three update suggestions were taken into account
+> from static source code analysis.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in pxa_pm_init()
-  Improve a size determination in pxa3xx_u2d_probe()
-  Delete an error message for a failed memory allocation in pxa3xx_u2d_probe()
+Applied to the pxa/for-next tree, thanks.
 
- arch/arm/mach-pxa/pm.c          | 4 +---
- arch/arm/mach-pxa/pxa3xx-ulpi.c | 6 ++----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+Cheers.
 
 -- 
-2.13.0
-
+Robert
