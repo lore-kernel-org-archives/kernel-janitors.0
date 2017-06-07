@@ -1,37 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:20:28 +0000
-Subject: [PATCH 0/9] ARM: OMAP2+: Adjustments for seven function implementations
-Message-Id: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+From: Tony Lindgren <tony@atomide.com>
+Date: Wed, 07 Jun 2017 06:51:46 +0000
+Subject: Re: [PATCH 0/9] ARM: OMAP2+: Adjustments for seven function implementations
+Message-Id: <20170607065146.GE3730@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 20:12:34 +0200
+* SF Markus Elfring <elfring@users.sourceforge.net> [170603 11:24]:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 3 Jun 2017 20:12:34 +0200
+> 
+> Some update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (9):
+>   Delete an error message for a failed memory allocation in omap_mcspi_init()
+>   Delete an error message for a failed memory allocation in two functions
+>   Delete an unnecessary variable initialisation in omap_init_mcbsp()
+>   Improve a size determination in omap_init_mcbsp()
+>   Delete an error message for a failed memory allocation in omap_init_mcbsp()
+>   Improve a size determination in sr_dev_init()
+>   Use kcalloc() in sr_set_nvalues()
+>   SmartReflex: Delete an error message for a failed memory allocation in two functions
+>   Delete an error message for a failed memory allocation in omap_timer_init()
 
-Some update suggestions were taken into account
-from static source code analysis.
+Thanks for the patches. Many of these are no longer needed as
+I've now dropped more of the legacy boot code as everything
+for mach-omap2 is booting in device tree mode.
 
-Markus Elfring (9):
-  Delete an error message for a failed memory allocation in omap_mcspi_init()
-  Delete an error message for a failed memory allocation in two functions
-  Delete an unnecessary variable initialisation in omap_init_mcbsp()
-  Improve a size determination in omap_init_mcbsp()
-  Delete an error message for a failed memory allocation in omap_init_mcbsp()
-  Improve a size determination in sr_dev_init()
-  Use kcalloc() in sr_set_nvalues()
-  SmartReflex: Delete an error message for a failed memory allocation in two functions
-  Delete an error message for a failed memory allocation in omap_timer_init()
+So I'm applying the following ones into omap-for-v4.13/soc.
 
- arch/arm/mach-omap2/devices.c   |  4 +---
- arch/arm/mach-omap2/hsmmc.c     |  5 +----
- arch/arm/mach-omap2/mcbsp.c     |  8 +++-----
- arch/arm/mach-omap2/sr_device.c | 15 ++++-----------
- arch/arm/mach-omap2/timer.c     |  4 +---
- 5 files changed, 10 insertions(+), 26 deletions(-)
+Regards,
 
--- 
-2.13.0
+Tony
 
+8< -------
+ARM: OMAP2+: SmartReflex: Delete an error message for a failed memory allocation in two functions
+ARM: OMAP2+: Use kcalloc() in sr_set_nvalues()
+ARM: OMAP2+: Improve a size determination in sr_dev_init()
+ARM: OMAP2+: Delete an error message for a failed memory allocation in two functions
