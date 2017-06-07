@@ -1,40 +1,21 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 06 Jun 2017 23:33:45 +0000
-Subject: [PATCH] cifs: remove redundant return in cifs_creation_time_get
-Message-Id: <20170606233345.5980-1-colin.king@canonical.com>
+From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+Date: Wed, 07 Jun 2017 13:00:07 +0000
+Subject: Re: [PATCH] cifs: remove redundant return in cifs_creation_time_get
+Message-Id: <mpsd1agymug.fsf@aaptelpc.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170606233345.5980-1-colin.king@canonical.com>
+In-Reply-To: <20170606233345.5980-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
 Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-There is a redundant return in function cifs_creation_time_get
-that appears to be old vestigial code than can be removed. So
-remove it.
+Looks good to me.
 
-Detected by CoverityScan, CID#1361924 ("Structurally dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/xattr.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
-index 3cb5c9e2d4e7..de50e749ff05 100644
---- a/fs/cifs/xattr.c
-+++ b/fs/cifs/xattr.c
-@@ -188,8 +188,6 @@ static int cifs_creation_time_get(struct dentry *dentry, struct inode *inode,
- 	pcreatetime = (__u64 *)value;
- 	*pcreatetime = CIFS_I(inode)->createtime;
- 	return sizeof(__u64);
--
--	return rc;
- }
- 
- 
 -- 
-2.11.0
-
+Aurélien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
