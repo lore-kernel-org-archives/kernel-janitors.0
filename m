@@ -1,45 +1,40 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 07 Jun 2017 06:51:46 +0000
-Subject: Re: [PATCH 0/9] ARM: OMAP2+: Adjustments for seven function implementations
-Message-Id: <20170607065146.GE3730@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Jun 2017 15:26:15 +0000
+Subject: [PATCH] rtc: rtc-max8925: remove redundant check on ret
+Message-Id: <20170607152615.2072-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* SF Markus Elfring <elfring@users.sourceforge.net> [170603 11:24]:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Jun 2017 20:12:34 +0200
-> 
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (9):
->   Delete an error message for a failed memory allocation in omap_mcspi_init()
->   Delete an error message for a failed memory allocation in two functions
->   Delete an unnecessary variable initialisation in omap_init_mcbsp()
->   Improve a size determination in omap_init_mcbsp()
->   Delete an error message for a failed memory allocation in omap_init_mcbsp()
->   Improve a size determination in sr_dev_init()
->   Use kcalloc() in sr_set_nvalues()
->   SmartReflex: Delete an error message for a failed memory allocation in two functions
->   Delete an error message for a failed memory allocation in omap_timer_init()
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the patches. Many of these are no longer needed as
-I've now dropped more of the legacy boot code as everything
-for mach-omap2 is booting in device tree mode.
+The check on ret < 0 is redundant as the goto destination is the
+next statment.  Remove this redudant check and goto.
 
-So I'm applying the following ones into omap-for-v4.13/soc.
+Detected by CoverityScan, CID#1268785 ("Identical code for different
+branches")
 
-Regards,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-max8925.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Tony
+diff --git a/drivers/rtc/rtc-max8925.c b/drivers/rtc/rtc-max8925.c
+index 16d129a0bb3b..67d6fc2d23e6 100644
+--- a/drivers/rtc/rtc-max8925.c
++++ b/drivers/rtc/rtc-max8925.c
+@@ -234,8 +234,6 @@ static int max8925_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
+ 	else
+ 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x0);
+-	if (ret < 0)
+-		goto out;
+ out:
+ 	return ret;
+ }
+-- 
+2.11.0
 
-8< -------
-ARM: OMAP2+: SmartReflex: Delete an error message for a failed memory allocation in two functions
-ARM: OMAP2+: Use kcalloc() in sr_set_nvalues()
-ARM: OMAP2+: Improve a size determination in sr_dev_init()
-ARM: OMAP2+: Delete an error message for a failed memory allocation in two functions
