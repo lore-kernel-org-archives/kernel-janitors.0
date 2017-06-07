@@ -1,29 +1,39 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 22 Jun 2017 22:17:14 +0000
-Subject: Re: [PATCH 0/2] NFC-digital: Adjustments for four function implementations
-Message-Id: <20170622221714.GC21214@zurbaran.ger.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 07 Jun 2017 11:35:17 +0000
+Subject: [PATCH][drm-next] drm/nouveau: fix non-ANSI function declaration of nouveau_pmops_runtime
+Message-Id: <20170607113517.29270-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
-In-Reply-To: <7e27a76c-de7a-22ec-cf8a-31aee2000e29@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thierry Escande <thierry.escande@collabora.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, May 22, 2017 at 02:57:42PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 May 2017 14:50:05 +0200
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (2):
->   Improve a size determination in four functions
->   Delete an error message for a failed memory allocation in digital_in_send()
-Both patches applied to nfc-next, thanks.
+Give function nouveau_pmops_runtime a void argument to make it an ANSI
+function declaration. Fixes sparse warning:
 
-Cheers,
-Samuel.
+warning: non-ANSI function declaration of function 'nouveau_pmops_runtime'
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 7acd1cf8c5a6..90757af9bc73 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -727,7 +727,7 @@ nouveau_pmops_thaw(struct device *dev)
+ }
+ 
+ bool
+-nouveau_pmops_runtime()
++nouveau_pmops_runtime(void)
+ {
+ 	if (nouveau_runtime_pm = -1)
+ 		return nouveau_is_optimus() || nouveau_is_v1_dsm();
+-- 
+2.11.0
+
