@@ -1,41 +1,24 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:36:10 +0000
-Subject: [PATCH 9/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in omap_timer_init()
-Message-Id: <a673b257-4750-2135-2c4e-bc0e5937f4b0@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Thu, 08 Jun 2017 04:07:36 +0000
+Subject: Re: cxl: Unlock on error in probe
+Message-Id: <3wjsMX598Gz9s9Y@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <20170505053458.csrwd2kjber44r4o@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Ian Munsie <imunsie@au1.ibm.com>, Christophe Lombard <clombard@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 19:23:59 +0200
+On Fri, 2017-05-05 at 05:34:58 UTC, Dan Carpenter wrote:
+> We should unlock if get_cxl_adapter() fails.
+> 
+> Fixes: 594ff7d067ca ("cxl: Support to flash a new image on the adapter from a guest")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Applied to powerpc next, thanks.
 
-This issue was detected by using the Coccinelle software.
+https://git.kernel.org/powerpc/c/58d876fa7181f2f393190c1d32c056
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/timer.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index 07dd692c4737..f6b5ccfe4653 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -693,7 +693,5 @@ static int __init omap_timer_init(struct omap_hwmod *oh, void *unused)
--	if (!pdata) {
--		pr_err("%s: No memory for [%s]\n", __func__, oh->name);
-+	if (!pdata)
- 		return -ENOMEM;
--	}
- 
- 	/*
- 	 * Extract the IDs from name field in hwmod database
--- 
-2.13.0
-
+cheers
