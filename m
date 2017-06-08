@@ -1,40 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 07 Jun 2017 15:26:15 +0000
-Subject: [PATCH] rtc: rtc-max8925: remove redundant check on ret
-Message-Id: <20170607152615.2072-1-colin.king@canonical.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 08 Jun 2017 01:37:52 +0000
+Subject: Re: [PATCH] rtc: rtc-max8925: remove redundant check on ret
+Message-Id: <CAHp75VfBLQjtZPgY9pDxu4Lp__u+E+bfS=A6-id9cpPCX_ZQoQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170607152615.2072-1-colin.king@canonical.com>
+In-Reply-To: <20170607152615.2072-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jun 7, 2017 at 6:26 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check on ret < 0 is redundant as the goto destination is the
+> next statment.  Remove this redudant check and goto.
+>
+> Detected by CoverityScan, CID#1268785 ("Identical code for different
+> branches")
 
-The check on ret < 0 is redundant as the goto destination is the
-next statment.  Remove this redudant check and goto.
+>                 ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
+>         else
+>                 ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x0);
+> -       if (ret < 0)
+> -               goto out;
+>  out:
+>         return ret;
 
-Detected by CoverityScan, CID#1268785 ("Identical code for different
-branches")
+...and label (w/ replacing it by inplace return ret;) ?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rtc/rtc-max8925.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-max8925.c b/drivers/rtc/rtc-max8925.c
-index 16d129a0bb3b..67d6fc2d23e6 100644
---- a/drivers/rtc/rtc-max8925.c
-+++ b/drivers/rtc/rtc-max8925.c
-@@ -234,8 +234,6 @@ static int max8925_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x77);
- 	else
- 		ret = max8925_reg_write(info->rtc, MAX8925_ALARM0_CNTL, 0x0);
--	if (ret < 0)
--		goto out;
- out:
- 	return ret;
- }
 -- 
-2.11.0
-
+With Best Regards,
+Andy Shevchenko
