@@ -1,46 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 09 Jun 2017 15:54:25 +0000
-Subject: [PATCH][-next] loop: fix incorrect nesting levels on braces in nested if statements
-Message-Id: <20170609155425.21260-1-colin.king@canonical.com>
+From: Jens Axboe <axboe@fb.com>
+Date: Fri, 09 Jun 2017 15:57:49 +0000
+Subject: Re: [PATCH][-next] loop: fix incorrect nesting levels on braces in nested if statements
+Message-Id: <7929f1eb-d796-6eba-52de-3c19ddcd2723@fb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170609155425.21260-1-colin.king@canonical.com>
+In-Reply-To: <20170609155425.21260-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@fb.com>, Ming Lei <tom.leiming@gmail.com>, Hannes Reinecke <hare@suse.de>, Omar Sandoval <osandov@fb.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>, Ming Lei <tom.leiming@gmail.com>, Hannes Reinecke <hare@suse.de>, Omar Sandoval <osandov@fb.com>, Andrew Morton <akpm@linux-foundation.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 06/09/2017 09:54 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Adding another set of braces clarifies the block and ensures that
+> both the setting of err and the error exit are executed on the
+> deepest nested if statement.
+>=20
+> Detected by CoverityScan, CID#1440959 ("Nesting level does not
+> match indentation")
 
-Adding another set of braces clarifies the block and ensures that
-both the setting of err and the error exit are executed on the
-deepest nested if statement.
+Already fixed:
 
-Detected by CoverityScan, CID#1440959 ("Nesting level does not
-match indentation")
+http://git.kernel.dk/cgit/linux-block/commit/?h=3Dfor-4.13/block&id=B040ad9=
+cf6a169cc000a5324fcada695dfa1f4b3
 
-Fixes: f2c6df7dbf9a60 ("loop: support 4k physical blocksize")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/block/loop.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--=20
+Jens Axboe
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 4d376c10a97a..e288fb30100f 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1147,10 +1147,11 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 	    ((lo->lo_flags & LO_FLAGS_BLOCKSIZE) &&
- 	     lo->lo_logical_blocksize != LO_INFO_BLOCKSIZE(info))) {
- 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit,
--				     LO_INFO_BLOCKSIZE(info)))
-+				     LO_INFO_BLOCKSIZE(info))) {
- 			err = -EFBIG;
- 			goto exit;
- 		}
-+	}
- 
- 	loop_config_discard(lo);
- 
--- 
-2.11.0
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
