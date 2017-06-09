@@ -1,48 +1,36 @@
-From: Matan Barak <matanb@dev.mellanox.co.il>
-Date: Wed, 14 Jun 2017 09:57:42 +0000
-Subject: Re: [PATCH] IB/mlx5: Fix a warning message
-Message-Id: <CAAKD3BDGH1STMhcCgz=K6-8EtnGGOYkx7KPS+iPidUiuLmpjNw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 09 Jun 2017 19:27:12 +0000
+Subject: [PATCH] drm/mediatek: check for memory allocation failure
+Message-Id: <20170609192712.18155-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614091556.GF29394@elgon.mountain> <CAAKD3BDG9aOcLU9vEL1u8Yn23QpsZCjjN-y5DbKq5zBrvYJK=A@mail.gmail.com>
- <20170614095228.z27m247t5k2si6fz@mwanda>
-In-Reply-To: <20170614095228.z27m247t5k2si6fz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matan Barak <matanb@mellanox.com>, Arnd Bergmann <arnd@arndb.de>, Leon Romanovsky <leonro@mellanox.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma <linux-rdma@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie, matthias.bgg@gmail.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Jun 14, 2017 at 12:52 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> On Wed, Jun 14, 2017 at 12:19:57PM +0300, Matan Barak wrote:
->> On Wed, Jun 14, 2017 at 12:15 PM, Dan Carpenter
->> <dan.carpenter@oracle.com> wrote:
->> > "umem" is a valid pointer.  We intended to print "*umem" instead.
->> >
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> >
->> > diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
->> > index 763bb5b36144..86af54b0e414 100644
->> > --- a/drivers/infiniband/hw/mlx5/mr.c
->> > +++ b/drivers/infiniband/hw/mlx5/mr.c
->> > @@ -825,7 +825,7 @@ static int mr_umem_get(struct ib_pd *pd, u64 start, u64 length,
->> >                             access_flags, 0);
->> >         err = PTR_ERR_OR_ZERO(*umem);
->> >         if (err < 0) {
->> > -               mlx5_ib_err(dev, "umem get failed (%ld)\n", PTR_ERR(umem));
->> > +               mlx5_ib_err(dev, "umem get failed (%ld)\n", PTR_ERR(*umem));
->>
->> I think it's better just to print err :)
->>
->
-> I don't understand what you're saying.
->
+If 'devm_kmalloc_array' returns NULL, we should return -ENOMEM as already
+done a few lines above instead of deferencing a NULL pointer a few lines
+below.
 
-mlx5_ib_err(dev, "umem get failed (%d)\n", err);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> regards,
-> dan carpenter
->
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 6582e1f56d37..cb32c9369f3a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -559,6 +559,8 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 	mtk_crtc->ddp_comp = devm_kmalloc_array(dev, mtk_crtc->ddp_comp_nr,
+ 						sizeof(*mtk_crtc->ddp_comp),
+ 						GFP_KERNEL);
++	if (!mtk_crtc->ddp_comp)
++		return -ENOMEM;
+ 
+ 	mtk_crtc->mutex = mtk_disp_mutex_get(priv->mutex_dev, pipe);
+ 	if (IS_ERR(mtk_crtc->mutex)) {
+-- 
+2.11.0
 
-Thanks,
-Matan
