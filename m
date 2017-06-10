@@ -1,51 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:34:07 +0000
-Subject: [PATCH 8/9] ARM: OMAP2+: SmartReflex: Delete an error message for a failed memory allocation in two 
-Message-Id: <13210fb0-3a22-07f5-0bc5-b338b1ccfdeb@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 10 Jun 2017 13:14:13 +0000
+Subject: [PATCH] scsi: aacraid: Fix some error code
+Message-Id: <20170610131413.26666-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: aacraid@microsemi.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 19:16:27 +0200
+If 'scsi_host_alloc', 'kzalloc' or '(*aac_drivers[index].init)' fail, the
+function will return 0, because 'error' is known to be 0 at this point.
 
-Omit an extra message for a memory allocation failure in these functions.
+Return -ENOMEM in the 2 first cases and -ENODEV in the third one.
 
-This issue was detected by using the Coccinelle software.
+This patch also removes a useless 'error = -ENODEV'.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/mach-omap2/sr_device.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/scsi/aacraid/linit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
-index 65775c6e8c27..eef6935e0403 100644
---- a/arch/arm/mach-omap2/sr_device.c
-+++ b/arch/arm/mach-omap2/sr_device.c
-@@ -48,7 +48,5 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
--	if (!nvalue_table) {
--		pr_err("OMAP: SmartReflex: cannot allocate memory for n-value table\n");
-+	if (!nvalue_table)
- 		return;
--	}
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 0f277df73af0..43691d6febc2 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1473,7 +1473,6 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	error = pci_enable_device(pdev);
+ 	if (error)
+ 		goto out;
+-	error = -ENODEV;
  
- 	for (i = 0, j = 0; i < count; i++) {
- 		u32 v;
-@@ -104,8 +102,5 @@ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
--	if (!sr_data) {
--		pr_err("%s: Unable to allocate memory for %s sr_data\n",
--		       __func__, oh->name);
-+	if (!sr_data)
- 		return -ENOMEM;
--	}
+ 	if (!(aac_drivers[index].quirks & AAC_QUIRK_SRC)) {
+ 		error = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+@@ -1505,6 +1504,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	pci_set_master(pdev);
  
- 	sr_dev_attr = (struct omap_smartreflex_dev_attr *)oh->dev_attr;
- 	if (!sr_dev_attr || !sr_dev_attr->sensor_voltdm_name) {
+ 	shost = scsi_host_alloc(&aac_driver_template, sizeof(struct aac_dev));
++	error = -ENOMEM;
+ 	if (!shost)
+ 		goto out_disable_pdev;
+ 
+@@ -1526,6 +1526,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	INIT_LIST_HEAD(&aac->entry);
+ 
+ 	aac->fibs = kzalloc(sizeof(struct fib) * (shost->can_queue + AAC_NUM_MGT_FIB), GFP_KERNEL);
++	error = -ENOMEM;
+ 	if (!aac->fibs)
+ 		goto out_free_host;
+ 	spin_lock_init(&aac->fib_lock);
+@@ -1535,6 +1536,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	 *	Map in the registers from the adapter.
+ 	 */
+ 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
++	error = -ENODEV;
+ 	if ((*aac_drivers[index].init)(aac))
+ 		goto out_unmap;
+ 
 -- 
-2.13.0
+2.11.0
 
