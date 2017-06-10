@@ -1,83 +1,36 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Fri, 02 Jun 2017 12:45:38 +0000
-Subject: Re: [PATCH] Eliminate extra 'out_free' label from fcoe_init function
-Message-Id: <fefc51f4-62fa-57b8-09de-271dc10bd682@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 10 Jun 2017 09:19:20 +0000
+Subject: [PATCH] cxgb4: Remove some dead code
+Message-Id: <20170610091920.24746-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a1ea0104-83ed-2249-3450-dc5c31517558@redhat.com>
- <20170601150233.2j6lxormywlvu7fa@mwanda>
- <e318d328-71f4-5212-c697-f71e5c77b660@redhat.com>
- <alpine.DEB.2.20.1706020748480.2312@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1706020748480.2312@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>, Laurence Oberman <loberman@redhat.com>
+To: swise@chelsio.com, dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 06/02/2017 11:19 AM, Julia Lawall wrote:
-> 
-> 
-> On Fri, 2 Jun 2017, Milan P. Gandhi wrote:
-> 
->> On 06/01/2017 08:32 PM, Dan Carpenter wrote:
->>> On Thu, Jun 01, 2017 at 05:41:06PM +0530, Milan P. Gandhi wrote:
->>>> Simplify the check for return code of fcoe_if_init routine
->>>> in fcoe_init function such that we could eliminate need for
->>>> extra 'out_free' label.
->>>>
->>>> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
->>>> ---
->>>>  drivers/scsi/fcoe/fcoe.c | 10 ++++------
->>>>  1 file changed, 4 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
->>>> index ea21e7b..fb2a4c9 100644
->>>> --- a/drivers/scsi/fcoe/fcoe.c
->>>> +++ b/drivers/scsi/fcoe/fcoe.c
->>>> @@ -2523,13 +2523,11 @@ static int __init fcoe_init(void)
->>>>  	fcoe_dev_setup();
->>>>
->>>>  	rc = fcoe_if_init();
->>>> -	if (rc)
->>>> -		goto out_free;
->>>> -
->>>> -	mutex_unlock(&fcoe_config_mutex);
->>>> -	return 0;
->>>> +	if (rc = 0) {
->>>> +		mutex_unlock(&fcoe_config_mutex);
->>>> +		return 0;
->>>> +	}
->>>>
->>>> -out_free:
->>>>  	mutex_unlock(&fcoe_config_mutex);
->>>
->>> Gar...  Stop!  No1  Don't do this.
->>>
->>> Do failure handling, not success handling.
->>>
->>> People always think they should get creative with the last if statement
->>> in a function.  This leads to spaghetti code and it's confusing.  Please
->>> never do this again.
->>>
->>> The original is correct and the new code is bad rubbish code.
->>>
->>> regards,
->>> dan carpenter
->>>
->>>
->>
->> Oops, my bad sir. Will keep this in mind.
-> 
-> Still, does the mutex_unlock really need to be duplicated?
-> 
-> julia
-> 
+This 'BUG_ON(!ep)' can never trigger because we have:
+   if (!ep)
+      return 0;
+just a few lines above. So it can be removed safely.
 
-Hello Julia,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/cxgb4/cm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks for your hint! I have found a better way to remove a need for 
-duplicate mutex_unlock statement and extra 'out_free' label. Will send
-the corrected path for the same.
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 2f1136bf7b1f..815d7dfbdfb1 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -2879,7 +2879,6 @@ static int close_con_rpl(struct c4iw_dev *dev, struct sk_buff *skb)
+ 		return 0;
+ 
+ 	pr_debug("%s ep %p tid %u\n", __func__, ep, ep->hwtid);
+-	BUG_ON(!ep);
+ 
+ 	/* The cm_id may be null if we failed to connect */
+ 	mutex_lock(&ep->com.mutex);
+-- 
+2.11.0
 
-Many thanks,
-Milan.
