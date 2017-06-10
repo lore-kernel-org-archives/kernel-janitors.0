@@ -1,41 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 06 Jun 2017 23:54:07 +0000
-Subject: [PATCH] i40evf: remove redundant null check on key
-Message-Id: <20170606235407.6478-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Jun 2017 11:33:42 +0000
+Subject: Re: [PATCH] i40evf: remove redundant null check on key
+Message-Id: <20170610113342.f4v5j3inpoxwqkhf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170606235407.6478-1-colin.king@canonical.com>
+In-Reply-To: <20170606235407.6478-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-key has previously been null checked so the subsequent null check
-is redundant as key can never be null at that point, so remove it.
+This patch isn't right...
 
-Detected by CoverityScan, CID#1357164 ("Logically dead code")
+On Wed, Jun 07, 2017 at 12:54:07AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> key has previously been null checked so the subsequent null check
+> is redundant as key can never be null at that point, so remove it.
+> 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Actually, it's the reverse.  "key" is always NULL.  Probably the ||
+should be a &&?
 
-diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-index 9bb2cc7dd4e4..838e57c6e176 100644
---- a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-@@ -732,9 +732,7 @@ static int i40evf_set_rxfh(struct net_device *netdev, const u32 *indir,
- 	if (!indir)
- 		return 0;
- 
--	if (key) {
--		memcpy(adapter->rss_key, key, adapter->rss_key_size);
--	}
-+	memcpy(adapter->rss_key, key, adapter->rss_key_size);
- 
- 	/* Each 32 bits pointed by 'indir' is stored with a lut entry */
- 	for (i = 0; i < adapter->rss_lut_size; i++)
--- 
-2.11.0
+regards,
+dan carpenter
 
