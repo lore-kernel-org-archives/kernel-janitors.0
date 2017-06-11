@@ -1,47 +1,37 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 21 Jun 2017 19:15:12 +0000
-Subject: Re: [PATCH] iio: adc: mxs-lradc: Checking IS_ERR() instead of NULL
-Message-Id: <20170621201512.5808cc8a@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Jun 2017 06:16:02 +0000
+Subject: [PATCH 1/3] scsi: qedf: Fix a return value in case of error in 'qedf_alloc_global_queues'
+Message-Id: <7674c3a305022d1e30b7e7b744b673713fd50117.1497160148.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170426210349.sjmf65ck5awfgz22@mwanda>
-        <13f3bcd0-c6c8-7abc-d732-91a19618f5a5@kernel.org>
-        <20170613083905.7aiaxvfjg2ypkfq2@mwanda>
-In-Reply-To: <20170613083905.7aiaxvfjg2ypkfq2@mwanda>
+References: <cover.1497160148.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1497160148.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ksenija Stanojevic <ksenija.stanojevic@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Lee Jones <lee.jones@linaro.org>, Marek Vasut <marex@denx.de>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 13 Jun 2017 11:39:05 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+We should return -ENOMEM in case of memory allocation error, as done
+elsewhere in this function.
 
-> On Thu, Apr 27, 2017 at 07:21:09AM +0100, Jonathan Cameron wrote:
-> > On 26/04/17 22:03, Dan Carpenter wrote:  
-> > > devm_ioremap() returns NULL on error.  It doesn't return error pointers.
-> > > 
-> > > Fixes: 6dd112b9f85e ("iio: adc: mxs-lradc: Add support for ADC driver")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >   
-> > Hi Dan,
-> > 
-> > Already another patch for this under review.  Open question there is whether
-> > devm_ioremap_resource is the way to go instead.
-> >   
-> 
-> I wasn't on that other thread...  Nothing appears to have happened with
-> this or the touchscreen bug either.
-> 
-> regards,
-> dan carpenter
-I think I was just being a bit lax in actually pushing it out and sending
-Greg a pull request. 
+Fixes: 61d8658b4a435 ("scsi: qedf: Add QLogic FastLinQ offload FCoE driver framework.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/qedf/qedf_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=fixes-togreg&id54e15bc28ba94aa5d6b31a83a42d5c03af2a6d
-
-Thanks for following up on this.
-
-Jonathan
-> 
-> 
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index aab3e2bd26a0..52a27100ca6d 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -2673,6 +2673,7 @@ static int qedf_alloc_global_queues(struct qedf_ctx *qedf)
+ 		if (!qedf->global_queues[i]) {
+ 			QEDF_WARN(&(qedf->dbg_ctx), "Unable to allocation "
+ 				   "global queue %d.\n", i);
++			status = -ENOMEM;
+ 			goto mem_alloc_failure;
+ 		}
+ 
+-- 
+2.11.0
 
