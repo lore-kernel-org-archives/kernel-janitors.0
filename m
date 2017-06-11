@@ -1,35 +1,37 @@
-From: Don Zickus <dzickus@redhat.com>
-Date: Mon, 19 Jun 2017 14:22:21 +0000
-Subject: Re: [PATCH] x86/nmi: fix timeout test in test_nmi_ipi()
-Message-Id: <20170619142221.mqi7wwtr6pi75dad@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Jun 2017 06:40:18 +0000
+Subject: [PATCH 1/2] scsi: qedi: Fix a return value in case of error in 'qedi_alloc_global_queues'
+Message-Id: <aafc9e362592524150d11f61dc7ab0b49e75f698.1497162751.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170619105304.GA23995@elgon.mountain>
-In-Reply-To: <20170619105304.GA23995@elgon.mountain>
+References: <cover.1497162751.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1497162751.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Jun 19, 2017 at 01:53:04PM +0300, Dan Carpenter wrote:
-> We're supposed to exit the loop with "timeout" set to zero.
-> 
-> Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We should return -ENOMEM in case of memory allocation error, as done
+elsewhere in this function.
 
-Acked-by: Don Zickus <dzickus@redhat.com>
+Fixes: ace7f46ba5fde ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/qedi/qedi_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index f46880315ba8..c81e494a9067 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1319,6 +1319,7 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
+ 		if (!qedi->global_queues[i]) {
+ 			QEDI_ERR(&qedi->dbg_ctx,
+ 				 "Unable to allocation global queue %d.\n", i);
++			status = -ENOMEM;
+ 			goto mem_alloc_failure;
+ 		}
+ 
+-- 
+2.11.0
 
-> 
-> diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-> index 6d9582ec0324..d27f8d84c4ff 100644
-> --- a/arch/x86/kernel/nmi_selftest.c
-> +++ b/arch/x86/kernel/nmi_selftest.c
-> @@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct cpumask *mask)
->  
->  	/* Don't wait longer than a second */
->  	timeout = USEC_PER_SEC;
-> -	while (!cpumask_empty(mask) && timeout--)
-> +	while (!cpumask_empty(mask) && --timeout)
->  	        udelay(1);
->  
->  	/* What happens if we timeout, do we still unregister?? */
