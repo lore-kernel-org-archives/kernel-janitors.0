@@ -1,55 +1,121 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 15 Jun 2017 12:07:24 +0000
-Subject: Re: [PATCH] gpu: host1x: Fix error handling
-Message-Id: <20170615120724.GA30056@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="TB36FDmn/VVEgNH/"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Jun 2017 13:53:56 +0000
+Subject: [PATCH] scripts/coccinelle/api/gpiod_get_index.cocci: use gpiod_get variant when possible
+Message-Id: <1497189236-4666-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170410202922.17665-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170410202922.17665-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
+Coccinelle script to use the shorter gpiod_get function when the third
+argument to a gpiod_get_index function is 0.
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This rule avoids modifying wrapper functions and cases where there is a
+series of gpiod_get_index calls.
 
-On Mon, Apr 10, 2017 at 10:29:22PM +0200, Christophe JAILLET wrote:
-> If 'devm_reset_control_get' returns an error, then we erroneously return
-> success because error code is taken from 'host->clk' instead of=20
-> 'host->rst'.
->=20
-> Fixes: b386c6b73ac6 ("gpu: host1x: Support module reset")
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/host1x/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to drm-misc-fixes, thanks.
+---
+ scripts/coccinelle/api/gpiod_get_index.cocci |   92 +++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-Thierry
+diff --git a/scripts/coccinelle/api/gpiod_get_index.cocci b/scripts/coccinelle/api/gpiod_get_index.cocci
+new file mode 100644
+index 0000000..a670a29
+--- /dev/null
++++ b/scripts/coccinelle/api/gpiod_get_index.cocci
+@@ -0,0 +1,92 @@
++/// Use the shorter gpiod_get function when the third argument to a
++/// gpiod_get_index function is 0.
++//# The change might not be desired when there is a series of calls, for 0, 1,
++//# 2, etc.  This rule checks for another such call subsequently only.
++///
++// Confidence: Moderate
++// Copyright: (C) 2017 Julia Lawall, Inria. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++// Keywords: gpiod_get_index
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@initialize:python@
++@@
++
++def not_wrapper(p):
++  return (p[0].current_element != "devm_gpiod_get_optional" and
++          p[0].current_element != "devm_gpiod_get" and
++          p[0].current_element != "gpiod_get_optional" and
++          p[0].current_element != "gpiod_get");
++
++@r depends on patch && !context && !org && !report@
++expression e1,e2,e3,e4,e5,e6,n != 0;
++position p : script:python() { not_wrapper(p) };
++@@
++
++(
++- devm_gpiod_get_index_optional@p
+++ devm_gpiod_get_optional
++|
++- devm_gpiod_get_index@p
+++ devm_gpiod_get
++|
++- gpiod_get_index_optional@p
+++ gpiod_get_optional
++|
++- gpiod_get_index@p
+++ gpiod_get
++)
++   (e1,e2,
++-   0,
++    e3)
++ ... when != devm_gpiod_get_index_optional(e4,e5,n,e6)
++     when != devm_gpiod_get_index(e4,e5,n,e6)
++     when != gpiod_get_index_optional(e4,e5,n,e6)
++     when != gpiod_get_index(e4,e5,n,e6)
++
++// ----------------------------------------------------------------------------
++
++@r_context depends on !patch && (context || org || report) forall@
++expression e1, e2, e3, e4, e5, e6, n != 0;
++position p: script:python () { not_wrapper(p) };
++@@
++
++(
++*  devm_gpiod_get_index_optional@p
++|
++*  devm_gpiod_get_index@p
++|
++*  gpiod_get_index_optional@p
++|
++*  gpiod_get_index@p
++)
++   (e1,e2,
++*    0,
++    e3)
++ ... when != devm_gpiod_get_index_optional(e4,e5,n,e6)
++     when != devm_gpiod_get_index(e4,e5,n,e6)
++     when != gpiod_get_index_optional(e4,e5,n,e6)
++     when != gpiod_get_index(e4,e5,n,e6)
++
++// ----------------------------------------------------------------------------
++
++@script:python r_org depends on org@
++p << r_context.p;
++@@
++
++msg = "Use non _index variant in 0 case."
++coccilib.org.print_todo(p[0], msg)
++
++// ----------------------------------------------------------------------------
++
++@script:python r_report depends on report@
++p << r_context.p;
++@@
++
++msg = "Use non _index variant in 0 case around line %s." % (p[0].line)
++coccilib.report.print_report(p[0], msg)
 
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAllCeHkACgkQ3SOs138+
-s6H6Vw/9FV1MDmcHsT4wsziUxklh7XLsxfcnRcOA7yaIBIaEydwjsK8d/LIJc0j7
-Yyd/JW9KlL/nnO782fXo1e2gStc1P2Iy0GIxM0Lt7bgDFiRUTQIL7Ovq+4zPDOZH
-ZwnqG9LPEh9hsm3zf1lKFv8m+7JgKFAbcaK0Mq4Duls0yyJKjk+uR53M23j74sVE
-h0fmQsoP0uUSAgugItWVhc9qTGTzVWGVM/5jRB/FoeWXRjRdiNVSqMFTz3OSw5Jf
-T0cwQQi5yxGfU2Q/2sqjBVDK3pobJ1UcPVv3BkkiKlg4c4hSKBpZwnVsjQE7CHCM
-j6/tQ1sEIm1iaBVF0HE17XJ16l8EoEHfLiVae3Ap3ywHURSXmSKIRQBvUW7IDYG6
-uNrDbMLz1pMO+JccOpAduXsngw5JSAgIMQ7LjqKpDACGifsQ9DbIiG4XAMPDjtOG
-nzSuWBO3GMhXlfHA1NTMSmBDiE+hHpagIdLQMFJMK6RmC86PaVpqGq33ixaoykBx
-za7D0Z1B0/xO+bErGWbQ/yBZLVNYKiE66oJnvQO7Yq/r880EPLH+FoCtMXrIgEKI
-Zboglj4CV+NbzvEzqsZ4z+AQmG3h7CYTY6Xstcu8OO8oZGzVkbU8gHoR0ZrdwmxF
-am2U4WYU5v/vB80fDxxfn9RWPqAAz+2pW7Us7wmZyjzKylrECTw=
-=JseM
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
