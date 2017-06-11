@@ -1,29 +1,47 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Thu, 29 Jun 2017 05:26:14 +0000
-Subject: Re: [PATCH] powerpc: remapping too much memory
-Message-Id: <87bmp7bc09.fsf@concordia.ellerman.id.au>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Jun 2017 07:12:47 +0000
+Subject: [PATCH] CIFS: Fix some return values in case of error in 'crypt_message'
+Message-Id: <20170611071247.2038-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
-In-Reply-To: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Scott Wood <oss@buserror.net>
-Cc: Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: sfrench@samba.org
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+'rc' is known to be 0 at this point. So if 'init_sg' or 'kzalloc' fails, we
+should return -ENOMEM instead.
 
-> There is a cut and paste error here so we use "sizeof(struct mpc83xx_pmc)"
-> to remap the memory for "clock_regs".  That sizeof() is 20 bytes and we
-> only need to remap 12 bytes.  It presumably doesn't affect run time too
-> much...
+Also remove a useless 'rc' in a debug message as it is meaningless here.
 
-I don't know 83xx well, but I suspect mappings occur on a 4K granularity
-at a minimum :)
+Fixes: 026e93dc0a3ee ("CIFS: Encrypt SMB3 requests before sending")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/cifs/smb2ops.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> I changed them to both use "sizeof(*variable_name)" because that's the
-> prefered kernel style these days.
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index c58691834eb2..cdcb3d95add8 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1809,7 +1809,8 @@ crypt_message(struct TCP_Server_Info *server, struct smb_rqst *rqst, int enc)
+ 
+ 	sg = init_sg(rqst, sign);
+ 	if (!sg) {
+-		cifs_dbg(VFS, "%s: Failed to init sg %d", __func__, rc);
++		cifs_dbg(VFS, "%s: Failed to init sg", __func__);
++		rc = -ENOMEM;
+ 		goto free_req;
+ 	}
+ 
+@@ -1817,6 +1818,7 @@ crypt_message(struct TCP_Server_Info *server, struct smb_rqst *rqst, int enc)
+ 	iv = kzalloc(iv_len, GFP_KERNEL);
+ 	if (!iv) {
+ 		cifs_dbg(VFS, "%s: Failed to alloc IV", __func__);
++		rc = -ENOMEM;
+ 		goto free_sg;
+ 	}
+ 	iv[0] = 3;
+-- 
+2.11.0
 
-Thanks.
-
-cheers
