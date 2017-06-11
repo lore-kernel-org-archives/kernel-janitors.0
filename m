@@ -1,33 +1,47 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 01 Jun 2017 09:50:30 +0000
-Subject: Re: [net-next] qtnfmac: remove duplicated assignment to mac
-Message-Id: <20170601095030.463D260779@smtp.codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Jun 2017 04:43:05 +0000
+Subject: [PATCH] scsi: mpt3sas: Fix value returned by 'mpt3sas_base_attach' in case of error
+Message-Id: <20170611044305.28152-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170525134503.12106-1-colin.king@canonical.com>
-In-Reply-To: <20170525134503.12106-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Huizhao Wang <hwang@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sathya.prakash@broadcom.com, chaitra.basappa@broadcom.com, suganath-prabu.subramani@broadcom.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Colin Ian King <colin.king@canonical.com> wrote:
+'r' is known to be zero here, so it must be set to -ENOMEM is one of these
+'kzalloc' fails.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> mac is being assigned twice, remove redundant 2nd assignment.
-> 
-> Detected by CoverityScan, CID#1437554 ("Incorrect expression")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Fixes: c696f7b83edea ("scsi: mpt3sas: Implement device_remove_in_progress check in IOCTL path")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-4f8e25458cb6 qtnfmac: remove duplicated assignment to mac
-
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 18039bba26c4..22bee63ce239 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -5453,14 +5453,18 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+ 		ioc->pend_os_device_add_sz++;
+ 	ioc->pend_os_device_add = kzalloc(ioc->pend_os_device_add_sz,
+ 	    GFP_KERNEL);
+-	if (!ioc->pend_os_device_add)
++	if (!ioc->pend_os_device_add) {
++		r = -ENOMEM;
+ 		goto out_free_resources;
++	}
+ 
+ 	ioc->device_remove_in_progress_sz = ioc->pend_os_device_add_sz;
+ 	ioc->device_remove_in_progress  		kzalloc(ioc->device_remove_in_progress_sz, GFP_KERNEL);
+-	if (!ioc->device_remove_in_progress)
++	if (!ioc->device_remove_in_progress) {
++		r = -ENOMEM;
+ 		goto out_free_resources;
++	}
+ 
+ 	ioc->fwfault_debug = mpt3sas_fwfault_debug;
+ 
 -- 
-https://patchwork.kernel.org/patch/9748407/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
