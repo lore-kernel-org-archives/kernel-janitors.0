@@ -1,42 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 17:26:56 +0000
-Subject: [PATCH] ARM: imx: mmdc: Delete an error message for a failed memory allocation in imx_mmdc_perf_init
-Message-Id: <99f5fb49-903c-5010-573c-f8ab1a37a246@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Jun 2017 12:28:54 +0000
+Subject: [PATCH] cpuidle: dt: Add missing 'of_node_put()'
+Message-Id: <20170611122854.4182-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: rjw@rjwysocki.net, daniel.lezcano@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 19:15:41 +0200
+'of_node_put()' should be called on pointer returned by
+'of_parse_phandle()' when done. In this function this is done in all path
+except this 'continue', so add it.
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 97735da074fd ("drivers: cpuidle: Add status property to ARM idle states")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/mach-imx/mmdc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/cpuidle/dt_idle_states.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
-index 78262899a590..b073af20e59e 100644
---- a/arch/arm/mach-imx/mmdc.c
-+++ b/arch/arm/mach-imx/mmdc.c
-@@ -486,10 +486,8 @@ static int imx_mmdc_perf_init(struct platform_device *pdev, void __iomem *mmdc_b
- 		of_match_device(imx_mmdc_dt_ids, &pdev->dev);
+diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
+index ffca4fc0061d..ae8eb0359889 100644
+--- a/drivers/cpuidle/dt_idle_states.c
++++ b/drivers/cpuidle/dt_idle_states.c
+@@ -180,8 +180,10 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
+ 		if (!state_node)
+ 			break;
  
- 	pmu_mmdc = kzalloc(sizeof(*pmu_mmdc), GFP_KERNEL);
--	if (!pmu_mmdc) {
--		pr_err("failed to allocate PMU device!\n");
-+	if (!pmu_mmdc)
- 		return -ENOMEM;
--	}
+-		if (!of_device_is_available(state_node))
++		if (!of_device_is_available(state_node)) {
++			of_node_put(state_node);
+ 			continue;
++		}
  
- 	/* The first instance registers the hotplug state */
- 	if (!cpuhp_mmdc_state) {
+ 		if (!idle_state_valid(state_node, i, cpumask)) {
+ 			pr_warn("%s idle state not valid, bailing out\n",
 -- 
-2.13.0
+2.11.0
 
