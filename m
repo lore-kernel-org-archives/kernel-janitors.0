@@ -1,54 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Jun 2017 09:16:36 +0000
-Subject: [PATCH] ASoC: ak4642: make arrays fs_list and ps_list static const
-Message-Id: <20170630091636.8287-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 13 Jun 2017 07:02:13 +0000
+Subject: Re: [wireless-next] qtnfmac: check band before allocating cmd_skb to avoid resource leak
+Message-Id: <20170613070213.64C55606DC@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170602154045.28948-1-colin.king@canonical.com>
+In-Reply-To: <20170602154045.28948-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Igor Mitsyanko <imitsyanko@quantenna.com>, Avinash Patil <avinashp@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Dmitrii Lebed <dlebed@quantenna.com>, Huizhao Wang <hwang@quantenna.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Don't populate the arrays fs_list and ps_list on the stack but make
-them static const.  Makes the object code smaller:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The current code allocates cmd_skb and then will leak this if band->band
+> is an illegal value. It is simpler to sanity check the band first before
+> allocating cmd_skb so that we don't have to free cmd_skb if an invalid
+> band occurs.
+> 
+> Detected by CoverityScan, CID#1437561 ("Resource Leak")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Igor Mitsyanko <igor.mitsyanko.os@quantenna.com>
 
-Before:
-   text    data     bss     dec     hex filename
-  12084    4888      64   17036    428c sound/soc/codecs/ak4642.o
+Patch applied to wireless-drivers-next.git, thanks.
 
-After:
-   text    data     bss     dec     hex filename
-  11883    5032      64   16979    4253 sound/soc/codecs/ak4642.o
+bc0384eedb66 qtnfmac: check band before allocating cmd_skb to avoid resource leak
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/ak4642.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
-index 23ab9646c351..66de8a2013a6 100644
---- a/sound/soc/codecs/ak4642.c
-+++ b/sound/soc/codecs/ak4642.c
-@@ -433,7 +433,7 @@ static int ak4642_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- static int ak4642_set_mcko(struct snd_soc_codec *codec,
- 			   u32 frequency)
- {
--	u32 fs_list[] = {
-+	static const u32 fs_list[] = {
- 		[0] = 8000,
- 		[1] = 12000,
- 		[2] = 16000,
-@@ -447,7 +447,7 @@ static int ak4642_set_mcko(struct snd_soc_codec *codec,
- 		[14] = 29400,
- 		[15] = 44100,
- 	};
--	u32 ps_list[] = {
-+	static const u32 ps_list[] = {
- 		[0] = 256,
- 		[1] = 128,
- 		[2] = 64,
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9762863/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
