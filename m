@@ -1,39 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 20:51:04 +0000
-Subject: [PATCH 4/5] ARM: OMAP1: Delete an error message for a failed memory allocation in omap1_dm_timer_ini
-Message-Id: <3a130a87-96e7-792b-29b7-f43f93ae78bc@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 13 Jun 2017 07:01:23 +0000
+Subject: Re: [-next] mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
+Message-Id: <20170613070123.14C71607E4@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
-In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
+References: <20170602085639.29338-1-colin.king@canonical.com>
+In-Reply-To: <20170602085639.29338-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 22:04:29 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> function mwifiex_ret_pkt_aggr_ctrl can be made static as it does not
+> need to be in global scope.
+> 
+> Cleans up sparse warning: "symbol 'mwifiex_ret_pkt_aggr_ctrl' was not
+> declared. Should it be static?"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap1/timer.c | 2 --
- 1 file changed, 2 deletions(-)
+292c333300ec mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
 
-diff --git a/arch/arm/mach-omap1/timer.c b/arch/arm/mach-omap1/timer.c
-index 06c5ba7574a5..637f8c9d9f10 100644
---- a/arch/arm/mach-omap1/timer.c
-+++ b/arch/arm/mach-omap1/timer.c
-@@ -136,6 +136,4 @@ static int __init omap1_dm_timer_init(void)
- 		if (!pdata) {
--			dev_err(&pdev->dev, "%s: Failed to allocate pdata.\n",
--				__func__);
- 			ret = -ENOMEM;
- 			goto err_free_pdata;
- 		}
 -- 
-2.13.0
+https://patchwork.kernel.org/patch/9761985/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
