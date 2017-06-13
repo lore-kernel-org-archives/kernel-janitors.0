@@ -1,87 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 30 Jun 2017 11:59:40 +0000
-Subject: Applied "ASoC: ak4642: make arrays fs_list and ps_list static const" to the asoc tree
-Message-Id: <E1dQuaK-00085F-Sm@finisterre>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 13 Jun 2017 14:21:56 +0000
+Subject: Re: [PATCH] firmware: tegra: fix locking bugs in bpmp
+Message-Id: <20170613142156.GA20181@ulmo.fritz.box>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="cNdxnHkX5QqsyA0e"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630091636.8287-1-colin.king@canonical.com>
-In-Reply-To: <20170630091636.8287-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+References: <20170505053723.53qi4ob3df4ri2v4@mwanda>
+In-Reply-To: <20170505053723.53qi4ob3df4ri2v4@mwanda>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The patch
 
-   ASoC: ak4642: make arrays fs_list and ps_list static const
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Fri, May 05, 2017 at 08:37:23AM +0300, Dan Carpenter wrote:
+> There are a bunch of error paths were we don't unlock the bpmp->threaded
+> lock.  Also if __tegra_bpmp_channel_write() fails then we returned
+> success instead of an error code.
+>=20
+> Fixes: 983de5f97169 ("firmware: tegra: Add BPMP support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Applied, though I did omit the err_ prefixes from the labels for
+consistency.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thierry
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlk/9QEACgkQ3SOs138+
+s6GThxAAhjznPNt1rb83yH2UGJtMMR7Plf/AjdPK2ZeZlZ1k1VGfZQZrKRjH9Tp9
+XkMpRzHxx9THDg9TO8JrwSXfN/Pj/8FMXdMJMFYQkhdSyLPTgM5UWp2iwuKr2yQz
+QSQIJdil5p3Quo3W73Ennh7LePUPDk6RfqgaOUrkeJErVfw0ez7wGks9ZlzC1Tsy
+H/kceV6pM+giicNxfobB080dwSA4RF3tfP7GaVRUwf9Dh6+l/Pb7f3GxVckl5nts
+cjM+VJPxbVHjArV3hqrqV3rDUHzhzPCTvjpEwPsw3ODSp1Rtf5o+BCr4CsuEDoqg
+TLd+4yXHpzNrR/UCDIPOzCEgVJDwIu2JKnsL4MsUiQRhze7ffdgjg4zGKcQAdUqI
+N1PzAlGEQZa+uw4D9lyMms9P3ANu3yWk3x04WReqNqa425yAPunEZnEsn2Wjve2K
+18CLAcU6yBrVVmIfCzLlHvvwe/ClvD+9S3Lx6NQK4ntlSCRfpORnJyT6MGbPc1MT
+CjvUfFirKSGv2hqeLJQ12hFV2wJP2t/+E4XLrRxhW6qZAvjtQEN/DUTEj8/TuJcz
+WAnmtKSsMVbxf+eiuLVbQKsIP6KbECc515CsXzHIg9yigkhRQJwS0UcELJ3zwdvP
+QLrkBXs8DYga9LRVclBYkLz2pioYp5WHoNyjc3+F7cg5wKJVCNA=
+=vqu7
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
-From 836e4fedee8df123a203a0ded090251de66b9bd1 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 30 Jun 2017 10:16:36 +0100
-Subject: [PATCH] ASoC: ak4642: make arrays fs_list and ps_list static const
-
-Don't populate the arrays fs_list and ps_list on the stack but make
-them static const.  Makes the object code smaller:
-
-Before:
-   text    data     bss     dec     hex filename
-  12084    4888      64   17036    428c sound/soc/codecs/ak4642.o
-
-After:
-   text    data     bss     dec     hex filename
-  11883    5032      64   16979    4253 sound/soc/codecs/ak4642.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4642.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
-index 23ab9646c351..66de8a2013a6 100644
---- a/sound/soc/codecs/ak4642.c
-+++ b/sound/soc/codecs/ak4642.c
-@@ -433,7 +433,7 @@ static int ak4642_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- static int ak4642_set_mcko(struct snd_soc_codec *codec,
- 			   u32 frequency)
- {
--	u32 fs_list[] = {
-+	static const u32 fs_list[] = {
- 		[0] = 8000,
- 		[1] = 12000,
- 		[2] = 16000,
-@@ -447,7 +447,7 @@ static int ak4642_set_mcko(struct snd_soc_codec *codec,
- 		[14] = 29400,
- 		[15] = 44100,
- 	};
--	u32 ps_list[] = {
-+	static const u32 ps_list[] = {
- 		[0] = 256,
- 		[1] = 128,
- 		[2] = 64,
--- 
-2.13.2
-
+--cNdxnHkX5QqsyA0e--
