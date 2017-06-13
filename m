@@ -1,45 +1,49 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Sun, 25 Jun 2017 20:55:49 +0000
-Subject: Re: [PATCH][V2][target-devel-next] tcmu: make array tcmu_attrib_attrs static const
-Message-Id: <1498424149.26123.36.camel@haakon3.risingtidesystems.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Jun 2017 19:32:52 +0000
+Subject: [bug report] irqdomain: Let irq_domain_mapping display hierarchical domains
+Message-Id: <20170613193252.GA2224@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170613132909.28674-1-colin.king@canonical.com>
-In-Reply-To: <20170613132909.28674-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2017-06-13 at 14:29 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array tcmu_attrib_attrs does not need to be in global scope, so make
-> it static.
-> 
-> Cleans up sparse warning:
-> "symbol 'tcmu_attrib_attrs' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/target/target_core_user.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
-> index afc1fd6bacaf..04fb3f720895 100644
-> --- a/drivers/target/target_core_user.c
-> +++ b/drivers/target/target_core_user.c
-> @@ -1672,7 +1672,7 @@ static ssize_t tcmu_emulate_write_cache_store(struct config_item *item,
->  }
->  CONFIGFS_ATTR(tcmu_, emulate_write_cache);
->  
-> -struct configfs_attribute *tcmu_attrib_attrs[] = {
-> +static struct configfs_attribute *tcmu_attrib_attrs[] = {
->  	&tcmu_attr_cmd_time_out,
->  	&tcmu_attr_dev_path,
->  	&tcmu_attr_dev_size,
+Hello Marc Zyngier,
 
-Applied.
+This is a semi-automatic email about new static checker warnings.
 
-Thanks Colin.
+The patch fe17a42e704a: "irqdomain: Let irq_domain_mapping display 
+hierarchical domains" from May 12, 2017, leads to the following 
+Smatch complaint:
 
+kernel/irq/irqdomain.c:772 virq_debug_show_one()
+	 warn: variable dereferenced before check 'data' (see line 758)
+
+kernel/irq/irqdomain.c
+   757		while (domain) {
+   758			unsigned int irq = data->irq;
+                                           ^^^^^^^^^
+Dereference.
+
+   759			unsigned long hwirq = data->hwirq;
+   760			struct irq_chip *chip;
+   761			bool direct;
+   762	
+   763			if (data = &desc->irq_data)
+   764				seq_printf(m, "%5d  ", irq);
+   765			else
+   766				seq_printf(m, "%5d+ ", irq);
+   767			seq_printf(m, "0x%05lx  ", hwirq);
+   768	
+   769			chip = irq_data_get_irq_chip(data);
+   770			seq_printf(m, "%-15s  ", (chip && chip->name) ? chip->name : "none");
+   771	
+   772			seq_printf(m, data ? "0x%p  " : "  %p  ",
+                                      ^^^^
+Too late to check.
+
+   773				   irq_data_get_irq_chip_data(data));
+   774	
+
+regards,
+dan carpenter
