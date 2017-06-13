@@ -1,79 +1,44 @@
-From: Jason Gerecke <killertofu@gmail.com>
-Date: Mon, 05 Jun 2017 15:29:57 +0000
-Subject: Re: [PATCH 1/3] HID: Wacom: Use devm_kcalloc() in two functions
-Message-Id: <CANRwn3QbNn4EA-FDmz1jnFUgjJ0tH63MCwOGcTCodvFtaBeeAQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Jun 2017 13:47:51 +0000
+Subject: [PATCH][drm-next] drm/i915/cnl: make function cnl_ddi_dp_set_dpll_hw_state static
+Message-Id: <20170613134751.29196-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d126aeeb-f7e0-e54b-b874-61d776fe45cb@users.sourceforge.net> <d0224def-26ba-d33b-e9be-a6218259c8e4@users.sourceforge.net>
-In-Reply-To: <d0224def-26ba-d33b-e9be-a6218259c8e4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Linux Input <linux-input@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, LKML <linux-kernel@vger.kernel.org>, SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Going through old mail and noticed that these three patches seem to
-have been overlooked (at least, I don't see them in Jiri's
-branches...). For the set:
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
+The function cnl_ddi_dp_set_dpll_hw_state does not need to be in global
+scope, so make it static.
 
-Jason
+Cleans up sparse warning:
+"symbol 'cnl_ddi_dp_set_dpll_hw_state' was not declared. Should it
+ be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Now instead of four in the eights place /
-you’ve got three, ‘Cause you added one  /
-(That is to say, eight) to the two,     /
-But you can’t take seven from three,    /
-So you look at the sixty-fours....
+ drivers/gpu/drm/i915/intel_dpll_mgr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/i915/intel_dpll_mgr.c b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+index 8e669b6254ae..2f7b0e64f628 100644
+--- a/drivers/gpu/drm/i915/intel_dpll_mgr.c
++++ b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+@@ -2292,8 +2292,9 @@ static bool cnl_ddi_hdmi_pll_dividers(struct intel_crtc *crtc,
+ 	return true;
+ }
+ 
+-bool cnl_ddi_dp_set_dpll_hw_state(int clock,
+-				  struct intel_dpll_hw_state *dpll_hw_state)
++static bool
++cnl_ddi_dp_set_dpll_hw_state(int clock,
++			     struct intel_dpll_hw_state *dpll_hw_state)
+ {
+ 	uint32_t cfgcr0;
+ 
+-- 
+2.11.0
 
-
-On Tue, Apr 25, 2017 at 8:13 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 25 Apr 2017 16:06:08 +0200
->
-> * Multiplications for the size determination of memory allocations
->   indicated that array data structures should be processed.
->   Thus use the corresponding function "devm_kcalloc".
->
->   This issue was detected by using the Coccinelle software.
->
-> * Replace the specification of data structures by pointer dereferences
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/hid/wacom_sys.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-> index 0022c0dac88a..550faf8819ea 100644
-> --- a/drivers/hid/wacom_sys.c
-> +++ b/drivers/hid/wacom_sys.c
-> @@ -1245,7 +1245,7 @@ static int wacom_led_groups_alloc_and_register_one(struct device *dev,
->         if (!devres_open_group(dev, &wacom->led.groups[group_id], GFP_KERNEL))
->                 return -ENOMEM;
->
-> -       leds = devm_kzalloc(dev, sizeof(struct wacom_led) * count, GFP_KERNEL);
-> +       leds = devm_kcalloc(dev, count, sizeof(*leds), GFP_KERNEL);
->         if (!leds) {
->                 error = -ENOMEM;
->                 goto err;
-> @@ -1345,8 +1345,7 @@ static int wacom_led_groups_allocate(struct wacom *wacom, int count)
->         struct wacom_group_leds *groups;
->         int error;
->
-> -       groups = devm_kzalloc(dev, sizeof(struct wacom_group_leds) * count,
-> -                             GFP_KERNEL);
-> +       groups = devm_kcalloc(dev, count, sizeof(*groups), GFP_KERNEL);
->         if (!groups)
->                 return -ENOMEM;
->
-> --
-> 2.12.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
