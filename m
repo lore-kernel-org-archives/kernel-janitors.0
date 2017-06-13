@@ -1,49 +1,37 @@
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 21 Jun 2017 17:00:42 +0000
-Subject: Re: [PATCH] CIFS: Set ->should_dirty in cifs_user_readv()
-Message-Id: <CAH2r5mujedkOYtT4+2XjvLKBUZdz2OvuGst59Byv9Z6ONbvcEg@mail.gmail.com>
+From: Alex Williamson <alex.williamson@redhat.com>
+Date: Tue, 13 Jun 2017 15:30:50 +0000
+Subject: Re: [PATCH] vfio: Use ERR_CAST() instead of open coding it
+Message-Id: <20170613093050.76c65d1a@w520.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170505053040.x67a5f4riyba2wqb@mwanda>
-In-Reply-To: <20170505053040.x67a5f4riyba2wqb@mwanda>
+References: <20170518073431.sc6x2at4n4j7hngu@mwanda>
+In-Reply-To: <20170518073431.sc6x2at4n4j7hngu@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Pavel Shilovsky <pshilov-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, samba-technical <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+On Thu, 18 May 2017 10:34:31 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-On Fri, May 5, 2017 at 12:30 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The current code causes a static checker warning because ITER_IOVEC is
-> zero so the condition is never true.
->
-> Fixes: 6685c5e2d1ac ("CIFS: Add asynchronous read support through kernel AIO")
+> It's a small cleanup to use ERR_CAST() here.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I'm assuming this is the correct fix from looking at how ITER_IOVEC is
-> normally used.  Please review.
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 6ef78ad838e6..71ba8fa63c41 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -3271,7 +3271,7 @@ ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
->         if (!is_sync_kiocb(iocb))
->                 ctx->iocb = iocb;
->
-> -       if (to->type & ITER_IOVEC)
-> +       if (to->type = ITER_IOVEC)
->                 ctx->should_dirty = true;
->
->         rc = setup_aio_ctx_iter(ctx, to, READ);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+> index 561084ab387f..6a49485eb49d 100644
+> --- a/drivers/vfio/vfio.c
+> +++ b/drivers/vfio/vfio.c
+> @@ -382,7 +382,7 @@ static struct vfio_group *vfio_create_group(struct iommu_group *iommu_group)
+>  	if (IS_ERR(dev)) {
+>  		vfio_free_group_minor(minor);
+>  		vfio_group_unlock_and_free(group);
+> -		return (struct vfio_group *)dev; /* ERR_PTR */
+> +		return ERR_CAST(dev);
+>  	}
+>  
+>  	group->minor = minor;
 
+Applied to next branch for v4.13, thanks Dan!
 
-
--- 
-Thanks,
-
-Steve
+Alex
