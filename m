@@ -1,82 +1,40 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Mon, 05 Jun 2017 13:52:07 +0000
-Subject: [PATCH v3 0/1] Add public w1 driver interface
-Message-Id: <20170605135208.24807-1-afd@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Jun 2017 13:24:17 +0000
+Subject: [PATCH][target-devel-next] tcmu: make array tcmu_attrib_attrs static const
+Message-Id: <20170613132417.20397-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Polyakov <zbr@ioremap.net>, Sebastian Reichel <sre@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: "Nicholas A . Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi All,
+From: Colin Ian King <colin.king@canonical.com>
 
-As part of continuing work to cleanup the BQ27xxx driver I am attempting
-to remove the need for the platform driver interface. For this we first
-need the w1 subsystem to act more like a traditional bus subsystem
-and allow drivers for attached devices to live outside of the w1
-directory.
+The guid intel_dsm_guid does not need to be in global scope, so make
+it static.
 
-This should make no functional change, just a re-organization of
-header files.
+Cleans up sparse warning:
+"symbol 'tcmu_attrib_attrs' was not declared. Should it be static?"
 
-Thanks,
-Andrew
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/target/target_core_user.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v2:
- - Fix include path for out of directory references
-
-Changes from v1:
- - Dropped taken first two patches
- - Added support for the new ds2438 chip driver
- - Removed TI copywrite addition at maintainer's request
- - Rebased on v4.12-rc1
-
-Andrew F. Davis (1):
-  w1: Add subsystem kernel public interface
-
- MAINTAINERS                           |   1 +
- drivers/power/supply/ds2760_battery.c |   2 +-
- drivers/power/supply/ds2780_battery.c |   2 +-
- drivers/power/supply/ds2781_battery.c |   2 +-
- drivers/w1/masters/ds1wm.c            |   3 +-
- drivers/w1/masters/ds2482.c           |   3 +-
- drivers/w1/masters/ds2490.c           |   3 +-
- drivers/w1/masters/matrox_w1.c        |   3 +-
- drivers/w1/masters/mxc_w1.c           |   3 +-
- drivers/w1/masters/omap_hdq.c         |   3 +-
- drivers/w1/masters/w1-gpio.c          |   3 +-
- drivers/w1/slaves/w1_bq27000.c        |   6 +-
- drivers/w1/slaves/w1_ds2405.c         |   5 +-
- drivers/w1/slaves/w1_ds2406.c         |   6 +-
- drivers/w1/slaves/w1_ds2408.c         |   6 +-
- drivers/w1/slaves/w1_ds2413.c         |   6 +-
- drivers/w1/slaves/w1_ds2423.c         |   6 +-
- drivers/w1/slaves/w1_ds2431.c         |   6 +-
- drivers/w1/slaves/w1_ds2433.c         |   6 +-
- drivers/w1/slaves/w1_ds2438.c         |   5 +-
- drivers/w1/slaves/w1_ds2760.c         |   7 ++-
- drivers/w1/slaves/w1_ds2780.c         |   7 ++-
- drivers/w1/slaves/w1_ds2781.c         |   7 ++-
- drivers/w1/slaves/w1_ds28e04.c        |   6 +-
- drivers/w1/slaves/w1_smem.c           |   7 ++-
- drivers/w1/slaves/w1_therm.c          |  10 ++-
- drivers/w1/w1.c                       |   6 +-
- drivers/w1/w1_family.c                |   3 +-
- drivers/w1/w1_family.h                |  98 -----------------------------
- drivers/w1/w1_int.c                   |   3 +-
- drivers/w1/w1_int.h                   |  27 --------
- drivers/w1/w1_internal.h              |  87 ++++++++++++++++++++++++++
- drivers/w1/w1_io.c                    |   2 +-
- drivers/w1/w1_netlink.c               |   2 +-
- drivers/w1/w1_netlink.h               |   2 +-
- {drivers/w1 => include/linux}/w1.h    | 114 +++++++++++++++-------------------
- 36 files changed, 208 insertions(+), 260 deletions(-)
- delete mode 100644 drivers/w1/w1_family.h
- delete mode 100644 drivers/w1/w1_int.h
- create mode 100644 drivers/w1/w1_internal.h
- rename {drivers/w1 => include/linux}/w1.h (76%)
-
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index afc1fd6bacaf..04fb3f720895 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -1672,7 +1672,7 @@ static ssize_t tcmu_emulate_write_cache_store(struct config_item *item,
+ }
+ CONFIGFS_ATTR(tcmu_, emulate_write_cache);
+ 
+-struct configfs_attribute *tcmu_attrib_attrs[] = {
++static struct configfs_attribute *tcmu_attrib_attrs[] = {
+ 	&tcmu_attr_cmd_time_out,
+ 	&tcmu_attr_dev_path,
+ 	&tcmu_attr_dev_size,
 -- 
-2.13.0
+2.11.0
 
