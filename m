@@ -1,104 +1,34 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Date: Fri, 16 Jun 2017 09:07:27 +0000
-Subject: Re: [PATCH][drm-next] drm/amdgpu: fix some spelling mistakes and break overly wide lines
-Message-Id: <f5ff18f1-0487-39d8-f941-2431c4f806c7@amd.com>
+From: Dave Carroll <david.carroll@microsemi.com>
+Date: Tue, 13 Jun 2017 21:06:02 +0000
+Subject: RE: [PATCH] scsi: aacraid: fix leak of data from stack back to userspace
+Message-Id: <423FD6710FB8FB4F8728F93591889F9A53045C92@avsrvexchmbx2.microsemi.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170616084610.22861-1-colin.king@canonical.com>
-In-Reply-To: <20170616084610.22861-1-colin.king@canonical.com>
+References: <20170515145605.21461-1-colin.king@canonical.com>
+In-Reply-To: <20170515145605.21461-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Am 16.06.2017 um 10:46 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fixes to spelling mistakes in DRM_INFO, dev_info and
-> WARN_ONCE messages.  Also break overly wide lines and add some
-> white spacing where appropriate in ternary operator.
->
-> Fixes:
->    "successed" -> "succeeded"
->    "suuport" -> "support"
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 12 ++++++++----
->   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c     |  2 +-
->   2 files changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm=
-/amd/amdgpu/amdgpu_device.c
-> index 875cde414be7..990c427233f8 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -1885,7 +1885,9 @@ static int amdgpu_sriov_reinit_early(struct amdgpu_=
-device *adev)
->   				continue;
->  =20
->   			r =3D block->version->funcs->hw_init(adev);
-> -			DRM_INFO("RE-INIT: %s %s\n", block->version->funcs->name, r?"failed":=
-"successed");
-> +			DRM_INFO("RE-INIT: %s %s\n",
-> +				 block->version->funcs->name,
-> +				 r ? "failed" : "succeeded");
->   		}
->   	}
->  =20
-> @@ -1916,7 +1918,9 @@ static int amdgpu_sriov_reinit_late(struct amdgpu_d=
-evice *adev)
->   				continue;
->  =20
->   			r =3D block->version->funcs->hw_init(adev);
-> -			DRM_INFO("RE-INIT: %s %s\n", block->version->funcs->name, r?"failed":=
-"successed");
-> +			DRM_INFO("RE-INIT: %s %s\n",
-> +				 block->version->funcs->name,
-> +				 r ? "failed" : "succeeded");
->   		}
->   	}
->  =20
-> @@ -2800,7 +2804,7 @@ int amdgpu_sriov_gpu_reset(struct amdgpu_device *ad=
-ev, struct amdgpu_job *job)
->   		/* bad news, how to tell it to userspace ? */
->   		dev_info(adev->dev, "GPU reset failed\n");
->   	} else {
-> -		dev_info(adev->dev, "GPU reset successed!\n");
-> +		dev_info(adev->dev, "GPU reset succeeded!\n");
->   	}
->  =20
->   	adev->gfx.in_reset =3D false;
-> @@ -2966,7 +2970,7 @@ int amdgpu_gpu_reset(struct amdgpu_device *adev)
->   		/* bad news, how to tell it to userspace ? */
->   		dev_info(adev->dev, "GPU reset failed\n");
->   	else
-> -		dev_info(adev->dev, "GPU reset successed!\n");
-> +		dev_info(adev->dev, "GPU reset succeeded!\n");
->  =20
->   	return r;
->   }
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd=
-/amdgpu/amdgpu_vm.c
-> index 5795f81369f0..06f11e2a32af 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> @@ -1301,7 +1301,7 @@ static int amdgpu_vm_update_ptes(struct amdgpu_pte_=
-update_params *params,
->  =20
->   		if (params->shadow) {
->   			if (WARN_ONCE(use_cpu_update,
-> -				"CPU VM update doesn't suuport shadow pages"))
-> +				"CPU VM update doesn't support shadow pages"))
->   				return 0;
->  =20
->   			if (!pt->shadow)
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
+Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBNb25kYXksIE1heSAxNSwgMjAxNyA4
+OjU2IEFNDQo+IFRvOiBSYWdoYXZhIEFkaXR5YSBSZW51a3VudGEgPFJhZ2hhdmFBZGl0eWEuUmVu
+dWt1bnRhQG1pY3Jvc2VtaS5jb20+Ow0KPiBkbC1lc2MtQWFjcmFpZCBMaW51eCBEcml2ZXIgPGFh
+Y3JhaWRAbWljcm9zZW1pLmNvbT47IEphbWVzIEUgLiBKIC4gQm90dG9tbGV5DQo+IDxqZWpiQGxp
+bnV4LnZuZXQuaWJtLmNvbT47IE1hcnRpbiBLIC4gUGV0ZXJzZW4NCj4gPG1hcnRpbi5wZXRlcnNl
+bkBvcmFjbGUuY29tPjsgbGludXgtc2NzaUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1q
+YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogW1BBVENIXSBzY3NpOiBhYWNyYWlkOiBmaXggbGVhayBvZiBkYXRhIGZyb20gc3Rh
+Y2sgYmFjayB0byB1c2Vyc3BhY2UNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
+aW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgZmllbGRzIHNlbnNlX2RhdGFfc2l6ZSBhbmQg
+c2Vuc2VfZGF0YSBhcmUgdW5pdGlhbGl6ZWQgZ2FyYmFnZSBmcm9tIHRoZQ0KPiBzdGFjayBhbmQg
+YXJlIGJlaW5nIGNvcGllZCBiYWNrIHRvIHVzZXJzcGFjZS4gIEZpeCB0aGlzIGxlYWsgb2Ygc3Rh
+Y2sgaW5mb3JtYXRpb24NCj4gYnkgZW5zdXJpbmcgdGhleSBhcmUgemVybydkLg0KPiANCj4gRGV0
+ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQzNTQ3MyAoIlVuaW5pdGlhbGl6ZWQgc2NhbGFy
+IHZhcmlhYmxlIikNCj4gDQo+IEZpeGVzOiA0MjM0MDBlNjRkMzc3ICgic2NzaTogYWFjcmFpZDog
+SW5jbHVkZSBIQkEgZGlyZWN0IGludGVyZmFjZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
+biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9zY3Np
+L2FhY3JhaWQvY29tbWN0cmwuYyB8IDIgKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKykNCj4gDQpBY2tlZC1ieTogRGF2ZSBDYXJyb2xsIDxkYXZpZC5jYXJyb2xsQG1pY3Jvc2Vt
+aS5jb20+DQo
