@@ -1,45 +1,36 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Wed, 14 Jun 2017 14:44:52 +0000
-Subject: Re: [PATCH] apparmor: fix error code in aafs_create()
-Message-Id: <a58aedd0-3a53-d1de-6303-4d287ce6c6c6@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Jun 2017 08:52:54 +0000
+Subject: [PATCH][crypto-next] crypto: cavium: fix spelling mistake "Revsion" -> "Revision"
+Message-Id: <20170613085254.20855-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614104002.GL29394@elgon.mountain>
-In-Reply-To: <20170614104002.GL29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Srikanth Jampala <Jampala.Srikanth@cavium.com>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/14/2017 03:40 AM, Dan Carpenter wrote:
-> We accidentally return ERR_PTR(0) if lookup_one_len() fails.  The caller
-> is expecting error pointers so it likely causes problems later on.  For
-> example, on one path I saw it triggered an AA_BUG().
-> 
-> Fixes: a481f4d91783 ("apparmor: add custom apparmorfs that will be used by policy namespace files")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-I'll pull this in and forward it up to James along with a couple of other
-bug fixes
+Trivial fix to spelling mistake in seq_printf message
 
-thanks
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 853c2ec8e0c9..2caeb748070c 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
->  
->  	inode_lock(dir);
->  	dentry = lookup_one_len(name, parent, strlen(name));
-> -	if (IS_ERR(dentry))
-> +	if (IS_ERR(dentry)) {
-> +		error = PTR_ERR(dentry);
->  		goto fail_lock;
-> +	}
->  
->  	if (d_really_is_positive(dentry)) {
->  		error = -EEXIST;
-> 
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index eee6fb501580..ae44a464cd2d 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -399,7 +399,7 @@ static int nitrox_show(struct seq_file *s, void *v)
+ 	struct nitrox_device *ndev = s->private;
+ 
+ 	seq_printf(s, "NITROX-5 [idx: %d]\n", ndev->idx);
+-	seq_printf(s, "  Revsion ID: 0x%0x\n", ndev->hw.revision_id);
++	seq_printf(s, "  Revision ID: 0x%0x\n", ndev->hw.revision_id);
+ 	seq_printf(s, "  Cores [AE: %u  SE: %u]\n",
+ 		   ndev->hw.ae_cores, ndev->hw.se_cores);
+ 	seq_printf(s, "  Number of Queues: %u\n", ndev->nr_queues);
+-- 
+2.11.0
 
