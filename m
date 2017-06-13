@@ -1,41 +1,36 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Wed, 14 Jun 2017 17:12:21 +0000
-Subject: Re: [PATCH] thermal: bcm2835: fix an error code in probe()
-Message-Id: <1228273578.70849.1497460341422@email.1und1.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 13 Jun 2017 08:46:47 +0000
+Subject: [PATCH][crypto-next] crypto: omap-aes: fix spelling mistake "Encryptio" -> "Encryption"
+Message-Id: <20170613084647.20500-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614091327.GD29394@elgon.mountain>
-In-Reply-To: <20170614091327.GD29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Martin Sperl <kernel@martin.sperl.org>, Eric Anholt <eric@anholt.net>, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-> Dan Carpenter <dan.carpenter@oracle.com> hat am 14. Juni 2017 um 11:13 geschrieben:
-> 
-> 
-> This causes a static checker because we're passing a valid pointer to
-> PTR_ERR().  "err" is already the correct error code, so we can just
-> delete this line.
-> 
-> Fixes: bcb7dd9ef206 ("thermal: bcm2835: add thermal driver for bcm2835 SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-> index 0ecf80890c84..e6863c841662 100644
-> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
-> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-> @@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
->  		 */
->  		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
->  		if (err < 0) {
-> -			err = PTR_ERR(tz);
->  			dev_err(&pdev->dev,
->  				"Not able to read trip_temp: %d\n",
->  				err);
+Trivial fix to spelling mistake in pr_err message
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/omap-aes-gcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
-Stefan
+diff --git a/drivers/crypto/omap-aes-gcm.c b/drivers/crypto/omap-aes-gcm.c
+index 521a310ea699..7d4f8a4be6d8 100644
+--- a/drivers/crypto/omap-aes-gcm.c
++++ b/drivers/crypto/omap-aes-gcm.c
+@@ -214,7 +214,7 @@ static int do_encrypt_iv(struct aead_request *req, u32 *tag, u32 *iv)
+ 		}
+ 		/* fall through */
+ 	default:
+-		pr_err("Encryptio of IV failed for GCM mode");
++		pr_err("Encryption of IV failed for GCM mode");
+ 		break;
+ 	}
+ 
+-- 
+2.11.0
+
