@@ -1,50 +1,34 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 20 Jun 2017 15:06:52 +0000
-Subject: Re: [PATCH][tpm-next] tpm_tis: make ilb_base_addr static
-Message-Id: <20170620150652.s5hrk4mffm2vmuek@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Jun 2017 08:39:05 +0000
+Subject: Re: [PATCH] iio: adc: mxs-lradc: Checking IS_ERR() instead of NULL
+Message-Id: <20170613083905.7aiaxvfjg2ypkfq2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170620102202.7132-1-colin.king@canonical.com>
-In-Reply-To: <20170620102202.7132-1-colin.king@canonical.com>
+References: <20170426210349.sjmf65ck5awfgz22@mwanda>
+ <13f3bcd0-c6c8-7abc-d732-91a19618f5a5@kernel.org>
+In-Reply-To: <13f3bcd0-c6c8-7abc-d732-91a19618f5a5@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Ksenija Stanojevic <ksenija.stanojevic@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Lee Jones <lee.jones@linaro.org>, Marek Vasut <marex@denx.de>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 20, 2017 at 11:22:02AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 27, 2017 at 07:21:09AM +0100, Jonathan Cameron wrote:
+> On 26/04/17 22:03, Dan Carpenter wrote:
+> > devm_ioremap() returns NULL on error.  It doesn't return error pointers.
+> > 
+> > Fixes: 6dd112b9f85e ("iio: adc: mxs-lradc: Add support for ADC driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> Hi Dan,
 > 
-> The pointer ilb_base_addr does not need to be in global scope, so make
-> it static.
+> Already another patch for this under review.  Open question there is whether
+> devm_ioremap_resource is the way to go instead.
 > 
-> Cleans up sparse warning:
-> "symbol 'ilb_base_addr' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks Colin.
+I wasn't on that other thread...  Nothing appears to have happened with
+this or the touchscreen bug either.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+regards,
+dan carpenter
 
-/Jarkko
 
-> ---
->  drivers/char/tpm/tpm_tis.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 506e62ca3576..c915d65c1909 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -138,7 +138,7 @@ static int check_acpi_tpm2(struct device *dev)
->  #define LPC_CNTRL_REG_OFFSET            0x84
->  #define LPC_CLKRUN_EN                   (1 << 2)
->  
-> -void __iomem *ilb_base_addr;
-> +static void __iomem *ilb_base_addr;
->  
->  static inline bool is_bsw(void)
->  {
-> -- 
-> 2.11.0
-> 
