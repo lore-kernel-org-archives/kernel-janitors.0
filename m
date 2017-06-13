@@ -1,38 +1,47 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Jun 2017 13:03:21 +0000
-Subject: [PATCH][netdev-next] net: hns: make guid hns_dsaf_acpi_dsm_guid static
-Message-Id: <20170613130321.7797-1-colin.king@canonical.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Tue, 13 Jun 2017 14:16:44 +0000
+Subject: Re: [PATCH][netdev-next] net: hns: make guid hns_dsaf_acpi_dsm_guid static
+Message-Id: <1497363404.22624.131.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170613130321.7797-1-colin.king@canonical.com>
+In-Reply-To: <20170613130321.7797-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Daode Huang <huangdaode@hisilicon.com>, Kejian Yan <yankejian@huawei.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, oulijun <oulijun@huawei.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>, Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Daode Huang <huangdaode@hisilicon.com>, Kejian Yan <yankejian@huawei.com>, oulijun <oulijun@huawei.com>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2017-06-13 at 14:03 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The guid hns_dsaf_acpi_dsm_guid does not need to be in global
+> scope, so make it static.
+> 
+> Cleans up sparse warning:
+> "symbol 'hns_dsaf_acpi_dsm_guid' was not declared. Should it be
+> static?"
 
-The guid hns_dsaf_acpi_dsm_guid does not need to be in global
-scope, so make it static.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Cleans up sparse warning:
-"symbol 'hns_dsaf_acpi_dsm_guid' was not declared. Should it be static?"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> index 6b15a507999c..7a8addda726e 100644
+> --- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> +++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> @@ -29,7 +29,7 @@ enum _dsm_rst_type {
+>  	HNS_ROCE_RESET_FUNC     = 0x7,
+>  };
+>  
+> -const guid_t hns_dsaf_acpi_dsm_guid > +static const guid_t hns_dsaf_acpi_dsm_guid >  	GUID_INIT(0x1A85AA1A, 0xE293, 0x415E,
+>  		  0x8E, 0x28, 0x8D, 0x69, 0x0A, 0x0F, 0x82, 0x0A);
+>  
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-index 6b15a507999c..7a8addda726e 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-@@ -29,7 +29,7 @@ enum _dsm_rst_type {
- 	HNS_ROCE_RESET_FUNC     = 0x7,
- };
- 
--const guid_t hns_dsaf_acpi_dsm_guid +static const guid_t hns_dsaf_acpi_dsm_guid  	GUID_INIT(0x1A85AA1A, 0xE293, 0x415E,
- 		  0x8E, 0x28, 0x8D, 0x69, 0x0A, 0x0F, 0x82, 0x0A);
- 
 -- 
-2.11.0
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
