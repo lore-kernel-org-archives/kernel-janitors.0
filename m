@@ -1,59 +1,52 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Mon, 05 Jun 2017 13:57:01 +0000
-Subject: Re: [PATCH v2 1/1] w1: Add subsystem kernel public interface
-Message-Id: <62ab04d3-a648-01d1-ae0e-aa2e79b08f9a@ti.com>
+From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Date: Wed, 14 Jun 2017 13:03:05 +0000
+Subject: Re: [Intel-gfx] [PATCH][drm-next] drm/i915/cnl: make function cnl_ddi_dp_set_dpll_hw_state static
+Message-Id: <3662e55c-1507-3089-6d97-f96fad013a9c@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170516200814.12360-1-afd@ti.com>
- <20170516200814.12360-2-afd@ti.com> <20170603102233.GA19112@kroah.com>
-In-Reply-To: <20170603102233.GA19112@kroah.com>
+References: <20170613134751.29196-1-colin.king@canonical.com>
+In-Reply-To: <20170613134751.29196-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, Sebastian Reichel <sre@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/03/2017 05:22 AM, Greg Kroah-Hartman wrote:
-> On Tue, May 16, 2017 at 03:08:14PM -0500, Andrew F. Davis wrote:
->> Like other subsystems we should be able to define slave devices outside
->> of the w1 directory. To do this we move public facing interface
->> definitions to include/linux/w1.h and rename the internal definition
->> file to w1_internal.h.
->>
->> As w1_family.h and w1_int.h contained almost entirely public
->> driver interface definitions we simply removed these files and
->> moved the remaining definitions into w1_internal.h.
->>
->> With this we can now start to move slave devices out of w1/slaves and
->> into the subsystem based on the function they implement, again like
->> other drivers.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> Reviewed-by: Sebastian Reichel <sre@kernel.org>
-> 
-> This breaks the build for me:
->   CC [M]  drivers/power/supply/ds2760_battery.o
-> drivers/power/supply/ds2760_battery.c:31:10: fatal error: ../../w1/w1.h: No such file or directory
->  #include "../../w1/w1.h"
->           ^~~~~~~~~~~~~~~
-> compilation terminated.
-> 
-> 
-> So there was w1 drivers outside of the drivers/w1/ directory :)
-> 
 
-Seems these drivers are like the BQ27xxx I'm trying to fix-up, these are
-platform drivers that connect with the real driver in w1/. Must have
-missed my search.
-
-> Please fix and resend.
+On 13/06/2017 14:47, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function cnl_ddi_dp_set_dpll_hw_state does not need to be in global
+> scope, so make it static.
+> 
+> Cleans up sparse warning:
+> "symbol 'cnl_ddi_dp_set_dpll_hw_state' was not declared. Should it
+>   be static?"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/gpu/drm/i915/intel_dpll_mgr.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_dpll_mgr.c b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> index 8e669b6254ae..2f7b0e64f628 100644
+> --- a/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> +++ b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> @@ -2292,8 +2292,9 @@ static bool cnl_ddi_hdmi_pll_dividers(struct intel_crtc *crtc,
+>   	return true;
+>   }
+>   
+> -bool cnl_ddi_dp_set_dpll_hw_state(int clock,
+> -				  struct intel_dpll_hw_state *dpll_hw_state)
+> +static bool
+> +cnl_ddi_dp_set_dpll_hw_state(int clock,
+> +			     struct intel_dpll_hw_state *dpll_hw_state)
+>   {
+>   	uint32_t cfgcr0;
+>   
 > 
 
-Fix sent in v3.
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-Thanks,
-Andrew
+Regards,
 
-> thanks,
-> 
-> greg k-h
-> 
+Tvrtko
