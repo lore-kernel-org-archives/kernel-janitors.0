@@ -1,52 +1,31 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Mon, 05 Jun 2017 09:54:50 +0000
-Subject: Re: [PATCH] Remove white spaces from fcoe.h
-Message-Id: <d94f2aa7-8e5f-0117-d53b-31491b64b191@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:58:53 +0000
+Subject: [PATCH] drm/amdkfd: NULL dereference involving create_process()
+Message-Id: <20170614105853.GP29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0f8b6a7b-c1d2-bc95-7970-7572991495cb@redhat.com>
- <alpine.DEB.2.20.1706051118090.2010@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1706051118090.2010@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Johannes Thumshirn <jth@kernel.org>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
+To: Oded Gabbay <oded.gabbay-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexey Skidanov <Alexey.Skidanov-5C7GfCeVMHo@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-On 06/05/2017 02:48 PM, Julia Lawall wrote:
-> 
-> 
-> On Mon, 5 Jun 2017, Milan P. Gandhi wrote:
-> 
->> Remove the white spaces in do/while loop used for checking fcoe
->> debug logging
-> 
-> Is it converting spaces to tabs?  If so, saying that would be clearer.
-yeah, it converts the white spaces to tabs.
-> 
-> julia
-> 
->>
->> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
->> ---
->>  drivers/scsi/fcoe/fcoe.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/fcoe/fcoe.h b/drivers/scsi/fcoe/fcoe.h
->> index 6aa4820..7406376 100644
->> --- a/drivers/scsi/fcoe/fcoe.h
->> +++ b/drivers/scsi/fcoe/fcoe.h
->> @@ -46,7 +46,7 @@ extern unsigned int fcoe_debug_logging;
->>  #define FCOE_NETDEV_LOGGING 0x02 /* Netdevice logging */
->>
->>  #define FCOE_CHECK_LOGGING(LEVEL, CMD)					\
->> -do {                                                            	\
->> +do {									\
->>  	if (unlikely(fcoe_debug_logging & LEVEL))			\
->>  		do {							\
->>  			CMD;						\
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+We accidentally return ERR_PTR(0) which is NULL.  The caller is not
+expecting that and it leads to an Oops.
 
+Fixes: dd59239a9862 ("amdkfd: init aperture once per process")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index 84d1ffd1eef9..1190d06884ed 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -318,7 +318,8 @@ static struct kfd_process *create_process(const struct task_struct *thread)
+ 
+ 	/* init process apertures*/
+ 	process->is_32bit_user_mode = in_compat_syscall();
+-	if (kfd_init_apertures(process) != 0)
++	err = kfd_init_apertures(process);
++	if (err != 0)
+ 		goto err_init_apretures;
+ 
+ 	return process;
