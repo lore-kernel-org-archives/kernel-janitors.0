@@ -1,27 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 23 Jun 2017 18:20:30 +0000
-Subject: Re: [PATCH -net] tls: return -EFAULT if copy_to_user() fails
-Message-Id: <20170623.142030.1486260738446581677.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 07:49:46 +0000
+Subject: [PATCH] NFC: nci: Remove an unneeded NULL check
+Message-Id: <20170614074945.GA29233@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170623101544.c5bvwe5cd6e46bd5@mwanda>
-In-Reply-To: <20170623101544.c5bvwe5cd6e46bd5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: davejwatson@fb.com, aviadye@mellanox.com, ilyal@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Christophe Ricard <christophe.ricard@gmail.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jun 2017 13:15:44 +0300
+"conn_info" can't be NULL here.  Also we just dereferenced it a couple
+lines earlier, so that makes static checkers complain.
 
-> The copy_to_user() function returns the number of bytes remaining but we
-> want to return -EFAULT here.
-> 
-> Fixes: 3c4d7559159b ("tls: kernel TLS support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Dan, I happened to realize that tls is only in net-next, but please
-indicate the target tree properly in your Subject lines in the
-future.
-
-Applied, thanks.
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index 61fff422424f..5542fc72f020 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -73,11 +73,9 @@ int nci_get_conn_info_by_dest_type_params(struct nci_dev *ndev, u8 dest_type,
+ 		if (conn_info->dest_type = dest_type) {
+ 			if (!params)
+ 				return conn_info->conn_id;
+-			if (conn_info) {
+-				if (params->id = conn_info->dest_params->id &&
+-				    params->protocol = conn_info->dest_params->protocol)
+-					return conn_info->conn_id;
+-			}
++			if (params->id = conn_info->dest_params->id &&
++			    params->protocol = conn_info->dest_params->protocol)
++				return conn_info->conn_id;
+ 		}
+ 	}
+ 
