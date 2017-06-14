@@ -1,28 +1,36 @@
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Tue, 20 Jun 2017 19:53:15 +0000
-Subject: Re: [PATCH] cfg80211: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
-Message-Id: <2343c662-f70d-1e76-d863-5f6bb66c269b@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:46:45 +0000
+Subject: [PATCH] nvme-rdma: fix error code in nvme_rdma_create_ctrl()
+Message-Id: <20170614104645.GO29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170620062205.16078-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170620062205.16078-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, franky.lin@broadcom.com, hante.meuleman@broadcom.com, kvalo@codeaurora.org, rafal@milecki.pl, pieter-paul.giesberts@broadcom.com
-Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+We accidentally return ERR_PTR(0) which is NULL.  The caller isn't
+explicitly checking for that but I couldn't immediately spot whether
+this would lead to a NULL dereference.  Anyway, we can fix add an
+error code easily enough.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 20-06-17 08:22, Christophe JAILLET wrote:
-> If 'wiphy_new()' fails, we leak 'ops'. Add a new label in the error
-> handling path to free it in such a case.
-
-Thanks. Please add the following tags:
-
-Cc: stable@vger.kernel.org
-> Fixes: 5c22fb85102a7 ("brcmfmac: add wowl gtk rekeying offload support")
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index e84a74479dd8..8456cb6e2a70 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -1940,12 +1940,14 @@ static struct nvme_ctrl *nvme_rdma_create_ctrl(struct device *dev,
+ 	/* sanity check icdoff */
+ 	if (ctrl->ctrl.icdoff) {
+ 		dev_err(ctrl->ctrl.device, "icdoff is not supported!\n");
++		ret = -EINVAL;
+ 		goto out_remove_admin_queue;
+ 	}
+ 
+ 	/* sanity check keyed sgls */
+ 	if (!(ctrl->ctrl.sgls & (1 << 20))) {
+ 		dev_err(ctrl->ctrl.device, "Mandatory keyed sgls are not support\n");
++		ret = -EINVAL;
+ 		goto out_remove_admin_queue;
+ 	}
+ 
