@@ -1,94 +1,29 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 12 Jun 2017 14:29:32 +0000
-Subject: Re: [PATCH v3 1/1] w1: Add subsystem kernel public interface
-Message-Id: <20170612142932.GA31457@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 09:04:37 +0000
+Subject: [PATCH] block: missing break in process_queued_bios()
+Message-Id: <20170614090437.GA31017@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170605135208.24807-1-afd@ti.com>
- <20170605135208.24807-2-afd@ti.com>
- <20170610125114.GA3128@kroah.com>
- <cdf6a90d-a3a8-4b40-3cf5-73ba4898ff11@ti.com>
-In-Reply-To: <cdf6a90d-a3a8-4b40-3cf5-73ba4898ff11@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, Sebastian Reichel <sre@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Christoph Hellwig <hch@lst.de>
+Cc: linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, Mike Snitzer <snitzer@redhat.com>
 
-On Mon, Jun 12, 2017 at 09:24:04AM -0500, Andrew F. Davis wrote:
-> On 06/10/2017 07:51 AM, Greg Kroah-Hartman wrote:
-> > On Mon, Jun 05, 2017 at 08:52:08AM -0500, Andrew F. Davis wrote:
-> >> Like other subsystems we should be able to define slave devices outside
-> >> of the w1 directory. To do this we move public facing interface
-> >> definitions to include/linux/w1.h and rename the internal definition
-> >> file to w1_internal.h.
-> >>
-> >> As w1_family.h and w1_int.h contained almost entirely public
-> >> driver interface definitions we simply removed these files and
-> >> moved the remaining definitions into w1_internal.h.
-> >>
-> >> With this we can now start to move slave devices out of w1/slaves and
-> >> into the subsystem based on the function they implement, again like
-> >> other drivers.
-> >>
-> >> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> >> Reviewed-by: Sebastian Reichel <sre@kernel.org>
-> >> Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-> >> ---
-> >>  MAINTAINERS                           |   1 +
-> >>  drivers/power/supply/ds2760_battery.c |   2 +-
-> >>  drivers/power/supply/ds2780_battery.c |   2 +-
-> >>  drivers/power/supply/ds2781_battery.c |   2 +-
-> >>  drivers/w1/masters/ds1wm.c            |   3 +-
-> >>  drivers/w1/masters/ds2482.c           |   3 +-
-> >>  drivers/w1/masters/ds2490.c           |   3 +-
-> >>  drivers/w1/masters/matrox_w1.c        |   3 +-
-> >>  drivers/w1/masters/mxc_w1.c           |   3 +-
-> >>  drivers/w1/masters/omap_hdq.c         |   3 +-
-> >>  drivers/w1/masters/w1-gpio.c          |   3 +-
-> >>  drivers/w1/slaves/w1_bq27000.c        |   6 +-
-> >>  drivers/w1/slaves/w1_ds2405.c         |   5 +-
-> >>  drivers/w1/slaves/w1_ds2406.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2408.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2413.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2423.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2431.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2433.c         |   6 +-
-> >>  drivers/w1/slaves/w1_ds2438.c         |   5 +-
-> >>  drivers/w1/slaves/w1_ds2760.c         |   7 ++-
-> >>  drivers/w1/slaves/w1_ds2780.c         |   7 ++-
-> >>  drivers/w1/slaves/w1_ds2781.c         |   7 ++-
-> >>  drivers/w1/slaves/w1_ds28e04.c        |   6 +-
-> >>  drivers/w1/slaves/w1_smem.c           |   7 ++-
-> >>  drivers/w1/slaves/w1_therm.c          |  10 ++-
-> >>  drivers/w1/w1.c                       |   6 +-
-> >>  drivers/w1/w1_family.c                |   3 +-
-> >>  drivers/w1/w1_family.h                |  98 -----------------------------
-> >>  drivers/w1/w1_int.c                   |   3 +-
-> >>  drivers/w1/w1_int.h                   |  27 --------
-> >>  drivers/w1/w1_internal.h              |  87 ++++++++++++++++++++++++++
-> >>  drivers/w1/w1_io.c                    |   2 +-
-> >>  drivers/w1/w1_netlink.c               |   2 +-
-> >>  drivers/w1/w1_netlink.h               |   2 +-
-> >>  {drivers/w1 => include/linux}/w1.h    | 114 +++++++++++++++-------------------
-> >>  36 files changed, 208 insertions(+), 260 deletions(-)
-> >>  delete mode 100644 drivers/w1/w1_family.h
-> >>  delete mode 100644 drivers/w1/w1_int.h
-> >>  create mode 100644 drivers/w1/w1_internal.h
-> >>  rename {drivers/w1 => include/linux}/w1.h (76%)
-> > 
-> > You forgot to update Documentation/DocBook/w1.tmpl, and now the
-> > documentation build breaks :(
-> > 
-> > Can you please send me a patch to fix that up?
-> 
-> It looks like in -next DocBook/w1.tmpl has been converted to
-> driver-api/w1.rst, should I just fix up the .rst version, or would you
-> also like a patch for your tree to keep it building for now?
+This used to be a fall through case, but we shifted code around and I
+think we want a break here now.
 
-Fixing up my tree would be best for now.
+Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-We can handle the merge issue if it happens afterward.
-
-thanks,
-
-greg k-h
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index a7d2e0840cc5..0e8ab5bb3575 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -625,6 +625,7 @@ static void process_queued_bios(struct work_struct *work)
+ 		case DM_MAPIO_KILL:
+ 			bio->bi_status = BLK_STS_IOERR;
+ 			bio_endio(bio);
++			break;
+ 		case DM_MAPIO_REQUEUE:
+ 			bio->bi_status = BLK_STS_DM_REQUEUE;
+ 			bio_endio(bio);
