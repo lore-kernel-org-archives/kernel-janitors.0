@@ -1,45 +1,30 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 28 Jun 2017 16:22:02 +0000
-Subject: Re: [PATCH] rsi: add in missing RSI_FSM_STATES into array fsm_state
-Message-Id: <87vangqdzp.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 09:10:10 +0000
+Subject: [PATCH net-next] qed: Fix an off by one bug
+Message-Id: <20170614091009.GA29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622165804.24379-1-colin.king@canonical.com>
-In-Reply-To: <20170622165804.24379-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 22 Jun 2017 17:58:04 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@cavium.com>
+Cc: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+The p_l2_info->pp_qid_usage[] array has "p_l2_info->queues" elements so
+the > here should be a >= or we write beyond the end of the array.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Two recent commits added new RSI_FSM_STATES (namely FSM_FW_NOT_LOADED
-> and FSM_COMMON_DEV_PARAMS_SENT) and the corresponding table fsm_state
-> was not updated to match. This can lead to an array overrun when
-> accessing the latter two states in fsm_state. Fix this by adding in
-> the missing states.
->
-> Detected by CoverityScan, CID#1398379 ("Illegal address computation")
->
-> Fixes: 9920322ccd8e04 ("rsi: add tx frame for common device configuration")
-> Fixes: 015e367494c1d5 ("rsi: Register interrupt handler before firmware load")
+Fixes: bbe3f233ec5e ("qed: Assign a unique per-queue index to queue-cid")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This is very much nitpicking, no need to resend because of this, but the
-preferred format is to to use 12 chars for the commit id:
-
-Fixes: 9920322ccd8e ("rsi: add tx frame for common device configuration")
-Fixes: 015e367494c1 ("rsi: Register interrupt handler before firmware load")
-
-Documentation/process/submitting-patches.rst contains a nice tip how you
-can get that automatically with git:
-
-        [core]
-                abbrev = 12
-        [pretty]
-                fixes = Fixes: %h (\"%s\")
-
--- 
-Kalle Valo
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+index cb8b05dbfc6e..e57699bfbdfa 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+@@ -161,7 +161,7 @@ static bool qed_eth_queue_qid_usage_add(struct qed_hwfn *p_hwfn,
+ 
+ 	mutex_lock(&p_l2_info->lock);
+ 
+-	if (queue_id > p_l2_info->queues) {
++	if (queue_id >= p_l2_info->queues) {
+ 		DP_NOTICE(p_hwfn,
+ 			  "Requested to increase usage for qzone %04x out of %08x\n",
+ 			  queue_id, p_l2_info->queues);
