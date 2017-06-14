@@ -1,48 +1,30 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Wed, 14 Jun 2017 13:05:32 +0000
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Date: Wed, 14 Jun 2017 17:18:25 +0000
 Subject: Re: [PATCH] RDS: IB: NULL dereference on error in rds_ib_alloc_frmr()
-Message-Id: <20170614130532.GC3329@yuvallap>
+Message-Id: <eecbb80f-9df3-e717-7af2-4407a3a40d3c@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170614103924.GK29394@elgon.mountain>
- <20170614125423.GA3329@yuvallap>
- <20170614130340.ge7dfgttnk4lgnmx@mwanda>
-In-Reply-To: <20170614130340.ge7dfgttnk4lgnmx@mwanda>
+In-Reply-To: <20170614103924.GK29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Avinash Repaka <avinash.repaka@oracle.com>, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
+Cc: Avinash Repaka <avinash.repaka@oracle.com>, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Wed, Jun 14, 2017 at 04:03:40PM +0300, Dan Carpenter wrote:
-> On Wed, Jun 14, 2017 at 03:54:24PM +0300, Yuval Shaia wrote:
-> > On Wed, Jun 14, 2017 at 01:39:24PM +0300, Dan Carpenter wrote:
-> > > We accidentally return ERR_PTR(0) if ib_alloc_mr() fails.  The caller
-> > > is expecting error pointers so it results in a NULL dereference.
-> > > 
-> > > Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > 
-> > > diff --git a/net/rds/ib_frmr.c b/net/rds/ib_frmr.c
-> > > index 48332a6ed738..74a66cc162ed 100644
-> > > --- a/net/rds/ib_frmr.c
-> > > +++ b/net/rds/ib_frmr.c
-> > > @@ -38,7 +38,7 @@ static struct rds_ib_mr *rds_ib_alloc_frmr(struct rds_ib_device *rds_ibdev,
-> > >  	struct rds_ib_mr_pool *pool;
-> > >  	struct rds_ib_mr *ibmr = NULL;
-> > >  	struct rds_ib_frmr *frmr;
-> > > -	int err = 0;
-> > > +	int err;
-> > 
-> > Can we trust it'll be zero?
-> 
-> We don't ever want it to be zero.  This way, hopefully, GCC will catch
-> it if we introduce any new bugs where we forget to set it to negative.
+On 6/14/17 3:39 AM, Dan Carpenter wrote:
+> We accidentally return ERR_PTR(0) if ib_alloc_mr() fails.  The caller
+> is expecting error pointers so it results in a NULL dereference.
+>
+> Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+Thanks Dan for fix.
 
-I see your point, in a "good" case we just return the ptr.
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+You haven't copied netdev. Can you please resend the patch
+with my ack on netdev so that Dave can pick it up.
 
-> 
-> regards,
-> dan carpenter
-> 
+
+
+
