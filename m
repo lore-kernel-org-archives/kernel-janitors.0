@@ -1,42 +1,30 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Wed, 14 Jun 2017 20:34:57 +0000
-Subject: Re: [PATCH] drm/amdkfd: NULL dereference involving create_process()
-Message-Id: <CAFCwf11tMreKQZNaeFzVVUnhSworrV8j945M52deuC0rM4NfwQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 09:13:27 +0000
+Subject: [PATCH] thermal: bcm2835: fix an error code in probe()
+Message-Id: <20170614091327.GD29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614105853.GP29394@elgon.mountain>
-In-Reply-To: <20170614105853.GP29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, "Kuehling, Felix" <Felix.Kuehling@amd.com>
+To: Zhang Rui <rui.zhang@intel.com>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Martin Sperl <kernel@martin.sperl.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 1:58 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> We accidentally return ERR_PTR(0) which is NULL.  The caller is not
-> expecting that and it leads to an Oops.
->
-> Fixes: dd59239a9862 ("amdkfd: init aperture once per process")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> index 84d1ffd1eef9..1190d06884ed 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> @@ -318,7 +318,8 @@ static struct kfd_process *create_process(const struct task_struct *thread)
->
->         /* init process apertures*/
->         process->is_32bit_user_mode = in_compat_syscall();
-> -       if (kfd_init_apertures(process) != 0)
-> +       err = kfd_init_apertures(process);
-> +       if (err != 0)
->                 goto err_init_apretures;
->
->         return process;
+This causes a static checker because we're passing a valid pointer to
+PTR_ERR().  "err" is already the correct error code, so we can just
+delete this line.
 
-Hi Dan,
+Fixes: bcb7dd9ef206 ("thermal: bcm2835: add thermal driver for bcm2835 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to amdkfd-next
-Thanks!
-
-Oded
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 0ecf80890c84..e6863c841662 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		 */
+ 		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
+ 		if (err < 0) {
+-			err = PTR_ERR(tz);
+ 			dev_err(&pdev->dev,
+ 				"Not able to read trip_temp: %d\n",
+ 				err);
