@@ -1,39 +1,32 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 30 Jun 2017 22:30:19 +0000
-Subject: Re: [PATCH] selinux: return -ENOMEM if kzalloc() fails
-Message-Id: <CAHC9VhTpBEJE3oYShNMNrLP7sL5hM2aSLDAcoLn0TMhpMma8Yg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:35:37 +0000
+Subject: [PATCH] xfrm: NULL dereference on allocation failure
+Message-Id: <20170614103537.GJ29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630075614.ywv3y3tptor5ox7g@mwanda>
-	<1498826894.16913.1.camel@tycho.nsa.gov>
-	<201706302210.GCA05089.MFFOtQVJSOLHOF@I-love.SAKURA.ne.jp>
-In-Reply-To: <201706302210.GCA05089.MFFOtQVJSOLHOF@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>, Trent Jaeger <tjaeger@cse.psu.edu>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 30, 2017 at 9:10 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Stephen Smalley wrote:
->> On Fri, 2017-06-30 at 10:56 +0300, Dan Carpenter wrote:
->> > We accidentally return success instead of -ENOMEM on this failure
->> > path.
->> >
->> > Fixes: 409dcf31538a ("selinux: Add a cache for quicker retreival of
->> > PKey SIDs")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> NAK, that's intentional.  See the comment just above the code in
->> question.
->
-> If allocation failure is no problem, please consider using
-> GFP_NOWAIT | __GFP_NOMEMALLOC | __GFP_NOWARN instead of
-> GFP_ATOMIC, for memory reserves is mainly targeted for OOM victims.
+The default error code in pfkey_msg2xfrm_state() is -ENOBUFS.  We
+added a new call to security_xfrm_state_alloc() which sets "err" to zero
+so there several places where we can return ERR_PTR(0) if kmalloc()
+fails.  The caller is expecting error pointers so it leads to a NULL
+dereference.
 
-I have a todo item to try and consolidate some of the SELinux object
-cache code, this seems like something worth experimenting with when
-that happens.
+Fixes: df71837d5024 ("[LSM-IPSec]: Security association restriction.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-paul moore
-www.paul-moore.com
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 86051b5879f2..02e6865421e8 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -1157,6 +1157,7 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 			goto out;
+ 	}
+ 
++	err = -ENOBUFS;
+ 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
+ 	if (sa->sadb_sa_auth) {
+ 		int keysize = 0;
