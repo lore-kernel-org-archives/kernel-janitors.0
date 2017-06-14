@@ -1,48 +1,35 @@
-From: Stefano Stabellini <sstabellini@kernel.org>
-Date: Mon, 05 Jun 2017 17:18:17 +0000
-Subject: Re: [PATCH 3/3] arm/xen: Adjust one function call together with a variable assignment
-Message-Id: <alpine.DEB.2.10.1706051018100.2941@sstabellini-ThinkPad-X260>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:29:31 +0000
+Subject: [PATCH net] net/act_pedit: fix an error code
+Message-Id: <20170614102930.GH29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
- <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
-In-Reply-To: <e479b745-f2da-b92e-02c3-f5ce27fc53ad@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Amir Vadai <amir@vadai.me>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 4 Jun 2017, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Jun 2017 21:21:20 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> ERROR: do not use assignment in if condition
-> 
-> Thus fix the affected source code place.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I'm reviewing static checker warnings where we do ERR_PTR(0), which is
+the same as NULL.  I'm pretty sure we intended to return ERR_PTR(-EINVAL)
+here.  Sometimes these bugs lead to a NULL dereference but I don't
+immediately see that problem here.
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+Fixes: 71d0ed7079df ("net/act_pedit: Support using offset relative to the conventional network headers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  arch/arm/xen/p2m.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
-> index f5f74ac637b9..e71eefa2e427 100644
-> --- a/arch/arm/xen/p2m.c
-> +++ b/arch/arm/xen/p2m.c
-> @@ -153,7 +153,8 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
->  	p2m_entry->mfn = mfn;
->  
->  	write_lock_irqsave(&p2m_lock, irqflags);
-> -	if ((rc = xen_add_phys_to_mach_entry(p2m_entry)) < 0) {
-> +	rc = xen_add_phys_to_mach_entry(p2m_entry);
-> +	if (rc < 0) {
->  		write_unlock_irqrestore(&p2m_lock, irqflags);
->  		return false;
->  	}
-> -- 
-> 2.13.0
-> 
+diff --git a/net/sched/act_pedit.c b/net/sched/act_pedit.c
+index 164b5ac094be..7dc5892671c8 100644
+--- a/net/sched/act_pedit.c
++++ b/net/sched/act_pedit.c
+@@ -94,8 +94,10 @@ static struct tcf_pedit_key_ex *tcf_pedit_keys_ex_parse(struct nlattr *nla,
+ 		k++;
+ 	}
+ 
+-	if (n)
++	if (n) {
++		err = -EINVAL;
+ 		goto err_out;
++	}
+ 
+ 	return keys_ex;
+ 
