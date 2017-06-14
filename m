@@ -1,25 +1,46 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 22 Jun 2017 09:00:31 +0000
-Subject: Re: [PATCH] crypto: cavium/nitrox - dma_mapping_error() returns bool
-Message-Id: <20170622090031.GE25859@gondor.apana.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Date: Wed, 14 Jun 2017 13:18:13 +0000
+Subject: Re: block: missing break in process_queued_bios()
+Message-Id: <20170614131813.GA10647@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170619105124.GA23831@elgon.mountain>
-In-Reply-To: <20170619105124.GA23831@elgon.mountain>
+References: <20170614090437.GA31017@elgon.mountain>
+In-Reply-To: <20170614090437.GA31017@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Srikanth Jampala <Jampala.Srikanth@cavium.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, axboe@kernel.dk
+Cc: Alasdair Kergon <agk@redhat.com>, Christoph Hellwig <hch@lst.de>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 19, 2017 at 01:51:25PM +0300, Dan Carpenter wrote:
-> We want to return negative error codes here, but we're accidentally
-> propogating the "true" return from dma_mapping_error().
+On Wed, Jun 14 2017 at  5:04am -0400,
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> This used to be a fall through case, but we shifted code around and I
+> think we want a break here now.
 > 
-> Fixes: 14fa93cdcd9b ("crypto: cavium - Add support for CNN55XX adapters.")
+> Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+> index a7d2e0840cc5..0e8ab5bb3575 100644
+> --- a/drivers/md/dm-mpath.c
+> +++ b/drivers/md/dm-mpath.c
+> @@ -625,6 +625,7 @@ static void process_queued_bios(struct work_struct *work)
+>  		case DM_MAPIO_KILL:
+>  			bio->bi_status = BLK_STS_IOERR;
+>  			bio_endio(bio);
+> +			break;
+>  		case DM_MAPIO_REQUEUE:
+>  			bio->bi_status = BLK_STS_DM_REQUEUE;
+>  			bio_endio(bio);
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Annoyed with myself for missing this during my review...
+
+The subject should be:
+"dm mpath: add missing break in process_queued_bios()"
+
+Also, this should go through Jens and I'll rebase my linux-dm branches
+accordingly.  Jens, please pick this up.
+
+Acked-by: Mike Snitzer <snitzer@redhat.com>
+
+Thanks!
