@@ -1,52 +1,63 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 14 Jun 2017 14:23:46 +0000
-Subject: Re: block: missing break in process_queued_bios()
-Message-Id: <94a9d00d-f066-2ce3-c15c-224ec7079d36@kernel.dk>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 14 Jun 2017 10:54:58 +0000
+Subject: Re: [PATCH] sm501fb: Silence a coccinelle script warning.
+Message-Id: <3551083.sIQ6JeN0q9@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614090437.GA31017@elgon.mountain>
- <20170614131813.GA10647@redhat.com>
-In-Reply-To: <20170614131813.GA10647@redhat.com>
+References: <CGME20170508061141epcas3p4d89f8f964dbe8a327de1abf80da94e6a@epcas3p4.samsung.com>
+        <20170508061116.31471-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170508061116.31471-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Snitzer <snitzer@redhat.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Christoph Hellwig <hch@lst.de>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: khoroshilov@ispras.ru, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/14/2017 07:18 AM, Mike Snitzer wrote:
-> On Wed, Jun 14 2017 at  5:04am -0400,
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
->> This used to be a fall through case, but we shifted code around and I
->> think we want a break here now.
->>
->> Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
->> index a7d2e0840cc5..0e8ab5bb3575 100644
->> --- a/drivers/md/dm-mpath.c
->> +++ b/drivers/md/dm-mpath.c
->> @@ -625,6 +625,7 @@ static void process_queued_bios(struct work_struct *work)
->>  		case DM_MAPIO_KILL:
->>  			bio->bi_status = BLK_STS_IOERR;
->>  			bio_endio(bio);
->> +			break;
->>  		case DM_MAPIO_REQUEUE:
->>  			bio->bi_status = BLK_STS_DM_REQUEUE;
->>  			bio_endio(bio);
-> 
-> Annoyed with myself for missing this during my review...
-> 
-> The subject should be:
-> "dm mpath: add missing break in process_queued_bios()"
-> 
-> Also, this should go through Jens and I'll rebase my linux-dm branches
-> accordingly.  Jens, please pick this up.
-> 
-> Acked-by: Mike Snitzer <snitzer@redhat.com>
 
-Thanks, I've added it to the 4.13 branch.
+Hi,
 
--- 
-Jens Axboe
+On Monday, May 08, 2017 08:11:16 AM Christophe JAILLET wrote:
+> According to surrounding goto, it is likely that 'goto err_probed_panel' is
+> expected here.
+> This change is just done in order to silence some coccinelle scripts
+> which try to detect wrongly ordered goto.
+> 
+> If 'info->fb[HEAD_PANEL]' and' 'info->fb[HEAD_CRT]' are both NULL, this
+> means that no 'framebuffer_alloc' has been performed, so 'goto err_alloc'
+> looks fine.
+> Anyway, it is also harmless in this case to call 'framebuffer_release'.
+> The code looks more straight forward.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+It seems that the code for supporting only selected framebuffers
+(only HEAD_PANEL fb or only HEAD_CRT fb) is broken anyway as at least
+the suspend/resume support assumes that both framebuffers are always
+present. Also all sm501fb driver users always try try to initialize
+both framebuffers. Therefore I would prefer the removal of non-working
+individual framebuffers support (the code that your patch modifies
+would be removed as well). Could you please look into it?
+
+> ---
+>  drivers/video/fbdev/sm501fb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
+> index 67e314fdd947..4d89b045ce40 100644
+> --- a/drivers/video/fbdev/sm501fb.c
+> +++ b/drivers/video/fbdev/sm501fb.c
+> @@ -1990,7 +1990,7 @@ static int sm501fb_probe(struct platform_device *pdev)
+>  	    info->fb[HEAD_CRT] = NULL) {
+>  		dev_err(dev, "no framebuffers found\n");
+>  		ret = -ENODEV;
+> -		goto err_alloc;
+> +		goto err_probed_panel;
+>  	}
+>  
+>  	/* get the resources for both of the framebuffers */
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
