@@ -1,50 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 02 Jun 2017 09:12:13 +0000
-Subject: [PATCH][media] atomisp: make repool_pgnr and punit_ddr_dvfs_enable static
-Message-Id: <20170602091213.30250-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 09:10:56 +0000
+Subject: [PATCH] Staging: rtl8723bs: fix an error code in isFileReadable()
+Message-Id: <20170614091055.GB29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Arushi Singhal <arushisinghal19971997@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The caller only cares about zero vs non-zero so this code actually works
+fine but we should be returning a negative error code instead of a valid
+pointer casted to int.
 
-integer repool_pgnr and function punit_ddr_dvfs_enable can be made
-static as they do not need to be in global scope.
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cleans up sparse warnings:
- "symbol 'repool_pgnr' was not declared. Should it be static?"
- "symbol 'punit_ddr_dvfs_enable' was not declared. Should it be static?"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-index a0478077a012..a543def739fc 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
-@@ -56,7 +56,7 @@ module_param(skip_fwload, uint, 0644);
- MODULE_PARM_DESC(skip_fwload, "Skip atomisp firmware load");
+diff --git a/drivers/staging/rtl8723bs/os_dep/osdep_service.c b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+index 02db59e8b593..aa16d1ab955b 100644
+--- a/drivers/staging/rtl8723bs/os_dep/osdep_service.c
++++ b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+@@ -160,7 +160,7 @@ static int isFileReadable(char *path)
+ 		oldfs = get_fs(); set_fs(get_ds());
  
- /* set reserved memory pool size in page */
--unsigned int repool_pgnr;
-+static unsigned int repool_pgnr;
- module_param(repool_pgnr, uint, 0644);
- MODULE_PARM_DESC(repool_pgnr,
- 		"Set the reserved memory pool size in page (default:0)");
-@@ -384,7 +384,7 @@ static int atomisp_mrfld_pre_power_down(struct atomisp_device *isp)
-  * WA for DDR DVFS enable/disable
-  * By default, ISP will force DDR DVFS 1600MHz before disable DVFS
-  */
--void punit_ddr_dvfs_enable(bool enable)
-+static void punit_ddr_dvfs_enable(bool enable)
- {
- 	int reg = intel_mid_msgbus_read32(PUNIT_PORT, MRFLD_ISPSSDVFS);
- 	int door_bell = 1 << 8;
--- 
-2.11.0
-
+ 		if (1!=readFile(fp, &buf, 1))
+-			ret = PTR_ERR(fp);
++			ret = -EINVAL;
+ 
+ 		set_fs(oldfs);
+ 		filp_close(fp, NULL);
