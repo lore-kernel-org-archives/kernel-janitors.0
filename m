@@ -1,55 +1,71 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 30 Jun 2017 16:17:57 +0000
-Subject: Re: [PATCH] platform/x86: intel_telemetry_debugfs: fix some error codes in init
-Message-Id: <CAHp75Vd9EVkThvxE8RDdr3D3M8dbPvYXRgtLri9c-z4qxFXLtQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:34:05 +0000
+Subject: [PATCH] xfrm: Oops on error in pfkey_msg2xfrm_state()
+Message-Id: <20170614103405.GI29394@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630075218.m4eal2iqu5i2skx5@mwanda>
-In-Reply-To: <20170630075218.m4eal2iqu5i2skx5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 30, 2017 at 10:52 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> There are bunch of "goto out;" paths where we don't set the error code.
->
+There are some missing error codes here so we accidentally return NULL
+instead of an error pointer.  It results in a NULL pointer dereference.
 
-Applied for testing, thanks!
+Fixes: df71837d5024 ("[LSM-IPSec]: Security association restriction.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This goes through Steffen's tree I presume.  It aplies to net.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-> index 4cc2f4ea0a25..b8be058a8754 100644
-> --- a/drivers/platform/x86/intel_telemetry_debugfs.c
-> +++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-> @@ -938,7 +938,7 @@ static struct notifier_block pm_notifier = {
->  static int __init telemetry_debugfs_init(void)
->  {
->         const struct x86_cpu_id *id;
-> -       int err = -ENOMEM;
-> +       int err;
->         struct dentry *f;
->
->         /* Only APL supported for now */
-> @@ -958,11 +958,10 @@ static int __init telemetry_debugfs_init(void)
->
->         register_pm_notifier(&pm_notifier);
->
-> +       err = -ENOMEM;
->         debugfs_conf->telemetry_dbg_dir = debugfs_create_dir("telemetry", NULL);
-> -       if (!debugfs_conf->telemetry_dbg_dir) {
-> -               err = -ENOMEM;
-> +       if (!debugfs_conf->telemetry_dbg_dir)
->                 goto out_pm;
-> -       }
->
->         f = debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
->                                 debugfs_conf->telemetry_dbg_dir, NULL,
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 86051b5879f2..0fa678fa3b73 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -1168,8 +1168,10 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 		if (key)
+ 			keysize = (key->sadb_key_bits + 7) / 8;
+ 		x->aalg = kmalloc(sizeof(*x->aalg) + keysize, GFP_KERNEL);
+-		if (!x->aalg)
++		if (!x->aalg) {
++			err = -ENOMEM;
+ 			goto out;
++		}
+ 		strcpy(x->aalg->alg_name, a->name);
+ 		x->aalg->alg_key_len = 0;
+ 		if (key) {
+@@ -1188,8 +1190,10 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 				goto out;
+ 			}
+ 			x->calg = kmalloc(sizeof(*x->calg), GFP_KERNEL);
+-			if (!x->calg)
++			if (!x->calg) {
++				err = -ENOMEM;
+ 				goto out;
++			}
+ 			strcpy(x->calg->alg_name, a->name);
+ 			x->props.calgo = sa->sadb_sa_encrypt;
+ 		} else {
+@@ -1203,8 +1207,10 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 			if (key)
+ 				keysize = (key->sadb_key_bits + 7) / 8;
+ 			x->ealg = kmalloc(sizeof(*x->ealg) + keysize, GFP_KERNEL);
+-			if (!x->ealg)
++			if (!x->ealg) {
++				err = -ENOMEM;
+ 				goto out;
++			}
+ 			strcpy(x->ealg->alg_name, a->name);
+ 			x->ealg->alg_key_len = 0;
+ 			if (key) {
+@@ -1249,8 +1255,10 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
+ 		struct xfrm_encap_tmpl *natt;
+ 
+ 		x->encap = kmalloc(sizeof(*x->encap), GFP_KERNEL);
+-		if (!x->encap)
++		if (!x->encap) {
++			err = -ENOMEM;
+ 			goto out;
++		}
+ 
+ 		natt = x->encap;
+ 		n_type = ext_hdrs[SADB_X_EXT_NAT_T_TYPE-1];
