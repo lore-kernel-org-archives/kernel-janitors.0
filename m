@@ -1,30 +1,44 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Date: Wed, 14 Jun 2017 17:18:25 +0000
+From: Avinash Repaka <avinash.repaka@oracle.com>
+Date: Wed, 14 Jun 2017 20:59:16 +0000
 Subject: Re: [PATCH] RDS: IB: NULL dereference on error in rds_ib_alloc_frmr()
-Message-Id: <eecbb80f-9df3-e717-7af2-4407a3a40d3c@oracle.com>
+Message-Id: <0d556f30-3a33-695e-4a13-a2e0070d0684@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170614103924.GK29394@elgon.mountain>
 In-Reply-To: <20170614103924.GK29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Avinash Repaka <avinash.repaka@oracle.com>, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
 
-On 6/14/17 3:39 AM, Dan Carpenter wrote:
+Reviewed-by: Avinash Repaka <avinash.repaka@oracle.com>
+
+On 06/14/2017 03:39 AM, Dan Carpenter wrote:
 > We accidentally return ERR_PTR(0) if ib_alloc_mr() fails.  The caller
 > is expecting error pointers so it results in a NULL dereference.
 >
 > Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-Thanks Dan for fix.
-
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-
-You haven't copied netdev. Can you please resend the patch
-with my ack on netdev so that Dave can pick it up.
-
-
-
+> diff --git a/net/rds/ib_frmr.c b/net/rds/ib_frmr.c
+> index 48332a6ed738..74a66cc162ed 100644
+> --- a/net/rds/ib_frmr.c
+> +++ b/net/rds/ib_frmr.c
+> @@ -38,7 +38,7 @@ static struct rds_ib_mr *rds_ib_alloc_frmr(struct rds_ib_device *rds_ibdev,
+>   	struct rds_ib_mr_pool *pool;
+>   	struct rds_ib_mr *ibmr = NULL;
+>   	struct rds_ib_frmr *frmr;
+> -	int err = 0;
+> +	int err;
+>   
+>   	if (npages <= RDS_MR_8K_MSG_SIZE)
+>   		pool = rds_ibdev->mr_8k_pool;
+> @@ -61,6 +61,7 @@ static struct rds_ib_mr *rds_ib_alloc_frmr(struct rds_ib_device *rds_ibdev,
+>   			 pool->fmr_attr.max_pages);
+>   	if (IS_ERR(frmr->mr)) {
+>   		pr_warn("RDS/IB: %s failed to allocate MR", __func__);
+> +		err = -ENOMEM;
+>   		goto out_no_cigar;
+>   	}
+>   
 
