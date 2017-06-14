@@ -1,30 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 30 Jun 2017 13:49:05 +0000
-Subject: Re: [PATCH] pinctrl: rza1: make structures rza1_gpiochip_template and rza1_pinmux_ops static
-Message-Id: <CACRpkdaw3APxQhNw9zmc5-41s6jxSS34f7BZ-PncNpmW0=-_8Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jun 2017 10:20:09 +0000
+Subject: [PATCH v2] IB/mlx5: Fix a warning message
+Message-Id: <20170614102009.GA5171@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630102653.9546-1-colin.king@canonical.com>
-In-Reply-To: <20170630102653.9546-1-colin.king@canonical.com>
+References: <CAAKD3BDGH1STMhcCgz=K6-8EtnGGOYkx7KPS+iPidUiuLmpjNw@mail.gmail.com>
+In-Reply-To: <CAAKD3BDGH1STMhcCgz=K6-8EtnGGOYkx7KPS+iPidUiuLmpjNw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, Jun 30, 2017 at 12:26 PM, Colin King <colin.king@canonical.com> wrote:
+"umem" is a valid pointer.  We intended to print "*umem" or even just
+"err" instead.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> structures rza1_gpiochip_template and rza1_pinmux_ops do not need to be
-> in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> symbol 'rza1_gpiochip_template' was not declared. Should it be static?
-> symbol 'rza1_pinmux_ops' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style change
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index 763bb5b36144..2c89757b0223 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -825,7 +825,7 @@ static int mr_umem_get(struct ib_pd *pd, u64 start, u64 length,
+ 			    access_flags, 0);
+ 	err = PTR_ERR_OR_ZERO(*umem);
+ 	if (err < 0) {
+-		mlx5_ib_err(dev, "umem get failed (%ld)\n", PTR_ERR(umem));
++		mlx5_ib_err(dev, "umem get failed (%d)\n", err);
+ 		return err;
+ 	}
+ 
