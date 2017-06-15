@@ -1,36 +1,40 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 23 Jun 2017 08:27:07 +0000
-Subject: Re: [PATCH][V2] x86/microcode: make a couple of symbols static
-Message-Id: <20170623082707.lti7wqqsx273fnrv@pd.tnic>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 15 Jun 2017 09:55:59 +0000
+Subject: [PATCH] cpufreq: sfi: make freq_table static
+Message-Id: <20170615095559.21973-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622095736.11937-1-colin.king@canonical.com>
-In-Reply-To: <20170622095736.11937-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 22, 2017 at 10:57:36AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The helper function __load_ucode_amd and pointer intel_ucode_patch
-> do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> "symbol '__load_ucode_amd' was not declared. Should it be static?"
-> "symbol 'intel_ucode_patch' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c   | 2 +-
->  arch/x86/kernel/cpu/microcode/intel.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+pointer freq_table can be made static as it does not need to be in
+global scope.
 
+Cleans up sparse warning:
+"symbol 'freq_table' was not declared. Should it be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/cpufreq/sfi-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/sfi-cpufreq.c b/drivers/cpufreq/sfi-cpufreq.c
+index 992ce6f9abec..3779742f86e3 100644
+--- a/drivers/cpufreq/sfi-cpufreq.c
++++ b/drivers/cpufreq/sfi-cpufreq.c
+@@ -24,7 +24,7 @@
+ 
+ #include <asm/msr.h>
+ 
+-struct cpufreq_frequency_table *freq_table;
++static struct cpufreq_frequency_table *freq_table;
+ static struct sfi_freq_table_entry *sfi_cpufreq_array;
+ static int num_freq_table_entries;
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.11.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
