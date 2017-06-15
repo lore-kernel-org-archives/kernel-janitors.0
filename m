@@ -1,24 +1,80 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Jun 2017 01:22:28 +0000
-Subject: Re: [PATCH 0/3] scsi: qedf: Fix a return value + some cleanups
-Message-Id: <yq14lvkznor.fsf@oracle.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 15 Jun 2017 17:20:55 +0000
+Subject: Applied "ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'" to the asoc tree
+Message-Id: <E1dLYRz-0001l4-SZ@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1497160148.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1497160148.git.christophe.jaillet@wanadoo.fr> (Christophe
-        JAILLET's message of "Sun, 11 Jun 2017 08:16:01 +0200")
+References: <20170615055311.8049-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170615055311.8049-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, heiko@sntech.de, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.orgChristopheJAILLETchristophe.jaillet@wanadoo.fr@alsa-project.org
 
+The patch
 
-Christophe,
+   ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'
 
-> This patch serie first fixes a case where an error code was missing.
-> The 2 other patches are just cleanups in the same area.
+has been applied to the asoc tree at
 
-Applied to 4.13/scsi-queue with fixed typo.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c3a3d3c41b74b05267bab6173f2a8224a1443ba6 Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Thu, 15 Jun 2017 07:53:11 +0200
+Subject: [PATCH] ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'
+
+If this memory allocation fail, we must disable what has been enabled.
+Do not return immediately but go thrue the error handling path instead.
+
+Also use 'devm_kmemdup' instead of 'devm_kzalloc+memcpy' to simplify code.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/rockchip/rockchip_i2s.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
+index 66a26c56c658..ce09dee2202e 100644
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -641,12 +641,13 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
+ 			goto err_pm_disable;
+ 	}
+ 
+-	soc_dai = devm_kzalloc(&pdev->dev,
++	soc_dai = devm_kmemdup(&pdev->dev, &rockchip_i2s_dai
+ 			       sizeof(*soc_dai), GFP_KERNEL);
+-	if (!soc_dai)
+-		return -ENOMEM;
++	if (!soc_dai) {
++		err = -ENOMEM;
++		goto err_pm_disable;
++	}
+ 
+-	memcpy(soc_dai, &rockchip_i2s_dai, sizeof(*soc_dai));
+ 	if (!of_property_read_u32(node, "rockchip,playback-channels", &val)) {
+ 		if (val >= 2 && val <= 8)
+ 			soc_dai->playback.channels_max = val;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
