@@ -1,42 +1,46 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Date: Fri, 23 Jun 2017 12:42:07 +0000
-Subject: Re: [PATCH][spi-next] spi: stm32: fix range limit checks on div
-Message-Id: <1c40b653-2b52-f631-5f54-57e68270d141@st.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 15 Jun 2017 05:53:11 +0000
+Subject: [PATCH] ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'
+Message-Id: <20170615055311.8049-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622154142.22481-1-colin.king@canonical.com>
-In-Reply-To: <20170622154142.22481-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, heiko@sntech.de
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If this memory allocation fail, we must disable what has been enabled.
+Do not return immediately but go thrue the error handling path instead.
 
-On 06/22/2017 05:41 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the check for range limits on div is incorrect and will
-> never return -EINVAL. Fix this by replacing && with ||
-> 
-> Detected by CoverityScan, CID#1446580 ("Structurally dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/spi/spi-stm32.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-> index 0553f61ab3b7..b75909e7b117 100644
-> --- a/drivers/spi/spi-stm32.c
-> +++ b/drivers/spi/spi-stm32.c
-> @@ -262,7 +262,7 @@ static int stm32_spi_prepare_mbr(struct stm32_spi *spi, u32 speed_hz)
->   	 * no need to check it there.
->   	 * However, we need to ensure the following calculations.
->   	 */
-> -	if ((div < SPI_MBR_DIV_MIN) &&
-> +	if ((div < SPI_MBR_DIV_MIN) ||
->   	    (div > SPI_MBR_DIV_MAX))
->   		return -EINVAL;
->   
-> 
+Also use 'devm_kmemdup' instead of 'devm_kzalloc+memcpy' to simplify code.
 
-Reviewed-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/rockchip/rockchip_i2s.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
+index af5e0da144f7..f3aa3dfe914b 100644
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -643,12 +643,13 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
+ 			goto err_pm_disable;
+ 	}
+ 
+-	soc_dai = devm_kzalloc(&pdev->dev,
++	soc_dai = devm_kmemdup(&pdev->dev, &rockchip_i2s_dai
+ 			       sizeof(*soc_dai), GFP_KERNEL);
+-	if (!soc_dai)
+-		return -ENOMEM;
++	if (!soc_dai) {
++		err = -ENOMEM;
++		goto err_pm_disable;
++	}
+ 
+-	memcpy(soc_dai, &rockchip_i2s_dai, sizeof(*soc_dai));
+ 	if (!of_property_read_u32(node, "rockchip,playback-channels", &val)) {
+ 		if (val >= 2 && val <= 8)
+ 			soc_dai->playback.channels_max = val;
+-- 
+2.11.0
+
