@@ -1,47 +1,86 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Wed, 21 Jun 2017 10:22:19 +0000
-Subject: Re: [PATCH][mm-next] mm: clean up build warning with unused variable ret2
-Message-Id: <1498040539.4735.3.camel@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 16 Jun 2017 08:46:10 +0000
+Subject: [PATCH][drm-next] drm/amdgpu: fix some spelling mistakes and break overly wide lines
+Message-Id: <20170616084610.22861-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170621101433.9847-1-colin.king@canonical.com>
-In-Reply-To: <20170621101433.9847-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@techsingularity.net>, Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>, Dave Chinner <dchinner@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2017-06-21 at 11:14 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret2 is unused and should be removed. Cleans up
-> build warning:
-> 
-> warning: unused variable 'ret2' [-Wunused-variable]
-> 
-> Fixes: 4118ba44fa2cd040e ("mm: clean up error handling in write_one_page")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  mm/page-writeback.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 64b75bd996a4..0b60cc7ddac2 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2377,7 +2377,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
->  int write_one_page(struct page *page)
->  {
->  	struct address_space *mapping = page->mapping;
-> -	int ret = 0, ret2;
-> +	int ret = 0;
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_ALL,
->  		.nr_to_write = 1,
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fixes to spelling mistakes in DRM_INFO, dev_info and
+WARN_ONCE messages.  Also break overly wide lines and add some
+white spacing where appropriate in ternary operator.
 
-Thanks. I just squashed the same fix into the original patch this
-morning after seeing the mail from Stephen. Tomorrow's linux-next pull
-should pick up the corrected version.
+Fixes:
+  "successed" -> "succeeded"
+  "suuport" -> "support"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 12 ++++++++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c     |  2 +-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 875cde414be7..990c427233f8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1885,7 +1885,9 @@ static int amdgpu_sriov_reinit_early(struct amdgpu_device *adev)
+ 				continue;
+ 
+ 			r = block->version->funcs->hw_init(adev);
+-			DRM_INFO("RE-INIT: %s %s\n", block->version->funcs->name, r?"failed":"successed");
++			DRM_INFO("RE-INIT: %s %s\n",
++				 block->version->funcs->name,
++				 r ? "failed" : "succeeded");
+ 		}
+ 	}
+ 
+@@ -1916,7 +1918,9 @@ static int amdgpu_sriov_reinit_late(struct amdgpu_device *adev)
+ 				continue;
+ 
+ 			r = block->version->funcs->hw_init(adev);
+-			DRM_INFO("RE-INIT: %s %s\n", block->version->funcs->name, r?"failed":"successed");
++			DRM_INFO("RE-INIT: %s %s\n",
++				 block->version->funcs->name,
++				 r ? "failed" : "succeeded");
+ 		}
+ 	}
+ 
+@@ -2800,7 +2804,7 @@ int amdgpu_sriov_gpu_reset(struct amdgpu_device *adev, struct amdgpu_job *job)
+ 		/* bad news, how to tell it to userspace ? */
+ 		dev_info(adev->dev, "GPU reset failed\n");
+ 	} else {
+-		dev_info(adev->dev, "GPU reset successed!\n");
++		dev_info(adev->dev, "GPU reset succeeded!\n");
+ 	}
+ 
+ 	adev->gfx.in_reset = false;
+@@ -2966,7 +2970,7 @@ int amdgpu_gpu_reset(struct amdgpu_device *adev)
+ 		/* bad news, how to tell it to userspace ? */
+ 		dev_info(adev->dev, "GPU reset failed\n");
+ 	else
+-		dev_info(adev->dev, "GPU reset successed!\n");
++		dev_info(adev->dev, "GPU reset succeeded!\n");
+ 
+ 	return r;
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index 5795f81369f0..06f11e2a32af 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -1301,7 +1301,7 @@ static int amdgpu_vm_update_ptes(struct amdgpu_pte_update_params *params,
+ 
+ 		if (params->shadow) {
+ 			if (WARN_ONCE(use_cpu_update,
+-				"CPU VM update doesn't suuport shadow pages"))
++				"CPU VM update doesn't support shadow pages"))
+ 				return 0;
+ 
+ 			if (!pt->shadow)
 -- 
-Jeff Layton <jlayton@redhat.com>
+2.11.0
+
