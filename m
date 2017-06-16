@@ -1,37 +1,67 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 01 Jun 2017 14:40:25 +0000
-Subject: Re: [PATCH] scsi: lpfc: fix spelling mistake "entrys" -> "entries"
-Message-Id: <b5f2ac31-d1cf-7f29-e0cd-0b8f8954ad9a@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 16 Jun 2017 22:44:37 +0000
+Subject: endian bitshift defects [ was: staging: fusb302: don't bitshift __le16 type ]
+Message-Id: <1497653077.10546.23.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170526101137.14282-1-colin.king@canonical.com>
- <20170601143519.mk4tvxwcl63y3zwm@mwanda>
-In-Reply-To: <20170601143519.mk4tvxwcl63y3zwm@mwanda>
+References: <20170616174556.2358-1-fransklaver@gmail.com>
+In-Reply-To: <20170616174556.2358-1-fransklaver@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Yueyao Zhu <yueyao.zhu@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, Guru Das Srinagesh <gurooodas@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On 01/06/17 15:35, Dan Carpenter wrote:
-> On Fri, May 26, 2017 at 11:11:37AM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Trivial fix to spelling mistake in debugfs message
->>
-> 
-> Are you using a tool to find all these spelling mistakes?
+On Fri, 2017-06-16 at 19:45 +0200, Frans Klaver wrote:
+> The header field in struct pd_message is declared as an __le16 type. The
+> data in the message is supposed to be little endian. This means we don't
+> have to go and shift the individual bytes into position when we're
+> filling the buffer, we can just copy the contents right away. As an
+> added benefit we don't get fishy results on big endian systems anymore.
 
-Yep, I'm using kernelscan [1]
+Thanks for pointing this out.
 
-kernelscan -c path-to-kernel-source
+There are several instances of this class of error.
 
-I run this daily and diff the latest with the previous results. It uses
-the dictionary from "spell". It's been hand optimized to be rather fast.
+Here's a cocci script to find them.
 
-[1] https://github.com/ColinIanKing/kernelscan
+This is best used with cocci's --all-includes option like:
 
-> 
-> regards,
-> dan carpenter
-> 
+$ spatch --all-includes --very-quiet --sp-file lebe_bitshifts.cocci .
+[ many defects...]
 
+$ cat lebe_bitshifts.cocci
+@@
+typedef __le16, __le32, __le64,=A0=A0__be16, __be32, __be64;
+{ __le16, __le32, __le64,=A0=A0__be16, __be32, __be64 } a;
+expression b;
+@@
+
+*	a << b
+
+@@
+{ __le16, __le32, __le64,=A0=A0__be16, __be32, __be64 } a;
+expression b;
+@@
+
+*	a <<=3D b
+
+@@
+{ __le16, __le32, __le64,=A0=A0__be16, __be32, __be64 } a;
+expression b;
+@@
+
+*	a >> b
+
+@@
+{ __le16, __le32, __le64,=A0=A0__be16, __be32, __be64 } a;
+expression b;
+@@
+
+*	a >>=3D b
+$
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
