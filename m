@@ -1,95 +1,51 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 16 Jun 2017 04:57:30 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 16 Jun 2017 09:18:56 +0000
 Subject: Re: Applied "ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'" to the asoc tree
-Message-Id: <e92fef8d-5ce1-0b7d-d130-0246d2cb7f91@wanadoo.fr>
+Message-Id: <20170616091856.jz5d4trm5jz2ugan@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="x65wduh7amfg3u5o"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170615055311.8049-1-christophe.jaillet@wanadoo.fr>
  <E1dLYRz-0001l4-SZ@debutante>
-In-Reply-To: <E1dLYRz-0001l4-SZ@debutante>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mark Brown <broonie@kernel.org>
+ <e92fef8d-5ce1-0b7d-d130-0246d2cb7f91@wanadoo.fr>
+In-Reply-To: <e92fef8d-5ce1-0b7d-d130-0246d2cb7f91@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, heiko@sntech.de, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-Le 15/06/2017 =E0 19:20, Mark Brown a =E9crit :
-> The patch
->
->     ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'
->
-> has been applied to the asoc tree at
->
->     git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
->
->  From c3a3d3c41b74b05267bab6173f2a8224a1443ba6 Mon Sep 17 00:00:00 2001
-> From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-> Date: Thu, 15 Jun 2017 07:53:11 +0200
-> Subject: [PATCH] ASoC: rockchip: Fix an error handling in 'rockchip_i2s_p=
-robe'
->
-> If this memory allocation fail, we must disable what has been enabled.
-> Do not return immediately but go thrue the error handling path instead.
->
-> Also use 'devm_kmemdup' instead of 'devm_kzalloc+memcpy' to simplify code.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->   sound/soc/rockchip/rockchip_i2s.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockc=
-hip_i2s.c
-> index 66a26c56c658..ce09dee2202e 100644
-> --- a/sound/soc/rockchip/rockchip_i2s.c
-> +++ b/sound/soc/rockchip/rockchip_i2s.c
-> @@ -641,12 +641,13 @@ static int rockchip_i2s_probe(struct platform_devic=
-e *pdev)
->   			goto err_pm_disable;
->   	}
->  =20
-> -	soc_dai =3D devm_kzalloc(&pdev->dev,
-> +	soc_dai =3D devm_kmemdup(&pdev->dev, &rockchip_i2s_dai
->   			       sizeof(*soc_dai), GFP_KERNEL);
-> -	if (!soc_dai)
-> -		return -ENOMEM;
-> +	if (!soc_dai) {
-> +		err =3D -ENOMEM;
-> +		goto err_pm_disable;
-> +	}
->  =20
-> -	memcpy(soc_dai, &rockchip_i2s_dai, sizeof(*soc_dai));
->   	if (!of_property_read_u32(node, "rockchip,playback-channels", &val)) {
->   		if (val >=3D 2 && val <=3D 8)
->   			soc_dai->playback.channels_max =3D val;
 
-... and 'err' should be 'ret'...
+--x65wduh7amfg3u5o
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm really confused for such a ugly proposal !
+On Fri, Jun 16, 2017 at 06:57:30AM +0200, Christophe JAILLET wrote:
+> Le 15/06/2017 =E0 19:20, Mark Brown a =E9crit :
 
-CJ
+> >   	if (!of_property_read_u32(node, "rockchip,playback-channels", &val))=
+ {
+> >   		if (val >=3D 2 && val <=3D 8)
+> >   			soc_dai->playback.channels_max =3D val;
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ... and 'err' should be 'ret'...
+
+> I'm really confused for such a ugly proposal !
+
+In a situation like this it's generally best to send a patch, I'll fix
+though.
+
+--x65wduh7amfg3u5o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllDonsACgkQJNaLcl1U
+h9BKXAf9HLRJwNPvMTRln/0h4G5l6rxHDsSvEjI07dJwsmDHOI623PUUg27XdVNa
+EmTT4pVe0aP2hcmIZOr6+RniDUGyR5Yi0J37FvchkLl2LmlpcuHXvDMIToBjvAvE
+M6k9kXGLrhDqg72+esyG+EpEu17ZzekACrI7eBEA98O04YXIooz8HsO+4YfMQdhn
+yrzJ8A7paNyvtQtQrs7BFizRR7SUCOax4UjFjMlJjRKLe50KTEetjIULYRDP9X4X
+IrkUCV4Kcg40YY6CghPpv8Cs/X/Mu/etCqmEqnMp1QwVPfT8BrNpBr1Sakeewbag
+YwA4oKr0TDQy5Yrhv2lblhAacqIo5Q==
+=2+34
+-----END PGP SIGNATURE-----
+
+--x65wduh7amfg3u5o--
