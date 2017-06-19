@@ -1,48 +1,25 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 21 Jun 2017 05:45:53 +0000
-Subject: [PATCH v2] brcmfmac: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
-Message-Id: <20170621054553.16546-1-christophe.jaillet@wanadoo.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 19 Jun 2017 06:40:26 +0000
+Subject: Re: [PATCH] crypto: glue_helper - Delete some dead code
+Message-Id: <20170619064026.GA13800@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170510055226.5mlkw654cl6djc65@mwanda>
+In-Reply-To: <20170510055226.5mlkw654cl6djc65@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: arend.vanspriel@broadcom.com, franky.lin@broadcom.com, hante.meuleman@broadcom.com, kvalo@codeaurora.org, rafal@milecki.pl, pieter-paul.giesberts@broadcom.com
-Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, stable@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If 'wiphy_new()' fails, we leak 'ops'. Add a new label in the error
-handling path to free it in such a case.
+On Wed, May 10, 2017 at 08:52:26AM +0300, Dan Carpenter wrote:
+> We checked (nbytes < bsize) inside the loops so it's not possible to hit
+> the "goto done;" here.  This code is cut and paste from other slightly
+> different loops where we don't have the check inside the loop.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 5c22fb85102a7 ("brcmfmac: add wowl gtk rekeying offload support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: Add CC tag
-    Change prefix
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index 2443c71a202f..032d823c53c2 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -6861,7 +6861,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
- 	wiphy = wiphy_new(ops, sizeof(struct brcmf_cfg80211_info));
- 	if (!wiphy) {
- 		brcmf_err("Could not allocate wiphy device\n");
--		return NULL;
-+		goto ops_out;
- 	}
- 	memcpy(wiphy->perm_addr, drvr->mac, ETH_ALEN);
- 	set_wiphy_dev(wiphy, busdev);
-@@ -7012,6 +7012,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
- 	ifp->vif = NULL;
- wiphy_out:
- 	brcmf_free_wiphy(wiphy);
-+ops_out:
- 	kfree(ops);
- 	return NULL;
- }
+Patch applied.  Thanks.
 -- 
-2.11.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
