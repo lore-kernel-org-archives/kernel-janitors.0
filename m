@@ -1,21 +1,29 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Thu, 15 Jun 2017 11:56:58 +0000
-Subject: Re: [PATCH] xfrm: Oops on error in pfkey_msg2xfrm_state()
-Message-Id: <20170615115658.GG2631@secunet.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Jun 2017 10:56:05 +0000
+Subject: [PATCH] phy: brcm-sata: fix a timeout test in init
+Message-Id: <20170619105251.GA23911@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614103405.GI29394@elgon.mountain>
-In-Reply-To: <20170614103405.GI29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Heiko Stuebner <heiko@sntech.de>, Florian Fainelli <f.fainelli@gmail.com>, Axel Lin <axel.lin@ingics.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 01:34:05PM +0300, Dan Carpenter wrote:
-> There are some missing error codes here so we accidentally return NULL
-> instead of an error pointer.  It results in a NULL pointer dereference.
-> 
-> Fixes: df71837d5024 ("[LSM-IPSec]: Security association restriction.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We want to timeout with try set to zero so this should be a pre-op
+instead of post-op.
 
-Patch applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/phy/broadcom/phy-brcm-sata.c b/drivers/phy/broadcom/phy-brcm-sata.c
+index ccbc3d994998..48fb016ce689 100644
+--- a/drivers/phy/broadcom/phy-brcm-sata.c
++++ b/drivers/phy/broadcom/phy-brcm-sata.c
+@@ -329,7 +329,7 @@ static int brcm_nsp_sata_init(struct brcm_sata_port *port)
+ 
+ 	/* Wait for pll_seq_done bit */
+ 	try = 50;
+-	while (try--) {
++	while (--try) {
+ 		val = brcm_sata_phy_rd(base, BLOCK0_REG_BANK,
+ 					BLOCK0_XGXSSTATUS);
+ 		if (val & BLOCK0_XGXSSTATUS_PLL_LOCK)
