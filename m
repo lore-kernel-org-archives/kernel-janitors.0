@@ -1,41 +1,41 @@
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Date: Wed, 28 Jun 2017 14:35:04 +0000
-Subject: Re: [PATCH][iio-next] iio: adc: stm32: make array stm32h7_adc_ckmodes_spec static
-Message-Id: <29afb806-8634-0938-081b-dfab4efa04bf@st.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 19 Jun 2017 16:35:23 +0000
+Subject: [PATCH][next] ASoC: rsnd: make main_rate signed to check for -ve error return codes
+Message-Id: <20170619163523.2208-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628130650.21872-1-colin.king@canonical.com>
-In-Reply-To: <20170628130650.21872-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Julia Lawall <Julia.Lawall@lip6.fr>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/28/2017 03:06 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array stm32h7_adc_ckmodes_spec does not need to be in global scope, so
-> make it static.
-> 
-> Cleans up sparse warning:
-> "symbol 'stm32h7_adc_ckmodes_spec' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/iio/adc/stm32-adc-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-> index e09233b03c05..9d083c2338f9 100644
-> --- a/drivers/iio/adc/stm32-adc-core.c
-> +++ b/drivers/iio/adc/stm32-adc-core.c
-> @@ -172,7 +172,7 @@ struct stm32h7_adc_ck_spec {
->  	int div;
->  };
->  
-> -const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
-> +static const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
->  	/* 00: CK_ADC[1..3]: Asynchronous clock modes */
->  	{ 0, 0, 1 },
->  	{ 0, 1, 2 },
-> 
-Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Colin Ian King <colin.king@canonical.com>
+
+The comparison of main_rate < 0 has no effect because main_rate is
+an unsigned int. Make it signed so that any -ve error returns from the
+call to rsnd_clk_query can be detected.
+
+Detected by CoverityScan, CID#1446152 ("Unsigned compared against 0")
+
+Fixes: ef4cf5d6a143e0 ("ASoC: rsnd: add rsnd_ssi_clk_query()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/sh/rcar/ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index c8956c3484dd..d220512918f9 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -258,7 +258,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	struct rsnd_mod *ssi_parent_mod = rsnd_io_to_mod_ssip(io);
+ 	int chan = rsnd_runtime_channel_for_ssi(io);
+ 	int idx, ret;
+-	unsigned int main_rate;
++	int main_rate;
+ 	unsigned int rate = rsnd_io_is_play(io) ?
+ 		rsnd_src_get_out_rate(priv, io) :
+ 		rsnd_src_get_in_rate(priv, io);
+-- 
+2.11.0
+
