@@ -1,50 +1,44 @@
-From: Keerthy <j-keerthy@ti.com>
-Date: Tue, 02 May 2017 03:57:17 +0000
-Subject: Re: [PATCH 1/3] ti-soc-thermal: Use devm_kcalloc() in ti_bandgap_build()
-Message-Id: <baec64c7-2cae-dfd8-2f5e-790b2141efc9@ti.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 20 Jun 2017 06:22:05 +0000
+Subject: [PATCH] cfg80211: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
+Message-Id: <20170620062205.16078-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd524803-b771-c3d2-8906-ee78576c86d4@users.sourceforge.net>
- <071d2e92-0bcc-5ccc-ad28-b05a72538d6b@users.sourceforge.net>
-In-Reply-To: <071d2e92-0bcc-5ccc-ad28-b05a72538d6b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: arend.vanspriel@broadcom.com, franky.lin@broadcom.com, hante.meuleman@broadcom.com, kvalo@codeaurora.org, rafal@milecki.pl, pieter-paul.giesberts@broadcom.com
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If 'wiphy_new()' fails, we leak 'ops'. Add a new label in the error
+handling path to free it in such a case.
 
+Fixes: 5c22fb85102a7 ("brcmfmac: add wowl gtk rekeying offload support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On Wednesday 26 April 2017 09:04 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 26 Apr 2017 16:45:25 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "devm_kcalloc".
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 2443c71a202f..032d823c53c2 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6861,7 +6861,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
+ 	wiphy = wiphy_new(ops, sizeof(struct brcmf_cfg80211_info));
+ 	if (!wiphy) {
+ 		brcmf_err("Could not allocate wiphy device\n");
+-		return NULL;
++		goto ops_out;
+ 	}
+ 	memcpy(wiphy->perm_addr, drvr->mac, ETH_ALEN);
+ 	set_wiphy_dev(wiphy, busdev);
+@@ -7012,6 +7012,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
+ 	ifp->vif = NULL;
+ wiphy_out:
+ 	brcmf_free_wiphy(wiphy);
++ops_out:
+ 	kfree(ops);
+ 	return NULL;
+ }
+-- 
+2.11.0
 
-Reviewed-by: Keerthy <j-keerthy@ti.com>
-
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> index ba9c302454fb..f19cb7612a65 100644
-> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-> @@ -1224,8 +1224,8 @@ static struct ti_bandgap *ti_bandgap_build(struct platform_device *pdev)
->  		bgp->conf = of_id->data;
->  
->  	/* register shadow for context save and restore */
-> -	bgp->regval = devm_kzalloc(&pdev->dev, sizeof(*bgp->regval) *
-> -				   bgp->conf->sensor_count, GFP_KERNEL);
-> +	bgp->regval = devm_kcalloc(&pdev->dev, bgp->conf->sensor_count,
-> +				   sizeof(*bgp->regval), GFP_KERNEL);
->  	if (!bgp->regval) {
->  		dev_err(&pdev->dev, "Unable to allocate mem for driver ref\n");
->  		return ERR_PTR(-ENOMEM);
-> 
