@@ -1,81 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 03 Jun 2017 02:30:29 +0000
-Subject: Re: [PATCH] Remove an extra out label in _fcoe_create function
-Message-Id: <20170603023029.tfk76tzx6alim2bo@mwanda>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 21 Jun 2017 16:59:38 +0000
+Subject: Re: [PATCH] CIFS: check if pages is null rather than bv for a failed allocation
+Message-Id: <CAH2r5mvmyaGrDUB38kndWBCGHHVvL4fj6pnwJK=VKVpB294xyw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d0539e8-ec2e-eac3-a91b-bfda55e83eca@redhat.com>
-In-Reply-To: <0d0539e8-ec2e-eac3-a91b-bfda55e83eca@redhat.com>
+References: <20170517182415.12081-1-colin.king@canonical.com>
+In-Reply-To: <20170517182415.12081-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Milan P. Gandhi" <mgandhi@redhat.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Laurence Oberman <loberman@redhat.com>, Johannes Thumshirn <jth@kernel.org>
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: Pavel Shilovsky <pshilov-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, samba-technical <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-On Thu, Jun 01, 2017 at 05:38:55PM +0530, Milan P. Gandhi wrote:
-> This patch removes an extra out label in _fcoe_create function
-> where we return if creation of FCOE interface is failed.
-> 
-> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+meged into cifs-2.6.git for-next
+
+On Wed, May 17, 2017 at 1:24 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> pages is being allocated however a null check on bv is being used
+> to see if the allocation failed. Fix this by checking if pages is
+> null.
+>
+> Detected by CoverityScan, CID#1432974 ("Logically dead code")
+>
+> Fixes: ccf7f4088af2dd ("CIFS: Add asynchronous context to support kernel AIO")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/scsi/fcoe/fcoe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-> index 7b960d3..ea21e7b 100644
-> --- a/drivers/scsi/fcoe/fcoe.c
-> +++ b/drivers/scsi/fcoe/fcoe.c
-> @@ -2258,7 +2258,7 @@ static int _fcoe_create(struct net_device *netdev, enum fip_mode fip_mode,
->  		fcoe_interface_cleanup(fcoe);
->  		mutex_unlock(&fcoe_config_mutex);
->  		fcoe_ctlr_device_delete(ctlr_dev);
-> -		goto out;
-> +		return rc;
+>  fs/cifs/misc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+> index b08531977daa..3b147dc6af63 100644
+> --- a/fs/cifs/misc.c
+> +++ b/fs/cifs/misc.c
+> @@ -810,7 +810,7 @@ setup_aio_ctx_iter(struct cifs_aio_ctx *ctx, struct iov_iter *iter, int rw)
+>
+>         if (!pages) {
+>                 pages = vmalloc(max_pages * sizeof(struct page *));
+> -               if (!bv) {
+> +               if (!pages) {
+>                         kvfree(bv);
+>                         return -ENOMEM;
+>                 }
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I don't like do nothing gotos, but I also don't like churn too much.
 
-It doesn't really make sense to do:
 
-		rc = -EIO;
-		...
-		return rc;
+-- 
+Thanks,
 
-We should probably preserve the error code?  There is a second
-"return rc;" later which is more annoying.
-
-drivers/scsi/fcoe/fcoe.c
-  2274          /*
-  2275           * If the fcoe_ctlr_device is to be set to DISABLED
-  2276           * it must be done after the lport is added to the
-  2277           * hostlist, but before the rtnl_lock is released.
-  2278           * This is because the rtnl_lock protects the
-  2279           * hostlist that fcoe_device_notification uses. If
-  2280           * the FCoE Controller is intended to be created
-  2281           * DISABLED then 'enabled' needs to be considered
-  2282           * handling link events. 'enabled' must be set
-  2283           * before the lport can be found in the hostlist
-  2284           * when a link up event is received.
-  2285           */
-  2286          if (link_state = FCOE_CREATE_LINK_UP)
-  2287                  ctlr_dev->enabled = FCOE_CTLR_ENABLED;
-  2288          else
-  2289                  ctlr_dev->enabled = FCOE_CTLR_DISABLED;
-  2290  
-  2291          if (link_state = FCOE_CREATE_LINK_UP &&
-  2292              !fcoe_link_ok(lport)) {
-  2293                  rtnl_unlock();
-  2294                  fcoe_ctlr_link_up(ctlr);
-  2295                  mutex_unlock(&fcoe_config_mutex);
-  2296                  return rc;
-                        ^^^^^^^^^
-This is the same as "return 0;" and I guess it's supposed to be a
-success return?  But it would look more clear if we changed it to return
-a literal instead of rc.
-
-  2297          }
-  2298  
-  2299  out_nodev:
-  2300          rtnl_unlock();
-
-regards,
-dan carpenter
-
+Steve
