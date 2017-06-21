@@ -1,53 +1,40 @@
-From: Stefano Stabellini <sstabellini@kernel.org>
-Date: Mon, 05 Jun 2017 17:17:29 +0000
-Subject: Re: [PATCH 2/3] arm/xen: Delete an error message for a failed memory allocation in __set_phys_to_mac
-Message-Id: <alpine.DEB.2.10.1706051016590.2941@sstabellini-ThinkPad-X260>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 21 Jun 2017 10:14:33 +0000
+Subject: [PATCH][mm-next] mm: clean up build warning with unused variable ret2
+Message-Id: <20170621101433.9847-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b9230f4-0f00-e019-75b4-571e29b52998@users.sourceforge.net>
- <004250a0-d94b-7587-ae5d-524ba2911a16@users.sourceforge.net>
-In-Reply-To: <004250a0-d94b-7587-ae5d-524ba2911a16@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@techsingularity.net>, Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>, Jeff Layton <jlayton@redhat.com>, Dave Chinner <dchinner@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 4 Jun 2017, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Jun 2017 21:12:36 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+Variable ret2 is unused and should be removed. Cleans up
+build warning:
 
-> ---
->  arch/arm/xen/p2m.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
-> index 11e78432b663..f5f74ac637b9 100644
-> --- a/arch/arm/xen/p2m.c
-> +++ b/arch/arm/xen/p2m.c
-> @@ -148,7 +148,6 @@ bool __set_phys_to_machine_multi(unsigned long pfn,
-> -	if (!p2m_entry) {
-> -		pr_warn("cannot allocate xen_p2m_entry\n");
-> +	if (!p2m_entry)
->  		return false;
-> -	}
-> +
->  	p2m_entry->pfn = pfn;
->  	p2m_entry->nr_pages = nr_pages;
->  	p2m_entry->mfn = mfn;
-> -- 
-> 2.13.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+warning: unused variable 'ret2' [-Wunused-variable]
+
+Fixes: 4118ba44fa2cd040e ("mm: clean up error handling in write_one_page")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 64b75bd996a4..0b60cc7ddac2 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2377,7 +2377,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ int write_one_page(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+-	int ret = 0, ret2;
++	int ret = 0;
+ 	struct writeback_control wbc = {
+ 		.sync_mode = WB_SYNC_ALL,
+ 		.nr_to_write = 1,
+-- 
+2.11.0
+
