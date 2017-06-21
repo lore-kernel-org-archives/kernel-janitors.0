@@ -1,7 +1,7 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Tue, 20 Jun 2017 09:11:02 +0000
+From: David Sterba <dsterba@suse.cz>
+Date: Wed, 21 Jun 2017 13:17:23 +0000
 Subject: Re: [PATCH] btrfs: use new block error code
-Message-Id: <20170620091102.GB10272@lst.de>
+Message-Id: <20170621131723.GH21388@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170619105536.GA24075@elgon.mountain>
 In-Reply-To: <20170619105536.GA24075@elgon.mountain>
@@ -18,6 +18,7 @@ On Mon, Jun 19, 2017 at 01:55:37PM +0300, Dan Carpenter wrote:
 > Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks fine,
+Acked-by: David Sterba <dsterba@suse.com>
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+The patch depends on the blk_status_t patchset, so I expect that it's
+going to be merged to that.
