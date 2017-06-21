@@ -1,17 +1,20 @@
-From: Pavel Shilovskiy <pshilov@microsoft.com>
-Date: Mon, 12 Jun 2017 23:12:17 +0000
-Subject: RE: [PATCH] CIFS: Fix some return values in case of error in 'crypt_message'
-Message-Id: <CY4PR21MB0135BF129DED3C5BC7799C47B6CD0@CY4PR21MB0135.namprd21.prod.outlook.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 21 Jun 2017 17:01:39 +0000
+Subject: Re: [PATCH] CIFS: Fix some return values in case of error in 'crypt_message'
+Message-Id: <CAH2r5muiqTjpty9o9xKM3ai8zzpSwQD49O4oVAz4yTiPfG3jZA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170611071247.2038-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170611071247.2038-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+In-Reply-To: <20170611071247.2038-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, "sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
-Cc: "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org" <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Steve French <sfrench@samba.org>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-2017-06-11 0:12 GMT-07:00 Christophe JAILLET <christophe.jaillet@wanadoo.fr>:
+merged into cifs-2.6.git for-next
+
+On Sun, Jun 11, 2017 at 2:12 AM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 > 'rc' is known to be 0 at this point. So if 'init_sg' or 'kzalloc' fails, we
 > should return -ENOMEM instead.
 >
@@ -53,10 +56,9 @@ Cc: "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thanks for catching this.
 
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 
---
-Best regards,
-Pavel Shilovsky
+-- 
+Thanks,
+
+Steve
