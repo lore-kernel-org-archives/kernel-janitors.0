@@ -1,40 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Jun 2017 17:50:54 +0000
-Subject: [PATCH][mtd-next] mtd: spi-nor: remove redundant check on err
-Message-Id: <20170629175054.12231-1-colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 15:52:19 +0000
+Subject: [PATCH] scsi: hptiop: make function hptiop_iop_request_callback_itl static
+Message-Id: <20170622155219.22871-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+To: HighPoint Linux Team <linux@highpoint-tech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable err is not updated since the previous check on it, so
-the subsequent check on err is redundant and can be removed.
+The function hptiop_iop_request_callback_itl does not need to be in
+global scope, so make it static.
 
-Detected by CoverityScan, CID#1448658 ("Logically dead code")
+Cleans up sparse warning:
+"symbol 'hptiop_iop_request_callback_itl' was not declared. Should it
+ be static?"
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/hptiop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 196b52f083ae..1296c1931591 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2307,9 +2307,6 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
- 		default:
- 			break;
- 		}
--
--		if (err)
--			goto exit;
- 	}
+diff --git a/drivers/scsi/hptiop.c b/drivers/scsi/hptiop.c
+index db17ad15b0c1..7226226f7383 100644
+--- a/drivers/scsi/hptiop.c
++++ b/drivers/scsi/hptiop.c
+@@ -800,7 +800,7 @@ static void hptiop_host_request_callback_itl(struct hptiop_hba *hba, u32 _tag)
+ 	hptiop_finish_scsi_req(hba, tag, req);
+ }
  
- exit:
+-void hptiop_iop_request_callback_itl(struct hptiop_hba *hba, u32 tag)
++static void hptiop_iop_request_callback_itl(struct hptiop_hba *hba, u32 tag)
+ {
+ 	struct hpt_iop_request_header __iomem *req;
+ 	struct hpt_iop_request_ioctl_command __iomem *p;
 -- 
 2.11.0
 
