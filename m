@@ -1,29 +1,38 @@
-From: Luca Coelho <luca@coelho.fi>
-Date: Wed, 14 Jun 2017 10:49:11 +0000
-Subject: Re: [PATCH] iwlwifi: missing error code in iwl_trans_pcie_alloc()
-Message-Id: <1497437351.26841.45.camel@coelho.fi>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 15:41:42 +0000
+Subject: [PATCH][spi-next] spi: stm32: fix range limit checks on div
+Message-Id: <20170622154142.22481-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614104450.GN29394@elgon.mountain>
-In-Reply-To: <20170614104450.GN29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Johannes Berg <johannes.berg@intel.com>, Haim Dreyfuss <haim.dreyfuss@intel.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Sara Sharon <sara.sharon@intel.com>, Liad Kaufman <liad.kaufman@intel.com>, Sharon Dvir <sharon.dvir@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 2017-06-14 at 13:44 +0300, Dan Carpenter wrote:
-> We don't set the error code here so we end up returning ERR_PTR(0) which
-> is NULL.  The caller doesn't expect that so it results in a NULL
-> dereference.
-> 
-> Fixes: 2e5d4a8f61dc ("iwlwifi: pcie: Add new configuration to enable MSIX")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Good catch, thanks!
+Currently the check for range limits on div is incorrect and will
+never return -EINVAL. Fix this by replacing && with ||
 
-I'll push it to our internal tree, so it will go upstream via our normal
-process.
+Detected by CoverityScan, CID#1446580 ("Structurally dead code")
 
---
-Cheers,
-Luca.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index 0553f61ab3b7..b75909e7b117 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -262,7 +262,7 @@ static int stm32_spi_prepare_mbr(struct stm32_spi *spi, u32 speed_hz)
+ 	 * no need to check it there.
+ 	 * However, we need to ensure the following calculations.
+ 	 */
+-	if ((div < SPI_MBR_DIV_MIN) &&
++	if ((div < SPI_MBR_DIV_MIN) ||
+ 	    (div > SPI_MBR_DIV_MAX))
+ 		return -EINVAL;
+ 
+-- 
+2.11.0
+
