@@ -1,31 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 27 Jun 2017 14:16:16 +0000
-Subject: Re: [v2] brcmfmac: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
-Message-Id: <20170627141616.F24176071A@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 17:27:21 +0000
+Subject: [PATCH][media-next] media: venus: fix loop wrap in cleanup of clks
+Message-Id: <20170622172721.25844-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170621054553.16546-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170621054553.16546-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: arend.vanspriel@broadcom.com, franky.lin@broadcom.com, hante.meuleman@broadcom.com, rafal@milecki.pl, pieter-paul.giesberts@broadcom.com, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If 'wiphy_new()' fails, we leak 'ops'. Add a new label in the error
-> handling path to free it in such a case.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 5c22fb85102a7 ("brcmfmac: add wowl gtk rekeying offload support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The current pre-decrement is incorrect and should be replaced
+with a post-decrement. Consider the case where the very first
+clk_prepare_enable fails when i is 0; in this case the error
+clean up will decrement the unsigned int which wraps to the
+largest unsigned int value causing an array out of bounds read
+on core->clks[i].
 
-Patch applied to wireless-drivers-next.git, thanks.
+Detected by CoverityScan, CID#1446590 ("Out-of-bounds read")
 
-57c00f2fac51 brcmfmac: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/qcom/venus/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 776d2bae6979..d8cbe8549d97 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -137,7 +137,7 @@ static int venus_clks_enable(struct venus_core *core)
+ 
+ 	return 0;
+ err:
+-	while (--i)
++	while (i--)
+ 		clk_disable_unprepare(core->clks[i]);
+ 
+ 	return ret;
 -- 
-https://patchwork.kernel.org/patch/9800763/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
