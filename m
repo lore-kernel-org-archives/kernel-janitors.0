@@ -1,32 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 04 Jun 2017 23:58:15 +0000
-Subject: Re: [PATCH] net: stmmac: ensure jumbo_frm error return is correctly checked for -ve value
-Message-Id: <20170604.195815.1578427347580474114.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 09:16:26 +0000
+Subject: [PATCH] x86/microcode/AMD: make function __load_ucode_amd static
+Message-Id: <20170622091626.10995-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170602145827.21151-1-colin.king@canonical.com>
-In-Reply-To: <20170602145827.21151-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri,  2 Jun 2017 15:58:27 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current comparison of entry < 0 will never be true since entry is an
-> unsigned integer. Cast entry to an int to ensure -ve error return values
-> from the call to jumbo_frm are correctly being caught.
-> 
-> Detected by CoverityScan, CID#1238760 ("Macro compares unsigned to 0")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The helper function __load_ucode_amd does not need to be in global
+scope, so make it static.
 
-Like others have suggested, probably making 'entry' signed is
-a better fix.
+Cleans up sparse warning:
+"symbol '__load_ucode_amd' was not declared. Should it be static?"
 
-I was initially worried that STMMAC_GET_ENTRY() might become
-more expensive if it was implemented using '%' but it is using
-'and' masking instead which doesn't have that kind of problem.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index e9f4d762aa5b..21b185793c80 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -251,7 +251,7 @@ static bool get_builtin_microcode(struct cpio_data *cp, unsigned int family)
+ #endif
+ }
+ 
+-void __load_ucode_amd(unsigned int cpuid_1_eax, struct cpio_data *ret)
++static void __load_ucode_amd(unsigned int cpuid_1_eax, struct cpio_data *ret)
+ {
+ 	struct ucode_cpu_info *uci;
+ 	struct cpio_data cp;
+-- 
+2.11.0
+
