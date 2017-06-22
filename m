@@ -1,41 +1,74 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 05 Jun 2017 18:08:04 +0000
-Subject: [PATCH][netdev-next] mdio: mux: fix an incorrect less than zero error check using a u32
-Message-Id: <20170605180804.13765-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 22 Jun 2017 14:18:31 +0000
+Subject: Applied "ASoC: max9867: make array ni_div static const" to the asoc tree
+Message-Id: <E1dO2wJ-0007YV-09@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170622093231.11389-1-colin.king@canonical.com>
+In-Reply-To: <20170622093231.11389-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
+The patch
+
+   ASoC: max9867: make array ni_div static const
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1943b0661184a5d17f31624dc8ac2c02a086c998 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 10:32:31 +0100
+Subject: [PATCH] ASoC: max9867: make array ni_div static const
 
-The u32 variable v is being checked to see if an error return is
-less than zero and this check has no effect because it is unsigned.
-Fix this by making v and int (this also matches the type of
-cb->bus_number which is assigned to the value in v).
+The array ni_div does not need to be in global scope and is not
+modified, so make it static const.
 
-Detected by CoverityScan, CID#1440454 ("Unsigned compared against zero")
+Cleans up sparse warning:
+"symbol 'ni_div' was not declared. Should it be static?"
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/phy/mdio-mux.c | 2 +-
+ sound/soc/codecs/max9867.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mdio-mux.c b/drivers/net/phy/mdio-mux.c
-index 47ded3904050..00755b6a42cf 100644
---- a/drivers/net/phy/mdio-mux.c
-+++ b/drivers/net/phy/mdio-mux.c
-@@ -133,7 +133,7 @@ int mdio_mux_init(struct device *dev,
+diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
+index 0247edc9c84e..2a40a69a7513 100644
+--- a/sound/soc/codecs/max9867.c
++++ b/sound/soc/codecs/max9867.c
+@@ -132,7 +132,7 @@ enum rates {
+ 	pcm_rate_48, max_pcm_rate,
+ };
  
- 	ret_val = -ENODEV;
- 	for_each_available_child_of_node(dev->of_node, child_bus_node) {
--		u32 v;
-+		int v;
- 
- 		v = of_mdio_parse_addr(dev, child_bus_node);
- 		if (v < 0) {
+-struct ni_div_rates {
++static const struct ni_div_rates {
+ 	u32 mclk;
+ 	u16 ni[max_pcm_rate];
+ } ni_div[] = {
 -- 
 2.11.0
 
