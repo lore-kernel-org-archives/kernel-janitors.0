@@ -1,34 +1,55 @@
-From: Dave Carroll <david.carroll@microsemi.com>
-Date: Tue, 13 Jun 2017 21:06:02 +0000
-Subject: RE: [PATCH] scsi: aacraid: fix leak of data from stack back to userspace
-Message-Id: <423FD6710FB8FB4F8728F93591889F9A53045C92@avsrvexchmbx2.microsemi.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 09:57:36 +0000
+Subject: [PATCH][V2] x86/microcode: make a couple of symbols static
+Message-Id: <20170622095736.11937-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170515145605.21461-1-colin.king@canonical.com>
-In-Reply-To: <20170515145605.21461-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>, dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
-Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBNb25kYXksIE1heSAxNSwgMjAxNyA4
-OjU2IEFNDQo+IFRvOiBSYWdoYXZhIEFkaXR5YSBSZW51a3VudGEgPFJhZ2hhdmFBZGl0eWEuUmVu
-dWt1bnRhQG1pY3Jvc2VtaS5jb20+Ow0KPiBkbC1lc2MtQWFjcmFpZCBMaW51eCBEcml2ZXIgPGFh
-Y3JhaWRAbWljcm9zZW1pLmNvbT47IEphbWVzIEUgLiBKIC4gQm90dG9tbGV5DQo+IDxqZWpiQGxp
-bnV4LnZuZXQuaWJtLmNvbT47IE1hcnRpbiBLIC4gUGV0ZXJzZW4NCj4gPG1hcnRpbi5wZXRlcnNl
-bkBvcmFjbGUuY29tPjsgbGludXgtc2NzaUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1q
-YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
-U3ViamVjdDogW1BBVENIXSBzY3NpOiBhYWNyYWlkOiBmaXggbGVhayBvZiBkYXRhIGZyb20gc3Rh
-Y2sgYmFjayB0byB1c2Vyc3BhY2UNCj4gDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5r
-aW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUgZmllbGRzIHNlbnNlX2RhdGFfc2l6ZSBhbmQg
-c2Vuc2VfZGF0YSBhcmUgdW5pdGlhbGl6ZWQgZ2FyYmFnZSBmcm9tIHRoZQ0KPiBzdGFjayBhbmQg
-YXJlIGJlaW5nIGNvcGllZCBiYWNrIHRvIHVzZXJzcGFjZS4gIEZpeCB0aGlzIGxlYWsgb2Ygc3Rh
-Y2sgaW5mb3JtYXRpb24NCj4gYnkgZW5zdXJpbmcgdGhleSBhcmUgemVybydkLg0KPiANCj4gRGV0
-ZWN0ZWQgYnkgQ292ZXJpdHlTY2FuLCBDSUQjMTQzNTQ3MyAoIlVuaW5pdGlhbGl6ZWQgc2NhbGFy
-IHZhcmlhYmxlIikNCj4gDQo+IEZpeGVzOiA0MjM0MDBlNjRkMzc3ICgic2NzaTogYWFjcmFpZDog
-SW5jbHVkZSBIQkEgZGlyZWN0IGludGVyZmFjZSIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElh
-biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9zY3Np
-L2FhY3JhaWQvY29tbWN0cmwuYyB8IDIgKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKykNCj4gDQpBY2tlZC1ieTogRGF2ZSBDYXJyb2xsIDxkYXZpZC5jYXJyb2xsQG1pY3Jvc2Vt
-aS5jb20+DQo
+From: Colin Ian King <colin.king@canonical.com>
+
+The helper function __load_ucode_amd and pointer intel_ucode_patch
+do not need to be in global scope, so make them static.
+
+Cleans up sparse warnings:
+"symbol '__load_ucode_amd' was not declared. Should it be static?"
+"symbol 'intel_ucode_patch' was not declared. Should it be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/cpu/microcode/amd.c   | 2 +-
+ arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index e9f4d762aa5b..21b185793c80 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -251,7 +251,7 @@ static bool get_builtin_microcode(struct cpio_data *cp, unsigned int family)
+ #endif
+ }
+ 
+-void __load_ucode_amd(unsigned int cpuid_1_eax, struct cpio_data *ret)
++static void __load_ucode_amd(unsigned int cpuid_1_eax, struct cpio_data *ret)
+ {
+ 	struct ucode_cpu_info *uci;
+ 	struct cpio_data cp;
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index d525a0bd7d28..59edbe9d4ccb 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -42,7 +42,7 @@
+ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
+ 
+ /* Current microcode patch used in early patching on the APs. */
+-struct microcode_intel *intel_ucode_patch;
++static struct microcode_intel *intel_ucode_patch;
+ 
+ static inline bool cpu_signatures_match(unsigned int s1, unsigned int p1,
+ 					unsigned int s2, unsigned int p2)
+-- 
+2.11.0
+
