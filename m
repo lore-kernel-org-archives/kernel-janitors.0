@@ -1,35 +1,40 @@
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 21 Jun 2017 16:59:18 +0000
-Subject: Re: [PATCH] cifs: remove redundant return in cifs_creation_time_get
-Message-Id: <CAH2r5mv1rLPGS+qZeuAgNf=p4Km--AN0-zHUbBxdOT0J1S9h8g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 09:00:49 +0000
+Subject: [PATCH] kasan: make function get_wild_bug_type static
+Message-Id: <20170622090049.10658-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170606233345.5980-1-colin.king@canonical.com> <mpsd1agymug.fsf@aaptelpc.suse.de>
-In-Reply-To: <mpsd1agymug.fsf@aaptelpc.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc: Colin King <colin.king@canonical.com>, Steve French <sfrench@samba.org>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Jun 7, 2017 at 8:00 AM, Aurélien Aptel <aaptel@suse.com> wrote:
->
-> Looks good to me.
->
-> --
-> Aurélien Aptel / SUSE Labs Samba Team
-> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-> SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The helper function get_wild_bug_type does not need to be in global scope,
+so make it static.
 
+Cleans up sparse warning:
+"symbol 'get_wild_bug_type' was not declared. Should it be static?"
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/kasan/report.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index beee0e980e2d..04bb1d3eb9ec 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -107,7 +107,7 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
+ 	return bug_type;
+ }
+ 
+-const char *get_wild_bug_type(struct kasan_access_info *info)
++static const char *get_wild_bug_type(struct kasan_access_info *info)
+ {
+ 	const char *bug_type = "unknown-crash";
+ 
 -- 
-Thanks,
+2.11.0
 
-Steve
