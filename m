@@ -1,34 +1,43 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 22 Jun 2017 22:01:21 +0000
-Subject: Re: [PATCH] NFC: trf7970a: fix check of clock frequencies, use && instead of ||
-Message-Id: <20170622220121.GB21214@zurbaran.ger.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 23 Jun 2017 19:55:10 +0000
+Subject: [PATCH] clocksource/mips-gic-timer: Fix an error code in 'gic_clocksource_of_init()'
+Message-Id: <20170623195510.12067-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170424133603.3697-1-colin.king@canonical.com>
-In-Reply-To: <20170424133603.3697-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Geoff Lansberry <geoff@kuvee.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Colin,
+'clk' is a valid pointer at this point. So calling PTR_ERR on it is
+pointess.
+Return the error code from 'clk_prepare_enable()' if it fails instead.
 
-On Mon, Apr 24, 2017 at 02:36:02PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The "or" condition (clk_freq != TRF7970A_27MHZ_CLOCK_FREQUENCY) ||
-> (clk_freq != TRF7970A_13MHZ_CLOCK_FREQUE) will always be true because
-> clk_freq cannot be equal to two different values at the same time. Use
-> the  && operator instead of || to fix this.
-> 
-> Detected by CoverityScan, CID#1430468 ("Constant expression result")
-> 
-> Fixes: 837eb4d21ecde7 ("NFC: trf7970a: add device tree option for 27MHz clock")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/nfc/trf7970a.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-Applied to nfc-next, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not compile tested as I don't have the corresponding cross-compiler
+---
+ drivers/clocksource/mips-gic-timer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Cheers,
-Samuel.
+diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
+index e31e08326024..17b861ea2626 100644
+--- a/drivers/clocksource/mips-gic-timer.c
++++ b/drivers/clocksource/mips-gic-timer.c
+@@ -167,10 +167,11 @@ static int __init gic_clocksource_of_init(struct device_node *node)
+ 
+ 	clk = of_clk_get(node, 0);
+ 	if (!IS_ERR(clk)) {
+-		if (clk_prepare_enable(clk) < 0) {
++		ret = clk_prepare_enable(clk);
++		if (ret < 0) {
+ 			pr_err("GIC failed to enable clock\n");
+ 			clk_put(clk);
+-			return PTR_ERR(clk);
++			return ret;
+ 		}
+ 
+ 		gic_frequency = clk_get_rate(clk);
+-- 
+2.11.0
+
