@@ -1,96 +1,56 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 27 Jun 2017 23:58:16 +0000
-Subject: Re: [PATCH 3/9] drbd: Drop unnecessary static
-Message-Id: <a7dbb81a-fef3-fa6f-c92e-c6b0f65a94a1@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 10:17:05 +0000
+Subject: [PATCH] apparmor: uninitialized variable bugs
+Message-Id: <20170623101705.3vmozsl5csrwieif@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
- <1493928654-18768-4-git-send-email-Julia.Lawall@lip6.fr>
- <20170505071945.GB6818@rck.sh>
- <CAGXu5jKzvy2deqGYTjHh6z2SUcbneJmRr9hs0zoYsxyuiqfP9A@mail.gmail.com>
-In-Reply-To: <CAGXu5jKzvy2deqGYTjHh6z2SUcbneJmRr9hs0zoYsxyuiqfP9A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kees Cook <keescook@chromium.org>, Roland Kammerer <roland.kammerer@linbit.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Philipp Reisner <philipp.reisner@linbit.com>, kernel-janitors@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
-On 06/27/2017 05:49 PM, Kees Cook wrote:
-> On Fri, May 5, 2017 at 12:19 AM, Roland Kammerer
-> <roland.kammerer@linbit.com> wrote:
->> On Thu, May 04, 2017 at 10:10:48PM +0200, Julia Lawall wrote:
->>> Drop static on a local variable, when the variable is initialized before
->>> any use, on every possible execution path through the function.  The static
->>> has no benefit, and dropping it reduces the code size.
->>>
->>> The semantic patch that fixes this problem is as follows:
->>> (http://coccinelle.lip6.fr/)
->>>
->>> // <smpl>
->>> @bad exists@
->>> position p;
->>> identifier x;
->>> type T;
->>> @@
->>>
->>> static T x@p;
->>> ...
->>> x = <+...x...+>
->>>
->>> @@
->>> identifier x;
->>> expression e;
->>> type T;
->>> position p != bad.p;
->>> @@
->>>
->>> -static
->>>  T x@p;
->>>  ... when != x
->>>      when strict
->>> ?x = e;
->>> // </smpl>
->>>
->>> The change in code size is indicates by the following output from the size
->>> command.
->>>
->>> before:
->>>    text    data     bss     dec     hex filename
->>>   67299    2291    1056   70646   113f6 drivers/block/drbd/drbd_nl.o
->>>
->>> after:
->>>    text    data     bss     dec     hex filename
->>>   67283    2291    1056   70630   113e6 drivers/block/drbd/drbd_nl.o
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> ---
->>>  drivers/block/drbd/drbd_nl.c |    2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
->>> index 02255a0..ad0fcb4 100644
->>> --- a/drivers/block/drbd/drbd_nl.c
->>> +++ b/drivers/block/drbd/drbd_nl.c
->>> @@ -2294,7 +2294,7 @@ static bool conn_ov_running(struct drbd_connection *connection)
->>>  static enum drbd_ret_code
->>>  check_net_options(struct drbd_connection *connection, struct net_conf *new_net_conf)
->>>  {
->>> -     static enum drbd_ret_code rv;
->>> +     enum drbd_ret_code rv;
->>>       struct drbd_peer_device *peer_device;
->>>       int i;
->>
->> Yes, that already got dropped for drbd9 and is obviously correct for
->> in-tree drbd8.
->>
->> Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
->>
->> Regards, rck
-> 
-> Which tree should this go through? Jens, I think yours?
+We should be testing for "< 0" instead of "= -1" in case the return is
+-ENOMEM or some other error code.  Otherwise the string ponter we were
+expecting isn't initialized.
 
-Yes, I'll queue it up for 4.13. Thanks Julia.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index e052eaba1cf6..c5887afb84ce 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -1431,7 +1431,7 @@ bool aa_update_label_name(struct aa_ns *ns, struct aa_label *label, gfp_t gfp)
+ 	if (label->hname || labels_ns(label) != ns)
+ 		return res;
+ 
+-	if (aa_label_acntsxprint(&name, ns, label, FLAGS_NONE, gfp) = -1)
++	if (aa_label_acntsxprint(&name, ns, label, FLAGS_NONE, gfp) < 0)
+ 		return res;
+ 
+ 	ls = labels_set(label);
+@@ -1715,7 +1715,7 @@ void aa_label_xaudit(struct audit_buffer *ab, struct aa_ns *ns,
+ 
+ 	if (!use_label_hname(ns, label) || display_mode(ns, label, flags)) {
+ 		len  = aa_label_asxprint(&name, ns, label, flags, gfp);
+-		if (len = -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
+@@ -1746,7 +1746,7 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
+ 		int len;
+ 
+ 		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+-		if (len = -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
+@@ -1772,7 +1772,7 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+ 		int len;
+ 
+ 		len = aa_label_asxprint(&str, ns, label, flags, gfp);
+-		if (len = -1) {
++		if (len < 0) {
+ 			AA_DEBUG("label print error");
+ 			return;
+ 		}
