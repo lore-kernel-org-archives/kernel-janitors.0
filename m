@@ -1,67 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jun 2017 10:44:06 +0000
-Subject: [bug report] clocksource/drivers: Add timer-of common init routine
-Message-Id: <20170623104405.GA29841@elgon.mountain>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Fri, 23 Jun 2017 10:51:19 +0000
+Subject: Re: [bug report] clocksource/drivers: Add timer-of common init routine
+Message-Id: <c488db16-afb9-3a72-9afd-c952eca55c63@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170623104405.GA29841@elgon.mountain>
+In-Reply-To: <20170623104405.GA29841@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hello Daniel Lezcano,
+On 23/06/2017 12:44, Dan Carpenter wrote:
+> Hello Daniel Lezcano,
+>=20
+> The patch dc11bae78529: "clocksource/drivers: Add timer-of common
+> init routine" from Jun 5, 2017, leads to the following static checker
+> warning:
+>=20
+> 	drivers/clocksource/timer-of.c:160 timer_of_init()
+> 	error: uninitialized symbol 'ret'.
 
-The patch dc11bae78529: "clocksource/drivers: Add timer-of common
-init routine" from Jun 5, 2017, leads to the following static checker
-warning:
+Hi Dan,
 
-	drivers/clocksource/timer-of.c:160 timer_of_init()
-	error: uninitialized symbol 'ret'.
+the error has been fixed:
 
-drivers/clocksource/timer-of.c
-   131  int __init timer_of_init(struct device_node *np, struct timer_of *to)
-   132  {
-   133          int ret;
-   134          int flags = 0;
-   135  
-   136          if (to->flags & TIMER_OF_BASE) {
-   137                  ret = timer_base_init(np, &to->of_base);
-   138                  if (ret)
-   139                          goto out_fail;
-   140                  flags |= TIMER_OF_BASE;
-   141          }
-   142  
-   143          if (to->flags & TIMER_OF_CLOCK) {
-   144                  ret = timer_clk_init(np, &to->of_clk);
-   145                  if (ret)
-   146                          goto out_fail;
-   147                  flags |= TIMER_OF_CLOCK;
-   148          }
-   149  
-   150          if (to->flags & TIMER_OF_IRQ) {
-   151                  ret = timer_irq_init(np, &to->of_irq);
-   152                  if (ret)
-   153                          goto out_fail;
-   154                  flags |= TIMER_OF_IRQ;
-   155          }
-   156  
-   157          if (!to->clkevt.name)
-   158                  to->clkevt.name = np->name;
-   159  out:
-   160          return ret;
-                ^^^^^^^^^^
-Presumably one of the TIMER_OF_IRQ flags is always set, but there are no
-callers so it's hard to tell.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=3Dtim=
+ers/core&id=B7dcc4eacc45263ac5d3a0bd78c64e9ff7c94c13
 
-   161  
-   162  out_fail:
-   163          if (flags & TIMER_OF_IRQ)
-   164                  timer_irq_exit(&to->of_irq);
-   165  
-   166          if (flags & TIMER_OF_CLOCK)
-   167                  timer_clk_exit(&to->of_clk);
-   168  
+Thanks for reporting the issue.
+
+  -- Daniel
 
 
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
+ SoCs
 
-regards,
-dan carpenter
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
