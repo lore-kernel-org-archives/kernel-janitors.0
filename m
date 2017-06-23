@@ -1,44 +1,32 @@
-From: Avinash Repaka <avinash.repaka@oracle.com>
-Date: Wed, 14 Jun 2017 20:59:16 +0000
-Subject: Re: [PATCH] RDS: IB: NULL dereference on error in rds_ib_alloc_frmr()
-Message-Id: <0d556f30-3a33-695e-4a13-a2e0070d0684@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 07:02:00 +0000
+Subject: [PATCH] bnx2i: missing error code in bnx2i_ep_connect()
+Message-Id: <20170623070200.GA7922@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614103924.GK29394@elgon.mountain>
-In-Reply-To: <20170614103924.GK29394@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@qlogic.com, Michael Chan <mchan@broadcom.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Reviewed-by: Avinash Repaka <avinash.repaka@oracle.com>
+If bnx2i_map_ep_dbell_regs() then we accidentally return NULL instead
+of an error pointer.  It results in a NULL dereference in
+iscsi_if_ep_connect().
 
-On 06/14/2017 03:39 AM, Dan Carpenter wrote:
-> We accidentally return ERR_PTR(0) if ib_alloc_mr() fails.  The caller
-> is expecting error pointers so it results in a NULL dereference.
->
-> Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/net/rds/ib_frmr.c b/net/rds/ib_frmr.c
-> index 48332a6ed738..74a66cc162ed 100644
-> --- a/net/rds/ib_frmr.c
-> +++ b/net/rds/ib_frmr.c
-> @@ -38,7 +38,7 @@ static struct rds_ib_mr *rds_ib_alloc_frmr(struct rds_ib_device *rds_ibdev,
->   	struct rds_ib_mr_pool *pool;
->   	struct rds_ib_mr *ibmr = NULL;
->   	struct rds_ib_frmr *frmr;
-> -	int err = 0;
-> +	int err;
->   
->   	if (npages <= RDS_MR_8K_MSG_SIZE)
->   		pool = rds_ibdev->mr_8k_pool;
-> @@ -61,6 +61,7 @@ static struct rds_ib_mr *rds_ib_alloc_frmr(struct rds_ib_device *rds_ibdev,
->   			 pool->fmr_attr.max_pages);
->   	if (IS_ERR(frmr->mr)) {
->   		pr_warn("RDS/IB: %s failed to allocate MR", __func__);
-> +		err = -ENOMEM;
->   		goto out_no_cigar;
->   	}
->   
+Fixes: cf4e6363859d ("[SCSI] bnx2i: Add bnx2i iSCSI driver.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/scsi/bnx2i/bnx2i_iscsi.c b/drivers/scsi/bnx2i/bnx2i_iscsi.c
+index f32a66f89d25..03c104b47f31 100644
+--- a/drivers/scsi/bnx2i/bnx2i_iscsi.c
++++ b/drivers/scsi/bnx2i/bnx2i_iscsi.c
+@@ -1909,7 +1909,8 @@ static struct iscsi_endpoint *bnx2i_ep_connect(struct Scsi_Host *shost,
+ 
+ 	bnx2i_ep_active_list_add(hba, bnx2i_ep);
+ 
+-	if (bnx2i_map_ep_dbell_regs(bnx2i_ep))
++	rc = bnx2i_map_ep_dbell_regs(bnx2i_ep);
++	if (rc)
+ 		goto del_active_ep;
+ 
+ 	mutex_unlock(&hba->net_dev_lock);
