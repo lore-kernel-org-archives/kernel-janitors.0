@@ -1,32 +1,32 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 23 Jun 2017 08:55:53 +0000
-Subject: Re: [PATCH] Bluetooth: hci_serdev: make hci_serdev_client_ops static
-Message-Id: <F2C49C06-F6D7-4598-87DE-F4BC98A546F7@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 15:17:38 +0000
+Subject: [PATCH] libertas: Fix lbs_prb_rsp_limit_set()
+Message-Id: <20170623151738.qxncismrvd4yzzfr@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170623083738.8836-1-colin.king@canonical.com>
-In-Reply-To: <20170623083738.8836-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Jingoo Han <jg1.han@samsung.com>
+Cc: libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+The kstrtoul() test was reversed so this always returned -ENOTSUPP.
 
-> The structure hci_serdev_client_ops does not need to be in global scope
-> and is not modified, so make it static.
-> 
-> Cleans up sparse warning:
-> "symbol 'hci_serdev_client_ops' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> drivers/bluetooth/hci_serdev.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
+Fixes: 27d7f47756f4 ("net: wireless: replace strict_strtoul() with kstrtoul()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+diff --git a/drivers/net/wireless/marvell/libertas/mesh.c b/drivers/net/wireless/marvell/libertas/mesh.c
+index eeeb892219aa..37ace5cb309d 100644
+--- a/drivers/net/wireless/marvell/libertas/mesh.c
++++ b/drivers/net/wireless/marvell/libertas/mesh.c
+@@ -233,8 +233,9 @@ static ssize_t lbs_prb_rsp_limit_set(struct device *dev,
+ 	memset(&mesh_access, 0, sizeof(mesh_access));
+ 	mesh_access.data[0] = cpu_to_le32(CMD_ACT_SET);
+ 
+-	if (!kstrtoul(buf, 10, &retry_limit))
+-		return -ENOTSUPP;
++	ret = kstrtoul(buf, 10, &retry_limit);
++	if (ret)
++		return ret;
+ 	if (retry_limit > 15)
+ 		return -ENOTSUPP;
+ 
