@@ -1,49 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Jun 2017 08:37:38 +0000
-Subject: [PATCH] Bluetooth: hci_serdev: make hci_serdev_client_ops static
-Message-Id: <20170623083738.8836-1-colin.king@canonical.com>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Fri, 23 Jun 2017 08:55:53 +0000
+Subject: Re: [PATCH] Bluetooth: hci_serdev: make hci_serdev_client_ops static
+Message-Id: <F2C49C06-F6D7-4598-87DE-F4BC98A546F7@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170623083738.8836-1-colin.king@canonical.com>
+In-Reply-To: <20170623083738.8836-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-The structure hci_serdev_client_ops does not need to be in global scope
-and is not modified, so make it static.
+> The structure hci_serdev_client_ops does not need to be in global scope
+> and is not modified, so make it static.
+> 
+> Cleans up sparse warning:
+> "symbol 'hci_serdev_client_ops' was not declared. Should it be static?"
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> drivers/bluetooth/hci_serdev.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cleans up sparse warning:
-"symbol 'hci_serdev_client_ops' was not declared. Should it be static?"
+patch has been applied to bluetooth-next tree.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/bluetooth/hci_serdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Regards
 
-diff --git a/drivers/bluetooth/hci_serdev.c b/drivers/bluetooth/hci_serdev.c
-index 7de0edc0ff8c..aea930101dd2 100644
---- a/drivers/bluetooth/hci_serdev.c
-+++ b/drivers/bluetooth/hci_serdev.c
-@@ -31,7 +31,7 @@
- 
- #include "hci_uart.h"
- 
--struct serdev_device_ops hci_serdev_client_ops;
-+static struct serdev_device_ops hci_serdev_client_ops;
- 
- static inline void hci_uart_tx_complete(struct hci_uart *hu, int pkt_type)
- {
-@@ -268,7 +268,7 @@ static int hci_uart_receive_buf(struct serdev_device *serdev, const u8 *data,
- 	return count;
- }
- 
--struct serdev_device_ops hci_serdev_client_ops = {
-+static struct serdev_device_ops hci_serdev_client_ops = {
- 	.receive_buf = hci_uart_receive_buf,
- 	.write_wakeup = hci_uart_write_wakeup,
- };
--- 
-2.11.0
+Marcel
 
