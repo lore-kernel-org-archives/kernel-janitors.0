@@ -1,30 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Jun 2017 08:01:47 +0000
-Subject: [PATCH] phy: phy-twl4030-usb: silence an uninitialized variable warning
-Message-Id: <20170630080147.hbqbjgaa6bnrtwrw@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 23 Jun 2017 19:44:35 +0000
+Subject: [PATCH v2] thermal: bcm2835: Fix error code in 'bcm2835_thermal_probe'
+Message-Id: <20170623194435.8094-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Andreas Kemnade <andreas@kemnade.info>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Heiko Stuebner <heiko@sntech.de>, Vivek Gautam <vivek.gautam@codeaurora.org>, Matt Ranostay <mranostay@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The "check" variable isn't necessarily initialized when we print it out
-in the debugging messages.  It's a pretty haphazard affair and it
-doesn't matter very much what we initialize "check" to.
+'tz' is a valid pointer at this point, so calling PTR_ERR on it is
+pointless.
+This 'err = PTR_ERR(tz)' looks like a cut'n'paste from a few lines above.
+So remove it. 'err' is already the error we want to report.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: fix empty subject
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
-index 2990b3965460..0e9013868188 100644
---- a/drivers/phy/ti/phy-twl4030-usb.c
-+++ b/drivers/phy/ti/phy-twl4030-usb.c
-@@ -185,7 +185,7 @@ struct twl4030_usb {
- static int twl4030_i2c_write_u8_verify(struct twl4030_usb *twl,
- 		u8 module, u8 data, u8 address)
- {
--	u8 check;
-+	u8 check = 0xFF;
- 
- 	if ((twl_i2c_write_u8(module, data, address) >= 0) &&
- 	    (twl_i2c_read_u8(module, &check, address) >= 0) &&
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 0ecf80890c84..e6863c841662 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		 */
+ 		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
+ 		if (err < 0) {
+-			err = PTR_ERR(tz);
+ 			dev_err(&pdev->dev,
+ 				"Not able to read trip_temp: %d\n",
+ 				err);
+-- 
+2.11.0
+
