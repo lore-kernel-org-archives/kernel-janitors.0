@@ -1,39 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 20:49:06 +0000
-Subject: [PATCH 2/5] ARM: OMAP1: DMA: Delete an error message for a failed memory allocation in omap1_system_
-Message-Id: <cda37778-b59c-ae5e-529d-b435750dcd8f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 23 Jun 2017 16:13:39 +0000
+Subject: [RFC] MIPS: OCTEON: Spurious code in 'arch/mips/cavium-octeon/octeon-usb.c'
+Message-Id: <20170623161339.7159-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
-In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: christophe.jaillet@wanadoo.fr, ralf@linux-mips.org, james.hogan@imgtec.com, Steven.Hill@cavium.com, david.daney@cavium.com
+Cc: linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 21:54:36 +0200
+Hi,
 
-Omit an extra message for a memory allocation failure in this function.
+The coccinelle script located at https://github.com/coccinelle/coccinellery/blob/master/notnull/notnull2.cocci
+triggered a spurious code in 'arch/mips/cavium-octeon/octeon-usb.c'
 
-This issue was detected by using the Coccinelle software.
+It seems that 'dwc3_octeon_device_init()' can never return success (i.e. 0).
+The 'do...while' loop exits only if 'node = NULL'. But, in such a case,
+-ENODEV will be returned at the beginning of the loop.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap1/dma.c | 2 --
- 1 file changed, 2 deletions(-)
+I may miss something obvious, but I can't see how this code is supposed to
+work.
 
-diff --git a/arch/arm/mach-omap1/dma.c b/arch/arm/mach-omap1/dma.c
-index 823dba3dc033..c545b4e01d53 100644
---- a/arch/arm/mach-omap1/dma.c
-+++ b/arch/arm/mach-omap1/dma.c
-@@ -343,6 +343,4 @@ static int __init omap1_system_dma_init(void)
- 	if (!d) {
--		dev_err(&pdev->dev, "%s: Unable to allocate 'd' for %s\n",
--			__func__, pdev->name);
- 		ret = -ENOMEM;
- 		goto exit_iounmap;
- 	}
--- 
-2.13.0
+Best regards.
 
+CJ
