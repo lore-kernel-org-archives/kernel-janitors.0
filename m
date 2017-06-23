@@ -1,26 +1,41 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 29 Jun 2017 13:11:05 +0000
-Subject: Re: [bug report] device property: Move FW type specific functionality to FW specific files
-Message-Id: <9a4eaa40-2408-1731-93db-a921d11b2ac2@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Jun 2017 14:58:40 +0000
+Subject: [PATCH][ext4-next] ext4: ensure error return ret is zero on successful return
+Message-Id: <20170623145840.26779-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170629130056.xtcf35gxw76ib6gs@mwanda>
-In-Reply-To: <20170629130056.xtcf35gxw76ib6gs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/29/17 16:04, Dan Carpenter wrote:
-> Also on the next lines:
-> drivers/base/property.c:259 fwnode_property_present() warn: assigning (-6) to unsigned variable 'ret'
-> 
-> And really it should have complained about fwnode_device_is_available()
-> but it doesn't.
+From: Colin Ian King <colin.king@canonical.com>
 
-Will fix.
+The error return ret is not set on a successful return path and
+so it returns a garbage value. Ensure it is is set to zero on
+a successful return.
 
-Thanks, Dan!
+Detected by CoverityScan, CID#1446616 ("Uninitialized scalar variable")
 
+Fixes: 3499c0fb822d ("quota: add get_inode_usage callback to transfer multi-inode charges")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ext4/xattr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index ce12c3fb7e59..f454b2709b5a 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -794,6 +794,7 @@ int ext4_get_inode_usage(struct inode *inode, qsize_t *usage)
+ 				ea_inode_refs++;
+ 	}
+ 	*usage = ea_inode_refs + 1;
++	ret = 0;
+ out:
+ 	brelse(iloc.bh);
+ 	brelse(bh);
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.11.0
+
