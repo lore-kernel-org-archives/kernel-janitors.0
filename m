@@ -1,28 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jun 2017 10:36:12 +0000
+From: Joe Perches <joe@perches.com>
+Date: Fri, 23 Jun 2017 10:58:35 +0000
 Subject: Re: [PATCH -net] tls: return -EFAULT if copy_to_user() fails
-Message-Id: <20170623103612.ycduw43oyi6hmtp3@mwanda>
+Message-Id: <1498215515.24295.12.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170623101544.c5bvwe5cd6e46bd5@mwanda>
- <1498213904.24295.10.camel@perches.com>
-In-Reply-To: <1498213904.24295.10.camel@perches.com>
+         <1498213904.24295.10.camel@perches.com>
+         <20170623103612.ycduw43oyi6hmtp3@mwanda>
+In-Reply-To: <20170623103612.ycduw43oyi6hmtp3@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Dave Watson <davejwatson@fb.com>, Aviad Yehezkel <aviadye@mellanox.com>, Ilya Lesokhin <ilyal@mellanox.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 23, 2017 at 03:31:44AM -0700, Joe Perches wrote:
-> On Fri, 2017-06-23 at 13:15 +0300, Dan Carpenter wrote:
-> > The copy_to_user() function returns the number of bytes remaining but we
-> > want to return -EFAULT here.
-> 
-> because?
-> 
+On Fri, 2017-06-23 at 13:36 +0300, Dan Carpenter wrote:
+> On Fri, Jun 23, 2017 at 03:31:44AM -0700, Joe Perches wrote:
+> > On Fri, 2017-06-23 at 13:15 +0300, Dan Carpenter wrote:
+> > > The copy_to_user() function returns the number of bytes remaining but=
+ we
+> > > want to return -EFAULT here.
+> >=20
+> > because?
+> >=20
+>=20
+> Rhetorical questions don't work over email.  Are you honestly confused
+> by this patch?
 
-Rhetorical questions don't work over email.  Are you honestly confused
-by this patch?
+There doesn't seem to be a fault here, just a
+return of less than the expected number of bytes.
 
-regards,
-dan carpenter
+It's non-obvious why -EFAULT is the appropriate
+return value.
 
+Why is changing the return value from number of
+bytes transferred, even if less than desired,
+the right thing to do?  Your commit message
+doesn't describe any rationale.
+
+getsockopt says:
+
+For getsockopt(), optlen is a value-result argument, initially containing t=
+he size
+of the buffer pointed to by optval, and modified on return to indicate the =
+actual
+size of the value returned
+
+The generic EFAULT description in getsockopt is:
+
+       EFAULT    The  address  pointed  to by optval is not in a valid part=
+ of the
+=A0                process address space.  For getsockopt(), this error may=
+ also  be
+=A0                returned  if optlen is not in a valid part of the proces=
+s address
+=A0                space.
+
+Is tls different?
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
