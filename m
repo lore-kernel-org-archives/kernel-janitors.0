@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jun 2017 10:34:50 +0000
+Date: Fri, 23 Jun 2017 10:36:12 +0000
 Subject: Re: [PATCH -net] tls: return -EFAULT if copy_to_user() fails
-Message-Id: <20170623103450.x2uodbdsz37lwr2c@mwanda>
+Message-Id: <20170623103612.ycduw43oyi6hmtp3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170623101544.c5bvwe5cd6e46bd5@mwanda>
  <1498213904.24295.10.camel@perches.com>
@@ -18,8 +18,11 @@ On Fri, Jun 23, 2017 at 03:31:44AM -0700, Joe Perches wrote:
 > > want to return -EFAULT here.
 > 
 > because?
+> 
 
-Because it's a failure path?
+Rhetorical questions don't work over email.  Are you honestly confused
+by this patch?
 
 regards,
 dan carpenter
+
