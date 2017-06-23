@@ -1,25 +1,49 @@
-From: James Smart <james.smart@broadcom.com>
-Date: Fri, 30 Jun 2017 14:56:29 +0000
-Subject: Re: [PATCH 1/2] scsi: lpfc: spin_lock_irq() is not nestable
-Message-Id: <89beb27c-0844-1bba-dcf3-4f64c167782c@broadcom.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Jun 2017 08:37:38 +0000
+Subject: [PATCH] Bluetooth: hci_serdev: make hci_serdev_client_ops static
+Message-Id: <20170623083738.8836-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080250.mjbosf64qlytrsii@mwanda>
-In-Reply-To: <20170630080250.mjbosf64qlytrsii@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 6/30/2017 1:02 AM, Dan Carpenter wrote:
-> We're calling spin_lock_irq() multiple times, the problem is that on the
-> first spin_unlock_irq() then we will re-enable IRQs and we don't want
-> that.
->
-> Fixes: 966bb5b71196 ("scsi: lpfc: Break up IO ctx list into a separate get and put list")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+From: Colin Ian King <colin.king@canonical.com>
 
-looks good.
+The structure hci_serdev_client_ops does not need to be in global scope
+and is not modified, so make it static.
 
-Signed-off-By: James Smart <james.smart@broadcom.com>
+Cleans up sparse warning:
+"symbol 'hci_serdev_client_ops' was not declared. Should it be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/bluetooth/hci_serdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/bluetooth/hci_serdev.c b/drivers/bluetooth/hci_serdev.c
+index 7de0edc0ff8c..aea930101dd2 100644
+--- a/drivers/bluetooth/hci_serdev.c
++++ b/drivers/bluetooth/hci_serdev.c
+@@ -31,7 +31,7 @@
+ 
+ #include "hci_uart.h"
+ 
+-struct serdev_device_ops hci_serdev_client_ops;
++static struct serdev_device_ops hci_serdev_client_ops;
+ 
+ static inline void hci_uart_tx_complete(struct hci_uart *hu, int pkt_type)
+ {
+@@ -268,7 +268,7 @@ static int hci_uart_receive_buf(struct serdev_device *serdev, const u8 *data,
+ 	return count;
+ }
+ 
+-struct serdev_device_ops hci_serdev_client_ops = {
++static struct serdev_device_ops hci_serdev_client_ops = {
+ 	.receive_buf = hci_uart_receive_buf,
+ 	.write_wakeup = hci_uart_write_wakeup,
+ };
+-- 
+2.11.0
+
