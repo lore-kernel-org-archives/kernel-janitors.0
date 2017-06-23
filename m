@@ -1,24 +1,45 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 20 Jun 2017 03:33:43 +0000
-Subject: Re: [PATCH] crypto: crypto4xx - fix an error code
-Message-Id: <20170620033343.GA17764@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 10:15:44 +0000
+Subject: [PATCH -net] tls: return -EFAULT if copy_to_user() fails
+Message-Id: <20170623101544.c5bvwe5cd6e46bd5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170610125433.26294-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170610125433.26294-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Watson <davejwatson@fb.com>
+Cc: Aviad Yehezkel <aviadye@mellanox.com>, Ilya Lesokhin <ilyal@mellanox.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jun 10, 2017 at 02:54:33PM +0200, Christophe JAILLET wrote:
-> If 'kzalloc' fails, we return 0 which means success.
-> return -ENOMEM instead as already done a few lines above.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The copy_to_user() function returns the number of bytes remaining but we
+want to return -EFAULT here.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+index 2ebc328bda96..a03130a47b85 100644
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -273,7 +273,8 @@ static int do_tls_getsockopt_tx(struct sock *sk, char __user *optval,
+ 	}
+ 
+ 	if (len = sizeof(crypto_info)) {
+-		rc = copy_to_user(optval, crypto_info, sizeof(*crypto_info));
++		if (copy_to_user(optval, crypto_info, sizeof(*crypto_info)))
++			rc = -EFAULT;
+ 		goto out;
+ 	}
+ 
+@@ -293,9 +294,10 @@ static int do_tls_getsockopt_tx(struct sock *sk, char __user *optval,
+ 		memcpy(crypto_info_aes_gcm_128->iv, ctx->iv,
+ 		       TLS_CIPHER_AES_GCM_128_IV_SIZE);
+ 		release_sock(sk);
+-		rc = copy_to_user(optval,
+-				  crypto_info_aes_gcm_128,
+-				  sizeof(*crypto_info_aes_gcm_128));
++		if (copy_to_user(optval,
++				 crypto_info_aes_gcm_128,
++				 sizeof(*crypto_info_aes_gcm_128)))
++			rc = -EFAULT;
+ 		break;
+ 	}
+ 	default:
