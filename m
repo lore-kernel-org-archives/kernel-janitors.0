@@ -1,50 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 23 Jun 2017 11:11:17 +0000
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Date: Fri, 23 Jun 2017 12:42:07 +0000
 Subject: Re: [PATCH][spi-next] spi: stm32: fix range limit checks on div
-Message-Id: <20170623111117.yj33dqr4eg4v43wt@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cpbv432ypy7adrwo"
+Message-Id: <1c40b653-2b52-f631-5f54-57e68270d141@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170622154142.22481-1-colin.king@canonical.com>
- <0133c805-c919-f115-7c94-65d88bed8ca2@st.com>
-In-Reply-To: <0133c805-c919-f115-7c94-65d88bed8ca2@st.com>
+In-Reply-To: <20170622154142.22481-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 
---cpbv432ypy7adrwo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 06/22/2017 05:41 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the check for range limits on div is incorrect and will
+> never return -EINVAL. Fix this by replacing && with ||
+> 
+> Detected by CoverityScan, CID#1446580 ("Structurally dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/spi/spi-stm32.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index 0553f61ab3b7..b75909e7b117 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -262,7 +262,7 @@ static int stm32_spi_prepare_mbr(struct stm32_spi *spi, u32 speed_hz)
+>   	 * no need to check it there.
+>   	 * However, we need to ensure the following calculations.
+>   	 */
+> -	if ((div < SPI_MBR_DIV_MIN) &&
+> +	if ((div < SPI_MBR_DIV_MIN) ||
+>   	    (div > SPI_MBR_DIV_MAX))
+>   		return -EINVAL;
+>   
+> 
 
-On Thu, Jun 22, 2017 at 05:49:10PM +0200, Amelie DELAUNAY wrote:
-
-> I'm preparing a v2 for the initial patchset introducing spi-stm32, if you
-> agree, I can directly add your fix.
-
-Please don't resubmit patches that have already been applied, you should
-submit patches against current code in the tree you're expecting things
-to be applied to.  If any updates are needed to a patch that's already
-been applied you should submit incremental patches which make those
-updates.  This avoids having to change published git commits which could
-cause problems for people working against git.
-
-Please don't top post, reply in line with needed context.  This allows
-readers to readily follow the flow of conversation and understand what
-you are talking about and also helps ensure that everything in the
-discussion is being addressed.
-
---cpbv432ypy7adrwo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllM91IACgkQJNaLcl1U
-h9AMiwf/ZDVix5Gpa85aSIgX0I8O+40zuxf0t8oivixjWBUP1/2vUeQhlud/Hwm0
-VawRNm6rsQ8GoZkF1ZVvGRjjTHyvchxXhvJtX4VjYbUtYq+13uecN+AM5STr4EtD
-7Yb6BKhr9EBAtudQH4fBX9azEbEd7aNUYqcCXMeu7A6Ya7ES3B/Uzd1QtZUT4gYt
-iCvROTsRi1EOa546UTVEKucf/YVJrgzMY2jQcCO5FTAug5AK7+h3sG3/OpzD+0B3
-k/ALQPYLqjPGBNAxP1mRUXYp+vW08c55puiQZjHn23yf5eg4kZAvmP9AveuC9OpF
-hMlplpuXv/joCslD9PEtdymaYhUvJg==
-=diu2
------END PGP SIGNATURE-----
-
---cpbv432ypy7adrwo--
+Reviewed-by: Amelie Delaunay <amelie.delaunay@st.com>
