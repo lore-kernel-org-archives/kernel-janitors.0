@@ -1,37 +1,80 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:29:20 +0000
-Subject: [PATCH 3/9] ARM: OMAP2+: McBSP: Delete an unnecessary variable initialisation in omap_init_mcbsp()
-Message-Id: <9d9bee0e-01b2-ff5d-1bb4-76b401208cd4@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 23 Jun 2017 12:04:37 +0000
+Subject: Applied "spi: stm32: fix error check on mbr being -ve" to the spi tree
+Message-Id: <E1dONKH-0006aB-Py@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+In-Reply-To: <20170622163449.23925-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 17:54:19 +0200
+The patch
 
-The local variable "pdata" is reassigned by a statement at the beginning.
-Thus omit the explicit initialisation.
+   spi: stm32: fix error check on mbr being -ve
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a2f07d38d6981ed220d86b7df07e4ac6a1734443 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 22 Jun 2017 17:34:49 +0100
+Subject: [PATCH] spi: stm32: fix error check on mbr being -ve
+
+The error check of mbr < 0 is always false because mbr is a u32. Make
+mbt an int so that a -ve error return from stm32_spi_prepare_mbr can be
+detected.
+
+Detected by CoverityScan, CID#1446586 ("Unsigned compared against 0")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-omap2/mcbsp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-stm32.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/mcbsp.c b/arch/arm/mach-omap2/mcbsp.c
-index fc04be74e064..53c4a30e2963 100644
---- a/arch/arm/mach-omap2/mcbsp.c
-+++ b/arch/arm/mach-omap2/mcbsp.c
-@@ -59,5 +59,5 @@ static int __init omap_init_mcbsp(struct omap_hwmod *oh, void *unused)
- 	int id, count = 1;
- 	char *name = "omap-mcbsp";
- 	struct omap_hwmod *oh_device[2];
--	struct omap_mcbsp_platform_data *pdata = NULL;
-+	struct omap_mcbsp_platform_data *pdata;
- 	struct platform_device *pdev;
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index 0553f61ab3b7..305ecd5334fc 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -857,7 +857,7 @@ static int stm32_spi_transfer_one_setup(struct stm32_spi *spi,
+ 	}
+ 
+ 	if (spi->cur_speed != transfer->speed_hz) {
+-		u32 mbr;
++		int mbr;
+ 
+ 		/* Update spi->cur_speed with real clock speed */
+ 		mbr = stm32_spi_prepare_mbr(spi, transfer->speed_hz);
+@@ -869,7 +869,7 @@ static int stm32_spi_transfer_one_setup(struct stm32_spi *spi,
+ 		transfer->speed_hz = spi->cur_speed;
+ 
+ 		cfg1_clrb |= SPI_CFG1_MBR;
+-		cfg1_setb |= (mbr << SPI_CFG1_MBR_SHIFT) & SPI_CFG1_MBR;
++		cfg1_setb |= ((u32)mbr << SPI_CFG1_MBR_SHIFT) & SPI_CFG1_MBR;
+ 	}
+ 
+ 	if (cfg1_clrb || cfg1_setb)
 -- 
-2.13.0
+2.13.1
 
