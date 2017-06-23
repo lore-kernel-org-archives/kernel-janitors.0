@@ -1,45 +1,39 @@
-From: Chao Yu <yuchao0@huawei.com>
-Date: Mon, 12 Jun 2017 10:59:42 +0000
-Subject: Re: [PATCH] f2fs: Fix a return value in case of error in 'f2fs_fill_super'
-Message-Id: <da6d6381-42e4-a99d-89e4-3cba1d628091@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 23 Jun 2017 09:00:23 +0000
+Subject: [PATCH][mtd-next] mtd: parser: print hex size_t value using correct %zx printk format specifier
+Message-Id: <20170623090023.9482-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017/6/11 15:21, Christophe JAILLET wrote:
-> err must be set to -ENOMEM, otherwise we return 0.
-> 
-> Fixes: a912b54d3aaa0 ("f2fs: split bio cache")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Use %zx instead of %X for size_t variable offset, fixes build warning:
 
-Thanks,
+warning: format '%X' expects argument of type 'unsigned int', but argument
+2 has type 'size_t {aka long unsigned int}' [-Wformat=]
 
-> ---
->  fs/f2fs/super.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 5be27eacea99..38f1624ac5dc 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1976,8 +1976,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  
->  		sbi->write_io[i] = kmalloc(n * sizeof(struct f2fs_bio_info),
->  								GFP_KERNEL);
-> -		if (!sbi->write_io[i])
-> +		if (!sbi->write_io[i]) {
-> +			err = -ENOMEM;
->  			goto free_options;
-> +		}
->  
->  		for (j = HOT; j < n; j++) {
->  			init_rwsem(&sbi->write_io[i][j].io_rwsem);
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/parsers/parser_trx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/parsers/parser_trx.c b/drivers/mtd/parsers/parser_trx.c
+index e805108afd31..c0539555fac3 100644
+--- a/drivers/mtd/parsers/parser_trx.c
++++ b/drivers/mtd/parsers/parser_trx.c
+@@ -39,7 +39,7 @@ static const char *parser_trx_data_part_name(struct mtd_info *master,
+ 	err  = mtd_read(master, offset, sizeof(buf), &bytes_read,
+ 			(uint8_t *)&buf);
+ 	if (err && !mtd_is_bitflip(err)) {
+-		pr_err("mtd_read error while parsing (offset: 0x%X): %d\n",
++		pr_err("mtd_read error while parsing (offset: 0x%zx): %d\n",
+ 			offset, err);
+ 		goto out_default;
+ 	}
+-- 
+2.11.0
 
