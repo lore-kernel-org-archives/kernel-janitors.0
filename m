@@ -1,39 +1,35 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Jun 2017 23:47:37 +0000
-Subject: Re: [PATCH 0/9] Drop unnecessary static
-Message-Id: <CAGXu5jK+oz7SoBKmHDjUpmZ96=keiou+75WK2or37Z8RL9jLxA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 23 Jun 2017 19:38:11 +0000
+Subject: [PATCH] thermal: bcm2835:
+Message-Id: <20170623193811.8016-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux mtd <linux-mtd@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, drbd-dev@lists.linbit.com, linux-omap@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input <linux-input@vger.kernel.org>, linux-iio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, May 4, 2017 at 1:10 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> These patches fix cases where there is a static on a local variable, but
-> the variable is either first initialized or never used, on every possible
-> execution path through the function.  The static has no benefit, and
-> dropping it reduces the code size.
->
-> ---
->
->  drivers/block/drbd/drbd_nl.c            |    2 +-
->  drivers/clocksource/timer-fttmr010.c    |    2 +-
->  drivers/iio/accel/hid-sensor-accel-3d.c |    2 +-
->  drivers/mfd/max8925-i2c.c               |    2 +-
->  drivers/mfd/twl4030-irq.c               |    2 +-
->  drivers/mtd/chips/cfi_cmdset_0020.c     |    2 +-
->  drivers/mtd/maps/physmap_of_gemini.c    |    2 +-
->  drivers/power/supply/axp20x_usb_power.c |    2 +-
->  drivers/regulator/palmas-regulator.c    |    2 +-
->  9 files changed, 9 insertions(+), 9 deletions(-)
+'tz' is a valid pointer at this point, so calling PTR_ERR on it is
+pointless.
+This 'err = PTR_ERR(tz)' looks like a cut'n'paste from a few lines above.
+So remove it. 'err' is already the error we want to report.
 
-It looks like most of these were taken. I pinged the other three. Thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 1 -
+ 1 file changed, 1 deletion(-)
 
--Kees
-
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 0ecf80890c84..e6863c841662 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		 */
+ 		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
+ 		if (err < 0) {
+-			err = PTR_ERR(tz);
+ 			dev_err(&pdev->dev,
+ 				"Not able to read trip_temp: %d\n",
+ 				err);
 -- 
-Kees Cook
-Pixel Security
+2.11.0
+
