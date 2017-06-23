@@ -1,25 +1,32 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 20 Jun 2017 03:41:08 +0000
-Subject: Re: [PATCH][crypto-next] crypto: omap-aes: fix spelling mistake "Encryptio" -> "Encryption"
-Message-Id: <20170620034108.GF17764@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 09:28:00 +0000
+Subject: [PATCH] ext4: fix reserved_clusters_store()
+Message-Id: <20170623092800.eize6ayzkvngpseq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170613084647.20500-1-colin.king@canonical.com>
-In-Reply-To: <20170613084647.20500-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 13, 2017 at 09:46:47AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in pr_err message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The test if kstrtoull() failed is reversed so we can't set cluster_store
+any more.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: 76d33bca5581 ("ext4: refactor sysfs support code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+index d74dc5f81a04..5d543523f479 100644
+--- a/fs/ext4/sysfs.c
++++ b/fs/ext4/sysfs.c
+@@ -100,7 +100,9 @@ static ssize_t reserved_clusters_store(struct ext4_attr *a,
+ 	int ret;
+ 
+ 	ret = kstrtoull(skip_spaces(buf), 0, &val);
+-	if (!ret || val >= clusters)
++	if (ret)
++		return ret;
++	if (val >= clusters)
+ 		return -EINVAL;
+ 
+ 	atomic64_set(&sbi->s_resv_clusters, val);
