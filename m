@@ -1,41 +1,20 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 23 Jun 2017 14:58:40 +0000
-Subject: [PATCH][ext4-next] ext4: ensure error return ret is zero on successful return
-Message-Id: <20170623145840.26779-1-colin.king@canonical.com>
+From: Tahsin Erdogan <tahsin@google.com>
+Date: Fri, 23 Jun 2017 17:04:32 +0000
+Subject: Re: [PATCH][ext4-next] ext4: ensure error return ret is zero on successful return
+Message-Id: <CAAeU0aMtbRBN80fhPza4QS-77Mn=KAPO8STt__tq8UjtQuuk2Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170623145840.26779-1-colin.king@canonical.com>
+In-Reply-To: <20170623145840.26779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jun 23, 2017 at 7:58 AM, Colin King <colin.king@canonical.com> wrote:
+> The error return ret is not set on a successful return path and
+> so it returns a garbage value. Ensure it is is set to zero on
+> a successful return.
+Thanks for catching this bug!
 
-The error return ret is not set on a successful return path and
-so it returns a garbage value. Ensure it is is set to zero on
-a successful return.
-
-Detected by CoverityScan, CID#1446616 ("Uninitialized scalar variable")
-
-Fixes: 3499c0fb822d ("quota: add get_inode_usage callback to transfer multi-inode charges")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/ext4/xattr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index ce12c3fb7e59..f454b2709b5a 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -794,6 +794,7 @@ int ext4_get_inode_usage(struct inode *inode, qsize_t *usage)
- 				ea_inode_refs++;
- 	}
- 	*usage = ea_inode_refs + 1;
-+	ret = 0;
- out:
- 	brelse(iloc.bh);
- 	brelse(bh);
--- 
-2.11.0
-
+Reviewed-by: Tahsin Erdogan <tahsin@google.com>
