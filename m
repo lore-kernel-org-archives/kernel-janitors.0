@@ -1,21 +1,34 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Tue, 27 Jun 2017 13:30:53 +0000
-Subject: Re: [PATCH] drm/i915: Fix an error checking test
-Message-Id: <149857025387.8075.5520164386688935875@mail.alporthouse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Jun 2017 15:15:44 +0000
+Subject: [PATCH] scsi: hisi_sas: silence a static checker warning
+Message-Id: <20170623151544.57jlfbl5apofl6hj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170627053854.21152-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170627053854.21152-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie, joonas.lahtinen@linux.intel.com, matthew.auld@intel.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: John Garry <john.garry@huawei.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2017-06-27 06:38:54)
-> 'dma_buf_vmap' returns NULL on error, not an error pointer.
-> 
-> Fixes: 6cca22ede8a4 ("drm/i915: Add some mock tests for dmabuf interop")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+phy->phy_type is a u64.  We only ever use the first two bits so it's a
+bit over kill perhaps.  Anyway, let's declare the flags as ULL as well
+because that lets us do things like "phy->phy_type &= ~PORT_TYPE_SAS;".
+In the current code, static checkers complain that that would
+unintentionally clear the high 32 bits as well.
 
-Thanks for the fix, reviewed and pushed.
--Chris
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index 4fc23087a939..b23245aeab74 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -56,8 +56,8 @@
+ struct hisi_hba;
+ 
+ enum {
+-	PORT_TYPE_SAS = (1U << 1),
+-	PORT_TYPE_SATA = (1U << 0),
++	PORT_TYPE_SAS = (1ULL << 1),
++	PORT_TYPE_SATA = (1ULL << 0),
+ };
+ 
+ enum dev_status {
