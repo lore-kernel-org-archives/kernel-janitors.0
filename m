@@ -1,41 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Jun 2017 15:52:19 +0000
-Subject: [PATCH] scsi: hptiop: make function hptiop_iop_request_callback_itl static
-Message-Id: <20170622155219.22871-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Mon, 26 Jun 2017 17:32:27 +0000
+Subject: Re: [PATCH] scsi: hptiop: make function hptiop_iop_request_callback_itl static
+Message-Id: <yq1efu664es.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170622155219.22871-1-colin.king@canonical.com>
+In-Reply-To: <20170622155219.22871-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 22 Jun 2017 16:52:19 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: HighPoint Linux Team <linux@highpoint-tech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: HighPoint Linux Team <linux@highpoint-tech.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The function hptiop_iop_request_callback_itl does not need to be in
-global scope, so make it static.
+Colin,
 
-Cleans up sparse warning:
-"symbol 'hptiop_iop_request_callback_itl' was not declared. Should it
- be static?"
+> The function hptiop_iop_request_callback_itl does not need to be in
+> global scope, so make it static.
+>
+> Cleans up sparse warning:
+> "symbol 'hptiop_iop_request_callback_itl' was not declared. Should it
+>  be static?"
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/hptiop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to 4.13/scsi-queue.
 
-diff --git a/drivers/scsi/hptiop.c b/drivers/scsi/hptiop.c
-index db17ad15b0c1..7226226f7383 100644
---- a/drivers/scsi/hptiop.c
-+++ b/drivers/scsi/hptiop.c
-@@ -800,7 +800,7 @@ static void hptiop_host_request_callback_itl(struct hptiop_hba *hba, u32 _tag)
- 	hptiop_finish_scsi_req(hba, tag, req);
- }
- 
--void hptiop_iop_request_callback_itl(struct hptiop_hba *hba, u32 tag)
-+static void hptiop_iop_request_callback_itl(struct hptiop_hba *hba, u32 tag)
- {
- 	struct hpt_iop_request_header __iomem *req;
- 	struct hpt_iop_request_ioctl_command __iomem *p;
 -- 
-2.11.0
-
+Martin K. Petersen	Oracle Linux Engineering
