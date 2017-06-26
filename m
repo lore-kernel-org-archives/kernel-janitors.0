@@ -1,39 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 16:35:52 +0000
-Subject: [PATCH] ARM: topology: Delete an error message for a failed memory allocation in parse_cpu_capacity(
-Message-Id: <c1e7ffcf-bcb5-77da-b1b6-0cba939207f3@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Jun 2017 09:10:03 +0000
+Subject: [PATCH][-next] platform/chrome: make a couple of structures static
+Message-Id: <20170626091003.9341-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 18:28:43 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The structures cros_ec_console_log_fops and cros_ec_lpc_pm_ops do
+not need to be in global scope, so make them static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warnings:
+"symbol 'cros_ec_console_log_fops' was not declared. Should it be static?"
+"symbol 'cros_ec_lpc_pm_ops' was not declared. Should it be static?"
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/arm/kernel/topology.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/chrome/cros_ec_debugfs.c | 2 +-
+ drivers/platform/chrome/cros_ec_lpc.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index f8a3ab82e77f..db81ec24f8d3 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -164,7 +164,6 @@ static int __init parse_cpu_capacity(struct device_node *cpu_node, int cpu)
- 					       sizeof(*raw_capacity),
- 					       GFP_KERNEL);
- 			if (!raw_capacity) {
--				pr_err("cpu_capacity: failed to allocate memory for raw capacities\n");
- 				cap_parsing_failed = true;
- 				return !ret;
- 			}
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index 4cc66f405760..c4717017f935 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -214,7 +214,7 @@ static int cros_ec_console_log_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-const struct file_operations cros_ec_console_log_fops = {
++static const struct file_operations cros_ec_console_log_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = cros_ec_console_log_open,
+ 	.read = cros_ec_console_log_read,
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index eeb187e558ce..3eb110bb4424 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -381,7 +381,7 @@ static int cros_ec_lpc_resume(struct device *dev)
+ }
+ #endif
+ 
+-const struct dev_pm_ops cros_ec_lpc_pm_ops = {
++static const struct dev_pm_ops cros_ec_lpc_pm_ops = {
+ 	SET_LATE_SYSTEM_SLEEP_PM_OPS(cros_ec_lpc_suspend, cros_ec_lpc_resume)
+ };
+ 
 -- 
-2.13.0
+2.11.0
 
