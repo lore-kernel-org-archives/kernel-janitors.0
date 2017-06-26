@@ -1,22 +1,40 @@
-From: David Rientjes <rientjes@google.com>
-Date: Thu, 15 Jun 2017 01:49:08 +0000
-Subject: Re: [PATCH] mm, vmpressure: free the same pointer we allocated
-Message-Id: <alpine.DEB.2.10.1706141847460.77174@chino.kir.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 26 Jun 2017 09:00:14 +0000
+Subject: [PATCH][sound-next] ASoC: zx_aud96p22: make aud96p22_dt_ids static
+Message-Id: <20170626090014.8977-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170613191820.GA20003@elgon.mountain>
-In-Reply-To: <20170613191820.GA20003@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Minchan Kim <minchan@kernel.org>, Vinayak Menon <vinmenon@codeaurora.org>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 13 Jun 2017, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We keep incrementing "spec" as we parse the args so we end up calling
-> kfree() on a modified of spec.  It probably works or this would have
-> been caught in testing, but it looks weird.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The structure aud96p22_dt_ids does not need to be in global scope,
+so make it static.
 
-Acked-by: David Rientjes <rientjes@google.com>
+Cleans up sparse warning:
+"warning: symbol 'aud96p22_dt_ids' was not declared. Should it be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/zx_aud96p22.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/zx_aud96p22.c b/sound/soc/codecs/zx_aud96p22.c
+index 032fb7cf6cbd..bc23ce1a30a1 100644
+--- a/sound/soc/codecs/zx_aud96p22.c
++++ b/sound/soc/codecs/zx_aud96p22.c
+@@ -382,7 +382,7 @@ static int aud96p22_i2c_remove(struct i2c_client *i2c)
+ 	return 0;
+ }
+ 
+-const struct of_device_id aud96p22_dt_ids[] = {
++static const struct of_device_id aud96p22_dt_ids[] = {
+ 	{ .compatible = "zte,zx-aud96p22", },
+ 	{ }
+ };
+-- 
+2.11.0
+
