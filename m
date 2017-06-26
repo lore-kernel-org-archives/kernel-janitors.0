@@ -1,32 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jun 2017 11:47:07 +0000
-Subject: [PATCH 1/2] bcache: silence static checker warning
-Message-Id: <20170628114707.5oy4wmslmrethlzn@mwanda>
+From: Julian Smith <sinara_group@126.com>
+Date: Mon, 26 Jun 2017 22:15:40 +0000
+Subject: Product Inquiry
+Message-Id: <20170626221540.45034EE480@mail.dealer.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kent Overstreet <kent.overstreet@gmail.com>, Jens Axboe <axboe@fb.com>
-Cc: Shaohua Li <shli@kernel.org>, Eric Wheeler <git@linux.ewheeler.net>, Ming Lei <tom.leiming@gmail.com>, NeilBrown <neilb@suse.com>, Coly Li <colyli@suse.de>, Yijing Wang <wangyijing@huawei.com>, Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-In olden times, closure_return() used to have a hidden return built in.
-We removed the hidden return but forgot to add a new return here.  If
-"c" were NULL we would oops on the next line, but fortunately "c" is
-never NULL.  Let's just remove the if statement.
+Hello, 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+My name is Ms Julian Smith and i am from Sinara Group Co.
+We are glad to know about your company from the web and we are interested in
+your products.Please send us your Latest catalog and price list for our
+trial order. 
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 8352fad765f6..78004c54f4f6 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1374,9 +1374,6 @@ static void cache_set_flush(struct closure *cl)
- 	struct btree *b;
- 	unsigned i;
- 
--	if (!c)
--		closure_return(cl);
--
- 	bch_cache_accounting_destroy(&c->accounting);
- 
- 	kobject_put(&c->internal);
+Julian Smith, 
+Purchasing Manager
+Sinara Group Co.
+7 Krasnogo Znameni Ave.
+Vladivostok,690106,Ukraine
+
+
