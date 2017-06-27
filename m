@@ -1,38 +1,85 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:32:06 +0000
-Subject: [PATCH 6/9] ARM: OMAP2+: Improve a size determination in sr_dev_init()
-Message-Id: <82c5d47e-5b98-5e6d-c161-fbd0093a38db@users.sourceforge.net>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Jun 2017 23:46:19 +0000
+Subject: Re: [PATCH 5/9] mfd: Drop unnecessary static
+Message-Id: <CAGXu5jKgHObu8Ms4KNsO8g_PkoYp4YZbuHzyz0qPMK5xEkT90w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr> <1493928654-18768-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: Tony Lindgren <tony@atomide.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 19:02:24 +0200
+On Thu, May 4, 2017 at 1:10 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> Drop static on a local variable, when the variable is initialized before
+> any use, on every possible execution path through the function.
+>
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @bad exists@
+> position p;
+> identifier x;
+> type T;
+> @@
+>
+> static T x@p;
+> ...
+> x = <+...x...+>
+>
+> @@
+> identifier x;
+> expression e;
+> type T;
+> position p != bad.p;
+> @@
+>
+> -static
+>  T x@p;
+>  ... when != x
+>      when strict
+> ?x = e;
+> // </smpl>
+>
+> The change increases the code size but decreases the size of the bss segment.
+>
+> before:
+>    text    data     bss     dec     hex filename
+>    3369     272     300    3941     f65 drivers/mfd/twl4030-irq.o
+>
+> after:
+>    text    data     bss     dec     hex filename
+>    3401     272      28    3701     e75 drivers/mfd/twl4030-irq.o
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
+>  drivers/mfd/twl4030-irq.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+> index b46c0cf..c775f27 100644
+> --- a/drivers/mfd/twl4030-irq.c
+> +++ b/drivers/mfd/twl4030-irq.c
+> @@ -683,7 +683,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base)
+>
+>  int twl4030_init_irq(struct device *dev, int irq_num)
+>  {
+> -       static struct irq_chip  twl4030_irq_chip;
+> +       struct irq_chip twl4030_irq_chip;
+>         int                     status, i;
+>         int                     irq_base, irq_end, nr_irqs;
+>         struct                  device_node *node = dev->of_node;
+>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/sr_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kernel janitors or Andrew, can you pick this up?
 
-diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
-index d7cff2632d1e..01df4907c0e3 100644
---- a/arch/arm/mach-omap2/sr_device.c
-+++ b/arch/arm/mach-omap2/sr_device.c
-@@ -102,5 +102,5 @@ static int __init sr_dev_init(struct omap_hwmod *oh, void *user)
- 	char *name = "smartreflex";
- 	static int i;
- 
--	sr_data = kzalloc(sizeof(struct omap_sr_data), GFP_KERNEL);
-+	sr_data = kzalloc(sizeof(*sr_data), GFP_KERNEL);
- 	if (!sr_data) {
+Thanks!
+
 -- 
-2.13.0
-
+Kees Cook
+Pixel Security
