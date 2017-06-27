@@ -1,44 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 17:55:06 +0000
-Subject: [PATCH] ARM: lpc32xx: Delete an error message for a failed memory allocation in lpc32xx_pm_enter()
-Message-Id: <fc803eb9-32fa-cfcd-7a8e-4847434dfb7d@users.sourceforge.net>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Jun 2017 23:47:37 +0000
+Subject: Re: [PATCH 0/9] Drop unnecessary static
+Message-Id: <CAGXu5jK+oz7SoBKmHDjUpmZ96=keiou+75WK2or37Z8RL9jLxA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux mtd <linux-mtd@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, drbd-dev@lists.linbit.com, linux-omap@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input <linux-input@vger.kernel.org>, linux-iio@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 19:50:32 +0200
+On Thu, May 4, 2017 at 1:10 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> These patches fix cases where there is a static on a local variable, but
+> the variable is either first initialized or never used, on every possible
+> execution path through the function.  The static has no benefit, and
+> dropping it reduces the code size.
+>
+> ---
+>
+>  drivers/block/drbd/drbd_nl.c            |    2 +-
+>  drivers/clocksource/timer-fttmr010.c    |    2 +-
+>  drivers/iio/accel/hid-sensor-accel-3d.c |    2 +-
+>  drivers/mfd/max8925-i2c.c               |    2 +-
+>  drivers/mfd/twl4030-irq.c               |    2 +-
+>  drivers/mtd/chips/cfi_cmdset_0020.c     |    2 +-
+>  drivers/mtd/maps/physmap_of_gemini.c    |    2 +-
+>  drivers/power/supply/axp20x_usb_power.c |    2 +-
+>  drivers/regulator/palmas-regulator.c    |    2 +-
+>  9 files changed, 9 insertions(+), 9 deletions(-)
 
-Omit an extra message for a memory allocation failure in this function.
+It looks like most of these were taken. I pinged the other three. Thanks!
 
-This issue was detected by using the Coccinelle software.
+-Kees
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-lpc32xx/pm.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-lpc32xx/pm.c b/arch/arm/mach-lpc32xx/pm.c
-index 62471570d586..5a4d31488d11 100644
---- a/arch/arm/mach-lpc32xx/pm.c
-+++ b/arch/arm/mach-lpc32xx/pm.c
-@@ -87,12 +87,8 @@ static int lpc32xx_pm_enter(suspend_state_t state)
- 
- 	/* Allocate some space for temporary IRAM storage */
- 	iram_swap_area = kmalloc(lpc32xx_sys_suspend_sz, GFP_KERNEL);
--	if (!iram_swap_area) {
--		printk(KERN_ERR
--		       "PM Suspend: cannot allocate memory to save portion "
--			"of SRAM\n");
-+	if (!iram_swap_area)
- 		return -ENOMEM;
--	}
- 
- 	/* Backup a small area of IRAM used for the suspend code */
- 	memcpy(iram_swap_area, (void *) TEMP_IRAM_AREA,
 -- 
-2.13.0
-
+Kees Cook
+Pixel Security
