@@ -1,30 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Jun 2017 19:14:34 +0000
-Subject: Re: [PATCH][V2] net: stmmac: ensure jumbo_frm error return is correctly checked for -ve value
-Message-Id: <20170606.151434.1826178347509987461.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 27 Jun 2017 05:38:54 +0000
+Subject: [PATCH] drm/i915: Fix an error checking test
+Message-Id: <20170627053854.21152-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170605090452.30688-1-colin.king@canonical.com>
-In-Reply-To: <20170605090452.30688-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie, chris@chris-wilson.co.uk, joonas.lahtinen@linux.intel.com, matthew.auld@intel.com
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  5 Jun 2017 10:04:52 +0100
+'dma_buf_vmap' returns NULL on error, not an error pointer.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current comparison of entry < 0 will never be true since entry is an
-> unsigned integer. Make entry an int to ensure -ve error return values
-> from the call to jumbo_frm are correctly being caught.
-> 
-> Detected by CoverityScan, CID#1238760 ("Macro compares unsigned to 0")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 6cca22ede8a4 ("drm/i915: Add some mock tests for dmabuf interop")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I know Julia asked for more comments, but I'm going to apply this
-as-is for now as it is correct.
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
+index d15cc9d3a5cd..89dc25a5a53b 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
+@@ -246,9 +246,9 @@ static int igt_dmabuf_export_vmap(void *arg)
+ 	i915_gem_object_put(obj);
+ 
+ 	ptr = dma_buf_vmap(dmabuf);
+-	if (IS_ERR(ptr)) {
+-		err = PTR_ERR(ptr);
+-		pr_err("dma_buf_vmap failed with err=%d\n", err);
++	if (!ptr) {
++		pr_err("dma_buf_vmap failed\n");
++		err = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-- 
+2.11.0
 
-Thanks Colin.
