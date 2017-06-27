@@ -1,41 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:27:17 +0000
-Subject: [PATCH 1/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in omap_mcspi_init()
-Message-Id: <2e685abe-2544-f996-4756-9836b8ecd450@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 27 Jun 2017 14:16:16 +0000
+Subject: Re: [v2] brcmfmac: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
+Message-Id: <20170627141616.F24176071A@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
+References: <20170621054553.16546-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170621054553.16546-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: arend.vanspriel@broadcom.com, franky.lin@broadcom.com, hante.meuleman@broadcom.com, rafal@milecki.pl, pieter-paul.giesberts@broadcom.com, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 16:45:12 +0200
+Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> If 'wiphy_new()' fails, we leak 'ops'. Add a new label in the error
+> handling path to free it in such a case.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5c22fb85102a7 ("brcmfmac: add wowl gtk rekeying offload support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/devices.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+57c00f2fac51 brcmfmac: Fix a memory leak in error handling path in 'brcmf_cfg80211_attach'
 
-diff --git a/arch/arm/mach-omap2/devices.c b/arch/arm/mach-omap2/devices.c
-index 473951203104..cf1fc0d162c4 100644
---- a/arch/arm/mach-omap2/devices.c
-+++ b/arch/arm/mach-omap2/devices.c
-@@ -82,7 +82,5 @@ static int __init omap_mcspi_init(struct omap_hwmod *oh, void *unused)
--	if (!pdata) {
--		pr_err("Memory allocation for McSPI device failed\n");
-+	if (!pdata)
- 		return -ENOMEM;
--	}
- 
- 	pdata->num_cs = mcspi_attrib->num_chipselect;
- 	switch (oh->class->rev) {
 -- 
-2.13.0
+https://patchwork.kernel.org/patch/9800763/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
