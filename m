@@ -1,30 +1,95 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Jun 2017 09:10:56 +0000
-Subject: [PATCH] Staging: rtl8723bs: fix an error code in isFileReadable()
-Message-Id: <20170614091055.GB29394@elgon.mountain>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Jun 2017 23:49:52 +0000
+Subject: Re: [PATCH 3/9] drbd: Drop unnecessary static
+Message-Id: <CAGXu5jKzvy2deqGYTjHh6z2SUcbneJmRr9hs0zoYsxyuiqfP9A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1493928654-18768-4-git-send-email-Julia.Lawall@lip6.fr> <20170505071945.GB6818@rck.sh>
+In-Reply-To: <20170505071945.GB6818@rck.sh>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roland Kammerer <roland.kammerer@linbit.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Philipp Reisner <philipp.reisner@linbit.com>, kernel-janitors@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, LKML <linux-kernel@vger.kernel.org>
 
-The caller only cares about zero vs non-zero so this code actually works
-fine but we should be returning a negative error code instead of a valid
-pointer casted to int.
+On Fri, May 5, 2017 at 12:19 AM, Roland Kammerer
+<roland.kammerer@linbit.com> wrote:
+> On Thu, May 04, 2017 at 10:10:48PM +0200, Julia Lawall wrote:
+>> Drop static on a local variable, when the variable is initialized before
+>> any use, on every possible execution path through the function.  The static
+>> has no benefit, and dropping it reduces the code size.
+>>
+>> The semantic patch that fixes this problem is as follows:
+>> (http://coccinelle.lip6.fr/)
+>>
+>> // <smpl>
+>> @bad exists@
+>> position p;
+>> identifier x;
+>> type T;
+>> @@
+>>
+>> static T x@p;
+>> ...
+>> x = <+...x...+>
+>>
+>> @@
+>> identifier x;
+>> expression e;
+>> type T;
+>> position p != bad.p;
+>> @@
+>>
+>> -static
+>>  T x@p;
+>>  ... when != x
+>>      when strict
+>> ?x = e;
+>> // </smpl>
+>>
+>> The change in code size is indicates by the following output from the size
+>> command.
+>>
+>> before:
+>>    text    data     bss     dec     hex filename
+>>   67299    2291    1056   70646   113f6 drivers/block/drbd/drbd_nl.o
+>>
+>> after:
+>>    text    data     bss     dec     hex filename
+>>   67283    2291    1056   70630   113e6 drivers/block/drbd/drbd_nl.o
+>>
+>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> ---
+>>  drivers/block/drbd/drbd_nl.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+>> index 02255a0..ad0fcb4 100644
+>> --- a/drivers/block/drbd/drbd_nl.c
+>> +++ b/drivers/block/drbd/drbd_nl.c
+>> @@ -2294,7 +2294,7 @@ static bool conn_ov_running(struct drbd_connection *connection)
+>>  static enum drbd_ret_code
+>>  check_net_options(struct drbd_connection *connection, struct net_conf *new_net_conf)
+>>  {
+>> -     static enum drbd_ret_code rv;
+>> +     enum drbd_ret_code rv;
+>>       struct drbd_peer_device *peer_device;
+>>       int i;
+>
+> Yes, that already got dropped for drbd9 and is obviously correct for
+> in-tree drbd8.
+>
+> Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+>
+> Regards, rck
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Which tree should this go through? Jens, I think yours?
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/osdep_service.c b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
-index 02db59e8b593..aa16d1ab955b 100644
---- a/drivers/staging/rtl8723bs/os_dep/osdep_service.c
-+++ b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
-@@ -160,7 +160,7 @@ static int isFileReadable(char *path)
- 		oldfs = get_fs(); set_fs(get_ds());
- 
- 		if (1!=readFile(fp, &buf, 1))
--			ret = PTR_ERR(fp);
-+			ret = -EINVAL;
- 
- 		set_fs(oldfs);
- 		filp_close(fp, NULL);
+Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
