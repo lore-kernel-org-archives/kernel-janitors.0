@@ -1,23 +1,33 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 14 Jun 2017 09:07:42 +0000
-Subject: Re: [PATCH] block: missing break in process_queued_bios()
-Message-Id: <20170614090742.GA15501@lst.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 12:41:01 +0000
+Subject: [PATCH] drm/gma500: remove an unneeded NULL check
+Message-Id: <20170628124100.3pw2gyitsfopaib5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170614090437.GA31017@elgon.mountain>
-In-Reply-To: <20170614090437.GA31017@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, Christoph Hellwig <hch@lst.de>, Alasdair Kergon <agk@redhat.com>
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 12:04:37PM +0300, Dan Carpenter wrote:
-> This used to be a fall through case, but we shifted code around and I
-> think we want a break here now.
-> 
-> Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"connector" is the list iterator and it can't be NULL.  It causes a
+static checker warning because we dereference the iterator to get the
+next item in the list.  Let's remove this check.
 
-Thanks Dan, this looks coreect:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+index 63c6e08600ae..531e4450c000 100644
+--- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
++++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+@@ -737,11 +737,7 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
+ 					sizeof(struct drm_display_mode));
+ 
+ 	list_for_each_entry(connector, &mode_config->connector_list, head) {
+-		if (!connector)
+-			continue;
+-
+ 		encoder = connector->encoder;
+-
+ 		if (!encoder)
+ 			continue;
+ 
