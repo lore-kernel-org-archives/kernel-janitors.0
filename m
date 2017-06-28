@@ -1,51 +1,28 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 16 Jun 2017 09:18:56 +0000
-Subject: Re: Applied "ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'" to the asoc tree
-Message-Id: <20170616091856.jz5d4trm5jz2ugan@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="x65wduh7amfg3u5o"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 12:19:37 +0000
+Subject: [PATCH] phy: cpcap-usb: remove a stray tab
+Message-Id: <20170628121936.mjupfdpqh7tl3bnk@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170615055311.8049-1-christophe.jaillet@wanadoo.fr>
- <E1dLYRz-0001l4-SZ@debutante>
- <e92fef8d-5ce1-0b7d-d130-0246d2cb7f91@wanadoo.fr>
-In-Reply-To: <e92fef8d-5ce1-0b7d-d130-0246d2cb7f91@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, heiko@sntech.de, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+This line was indented further that it should have been.
 
---x65wduh7amfg3u5o
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Jun 16, 2017 at 06:57:30AM +0200, Christophe JAILLET wrote:
-> Le 15/06/2017 =E0 19:20, Mark Brown a =E9crit :
-
-> >   	if (!of_property_read_u32(node, "rockchip,playback-channels", &val))=
- {
-> >   		if (val >=3D 2 && val <=3D 8)
-> >   			soc_dai->playback.channels_max =3D val;
-
-> ... and 'err' should be 'ret'...
-
-> I'm really confused for such a ugly proposal !
-
-In a situation like this it's generally best to send a patch, I'll fix
-though.
-
---x65wduh7amfg3u5o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllDonsACgkQJNaLcl1U
-h9BKXAf9HLRJwNPvMTRln/0h4G5l6rxHDsSvEjI07dJwsmDHOI623PUUg27XdVNa
-EmTT4pVe0aP2hcmIZOr6+RniDUGyR5Yi0J37FvchkLl2LmlpcuHXvDMIToBjvAvE
-M6k9kXGLrhDqg72+esyG+EpEu17ZzekACrI7eBEA98O04YXIooz8HsO+4YfMQdhn
-yrzJ8A7paNyvtQtQrs7BFizRR7SUCOax4UjFjMlJjRKLe50KTEetjIULYRDP9X4X
-IrkUCV4Kcg40YY6CghPpv8Cs/X/Mu/etCqmEqnMp1QwVPfT8BrNpBr1Sakeewbag
-YwA4oKr0TDQy5Yrhv2lblhAacqIo5Q==
-=2+34
------END PGP SIGNATURE-----
-
---x65wduh7amfg3u5o--
+diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
+index 9b63efa5ae4d..accaaaccb662 100644
+--- a/drivers/phy/motorola/phy-cpcap-usb.c
++++ b/drivers/phy/motorola/phy-cpcap-usb.c
+@@ -506,7 +506,7 @@ static void cpcap_usb_init_optional_gpios(struct cpcap_phy_ddata *ddata)
+ 		if (IS_ERR(ddata->gpio[i])) {
+ 			dev_info(ddata->dev, "no mode change GPIO%i: %li\n",
+ 				 i, PTR_ERR(ddata->gpio[i]));
+-				 ddata->gpio[i] = NULL;
++			ddata->gpio[i] = NULL;
+ 		}
+ 	}
+ }
