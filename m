@@ -1,26 +1,46 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 23 Jun 2017 16:13:39 +0000
-Subject: [RFC] MIPS: OCTEON: Spurious code in 'arch/mips/cavium-octeon/octeon-usb.c'
-Message-Id: <20170623161339.7159-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 11:30:37 +0000
+Subject: [bug report] net: dsa: Remove master_netdev and use dst->cpu_dp->netdev
+Message-Id: <20170628113037.p6zcxvav4x4o2byv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr, ralf@linux-mips.org, james.hogan@imgtec.com, Steven.Hill@cavium.com, david.daney@cavium.com
-Cc: linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+Hello Florian Fainelli,
 
-The coccinelle script located at https://github.com/coccinelle/coccinellery/blob/master/notnull/notnull2.cocci
-triggered a spurious code in 'arch/mips/cavium-octeon/octeon-usb.c'
+This is a semi-automatic email about new static checker warnings.
 
-It seems that 'dwc3_octeon_device_init()' can never return success (i.e. 0).
-The 'do...while' loop exits only if 'node = NULL'. But, in such a case,
--ENODEV will be returned at the beginning of the loop.
+The patch 6d3c8c0dd88a: "net: dsa: Remove master_netdev and use 
+dst->cpu_dp->netdev" from Jun 13, 2017, leads to the following Smatch 
+complaint:
 
-I may miss something obvious, but I can't see how this code is supposed to
-work.
+net/dsa/dsa2.c:447 dsa_dst_apply()
+	 error: we previously assumed 'dst->cpu_dp' could be null (see line 436)
 
-Best regards.
+net/dsa/dsa2.c
+   435	
+   436		if (dst->cpu_dp) {
+                    ^^^^^^^^^^^
+The existing code assumes this can be NULL.
 
-CJ
+   437			err = dsa_cpu_port_ethtool_setup(dst->cpu_dp);
+   438			if (err)
+   439				return err;
+   440		}
+   441	
+   442		/* If we use a tagging format that doesn't have an ethertype
+   443		 * field, make sure that all packets from this point on get
+   444		 * sent to the tag format's receive function.
+   445		 */
+   446		wmb();
+   447		dst->cpu_dp->netdev->dsa_ptr = dst;
+                ^^^^^^^^^^^^^
+The patch derefrences it without checking.
+
+   448		dst->applied = true;
+   449	
+
+regards,
+dan carpenter
