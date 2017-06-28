@@ -1,37 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 29 Jun 2017 18:12:19 +0000
-Subject: [PATCH] mmc: rtsx_usb_sdmmc: make array 'width' static const
-Message-Id: <20170629181219.12837-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 28 Jun 2017 17:54:29 +0000
+Subject: Re: rsi: add in missing RSI_FSM_STATES into array fsm_state
+Message-Id: <20170628175429.3F57760B7F@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170622165804.24379-1-colin.king@canonical.com>
+In-Reply-To: <20170622165804.24379-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-array width is on-stack and not modified and should be
-made static const.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Two recent commits added new RSI_FSM_STATES (namely FSM_FW_NOT_LOADED
+> and FSM_COMMON_DEV_PARAMS_SENT) and the corresponding table fsm_state
+> was not updated to match. This can lead to an array overrun when
+> accessing the latter two states in fsm_state. Fix this by adding in
+> the missing states.
+> 
+> Detected by CoverityScan, CID#1398379 ("Illegal address computation")
+> 
+> Fixes: 9920322ccd8e ("rsi: add tx frame for common device configuration")
+> Fixes: 015e367494c1 ("rsi: Register interrupt handler before firmware load")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index 12d2fbe9c520..76da1687ab37 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -909,7 +909,7 @@ static int sd_set_bus_width(struct rtsx_usb_sdmmc *host,
- 		unsigned char bus_width)
- {
- 	int err = 0;
--	u8 width[] = {
-+	static const u8 width[] = {
- 		[MMC_BUS_WIDTH_1] = SD_BUS_WIDTH_1BIT,
- 		[MMC_BUS_WIDTH_4] = SD_BUS_WIDTH_4BIT,
- 		[MMC_BUS_WIDTH_8] = SD_BUS_WIDTH_8BIT,
+58828680af49 rsi: add in missing RSI_FSM_STATES into array fsm_state
+
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9804857/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
