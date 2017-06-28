@@ -1,41 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 20:10:30 +0000
-Subject: [PATCH 3/3] ARM: pxa: Delete an error message for a failed memory allocation in pxa3xx_u2d_probe()
-Message-Id: <519a96e2-675c-5d46-f7d1-fc3146384206@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 11:48:18 +0000
+Subject: [PATCH 2/2] bcache: Update continue_at() documentation
+Message-Id: <20170628114818.c7avv5773pa4gb37@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
-In-Reply-To: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
+References: <20170628114707.5oy4wmslmrethlzn@mwanda>
+In-Reply-To: <20170628114707.5oy4wmslmrethlzn@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@fb.com>, Ingo Molnar <mingo@kernel.org>, Coly Li <colyli@suse.de>, Yijing Wang <wangyijing@huawei.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 21:46:26 +0200
+continue_at() doesn't have a return statement anymore.
 
-Omit an extra message for a memory allocation failure in this function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-pxa/pxa3xx-ulpi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-pxa/pxa3xx-ulpi.c b/arch/arm/mach-pxa/pxa3xx-ulpi.c
-index 13f9909ac8bf..60cb59a7ebd1 100644
---- a/arch/arm/mach-pxa/pxa3xx-ulpi.c
-+++ b/arch/arm/mach-pxa/pxa3xx-ulpi.c
-@@ -290,7 +290,5 @@ static int pxa3xx_u2d_probe(struct platform_device *pdev)
--	if (!u2d) {
--		dev_err(&pdev->dev, "failed to allocate memory\n");
-+	if (!u2d)
- 		return -ENOMEM;
--	}
- 
- 	u2d->clk = clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(u2d->clk)) {
--- 
-2.13.0
-
+diff --git a/drivers/md/bcache/closure.h b/drivers/md/bcache/closure.h
+index 1ec84ca81146..295b7e43f92c 100644
+--- a/drivers/md/bcache/closure.h
++++ b/drivers/md/bcache/closure.h
+@@ -312,8 +312,6 @@ static inline void closure_wake_up(struct closure_waitlist *list)
+  * been dropped with closure_put()), it will resume execution at @fn running out
+  * of @wq (or, if @wq is NULL, @fn will be called by closure_put() directly).
+  *
+- * NOTE: This macro expands to a return in the calling function!
+- *
+  * This is because after calling continue_at() you no longer have a ref on @cl,
+  * and whatever @cl owns may be freed out from under you - a running closure fn
+  * has a ref on its own closure which continue_at() drops.
+@@ -340,8 +338,6 @@ do {									\
+  * Causes @fn to be executed out of @cl, in @wq context (or called directly if
+  * @wq is NULL).
+  *
+- * NOTE: like continue_at(), this macro expands to a return in the caller!
+- *
+  * The ref the caller of continue_at_nobarrier() had on @cl is now owned by @fn,
+  * thus it's not safe to touch anything protected by @cl after a
+  * continue_at_nobarrier().
