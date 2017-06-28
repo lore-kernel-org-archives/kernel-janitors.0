@@ -1,54 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Jun 2017 09:50:59 +0000
-Subject: [PATCH] ASoC: rsnd: make arrays path and cmd_case static const
-Message-Id: <20170630095059.8847-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 28 Jun 2017 18:18:22 +0000
+Subject: Re: libertas: Fix lbs_prb_rsp_limit_set()
+Message-Id: <20170628181822.742BF60AD6@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170623151738.qxncismrvd4yzzfr@mwanda>
+In-Reply-To: <20170623151738.qxncismrvd4yzzfr@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Don't populate the arrays path and cmd_case on the stack but make
-them static const.  Makes the object code smaller:
+> The kstrtoul() test was reversed so this always returned -ENOTSUPP.
+> 
+> Fixes: 27d7f47756f4 ("net: wireless: replace strict_strtoul() with kstrtoul()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: James Cameron <quozl@laptop.org>
+> 
+> diff --git a/drivers/net/wireless/marvell/libertas/mesh.c b/drivers/net/wireless/marvell/libertas/mesh.c
+> index eeeb892219aa..37ace5cb309d 100644
+> --- a/drivers/net/wireless/marvell/libertas/mesh.c
+> +++ b/drivers/net/wireless/marvell/libertas/mesh.c
+> @@ -233,8 +233,9 @@ static ssize_t lbs_prb_rsp_limit_set(struct device *dev,
+>  	memset(&mesh_access, 0, sizeof(mesh_access));
+>  	mesh_access.data[0] = cpu_to_le32(CMD_ACT_SET);
+>  
+> -	if (!kstrtoul(buf, 10, &retry_limit))
+> -		return -ENOTSUPP;
+> +	ret = kstrtoul(buf, 10, &retry_limit);
+> +	if (ret)
+> +		return ret;
+>  	if (retry_limit > 15)
+>  		return -ENOTSUPP;
 
-Before:
-   text    data     bss     dec     hex filename
-   2673     624       0    3297     ce1 sound/soc/sh/rcar/cmd.o
+Patch applied to wireless-drivers-next.git, thanks.
 
-After:
-   text    data     bss     dec     hex filename
-   2398     768       0    3166     c5e sound/soc/sh/rcar/cmd.o
+69551f5f370c libertas: Fix lbs_prb_rsp_limit_set()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/sh/rcar/cmd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
-index 9a136d86e2a9..f1d4fb566892 100644
---- a/sound/soc/sh/rcar/cmd.c
-+++ b/sound/soc/sh/rcar/cmd.c
-@@ -31,7 +31,7 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
- 	struct rsnd_mod *mix = rsnd_io_to_mod_mix(io);
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	u32 data;
--	u32 path[] = {
-+	static const u32 path[] = {
- 		[1] = 1 << 0,
- 		[5] = 1 << 8,
- 		[6] = 1 << 12,
-@@ -71,7 +71,7 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
- 	} else {
- 		struct rsnd_mod *src = rsnd_io_to_mod_src(io);
- 
--		u8 cmd_case[] = {
-+		static const u8 cmd_case[] = {
- 			[0] = 0x3,
- 			[1] = 0x3,
- 			[2] = 0x4,
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9806775/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
