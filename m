@@ -1,20 +1,44 @@
-From: Tahsin Erdogan <tahsin@google.com>
-Date: Fri, 23 Jun 2017 17:04:32 +0000
-Subject: Re: [PATCH][ext4-next] ext4: ensure error return ret is zero on successful return
-Message-Id: <CAAeU0aMtbRBN80fhPza4QS-77Mn=KAPO8STt__tq8UjtQuuk2Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 11:49:07 +0000
+Subject: [PATCH] powerpc: remapping too much memory
+Message-Id: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170623145840.26779-1-colin.king@canonical.com>
-In-Reply-To: <20170623145840.26779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Scott Wood <oss@buserror.net>
+Cc: Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 23, 2017 at 7:58 AM, Colin King <colin.king@canonical.com> wrote:
-> The error return ret is not set on a successful return path and
-> so it returns a garbage value. Ensure it is is set to zero on
-> a successful return.
-Thanks for catching this bug!
+There is a cut and paste error here so we use "sizeof(struct mpc83xx_pmc)"
+to remap the memory for "clock_regs".  That sizeof() is 20 bytes and we
+only need to remap 12 bytes.  It presumably doesn't affect run time too
+much...
 
-Reviewed-by: Tahsin Erdogan <tahsin@google.com>
+I changed them to both use "sizeof(*variable_name)" because that's the
+prefered kernel style these days.
+
+Fixes: d49747bdfb2d ("powerpc/mpc83xx: Power Management support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/powerpc/platforms/83xx/suspend.c b/arch/powerpc/platforms/83xx/suspend.c
+index 978b85bb3233..7fa3e197871a 100644
+--- a/arch/powerpc/platforms/83xx/suspend.c
++++ b/arch/powerpc/platforms/83xx/suspend.c
+@@ -361,7 +361,7 @@ static int pmc_probe(struct platform_device *ofdev)
+ 			return -EBUSY;
+ 	}
+ 
+-	pmc_regs = ioremap(res.start, sizeof(struct mpc83xx_pmc));
++	pmc_regs = ioremap(res.start, sizeof(*pmc_regs));
+ 
+ 	if (!pmc_regs) {
+ 		ret = -ENOMEM;
+@@ -374,7 +374,7 @@ static int pmc_probe(struct platform_device *ofdev)
+ 		goto out_pmc;
+ 	}
+ 
+-	clock_regs = ioremap(res.start, sizeof(struct mpc83xx_pmc));
++	clock_regs = ioremap(res.start, sizeof(*clock_regs));
+ 
+ 	if (!clock_regs) {
+ 		ret = -ENOMEM;
