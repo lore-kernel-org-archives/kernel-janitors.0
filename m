@@ -1,41 +1,84 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 20:50:06 +0000
-Subject: [PATCH 3/5] ARM: OMAP1: DMA: Delete an unnecessary return statement in omap1_show_dma_caps()
-Message-Id: <3790e998-2d64-aef8-28ab-1bdad153738a@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 28 Jun 2017 05:22:27 +0000
+Subject: [PATCH] IB/hns: Fix a potential use after free in 'hns_roce_v1_destroy_qp_work_fn()'
+Message-Id: <20170628052227.31493-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
-In-Reply-To: <85e2ec7f-f650-28a2-6cc5-0b4b52e44183@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 22:00:21 +0200
+The last 'dev_dbg' call uses 'hr_qp->qpn'. However, 'hr_qp' may have been
+freed a few lines above.
 
-The script "checkpatch.pl" pointed information out like the following.
+In order to fix it, take the value of 'hr_qp->qpn' earlier in the function
+and use it instead.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: d838c481e025 ("IB/hns: Fix the bug when destroy qp")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/mach-omap1/dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/dma.c b/arch/arm/mach-omap1/dma.c
-index c545b4e01d53..52d7eda1adec 100644
---- a/arch/arm/mach-omap1/dma.c
-+++ b/arch/arm/mach-omap1/dma.c
-@@ -240,7 +240,6 @@ static void omap1_show_dma_caps(void)
- 		w |= 1 << 3;
- 		dma_write(w, GSCR, 0);
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index 37d5d29597a4..8233335a0fc2 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -3641,6 +3641,7 @@ static void hns_roce_v1_destroy_qp_work_fn(struct work_struct *work)
+ 	struct hns_roce_dev *hr_dev;
+ 	struct hns_roce_qp *hr_qp;
+ 	struct device *dev;
++	unsigned long qpn;
+ 	int ret;
+ 
+ 	qp_work_entry = container_of(work, struct hns_roce_qp_work, work);
+@@ -3648,8 +3649,9 @@ static void hns_roce_v1_destroy_qp_work_fn(struct work_struct *work)
+ 	dev = &hr_dev->pdev->dev;
+ 	priv = (struct hns_roce_v1_priv *)hr_dev->hw->priv;
+ 	hr_qp = qp_work_entry->qp;
++	qpn = hr_qp->qpn;
+ 
+-	dev_dbg(dev, "Schedule destroy QP(0x%lx) work.\n", hr_qp->qpn);
++	dev_dbg(dev, "Schedule destroy QP(0x%lx) work.\n", qpn);
+ 
+ 	qp_work_entry->sche_cnt++;
+ 
+@@ -3660,7 +3662,7 @@ static void hns_roce_v1_destroy_qp_work_fn(struct work_struct *work)
+ 					 &qp_work_entry->db_wait_stage);
+ 	if (ret) {
+ 		dev_err(dev, "Check QP(0x%lx) db process status failed!\n",
+-			hr_qp->qpn);
++			qpn);
+ 		return;
  	}
--	return;
+ 
+@@ -3674,7 +3676,7 @@ static void hns_roce_v1_destroy_qp_work_fn(struct work_struct *work)
+ 	ret = hns_roce_v1_modify_qp(&hr_qp->ibqp, NULL, 0, hr_qp->state,
+ 				    IB_QPS_RESET);
+ 	if (ret) {
+-		dev_err(dev, "Modify QP(0x%lx) to RST failed!\n", hr_qp->qpn);
++		dev_err(dev, "Modify QP(0x%lx) to RST failed!\n", qpn);
+ 		return;
+ 	}
+ 
+@@ -3683,14 +3685,14 @@ static void hns_roce_v1_destroy_qp_work_fn(struct work_struct *work)
+ 
+ 	if (hr_qp->ibqp.qp_type = IB_QPT_RC) {
+ 		/* RC QP, release QPN */
+-		hns_roce_release_range_qp(hr_dev, hr_qp->qpn, 1);
++		hns_roce_release_range_qp(hr_dev, qpn, 1);
+ 		kfree(hr_qp);
+ 	} else
+ 		kfree(hr_to_hr_sqp(hr_qp));
+ 
+ 	kfree(qp_work_entry);
+ 
+-	dev_dbg(dev, "Accomplished destroy QP(0x%lx) work.\n", hr_qp->qpn);
++	dev_dbg(dev, "Accomplished destroy QP(0x%lx) work.\n", qpn);
  }
  
- static unsigned configure_dma_errata(void)
+ int hns_roce_v1_destroy_qp(struct ib_qp *ibqp)
 -- 
-2.13.0
+2.11.0
 
