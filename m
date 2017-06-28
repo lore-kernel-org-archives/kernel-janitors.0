@@ -1,30 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 23 Jun 2017 17:58:52 +0000
-Subject: Re: [PATCH] net: stmmac: make some functions static
-Message-Id: <20170623.135852.116857192416960869.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jun 2017 11:44:21 +0000
+Subject: [PATCH net] rocker: move dereference before free
+Message-Id: <20170628114421.qyv6lmugpbjqntpt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622161729.23602-1-colin.king@canonical.com>
-In-Reply-To: <20170622161729.23602-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@resnulli.us>, Arnd Bergmann <arnd@arndb.de>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 22 Jun 2017 17:17:29 +0100
+My static checker complains that ofdpa_neigh_del() can sometimes free
+"found".   It just makes sense to use it first before deleting it.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions dwmac4_dma_init_rx_chan, dwmac4_dma_init_tx_chan and
-> dwmac4_dma_init_channel do not need to be in global scope, so them
-> static.
-> 
-> Cleans up sparse warnings:
-> "symbol 'dwmac4_dma_init_rx_chan' was not declared. Should it be static?"
-> "symbol 'dwmac4_dma_init_tx_chan' was not declared. Should it be static?"
-> "symbol 'dwmac4_dma_init_channel' was not declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: ecf244f753e0 ("rocker: fix maybe-uninitialized warning")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Most ref counting function use atomic_dec() but ofdpa_neigh_del() just
+uses normal decrement.  Are you sure this isn't racy?
 
-Applied to net-next, thanks.
+This applies to net.  In net-next the code has shifted around and it
+doesn't apply anymore.  Should I send a different patch for net-next?
+
+diff --git a/drivers/net/ethernet/rocker/rocker_ofdpa.c b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+index 2ae852454780..a9ce82d3e9cf 100644
+--- a/drivers/net/ethernet/rocker/rocker_ofdpa.c
++++ b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+@@ -1505,8 +1505,8 @@ static int ofdpa_port_ipv4_nh(struct ofdpa_port *ofdpa_port,
+ 		*index = entry->index;
+ 		resolved = false;
+ 	} else if (removing) {
+-		ofdpa_neigh_del(trans, found);
+ 		*index = found->index;
++		ofdpa_neigh_del(trans, found);
+ 	} else if (updating) {
+ 		ofdpa_neigh_update(found, trans, NULL, false);
+ 		resolved = !is_zero_ether_addr(found->eth_dst);
