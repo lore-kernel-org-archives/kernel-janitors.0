@@ -1,26 +1,71 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 13 Jun 2017 01:12:07 +0000
-Subject: Re: [PATCH][scsi-next] scsi: qla2xxx: remove redundant null check on tgt
-Message-Id: <yq1h8zkzo60.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Jun 2017 17:57:38 +0000
+Subject: [PATCH] leds: lp55xx: make various arrays static const
+Message-Id: <20170629175738.12467-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170605172958.12844-1-colin.king@canonical.com>
-In-Reply-To: <20170605172958.12844-1-colin.king@canonical.com> (Colin King's
-        message of "Mon, 5 Jun 2017 18:29:58 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: qla2xxx-upstream@qlogic.com, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+Several arrays are currently on-stack and instead should be made
+static const.
 
-> An earlier commit ed7fb808477b846bb2 ("scsi: qla2xxx: Remove redundant
-> wait when target is stopped.") removed a null check on ha->tgt.tgt_ops
-> and replaced it with a new check that null checked tgt, thus making
-> the subsequent null check on tgt totally redundant. Remove it.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/leds/leds-lp5523.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Applied to 4.13/scsi-queue. Thanks!
-
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index e9ba8cd32d66..924e50aefb00 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -168,13 +168,13 @@ static int lp5523_post_init_device(struct lp55xx_chip *chip)
+ static void lp5523_load_engine(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 mask[] = {
++	static const u8 mask[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+ 		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+ 		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+ 	};
+ 
+-	u8 val[] = {
++	static const u8 val[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_LOAD_ENG1,
+ 		[LP55XX_ENGINE_2] = LP5523_LOAD_ENG2,
+ 		[LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
+@@ -188,7 +188,7 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
+ static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 page_sel[] = {
++	static const u8 page_sel[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
+ 		[LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
+ 		[LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
+@@ -208,7 +208,7 @@ static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
+ static void lp5523_stop_engine(struct lp55xx_chip *chip)
+ {
+ 	enum lp55xx_engine_index idx = chip->engine_idx;
+-	u8 mask[] = {
++	static const u8 mask[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+ 		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+ 		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+@@ -505,7 +505,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
+ {
+ 	struct lp55xx_engine *engine = &chip->engines[nr - 1];
+ 	int ret;
+-	u8 mux_page[] = {
++	static const u8 mux_page[] = {
+ 		[LP55XX_ENGINE_1] = LP5523_PAGE_MUX1,
+ 		[LP55XX_ENGINE_2] = LP5523_PAGE_MUX2,
+ 		[LP55XX_ENGINE_3] = LP5523_PAGE_MUX3,
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
