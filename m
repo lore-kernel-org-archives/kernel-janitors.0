@@ -1,44 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jun 2017 11:49:07 +0000
-Subject: [PATCH] powerpc: remapping too much memory
-Message-Id: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Date: Thu, 29 Jun 2017 05:26:14 +0000
+Subject: Re: [PATCH] powerpc: remapping too much memory
+Message-Id: <87bmp7bc09.fsf@concordia.ellerman.id.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
+In-Reply-To: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Scott Wood <oss@buserror.net>
-Cc: Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Scott Wood <oss@buserror.net>
+Cc: Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-There is a cut and paste error here so we use "sizeof(struct mpc83xx_pmc)"
-to remap the memory for "clock_regs".  That sizeof() is 20 bytes and we
-only need to remap 12 bytes.  It presumably doesn't affect run time too
-much...
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-I changed them to both use "sizeof(*variable_name)" because that's the
-prefered kernel style these days.
+> There is a cut and paste error here so we use "sizeof(struct mpc83xx_pmc)"
+> to remap the memory for "clock_regs".  That sizeof() is 20 bytes and we
+> only need to remap 12 bytes.  It presumably doesn't affect run time too
+> much...
 
-Fixes: d49747bdfb2d ("powerpc/mpc83xx: Power Management support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I don't know 83xx well, but I suspect mappings occur on a 4K granularity
+at a minimum :)
 
-diff --git a/arch/powerpc/platforms/83xx/suspend.c b/arch/powerpc/platforms/83xx/suspend.c
-index 978b85bb3233..7fa3e197871a 100644
---- a/arch/powerpc/platforms/83xx/suspend.c
-+++ b/arch/powerpc/platforms/83xx/suspend.c
-@@ -361,7 +361,7 @@ static int pmc_probe(struct platform_device *ofdev)
- 			return -EBUSY;
- 	}
- 
--	pmc_regs = ioremap(res.start, sizeof(struct mpc83xx_pmc));
-+	pmc_regs = ioremap(res.start, sizeof(*pmc_regs));
- 
- 	if (!pmc_regs) {
- 		ret = -ENOMEM;
-@@ -374,7 +374,7 @@ static int pmc_probe(struct platform_device *ofdev)
- 		goto out_pmc;
- 	}
- 
--	clock_regs = ioremap(res.start, sizeof(struct mpc83xx_pmc));
-+	clock_regs = ioremap(res.start, sizeof(*clock_regs));
- 
- 	if (!clock_regs) {
- 		ret = -ENOMEM;
+> I changed them to both use "sizeof(*variable_name)" because that's the
+> prefered kernel style these days.
+
+Thanks.
+
+cheers
