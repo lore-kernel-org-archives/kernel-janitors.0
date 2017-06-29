@@ -1,46 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jun 2017 11:30:37 +0000
-Subject: [bug report] net: dsa: Remove master_netdev and use dst->cpu_dp->netdev
-Message-Id: <20170628113037.p6zcxvav4x4o2byv@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 29 Jun 2017 09:49:25 +0000
+Subject: [PATCH] ACPI / osi: make local function acpi_osi_dmi_linux static
+Message-Id: <20170629094925.10884-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Florian Fainelli,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is a semi-automatic email about new static checker warnings.
+The function acpi_osi_dmi_linux is local and does not need to be in
+global scope, so make it static.
 
-The patch 6d3c8c0dd88a: "net: dsa: Remove master_netdev and use 
-dst->cpu_dp->netdev" from Jun 13, 2017, leads to the following Smatch 
-complaint:
+Cleans up sparse warning:
+"symbol 'acpi_osi_dmi_linux' was not declared. Should it be static?"
 
-net/dsa/dsa2.c:447 dsa_dst_apply()
-	 error: we previously assumed 'dst->cpu_dp' could be null (see line 436)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/osi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-net/dsa/dsa2.c
-   435	
-   436		if (dst->cpu_dp) {
-                    ^^^^^^^^^^^
-The existing code assumes this can be NULL.
+diff --git a/drivers/acpi/osi.c b/drivers/acpi/osi.c
+index 849f9d2245ca..723bee58bbcf 100644
+--- a/drivers/acpi/osi.c
++++ b/drivers/acpi/osi.c
+@@ -265,7 +265,8 @@ static void __init acpi_osi_dmi_darwin(bool enable,
+ 	__acpi_osi_setup_darwin(enable);
+ }
+ 
+-void __init acpi_osi_dmi_linux(bool enable, const struct dmi_system_id *d)
++static void __init acpi_osi_dmi_linux(bool enable,
++				      const struct dmi_system_id *d)
+ {
+ 	pr_notice("DMI detected to setup _OSI(\"Linux\"): %s\n", d->ident);
+ 	osi_config.linux_dmi = 1;
+-- 
+2.11.0
 
-   437			err = dsa_cpu_port_ethtool_setup(dst->cpu_dp);
-   438			if (err)
-   439				return err;
-   440		}
-   441	
-   442		/* If we use a tagging format that doesn't have an ethertype
-   443		 * field, make sure that all packets from this point on get
-   444		 * sent to the tag format's receive function.
-   445		 */
-   446		wmb();
-   447		dst->cpu_dp->netdev->dsa_ptr = dst;
-                ^^^^^^^^^^^^^
-The patch derefrences it without checking.
-
-   448		dst->applied = true;
-   449	
-
-regards,
-dan carpenter
