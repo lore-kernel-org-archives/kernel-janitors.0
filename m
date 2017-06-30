@@ -1,34 +1,87 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 13 Jun 2017 07:01:23 +0000
-Subject: Re: [-next] mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
-Message-Id: <20170613070123.14C71607E4@smtp.codeaurora.org>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 30 Jun 2017 11:59:40 +0000
+Subject: Applied "ASoC: ak4642: make arrays fs_list and ps_list static const" to the asoc tree
+Message-Id: <E1dQuaK-00085F-Sm@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170602085639.29338-1-colin.king@canonical.com>
-In-Reply-To: <20170602085639.29338-1-colin.king@canonical.com>
+References: <20170630091636.8287-1-colin.king@canonical.com>
+In-Reply-To: <20170630091636.8287-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+The patch
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> function mwifiex_ret_pkt_aggr_ctrl can be made static as it does not
-> need to be in global scope.
-> 
-> Cleans up sparse warning: "symbol 'mwifiex_ret_pkt_aggr_ctrl' was not
-> declared. Should it be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+   ASoC: ak4642: make arrays fs_list and ps_list static const
 
-Patch applied to wireless-drivers-next.git, thanks.
+has been applied to the asoc tree at
 
-292c333300ec mwifiex: make function mwifiex_ret_pkt_aggr_ctrl static
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 836e4fedee8df123a203a0ded090251de66b9bd1 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 30 Jun 2017 10:16:36 +0100
+Subject: [PATCH] ASoC: ak4642: make arrays fs_list and ps_list static const
+
+Don't populate the arrays fs_list and ps_list on the stack but make
+them static const.  Makes the object code smaller:
+
+Before:
+   text    data     bss     dec     hex filename
+  12084    4888      64   17036    428c sound/soc/codecs/ak4642.o
+
+After:
+   text    data     bss     dec     hex filename
+  11883    5032      64   16979    4253 sound/soc/codecs/ak4642.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ak4642.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
+index 23ab9646c351..66de8a2013a6 100644
+--- a/sound/soc/codecs/ak4642.c
++++ b/sound/soc/codecs/ak4642.c
+@@ -433,7 +433,7 @@ static int ak4642_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ static int ak4642_set_mcko(struct snd_soc_codec *codec,
+ 			   u32 frequency)
+ {
+-	u32 fs_list[] = {
++	static const u32 fs_list[] = {
+ 		[0] = 8000,
+ 		[1] = 12000,
+ 		[2] = 16000,
+@@ -447,7 +447,7 @@ static int ak4642_set_mcko(struct snd_soc_codec *codec,
+ 		[14] = 29400,
+ 		[15] = 44100,
+ 	};
+-	u32 ps_list[] = {
++	static const u32 ps_list[] = {
+ 		[0] = 256,
+ 		[1] = 128,
+ 		[2] = 64,
 -- 
-https://patchwork.kernel.org/patch/9761985/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.13.2
 
