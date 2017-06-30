@@ -1,111 +1,98 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Thu, 29 Jun 2017 20:48:31 +0000
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Date: Fri, 30 Jun 2017 21:26:50 +0000
 Subject: Re: [PATCH] leds: lp55xx: make various arrays static const
-Message-Id: <20170629204831.GA763@amd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="zhXaljGHf11kAtnf"
+Message-Id: <1d5d4c21-32db-447e-1715-54a7eb959ad0@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170629175738.12467-1-colin.king@canonical.com>
- <d57c8cab-4577-d227-64df-553b948566d9@gmail.com>
-In-Reply-To: <d57c8cab-4577-d227-64df-553b948566d9@gmail.com>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+ <d57c8cab-4577-d227-64df-553b948566d9@gmail.com> <20170629204831.GA763@amd>
+In-Reply-To: <20170629204831.GA763@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pavel Machek <pavel@ucw.cz>
 Cc: Colin King <colin.king@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hi,
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/29/2017 10:48 PM, Pavel Machek wrote:
+> Hi!
+> 
+>> Thanks for the patch.
+>>
+>> Do you have some profiling results showing the benefit of these changes?
+>> It seems that these functions are called only on driver initialization.
+>> Making the local arrays static will prevent releasing this memory even
+>> though it will be no longer needed.
+>>
+>> Anyway, the size of arrays is 3 bytes, so the impact of these changes
+>> seems to be virtually negligible. I am not taking this patch unless
+>> you are able to provide the numbers showing the gain.
+> 
+> C will have to initialize the array on stack, then copy values
 
-Hi!
+OK, similar justification is used in case of few other similar patches.
 
-> Thanks for the patch.
->=20
-> Do you have some profiling results showing the benefit of these changes?
-> It seems that these functions are called only on driver initialization.
-> Making the local arrays static will prevent releasing this memory even
-> though it will be no longer needed.
->=20
-> Anyway, the size of arrays is 3 bytes, so the impact of these changes
-> seems to be virtually negligible. I am not taking this patch unless
-> you are able to provide the numbers showing the gain.
+Applied to the for-next branch of linux-leds.git. It's rather
+cosmetic change so only a few days of testing before sending
+upstream should be enough.
 
-C will have to initialize the array on stack, then copy values
-there.. which is ugly. "static const" also tells the reader what is
-going on there (nothing).
+Thanks,
+Jacek Anaszewski
 
-I'd say this is a good patch.
+> there.. which is ugly. "static const" also tells the reader what is
+> going on there (nothing).
+> 
+> I'd say this is a good patch.
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> 
+>>> +++ b/drivers/leds/leds-lp5523.c
+>>> @@ -168,13 +168,13 @@ static int lp5523_post_init_device(struct lp55xx_chip *chip)
+>>>  static void lp5523_load_engine(struct lp55xx_chip *chip)
+>>>  {
+>>>  	enum lp55xx_engine_index idx = chip->engine_idx;
+>>> -	u8 mask[] = {
+>>> +	static const u8 mask[] = {
+>>>  		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+>>>  		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+>>>  		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+>>>  	};
+>>>  
+>>> -	u8 val[] = {
+>>> +	static const u8 val[] = {
+>>>  		[LP55XX_ENGINE_1] = LP5523_LOAD_ENG1,
+>>>  		[LP55XX_ENGINE_2] = LP5523_LOAD_ENG2,
+>>>  		[LP55XX_ENGINE_3] = LP5523_LOAD_ENG3,
+>>> @@ -188,7 +188,7 @@ static void lp5523_load_engine(struct lp55xx_chip *chip)
+>>>  static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chip)
+>>>  {
+>>>  	enum lp55xx_engine_index idx = chip->engine_idx;
+>>> -	u8 page_sel[] = {
+>>> +	static const u8 page_sel[] = {
+>>>  		[LP55XX_ENGINE_1] = LP5523_PAGE_ENG1,
+>>>  		[LP55XX_ENGINE_2] = LP5523_PAGE_ENG2,
+>>>  		[LP55XX_ENGINE_3] = LP5523_PAGE_ENG3,
+>>> @@ -208,7 +208,7 @@ static void lp5523_stop_all_engines(struct lp55xx_chip *chip)
+>>>  static void lp5523_stop_engine(struct lp55xx_chip *chip)
+>>>  {
+>>>  	enum lp55xx_engine_index idx = chip->engine_idx;
+>>> -	u8 mask[] = {
+>>> +	static const u8 mask[] = {
+>>>  		[LP55XX_ENGINE_1] = LP5523_MODE_ENG1_M,
+>>>  		[LP55XX_ENGINE_2] = LP5523_MODE_ENG2_M,
+>>>  		[LP55XX_ENGINE_3] = LP5523_MODE_ENG3_M,
+>>> @@ -505,7 +505,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
+>>>  {
+>>>  	struct lp55xx_engine *engine = &chip->engines[nr - 1];
+>>>  	int ret;
+>>> -	u8 mux_page[] = {
+>>> +	static const u8 mux_page[] = {
+>>>  		[LP55XX_ENGINE_1] = LP5523_PAGE_MUX1,
+>>>  		[LP55XX_ENGINE_2] = LP5523_PAGE_MUX2,
+>>>  		[LP55XX_ENGINE_3] = LP5523_PAGE_MUX3,
+>>>
+> 
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-								Pavel
-
-> > +++ b/drivers/leds/leds-lp5523.c
-> > @@ -168,13 +168,13 @@ static int lp5523_post_init_device(struct lp55xx_=
-chip *chip)
-> >  static void lp5523_load_engine(struct lp55xx_chip *chip)
-> >  {
-> >  	enum lp55xx_engine_index idx =3D chip->engine_idx;
-> > -	u8 mask[] =3D {
-> > +	static const u8 mask[] =3D {
-> >  		[LP55XX_ENGINE_1] =3D LP5523_MODE_ENG1_M,
-> >  		[LP55XX_ENGINE_2] =3D LP5523_MODE_ENG2_M,
-> >  		[LP55XX_ENGINE_3] =3D LP5523_MODE_ENG3_M,
-> >  	};
-> > =20
-> > -	u8 val[] =3D {
-> > +	static const u8 val[] =3D {
-> >  		[LP55XX_ENGINE_1] =3D LP5523_LOAD_ENG1,
-> >  		[LP55XX_ENGINE_2] =3D LP5523_LOAD_ENG2,
-> >  		[LP55XX_ENGINE_3] =3D LP5523_LOAD_ENG3,
-> > @@ -188,7 +188,7 @@ static void lp5523_load_engine(struct lp55xx_chip *=
-chip)
-> >  static void lp5523_load_engine_and_select_page(struct lp55xx_chip *chi=
-p)
-> >  {
-> >  	enum lp55xx_engine_index idx =3D chip->engine_idx;
-> > -	u8 page_sel[] =3D {
-> > +	static const u8 page_sel[] =3D {
-> >  		[LP55XX_ENGINE_1] =3D LP5523_PAGE_ENG1,
-> >  		[LP55XX_ENGINE_2] =3D LP5523_PAGE_ENG2,
-> >  		[LP55XX_ENGINE_3] =3D LP5523_PAGE_ENG3,
-> > @@ -208,7 +208,7 @@ static void lp5523_stop_all_engines(struct lp55xx_c=
-hip *chip)
-> >  static void lp5523_stop_engine(struct lp55xx_chip *chip)
-> >  {
-> >  	enum lp55xx_engine_index idx =3D chip->engine_idx;
-> > -	u8 mask[] =3D {
-> > +	static const u8 mask[] =3D {
-> >  		[LP55XX_ENGINE_1] =3D LP5523_MODE_ENG1_M,
-> >  		[LP55XX_ENGINE_2] =3D LP5523_MODE_ENG2_M,
-> >  		[LP55XX_ENGINE_3] =3D LP5523_MODE_ENG3_M,
-> > @@ -505,7 +505,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip=
-, u16 mux, int nr)
-> >  {
-> >  	struct lp55xx_engine *engine =3D &chip->engines[nr - 1];
-> >  	int ret;
-> > -	u8 mux_page[] =3D {
-> > +	static const u8 mux_page[] =3D {
-> >  		[LP55XX_ENGINE_1] =3D LP5523_PAGE_MUX1,
-> >  		[LP55XX_ENGINE_2] =3D LP5523_PAGE_MUX2,
-> >  		[LP55XX_ENGINE_3] =3D LP5523_PAGE_MUX3,
-> >=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAllVZ58ACgkQMOfwapXb+vK6TACfcIB/Hs3YSnfGFSx4Wd2r3D5Q
-u8cAoMOKFCLEFO3JmSNchNAHyetrI+ny
-=Jr4f
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+-- 
+Best regards,
+Jacek Anaszewski
