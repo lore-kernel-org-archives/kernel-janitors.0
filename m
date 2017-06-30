@@ -1,47 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:28:30 +0000
-Subject: [PATCH 2/9] ARM: OMAP2+: Delete an error message for a failed memory allocation in two functions
-Message-Id: <9e8c21ba-0c34-7a7b-2583-59d7a8c19af6@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 08:00:30 +0000
+Subject: [PATCH] video: fbdev: matrox: the list iterator can't be NULL
+Message-Id: <20170630080030.2hee3stcmn5utlmc@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-fbdev@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 17:24:27 +0200
+My static checker is complaining because we check "drv" for NULL and
+then we dereference it to get the next item in the list.  It can't be
+NULL so we can remove this check.
 
-Omit an extra message for a memory allocation failure in these functions.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/hsmmc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/hsmmc.c b/arch/arm/mach-omap2/hsmmc.c
-index cb754c46747e..be517b048762 100644
---- a/arch/arm/mach-omap2/hsmmc.c
-+++ b/arch/arm/mach-omap2/hsmmc.c
-@@ -155,5 +155,4 @@ static int __init omap_hsmmc_pdata_init(struct omap2_hsmmc_info *c,
- 	if (!hc_name) {
--		pr_err("Cannot allocate memory for controller slot name\n");
- 		kfree(hc_name);
- 		return -ENOMEM;
- 	}
-@@ -318,7 +317,5 @@ static void __init omap_hsmmc_init_one(struct omap2_hsmmc_info *hsmmcinfo,
--	if (!mmc_data) {
--		pr_err("Cannot allocate memory for mmc device!\n");
-+	if (!mmc_data)
- 		return;
--	}
- 
- 	res = omap_hsmmc_pdata_init(hsmmcinfo, mmc_data);
- 	if (res < 0)
--- 
-2.13.0
-
+diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
+index 11eb094396ae..f6a0b9af97a9 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_base.c
++++ b/drivers/video/fbdev/matrox/matroxfb_base.c
+@@ -2001,7 +2001,7 @@ static void matroxfb_register_device(struct matrox_fb_info* minfo) {
+ 	for (drv = matroxfb_driver_l(matroxfb_driver_list.next);
+ 	     drv != matroxfb_driver_l(&matroxfb_driver_list);
+ 	     drv = matroxfb_driver_l(drv->node.next)) {
+-		if (drv && drv->probe) {
++		if (drv->probe) {
+ 			void *p = drv->probe(minfo);
+ 			if (p) {
+ 				minfo->drivers_data[i] = p;
