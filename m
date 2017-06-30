@@ -1,123 +1,87 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 11 Jun 2017 06:40:19 +0000
-Subject: [PATCH 2/2] scsi: qedi: Use 'dma_zalloc_coherent' to reduce code verbosity.
-Message-Id: <86ebfb8beeafc7ae8f5e39b4add3cf8666b81c19.1497162751.git.christophe.jaillet@wanadoo.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 30 Jun 2017 11:58:46 +0000
+Subject: Applied "ASoC: rsnd: make arrays path and cmd_case static const" to the asoc tree
+Message-Id: <E1dQuZS-0007wL-Uo@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1497162751.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1497162751.git.christophe.jaillet@wanadoo.fr>
+References: <20170630095059.8847-1-colin.king@canonical.com>
+In-Reply-To: <20170630095059.8847-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 
-Replace some 'dma_alloc_coherent+memset' by some quivalent
-'dma_zalloc_coherent' in order to reduce code verbosity
+The patch
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+   ASoC: rsnd: make arrays path and cmd_case static const
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8288591368fcb470024348a9b846f7b3f791be44 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 30 Jun 2017 10:50:59 +0100
+Subject: [PATCH] ASoC: rsnd: make arrays path and cmd_case static const
+
+Don't populate the arrays path and cmd_case on the stack but make
+them static const.  Makes the object code smaller:
+
+Before:
+   text    data     bss     dec     hex filename
+   2673     624       0    3297     ce1 sound/soc/sh/rcar/cmd.o
+
+After:
+   text    data     bss     dec     hex filename
+   2398     768       0    3166     c5e sound/soc/sh/rcar/cmd.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-This patch generates some checkpatch errors about the use of space to indent code.
-I've left it as-is to keep consistency with the style used in this file.
----
- drivers/scsi/qedi/qedi_main.c | 39 ++++++++++++++++-----------------------
- 1 file changed, 16 insertions(+), 23 deletions(-)
+ sound/soc/sh/rcar/cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index c81e494a9067..37bf881ccfb3 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -1241,16 +1241,15 @@ static int qedi_alloc_bdq(struct qedi_ctx *qedi)
- 	}
+diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
+index 9a136d86e2a9..f1d4fb566892 100644
+--- a/sound/soc/sh/rcar/cmd.c
++++ b/sound/soc/sh/rcar/cmd.c
+@@ -31,7 +31,7 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
+ 	struct rsnd_mod *mix = rsnd_io_to_mod_mix(io);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	u32 data;
+-	u32 path[] = {
++	static const u32 path[] = {
+ 		[1] = 1 << 0,
+ 		[5] = 1 << 8,
+ 		[6] = 1 << 12,
+@@ -71,7 +71,7 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
+ 	} else {
+ 		struct rsnd_mod *src = rsnd_io_to_mod_src(io);
  
- 	/* Allocate list of PBL pages */
--	qedi->bdq_pbl_list = dma_alloc_coherent(&qedi->pdev->dev,
--						PAGE_SIZE,
--						&qedi->bdq_pbl_list_dma,
--						GFP_KERNEL);
-+	qedi->bdq_pbl_list = dma_zalloc_coherent(&qedi->pdev->dev,
-+						 PAGE_SIZE,
-+						 &qedi->bdq_pbl_list_dma,
-+						 GFP_KERNEL);
- 	if (!qedi->bdq_pbl_list) {
- 		QEDI_ERR(&qedi->dbg_ctx,
- 			 "Could not allocate list of PBL pages.\n");
- 		return -ENOMEM;
- 	}
--	memset(qedi->bdq_pbl_list, 0, PAGE_SIZE);
- 
- 	/*
- 	 * Now populate PBL list with pages that contain pointers to the
-@@ -1337,10 +1336,10 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
- 		    (QEDI_PAGE_SIZE - 1));
- 
- 		qedi->global_queues[i]->cq -		    dma_alloc_coherent(&qedi->pdev->dev,
--				       qedi->global_queues[i]->cq_mem_size,
--				       &qedi->global_queues[i]->cq_dma,
--				       GFP_KERNEL);
-+		    dma_zalloc_coherent(&qedi->pdev->dev,
-+				        qedi->global_queues[i]->cq_mem_size,
-+				        &qedi->global_queues[i]->cq_dma,
-+				        GFP_KERNEL);
- 
- 		if (!qedi->global_queues[i]->cq) {
- 			QEDI_WARN(&qedi->dbg_ctx,
-@@ -1348,14 +1347,12 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
- 			status = -ENOMEM;
- 			goto mem_alloc_failure;
- 		}
--		memset(qedi->global_queues[i]->cq, 0,
--		       qedi->global_queues[i]->cq_mem_size);
- 
- 		qedi->global_queues[i]->cq_pbl -		    dma_alloc_coherent(&qedi->pdev->dev,
--				       qedi->global_queues[i]->cq_pbl_size,
--				       &qedi->global_queues[i]->cq_pbl_dma,
--				       GFP_KERNEL);
-+		    dma_zalloc_coherent(&qedi->pdev->dev,
-+				        qedi->global_queues[i]->cq_pbl_size,
-+				        &qedi->global_queues[i]->cq_pbl_dma,
-+				        GFP_KERNEL);
- 
- 		if (!qedi->global_queues[i]->cq_pbl) {
- 			QEDI_WARN(&qedi->dbg_ctx,
-@@ -1363,8 +1360,6 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
- 			status = -ENOMEM;
- 			goto mem_alloc_failure;
- 		}
--		memset(qedi->global_queues[i]->cq_pbl, 0,
--		       qedi->global_queues[i]->cq_pbl_size);
- 
- 		/* Create PBL */
- 		num_pages = qedi->global_queues[i]->cq_mem_size /
-@@ -1425,25 +1420,23 @@ int qedi_alloc_sq(struct qedi_ctx *qedi, struct qedi_endpoint *ep)
- 	ep->sq_pbl_size = (ep->sq_mem_size / QEDI_PAGE_SIZE) * sizeof(void *);
- 	ep->sq_pbl_size = ep->sq_pbl_size + QEDI_PAGE_SIZE;
- 
--	ep->sq = dma_alloc_coherent(&qedi->pdev->dev, ep->sq_mem_size,
--				    &ep->sq_dma, GFP_KERNEL);
-+	ep->sq = dma_zalloc_coherent(&qedi->pdev->dev, ep->sq_mem_size,
-+				     &ep->sq_dma, GFP_KERNEL);
- 	if (!ep->sq) {
- 		QEDI_WARN(&qedi->dbg_ctx,
- 			  "Could not allocate send queue.\n");
- 		rval = -ENOMEM;
- 		goto out;
- 	}
--	memset(ep->sq, 0, ep->sq_mem_size);
- 
--	ep->sq_pbl = dma_alloc_coherent(&qedi->pdev->dev, ep->sq_pbl_size,
--					&ep->sq_pbl_dma, GFP_KERNEL);
-+	ep->sq_pbl = dma_zalloc_coherent(&qedi->pdev->dev, ep->sq_pbl_size,
-+					 &ep->sq_pbl_dma, GFP_KERNEL);
- 	if (!ep->sq_pbl) {
- 		QEDI_WARN(&qedi->dbg_ctx,
- 			  "Could not allocate send queue PBL.\n");
- 		rval = -ENOMEM;
- 		goto out_free_sq;
- 	}
--	memset(ep->sq_pbl, 0, ep->sq_pbl_size);
- 
- 	/* Create PBL */
- 	num_pages = ep->sq_mem_size / QEDI_PAGE_SIZE;
+-		u8 cmd_case[] = {
++		static const u8 cmd_case[] = {
+ 			[0] = 0x3,
+ 			[1] = 0x3,
+ 			[2] = 0x4,
 -- 
-2.11.0
+2.13.2
 
