@@ -1,25 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 26 Jun 2017 17:34:31 +0000
-Subject: Re: [PATCH] bnx2i: missing error code in bnx2i_ep_connect()
-Message-Id: <yq1a84u64bc.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Jun 2017 10:33:55 +0000
+Subject: [PATCH] pinctrl: rza1: fix incorrect failure check on platform_get_resources
+Message-Id: <20170630103355.9769-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170623070200.GA7922@elgon.mountain>
-In-Reply-To: <20170623070200.GA7922@elgon.mountain> (Dan Carpenter's message
-        of "Fri, 23 Jun 2017 10:02:00 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QLogic-Storage-Upstream@qlogic.com, Michael Chan <mchan@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+The return res from platform_get_resources should be checked for
+a failure rather than ret.  Fixes warning:
 
-> If bnx2i_map_ep_dbell_regs() then we accidentally return NULL instead
-> of an error pointer.  It results in a NULL dereference in
-> iscsi_if_ep_connect().
+'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-Applied to 4.13/scsi-queue, thanks!
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-rza1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 29ddd624fb98..e79c8b9818d7 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1257,7 +1257,7 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
+ 	rza1_pctl->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (ret)
++	if (!res)
+ 		return -ENODEV;
+ 
+ 	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
