@@ -1,46 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Jun 2017 18:33:10 +0000
-Subject: [PATCH 7/9] ARM: OMAP2+: Use kcalloc() in sr_set_nvalues()
-Message-Id: <201e94ac-bbd7-5fb0-582b-4a6b2585bdab@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 07:59:15 +0000
+Subject: [PATCH] drm/msm: fix an integer overflow test
+Message-Id: <20170630075915.crhfqqmjaxq34awz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
-In-Reply-To: <e9d44aa5-9208-9ff3-46ec-cd58ac3f4696@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Rob Clark <robdclark@gmail.com>, Kasin Li <donglil@codeaurora.org>
+Cc: David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jun 2017 19:09:07 +0200
+We recently added an integer overflow check but it needs an additional
+tweak to work properly on 32 bit systems.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+The problem is that we're doing the right hand side of the assignment as
+type unsigned long so the max it will have an integer overflow instead
+of being larger than SIZE_MAX.  That means the "sz > SIZE_MAX" condition
+is never true even on 32 bit systems.  We need to first cast it to u64
+and then do the math.
 
-  This issue was detected by using the Coccinelle software.
+Fixes: 4a630fadbb29 ("drm/msm: Fix potential buffer overflow issue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/sr_device.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
-index 01df4907c0e3..65775c6e8c27 100644
---- a/arch/arm/mach-omap2/sr_device.c
-+++ b/arch/arm/mach-omap2/sr_device.c
-@@ -44,7 +44,5 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
- 	while (volt_data[count].volt_nominal)
- 		count++;
+diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+index 6bfca7470141..8095658e8cb4 100644
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@ -34,8 +34,8 @@ static struct msm_gem_submit *submit_create(struct drm_device *dev,
+ 		struct msm_gpu *gpu, uint32_t nr_bos, uint32_t nr_cmds)
+ {
+ 	struct msm_gem_submit *submit;
+-	uint64_t sz = sizeof(*submit) + (nr_bos * sizeof(submit->bos[0])) +
+-		(nr_cmds * sizeof(submit->cmd[0]));
++	uint64_t sz = sizeof(*submit) + ((u64)nr_bos * sizeof(submit->bos[0])) +
++		((u64)nr_cmds * sizeof(submit->cmd[0]));
  
--	nvalue_table = kzalloc(sizeof(struct omap_sr_nvalue_table)*count,
--			GFP_KERNEL);
--
-+	nvalue_table = kcalloc(count, sizeof(*nvalue_table), GFP_KERNEL);
- 	if (!nvalue_table) {
--- 
-2.13.0
-
+ 	if (sz > SIZE_MAX)
+ 		return NULL;
