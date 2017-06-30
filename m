@@ -1,40 +1,54 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 11 Jun 2017 12:28:54 +0000
-Subject: [PATCH] cpuidle: dt: Add missing 'of_node_put()'
-Message-Id: <20170611122854.4182-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Jun 2017 09:16:36 +0000
+Subject: [PATCH] ASoC: ak4642: make arrays fs_list and ps_list static const
+Message-Id: <20170630091636.8287-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rjw@rjwysocki.net, daniel.lezcano@linaro.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'of_node_put()' should be called on pointer returned by
-'of_parse_phandle()' when done. In this function this is done in all path
-except this 'continue', so add it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 97735da074fd ("drivers: cpuidle: Add status property to ARM idle states")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Don't populate the arrays fs_list and ps_list on the stack but make
+them static const.  Makes the object code smaller:
+
+Before:
+   text    data     bss     dec     hex filename
+  12084    4888      64   17036    428c sound/soc/codecs/ak4642.o
+
+After:
+   text    data     bss     dec     hex filename
+  11883    5032      64   16979    4253 sound/soc/codecs/ak4642.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/cpuidle/dt_idle_states.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/codecs/ak4642.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
-index ffca4fc0061d..ae8eb0359889 100644
---- a/drivers/cpuidle/dt_idle_states.c
-+++ b/drivers/cpuidle/dt_idle_states.c
-@@ -180,8 +180,10 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
- 		if (!state_node)
- 			break;
- 
--		if (!of_device_is_available(state_node))
-+		if (!of_device_is_available(state_node)) {
-+			of_node_put(state_node);
- 			continue;
-+		}
- 
- 		if (!idle_state_valid(state_node, i, cpumask)) {
- 			pr_warn("%s idle state not valid, bailing out\n",
+diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
+index 23ab9646c351..66de8a2013a6 100644
+--- a/sound/soc/codecs/ak4642.c
++++ b/sound/soc/codecs/ak4642.c
+@@ -433,7 +433,7 @@ static int ak4642_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ static int ak4642_set_mcko(struct snd_soc_codec *codec,
+ 			   u32 frequency)
+ {
+-	u32 fs_list[] = {
++	static const u32 fs_list[] = {
+ 		[0] = 8000,
+ 		[1] = 12000,
+ 		[2] = 16000,
+@@ -447,7 +447,7 @@ static int ak4642_set_mcko(struct snd_soc_codec *codec,
+ 		[14] = 29400,
+ 		[15] = 44100,
+ 	};
+-	u32 ps_list[] = {
++	static const u32 ps_list[] = {
+ 		[0] = 256,
+ 		[1] = 128,
+ 		[2] = 64,
 -- 
 2.11.0
 
