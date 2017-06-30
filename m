@@ -1,46 +1,31 @@
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 22 Jun 2017 09:28:34 +0000
-Subject: Re: [PATCH] kasan: make function get_wild_bug_type static
-Message-Id: <CACT4Y+Yqadr1obZCqpQVTp4DrjOLrshnyPp6L8owoqUybttvSQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 08:00:12 +0000
+Subject: [PATCH] drm: rcar-du: remove an unneeded NULL check
+Message-Id: <20170630080011.o5s7tbrcd7gob3et@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170622090049.10658-1-colin.king@canonical.com>
-In-Reply-To: <20170622090049.10658-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, kasan-dev <kasan-dev@googlegroups.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 22, 2017 at 11:00 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The helper function get_wild_bug_type does not need to be in global scope,
-> so make it static.
->
-> Cleans up sparse warning:
-> "symbol 'get_wild_bug_type' was not declared. Should it be static?"
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+"params" can't be NULL here.  The next lines assume that we either
+hit the break statement of "params->mpixelclock = ~0UL".  The
+inconsistent NULL checking makes static checkers complain.  I've just
+removed the test.
 
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  mm/kasan/report.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> index beee0e980e2d..04bb1d3eb9ec 100644
-> --- a/mm/kasan/report.c
-> +++ b/mm/kasan/report.c
-> @@ -107,7 +107,7 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
->         return bug_type;
->  }
->
-> -const char *get_wild_bug_type(struct kasan_access_info *info)
-> +static const char *get_wild_bug_type(struct kasan_access_info *info)
->  {
->         const char *bug_type = "unknown-crash";
->
-> --
-> 2.11.0
->
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 7539626b8ebd..dc85b53d58ef 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -45,7 +45,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+ {
+ 	const struct rcar_hdmi_phy_params *params = rcar_hdmi_phy_params;
+ 
+-	for (; params && params->mpixelclock != ~0UL; ++params) {
++	for (; params->mpixelclock != ~0UL; ++params) {
+ 		if (mpixelclock <= params->mpixelclock)
+ 			break;
+ 	}
