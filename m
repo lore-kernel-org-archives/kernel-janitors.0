@@ -1,37 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 23 Jun 2017 19:44:35 +0000
-Subject: [PATCH v2] thermal: bcm2835: Fix error code in 'bcm2835_thermal_probe'
-Message-Id: <20170623194435.8094-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 30 Jun 2017 10:08:43 +0000
+Subject: [PATCH][-next] rtlwifi: kfree entry until after entry->bssid has been accessed
+Message-Id: <20170630100843.9188-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'tz' is a valid pointer at this point, so calling PTR_ERR on it is
-pointless.
-This 'err = PTR_ERR(tz)' looks like a cut'n'paste from a few lines above.
-So remove it. 'err' is already the error we want to report.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The current code kfree's entry and then dereferences it by accessing
+entry->bssid.  Avoid the dereference-after-free by moving the kfree
+after the access to entry->bssid.
+
+Detected by CoverityScan, CID#1448600 ("Read from pointer after free")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: fix empty subject
----
- drivers/thermal/broadcom/bcm2835_thermal.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 0ecf80890c84..e6863c841662 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -245,7 +245,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 		 */
- 		err = tz->ops->get_trip_temp(tz, 0, &trip_temp);
- 		if (err < 0) {
--			err = PTR_ERR(tz);
- 			dev_err(&pdev->dev,
- 				"Not able to read trip_temp: %d\n",
- 				err);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index e36ee592c660..208f56297a75 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -1735,12 +1735,12 @@ void rtl_scan_list_expire(struct ieee80211_hw *hw)
+ 			continue;
+ 
+ 		list_del(&entry->list);
+-		kfree(entry);
+ 		rtlpriv->scan_list.num--;
+ 
+ 		RT_TRACE(rtlpriv, COMP_SCAN, DBG_LOUD,
+ 			 "BSSID=%pM is expire in scan list (total=%d)\n",
+ 			 entry->bssid, rtlpriv->scan_list.num);
++		kfree(entry);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&rtlpriv->locks.scan_list_lock, flags);
 -- 
 2.11.0
 
