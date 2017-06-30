@@ -1,45 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 01 Jun 2017 15:59:55 +0000
-Subject: [PATCH 1/3] ARM: dmabounce: Improve a size determination in two functions
-Message-Id: <d78ce917-3920-7858-b866-48a61b1c8fc3@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 08:01:47 +0000
+Subject: [PATCH] phy: phy-twl4030-usb: silence an uninitialized variable warning
+Message-Id: <20170630080147.hbqbjgaa6bnrtwrw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
-In-Reply-To: <697e7810-d280-08f3-2a24-026ff41e15a3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Andreas Kemnade <andreas@kemnade.info>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Heiko Stuebner <heiko@sntech.de>, Vivek Gautam <vivek.gautam@codeaurora.org>, Matt Ranostay <mranostay@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Jun 2017 17:00:17 +0200
+The "check" variable isn't necessarily initialized when we print it out
+in the debugging messages.  It's a pretty haphazard affair and it
+doesn't matter very much what we initialize "check" to.
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/common/dmabounce.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
-index 9b1b7be2ec0e..fcdecb2de242 100644
---- a/arch/arm/common/dmabounce.c
-+++ b/arch/arm/common/dmabounce.c
-@@ -123,5 +123,5 @@ alloc_safe_buffer(struct dmabounce_device_info *device_info, void *ptr,
- 		pool = NULL;
- 	}
+diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
+index 2990b3965460..0e9013868188 100644
+--- a/drivers/phy/ti/phy-twl4030-usb.c
++++ b/drivers/phy/ti/phy-twl4030-usb.c
+@@ -185,7 +185,7 @@ struct twl4030_usb {
+ static int twl4030_i2c_write_u8_verify(struct twl4030_usb *twl,
+ 		u8 module, u8 data, u8 address)
+ {
+-	u8 check;
++	u8 check = 0xFF;
  
--	buf = kmalloc(sizeof(struct safe_buffer), GFP_ATOMIC);
-+	buf = kmalloc(sizeof(*buf), GFP_ATOMIC);
- 	if (buf = NULL) {
-@@ -487,5 +487,5 @@ int dmabounce_register_dev(struct device *dev, unsigned long small_buffer_size,
- 	struct dmabounce_device_info *device_info;
- 	int ret;
- 
--	device_info = kmalloc(sizeof(struct dmabounce_device_info), GFP_ATOMIC);
-+	device_info = kmalloc(sizeof(*device_info), GFP_ATOMIC);
- 	if (!device_info) {
--- 
-2.13.0
-
+ 	if ((twl_i2c_write_u8(module, data, address) >= 0) &&
+ 	    (twl_i2c_read_u8(module, &check, address) >= 0) &&
