@@ -1,40 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Jun 2017 08:02:21 +0000
-Subject: [PATCH] mfd: twl-core: Improve the documentation
-Message-Id: <20170630080220.ctwetsy2jfrxyn4s@mwanda>
+Date: Fri, 30 Jun 2017 07:59:46 +0000
+Subject: [PATCH] nvmem: core: remove unneeded NULL check
+Message-Id: <20170630075946.3sstlbpgdxrydath@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Lindgren <tony@atomide.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Saying it "returns the result" seems tautological.  The read function
-does not return num_bytes on success, it returns zero on success.  I
-noticed this discrepancy because some of the callers were checking for
->= 0.
+"p" is the list iterator so it can't be NULL.  Static checkers complain
+about this unnecessary check because we dereference the list iterator to
+get the next item in the list so we'd be in trouble if it really was
+NULL.  I have removed the check.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-index c64615dca2bd..07d168f8cc81 100644
---- a/drivers/mfd/twl-core.c
-+++ b/drivers/mfd/twl-core.c
-@@ -448,7 +448,7 @@ static struct regmap *twl_get_regmap(u8 mod_no)
-  * @reg: register address (just offset will do)
-  * @num_bytes: number of bytes to transfer
-  *
-- * Returns the result of operation - 0 is success
-+ * Returns 0 on success or else a negative error code.
-  */
- int twl_i2c_write(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
- {
-@@ -476,7 +476,7 @@ EXPORT_SYMBOL(twl_i2c_write);
-  * @reg: register address (just offset will do)
-  * @num_bytes: number of bytes to transfer
-  *
-- * Returns result of operation - num_bytes is success else failure.
-+ * Returns 0 on success or else a negative error code.
-  */
- int twl_i2c_read(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
- {
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 4c49285168fb..f76916b936e1 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -290,7 +290,7 @@ static struct nvmem_cell *nvmem_find_cell(const char *cell_id)
+ 	mutex_lock(&nvmem_cells_mutex);
+ 
+ 	list_for_each_entry(p, &nvmem_cells, node)
+-		if (p && !strcmp(p->name, cell_id)) {
++		if (!strcmp(p->name, cell_id)) {
+ 			mutex_unlock(&nvmem_cells_mutex);
+ 			return p;
+ 		}
