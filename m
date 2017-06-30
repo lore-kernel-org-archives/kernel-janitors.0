@@ -1,27 +1,42 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Tue, 06 Jun 2017 10:53:25 +0000
-Subject: Re: [PATCH 0/3] ARM-pxa: Adjustments for two function implementations
-Message-Id: <87y3t5z8t6.fsf@belgarion.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 07:52:18 +0000
+Subject: [PATCH] platform/x86: intel_telemetry_debugfs: fix some error codes in init
+Message-Id: <20170630075218.m4eal2iqu5i2skx5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net>
-In-Reply-To: <f50bf224-7fdc-f9ba-b73b-0b3c11df50dc@users.sourceforge.net> (SF
- Markus Elfring's message of "Sat, 3 Jun 2017 22:07:49 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+There are bunch of "goto out;" paths where we don't set the error code.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Jun 2017 22:02:34 +0200
->
-> Three update suggestions were taken into account
-> from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to the pxa/for-next tree, thanks.
-
-Cheers.
-
--- 
-Robert
+diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
+index 4cc2f4ea0a25..b8be058a8754 100644
+--- a/drivers/platform/x86/intel_telemetry_debugfs.c
++++ b/drivers/platform/x86/intel_telemetry_debugfs.c
+@@ -938,7 +938,7 @@ static struct notifier_block pm_notifier = {
+ static int __init telemetry_debugfs_init(void)
+ {
+ 	const struct x86_cpu_id *id;
+-	int err = -ENOMEM;
++	int err;
+ 	struct dentry *f;
+ 
+ 	/* Only APL supported for now */
+@@ -958,11 +958,10 @@ static int __init telemetry_debugfs_init(void)
+ 
+ 	register_pm_notifier(&pm_notifier);
+ 
++	err = -ENOMEM;
+ 	debugfs_conf->telemetry_dbg_dir = debugfs_create_dir("telemetry", NULL);
+-	if (!debugfs_conf->telemetry_dbg_dir) {
+-		err = -ENOMEM;
++	if (!debugfs_conf->telemetry_dbg_dir)
+ 		goto out_pm;
+-	}
+ 
+ 	f = debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
+ 				debugfs_conf->telemetry_dbg_dir, NULL,
