@@ -1,42 +1,32 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 02 Jun 2017 14:04:09 +0000
-Subject: Re: [PATCH] net: phy: marvell: make two functions static
-Message-Id: <c09480fc-481f-dfab-576b-1427e89e12ae@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jun 2017 08:03:53 +0000
+Subject: [PATCH 2/2] scsi: lpfc: don't double count abort errors
+Message-Id: <20170630080352.mmfyjjxsznzx75yf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170602111424.31287-1-colin.king@canonical.com>
- <20170602140014.GK12261@lunn.ch>
-In-Reply-To: <20170602140014.GK12261@lunn.ch>
+References: <20170630080250.mjbosf64qlytrsii@mwanda>
+In-Reply-To: <20170630080250.mjbosf64qlytrsii@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>
+Cc: Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/06/17 15:00, Andrew Lunn wrote:
-> On Fri, Jun 02, 2017 at 12:14:24PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> functions m88e1510_get_temp_critical and m88e1510_get_temp_alarm can be
->> made static as they not need to be in global scope.
->>
->> Cleans up sparse warnings:
->>  "symbol 'm88e1510_get_temp_alarm' was not declared. Should it be static?"
->>  "symbol 'm88e1510_get_temp_critical' was not declared. Should it be 
->>   static?"
-> 
-> Hi Colin
-> 
-> What about m88e1510_get_temp_alarm()? That should also have a static.
+If lpfc_nvmet_unsol_fcp_issue_abort() fails then we accidentally
+increment "tgtp->xmt_abort_rsp_error" and then two lines later we
+increment it a second time.
 
-Ah, good point, I somehow missed that one. I'll send a V2
+Fixes: 547077a44b3b ("scsi: lpfc: Adding additional stats counters for nvme.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Colin
-> 
-> Thanks
->      Andrew
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 7dc061a14f95..fbeec344c6cc 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -2583,7 +2583,6 @@ lpfc_nvmet_unsol_fcp_issue_abort(struct lpfc_hba *phba,
+ 	}
+ 
+ aerr:
+-	atomic_inc(&tgtp->xmt_abort_rsp_error);
+ 	ctxp->flag &= ~LPFC_NVMET_ABORT_OP;
+ 	atomic_inc(&tgtp->xmt_abort_rsp_error);
+ 	lpfc_printf_log(phba, KERN_ERR, LOG_NVME_ABTS,
