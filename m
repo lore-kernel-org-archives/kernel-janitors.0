@@ -1,24 +1,82 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 12 Jul 2017 21:20:48 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: Off by one in qlt_ctio_to_cmd()
-Message-Id: <yq160exl5cf.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Jul 2017 19:28:10 +0000
+Subject: [PATCH] coccinelle: api: detect unnecessary le16_to_cpu
+Message-Id: <1498937290-12285-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710084739.tjj7juaex7cb7xs5@mwanda>
-In-Reply-To: <20170710084739.tjj7juaex7cb7xs5@mwanda> (Dan Carpenter's message
-        of "Mon, 10 Jul 2017 11:47:40 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: qla2xxx-upstream@qlogic.com, Nicholas Bellinger <nab@linux-iscsi.org>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
+As reported by Sebastian Reichel, i2c_smbus_read_word_data() returns native
+endianness for little-endian bus (it basically has builtin
+le16_to_cpu). Calling le16_to_cpu on the result breaks support on big
+endian machines by converting it back.
 
-Dan,
+This semantic patch give no reports on kernel code currently, but the
+issue is somewhat obscure and has occurred in a sumitted patch, so it could
+be good to have a check for it.
 
-> There are "req->num_outstanding_cmds" elements in the
-> req->outstanding_cmds[] array so the > here should be >=.
+Suggested-by: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to 4.13/scsi-fixes. Thanks!
+---
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+The rule could easily be extended with more such functions.  Let me know if
+anything else should be taken into account.
+
+ scripts/coccinelle/api/smbus_word.cocci |   45 ++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/scripts/coccinelle/api/smbus_word.cocci b/scripts/coccinelle/api/smbus_word.cocci
+new file mode 100644
+index 0000000..b167cf0
+--- /dev/null
++++ b/scripts/coccinelle/api/smbus_word.cocci
+@@ -0,0 +1,45 @@
++/// i2c_smbus_read_word_data() returns native endianness for little-endian
++/// bus (it basically has builtin le16_to_cpu). Calling le16_to_cpu on the
++/// result breaks support on big endian machines by converting it back.
++///
++// Confidence: Moderate
++// Copyright: (C) 2017 Julia Lawall, Inria. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++// Keywords: i2c_smbus_read_word_data, le16_to_cpu
++
++virtual context
++virtual org
++virtual report
++
++// ----------------------------------------------------------------------------
++
++@r depends on context || org || report exists@
++expression e, x;
++position j0, j1;
++@@
++
++* x@j0 = i2c_smbus_read_word_data(...)
++... when != x = e
++* le16_to_cpu@j1(x)
++
++// ----------------------------------------------------------------------------
++
++@script:python r_org depends on org@
++j0 << r.j0;
++j1 << r.j1;
++@@
++
++msg = "le16_to_cpu not needed on i2c_smbus_read_word_data result."
++coccilib.org.print_todo(j0[0], msg)
++coccilib.org.print_link(j1[0], "")
++
++// ----------------------------------------------------------------------------
++
++@script:python r_report depends on report@
++j0 << r.j0;
++j1 << r.j1;
++@@
++
++msg = "le16_to_cpu not needed on i2c_smbus_read_word_data result around line %s." % (j1[0].line)
++coccilib.report.print_report(j0[0], msg)
+
