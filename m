@@ -1,27 +1,56 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Tue, 04 Jul 2017 01:37:57 +0000
-Subject: Re: [PATCH] ext4: don't free an error pointer
-Message-Id: <20170704013757.mglr2mom3tev5nwj@thunk.org>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 01 Jul 2017 10:14:29 +0000
+Subject: Re: [PATCH][iio-next] iio: adc: stm32: make array stm32h7_adc_ckmodes_spec static
+Message-Id: <20170701111429.6e7ba6a9@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630075652.gsvvzybinoee2biw@mwanda>
-In-Reply-To: <20170630075652.gsvvzybinoee2biw@mwanda>
+References: <20170628130650.21872-1-colin.king@canonical.com>
+ <29afb806-8634-0938-081b-dfab4efa04bf@st.com>
+In-Reply-To: <29afb806-8634-0938-081b-dfab4efa04bf@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Jun 30, 2017 at 10:56:53AM +0300, Dan Carpenter wrote:
-> "goto out;" calls brelse(bh); which will oops on this this path where
-> "bh" is an error pointer.
-> 
-> Fixes: 2851a40a5d71 ("ext4: xattr-in-inode support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Oops.  I wrote a bug report and a patch for this...  Probably we only
-> need the patch.
+On Wed, 28 Jun 2017 16:35:04 +0200
+Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-Thanks, I've folded your this to the xattr-in-inode patch and added a
-credit for the bugfix to the commit log.
+> On 06/28/2017 03:06 PM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The array stm32h7_adc_ckmodes_spec does not need to be in global scope, so
+> > make it static.
+> > 
+> > Cleans up sparse warning:
+> > "symbol 'stm32h7_adc_ckmodes_spec' was not declared. Should it be static?"
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/iio/adc/stm32-adc-core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
+> > index e09233b03c05..9d083c2338f9 100644
+> > --- a/drivers/iio/adc/stm32-adc-core.c
+> > +++ b/drivers/iio/adc/stm32-adc-core.c
+> > @@ -172,7 +172,7 @@ struct stm32h7_adc_ck_spec {
+> >  	int div;
+> >  };
+> >  
+> > -const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
+> > +static const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
+> >  	/* 00: CK_ADC[1..3]: Asynchronous clock modes */
+> >  	{ 0, 0, 1 },
+> >  	{ 0, 1, 2 },
+> >   
+> Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+applied to the togreg branch of iio.git and pushed out as
+testing for the autobuilders to play with it.
 
-					- Ted
+Thanks,
+
+Jonathan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
