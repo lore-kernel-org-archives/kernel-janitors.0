@@ -1,32 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 13 Jul 2017 16:24:44 +0000
-Subject: Re: [PATCH] dccp: make const array error_code static
-Message-Id: <20170713.092444.2018465341570344249.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Jul 2017 10:54:28 +0000
+Subject: [PATCH] mtd: nand: mtk: release lock on error path
+Message-Id: <20170703104858.2226i5bmcvnhhy2x@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713112224.31667-1-colin.king@canonical.com>
-In-Reply-To: <20170713112224.31667-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: gerrit@erg.abdn.ac.uk, dccp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Xiaolei Li <xiaolei.li@mediatek.com>
+Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mtd@lists.infradead.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 13 Jul 2017 12:22:24 +0100
+We only want to hold the lock on the success path, not this error path.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate array error_code on the stack but make it static. Makes
-> the object code smaller by almost 250 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   10366	    983	      0	  11349	   2c55	net/dccp/input.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   10161	   1039	      0	  11200	   2bc0	net/dccp/input.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 7ec4a37c5d71 ("mtd: nand: mediatek: add support for different MTK NAND FLASH Controller IP")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/mtd/nand/mtk_ecc.c b/drivers/mtd/nand/mtk_ecc.c
+index f38e2bb1953e..6c3a4aab0b48 100644
+--- a/drivers/mtd/nand/mtk_ecc.c
++++ b/drivers/mtd/nand/mtk_ecc.c
+@@ -273,8 +273,10 @@ int mtk_ecc_enable(struct mtk_ecc *ecc, struct mtk_ecc_config *config)
+ 	mtk_ecc_wait_idle(ecc, op);
+ 
+ 	ret = mtk_ecc_config(ecc, config);
+-	if (ret)
++	if (ret) {
++		mutex_unlock(&ecc->lock);
+ 		return ret;
++	}
+ 
+ 	if (config->mode != ECC_NFI_MODE || op != ECC_ENCODE) {
+ 		init_completion(&ecc->done);
