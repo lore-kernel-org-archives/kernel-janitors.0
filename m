@@ -1,51 +1,98 @@
-From: "Wolf Entwicklungen" <Marcus.Wolf@Wolf-Entwicklungen.de>
-Date: Thu, 20 Jul 2017 11:02:42 +0000
-Subject: Re: [PATCH 3/3][staging-next] staging: pi433: fix thread_run failure check
-Message-Id: <962023a363631a61711915b30585aef8-EhVcX1pHQwdXWkQFBhENSgEKLlwACzJXX19HAVhEWENbS1kLMF52CEtUX1pBSEwcXlJRL1lQWAhaW34EU1c=-webmailer1@server01.webmailer.webmailer.hosteurope.de>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 03 Jul 2017 11:42:29 +0000
+Subject: Re: [PATCH 5/9] mfd: Drop unnecessary static
+Message-Id: <20170703114229.4457nmk627l75nly@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718130400.25436-1-colin.king@canonical.com>
-    <20170718130400.25436-3-colin.king@canonical.com>
-In-Reply-To: <20170718130400.25436-3-colin.king@canonical.com>
+References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1493928654-18768-6-git-send-email-Julia.Lawall@lip6.fr>
+ <CAGXu5jKgHObu8Ms4KNsO8g_PkoYp4YZbuHzyz0qPMK5xEkT90w@mail.gmail.com>
+In-Reply-To: <CAGXu5jKgHObu8Ms4KNsO8g_PkoYp4YZbuHzyz0qPMK5xEkT90w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Kees Cook <keescook@chromium.org>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Reviewed-by: Marcus Wolf <linux@wolf-entwicklungen.de>
-Tested-by: Marcus Wolf <linux@wolf-entwicklungen.de>
+On Tue, 27 Jun 2017, Kees Cook wrote:
 
-Am Di, 18.07.2017, 15:04 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check for thread_run failure is incorrect, use IS_ERR instead.
->
-> Cleans up sparse error message:
-> "error: incompatible types for operation (<)"
->
-> Fixes: 874bcba65f9a ("staging: pi433: New driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/pi433/pi433_if.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-> index 95930a192de4..266e572ae66e 100644
-> --- a/drivers/staging/pi433/pi433_if.c
-> +++ b/drivers/staging/pi433/pi433_if.c
-> @@ -1152,8 +1152,7 @@ static int pi433_probe(struct spi_device *spi)
->  	device->tx_task_struct = kthread_run(pi433_tx_thread,
->  					     device,
->  					     "pi433_tx_task");
-> -	if (device->tx_task_struct < 0)
-> -	{
-> +	if (IS_ERR(device->tx_task_struct)) {
->  		dev_dbg(device->dev, "start of send thread failed");
->  		goto send_thread_failed;
->  	}
-> --
-> 2.11.0
->
->
->
+> On Thu, May 4, 2017 at 1:10 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> > Drop static on a local variable, when the variable is initialized before
+> > any use, on every possible execution path through the function.
+> >
+> > The semantic patch that fixes this problem is as follows:
+> > (http://coccinelle.lip6.fr/)
+> >
+> > // <smpl>
+> > @bad exists@
+> > position p;
+> > identifier x;
+> > type T;
+> > @@
+> >
+> > static T x@p;
+> > ...
+> > x =3D <+...x...+>
+> >
+> > @@
+> > identifier x;
+> > expression e;
+> > type T;
+> > position p !=3D bad.p;
+> > @@
+> >
+> > -static
+> >  T x@p;
+> >  ... when !=3D x
+> >      when strict
+> > ?x =3D e;
+> > // </smpl>
+> >
+> > The change increases the code size but decreases the size of the bss se=
+gment.
+> >
+> > before:
+> >    text    data     bss     dec     hex filename
+> >    3369     272     300    3941     f65 drivers/mfd/twl4030-irq.o
+> >
+> > after:
+> >    text    data     bss     dec     hex filename
+> >    3401     272      28    3701     e75 drivers/mfd/twl4030-irq.o
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> >
+> > ---
+> >  drivers/mfd/twl4030-irq.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+> > index b46c0cf..c775f27 100644
+> > --- a/drivers/mfd/twl4030-irq.c
+> > +++ b/drivers/mfd/twl4030-irq.c
+> > @@ -683,7 +683,7 @@ int twl4030_sih_setup(struct device *dev, int modul=
+e, int irq_base)
+> >
+> >  int twl4030_init_irq(struct device *dev, int irq_num)
+> >  {
+> > -       static struct irq_chip  twl4030_irq_chip;
+> > +       struct irq_chip twl4030_irq_chip;
+> >         int                     status, i;
+> >         int                     irq_base, irq_end, nr_irqs;
+> >         struct                  device_node *node =3D dev->of_node;
+> >
+>=20
+> Acked-by: Kees Cook <keescook@chromium.org>
+>=20
+> Kernel janitors or Andrew, can you pick this up?
 
+Same.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
