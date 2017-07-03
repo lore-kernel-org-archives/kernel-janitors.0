@@ -1,148 +1,32 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Mon, 03 Jul 2017 13:36:02 +0000
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 03 Jul 2017 16:37:59 +0000
 Subject: Re: [PATCH] coccinelle: api: detect unnecessary le16_to_cpu
-Message-Id: <20170703133602.ejcdu35ku3i63cj2@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bh35jazzbablkmhm"
+Message-Id: <CAHp75VeJY8Xr2H8XK8A7Piu-38TnAeKu5Gn+edtkZmbw2quW0g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1498937290-12285-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1498937290-12285-1-git-send-email-Julia.Lawall@lip6.fr>
+ <20170703133602.ejcdu35ku3i63cj2@earth>
+In-Reply-To: <20170703133602.ejcdu35ku3i63cj2@earth>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
+On Mon, Jul 3, 2017 at 4:36 PM, Sebastian Reichel
+<sebastian.reichel@collabora.co.uk> wrote:
+> On Sat, Jul 01, 2017 at 09:28:10PM +0200, Julia Lawall wrote:
 
---bh35jazzbablkmhm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  * drivers/gpio/gpio-pca953x.c (line 190-192)
 
-Hi Julia,
+It has double conversion there:
+1. LE CPU: Read as LE and converted to LE (no-op), so, just u16
+2. BE CPU: Read as BE and converted to LE, makes it __le16
 
-On Sat, Jul 01, 2017 at 09:28:10PM +0200, Julia Lawall wrote:
-> As reported by Sebastian Reichel, i2c_smbus_read_word_data() returns nati=
-ve
-> endianness for little-endian bus (it basically has builtin
-> le16_to_cpu). Calling le16_to_cpu on the result breaks support on big
-> endian machines by converting it back.
+Looks like the conversion is not needed, only get_unaligned() is necessary.
 
-Thanks, you are fast :)
+P.S. What about lines 244-245 there? I think they are no-op.
+Interesting that those two parts were added in quite different
+commits.
 
-> This semantic patch give no reports on kernel code currently, but the
-> issue is somewhat obscure and has occurred in a sumitted patch, so it cou=
-ld
-> be good to have a check for it.
-
-Ok, so problem is not as bad as I feared. I found a few issues with
-simple git grep, though:
-
-git grep -C100 i2c_smbus_read_word_data | grep le16_to_cpu
-git grep -C100 i2c_smbus_write_word_data | grep cpu_to_le16
-
-It returned just a few files on v4.12 and all of them look buggy
-after manual inspection:
-
- * drivers/macintosh/windfarm_lm75_sensor.c (line 71)
- * drivers/macintosh/windfarm_smu_sat.c (line 80-91)
- * drivers/gpio/gpio-pca953x.c (line 190-192)
- * drivers/power/supply/bq24735-charger.c
-   - fixed in linux-next by 48f680c0a9ca
- * drivers/power/supply/sbs-battery.c
-   - fixed in linux-next by a1bbec72f9fe
-
-> Suggested-by: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->=20
-> The rule could easily be extended with more such functions.  Let me know =
-if
-> anything else should be taken into account.
-
-I guess the write function should also be covered.
-
--- Sebastian
-
->  scripts/coccinelle/api/smbus_word.cocci |   45 +++++++++++++++++++++++++=
-+++++++
->  1 file changed, 45 insertions(+)
->=20
-> diff --git a/scripts/coccinelle/api/smbus_word.cocci b/scripts/coccinelle=
-/api/smbus_word.cocci
-> new file mode 100644
-> index 0000000..b167cf0
-> --- /dev/null
-> +++ b/scripts/coccinelle/api/smbus_word.cocci
-> @@ -0,0 +1,45 @@
-> +/// i2c_smbus_read_word_data() returns native endianness for little-endi=
-an
-> +/// bus (it basically has builtin le16_to_cpu). Calling le16_to_cpu on t=
-he
-> +/// result breaks support on big endian machines by converting it back.
-> +///
-> +// Confidence: Moderate
-> +// Copyright: (C) 2017 Julia Lawall, Inria. GPLv2.
-> +// URL: http://coccinelle.lip6.fr/
-> +// Options: --no-includes --include-headers
-> +// Keywords: i2c_smbus_read_word_data, le16_to_cpu
-> +
-> +virtual context
-> +virtual org
-> +virtual report
-> +
-> +// ---------------------------------------------------------------------=
--------
-> +
-> +@r depends on context || org || report exists@
-> +expression e, x;
-> +position j0, j1;
-> +@@
-> +
-> +* x@j0 =3D i2c_smbus_read_word_data(...)
-> +... when !=3D x =3D e
-> +* le16_to_cpu@j1(x)
-> +
-> +// ---------------------------------------------------------------------=
--------
-> +
-> +@script:python r_org depends on org@
-> +j0 << r.j0;
-> +j1 << r.j1;
-> +@@
-> +
-> +msg =3D "le16_to_cpu not needed on i2c_smbus_read_word_data result."
-> +coccilib.org.print_todo(j0[0], msg)
-> +coccilib.org.print_link(j1[0], "")
-> +
-> +// ---------------------------------------------------------------------=
--------
-> +
-> +@script:python r_report depends on report@
-> +j0 << r.j0;
-> +j1 << r.j1;
-> +@@
-> +
-> +msg =3D "le16_to_cpu not needed on i2c_smbus_read_word_data result aroun=
-d line %s." % (j1[0].line)
-> +coccilib.report.print_report(j0[0], msg)
->=20
-
---bh35jazzbablkmhm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAllaSD4ACgkQ2O7X88g7
-+ppmnA/8C+N/4AqBw81+Gc4ZscPU5IuydzcGKoVUqpA5Fo3Qkye7IbGIghS7hGub
-U2of/+N8sE/kUa4nRrLyIfe3QK/3KfgVi+4gWRe7WaWGUUJbZys2ontyBie2f94n
-I4KdKVf4dfNx+K6Zaac0JNcgGqVUMfTGRvxEaUALpaMiw/edPbF6enLsOa5xchXx
-KgpIG9uR+NuMDrSSVPM9jdm8jachSbU4iTpjsq3MrK8SIuja4bP3Tr5BogzRhCJR
-nrE1FfQnhdoQStKl2kM3yNgI90Eusrvdw6bbKr4TE6GazPZJKrIs22YCOKfe6/S1
-bNDMQpzPy3PPF9R/6qt7WsWyou38VbhnjbUn0+mwy6Fnh78JEUdeP6w1mjjyzUvh
-e6sKbvIAoRFSMTvoU9ce+sZQy7whOoNzA06BmXb0IioLYjf3edYpbn4iRUz7rVq0
-Kzj8q5LARz4vGDuPWjgyT2PqSOboYHLu7IjtWSvFRTrHa0xQLqny78nrOCYFEIpF
-if/3yl19vxmEYvSNmtumXIFNlsi8CeYIv+7KCKCUPi9ljnuzKZCmcBTpCztKHcj5
-oLX8UMOpX7r5Cl8XubpmE/c9m+iUQJD+p1bLgEqB0C8yRL5wKOPPFp3OtExsGvgO
-7DX/+6hUSfYw+nhpmTjf9/OKuID9ksLAR4Yu1WZIH8L7I3U+xXc=
-=1wgC
------END PGP SIGNATURE-----
-
---bh35jazzbablkmhm--
+-- 
+With Best Regards,
+Andy Shevchenko
