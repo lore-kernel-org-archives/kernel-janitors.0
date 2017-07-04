@@ -1,68 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Jul 2017 09:58:19 +0000
-Subject: [PATCH 2/2 v2] leds: tlc591xx: add missing of_node_put
-Message-Id: <1500112699-770-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Jul 2017 10:31:24 +0000
+Subject: [PATCH] usb: renesas_usbhs: make array type_array static const
+Message-Id: <20170704103124.15217-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so a
-return from the loop requires an of_node_put.
+From: Colin Ian King <colin.king@canonical.com>
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+Array type_array can be made static const rather than being
+populated on the stack. Makes the object code smaller:
 
-// <smpl>
-@@
-local idexpression n;
-expression e,e1;
-iterator name for_each_child_of_node;
-@@
+Before:
+   text    data     bss     dec     hex filename
+   8087    1496       0    9583    256f drivers/usb/renesas_usbhs/pipe.o
 
- for_each_child_of_node(e1,n) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-// </smpl>
+After:
+   text    data     bss     dec     hex filename
+   7883    1584       0    9467    24fb drivers/usb/renesas_usbhs/pipe.o
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/leds/leds-tlc591xx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/renesas_usbhs/pipe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index fcc87ee..f5357f6 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -230,11 +230,15 @@ struct tlc591xx {
- 
- 	for_each_child_of_node(np, child) {
- 		err = of_property_read_u32(child, "reg", &reg);
--		if (err)
-+		if (err) {
-+			of_node_put(child);
- 			return err;
-+		}
- 		if (reg < 0 || reg >= tlc591xx->max_leds ||
--		    priv->leds[reg].active)
-+		    priv->leds[reg].active) {
-+			of_node_put(child);
- 			return -EINVAL;
-+		}
- 		priv->leds[reg].active = true;
- 		priv->leds[reg].ldev.name  			of_get_property(child, "label", NULL) ? : child->name;
+diff --git a/drivers/usb/renesas_usbhs/pipe.c b/drivers/usb/renesas_usbhs/pipe.c
+index 9396a8c14af8..d811f0550c04 100644
+--- a/drivers/usb/renesas_usbhs/pipe.c
++++ b/drivers/usb/renesas_usbhs/pipe.c
+@@ -401,7 +401,7 @@ static int usbhsp_setup_pipecfg(struct usbhs_pipe *pipe, int is_host,
+ 	u16 dir = 0;
+ 	u16 epnum = 0;
+ 	u16 shtnak = 0;
+-	u16 type_array[] = {
++	static const u16 type_array[] = {
+ 		[USB_ENDPOINT_XFER_BULK] = TYPE_BULK,
+ 		[USB_ENDPOINT_XFER_INT]  = TYPE_INT,
+ 		[USB_ENDPOINT_XFER_ISOC] = TYPE_ISO,
+-- 
+2.11.0
 
