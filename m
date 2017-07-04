@@ -1,27 +1,58 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 12 Jul 2017 10:52:21 +0000
-Subject: Re: [PATCH] crypto: cavium: make several functions static
-Message-Id: <20170712105221.GE22109@gondor.apana.org.au>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Tue, 04 Jul 2017 15:44:57 +0000
+Subject: Re: [PATCH] video: fbdev: imxfb: use after free in imxfb_remove()
+Message-Id: <2088323.70idy6k2dB@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170620103550.7660-1-colin.king@canonical.com>
-In-Reply-To: <20170620103550.7660-1-colin.king@canonical.com>
+References: <20170630080242.emnw7l53f52pvzeo@mwanda>
+In-Reply-To: <20170630080242.emnw7l53f52pvzeo@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: George Cherian <george.cherian@cavium.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Tue, Jun 20, 2017 at 11:35:50AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions cvm_encrypt, cvm_decrypt, cvm_xts_setkey and
-> cvm_enc_dec_init does not need to be in global scope, so make
-> them static.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi,
+
+On Friday, June 30, 2017 11:02:42 AM Dan Carpenter wrote:
+> We free "info" then dereference it on the next line.  I've moved the
+> call to framebuffer_release() down a line to avoid this problem.
+> 
+> Fixes: b7d2d37276c1 ("video: imxfb: Remove unused fields from platform data structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
+> index c166e0725be5..1d0c3592b290 100644
+> --- a/drivers/video/fbdev/imxfb.c
+> +++ b/drivers/video/fbdev/imxfb.c
+> @@ -1080,10 +1080,9 @@ static int imxfb_remove(struct platform_device *pdev)
+>  
+>  	fb_dealloc_cmap(&info->cmap);
+>  	kfree(info->pseudo_palette);
+> -	framebuffer_release(info);
+> -
+>  	dma_free_wc(&pdev->dev, fbi->map_size, info->screen_base,
+>  		    fbi->map_dma);
+> +	framebuffer_release(info);
+>  
+>  	iounmap(fbi->regs);
+
+Good catch.
+
+While you are at it, please:
+
+- move framebuffer_release() after iounmap() (memory occupied by
+  fbi will also be freed by framebuffer_release() call, please see
+  framebuffer_alloc() for details)
+
+- make the ordering in imxfb_remove() match the ordering of error
+  path in imxfb_probe() (to improve consistency and prevent similar
+  ordering errors in future)
+
+>  	release_mem_region(res->start, resource_size(res));
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
