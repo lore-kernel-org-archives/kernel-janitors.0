@@ -1,81 +1,27 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 25 Jul 2017 08:00:09 +0000
-Subject: Re: [PATCH 07/11] mfd: Drop unnecessary static
-Message-Id: <20170725080009.sm675kxlj7mhjqhi@dell>
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Tue, 04 Jul 2017 01:37:57 +0000
+Subject: Re: [PATCH] ext4: don't free an error pointer
+Message-Id: <20170704013757.mglr2mom3tev5nwj@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500149266-32357-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170630075652.gsvvzybinoee2biw@mwanda>
+In-Reply-To: <20170630075652.gsvvzybinoee2biw@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 15 Jul 2017, Julia Lawall wrote:
-
-> Drop static on a local variable, when the variable is initialized before
-> any possible use.  Thus, the static has no benefit.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> static T x@p;
-> ...
-> x =3D <+...x...+>
->=20
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p !=3D bad.p;
-> @@
-> -static
->  T x@p;
->  ... when !=3D x
->      when strict
-> ?x =3D e;
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
+On Fri, Jun 30, 2017 at 10:56:53AM +0300, Dan Carpenter wrote:
+> "goto out;" calls brelse(bh); which will oops on this this path where
+> "bh" is an error pointer.
+> 
+> Fixes: 2851a40a5d71 ("ext4: xattr-in-inode support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> These patches are all independent of each other.
->=20
->  drivers/mfd/twl4030-irq.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Oops.  I wrote a bug report and a patch for this...  Probably we only
+> need the patch.
 
-Looks like I didn't reply to this patch.
+Thanks, I've folded your this to the xattr-in-inode patch and added a
+credit for the bugfix to the commit log.
 
-Just to let you know, it has been applied.
-
-> diff -u -p a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
-> --- a/drivers/mfd/twl4030-irq.c
-> +++ b/drivers/mfd/twl4030-irq.c
-> @@ -685,7 +685,7 @@ int twl4030_sih_setup(struct device *dev
-> =20
->  int twl4030_init_irq(struct device *dev, int irq_num)
->  {
-> -	static struct irq_chip	twl4030_irq_chip;
-> +	struct irq_chip		twl4030_irq_chip;
->  	int			status, i;
->  	int			irq_base, irq_end, nr_irqs;
->  	struct			device_node *node =3D dev->of_node;
->=20
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+					- Ted
