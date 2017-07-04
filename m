@@ -1,26 +1,39 @@
-From: Chris Metcalf <cmetcalf@mellanox.com>
-Date: Mon, 24 Jul 2017 15:25:30 +0000
-Subject: Re: [PATCH] tile: array underflow in setup_maxnodemem()
-Message-Id: <536a0798-3fc3-61ed-f011-cf6f1b86cd0a@mellanox.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 04 Jul 2017 15:09:59 +0000
+Subject: [PATCH][-next] net: macb: remove extraneous return when MACB_EXT_DESC is defined
+Message-Id: <20170704150959.18315-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170722073302.34qagmx66a6djxsi@mwanda>
-In-Reply-To: <20170722073302.34qagmx66a6djxsi@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 7/22/2017 3:33 AM, Dan Carpenter wrote:
-> My static checker correctly complains that we should have a lower bound
-> on "node" to prevent an array underflow.
->
-> Fixes: 867e359b97c9 ("arch/tile: core support for Tilera 32-bit chips.")
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, taken into the tile tree.
+When macro MACB_EXT_DESC is defined we end up with two identical
+return statements and just one is sufficient. Remove the extra
+return.
 
+Detected by CoverityScan, CID#1449361 ("Structurally dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 41e5711544fc..e69ebdd65658 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -146,7 +146,6 @@ static unsigned int macb_adj_dma_desc_idx(struct macb *bp, unsigned int desc_idx
+ 	default:
+ 		break;
+ 	}
+-	return desc_idx;
+ #endif
+ 	return desc_idx;
+ }
 -- 
-Chris Metcalf, Mellanox Technologies
-http://www.mellanox.com
+2.11.0
 
