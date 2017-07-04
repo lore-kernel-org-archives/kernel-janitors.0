@@ -1,55 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Jul 2017 19:55:04 +0000
-Subject: [PATCH] staging: vchiq_arm: fix error codes in probe
-Message-Id: <20170711195456.brrzp7rotktte2jq@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 04 Jul 2017 05:55:15 +0000
+Subject: [PATCH] drm/i915: Fix an error hanfling path in 'i915_gem_do_execbuffer'
+Message-Id: <20170704055515.2394-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-If vchiq_debugfs_init() fails, then we accidentally return a valid
-pointer casted to int on error.  This code is simpler if we get rid of
-the "ptr_err" variable and just use "err" throughout.
+if 'eb_create()' fails, we must release some resources as done in all other
+error handling paths of this function.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is just a guess based on surrounding gotos and function names.
+(i.e. 'get_unused_fd_flags()' and 'put_unused_fd()')
+---
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 030bec855d86..314ffac50bb8 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -3391,7 +3391,6 @@ static int vchiq_probe(struct platform_device *pdev)
- 	struct device_node *fw_node;
- 	struct rpi_firmware *fw;
- 	int err;
--	void *ptr_err;
+diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+index 9337446f1068..0746b352f820 100644
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -2180,8 +2180,9 @@ i915_gem_do_execbuffer(struct drm_device *dev,
+ 		}
+ 	}
  
- 	fw_node = of_parse_phandle(pdev->dev.of_node, "firmware", 0);
- 	if (!fw_node) {
-@@ -3427,14 +3426,14 @@ static int vchiq_probe(struct platform_device *pdev)
+-	if (eb_create(&eb))
+-		return -ENOMEM;
++	err = eb_create(&eb);
++	if (err)
++		goto err_put_unused_fd;
  
- 	/* create sysfs entries */
- 	vchiq_class = class_create(THIS_MODULE, DEVICE_NAME);
--	ptr_err = vchiq_class;
--	if (IS_ERR(ptr_err))
-+	err = PTR_ERR(vchiq_class);
-+	if (IS_ERR(vchiq_class))
- 		goto failed_class_create;
- 
- 	vchiq_dev = device_create(vchiq_class, NULL,
- 		vchiq_devid, NULL, "vchiq");
--	ptr_err = vchiq_dev;
--	if (IS_ERR(ptr_err))
-+	err = PTR_ERR(vchiq_dev);
-+	if (IS_ERR(vchiq_dev))
- 		goto failed_device_create;
- 
- 	/* create debugfs entries */
-@@ -3455,7 +3454,6 @@ static int vchiq_probe(struct platform_device *pdev)
- 	class_destroy(vchiq_class);
- failed_class_create:
- 	cdev_del(&vchiq_cdev);
--	err = PTR_ERR(ptr_err);
- failed_cdev_add:
- 	unregister_chrdev_region(vchiq_devid, 1);
- failed_platform_init:
+ 	/*
+ 	 * Take a local wakeref for preparing to dispatch the execbuf as
+@@ -2340,6 +2341,7 @@ i915_gem_do_execbuffer(struct drm_device *dev,
+ err_rpm:
+ 	intel_runtime_pm_put(eb.i915);
+ 	eb_destroy(&eb);
++err_put_unused_fd:
+ 	if (out_fence_fd != -1)
+ 		put_unused_fd(out_fence_fd);
+ err_in_fence:
+-- 
+2.11.0
+
