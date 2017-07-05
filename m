@@ -1,82 +1,42 @@
-From: Daniel Scheller <d.scheller.oss@gmail.com>
-Date: Sat, 22 Jul 2017 10:59:53 +0000
-Subject: Re: [PATCH][media-next] media: dvb-frontends/stv0910: make various local variables static
-Message-Id: <20170722125953.362fe9c6@audiostation.wuest.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 05 Jul 2017 05:50:54 +0000
+Subject: [PATCH] mfd: Fix potential NULL pointer dereference
+Message-Id: <20170705055054.8022-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170721110635.23610-1-colin.king@canonical.com>
-In-Reply-To: <20170721110635.23610-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Am Fri, 21 Jul 2017 12:06:35 +0100
-schrieb Colin King <colin.king@canonical.com>:
+if 'max8998_i2c_parse_dt_pdata() fails (when out of memory), a NULL
+pointer dereference will occur in the error handling code.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The list stvlist and arrays padc_lookup, s1_sn_lookup and s2_sn_lookup
-> do not need to be in global scope, so make them all static.
-> 
-> Cleans up a bunch of smatch warnings:
-> symbol 'padc_lookup' was not declared. Should it be static?
-> symbol 's1_sn_lookup' was not declared. Should it be static?
-> symbol 's2_sn_lookup' was not declared. Should it be static?
-> symbol 'stvlist' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Return directly instead.
 
-Thanks,
+Fixes: ee999fb3f17f("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mfd/max8998.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Acked-by: Daniel Scheller <d.scheller@gmx.net>
-
-> ---
->  drivers/media/dvb-frontends/stv0910.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/stv0910.c
-> b/drivers/media/dvb-frontends/stv0910.c index
-> 7e8a460449c5..bae1da3fdb2d 100644 ---
-> a/drivers/media/dvb-frontends/stv0910.c +++
-> b/drivers/media/dvb-frontends/stv0910.c @@ -34,7 +34,7 @@
->  #define BER_SRC_S    0x20
->  #define BER_SRC_S2   0x20
->  
-> -LIST_HEAD(stvlist);
-> +static LIST_HEAD(stvlist);
->  
->  enum receive_mode { RCVMODE_NONE, RCVMODE_DVBS, RCVMODE_DVBS2,
-> RCVMODE_AUTO }; 
-> @@ -207,7 +207,7 @@ static int write_shared_reg(struct stv *state,
-> u16 reg, u8 mask, u8 val) return status;
->  }
->  
-> -struct slookup s1_sn_lookup[] = {
-> +static struct slookup s1_sn_lookup[] = {
->  	{   0,    9242  },  /*C/N=  0dB*/
->  	{   5,    9105  },  /*C/N=0.5dB*/
->  	{  10,    8950  },  /*C/N=1.0dB*/
-> @@ -264,7 +264,7 @@ struct slookup s1_sn_lookup[] = {
->  	{  510,    425  }   /*C/NQ.0dB*/
->  };
->  
-> -struct slookup s2_sn_lookup[] = {
-> +static struct slookup s2_sn_lookup[] = {
->  	{  -30,  13950  },  /*C/N=-2.5dB*/
->  	{  -25,  13580  },  /*C/N=-2.5dB*/
->  	{  -20,  13150  },  /*C/N=-2.0dB*/
-> @@ -327,7 +327,7 @@ struct slookup s2_sn_lookup[] = {
->  	{  510,    463  },  /*C/NQ.0dB*/
->  };
->  
-> -struct slookup padc_lookup[] = {
-> +static struct slookup padc_lookup[] = {
->  	{    0,  118000 }, /* PADC=+0dBm  */
->  	{ -100,  93600  }, /* PADC=-1dBm  */
->  	{ -200,  74500  }, /* PADC=-2dBm  */
-
-Best regards,
-Daniel Scheller
+diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
+index 4c33b8063bc3..b1d3f70782d9 100644
+--- a/drivers/mfd/max8998.c
++++ b/drivers/mfd/max8998.c
+@@ -192,10 +192,8 @@ static int max8998_i2c_probe(struct i2c_client *i2c,
+ 
+ 	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node) {
+ 		pdata = max8998_i2c_parse_dt_pdata(&i2c->dev);
+-		if (IS_ERR(pdata)) {
+-			ret = PTR_ERR(pdata);
+-			goto err;
+-		}
++		if (IS_ERR(pdata))
++			return PTR_ERR(pdata);
+ 	}
+ 
+ 	i2c_set_clientdata(i2c, max8998);
 -- 
-https://github.com/herrnst
+2.11.0
+
