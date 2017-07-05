@@ -1,17 +1,19 @@
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Date: Wed, 05 Jul 2017 08:03:49 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 05 Jul 2017 08:09:58 +0000
 Subject: Re: [PATCH][-next] net: macb: remove extraneous return when MACB_EXT_DESC is defined
-Message-Id: <b43c0c9b-37c0-466c-4d17-7fc26ca07060@microchip.com>
+Message-Id: <20170705.090958.2221041161435076999.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170704150959.18315-1-colin.king@canonical.com>
 In-Reply-To: <20170704150959.18315-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org, David Miller <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: colin.king@canonical.com
+Cc: nicolas.ferre@microchip.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/07/2017 at 17:09, Colin King wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Tue,  4 Jul 2017 16:09:59 +0100
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > When macro MACB_EXT_DESC is defined we end up with two identical
@@ -22,26 +24,4 @@ On 04/07/2017 at 17:09, Colin King wrote:
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
-> ---
->  drivers/net/ethernet/cadence/macb_main.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 41e5711544fc..e69ebdd65658 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -146,7 +146,6 @@ static unsigned int macb_adj_dma_desc_idx(struct macb *bp, unsigned int desc_idx
->  	default:
->  		break;
->  	}
-> -	return desc_idx;
->  #endif
->  	return desc_idx;
->  }
-> 
-
-
--- 
-Nicolas Ferre
+Applied, thanks.
