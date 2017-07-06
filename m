@@ -1,59 +1,36 @@
-From: Keith Busch <keith.busch@intel.com>
-Date: Mon, 17 Jul 2017 16:09:18 +0000
-Subject: Re: [PATCH] nvme-pci: Fix an error handling path in 'nvme_probe()'
-Message-Id: <20170717160918.GD24365@localhost.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Jul 2017 09:26:52 +0000
+Subject: [PATCH] nvme-pci: compile warnings in nvme_alloc_host_mem()
+Message-Id: <20170706092651.dshe5uxn665icxma@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170716083903.7108-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170716083903.7108-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 16, 2017 at 10:39:03AM +0200, Christophe JAILLET wrote:
-> Release resources in the correct order in order not to miss a
-> 'put_device()' if 'nvme_dev_map()' fails.
-> 
-> Fixes: b00a726a9fd8 ("NVMe: Don't unmap controller registers on reset")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+"i" should be signed or it could cause a forever loop on the cleanup
+path. "size" can be used uninitialized.
 
-Indeed, thanks for the fix. Alternatively this can be fixed by relocating
-nvme_dev_map prior to the 'get_device' a few lines up. This patch is
-okay, too.
+Fixes: 87ad72a59a38 ("nvme-pci: implement host memory buffer support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Presumably Arnd already sent a patch for this, but it's been hanging
+around linux-next for a while and I want to mark it as dealt with.
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index d10d2f279d19..005beffd005d 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2282,7 +2282,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  
->  	result = nvme_dev_map(dev);
->  	if (result)
-> -		goto free;
-> +		goto put_pci;
->  
->  	INIT_WORK(&dev->ctrl.reset_work, nvme_reset_work);
->  	INIT_WORK(&dev->remove_work, nvme_remove_dead_ctrl_work);
-> @@ -2291,7 +2291,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  
->  	result = nvme_setup_prp_pools(dev);
->  	if (result)
-> -		goto put_pci;
-> +		goto unmap;
->  
->  	quirks |= check_dell_samsung_bug(pdev);
->  
-> @@ -2308,9 +2308,10 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  
->   release_pools:
->  	nvme_release_prp_pools(dev);
-> + unmap:
-> +	nvme_dev_unmap(dev);
->   put_pci:
->  	put_device(dev->dev);
-> -	nvme_dev_unmap(dev);
->   free:
->  	kfree(dev->queues);
->  	kfree(dev);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 0ae864b63411..a40675947893 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1585,9 +1585,10 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
+ static int nvme_alloc_host_mem(struct nvme_dev *dev, u64 min, u64 preferred)
+ {
+ 	struct nvme_host_mem_buf_desc *descs;
+-	u32 chunk_size, max_entries, i = 0;
++	u32 chunk_size, max_entries;
++	int i = 0;
+ 	void **bufs;
+-	u64 size, tmp;
++	u64 size = 0, tmp;
+ 
+ 	/* start big and work our way down */
+ 	chunk_size = min(preferred, (u64)PAGE_SIZE << MAX_ORDER);
