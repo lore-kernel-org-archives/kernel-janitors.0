@@ -1,93 +1,50 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 17 Jul 2017 11:00:56 +0000
-Subject: Re: [PATCH 9/9] mfd: max8925-i2c: Drop unnecessary static
-Message-Id: <20170717110056.q5fp3wvjoamov5c2@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Jul 2017 15:06:32 +0000
+Subject: [PATCH][V2] usb: storage: return on error to avoid a null pointer dereference
+Message-Id: <20170706150633.11240-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
- <1493928654-18768-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1493928654-18768-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 04 May 2017, Julia Lawall wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Drop static on a local variable, when the variable is initialized before
-> any use, on every possible execution path through the function.  The stat=
-ic
-> has no benefit, and dropping it reduces the code size.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
->=20
-> static T x@p;
-> ...
-> x =3D <+...x...+>
->=20
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p !=3D bad.p;
-> @@
->=20
-> -static
->  T x@p;
->  ... when !=3D x
->      when strict
-> ?x =3D e;
-> // </smpl>
->=20
-> The change in code size is indicates by the following output from the size
-> command.
->=20
-> before:
->    text    data     bss     dec     hex filename
->    2579     240      16    2835     b13 drivers/mfd/max8925-i2c.o
->=20
-> after:
->    text    data     bss     dec     hex filename
->    2531     240       8    2779     adb drivers/mfd/max8925-i2c.o
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/mfd/max8925-i2c.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+When us->extra is null the driver is not initialized, however, a
+later call to osd200_scsi_to_ata is made that dereferences
+us->extra, causing a null pointer dereference.  The code
+currently detects and reports that the driver is not initialized;
+add a return to avoid the subsequent dereference issue in this
+check.
 
-Applied, thanks.
+Thanks to Alan Stern for pointing out that srb->result needs setting
+to DID_ERROR << 16
 
-> diff --git a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
-> index 5c80aea..1006323 100644
-> --- a/drivers/mfd/max8925-i2c.c
-> +++ b/drivers/mfd/max8925-i2c.c
-> @@ -151,7 +151,7 @@ static int max8925_probe(struct i2c_client *client,
->  				   const struct i2c_device_id *id)
->  {
->  	struct max8925_platform_data *pdata =3D dev_get_platdata(&client->dev);
-> -	static struct max8925_chip *chip;
-> +	struct max8925_chip *chip;
->  	struct device_node *node =3D client->dev.of_node;
-> =20
->  	if (node && !pdata) {
->=20
+Detected by CoverityScan, CID#100308 ("Dereference after null check")
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/storage/isd200.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
+index fba4005dd737..6a7720e66595 100644
+--- a/drivers/usb/storage/isd200.c
++++ b/drivers/usb/storage/isd200.c
+@@ -1529,8 +1529,11 @@ static void isd200_ata_command(struct scsi_cmnd *srb, struct us_data *us)
+ 
+ 	/* Make sure driver was initialized */
+ 
+-	if (us->extra = NULL)
++	if (us->extra = NULL) {
+ 		usb_stor_dbg(us, "ERROR Driver not initialized\n");
++		srb->result = DID_ERROR << 16;
++		return;
++	}
+ 
+ 	scsi_set_resid(srb, 0);
+ 	/* scsi_bufflen might change in protocol translation to ata */
+-- 
+2.11.0
+
