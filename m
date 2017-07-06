@@ -1,52 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 28 Jul 2017 16:51:11 +0000
-Subject: Re: rt2x00: make const array glrt_table static
-Message-Id: <877eyswlmo.fsf@purkki.adurom.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 06 Jul 2017 10:06:35 +0000
+Subject: [PATCH] usb: storage: return on error to avoid a null pointer dereference
+Message-Id: <20170706100635.16610-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170711114733.15387-1-colin.king@canonical.com>
-        <20170728150130.336D06095E@smtp.codeaurora.org>
-In-Reply-To: <20170728150130.336D06095E@smtp.codeaurora.org> (Kalle Valo's
-        message of "Fri, 28 Jul 2017 15:01:30 +0000 (UTC)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Colin Ian King <colin.king@canonical.com> wrote:
->
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> Don't populate array glrt_table on the stack but make it static.
->> Makes the object code a smaller by over 670 bytes:
->> 
->> Before:
->>    text	   data	    bss	    dec	    hex	filename
->>  131772	   4733	      0	 136505	  21539	rt2800lib.o
->> 
->> After:
->>    text	   data	    bss	    dec	    hex	filename
->>  131043	   4789	      0	 135832	  21298	rt2800lib.o
->> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
->
-> Patch applied to wireless-drivers-next.git, thanks.
->
-> 17830147c40a mwifiex: fix spelling mistake: "Insuffient" -> "Insufficient"
+When us->extra is null the driver is not initialized, however, a
+later call to osd200_scsi_to_ata is made that dereferences
+us->extra, causing a null pointer dereference.  The code
+currently detects and reports that the driver is not initialized;
+add a return to avoid the subsequent dereference issue in this
+check.
 
-Dave had applied this earlier and my script failed to detect that. Hence
-the commit above is wrong.
+Detected by CoverityScan, CID#100308 ("Dereference after null check")
 
-commit bf98bd0be1ba509c5e6d77524ffac192f1edb2dd
-Author:     Colin Ian King <colin.king@canonical.com>
-AuthorDate: Tue Jul 11 12:47:33 2017 +0100
-Commit:     David S. Miller <davem@davemloft.net>
-CommitDate: Thu Jul 13 09:23:56 2017 -0700
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/storage/isd200.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-    rt2x00: make const array glrt_table static
-
+diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
+index fba4005dd737..174ad60679e7 100644
+--- a/drivers/usb/storage/isd200.c
++++ b/drivers/usb/storage/isd200.c
+@@ -1529,8 +1529,10 @@ static void isd200_ata_command(struct scsi_cmnd *srb, struct us_data *us)
+ 
+ 	/* Make sure driver was initialized */
+ 
+-	if (us->extra = NULL)
++	if (us->extra = NULL) {
+ 		usb_stor_dbg(us, "ERROR Driver not initialized\n");
++		return;
++	}
+ 
+ 	scsi_set_resid(srb, 0);
+ 	/* scsi_bufflen might change in protocol translation to ata */
 -- 
-Kalle Valo
+2.11.0
+
