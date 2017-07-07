@@ -1,76 +1,72 @@
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 18 Jul 2017 11:00:21 +0000
-Subject: Re: [PATCH] ext4: silence array overflow warning
-Message-Id: <CAOQ4uxi+H4AQW=twF8pL1G-rOYcpFLw5T+nktZG9jQkjimkiZA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jul 2017 12:17:09 +0000
+Subject: [bug report] qed: iWARP CM add passive side connect
+Message-Id: <20170707121708.hwjpu5ph2kmuwixb@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718092702.bpk2k5qjg4cz2mqk@mwanda>
-In-Reply-To: <20170718092702.bpk2k5qjg4cz2mqk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Ext4 <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>
+To: kernel-janitors@vger.kernel.org
 
-CC fsdevel, because this bug is duplicated at least in 6 other filesystems:
-ext2, exofs, ocfs2, f2fs, nilfs2, btrfs
+Hello Kalderon, Michal,
 
-On Tue, Jul 18, 2017 at 12:27 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> I get a static checker warning:
->
->     fs/ext4/ext4.h:3091 ext4_set_de_type()
->     error: buffer overflow 'ext4_type_by_mode' 15 <= 15
->
-> It seems unlikely that we would hit this read overflow in real life, but
-> it's also simple enough to make the array 16 bytes instead of 15.
+The patch 456a584947d5: "qed: iWARP CM add passive side connect" from
+Jul 2, 2017, leads to the following Smatch warnings:
 
-FYI, I posted a series to fix this in 10 different filesystems, all have
-the same hypothetical bug:
-https://marc.info/?l=linux-fsdevel&m8217829301701&w=2
-There were objections about using common code for filesystem
-specific on-disk format, so my initial approach was dropped.
+	drivers/net/ethernet/qlogic/qed/qed_iwarp.c:585 qed_iwarp_print_tcp_ramrod()
+	warn: '%pI6' can only be followed by c
+	drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1521 qed_iwarp_print_cm_info()
+	warn: '%pI6' can only be followed by c
 
-My manual code audit of ext4 concluded that this specific bug cannot
-hit current ext4 code, which sanitizes the value of i_mode when reading
-it from disk:
-https://marc.info/?l=linux-fsdevel&m8243866204444&w=2
 
-The only maintainer that followed up on fixing the array overflow was
-Darrick and a fix was merged to xfs:
-1fc4d33fed12 xfs: replace xfs_mode_to_ftype table with switch statement
+drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+   576          if (p_tcp_ramrod->tcp.ip_version = TCP_IPV4) {
+   577                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
+   578                             "local_ip=%pI4h:%x, remote_ip=%pI4h%x, vlan=%x\n",
+   579                             p_tcp_ramrod->tcp.local_ip,
+   580                             p_tcp_ramrod->tcp.local_port,
+   581                             p_tcp_ramrod->tcp.remote_ip,
+   582                             p_tcp_ramrod->tcp.remote_port,
+   583                             p_tcp_ramrod->tcp.vlan_id);
+   584          } else {
+   585                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
+   586                             "local_ip=%pI6h:%x, remote_ip=%pI6h:%x, vlan=%x\n",
+                                                 ^                   ^
+These seem like copy and paste errors.  With IPv6 everything that's not
+'c' is treated the same.  There is no 'h' options.  (I'm not really
+familiar with the what formats people prefer).
 
-So there are 6 more fix patches you can send.
+   587                             p_tcp_ramrod->tcp.local_ip,
+   588                             p_tcp_ramrod->tcp.local_port,
+   589                             p_tcp_ramrod->tcp.remote_ip,
+   590                             p_tcp_ramrod->tcp.remote_port,
+   591                             p_tcp_ramrod->tcp.vlan_id);
+   592          }
 
-Cheers,
-Amir.
+	[ snip ]
 
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 9ebde0cd632e..fbaeb441bed3 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3074,7 +3074,7 @@ extern int ext4_handle_dirty_dirent_node(handle_t *handle,
->                                          struct inode *inode,
->                                          struct buffer_head *bh);
->  #define S_SHIFT 12
-> -static const unsigned char ext4_type_by_mode[S_IFMT >> S_SHIFT] = {
-> +static const unsigned char ext4_type_by_mode[(S_IFMT >> S_SHIFT) + 1] = {
->         [S_IFREG >> S_SHIFT]    = EXT4_FT_REG_FILE,
->         [S_IFDIR >> S_SHIFT]    = EXT4_FT_DIR,
->         [S_IFCHR >> S_SHIFT]    = EXT4_FT_CHRDEV,
+  1508  qed_iwarp_print_cm_info(struct qed_hwfn *p_hwfn,
+  1509                          struct qed_iwarp_cm_info *cm_info)
+  1510  {
+  1511          DP_VERBOSE(p_hwfn, QED_MSG_RDMA, "ip_version = %d\n",
+  1512                     cm_info->ip_version);
+  1513  
+  1514          if (cm_info->ip_version = QED_TCP_IPV4)
+  1515                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
+  1516                             "remote_ip %pI4h:%x, local_ip %pI4h:%x vlan=%x\n",
+  1517                             cm_info->remote_ip, cm_info->remote_port,
+  1518                             cm_info->local_ip, cm_info->local_port,
+  1519                             cm_info->vlan);
+  1520          else
+  1521                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
+  1522                             "remote_ip %pI6h:%x, local_ip %pI6h:%x vlan=%x\n",
+                                                  ^                  ^
+Same.
 
-I still think it makes more sense to use common DT_* macros here,
-even if not using common conversion helpers, i.e.:
-https://marc.info/?l=linux-fsdevel&m8221950110233&w=2
+  1523                             cm_info->remote_ip, cm_info->remote_port,
+  1524                             cm_info->local_ip, cm_info->local_port,
+  1525                             cm_info->vlan);
+  1526  
 
-If for nothing else, then for not redefining S_SHIFT 7 times
-in the code:
-fs/btrfs/inode.c:#define S_SHIFT 12
-fs/exofs/dir.c:#define S_SHIFT 12
-fs/ext2/dir.c:#define S_SHIFT 12
-fs/ext4/ext4.h:#define S_SHIFT 12
-fs/nilfs2/dir.c:#define S_SHIFT 12
-fs/ocfs2/ocfs2_fs.h:#define S_SHIFT 12
-include/linux/f2fs_fs.h:#define S_SHIFT 12
+regards,
+dan carpenter
