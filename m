@@ -1,45 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Jul 2017 14:08:55 +0000
-Subject: [PATCH] ASoC: hdmi-codec: make const array hdmi_codec_eld_spk_alloc_bits static
-Message-Id: <20170711140855.17634-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jul 2017 08:41:17 +0000
+Subject: [PATCH 3/3] lib/test_kmod: fix fs module tests
+Message-Id: <20170707084117.jbi3g364jz75liay@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20170707083933.2mgnpqafhspbwu7h@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Vincent Abriou <vincent.abriou@st.com>, Jon Medhurst <tixy@linaro.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The break was in the wrong place so file system tests don't work as
+intended.
 
-Don't populate array hdmi_codec_eld_spk_alloc_bits on the stack but
-make it static. Makes the object code smaller by over 260 bytes:
+Fixes: 39258f448d71 ("kmod: add test driver to stress test the module loader")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  10882	   3384	     64	  14330	   37fa	sound/soc/codecs/hdmi-codec.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  10557	   3440	     64	  14061	   36ed	sound/soc/codecs/hdmi-codec.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/hdmi-codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 7686a80861f1..509ab513b4b2 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -326,7 +326,7 @@ static int hdmi_eld_ctl_get(struct snd_kcontrol *kcontrol,
- static unsigned long hdmi_codec_spk_mask_from_alloc(int spk_alloc)
- {
- 	int i;
--	const unsigned long hdmi_codec_eld_spk_alloc_bits[] = {
-+	static const unsigned long hdmi_codec_eld_spk_alloc_bits[] = {
- 		[0] = FL | FR, [1] = LFE, [2] = FC, [3] = RL | RR,
- 		[4] = RC, [5] = FLC | FRC, [6] = RLC | RRC,
- 	};
--- 
-2.11.0
-
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index 093b44771197..5a402e610237 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -746,11 +746,11 @@ static int trigger_config_run_type(struct kmod_test_device *test_dev,
+ 						      strlen(test_str));
+ 		break;
+ 	case TEST_KMOD_FS_TYPE:
+-		break;
+ 		kfree_const(config->test_fs);
+ 		config->test_driver = NULL;
+ 		copied = config_copy_test_fs(config, test_str,
+ 					     strlen(test_str));
++		break;
+ 	default:
+ 		mutex_unlock(&test_dev->config_mutex);
+ 		return -EINVAL;
