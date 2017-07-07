@@ -1,49 +1,39 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 19 Jul 2017 18:11:09 +0000
-Subject: Re: [PATCH v2] platform/x86: peaq-wmi: silence a static checker warning
-Message-Id: <CAHp75Vck_T6Fi8qfu5SPUN7t3bdjmOxYRvoenOH4pyRUUSPb7A@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 07 Jul 2017 04:56:16 +0000
+Subject: [PATCH] arcnet: com20020-pci: Fix an error handling path in 'com20020pci_probe()'
+Message-Id: <20170707045616.8909-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAHp75VdSD0zVFtnwF8oWt24P8DM6vZQNO93F_38yaCYBzCCBRw@mail.gmail.com>
- <20170719130718.gcskf2ofko5wv6rw@mwanda>
-In-Reply-To: <20170719130718.gcskf2ofko5wv6rw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Darren Hart <dvhart@infradead.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: m.grzeschik@pengutronix.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Jul 19, 2017 at 4:07 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> There is a harmless static checker warning here that unsigned values are
-> always >= 0.  The code looks like:
->
->         if (peaq_ignore_events_counter && --peaq_ignore_events_counter >= 0)
->
-> The first part of the condition ensures that we never wrap around so the
-> code works as intended.  I've tweaked it slightly to avoid the warning.
->
+If this memory allocation fails, we should go through the error handling
+path as done everywhere else in this function before returning.
 
-Pushed to testing, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/arcnet/com20020-pci.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Andy Shevchenko's approach is cleaner
->
-> diff --git a/drivers/platform/x86/peaq-wmi.c b/drivers/platform/x86/peaq-wmi.c
-> index 77d1f90b0794..c68bd76954fd 100644
-> --- a/drivers/platform/x86/peaq-wmi.c
-> +++ b/drivers/platform/x86/peaq-wmi.c
-> @@ -51,7 +51,7 @@ static void peaq_wmi_poll(struct input_polled_dev *dev)
->                 return;
->         }
->
-> -       if (peaq_ignore_events_counter && --peaq_ignore_events_counter >= 0)
-> +       if (peaq_ignore_events_counter && peaq_ignore_events_counter--)
->                 return;
->
->         if (obj.integer.value) {
-
-
-
+diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
+index 239de38fbd6a..8e89a2ac071e 100644
+--- a/drivers/net/arcnet/com20020-pci.c
++++ b/drivers/net/arcnet/com20020-pci.c
+@@ -196,8 +196,10 @@ static int com20020pci_probe(struct pci_dev *pdev,
+ 
+ 		card = devm_kzalloc(&pdev->dev, sizeof(struct com20020_dev),
+ 				    GFP_KERNEL);
+-		if (!card)
+-			return -ENOMEM;
++		if (!card) {
++			ret = -ENOMEM;
++			goto out_port;
++		}
+ 
+ 		card->index = i;
+ 		card->pci_priv = priv;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
