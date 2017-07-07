@@ -1,70 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:16:56 +0000
-Subject: [PATCH 2/2] l2tp: constify net_protocol structures
-Message-Id: <1501309016-16059-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jul 2017 08:39:33 +0000
+Subject: [PATCH 1/3] lib/test_kmod: tidy up bounds checking
+Message-Id: <20170707083933.2mgnpqafhspbwu7h@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The net_protocol structure is only passed as the first argument to
-inet_add_protocol or inet_del_protocol, both of which are declared
-as const.  Thus the net_protocol structure itself can be const.
+There is technically a bug where we don't test for negatives in
+test_dev_config_update_uint_sync().  "new" is long and UINT_MAX is
+unsigned int so on 64 bit systems negatives are allowed.
 
-Done with the help of Coccinelle.
+In the next test I removed the UINT_MAX comparison because "max" is
+already an unsigned int so we already know that "new" can't be larger
+than UINT_MAX.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct net_protocol i@p = { ... };
+On the third test, I just flipped the tests around so we consistently
+test the lower bound before the upper bound.
 
-@ok1@
-identifier r.i;
-expression e1;
-position p;
-@@
- \(inet_add_protocol\|inet_del_protocol\)(&i@p,...)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct net_protocol e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct net_protocol i = { ... };
-// </smpl>
-
-Also drop __read_mostly.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/l2tp/l2tp_ip.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
-index 4d322c1..c8e4d85 100644
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -649,7 +649,7 @@ int l2tp_ioctl(struct sock *sk, int cmd, unsigned long arg)
- 	.ops		= &l2tp_ip_ops,
- };
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index 6c1d678bcf8b..8797400b8bda 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -887,7 +887,7 @@ static int test_dev_config_update_uint_sync(struct kmod_test_device *test_dev,
+ 	if (ret)
+ 		return ret;
  
--static struct net_protocol l2tp_ip_protocol __read_mostly = {
-+static const struct net_protocol l2tp_ip_protocol = {
- 	.handler	= l2tp_ip_recv,
- 	.netns_ok	= 1,
- };
-
+-	if (new > UINT_MAX)
++	if (new < 0 || new > UINT_MAX)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&test_dev->config_mutex);
+@@ -924,7 +924,7 @@ static int test_dev_config_update_uint_range(struct kmod_test_device *test_dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (new < min || new >  max || new > UINT_MAX)
++	if (new < min || new > max)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&test_dev->config_mutex);
+@@ -946,7 +946,7 @@ static int test_dev_config_update_int(struct kmod_test_device *test_dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (new > INT_MAX || new < INT_MIN)
++	if (new < INT_MIN || new > INT_MAX)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&test_dev->config_mutex);
