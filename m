@@ -1,45 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Jul 2017 17:49:27 +0000
-Subject: [PATCH][V2] staging: fbtft: make const array gamma_par_mask static
-Message-Id: <20170711174927.21072-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 08 Jul 2017 07:57:10 +0000
+Subject: [PATCH] mrf24j40: Fix en error handling path in 'mrf24j40_probe()'
+Message-Id: <20170708075710.18478-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alan@signal11.us, alex.aring@gmail.com, stefan@osg.samsung.com
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+If this check fails, we must release some resources as done everywhere
+else in this function before returning an error code.
 
-Don't populate array gamma_par_mask on the stack but instead make it
-static.  Makes the object code smaller by 148 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   2993	   1104	      0	   4097	   1001	drivers/staging/fbtft/fb_st7789v.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   2757	   1192	      0	   3949	    f6d	drivers/staging/fbtft/fb_st7789v.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/fbtft/fb_st7789v.c | 2 +-
+ drivers/net/ieee802154/mrf24j40.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
-index 8935a97ec048..a5d7c87557f8 100644
---- a/drivers/staging/fbtft/fb_st7789v.c
-+++ b/drivers/staging/fbtft/fb_st7789v.c
-@@ -189,7 +189,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
- 	 * The masks are the same for both positive and negative voltage
- 	 * gamma curves.
- 	 */
--	const u8 gamma_par_mask[] = {
-+	static const u8 gamma_par_mask[] = {
- 		0xFF, /* V63[3:0], V0[3:0]*/
- 		0x3F, /* V1[5:0] */
- 		0x3F, /* V2[5:0] */
+diff --git a/drivers/net/ieee802154/mrf24j40.c b/drivers/net/ieee802154/mrf24j40.c
+index 7d334963dc08..da8683782ffc 100644
+--- a/drivers/net/ieee802154/mrf24j40.c
++++ b/drivers/net/ieee802154/mrf24j40.c
+@@ -1330,7 +1330,7 @@ static int mrf24j40_probe(struct spi_device *spi)
+ 	if (spi->max_speed_hz > MAX_SPI_SPEED_HZ) {
+ 		dev_warn(&spi->dev, "spi clock above possible maximum: %d",
+ 			 MAX_SPI_SPEED_HZ);
+-		return -EINVAL;
++		goto err_register_device;
+ 	}
+ 
+ 	ret = mrf24j40_hw_init(devrec);
 -- 
 2.11.0
 
