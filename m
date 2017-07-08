@@ -1,54 +1,32 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 20 Jul 2017 15:48:27 +0000
-Subject: Re: [PATCH] [media] dvb_frontend: ensure that front end status is initialized
-Message-Id: <141477a2-1435-b74a-3ee9-1eeb6765dc12@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 08 Jul 2017 07:46:12 +0000
+Subject: [PATCH 0/3] net: stmmac: Fixes and cleanups in 'alloc_dma_[rt]x_desc_resources()'
+Message-Id: <cover.1499499451.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170720152916.24266-1-colin.king@canonical.com>
-In-Reply-To: <20170720152916.24266-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hans.verkuil@cisco.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+To: peppe.cavallaro@st.com, alexandre.torgue@st.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Colin,
+These patchs are all related to 'alloc_dma_[rt]x_desc_resources()' functions.
 
-On 07/20/2017 09:29 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The fe_status variable s is not initialized meaning it can have any
-> random garbage status.  This could be problematic if fe->ops.tune is
-> false as s is not updated by the call to fe->ops.tune() and a
-> subsequent check on the change status will using a garbage value.
-> Fix this by initializing s to zero.
-> 
-> Detected by CoverityScan, CID#112887 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/dvb-core/dvb_frontend.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-> index e3fff8f64d37..e18ea1508a59 100644
-> --- a/drivers/media/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb-core/dvb_frontend.c
-> @@ -631,7 +631,7 @@ static int dvb_frontend_thread(void *data)
->  	struct dvb_frontend *fe = data;
->  	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
->  	struct dvb_frontend_private *fepriv = fe->frontend_priv;
-> -	enum fe_status s;
-> +	enum fe_status s = 0;
+The 2 first fix an error path where some resources are leaking. I've
+separated them into 2 patches because the issues have been introduced by
+2 deferent commits.
 
-0 isn't a valid value for enum fe_status. I think the right fix would be
-to add FE_NONE to enum fe_status and then initialize s to that.
+The 3rd patch is just a clean-up.
 
-thanks,
--- Shuah
+Christophe JAILLET (3):
+  net: stmmac: Fix error handling path in
+    'alloc_dma_rx_desc_resources()'
+  net: stmmac: Fix error handling path in
+    'alloc_dma_tx_desc_resources()'
+  net: stmmac: Make 'alloc_dma_[rt]x_desc_resources()' look even closer
 
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
->  	enum dvbfe_algo algo;
->  	bool re_tune = false;
->  	bool semheld = false;
-> 
+-- 
+2.11.0
 
