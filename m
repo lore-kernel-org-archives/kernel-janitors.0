@@ -1,31 +1,38 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Mon, 10 Jul 2017 11:02:46 +0000
-Subject: Re: [PATCH 1/2 net] ptp: fix error codes in ptp_clock_register()
-Message-Id: <20170710110246.inwp2frouj7gvqzf@localhost.localdomain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 08 Jul 2017 07:46:33 +0000
+Subject: [PATCH 1/3] net: stmmac: Fix error handling path in 'alloc_dma_rx_desc_resources()'
+Message-Id: <12c5a0a87b6ef1ae40e35e247703082a671f2934.1499499451.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710071137.ui2fhjkqzjqhkopz@mwanda>
- <20170710092103.vnanagwpimk43zoz@localhost.localdomain>
- <20170710093816.wz5uiqoyilgxmgh3@mwanda>
- <20170710094806.lsrua5iqnmnntc5m@localhost.localdomain>
- <20170710102920.gav646pmteijfxfl@mwanda>
-In-Reply-To: <20170710102920.gav646pmteijfxfl@mwanda>
+References: <cover.1499499451.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1499499451.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ganesh Goudar <ganeshgr@chelsio.com>, Atul Gupta <atul.gupta@chelsio.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peppe.cavallaro@st.com, alexandre.torgue@st.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Jul 10, 2017 at 01:29:20PM +0300, Dan Carpenter wrote:
-> The "goto no_pps" was a bug you introduced.
+If the first 'kmalloc_array' within the loop fails, we should free what
+as already been allocated, as done in all other error handling path.
 
-I took a second look, and yes, the original commit should not have
-returned NULL, and the original callers did not expect NULL either.
+Fixes: 54139cf3bb33 ("net: stmmac: adding multiple buffers for rx")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 19bba6281dab..4322fa4a13e8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1498,7 +1498,7 @@ static int alloc_dma_rx_desc_resources(struct stmmac_priv *priv)
+ 						    sizeof(dma_addr_t),
+ 						    GFP_KERNEL);
+ 		if (!rx_q->rx_skbuff_dma)
+-			return -ENOMEM;
++			goto err_dma;
  
-> But I feel like you're being rude, so I'm not going to resend these
-> patches.  Please fix them yourself.
+ 		rx_q->rx_skbuff = kmalloc_array(DMA_RX_SIZE,
+ 						sizeof(struct sk_buff *),
+-- 
+2.11.0
 
-Sorry you feel that way.  Your first patch, although now more or less
-cosmetic, would be okay.  The second patch is still wrong.
-
-Thanks,
-Richard
