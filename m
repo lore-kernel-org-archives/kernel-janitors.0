@@ -1,80 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 23 Jun 2017 12:04:37 +0000
-Subject: Applied "spi: stm32: fix error check on mbr being -ve" to the spi tree
-Message-Id: <E1dONKH-0006aB-Py@debutante>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 08 Jul 2017 04:51:35 +0000
+Subject: [PATCH] cisco: enic: Fic an error handling path in 'vnic_dev_init_devcmd2()'
+Message-Id: <20170708045135.14753-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170622163449.23925-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: benve@cisco.com, govind@gmx.com, neepatel@cisco.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The patch
+if 'ioread32()' returns 0xFFFFFFF, we have to go through the error
+handling path as done everywhere else in this function.
 
-   spi: stm32: fix error check on mbr being -ve
+Move the 'err_free_wq' label to better match its name and its location
+and add a new label 'err_disable_wq'.
+Update the code accordingly.
 
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a2f07d38d6981ed220d86b7df07e4ac6a1734443 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 22 Jun 2017 17:34:49 +0100
-Subject: [PATCH] spi: stm32: fix error check on mbr being -ve
-
-The error check of mbr < 0 is always false because mbr is a u32. Make
-mbt an int so that a -ve error return from stm32_spi_prepare_mbr can be
-detected.
-
-Detected by CoverityScan, CID#1446586 ("Unsigned compared against 0")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 373fb0873d43 ("enic: add devcmd2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/spi/spi-stm32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/cisco/enic/vnic_dev.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-index 0553f61ab3b7..305ecd5334fc 100644
---- a/drivers/spi/spi-stm32.c
-+++ b/drivers/spi/spi-stm32.c
-@@ -857,7 +857,7 @@ static int stm32_spi_transfer_one_setup(struct stm32_spi *spi,
+diff --git a/drivers/net/ethernet/cisco/enic/vnic_dev.c b/drivers/net/ethernet/cisco/enic/vnic_dev.c
+index 1841ad45d215..39bad67422dd 100644
+--- a/drivers/net/ethernet/cisco/enic/vnic_dev.c
++++ b/drivers/net/ethernet/cisco/enic/vnic_dev.c
+@@ -402,8 +402,8 @@ static int vnic_dev_init_devcmd2(struct vnic_dev *vdev)
+ 	fetch_index = ioread32(&vdev->devcmd2->wq.ctrl->fetch_index);
+ 	if (fetch_index = 0xFFFFFFFF) { /* check for hardware gone  */
+ 		vdev_err(vdev, "Fatal error in devcmd2 init - hardware surprise removal\n");
+-
+-		return -ENODEV;
++		err = -ENODEV;
++		goto err_free_wq;
  	}
  
- 	if (spi->cur_speed != transfer->speed_hz) {
--		u32 mbr;
-+		int mbr;
+ 	enic_wq_init_start(&vdev->devcmd2->wq, 0, fetch_index, fetch_index, 0,
+@@ -414,7 +414,7 @@ static int vnic_dev_init_devcmd2(struct vnic_dev *vdev)
+ 	err = vnic_dev_alloc_desc_ring(vdev, &vdev->devcmd2->results_ring,
+ 				       DEVCMD2_RING_SIZE, DEVCMD2_DESC_SIZE);
+ 	if (err)
+-		goto err_free_wq;
++		goto err_disable_wq;
  
- 		/* Update spi->cur_speed with real clock speed */
- 		mbr = stm32_spi_prepare_mbr(spi, transfer->speed_hz);
-@@ -869,7 +869,7 @@ static int stm32_spi_transfer_one_setup(struct stm32_spi *spi,
- 		transfer->speed_hz = spi->cur_speed;
+ 	vdev->devcmd2->result = vdev->devcmd2->results_ring.descs;
+ 	vdev->devcmd2->cmd_ring = vdev->devcmd2->wq.ring.descs;
+@@ -433,8 +433,9 @@ static int vnic_dev_init_devcmd2(struct vnic_dev *vdev)
  
- 		cfg1_clrb |= SPI_CFG1_MBR;
--		cfg1_setb |= (mbr << SPI_CFG1_MBR_SHIFT) & SPI_CFG1_MBR;
-+		cfg1_setb |= ((u32)mbr << SPI_CFG1_MBR_SHIFT) & SPI_CFG1_MBR;
- 	}
- 
- 	if (cfg1_clrb || cfg1_setb)
+ err_free_desc_ring:
+ 	vnic_dev_free_desc_ring(vdev, &vdev->devcmd2->results_ring);
+-err_free_wq:
++err_disable_wq:
+ 	vnic_wq_disable(&vdev->devcmd2->wq);
++err_free_wq:
+ 	vnic_wq_free(&vdev->devcmd2->wq);
+ err_free_devcmd2:
+ 	kfree(vdev->devcmd2);
 -- 
-2.13.1
+2.11.0
 
