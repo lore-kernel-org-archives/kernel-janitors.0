@@ -1,85 +1,232 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Jul 2017 07:58:54 +0000
-Subject: [PATCH] atomisp: array underflow in ioctl
-Message-Id: <20170717075854.cmn2dgijylvpqdsp@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Jul 2017 13:54:27 +0000
+Subject: [PATCH] [media] dvb-frontends/cxd2841er: make several arrays static
+Message-Id: <20170710135427.27141-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Varsha Rao <rvarsha016@gmail.com>, Paolo Cretaro <melko@frugalware.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I noticed an array underflow in ov5693_enum_frame_size().  The code
-looks like this:
+From: Colin Ian King <colin.king@canonical.com>
 
-	int index = fse->index;
+Don't populate arrays on the stack but make them static.  Makes
+the object code smaller:
 
-	if (index >= N_RES)
-		retur -EINVAL;
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  89299	  21704	     64	 111067	  1b1db	cxd2841er.o
 
-fse->index is a u32 that comes from the user.  We want negative values
-to be counted as -EINVAL but they aren't.  There are several ways to fix
-this but I feel like the best fix for future proofing is to change the
-type of N_RES from int to unsigned long to make it the same as if we
-were comparing against ARRAY_SIZE().
+After:
+   text	   data	    bss	    dec	    hex	filename
+  85823	  23432	     64	 109319	  1ab07	cxd2841er.o
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/cxd2841er.c | 48 ++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/i2c/gc0310.h b/drivers/staging/media/atomisp/i2c/gc0310.h
-index f31eb277f542..7d8a0aeecb6c 100644
---- a/drivers/staging/media/atomisp/i2c/gc0310.h
-+++ b/drivers/staging/media/atomisp/i2c/gc0310.h
-@@ -454,6 +454,6 @@ struct gc0310_resolution gc0310_res_video[] = {
- #define N_RES_VIDEO (ARRAY_SIZE(gc0310_res_video))
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index 12bff778c97f..c5e1b4dd0765 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -2178,42 +2178,42 @@ static int cxd2841er_sleep_tc_to_active_t2_band(struct cxd2841er_priv *priv,
+ 	u32 iffreq, ifhz;
+ 	u8 data[MAX_WRITE_REGSIZE];
  
- static struct gc0310_resolution *gc0310_res = gc0310_res_preview;
--static int N_RES = N_RES_PREVIEW;
-+static unsigned long N_RES = N_RES_PREVIEW;
- #endif
+-	const uint8_t nominalRate8bw[3][5] = {
++	static const uint8_t nominalRate8bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x11, 0xF0, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x15, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x11, 0xF0, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
  
-diff --git a/drivers/staging/media/atomisp/i2c/gc2235.h b/drivers/staging/media/atomisp/i2c/gc2235.h
-index ccbc757045a5..7c3d994180cc 100644
---- a/drivers/staging/media/atomisp/i2c/gc2235.h
-+++ b/drivers/staging/media/atomisp/i2c/gc2235.h
-@@ -668,5 +668,5 @@ struct gc2235_resolution gc2235_res_video[] = {
- #define N_RES_VIDEO (ARRAY_SIZE(gc2235_res_video))
+-	const uint8_t nominalRate7bw[3][5] = {
++	static const uint8_t nominalRate7bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x14, 0x80, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x18, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x14, 0x80, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
  
- static struct gc2235_resolution *gc2235_res = gc2235_res_preview;
--static int N_RES = N_RES_PREVIEW;
-+static unsigned long N_RES = N_RES_PREVIEW;
- #endif
-diff --git a/drivers/staging/media/atomisp/i2c/ov2680.h b/drivers/staging/media/atomisp/i2c/ov2680.h
-index 944fe8e3bcbf..ab8907e6c9ef 100644
---- a/drivers/staging/media/atomisp/i2c/ov2680.h
-+++ b/drivers/staging/media/atomisp/i2c/ov2680.h
-@@ -934,7 +934,6 @@ static struct ov2680_resolution ov2680_res_video[] = {
- #define N_RES_VIDEO (ARRAY_SIZE(ov2680_res_video))
+-	const uint8_t nominalRate6bw[3][5] = {
++	static const uint8_t nominalRate6bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x17, 0xEA, 0xAA, 0xAA, 0xAA}, /* 20.5MHz XTal */
+ 		{0x1C, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x17, 0xEA, 0xAA, 0xAA, 0xAA}  /* 41MHz XTal */
+ 	};
  
- static struct ov2680_resolution *ov2680_res = ov2680_res_preview;
--static int N_RES = N_RES_PREVIEW;
--
-+static unsigned long N_RES = N_RES_PREVIEW;
+-	const uint8_t nominalRate5bw[3][5] = {
++	static const uint8_t nominalRate5bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x1C, 0xB3, 0x33, 0x33, 0x33}, /* 20.5MHz XTal */
+ 		{0x21, 0x99, 0x99, 0x99, 0x99}, /* 24MHz XTal */
+ 		{0x1C, 0xB3, 0x33, 0x33, 0x33}  /* 41MHz XTal */
+ 	};
  
- #endif
-diff --git a/drivers/staging/media/atomisp/i2c/ov2722.h b/drivers/staging/media/atomisp/i2c/ov2722.h
-index b0d40965d89e..73ecb1679718 100644
---- a/drivers/staging/media/atomisp/i2c/ov2722.h
-+++ b/drivers/staging/media/atomisp/i2c/ov2722.h
-@@ -1263,5 +1263,5 @@ struct ov2722_resolution ov2722_res_video[] = {
- #define N_RES_VIDEO (ARRAY_SIZE(ov2722_res_video))
+-	const uint8_t nominalRate17bw[3][5] = {
++	static const uint8_t nominalRate17bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x58, 0xE2, 0xAF, 0xE0, 0xBC}, /* 20.5MHz XTal */
+ 		{0x68, 0x0F, 0xA2, 0x32, 0xD0}, /* 24MHz XTal */
+ 		{0x58, 0xE2, 0xAF, 0xE0, 0xBC}  /* 41MHz XTal */
+ 	};
  
- static struct ov2722_resolution *ov2722_res = ov2722_res_preview;
--static int N_RES = N_RES_PREVIEW;
-+static unsigned long N_RES = N_RES_PREVIEW;
- #endif
-diff --git a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
-index d88ac1777d86..8c2e6794463b 100644
---- a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
-+++ b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
-@@ -1377,5 +1377,5 @@ struct ov5693_resolution ov5693_res_video[] = {
- #define N_RES_VIDEO (ARRAY_SIZE(ov5693_res_video))
+-	const uint8_t itbCoef8bw[3][14] = {
++	static const uint8_t itbCoef8bw[3][14] = {
+ 		{0x26, 0xAF, 0x06, 0xCD, 0x13, 0xBB, 0x28, 0xBA,
+ 			0x23, 0xA9, 0x1F, 0xA8, 0x2C, 0xC8}, /* 20.5MHz XTal */
+ 		{0x2F, 0xBA, 0x28, 0x9B, 0x28, 0x9D, 0x28, 0xA1,
+@@ -2222,7 +2222,7 @@ static int cxd2841er_sleep_tc_to_active_t2_band(struct cxd2841er_priv *priv,
+ 			0x23, 0xA9, 0x1F, 0xA8, 0x2C, 0xC8}  /* 41MHz XTal   */
+ 	};
  
- static struct ov5693_resolution *ov5693_res = ov5693_res_preview;
--static int N_RES = N_RES_PREVIEW;
-+static unsigned long N_RES = N_RES_PREVIEW;
- #endif
+-	const uint8_t itbCoef7bw[3][14] = {
++	static const uint8_t itbCoef7bw[3][14] = {
+ 		{0x2C, 0xBD, 0x02, 0xCF, 0x04, 0xF8, 0x23, 0xA6,
+ 			0x29, 0xB0, 0x26, 0xA9, 0x21, 0xA5}, /* 20.5MHz XTal */
+ 		{0x30, 0xB1, 0x29, 0x9A, 0x28, 0x9C, 0x28, 0xA0,
+@@ -2231,7 +2231,7 @@ static int cxd2841er_sleep_tc_to_active_t2_band(struct cxd2841er_priv *priv,
+ 			0x29, 0xB0, 0x26, 0xA9, 0x21, 0xA5}  /* 41MHz XTal   */
+ 	};
+ 
+-	const uint8_t itbCoef6bw[3][14] = {
++	static const uint8_t itbCoef6bw[3][14] = {
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8,
+ 			0x00, 0xCF, 0x00, 0xE6, 0x23, 0xA4}, /* 20.5MHz XTal */
+ 		{0x31, 0xA8, 0x29, 0x9B, 0x27, 0x9C, 0x28, 0x9E,
+@@ -2240,7 +2240,7 @@ static int cxd2841er_sleep_tc_to_active_t2_band(struct cxd2841er_priv *priv,
+ 			0x00, 0xCF, 0x00, 0xE6, 0x23, 0xA4}  /* 41MHz XTal   */
+ 	};
+ 
+-	const uint8_t itbCoef5bw[3][14] = {
++	static const uint8_t itbCoef5bw[3][14] = {
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8,
+ 			0x00, 0xCF, 0x00, 0xE6, 0x23, 0xA4}, /* 20.5MHz XTal */
+ 		{0x31, 0xA8, 0x29, 0x9B, 0x27, 0x9C, 0x28, 0x9E,
+@@ -2249,7 +2249,7 @@ static int cxd2841er_sleep_tc_to_active_t2_band(struct cxd2841er_priv *priv,
+ 			0x00, 0xCF, 0x00, 0xE6, 0x23, 0xA4}  /* 41MHz XTal   */
+ 	};
+ 
+-	const uint8_t itbCoef17bw[3][14] = {
++	static const uint8_t itbCoef17bw[3][14] = {
+ 		{0x25, 0xA0, 0x36, 0x8D, 0x2E, 0x94, 0x28, 0x9B,
+ 			0x32, 0x90, 0x2C, 0x9D, 0x29, 0x99}, /* 20.5MHz XTal */
+ 		{0x33, 0x8E, 0x2B, 0x97, 0x2D, 0x95, 0x37, 0x8B,
+@@ -2423,32 +2423,32 @@ static int cxd2841er_sleep_tc_to_active_t_band(
+ {
+ 	u8 data[MAX_WRITE_REGSIZE];
+ 	u32 iffreq, ifhz;
+-	u8 nominalRate8bw[3][5] = {
++	static const u8 nominalRate8bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x11, 0xF0, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x15, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x11, 0xF0, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
+-	u8 nominalRate7bw[3][5] = {
++	static const u8 nominalRate7bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x14, 0x80, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x18, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x14, 0x80, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
+-	u8 nominalRate6bw[3][5] = {
++	static const u8 nominalRate6bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x17, 0xEA, 0xAA, 0xAA, 0xAA}, /* 20.5MHz XTal */
+ 		{0x1C, 0x00, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x17, 0xEA, 0xAA, 0xAA, 0xAA}  /* 41MHz XTal */
+ 	};
+-	u8 nominalRate5bw[3][5] = {
++	static const u8 nominalRate5bw[3][5] = {
+ 		/* TRCG Nominal Rate [37:0] */
+ 		{0x1C, 0xB3, 0x33, 0x33, 0x33}, /* 20.5MHz XTal */
+ 		{0x21, 0x99, 0x99, 0x99, 0x99}, /* 24MHz XTal */
+ 		{0x1C, 0xB3, 0x33, 0x33, 0x33}  /* 41MHz XTal */
+ 	};
+ 
+-	u8 itbCoef8bw[3][14] = {
++	static const u8 itbCoef8bw[3][14] = {
+ 		{0x26, 0xAF, 0x06, 0xCD, 0x13, 0xBB, 0x28, 0xBA, 0x23, 0xA9,
+ 			0x1F, 0xA8, 0x2C, 0xC8}, /* 20.5MHz XTal */
+ 		{0x2F, 0xBA, 0x28, 0x9B, 0x28, 0x9D, 0x28, 0xA1, 0x29, 0xA5,
+@@ -2456,7 +2456,7 @@ static int cxd2841er_sleep_tc_to_active_t_band(
+ 		{0x26, 0xAF, 0x06, 0xCD, 0x13, 0xBB, 0x28, 0xBA, 0x23, 0xA9,
+ 			0x1F, 0xA8, 0x2C, 0xC8}  /* 41MHz XTal   */
+ 	};
+-	u8 itbCoef7bw[3][14] = {
++	static const u8 itbCoef7bw[3][14] = {
+ 		{0x2C, 0xBD, 0x02, 0xCF, 0x04, 0xF8, 0x23, 0xA6, 0x29, 0xB0,
+ 			0x26, 0xA9, 0x21, 0xA5}, /* 20.5MHz XTal */
+ 		{0x30, 0xB1, 0x29, 0x9A, 0x28, 0x9C, 0x28, 0xA0, 0x29, 0xA2,
+@@ -2464,7 +2464,7 @@ static int cxd2841er_sleep_tc_to_active_t_band(
+ 		{0x2C, 0xBD, 0x02, 0xCF, 0x04, 0xF8, 0x23, 0xA6, 0x29, 0xB0,
+ 			0x26, 0xA9, 0x21, 0xA5}  /* 41MHz XTal   */
+ 	};
+-	u8 itbCoef6bw[3][14] = {
++	static const u8 itbCoef6bw[3][14] = {
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8, 0x00, 0xCF,
+ 			0x00, 0xE6, 0x23, 0xA4}, /* 20.5MHz XTal */
+ 		{0x31, 0xA8, 0x29, 0x9B, 0x27, 0x9C, 0x28, 0x9E, 0x29, 0xA4,
+@@ -2472,7 +2472,7 @@ static int cxd2841er_sleep_tc_to_active_t_band(
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8, 0x00, 0xCF,
+ 			0x00, 0xE6, 0x23, 0xA4}  /* 41MHz XTal   */
+ 	};
+-	u8 itbCoef5bw[3][14] = {
++	static const u8 itbCoef5bw[3][14] = {
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8, 0x00, 0xCF,
+ 			0x00, 0xE6, 0x23, 0xA4}, /* 20.5MHz XTal */
+ 		{0x31, 0xA8, 0x29, 0x9B, 0x27, 0x9C, 0x28, 0x9E, 0x29, 0xA4,
+@@ -2652,39 +2652,39 @@ static int cxd2841er_sleep_tc_to_active_i_band(
+ 	u8 data[3];
+ 
+ 	/* TRCG Nominal Rate */
+-	u8 nominalRate8bw[3][5] = {
++	static const u8 nominalRate8bw[3][5] = {
+ 		{0x00, 0x00, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x11, 0xB8, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x00, 0x00, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
+ 
+-	u8 nominalRate7bw[3][5] = {
++	static const u8 nominalRate7bw[3][5] = {
+ 		{0x00, 0x00, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x14, 0x40, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x00, 0x00, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
+ 
+-	u8 nominalRate6bw[3][5] = {
++	static const u8 nominalRate6bw[3][5] = {
+ 		{0x14, 0x2E, 0x00, 0x00, 0x00}, /* 20.5MHz XTal */
+ 		{0x17, 0xA0, 0x00, 0x00, 0x00}, /* 24MHz XTal */
+ 		{0x14, 0x2E, 0x00, 0x00, 0x00}  /* 41MHz XTal */
+ 	};
+ 
+-	u8 itbCoef8bw[3][14] = {
++	static const u8 itbCoef8bw[3][14] = {
+ 		{0x00}, /* 20.5MHz XTal */
+ 		{0x2F, 0xBA, 0x28, 0x9B, 0x28, 0x9D, 0x28, 0xA1, 0x29,
+ 			0xA5, 0x2A, 0xAC, 0x29, 0xB5}, /* 24MHz Xtal */
+ 		{0x0}, /* 41MHz XTal   */
+ 	};
+ 
+-	u8 itbCoef7bw[3][14] = {
++	static const u8 itbCoef7bw[3][14] = {
+ 		{0x00}, /* 20.5MHz XTal */
+ 		{0x30, 0xB1, 0x29, 0x9A, 0x28, 0x9C, 0x28, 0xA0, 0x29,
+ 			0xA2, 0x2B, 0xA6, 0x2B, 0xAD}, /* 24MHz Xtal */
+ 		{0x00}, /* 41MHz XTal   */
+ 	};
+ 
+-	u8 itbCoef6bw[3][14] = {
++	static const u8 itbCoef6bw[3][14] = {
+ 		{0x27, 0xA7, 0x28, 0xB3, 0x02, 0xF0, 0x01, 0xE8, 0x00,
+ 			0xCF, 0x00, 0xE6, 0x23, 0xA4}, /* 20.5MHz XTal */
+ 		{0x31, 0xA8, 0x29, 0x9B, 0x27, 0x9C, 0x28, 0x9E, 0x29,
+-- 
+2.11.0
+
