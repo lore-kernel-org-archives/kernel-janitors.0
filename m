@@ -1,53 +1,31 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 12 Jul 2017 07:04:40 +0000
-Subject: Re: [PATCH] rt2x00: make const array glrt_table static
-Message-Id: <ff540218-a260-98ac-b1d1-d4b9f3317a9f@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Jul 2017 07:21:40 +0000
+Subject: [PATCH] PM / sysfs: return -EINVAL for bogus strings
+Message-Id: <20170710072140.chms22ep35myvvbd@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170711114733.15387-1-colin.king@canonical.com>
- <20170712064911.GA2769@redhat.com>
-In-Reply-To: <20170712064911.GA2769@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12/07/17 07:49, Stanislaw Gruszka wrote:
-> On Tue, Jul 11, 2017 at 12:47:33PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Don't populate array glrt_table on the stack but make it static.
->> Makes the object code a smaller by over 670 bytes:
->>
->> Before:
->>    text	   data	    bss	    dec	    hex	filename
->>  131772	   4733	      0	 136505	  21539	rt2800lib.o
->>
->> After:
->>    text	   data	    bss	    dec	    hex	filename
->>  131043	   4789	      0	 135832	  21298	rt2800lib.o
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
-> 
-> I wonder why compiler do not optimize by itself since array is
-> const, but patch is ok.
+In the current code, if the user accidentally writes a bogus command to
+this sysfs file, then we set the latency tolerance to an uninitialized
+variable.
 
-Afraid marking it as const does not guarantee that at all. The const
-qualifier just announces that the value will not be changed [1]. So one
-requires static const to ensure it's not populated on the stack and also
-marked as non-modifiable.
+Fixes: 2d984ad132a8 ("PM / QoS: Introcuce latency tolerance device PM QoS type")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[1] Section A4.4, The C programming Language, page 196
-
-Colin
-
-> 
-> Stanislaw 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+index 185a52581cfa..156ab57bca77 100644
+--- a/drivers/base/power/sysfs.c
++++ b/drivers/base/power/sysfs.c
+@@ -272,6 +272,8 @@ static ssize_t pm_qos_latency_tolerance_store(struct device *dev,
+ 			value = PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT;
+ 		else if (!strcmp(buf, "any") || !strcmp(buf, "any\n"))
+ 			value = PM_QOS_LATENCY_ANY;
++		else
++			return -EINVAL;
+ 	}
+ 	ret = dev_pm_qos_update_user_latency_tolerance(dev, value);
+ 	return ret < 0 ? ret : n;
