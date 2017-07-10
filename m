@@ -1,80 +1,154 @@
-From: Roopa Prabhu <roopa@cumulusnetworks.com>
-Date: Fri, 07 Jul 2017 13:43:26 +0000
-Subject: Re: [bug report] mpls: route get support
-Message-Id: <CAJieiUjT-9mx3rzkG=vuVss_Nt2t+OTYUoa+oz6tRcmAeV4HCA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Jul 2017 15:08:32 +0000
+Subject: [PATCH] char/mwave: make some arrays static const to make object code smaller
+Message-Id: <20170710150832.28498-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170707123615.pk4xal5dhvob3icr@mwanda>
-In-Reply-To: <20170707123615.pk4xal5dhvob3icr@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 7, 2017 at 5:36 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Roopa Prabhu,
->
-> The patch 397fc9e5cefe: "mpls: route get support" from Jul 3, 2017,
-> leads to the following static checker warning:
->
->         net/mpls/af_mpls.c:2111 mpls_getroute()
->         error: uninitialized symbol 'in_label'.
+From: Colin Ian King <colin.king@canonical.com>
 
+Don't populate arrays on the stack but make them static.  Makes
+the object code smaller.  Also remove temporary variables that
+have hard coded array sizes and just use ARRAY_SIZE instead and
+wrap some lines that are wider than 80 chars to clean up some
+checkpatch warnings.
 
-Thanks for the report. I will send a patch.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  11141	   2008	     64	  13213	   339d	drivers/char/mwave/smapi.o
 
+After:
+   text	   data	    bss	    dec	    hex	filename
+  10697	   2352	     64	  13113	   3339	drivers/char/mwave/smapi.o
 
->
-> net/mpls/af_mpls.c
->   2074  static int mpls_getroute(struct sk_buff *in_skb, struct nlmsghdr *in_nlh,
->   2075                           struct netlink_ext_ack *extack)
->   2076  {
->   2077          struct net *net = sock_net(in_skb->sk);
->   2078          u32 portid = NETLINK_CB(in_skb).portid;
->   2079          struct nlattr *tb[RTA_MAX + 1];
->   2080          u32 labels[MAX_NEW_LABELS];
->   2081          struct mpls_shim_hdr *hdr;
->   2082          unsigned int hdr_size = 0;
->   2083          struct net_device *dev;
->   2084          struct mpls_route *rt;
->   2085          struct rtmsg *rtm, *r;
->   2086          struct nlmsghdr *nlh;
->   2087          struct sk_buff *skb;
->   2088          struct mpls_nh *nh;
->   2089          int err = -EINVAL;
->   2090          u32 in_label;
->                 ^^^^^^^^^^^^
->
->   2091          u8 n_labels;
->   2092
->   2093          err = nlmsg_parse(in_nlh, sizeof(*rtm), tb, RTA_MAX,
->   2094                            rtm_mpls_policy, extack);
->   2095          if (err < 0)
->   2096                  goto errout;
->   2097
->   2098          rtm = nlmsg_data(in_nlh);
->   2099
->   2100          if (tb[RTA_DST]) {
->   2101                  u8 label_count;
->   2102
->   2103                  if (nla_get_labels(tb[RTA_DST], 1, &label_count,
->   2104                                     &in_label, extack))
->                                            ^^^^^^^^^
-> Only initialized inside the if statement.
->
->   2105                          goto errout;
->   2106
->   2107                  if (in_label < MPLS_LABEL_FIRST_UNRESERVED)
->   2108                          goto errout;
->   2109          }
->   2110
->   2111          rt = mpls_route_input_rcu(net, in_label);
->                                                ^^^^^^^^
-> Uninitialized variable use.
->
->   2112          if (!rt) {
->   2113                  err = -ENETUNREACH;
->   2114                  goto errout;
->   2115          }
->
-> regards,
-> dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/mwave/smapi.c | 48 ++++++++++++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/char/mwave/smapi.c b/drivers/char/mwave/smapi.c
+index 8c5411a8f33f..691f5898bb32 100644
+--- a/drivers/char/mwave/smapi.c
++++ b/drivers/char/mwave/smapi.c
+@@ -128,10 +128,11 @@ int smapi_query_DSP_cfg(SMAPI_DSP_SETTINGS * pSettings)
+ {
+ 	int bRC = -EIO;
+ 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
+-	unsigned short ausDspBases[] = { 0x0030, 0x4E30, 0x8E30, 0xCE30, 0x0130, 0x0350, 0x0070, 0x0DB0 };
+-	unsigned short ausUartBases[] = { 0x03F8, 0x02F8, 0x03E8, 0x02E8 };
+-	unsigned short numDspBases = 8;
+-	unsigned short numUartBases = 4;
++	static const unsigned short ausDspBases[] = {
++		0x0030, 0x4E30, 0x8E30, 0xCE30,
++		0x0130, 0x0350, 0x0070, 0x0DB0 };
++	static const unsigned short ausUartBases[] = {
++		0x03F8, 0x02F8, 0x03E8, 0x02E8 };
+ 
+ 	PRINTK_1(TRACE_SMAPI, "smapi::smapi_query_DSP_cfg entry\n");
+ 
+@@ -148,7 +149,7 @@ int smapi_query_DSP_cfg(SMAPI_DSP_SETTINGS * pSettings)
+ 	pSettings->bDSPEnabled = ((usCX & 0x0001) != 0);
+ 	pSettings->usDspIRQ = usSI & 0x00FF;
+ 	pSettings->usDspDMA = (usSI & 0xFF00) >> 8;
+-	if ((usDI & 0x00FF) < numDspBases) {
++	if ((usDI & 0x00FF) < ARRAY_SIZE(ausDspBases)) {
+ 		pSettings->usDspBaseIO = ausDspBases[usDI & 0x00FF];
+ 	} else {
+ 		pSettings->usDspBaseIO = 0;
+@@ -176,7 +177,7 @@ int smapi_query_DSP_cfg(SMAPI_DSP_SETTINGS * pSettings)
+ 
+ 	pSettings->bModemEnabled = ((usCX & 0x0001) != 0);
+ 	pSettings->usUartIRQ = usSI & 0x000F;
+-	if (((usSI & 0xFF00) >> 8) < numUartBases) {
++	if (((usSI & 0xFF00) >> 8) < ARRAY_SIZE(ausUartBases)) {
+ 		pSettings->usUartBaseIO = ausUartBases[(usSI & 0xFF00) >> 8];
+ 	} else {
+ 		pSettings->usUartBaseIO = 0;
+@@ -205,15 +206,16 @@ int smapi_set_DSP_cfg(void)
+ 	int bRC = -EIO;
+ 	int i;
+ 	unsigned short usAX, usBX, usCX, usDX, usDI, usSI;
+-	unsigned short ausDspBases[] = { 0x0030, 0x4E30, 0x8E30, 0xCE30, 0x0130, 0x0350, 0x0070, 0x0DB0 };
+-	unsigned short ausUartBases[] = { 0x03F8, 0x02F8, 0x03E8, 0x02E8 };
+-	unsigned short ausDspIrqs[] = { 5, 7, 10, 11, 15 };
+-	unsigned short ausUartIrqs[] = { 3, 4 };
+-
+-	unsigned short numDspBases = 8;
+-	unsigned short numUartBases = 4;
+-	unsigned short numDspIrqs = 5;
+-	unsigned short numUartIrqs = 2;
++	static const unsigned short ausDspBases[] = {
++		0x0030, 0x4E30, 0x8E30, 0xCE30,
++		0x0130, 0x0350, 0x0070, 0x0DB0 };
++	static const unsigned short ausUartBases[] = {
++		0x03F8, 0x02F8, 0x03E8, 0x02E8 };
++	static const unsigned short ausDspIrqs[] = {
++		5, 7, 10, 11, 15 };
++	static const unsigned short ausUartIrqs[] = {
++		3, 4 };
++
+ 	unsigned short dspio_index = 0, uartio_index = 0;
+ 
+ 	PRINTK_5(TRACE_SMAPI,
+@@ -221,11 +223,11 @@ int smapi_set_DSP_cfg(void)
+ 		mwave_3780i_irq, mwave_3780i_io, mwave_uart_irq, mwave_uart_io);
+ 
+ 	if (mwave_3780i_io) {
+-		for (i = 0; i < numDspBases; i++) {
++		for (i = 0; i < ARRAY_SIZE(ausDspBases); i++) {
+ 			if (mwave_3780i_io = ausDspBases[i])
+ 				break;
+ 		}
+-		if (i = numDspBases) {
++		if (i = ARRAY_SIZE(ausDspBases)) {
+ 			PRINTK_ERROR(KERN_ERR_MWAVE "smapi::smapi_set_DSP_cfg: Error: Invalid mwave_3780i_io address %x. Aborting.\n", mwave_3780i_io);
+ 			return bRC;
+ 		}
+@@ -233,22 +235,22 @@ int smapi_set_DSP_cfg(void)
+ 	}
+ 
+ 	if (mwave_3780i_irq) {
+-		for (i = 0; i < numDspIrqs; i++) {
++		for (i = 0; i < ARRAY_SIZE(ausDspIrqs); i++) {
+ 			if (mwave_3780i_irq = ausDspIrqs[i])
+ 				break;
+ 		}
+-		if (i = numDspIrqs) {
++		if (i = ARRAY_SIZE(ausDspIrqs)) {
+ 			PRINTK_ERROR(KERN_ERR_MWAVE "smapi::smapi_set_DSP_cfg: Error: Invalid mwave_3780i_irq %x. Aborting.\n", mwave_3780i_irq);
+ 			return bRC;
+ 		}
+ 	}
+ 
+ 	if (mwave_uart_io) {
+-		for (i = 0; i < numUartBases; i++) {
++		for (i = 0; i < ARRAY_SIZE(ausUartBases); i++) {
+ 			if (mwave_uart_io = ausUartBases[i])
+ 				break;
+ 		}
+-		if (i = numUartBases) {
++		if (i = ARRAY_SIZE(ausUartBases)) {
+ 			PRINTK_ERROR(KERN_ERR_MWAVE "smapi::smapi_set_DSP_cfg: Error: Invalid mwave_uart_io address %x. Aborting.\n", mwave_uart_io);
+ 			return bRC;
+ 		}
+@@ -257,11 +259,11 @@ int smapi_set_DSP_cfg(void)
+ 
+ 
+ 	if (mwave_uart_irq) {
+-		for (i = 0; i < numUartIrqs; i++) {
++		for (i = 0; i < ARRAY_SIZE(ausUartIrqs); i++) {
+ 			if (mwave_uart_irq = ausUartIrqs[i])
+ 				break;
+ 		}
+-		if (i = numUartIrqs) {
++		if (i = ARRAY_SIZE(ausUartIrqs)) {
+ 			PRINTK_ERROR(KERN_ERR_MWAVE "smapi::smapi_set_DSP_cfg: Error: Invalid mwave_uart_irq %x. Aborting.\n", mwave_uart_irq);
+ 			return bRC;
+ 		}
+-- 
+2.11.0
+
