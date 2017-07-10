@@ -1,76 +1,33 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 15 Jul 2017 09:09:52 +0000
-Subject: Re: [PATCH] leds: tlc591xx: add missing of_node_put
-Message-Id: <alpine.DEB.2.20.1707151109180.2838@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Jul 2017 07:22:47 +0000
+Subject: [PATCH] RDMA/bnxt_re: checking for NULL instead of IS_ERR()
+Message-Id: <20170710072247.6eczlwcxu5mt5jry@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500104933-25286-1-git-send-email-Julia.Lawall@lip6.fr> <20170715090223.GA21365@amd>
-In-Reply-To: <20170715090223.GA21365@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Purdie <rpurdie@rpsys.net>, kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Eddie Wai <eddie.wai-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Somnath Kotur <somnath.kotur-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Sriharsha Basavapatna <sriharsha.basavapatna-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+bnxt_re_alloc_mw() doesn't return NULL, it returns error pointers.
 
+Fixes: 9152e0b722b2 ("RDMA/bnxt_re: HW workarounds for handling specific conditions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sat, 15 Jul 2017, Pavel Machek wrote:
-
-> On Sat 2017-07-15 09:48:53, Julia Lawall wrote:
-> > for_each_child_of_node performs an of_node_get on each iteration, so a
-> > return from the loop requires an of_node_put.
-> >
-> > The semantic patch that fixes this problem is as follows
-> > (http://coccinelle.lip6.fr):
-> >
-> > // <smpl>
-> > @@
-> > local idexpression n;
-> > expression e,e1;
-> > iterator name for_each_child_of_node;
-> > @@
-> >
-> >  for_each_child_of_node(e1,n) {
-> >    ...
-> > (
-> >    of_node_put(n);
-> > |
-> >    e = n
-> > |
-> >    return n;
-> > |
-> > +  of_node_put(n);
-> > ?  return ...;
-> > )
-> >    ...
-> >  }
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Acked-by: Pavel Machek <pavel@ucw.cz>
->
-> > @@ -230,12 +230,18 @@ tlc591xx_probe(struct i2c_client *client
-> >
-> >  	for_each_child_of_node(np, child) {
-> >  		err = of_property_read_u32(child, "reg", &reg);
-> > -		if (err)
-> > +		if (err) {
-> > +			of_node_put(child);
-> >  			return err;
-> > -		if (reg < 0 || reg >= tlc591xx->max_leds)
-> > +		}
-> > +		if (reg < 0 || reg >= tlc591xx->max_leds) {
-> > +			of_node_put(child);
-> >  			return -EINVAL;
-> > -		if (priv->leds[reg].active)
-> > +		}
-> > +		if (priv->leds[reg].active) {
-> > +			of_node_put(child);
-> >  			return -EINVAL;
-> > +		}
->
-> I'd combine last two if()s into one...
-
-The test won't all fit on one line.  Should I do it anyway?
-
-julia
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index c7bd68311d0c..e794b0fa4ae6 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -588,10 +588,10 @@ static int bnxt_re_create_fence_mr(struct bnxt_re_pd *pd)
+ 
+ 	/* Create a fence MW only for kernel consumers */
+ 	mw = bnxt_re_alloc_mw(&pd->ib_pd, IB_MW_TYPE_1, NULL);
+-	if (!mw) {
++	if (IS_ERR(mw)) {
+ 		dev_err(rdev_to_dev(rdev),
+ 			"Failed to create fence-MW for PD: %p\n", pd);
+-		rc = -EINVAL;
++		rc = PTR_ERR(mw);
+ 		goto fail;
+ 	}
+ 	fence->mw = mw;
