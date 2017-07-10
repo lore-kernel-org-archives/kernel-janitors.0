@@ -1,35 +1,74 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Jul 2017 08:41:17 +0000
-Subject: [PATCH 3/3] lib/test_kmod: fix fs module tests
-Message-Id: <20170707084117.jbi3g364jz75liay@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 10 Jul 2017 18:42:11 +0000
+Subject: Applied "ASoC: rt5663: add in missing loop counter to avoid infinite loop" to the asoc tree
+Message-Id: <E1dUddL-0000E0-M0@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170707083933.2mgnpqafhspbwu7h@mwanda>
+References: <20170710152045.28898-1-colin.king@canonical.com>
+In-Reply-To: <20170710152045.28898-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-The break was in the wrong place so file system tests don't work as
-intended.
+The patch
 
-Fixes: 39258f448d71 ("kmod: add test driver to stress test the module loader")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: rt5663: add in missing loop counter to avoid infinite loop
 
-diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-index 093b44771197..5a402e610237 100644
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -746,11 +746,11 @@ static int trigger_config_run_type(struct kmod_test_device *test_dev,
- 						      strlen(test_str));
- 		break;
- 	case TEST_KMOD_FS_TYPE:
--		break;
- 		kfree_const(config->test_fs);
- 		config->test_driver = NULL;
- 		copied = config_copy_test_fs(config, test_str,
- 					     strlen(test_str));
-+		break;
- 	default:
- 		mutex_unlock(&test_dev->config_mutex);
- 		return -EINVAL;
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6afb505c23e91a7c566705f1dd60228704501778 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 10 Jul 2017 16:20:45 +0100
+Subject: [PATCH] ASoC: rt5663: add in missing loop counter to avoid infinite
+ loop
+
+The loop counter 'count' is missing an increment, so we could end up
+with an infinite loop.  Add in a pre-increment to count to fix this.
+
+Detected by CoverityScan, CID#1450120 ("Logically Dead Code")
+
+Fixes: 1a425dbf1a10 ("ASoC: rt5663: Update the calibration funciton")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/rt5663.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
+index 82edbcf39caa..5b3c50c641d8 100644
+--- a/sound/soc/codecs/rt5663.c
++++ b/sound/soc/codecs/rt5663.c
+@@ -3044,7 +3044,7 @@ static void rt5663_calibrate(struct rt5663_priv *rt5663)
+ 		else
+ 			break;
+ 
+-		if (count > 200)
++		if (++count > 200)
+ 			break;
+ 	}
+ 
+-- 
+2.13.2
+
