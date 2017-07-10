@@ -1,76 +1,45 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Sat, 22 Jul 2017 17:27:36 +0000
-Subject: Re: [PATCH] IB/i40iw: Fix error code in i40iw_create_cq()
-Message-Id: <a94d7fb1-5dea-784b-a55f-d491276efdae@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6labF3xAnNxjH1BHHE5l5uSfILhG1bDXN"
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Jul 2017 17:46:54 +0000
+Subject: [PATCH] iio: adc: at91: make array startup_lookup static
+Message-Id: <20170710174654.17271-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713074722.ki7o5k5vvdjbzpff@mwanda>
-In-Reply-To: <20170713074722.ki7o5k5vvdjbzpff@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Faisal Latif <faisal.latif@intel.com>
-Cc: Shiraz Saleem <shiraz.saleem@intel.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Wenyou Yang <wenyou.yang@atmel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Ludovic Desroches <ludovic.desroches@atmel.com>, Anders Darander <anders@chargestorm.se>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6labF3xAnNxjH1BHHE5l5uSfILhG1bDXN
-Content-Type: multipart/mixed; boundary="GjeQKjo4rVhhcdmfQgHVsgoMScem2oQqV";
- protected-headers="v1"
-From: Doug Ledford <dledford@redhat.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>,
- Faisal Latif <faisal.latif@intel.com>
-Cc: Shiraz Saleem <shiraz.saleem@intel.com>, Sean Hefty
- <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>,
- linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Message-ID: <a94d7fb1-5dea-784b-a55f-d491276efdae@redhat.com>
-Subject: Re: [PATCH] IB/i40iw: Fix error code in i40iw_create_cq()
-References: <20170713074722.ki7o5k5vvdjbzpff@mwanda>
-In-Reply-To: <20170713074722.ki7o5k5vvdjbzpff@mwanda>
+From: Colin Ian King <colin.king@canonical.com>
 
---GjeQKjo4rVhhcdmfQgHVsgoMScem2oQqV
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Don't populate array startup_lookup on the stack but instead make
+it static.  Makes the object code smaller.
 
-On 7/13/2017 3:47 AM, Dan Carpenter wrote:
-> We accidentally forgot to set the error code if ib_copy_from_udata()
-> fails.  It means we return ERR_PTR(0) which is NULL and results in a
-> NULL dereference in the callers.
->=20
-> Fixes: d37498417947 ("i40iw: add files for iwarp interface")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21754	   5440	    128	  27322	   6aba	drivers/iio/adc/at91_adc.o
 
-This was accepted into 4.13-rc, thanks.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  21613	   5496	    128	  27237	   6a65	drivers/iio/adc/at91_adc.o
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FD=
-D
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/at91_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index 34b928cefeed..15109728cae7 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -799,7 +799,7 @@ static u32 calc_startup_ticks_9x5(u32 startup_time, u32 adc_clk_khz)
+ 	 * For sama5d3x and at91sam9x5, the formula changes to:
+ 	 * Startup Time = <lookup_table_value> / ADC Clock
+ 	 */
+-	const int startup_lookup[] = {
++	static const int startup_lookup[] = {
+ 		0,   8,   16,  24,
+ 		64,  80,  96,  112,
+ 		512, 576, 640, 704,
+-- 
+2.11.0
 
---GjeQKjo4rVhhcdmfQgHVsgoMScem2oQqV--
-
---6labF3xAnNxjH1BHHE5l5uSfILhG1bDXN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJZc4sIAAoJELgmozMOVy/dUmoQAKwZSe+0uIjMRCKrd3IG8zet
-mZcpRX6wvwGAK0H3NeLi28THLKhfm5ZvoZmznq1qPxlNL0TSiaVDWRgwrgL3OJRe
-qs5UaCZuW4CjN9XgIjMCi/e2imlXbs1bQQbiJwiOCyxHzjHkLgXUC+AtwdBrj208
-1bLwpPZkzHePfj5CaM35AThgD6yO3oEFUEsQfHTyXgs+vcgavVheztpZJ9Pu5yh9
-i7yCVfAIu9+1JF8B4UfA2gV4GS1zxpveOlh1w0Do7WPtOoUcmnKybOxzqsNupBE9
-sBv6qBLdhkqHfFANNPrGrdlkdN8D/sJiefJ7BWlSagHGvHZVWDKwQQcXImPET73B
-j1X6E8wzNQxvoeP9k0pKPlmJEVcS5P4mhECEfY+kQUxY26XH/Bn4EELFHMvggcU+
-2ZtCaW00Ul5nbfbtPIlKIULU1SBxrDJMaXN4M6Pnu5FVfpF6H2e7oOKmlILdTJVF
-3v7/Lgir8EwvDgS8Al2Pb1GJv9BbmzLMbBQfMDSXZ7TKIIkuHAq1JQqEhKxl3pvi
-MgbCafYy086FLjJ9wi+HzaazzDewYyZUES2nOj8gWcdAvj8yv2e4eYXnSb5P6ISA
-YA7AxhuQaZ60C8p41x0yjTO22YbC4dIxDAyw9wO8SGLQ8NvhOvEZrVpugoHPKLEl
-J1CoBWq3lSkaGhrtBpmY
-=S6ri
------END PGP SIGNATURE-----
-
---6labF3xAnNxjH1BHHE5l5uSfILhG1bDXN--
