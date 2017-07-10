@@ -1,57 +1,40 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Thu, 06 Jul 2017 15:48:31 +0000
-Subject: Re: [PATCH][V2] usb: storage: return on error to avoid a null pointer dereference
-Message-Id: <Pine.LNX.4.44L0.1707061148080.1581-100000@iolanthe.rowland.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Jul 2017 07:24:23 +0000
+Subject: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
+Message-Id: <20170710072422.rs25i5oawmiaofrp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170706150633.11240-1-colin.king@canonical.com>
-References: <20170706150633.11240-1-colin.king@canonical.com>
-In-Reply-To: <20170706150633.11240-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 6 Jul 2017, Colin King wrote:
+ti_bandgap_get_sensor_data() can return error pointers so we should
+check for that.  There is no need to check "data->ti_thermal" for NULL
+and we removed that from the other cleanup function so we may as well
+from it in ti_thermal_remove_sensor() to be consistent.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> When us->extra is null the driver is not initialized, however, a
-> later call to osd200_scsi_to_ata is made that dereferences
-> us->extra, causing a null pointer dereference.  The code
-> currently detects and reports that the driver is not initialized;
-> add a return to avoid the subsequent dereference issue in this
-> check.
-> 
-> Thanks to Alan Stern for pointing out that srb->result needs setting
-> to DID_ERROR << 16
-> 
-> Detected by CoverityScan, CID#100308 ("Dereference after null check")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-> ---
->  drivers/usb/storage/isd200.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
-> index fba4005dd737..6a7720e66595 100644
-> --- a/drivers/usb/storage/isd200.c
-> +++ b/drivers/usb/storage/isd200.c
-> @@ -1529,8 +1529,11 @@ static void isd200_ata_command(struct scsi_cmnd *srb, struct us_data *us)
->  
->  	/* Make sure driver was initialized */
->  
-> -	if (us->extra = NULL)
-> +	if (us->extra = NULL) {
->  		usb_stor_dbg(us, "ERROR Driver not initialized\n");
-> +		srb->result = DID_ERROR << 16;
-> +		return;
-> +	}
->  
->  	scsi_set_resid(srb, 0);
->  	/* scsi_bufflen might change in protocol translation to ata */
-> 
-
+diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+index c211a8e4a210..9fea354ca90c 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
++++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+@@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap *bgp, int id)
+ 
+ 	data = ti_bandgap_get_sensor_data(bgp, id);
+ 
+-	if (data && data->ti_thermal) {
++	if (data && !IS_ERR(data)) {
+ 		if (data->our_zone)
+ 			thermal_zone_device_unregister(data->ti_thermal);
+ 	}
+@@ -276,7 +276,7 @@ int ti_thermal_unregister_cpu_cooling(struct ti_bandgap *bgp, int id)
+ 
+ 	data = ti_bandgap_get_sensor_data(bgp, id);
+ 
+-	if (data) {
++	if (data && !IS_ERR(data)) {
+ 		cpufreq_cooling_unregister(data->cool_dev);
+ 		cpufreq_cpu_put(data->policy);
+ 	}
