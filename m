@@ -1,96 +1,29 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Thu, 27 Jul 2017 23:54:06 +0000
-Subject: Re: [PATCH v2] cpufreq: s5pv210: add missing of_node_put
-Message-Id: <3083277.s4JKRQruaM@aspire.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Jul 2017 08:47:40 +0000
+Subject: [PATCH] scsi: qla2xxx: Off by one in qlt_ctio_to_cmd()
+Message-Id: <20170710084739.tjj7juaex7cb7xs5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr>
- <20170724085216.GS352@vireshk-i7>
-In-Reply-To: <20170724085216.GS352@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: qla2xxx-upstream@qlogic.com, Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Monday, July 24, 2017 02:22:16 PM Viresh Kumar wrote:
-> On 21-07-17, 21:53, Julia Lawall wrote:
-> > for_each_compatible_node performs an of_node_get on each iteration, so a
-> > return from the loop requires an of_node_put.
-> > 
-> > The semantic patch that fixes this problem is as follows
-> > (http://coccinelle.lip6.fr):
-> > 
-> > // <smpl>
-> > @@
-> > local idexpression n;
-> > expression e,e1,e2;
-> > statement S;
-> > iterator i1;
-> > iterator name for_each_compatible_node;
-> > @@
-> > 
-> >  for_each_compatible_node(n,e1,e2) {
-> >    ...
-> > (
-> >    of_node_put(n);
-> > |
-> >    e = n
-> > |
-> >    return n;
-> > |
-> >    i1(...,n,...) S
-> > |
-> > +  of_node_put(n);
-> > ?  return ...;
-> > )
-> >    ...
-> >  }
-> > // </smpl>
-> > 
-> > Additionally, call of_node_put on the previous value of np, obtained from
-> > of_find_compatible_node, that is no longer accessible at the point of the
-> > for_each_compatible_node.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> > 
-> > v2: add the of_node_put for the call to of_find_compatible_node as well.
-> > 
-> >  drivers/cpufreq/s5pv210-cpufreq.c |    3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> > index f82074e..5d31c2d 100644
-> > --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> > @@ -602,6 +602,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	clk_base = of_iomap(np, 0);
-> > +	of_node_put(np);
-> >  	if (!clk_base) {
-> >  		pr_err("%s: failed to map clock registers\n", __func__);
-> >  		return -EFAULT;
-> > @@ -612,6 +613,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
-> >  			pr_err("%s: failed to get alias of dmc node '%s'\n",
-> >  				__func__, np->name);
-> > +			of_node_put(np);
-> >  			return id;
-> >  		}
-> >  
-> > @@ -619,6 +621,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
-> >  		if (!dmc_base[id]) {
-> >  			pr_err("%s: failed to map dmc%d registers\n",
-> >  				__func__, id);
-> > +			of_node_put(np);
-> >  			return -EFAULT;
-> >  		}
-> >  	}
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
+There are "req->num_outstanding_cmds" elements in the
+req->outstanding_cmds[] array so the > here should be >=.
 
-Applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 6e4794367e0b..ecd1a95511f9 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3728,7 +3728,7 @@ static struct qla_tgt_cmd *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+ 	h &= QLA_CMD_HANDLE_MASK;
+ 
+ 	if (h != QLA_TGT_NULL_HANDLE) {
+-		if (unlikely(h > req->num_outstanding_cmds)) {
++		if (unlikely(h >= req->num_outstanding_cmds)) {
+ 			ql_dbg(ql_dbg_tgt, vha, 0xe052,
+ 			    "qla_target(%d): Wrong handle %x received\n",
+ 			    vha->vp_idx, handle);
