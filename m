@@ -1,45 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Jul 2017 07:31:21 +0000
-Subject: [PATCH] scsi: qedi: Fix return code in qedi_ep_connect()
-Message-Id: <20170712073121.yznfz6g5cvlrsvze@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 10 Jul 2017 18:29:47 +0000
+Subject: [PATCH] [media] smiapp: make various const arrays static
+Message-Id: <20170710182947.17884-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QLogic-Storage-Upstream@cavium.com, Manish Rangankar <manish.rangankar@cavium.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We shouldn't be writing over the "ret" variable.  It means we return
-ERR_PTR(0) which is NULL and it results in a NULL dereference in the
-caller.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Don't populate const arrays on the stack but instead make them static.
+Makes the object code smaller and saves nearly 550 bytes.
 
-diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
-index 80edd28b635f..37da9a8b43b1 100644
---- a/drivers/scsi/qedi/qedi_iscsi.c
-+++ b/drivers/scsi/qedi/qedi_iscsi.c
-@@ -824,7 +824,7 @@ qedi_ep_connect(struct Scsi_Host *shost, struct sockaddr *dst_addr,
- 	u32 iscsi_cid = QEDI_CID_RESERVED;
- 	u16 len = 0;
- 	char *buf = NULL;
--	int ret;
-+	int ret, tmp;
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   3638	    752	      0	   4390	   1126	smiapp-quirk.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   2802	   1040	      0	   3842	    f02	smiapp-quirk.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/smiapp/smiapp-quirk.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/i2c/smiapp/smiapp-quirk.c b/drivers/media/i2c/smiapp/smiapp-quirk.c
+index cb128eae9c54..95c0272bb014 100644
+--- a/drivers/media/i2c/smiapp/smiapp-quirk.c
++++ b/drivers/media/i2c/smiapp/smiapp-quirk.c
+@@ -71,7 +71,7 @@ static int jt8ew9_limits(struct smiapp_sensor *sensor)
  
- 	if (!shost) {
- 		ret = -ENXIO;
-@@ -940,10 +940,10 @@ qedi_ep_connect(struct Scsi_Host *shost, struct sockaddr *dst_addr,
- 
- ep_rel_conn:
- 	qedi->ep_tbl[iscsi_cid] = NULL;
--	ret = qedi_ops->release_conn(qedi->cdev, qedi_ep->handle);
--	if (ret)
-+	tmp = qedi_ops->release_conn(qedi->cdev, qedi_ep->handle);
-+	if (tmp)
- 		QEDI_WARN(&qedi->dbg_ctx, "release_conn returned %d\n",
--			  ret);
-+			  tmp);
- ep_free_sq:
- 	qedi_free_sq(qedi, qedi_ep);
- ep_conn_exit:
+ static int jt8ew9_post_poweron(struct smiapp_sensor *sensor)
+ {
+-	const struct smiapp_reg_8 regs[] = {
++	static const struct smiapp_reg_8 regs[] = {
+ 		{ 0x30a3, 0xd8 }, /* Output port control : LVDS ports only */
+ 		{ 0x30ae, 0x00 }, /* 0x0307 pll_multiplier maximum value on PLL input 9.6MHz ( 19.2MHz is divided on pre_pll_div) */
+ 		{ 0x30af, 0xd0 }, /* 0x0307 pll_multiplier maximum value on PLL input 9.6MHz ( 19.2MHz is divided on pre_pll_div) */
+@@ -115,7 +115,7 @@ const struct smiapp_quirk smiapp_jt8ew9_quirk = {
+ static int imx125es_post_poweron(struct smiapp_sensor *sensor)
+ {
+ 	/* Taken from v02. No idea what the other two are. */
+-	const struct smiapp_reg_8 regs[] = {
++	static const struct smiapp_reg_8 regs[] = {
+ 		/*
+ 		 * 0x3302: clk during frame blanking:
+ 		 * 0x00 - HS mode, 0x01 - LP11
+@@ -145,7 +145,7 @@ static int jt8ev1_post_poweron(struct smiapp_sensor *sensor)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(&sensor->src->sd);
+ 	int rval;
+-	const struct smiapp_reg_8 regs[] = {
++	static const struct smiapp_reg_8 regs[] = {
+ 		{ 0x3031, 0xcd }, /* For digital binning (EQ_MONI) */
+ 		{ 0x30a3, 0xd0 }, /* FLASH STROBE enable */
+ 		{ 0x3237, 0x00 }, /* For control of pulse timing for ADC */
+@@ -166,7 +166,7 @@ static int jt8ev1_post_poweron(struct smiapp_sensor *sensor)
+ 		{ 0x33cf, 0xec }, /* For Black sun */
+ 		{ 0x3328, 0x80 }, /* Ugh. No idea what's this. */
+ 	};
+-	const struct smiapp_reg_8 regs_96[] = {
++	static const struct smiapp_reg_8 regs_96[] = {
+ 		{ 0x30ae, 0x00 }, /* For control of ADC clock */
+ 		{ 0x30af, 0xd0 },
+ 		{ 0x30b0, 0x01 },
+-- 
+2.11.0
+
