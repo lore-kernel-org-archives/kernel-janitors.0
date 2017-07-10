@@ -1,63 +1,31 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 16 Jul 2017 06:59:04 +0000
-Subject: [PATCH 3/3] thermal: core: Avoid code duplication in 'thermal_zone_device_register()'
-Message-Id: <8eeaa51b6d95f3b73ec476a01157dc6308a1b732.1500187753.git.christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Jul 2017 07:22:25 +0000
+Subject: [PATCH] clocksource/timer-of: checking for NULL instead of IS_ERR()
+Message-Id: <20170710072225.eknzwy7yd4duc3yg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Jump in the error handling path in order to avoid code duplication if
-some function fail.
+of_io_request_and_map() doesn't return NULL, it returns error pointers.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/thermal/thermal_core.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index c58714800660..fe4b812eeb12 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1213,10 +1213,8 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	ida_init(&tz->ida);
- 	mutex_init(&tz->lock);
- 	result = ida_simple_get(&thermal_tz_ida, 0, 0, GFP_KERNEL);
--	if (result < 0) {
--		kfree(tz);
--		return ERR_PTR(result);
--	}
-+	if (result < 0)
-+		goto free_tz;
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index f6e7491c873c..f83d52e313d2 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -120,9 +120,9 @@ static __init int timer_base_init(struct device_node *np,
+ 	const char *name = of_base->name ? of_base->name : np->full_name;
  
- 	tz->id = result;
- 	strlcpy(tz->type, type, sizeof(tz->type));
-@@ -1239,11 +1237,8 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 	of_base->base = of_io_request_and_map(np, of_base->index, name);
+-	if (!of_base->base) {
++	if (IS_ERR(of_base->base)) {
+ 		pr_err("Failed to iomap (%s)\n", name);
+-		return -ENXIO;
++		return PTR_ERR(of_base->base);
+ 	}
  
- 	dev_set_name(&tz->device, "thermal_zone%d", tz->id);
- 	result = device_register(&tz->device);
--	if (result) {
--		ida_simple_remove(&thermal_tz_ida, tz->id);
--		kfree(tz);
--		return ERR_PTR(result);
--	}
-+	if (result)
-+		goto remove_id;
- 
- 	for (count = 0; count < trips; count++) {
- 		if (tz->ops->get_trip_type(tz, count, &trip_type))
-@@ -1297,6 +1292,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	device_unregister(&tz->device);
- remove_id:
- 	ida_simple_remove(&thermal_tz_ida, tz->id);
-+free_tz:
- 	kfree(tz);
- 	return ERR_PTR(result);
- }
--- 
-2.11.0
-
+ 	return 0;
