@@ -1,42 +1,31 @@
-From: Alan Ott <alan@signal11.us>
-Date: Mon, 10 Jul 2017 19:24:17 +0000
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Tue, 11 Jul 2017 06:48:33 +0000
 Subject: Re: [PATCH v2] mrf24j40: Fix en error handling path in 'mrf24j40_probe()'
-Message-Id: <581ccccf-a605-3472-a4a6-9ccb99c78da1@signal11.us>
+Message-Id: <7CBE2DA8-9296-42F8-ACC4-9472C178753E@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170708084013.18620-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170708084013.18620-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alex.aring@gmail.com, stefan@osg.samsung.com
-Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alan Ott <alan@signal11.us>, Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/08/2017 04:40 AM, Christophe JAILLET wrote:
+Hi Christophe,
+
 > If this check fails, we must release some resources as done everywhere
 > else in this function before returning an error code.
->
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 > V2: initialization of ret in this erro path ws missing. Stupid me!
 > ---
->  drivers/net/ieee802154/mrf24j40.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ieee802154/mrf24j40.c b/drivers/net/ieee802154/mrf24j40.c
-> index 7d334963dc08..da8683782ffc 100644
-> --- a/drivers/net/ieee802154/mrf24j40.c
-> +++ b/drivers/net/ieee802154/mrf24j40.c
-> @@ -1330,7 +1330,8 @@ static int mrf24j40_probe(struct spi_device *spi)
->  	if (spi->max_speed_hz > MAX_SPI_SPEED_HZ) {
->  		dev_warn(&spi->dev, "spi clock above possible maximum: %d",
->  			 MAX_SPI_SPEED_HZ);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err_register_device;
->  	}
->
->  	ret = mrf24j40_hw_init(devrec);
->
+> drivers/net/ieee802154/mrf24j40.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Alan Ott <alan@signal11.us>
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
 
