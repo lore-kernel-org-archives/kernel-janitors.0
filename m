@@ -1,27 +1,54 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 31 Jul 2017 07:14:14 +0000
-Subject: Re: [PATCH 10/11] greybus: usb: constify hc_driver structures
-Message-Id: <20170731071414.GA6339@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jul 2017 10:52:23 +0000
+Subject: [PATCH] net: broadcom: bnx2x: make a couple of const arrays static
+Message-Id: <20170711105223.14024-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501274518-25170-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501274518-25170-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Johan Hovold <johan@kernel.org>, kernel-janitors@vger.kernel.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@cavium.com>, Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 28, 2017 at 10:41:57PM +0200, Julia Lawall wrote:
-> The hc_driver structure is only passed as the first argument to
-> usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-> itself can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Johan Hovold <johan@kernel.org>
+Don't populate various tables on the stack but make them static const.
+Makes the object code smaller by nearly 200 bytes:
 
-Thanks,
-Johan
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 113468	  11200	      0	 124668	  1e6fc	bnx2x_ethtool.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 113129	  11344	      0	 124473	  1e639	bnx2x_ethtool.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index 43423744fdfa..21bc4bed6b26 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -2886,7 +2886,7 @@ static int bnx2x_test_nvram_tbl(struct bnx2x *bp,
+ 
+ static int bnx2x_test_nvram(struct bnx2x *bp)
+ {
+-	const struct crc_pair nvram_tbl[] = {
++	static const struct crc_pair nvram_tbl[] = {
+ 		{     0,  0x14 }, /* bootstrap */
+ 		{  0x14,  0xec }, /* dir */
+ 		{ 0x100, 0x350 }, /* manuf_info */
+@@ -2895,7 +2895,7 @@ static int bnx2x_test_nvram(struct bnx2x *bp)
+ 		{ 0x708,  0x70 }, /* manuf_key_info */
+ 		{     0,     0 }
+ 	};
+-	const struct crc_pair nvram_tbl2[] = {
++	static const struct crc_pair nvram_tbl2[] = {
+ 		{ 0x7e8, 0x350 }, /* manuf_info2 */
+ 		{ 0xb38,  0xf0 }, /* feature_info */
+ 		{     0,     0 }
+-- 
+2.11.0
+
