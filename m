@@ -1,45 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Jul 2017 10:31:24 +0000
-Subject: [PATCH] usb: renesas_usbhs: make array type_array static const
-Message-Id: <20170704103124.15217-1-colin.king@canonical.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 11 Jul 2017 14:43:50 +0000
+Subject: Re: [PATCH] mmc: rtsx_usb_sdmmc: make array 'width' static const
+Message-Id: <CAPDyKFoMJXR_xp_V8KpuoT+8eGjW=4LXfudCuR67PZGbGeOWWA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170629181219.12837-1-colin.king@canonical.com>
+In-Reply-To: <20170629181219.12837-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On 29 June 2017 at 20:12, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> array width is on-stack and not modified and should be
+> made static const.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Array type_array can be made static const rather than being
-populated on the stack. Makes the object code smaller:
+Thanks, applied for next!
 
-Before:
-   text    data     bss     dec     hex filename
-   8087    1496       0    9583    256f drivers/usb/renesas_usbhs/pipe.o
+Kind regards
+Uffe
 
-After:
-   text    data     bss     dec     hex filename
-   7883    1584       0    9467    24fb drivers/usb/renesas_usbhs/pipe.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/renesas_usbhs/pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/renesas_usbhs/pipe.c b/drivers/usb/renesas_usbhs/pipe.c
-index 9396a8c14af8..d811f0550c04 100644
---- a/drivers/usb/renesas_usbhs/pipe.c
-+++ b/drivers/usb/renesas_usbhs/pipe.c
-@@ -401,7 +401,7 @@ static int usbhsp_setup_pipecfg(struct usbhs_pipe *pipe, int is_host,
- 	u16 dir = 0;
- 	u16 epnum = 0;
- 	u16 shtnak = 0;
--	u16 type_array[] = {
-+	static const u16 type_array[] = {
- 		[USB_ENDPOINT_XFER_BULK] = TYPE_BULK,
- 		[USB_ENDPOINT_XFER_INT]  = TYPE_INT,
- 		[USB_ENDPOINT_XFER_ISOC] = TYPE_ISO,
--- 
-2.11.0
-
+> ---
+>  drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> index 12d2fbe9c520..76da1687ab37 100644
+> --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
+> +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> @@ -909,7 +909,7 @@ static int sd_set_bus_width(struct rtsx_usb_sdmmc *host,
+>                 unsigned char bus_width)
+>  {
+>         int err = 0;
+> -       u8 width[] = {
+> +       static const u8 width[] = {
+>                 [MMC_BUS_WIDTH_1] = SD_BUS_WIDTH_1BIT,
+>                 [MMC_BUS_WIDTH_4] = SD_BUS_WIDTH_4BIT,
+>                 [MMC_BUS_WIDTH_8] = SD_BUS_WIDTH_8BIT,
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
