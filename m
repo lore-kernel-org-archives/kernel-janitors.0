@@ -1,39 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:41:49 +0000
-Subject: [PATCH 02/11] usb: host: max3421-hcd: constify hc_driver structures
-Message-Id: <1501274518-25170-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jul 2017 17:49:27 +0000
+Subject: [PATCH][V2] staging: fbtft: make const array gamma_par_mask static
+Message-Id: <20170711174927.21072-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The hc_driver structure is only passed as the first argument to
-usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-itself can be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Don't populate array gamma_par_mask on the stack but instead make it
+static.  Makes the object code smaller by 148 bytes:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   2993	   1104	      0	   4097	   1001	drivers/staging/fbtft/fb_st7789v.o
 
+After:
+   text	   data	    bss	    dec	    hex	filename
+   2757	   1192	      0	   3949	    f6d	drivers/staging/fbtft/fb_st7789v.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/host/max3421-hcd.c |    2 +-
+ drivers/staging/fbtft/fb_st7789v.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hcd.c
-index 369869a..0ece9a9 100644
---- a/drivers/usb/host/max3421-hcd.c
-+++ b/drivers/usb/host/max3421-hcd.c
-@@ -1811,7 +1811,7 @@ enum {
- {
- }
- 
--static struct hc_driver max3421_hcd_desc = {
-+static const struct hc_driver max3421_hcd_desc = {
- 	.description =		"max3421",
- 	.product_desc =		DRIVER_DESC,
- 	.hcd_priv_size =	sizeof(struct max3421_hcd),
+diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
+index 8935a97ec048..a5d7c87557f8 100644
+--- a/drivers/staging/fbtft/fb_st7789v.c
++++ b/drivers/staging/fbtft/fb_st7789v.c
+@@ -189,7 +189,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ 	 * The masks are the same for both positive and negative voltage
+ 	 * gamma curves.
+ 	 */
+-	const u8 gamma_par_mask[] = {
++	static const u8 gamma_par_mask[] = {
+ 		0xFF, /* V63[3:0], V0[3:0]*/
+ 		0x3F, /* V1[5:0] */
+ 		0x3F, /* V2[5:0] */
+-- 
+2.11.0
 
