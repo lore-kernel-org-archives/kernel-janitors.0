@@ -1,56 +1,81 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 01 Jul 2017 10:14:29 +0000
-Subject: Re: [PATCH][iio-next] iio: adc: stm32: make array stm32h7_adc_ckmodes_spec static
-Message-Id: <20170701111429.6e7ba6a9@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jul 2017 12:11:44 +0000
+Subject: [PATCH] scsi: hisi_sas: make several const arrays static
+Message-Id: <20170711121144.15840-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170628130650.21872-1-colin.king@canonical.com>
- <29afb806-8634-0938-081b-dfab4efa04bf@st.com>
-In-Reply-To: <29afb806-8634-0938-081b-dfab4efa04bf@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 28 Jun 2017 16:35:04 +0200
-Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On 06/28/2017 03:06 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The array stm32h7_adc_ckmodes_spec does not need to be in global scope, so
-> > make it static.
-> > 
-> > Cleans up sparse warning:
-> > "symbol 'stm32h7_adc_ckmodes_spec' was not declared. Should it be static?"
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/iio/adc/stm32-adc-core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-> > index e09233b03c05..9d083c2338f9 100644
-> > --- a/drivers/iio/adc/stm32-adc-core.c
-> > +++ b/drivers/iio/adc/stm32-adc-core.c
-> > @@ -172,7 +172,7 @@ struct stm32h7_adc_ck_spec {
-> >  	int div;
-> >  };
-> >  
-> > -const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
-> > +static const struct stm32h7_adc_ck_spec stm32h7_adc_ckmodes_spec[] = {
-> >  	/* 00: CK_ADC[1..3]: Asynchronous clock modes */
-> >  	{ 0, 0, 1 },
-> >  	{ 0, 1, 2 },
-> >   
-> Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-applied to the togreg branch of iio.git and pushed out as
-testing for the autobuilders to play with it.
+Don't populate various tables on the stack but make them static const.
+Makes the object code smaller by over 280 bytes:
 
-Thanks,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  39887	   5080	     64	  45031	   afe7	hisi_sas_v2_hw.o
 
-Jonathan
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+After:
+   text	   data	    bss	    dec	    hex	filename
+  39318	   5368	     64	  44750	   aece	hisi_sas_v2_hw.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index 551d103c27f1..2bfea7082e3a 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -1693,7 +1693,7 @@ static int prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+ 
+ static int parse_trans_tx_err_code_v2_hw(u32 err_msk)
+ {
+-	const u8 trans_tx_err_code_prio[] = {
++	static const u8 trans_tx_err_code_prio[] = {
+ 		TRANS_TX_OPEN_FAIL_WITH_IT_NEXUS_LOSS,
+ 		TRANS_TX_ERR_PHY_NOT_ENABLE,
+ 		TRANS_TX_OPEN_CNX_ERR_WRONG_DESTINATION,
+@@ -1738,7 +1738,7 @@ static int parse_trans_tx_err_code_v2_hw(u32 err_msk)
+ 
+ static int parse_trans_rx_err_code_v2_hw(u32 err_msk)
+ {
+-	const u8 trans_rx_err_code_prio[] = {
++	static const u8 trans_rx_err_code_prio[] = {
+ 		TRANS_RX_ERR_WITH_RXFRAME_CRC_ERR,
+ 		TRANS_RX_ERR_WITH_RXFIS_8B10B_DISP_ERR,
+ 		TRANS_RX_ERR_WITH_RXFRAME_HAVE_ERRPRM,
+@@ -1784,7 +1784,7 @@ static int parse_trans_rx_err_code_v2_hw(u32 err_msk)
+ 
+ static int parse_dma_tx_err_code_v2_hw(u32 err_msk)
+ {
+-	const u8 dma_tx_err_code_prio[] = {
++	static const u8 dma_tx_err_code_prio[] = {
+ 		DMA_TX_UNEXP_XFER_ERR,
+ 		DMA_TX_UNEXP_RETRANS_ERR,
+ 		DMA_TX_XFER_LEN_OVERFLOW,
+@@ -1810,7 +1810,7 @@ static int parse_dma_tx_err_code_v2_hw(u32 err_msk)
+ 
+ static int parse_sipc_rx_err_code_v2_hw(u32 err_msk)
+ {
+-	const u8 sipc_rx_err_code_prio[] = {
++	static const u8 sipc_rx_err_code_prio[] = {
+ 		SIPC_RX_FIS_STATUS_ERR_BIT_VLD,
+ 		SIPC_RX_PIO_WRSETUP_STATUS_DRQ_ERR,
+ 		SIPC_RX_FIS_STATUS_BSY_BIT_ERR,
+@@ -1836,7 +1836,7 @@ static int parse_sipc_rx_err_code_v2_hw(u32 err_msk)
+ 
+ static int parse_dma_rx_err_code_v2_hw(u32 err_msk)
+ {
+-	const u8 dma_rx_err_code_prio[] = {
++	static const u8 dma_rx_err_code_prio[] = {
+ 		DMA_RX_UNKNOWN_FRM_ERR,
+ 		DMA_RX_DATA_LEN_OVERFLOW,
+ 		DMA_RX_DATA_LEN_UNDERFLOW,
+-- 
+2.11.0
 
