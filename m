@@ -1,21 +1,43 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Tue, 04 Jul 2017 17:13:10 +0000
-Subject: Re: [PATCH][-next] mqueue: fix incorrect memset size for object v
-Message-Id: <20170704171310.GW10672@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Jul 2017 10:19:28 +0000
+Subject: [bug report] isofs: Implement show_options
+Message-Id: <20170711101927.2d7cy5zlpxfby6eh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170704160919.19406-1-colin.king@canonical.com>
-In-Reply-To: <20170704160919.19406-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Steven Whitehouse <swhiteho@redhat.com>, Deepa Dinamani <deepa.kernel@gmail.com>, Waiman Long <longman@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 04, 2017 at 05:09:19PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The size of the memset is incorrect, it is currently using the size
-> of attr (a struct mq_attr *) and not of v (a struct compat_mq_attr)
+Hello David Howells,
 
-Folded (and that was a moderate infoleak - ->__reserved[] thing had
-been copied out uninitialized).
+The patch 6fecb86a44f5: "isofs: Implement show_options" from Jul 5,
+2017, leads to the following static checker warning:
+
+	fs/isofs/inode.c:495 isofs_show_options()
+	warn: always true condition '(sbi->s_session != -1) => (0-255 != (-1))'
+
+fs/isofs/inode.c
+   480  static int isofs_show_options(struct seq_file *m, struct dentry *root)
+   481  {
+   482          struct isofs_sb_info *sbi = ISOFS_SB(root->d_sb);
+   483  
+   484          if (!sbi->s_rock)               seq_puts(m, ",norock");
+   485          else if (!sbi->s_joliet_level)  seq_puts(m, ",nojoliet");
+   486          if (sbi->s_cruft)               seq_puts(m, ",cruft");
+   487          if (sbi->s_hide)                seq_puts(m, ",hide");
+   488          if (sbi->s_nocompress)          seq_puts(m, ",nocompress");
+   489          if (sbi->s_overriderockperm)    seq_puts(m, ",overriderockperm");
+   490          if (sbi->s_showassoc)           seq_puts(m, ",showassoc");
+   491          if (sbi->s_utf8)                seq_puts(m, ",utf8");
+   492  
+   493          if (sbi->s_check)               seq_printf(m, ",check=%c", sbi->s_check);
+   494          if (sbi->s_mapping)             seq_printf(m, ",map=%c", sbi->s_mapping);
+   495          if (sbi->s_session != -1)       seq_printf(m, ",session=%u", sbi->s_session);
+                    ^^^^^^^^^^^^^^^^^^^^
+->s_session is a u8 so it can't be -1
+
+   496          if (sbi->s_sbsector != -1)      seq_printf(m, ",sbsector=%u", sbi->s_sbsector);
+   497  
+
+regards,
+dan carpenter
