@@ -1,59 +1,61 @@
-From: <justynagolda@wp.pl>
-Date: Thu, 27 Jul 2017 05:46:21 +0000
-Subject: 
-Message-Id: <150113438117.7190.18134756059305192056@csloxinfo.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jul 2017 09:43:49 +0000
+Subject: [PATCH] [media] fc001[23]: make const gain table arrays static
+Message-Id: <20170711094349.13263-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Max Kellermann <max.kellermann@gmail.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-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
-BgAAAAABAAEAZAAAAEkKAAAAAA=
+From: Colin Ian King <colin.king@canonical.com>
+
+Don't populate the gain tables on the stack but make them static const.
+Makes the object code smaller:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   7801	   1408	      0	   9209	   23f9	drivers/media/tuners/fc0012.o
+   8483	    936	      0	   9419	   24cb	drivers/media/tuners/fc0013.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   7696	   1464	      0	   9160	   23c8	drivers/media/tuners/fc0012.o
+   8362	   1024	      0	   9386	   24aa	drivers/media/tuners/fc0013.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/tuners/fc0012.c | 2 +-
+ drivers/media/tuners/fc0013.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/tuners/fc0012.c b/drivers/media/tuners/fc0012.c
+index dcc323ffbde7..625ac6f51c39 100644
+--- a/drivers/media/tuners/fc0012.c
++++ b/drivers/media/tuners/fc0012.c
+@@ -351,7 +351,7 @@ static int fc0012_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	int ret;
+ 	unsigned char tmp;
+ 	int int_temp, lna_gain, int_lna, tot_agc_gain, power;
+-	const int fc0012_lna_gain_table[] = {
++	static const int fc0012_lna_gain_table[] = {
+ 		/* low gain */
+ 		-63, -58, -99, -73,
+ 		-63, -65, -54, -60,
+diff --git a/drivers/media/tuners/fc0013.c b/drivers/media/tuners/fc0013.c
+index 91dfa770a5cc..e606118d1a9b 100644
+--- a/drivers/media/tuners/fc0013.c
++++ b/drivers/media/tuners/fc0013.c
+@@ -511,7 +511,7 @@ static int fc0013_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	int ret;
+ 	unsigned char tmp;
+ 	int int_temp, lna_gain, int_lna, tot_agc_gain, power;
+-	const int fc0013_lna_gain_table[] = {
++	static const int fc0013_lna_gain_table[] = {
+ 		/* low gain */
+ 		-63, -58, -99, -73,
+ 		-63, -65, -54, -60,
+-- 
+2.11.0
+
