@@ -1,39 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Jul 2017 07:36:10 +0000
-Subject: [PATCH] perf script: remove some bogus error handling
-Message-Id: <20170722073610.nnsyiwdcfl6bhn4t@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 11 Jul 2017 14:08:55 +0000
+Subject: [PATCH] ASoC: hdmi-codec: make const array hdmi_codec_eld_spk_alloc_bits static
+Message-Id: <20170711140855.17634-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Vincent Abriou <vincent.abriou@st.com>, Jon Medhurst <tixy@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If script_desc__new() fails then the current code has a NULL
-dereference.  We don't actually need to do any cleanup, we can just
-return NULL.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Don't populate array hdmi_codec_eld_spk_alloc_bits on the stack but
+make it static. Makes the object code smaller by over 260 bytes:
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 83cdc0a61fd6..89ea2bc9b9be 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2199,16 +2199,11 @@ static struct script_desc *script_desc__findnew(const char *name)
- 
- 	s = script_desc__new(name);
- 	if (!s)
--		goto out_delete_desc;
-+		return NULL;
- 
- 	script_desc__add(s);
- 
- 	return s;
--
--out_delete_desc:
--	script_desc__delete(s);
--
--	return NULL;
- }
- 
- static const char *ends_with(const char *str, const char *suffix)
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  10882	   3384	     64	  14330	   37fa	sound/soc/codecs/hdmi-codec.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  10557	   3440	     64	  14061	   36ed	sound/soc/codecs/hdmi-codec.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/hdmi-codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 7686a80861f1..509ab513b4b2 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -326,7 +326,7 @@ static int hdmi_eld_ctl_get(struct snd_kcontrol *kcontrol,
+ static unsigned long hdmi_codec_spk_mask_from_alloc(int spk_alloc)
+ {
+ 	int i;
+-	const unsigned long hdmi_codec_eld_spk_alloc_bits[] = {
++	static const unsigned long hdmi_codec_eld_spk_alloc_bits[] = {
+ 		[0] = FL | FR, [1] = LFE, [2] = FC, [3] = RL | RR,
+ 		[4] = RC, [5] = FLC | FRC, [6] = RLC | RRC,
+ 	};
+-- 
+2.11.0
+
