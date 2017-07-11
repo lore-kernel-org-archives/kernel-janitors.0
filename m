@@ -1,46 +1,55 @@
-From: "Mrs.Meliana Trump" <ugochukwuonuorah12@gmail.com>
-Date: Tue, 18 Jul 2017 14:23:46 +0000
-Subject: Attention To me and get back to me urgent
-Message-Id: <CAOYsR4j+YuSwsq25e5AhG2mJ3x4o9SYkPEbk+QENo62t5DSC3w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Jul 2017 19:55:04 +0000
+Subject: [PATCH] staging: vchiq_arm: fix error codes in probe
+Message-Id: <20170711195456.brrzp7rotktte2jq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Attention:Beneficiary
+If vchiq_debugfs_init() fails, then we accidentally return a valid
+pointer casted to int on error.  This code is simpler if we get rid of
+the "ptr_err" variable and just use "err" throughout.
 
-I am  Meliana Trump, and I am writing to inform you about your Bank
-Check Draft brought back 16/07/2017 by the United Embassy Mr John
-Moore from the government of Benin Republic in the white house
-Washington DC been mandated to be deliver to your home address once
-you reconfirm it with the one we have here with us to avoid wrong
-delivery of your check draft Eighteen million united states dollars
-$18,000,000,00usd that was assigned to be delivered to your humble
-home address by Honorable president Donald Trump the president of this
-great country this week by a delivery agent Mr John Moore
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also reconfirm your details for the check delivery by filling the form
-below and send it immediately to our mrs.melianatrump@yahoo.com  in
-for verification and for prompt collection of your fund.
-
-Fill The Form Below:
-
-1. Residential Address :
-2. Next of Kin :
-3. Mobile Number:
-4. Fax Number :
-5. Occupation :
-6. Sex :
-7. Age :
-8. Nationality :
-9. Country :
-10. Marital Status :
-
-
-Accept my hearty congratulation again!
-
-Yours Sincerely,
-MRS MELIANA TRUMP
-FIRST_LADY
-1600 Pennsylvania Ave NW, Washington, DC 20500, United States
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 030bec855d86..314ffac50bb8 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -3391,7 +3391,6 @@ static int vchiq_probe(struct platform_device *pdev)
+ 	struct device_node *fw_node;
+ 	struct rpi_firmware *fw;
+ 	int err;
+-	void *ptr_err;
+ 
+ 	fw_node = of_parse_phandle(pdev->dev.of_node, "firmware", 0);
+ 	if (!fw_node) {
+@@ -3427,14 +3426,14 @@ static int vchiq_probe(struct platform_device *pdev)
+ 
+ 	/* create sysfs entries */
+ 	vchiq_class = class_create(THIS_MODULE, DEVICE_NAME);
+-	ptr_err = vchiq_class;
+-	if (IS_ERR(ptr_err))
++	err = PTR_ERR(vchiq_class);
++	if (IS_ERR(vchiq_class))
+ 		goto failed_class_create;
+ 
+ 	vchiq_dev = device_create(vchiq_class, NULL,
+ 		vchiq_devid, NULL, "vchiq");
+-	ptr_err = vchiq_dev;
+-	if (IS_ERR(ptr_err))
++	err = PTR_ERR(vchiq_dev);
++	if (IS_ERR(vchiq_dev))
+ 		goto failed_device_create;
+ 
+ 	/* create debugfs entries */
+@@ -3455,7 +3454,6 @@ static int vchiq_probe(struct platform_device *pdev)
+ 	class_destroy(vchiq_class);
+ failed_class_create:
+ 	cdev_del(&vchiq_cdev);
+-	err = PTR_ERR(ptr_err);
+ failed_cdev_add:
+ 	unregister_chrdev_region(vchiq_devid, 1);
+ failed_platform_init:
