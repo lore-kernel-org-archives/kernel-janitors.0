@@ -1,50 +1,29 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Jul 2017 14:43:50 +0000
-Subject: Re: [PATCH] mmc: rtsx_usb_sdmmc: make array 'width' static const
-Message-Id: <CAPDyKFoMJXR_xp_V8KpuoT+8eGjW=4LXfudCuR67PZGbGeOWWA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:51:33 +0000
+Subject: [PATCH] staging: rtl8188eu: memory leak in rtw_free_cmd_obj()
+Message-Id: <20170712075133.l6js4fd2xtaork3t@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170629181219.12837-1-colin.king@canonical.com>
-In-Reply-To: <20170629181219.12837-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On 29 June 2017 at 20:12, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> array width is on-stack and not modified and should be
-> made static const.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We were fixing checkpatch.pl warnings and accidentally reversed this
+condition.
 
-Thanks, applied for next!
+Fixes: 5b29aaaa1e3c ("staging: rtl8188eu: removes comparison to null")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-> index 12d2fbe9c520..76da1687ab37 100644
-> --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-> +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-> @@ -909,7 +909,7 @@ static int sd_set_bus_width(struct rtsx_usb_sdmmc *host,
->                 unsigned char bus_width)
->  {
->         int err = 0;
-> -       u8 width[] = {
-> +       static const u8 width[] = {
->                 [MMC_BUS_WIDTH_1] = SD_BUS_WIDTH_1BIT,
->                 [MMC_BUS_WIDTH_4] = SD_BUS_WIDTH_4BIT,
->                 [MMC_BUS_WIDTH_8] = SD_BUS_WIDTH_8BIT,
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index 002d09159896..a69007ef77bf 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -132,7 +132,7 @@ void rtw_free_cmd_obj(struct cmd_obj *pcmd)
+ 		kfree(pcmd->parmbuf);
+ 	}
+ 
+-	if (!pcmd->rsp) {
++	if (pcmd->rsp) {
+ 		if (pcmd->rspsz != 0) {
+ 			/* free rsp in cmd_obj */
+ 			kfree(pcmd->rsp);
