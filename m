@@ -1,36 +1,32 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 19 Jul 2017 14:34:08 +0000
-Subject: Re: [PATCH] libata: array underflow in ata_find_dev()
-Message-Id: <20170719143407.GK3365493@devbig577.frc2.facebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:53:00 +0000
+Subject: [PATCH] iwlwifi: pcie: Fix error code in iwl_trans_pcie_alloc()
+Message-Id: <20170712075300.sbd2vlwqf4rriale@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170719100641.7ste3wo6ap2g2djv@mwanda>
-In-Reply-To: <20170719100641.7ste3wo6ap2g2djv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>, Haim Dreyfuss <haim.dreyfuss@intel.com>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Sara Sharon <sara.sharon@intel.com>, Liad Kaufman <liad.kaufman@intel.com>, Sharon Dvir <sharon.dvir@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+We accidentally forgot to propogate the error code on this path.  It
+means we return ERR_PTR(0) which is NULL and it results in a NULL
+dereference in the caller.
 
-On Wed, Jul 19, 2017 at 01:06:41PM +0300, Dan Carpenter wrote:
-> My static checker complains that "devno" can be negative, meaning that
-> we read before the start of the loop.  I've looked at the code, and I
-> think the warning is right.  This come from /proc so it's root only or
-> it would be quite a quite a serious bug.  The call tree looks like this:
-> 
-> proc_scsi_write() <- gets id and channel from simple_strtoul()
-> -> scsi_add_single_device() <- calls shost->transportt->user_scan()
->    -> ata_scsi_user_scan()
->       -> ata_find_dev()
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 2e5d4a8f61dc ("iwlwifi: pcie: Add new configuration to enable MSIX")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'm impressed that the static checker caught this.  Thanks a lot for
-the fix, and lol at the code. :) Applied to libata/for-4.13-fixes w/
-stable cc'd.
-
-Thanks!
-
--- 
-tejun
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index 92b3a55d0fbc..f95eec52508e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -3150,7 +3150,8 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+ 	init_waitqueue_head(&trans_pcie->d0i3_waitq);
+ 
+ 	if (trans_pcie->msix_enabled) {
+-		if (iwl_pcie_init_msix_handler(pdev, trans_pcie))
++		ret = iwl_pcie_init_msix_handler(pdev, trans_pcie);
++		if (ret)
+ 			goto out_no_pci;
+ 	 } else {
+ 		ret = iwl_pcie_alloc_ict(trans);
