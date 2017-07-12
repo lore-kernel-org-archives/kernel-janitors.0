@@ -1,37 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Jul 2017 19:02:07 +0000
-Subject: Re: [PATCH] platform/x86: peaq-wmi: silence a static checker warning
-Message-Id: <20170718190207.aprsubzfak6vzn3e@mwanda>
+Date: Wed, 12 Jul 2017 07:26:34 +0000
+Subject: [PATCH] dm bufio: Fix error code in dm_bufio_write_dirty_buffers()
+Message-Id: <20170712072634.qtm4tq7xlnp572hs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718092849.nim5tiaycdenfyfz@mwanda>
- <CAHp75VdSD0zVFtnwF8oWt24P8DM6vZQNO93F_38yaCYBzCCBRw@mail.gmail.com>
-In-Reply-To: <CAHp75VdSD0zVFtnwF8oWt24P8DM6vZQNO93F_38yaCYBzCCBRw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Darren Hart <dvhart@infradead.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Christoph Hellwig <hch@lst.de>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 06:08:30PM +0300, Andy Shevchenko wrote:
-> On Tue, Jul 18, 2017 at 12:28 PM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
-> > Static checkers complain because:
-> >
-> >         if (peaq_ignore_events_counter && --peaq_ignore_events_counter >= 0)
-> >                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > The second part of the condition is always true because
-> > "peaq_ignore_events_counter" is unsigned.  It doesn't cause a problem
-> > because the first part of the condition prevents underflows, but it's
-> > simple enough to make the static checker happy.
-> 
-> Isn't it the same to
-> 
-> if (peaq_ignore_events_counter && peaq_ignore_events_counter--)
-> 
-> ?
+We should be returning normal negative error codes here.  The "a"
+variables comes from &c->async_write_error which is a blk_status_t
+converted to a regular error code.
 
-Yeah.  That's probably a little cleaner.  I'll resend.
+In the current code, the blk_status_t gets propogated back to
+pool_create() and eventually results in an Oops.
 
-regards,
-dan carpenter
+Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index 850ff6c67994..44f4a8ac95bd 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -1258,8 +1258,7 @@ EXPORT_SYMBOL_GPL(dm_bufio_write_dirty_buffers_async);
+  */
+ int dm_bufio_write_dirty_buffers(struct dm_bufio_client *c)
+ {
+-	blk_status_t a;
+-	int f;
++	int a, f;
+ 	unsigned long buffers_processed = 0;
+ 	struct dm_buffer *b, *tmp;
+ 
