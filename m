@@ -1,69 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:40:54 +0000
-Subject: [PATCH 2/2] netfilter: ipt_CLUSTERIP: constify nf_hook_ops structures
-Message-Id: <1501310455-7896-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:52:28 +0000
+Subject: [PATCH] drm: shmobile: checking for NULL instead if IS_ERR()
+Message-Id: <20170712075228.tlowlv3xo3uyhhzk@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-The nf_hook_ops structure is only passed as the second argument to
-nf_register_net_hook or nf_unregister_net_hook, both of which are
-declared as const.  Thus the nf_hook_ops structure itself can be
-const.
+We changed from ioremap_nocache() to devm_ioremap_resource() so the
+check needs to be changed from checking for NULL to checking for error
+pointers.
 
-Done with the help of Coccinelle.
+Fixes: 16ad3b2ce8dd ("drm/shmobile: Use devm_* managed functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct nf_hook_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-expression e;
-position p;
-@@
- \(nf_register_net_hook\|nf_unregister_net_hook\)(e,&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct nf_hook_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct nf_hook_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/ipv4/netfilter/ipt_CLUSTERIP.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index efaa04d..17b4ca5 100644
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -625,7 +625,7 @@ static void arp_print(struct arp_payload *payload)
- 	return NF_ACCEPT;
- }
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+index 800d1d2c435d..6bd777a3dc17 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+@@ -235,8 +235,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
  
--static struct nf_hook_ops cip_arp_ops __read_mostly = {
-+static const struct nf_hook_ops cip_arp_ops = {
- 	.hook = arp_mangle,
- 	.pf = NFPROTO_ARP,
- 	.hooknum = NF_ARP_OUT,
-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (sdev->mmio = NULL)
+-		return -ENOMEM;
++	if (IS_ERR(sdev->mmio))
++		return PTR_ERR(sdev->mmio);
+ 
+ 	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
+ 	if (ret < 0)
