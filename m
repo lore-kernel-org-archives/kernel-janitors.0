@@ -1,49 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 24 Jul 2017 21:44:45 +0000
-Subject: [PATCH] spi: pic32: fix spelling mistakes on macro names
-Message-Id: <20170724214445.15383-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:27:10 +0000
+Subject: [PATCH] drm/i915: Fix error code in __create_hw_context()
+Message-Id: <20170712072710.2uqqhomiup6zi2qx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We accidentally forget to set the error code here, which means that we
+return NULL.  The callers aren't expecting that and Oops.
 
-Trivial fix to spelling mistakes macros; fix EMPTY spellings:
-RX_FIFO_EMTPY -> RX_FIFO_EMPTY
-TX_FIFO_EMTPY -> TX_FIFO_EMPTY
+Fixes: 4ff4b44cbb70 ("drm/i915: Store a direct lookup from object handle to vma")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Note that there are no other occurrances of these macros in the
-source.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-pic32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
-index fefb688a3432..f8a45af1fa9f 100644
---- a/drivers/spi/spi-pic32.c
-+++ b/drivers/spi/spi-pic32.c
-@@ -52,14 +52,14 @@ struct pic32_spi_regs {
+diff --git a/drivers/gpu/drm/i915/i915_gem_context.c b/drivers/gpu/drm/i915/i915_gem_context.c
+index 39ed58a21fc1..25a73365a5be 100644
+--- a/drivers/gpu/drm/i915/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/i915_gem_context.c
+@@ -275,8 +275,10 @@ __create_hw_context(struct drm_i915_private *dev_priv,
+ 	ctx->vma_lut.ht = kcalloc(ctx->vma_lut.ht_size,
+ 				  sizeof(*ctx->vma_lut.ht),
+ 				  GFP_KERNEL);
+-	if (!ctx->vma_lut.ht)
++	if (!ctx->vma_lut.ht) {
++		ret = -ENOMEM;
+ 		goto err_out;
++	}
  
- /* Bit fields of SPI Control Register */
- #define CTRL_RX_INT_SHIFT	0  /* Rx interrupt generation */
--#define  RX_FIFO_EMTPY		0
-+#define  RX_FIFO_EMPTY		0
- #define  RX_FIFO_NOT_EMPTY	1 /* not empty */
- #define  RX_FIFO_HALF_FULL	2 /* full by half or more */
- #define  RX_FIFO_FULL		3 /* completely full */
+ 	INIT_WORK(&ctx->vma_lut.resize, resize_vma_ht);
  
- #define CTRL_TX_INT_SHIFT	2  /* TX interrupt generation */
- #define  TX_FIFO_ALL_EMPTY	0 /* completely empty */
--#define  TX_FIFO_EMTPY		1 /* empty */
-+#define  TX_FIFO_EMPTY		1 /* empty */
- #define  TX_FIFO_HALF_EMPTY	2 /* empty by half or more */
- #define  TX_FIFO_NOT_FULL	3 /* atleast one empty */
- 
--- 
-2.11.0
-
