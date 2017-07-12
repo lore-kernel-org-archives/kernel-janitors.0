@@ -1,34 +1,35 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Date: Thu, 20 Jul 2017 13:32:59 +0000
-Subject: Re: [PATCH][media-next] media: v4l: make local function v4l2_fwnode_endpoint_parse_csi1_bus static
-Message-Id: <20170720133258.s4yvdygcav4i4m6z@valkosipuli.retiisi.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:30:22 +0000
+Subject: [PATCH] scsi: libfc: pass an error pointer to fc_disc_error()
+Message-Id: <20170712073022.e24r3iad7jqxarn6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170720103014.19545-1-colin.king@canonical.com>
-In-Reply-To: <20170720103014.19545-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, Robert Love <rml@tech9.net>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 11:30:14AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function v4l2_fwnode_endpoint_parse_csi1_bus does not need to be
-> in global scope, so make it static.  Also reformat the function arguments
-> as adding the static keyword made one of the source lines more than 80
-> chars wide and checkpatch does not like that.
-> 
-> Cleans up sparse warning:
-> "symbol 'v4l2_fwnode_endpoint_parse_csi1_bus' was not declared. Should it
-> be static?"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This patch is basically to silence a static checker warning.
 
-Thanks!
+    drivers/scsi/libfc/fc_disc.c:326 fc_disc_error()
+    warn: passing a valid pointer to 'PTR_ERR'
 
-Applied, with removal of an extra neline and a tab in the arguments.
+It doesn't affect runtime because it treats -ENOMEM and a valid pointer
+the same.  But the documentation says we should be passing an error
+pointer.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index fd501f8dbb11..8660f923ace0 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -573,7 +573,7 @@ static void fc_disc_gpn_ft_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 		event = DISC_EV_FAILED;
+ 	}
+ 	if (error)
+-		fc_disc_error(disc, fp);
++		fc_disc_error(disc, ERR_PTR(error));
+ 	else if (event != DISC_EV_NONE)
+ 		fc_disc_done(disc, event);
+ 	fc_frame_free(fp);
