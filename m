@@ -1,28 +1,30 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 15 Jul 2017 21:00:36 +0000
-Subject: Re: [PATCH 00/11] Drop unnecessary static
-Message-Id: <alpine.DEB.2.20.1707152300030.5105@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:42:06 +0000
+Subject: [PATCH net] nfp: freeing the wrong variable
+Message-Id: <20170712074206.otviyjx2qhuz3snt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500151079.4457.80.camel@perches.com>
-In-Reply-To: <1500151079.4457.80.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jakub Kicinski <jakub.kicinski@netronome.com>, Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Simon Horman <simon.horman@netronome.com>, oss-drivers@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We accidentally free a NULL pointer and leak the pointer we want to
+free.  Also you can tell from the label name what was intended.  :)
 
+Fixes: abfcdc1de9bf ("nfp: add a stats handler for flower offloads")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sat, 15 Jul 2017, Joe Perches wrote:
-
-> On Sat, 2017-07-15 at 22:07 +0200, Julia Lawall wrote:
-> > These patches fix cases where there is a static on a local variable, but
-> > the variable is initialized before any possible use.  Thus, the static has
-> > no benefit.
->
-> Nice one.
-
-Thanks.  It was suggested by Kees Cook a while ago.  There seem to be many
-opportunities.
-
-julia
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/metadata.c b/drivers/net/ethernet/netronome/nfp/flower/metadata.c
+index fec0ff2ca94f..3226ddc55f99 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/metadata.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/metadata.c
+@@ -419,7 +419,7 @@ int nfp_flower_metadata_init(struct nfp_app *app)
+ 	return 0;
+ 
+ err_free_last_used:
+-	kfree(priv->stats_ids.free_list.buf);
++	kfree(priv->mask_ids.last_used);
+ err_free_mask_id:
+ 	kfree(priv->mask_ids.mask_id_free_list.buf);
+ 	return -ENOMEM;
