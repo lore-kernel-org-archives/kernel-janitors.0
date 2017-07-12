@@ -1,68 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 05:59:33 +0000
-Subject: [PATCH 04/12] mmc: moxart: constify mmc_host_ops structures
-Message-Id: <1501307981-29745-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Jul 2017 07:53:26 +0000
+Subject: [PATCH] usb: gadget: snps_udc_plat: testing the wrong variable
+Message-Id: <20170712075326.arqwm2glxo4657q4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The mmc_host_ops structure is only stored in the ops field of an
-mmc_host structure, which is declared as const.  Thus the mmc_host_ops
-structure itself can be const.
+"udc->regs" is zero here.  We don't set it until a couple lines later.
+The intent was to test "udc->virt_addr".
 
-Done with the help of Coccinelle.
+Fixes: 1b9f35adb0ff ("usb: gadget: udc: Add Synopsys UDC Platform driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct mmc_host_ops i@p = { ... };
-
-@ok1@
-struct mmc_host *mmc;
-identifier r.i;
-position p;
-@@
-mmc->ops = &i@p
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct mmc_host_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct mmc_host_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/mmc/host/moxart-mmc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/moxart-mmc.c b/drivers/mmc/host/moxart-mmc.c
-index d4dc55a..a0670e9 100644
---- a/drivers/mmc/host/moxart-mmc.c
-+++ b/drivers/mmc/host/moxart-mmc.c
-@@ -546,7 +546,7 @@ static int moxart_get_ro(struct mmc_host *mmc)
- 	return !!(readl(host->base + REG_STATUS) & WRITE_PROT);
- }
+diff --git a/drivers/usb/gadget/udc/snps_udc_plat.c b/drivers/usb/gadget/udc/snps_udc_plat.c
+index 2e11f19e07ae..b8d1280faafc 100644
+--- a/drivers/usb/gadget/udc/snps_udc_plat.c
++++ b/drivers/usb/gadget/udc/snps_udc_plat.c
+@@ -122,8 +122,8 @@ static int udc_plat_probe(struct platform_device *pdev)
  
--static struct mmc_host_ops moxart_ops = {
-+static const struct mmc_host_ops moxart_ops = {
- 	.request = moxart_request,
- 	.set_ios = moxart_set_ios,
- 	.get_ro = moxart_get_ro,
-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	udc->virt_addr = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(udc->regs))
+-		return PTR_ERR(udc->regs);
++	if (IS_ERR(udc->virt_addr))
++		return PTR_ERR(udc->virt_addr);
+ 
+ 	/* udc csr registers base */
+ 	udc->csr = udc->virt_addr + UDC_CSR_ADDR;
