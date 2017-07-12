@@ -1,95 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Jul 2017 07:34:57 +0000
-Subject: [PATCH 2/2] fsl/qe: Cleanup error paths in ucc_of_parse_tdm()
-Message-Id: <20170722073457.zyrqoufpopwg6il5@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 12 Jul 2017 05:17:38 +0000
+Subject: [PATCH] iwlwifi: mvm: Fix a memory leak in an error handling path in 'iwl_mvm_sar_get_wgds_table()'
+Message-Id: <20170712051738.21646-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170722073335.tb6byaaarqvloh3a@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: johannes.berg@intel.com, emmanuel.grumbach@intel.com, luciano.coelho@intel.com, linuxwifi@intel.com, kvalo@codeaurora.org, sara.sharon@intel.com
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The most important part of this change is that it not propogates error
-codes instead of returning -EINVAL.  There was also a tab missing, and
-a couple other minor cleanups which don't affect runtime.
+We should free 'wgds.pointer' here as done a few lines above in another
+error handling path.
+It was allocated within 'acpi_evaluate_object()'.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Not tested, but I don't think propogating the errors will cause a
-problem.
+A comment in '/drivers/acpi/acpica/utalloc.c' states that:
+/* [...] Note: The caller should use acpi_os_free to free this
+ * buffer created via ACPI_ALLOCATE_BUFFER.
+ */
 
-diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
-index ec7a853053c3..ce071a78209b 100644
---- a/drivers/soc/fsl/qe/qe_tdm.c
-+++ b/drivers/soc/fsl/qe/qe_tdm.c
-@@ -42,7 +42,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 		     struct ucc_tdm_info *ut_info)
- {
- 	const char *sprop;
--	int ret = 0;
-+	int ret;
- 	u32 val;
- 	struct resource *res;
- 	struct device_node *np2;
-@@ -68,7 +68,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 		if ((ut_info->uf_info.tx_sync < QE_CLK_NONE) ||
- 		    (ut_info->uf_info.tx_sync > QE_TSYNC_PIN)) {
- 			pr_err("QE-TDM: Invalid tx-sync-clock property\n");
--		return -EINVAL;
-+			return -EINVAL;
- 		}
- 	} else {
- 		pr_err("QE-TDM: Invalid tx-sync-clock property\n");
-@@ -78,13 +78,12 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 	ret = of_property_read_u32_index(np, "fsl,tx-timeslot-mask", 0, &val);
- 	if (ret) {
- 		pr_err("QE-TDM: Invalid tx-timeslot-mask property\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 	utdm->tx_ts_mask = val;
+So, at the end of this function:
+	out_free:
+		kfree(wgds.pointer);
+should maybe be:
+	out_free:
+		acpi_os_free(wgds.pointer);
+
+If correct, several places should be fixed accordingly.
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index 24cc406d87ef..56d535ab696f 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -1287,8 +1287,10 @@ static int iwl_mvm_sar_get_wgds_table(struct iwl_mvm *mvm,
  
- 	ret = of_property_read_u32_index(np, "fsl,rx-timeslot-mask", 0, &val);
- 	if (ret) {
--		ret = -EINVAL;
- 		pr_err("QE-TDM: Invalid rx-timeslot-mask property\n");
- 		return ret;
- 	}
-@@ -92,7 +91,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 		entry = &wifi_pkg->package.elements[i + 1];
+ 		if ((entry->type != ACPI_TYPE_INTEGER) ||
+-		    (entry->integer.value > U8_MAX))
+-			return -EINVAL;
++		    (entry->integer.value > U8_MAX)) {
++			ret = -EINVAL;
++			goto out_free;
++		}
  
- 	ret = of_property_read_u32_index(np, "fsl,tdm-id", 0, &val);
- 	if (ret) {
--		ret = -EINVAL;
- 		pr_err("QE-TDM: No fsl,tdm-id property for this UCC\n");
- 		return ret;
+ 		geo_table->values[i] = entry->integer.value;
  	}
-@@ -106,18 +104,16 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 
- 	sprop = of_get_property(np, "fsl,tdm-framer-type", NULL);
- 	if (!sprop) {
--		ret = -EINVAL;
- 		pr_err("QE-TDM: No tdm-framer-type property for UCC\n");
--		return ret;
-+		return -EINVAL;
- 	}
- 	ret = set_tdm_framer(sprop);
- 	if (ret < 0)
--		return -EINVAL;
-+		return ret;
- 	utdm->tdm_framer_type = ret;
- 
- 	ret = of_property_read_u32_index(np, "fsl,siram-entry-id", 0, &val);
- 	if (ret) {
--		ret = -EINVAL;
- 		pr_err("QE-TDM: No siram entry id for UCC\n");
- 		return ret;
- 	}
-@@ -164,7 +160,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
- 		siram_init_flag = 1;
- 	}
- 
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL(ucc_of_parse_tdm);
- 
+-- 
+2.11.0
+
