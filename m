@@ -1,28 +1,31 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 12 Jul 2017 07:30:07 +0000
-Subject: Re: [PATCH] dm bufio: Fix error code in dm_bufio_write_dirty_buffers()
-Message-Id: <20170712073007.GA6260@lst.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:45:48 +0000
+Subject: [PATCH] IB/IPoIB: Fix error code in ipoib_add_port()
+Message-Id: <20170713074548.i6cgpjhmmcnvtd5c@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170712072634.qtm4tq7xlnp572hs@mwanda>
-In-Reply-To: <20170712072634.qtm4tq7xlnp572hs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>
+Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Erez Shitrit <erezsh@mellanox.com>, Alex Vesker <valex@mellanox.com>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>, Feras Daoud <ferasda@mellanox.com>, Zhu Yanjun <yanjun.zhu@oracle.com>, Shamir Rabinovitch <shamir.rabinovitch@oracle.com>, Paolo Abeni <pabeni@redhat.com>, David Ahern <dsa@cumulusnetworks.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 12, 2017 at 10:26:34AM +0300, Dan Carpenter wrote:
-> We should be returning normal negative error codes here.  The "a"
-> variables comes from &c->async_write_error which is a blk_status_t
-> converted to a regular error code.
-> 
-> In the current code, the blk_status_t gets propogated back to
-> pool_create() and eventually results in an Oops.
+We accidentally don't see the error code on some of these error paths.
+It means we return ERR_PTR(0) which is NULL and it results in a NULL
+dereference in the caller.
 
-And sparse correctly warns about this, so no idea how this slipped in..
+This bug dates to pre-git days.
 
-> 
-> Fixes: 4e4cbee93d56 ("block: switch bios to blk_status_t")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 6e86eeee370e..ddd8114b6713 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -2212,6 +2212,7 @@ static struct net_device *ipoib_add_port(const char *format,
+ 		goto register_failed;
+ 	}
+ 
++	result = -ENOMEM;
+ 	if (ipoib_cm_add_mode_attr(priv->dev))
+ 		goto sysfs_failed;
+ 	if (ipoib_add_pkey_attr(priv->dev))
