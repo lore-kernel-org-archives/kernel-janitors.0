@@ -1,31 +1,29 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 11 Jul 2017 06:48:33 +0000
-Subject: Re: [PATCH v2] mrf24j40: Fix en error handling path in 'mrf24j40_probe()'
-Message-Id: <7CBE2DA8-9296-42F8-ACC4-9472C178753E@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:47:40 +0000
+Subject: [PATCH] cxgb4: Fix error codes in c4iw_create_cq()
+Message-Id: <20170713074740.4i2weowvndudqwh6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170708084013.18620-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170708084013.18620-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alan Ott <alan@signal11.us>, Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Christophe,
+If one of these kmalloc() calls fails then we return ERR_PTR(0) which is
+NULL.  It results in a NULL dereference in the callers.
 
-> If this check fails, we must release some resources as done everywhere
-> else in this function before returning an error code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> V2: initialization of ret in this erro path ws missing. Stupid me!
-> ---
-> drivers/net/ieee802154/mrf24j40.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: cfdda9d76436 ("RDMA/cxgb4: Add driver for Chelsio T4 RNIC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+diff --git a/drivers/infiniband/hw/cxgb4/cq.c b/drivers/infiniband/hw/cxgb4/cq.c
+index e16fcaf6b5a3..be07da1997e6 100644
+--- a/drivers/infiniband/hw/cxgb4/cq.c
++++ b/drivers/infiniband/hw/cxgb4/cq.c
+@@ -963,6 +963,7 @@ struct ib_cq *c4iw_create_cq(struct ib_device *ibdev,
+ 		goto err3;
+ 
+ 	if (ucontext) {
++		ret = -ENOMEM;
+ 		mm = kmalloc(sizeof *mm, GFP_KERNEL);
+ 		if (!mm)
+ 			goto err4;
