@@ -1,42 +1,45 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Thu, 13 Jul 2017 20:22:31 +0000
-Subject: Re: [PATCH] apparmor: Fix an error code in aafs_create()
-Message-Id: <46c023ef-98e2-bf4f-4da3-9c6237d3f3de@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 13 Jul 2017 11:22:24 +0000
+Subject: [PATCH] dccp: make const array error_code static
+Message-Id: <20170713112224.31667-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713073920.tdhewrs2ggtxylfs@mwanda>
-In-Reply-To: <20170713073920.tdhewrs2ggtxylfs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Gerrit Renker <gerrit@erg.abdn.ac.uk>, "David S . Miller" <davem@davemloft.net>, dccp@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/13/2017 12:39 AM, Dan Carpenter wrote:
-> We accidentally forgot to set the error code on this path.  It means we
-> return NULL instead of an error pointer.  I looked through a bunch of
-> callers and I don't think it really causes a big issue, but the
-> documentation says we're supposed to return error pointers here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Acked-by: John Johansen <john.johansen@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-I've pulled it into my tree
+Don't populate array error_code on the stack but make it static. Makes
+the object code smaller by almost 250 bytes:
 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 853c2ec8e0c9..2caeb748070c 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
->  
->  	inode_lock(dir);
->  	dentry = lookup_one_len(name, parent, strlen(name));
-> -	if (IS_ERR(dentry))
-> +	if (IS_ERR(dentry)) {
-> +		error = PTR_ERR(dentry);
->  		goto fail_lock;
-> +	}
->  
->  	if (d_really_is_positive(dentry)) {
->  		error = -EEXIST;
-> 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  10366	    983	      0	  11349	   2c55	net/dccp/input.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  10161	   1039	      0	  11200	   2bc0	net/dccp/input.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/dccp/input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/dccp/input.c b/net/dccp/input.c
+index 4a05d7876850..fa6be9750bb4 100644
+--- a/net/dccp/input.c
++++ b/net/dccp/input.c
+@@ -126,7 +126,7 @@ static int dccp_rcv_closereq(struct sock *sk, struct sk_buff *skb)
+ 
+ static u16 dccp_reset_code_convert(const u8 code)
+ {
+-	const u16 error_code[] = {
++	static const u16 error_code[] = {
+ 	[DCCP_RESET_CODE_CLOSED]	     = 0,	/* normal termination */
+ 	[DCCP_RESET_CODE_UNSPECIFIED]	     = 0,	/* nothing known */
+ 	[DCCP_RESET_CODE_ABORTED]	     = ECONNRESET,
+-- 
+2.11.0
 
