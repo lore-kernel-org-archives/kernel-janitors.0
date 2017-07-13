@@ -1,37 +1,33 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 19 Jul 2017 22:35:03 +0000
-Subject: [PATCH] drm/i915/selftests: Fix an error handling path in 'mock_gem_device()'
-Message-Id: <20170719223503.30580-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:38:49 +0000
+Subject: [PATCH 2/2] KVM: PPC: e500mc: Fix a NULL dereference
+Message-Id: <20170713073849.tj6jqmhliyjmn3zi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie, chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Alexander Graf <agraf@suse.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-Goto the right label in case of error, otherwise there is a leak.
-This has been introduced by c5cf9a9147ff. In this patch a goto has not been
-updated.
+We should set "err = -ENOMEM;", otherwise it means we're returning
+ERR_PTR(0) which is NULL.  It results in a NULL pointer dereference in
+the caller.
 
-Fixes: c5cf9a9147ff ("drm/i915: Create a kmem_cache to allocate struct i915_priolist from")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/i915/selftests/mock_gem_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-index 627e2aa09766..8cdec455cf7d 100644
---- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-@@ -206,7 +206,7 @@ struct drm_i915_private *mock_gem_device(void)
- 	mkwrite_device_info(i915)->ring_mask = BIT(0);
- 	i915->engine[RCS] = mock_engine(i915, "mock");
- 	if (!i915->engine[RCS])
--		goto err_dependencies;
-+		goto err_priorities;
+diff --git a/arch/powerpc/kvm/e500mc.c b/arch/powerpc/kvm/e500mc.c
+index f48a0c22e8f9..d0b6b5788afc 100644
+--- a/arch/powerpc/kvm/e500mc.c
++++ b/arch/powerpc/kvm/e500mc.c
+@@ -331,8 +331,10 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_e500mc(struct kvm *kvm,
+ 		goto uninit_vcpu;
  
- 	i915->kernel_context = mock_context(i915, NULL);
- 	if (!i915->kernel_context)
--- 
-2.11.0
-
+ 	vcpu->arch.shared = (void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
+-	if (!vcpu->arch.shared)
++	if (!vcpu->arch.shared) {
++		err = -ENOMEM;
+ 		goto uninit_tlb;
++	}
+ 
+ 	return vcpu;
+ 
