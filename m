@@ -1,32 +1,33 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Tue, 18 Jul 2017 08:01:00 +0000
-Subject: Re: [PATCH][xen-next] xen/pvcalls: fix null pointer reference on sock_release call
-Message-Id: <63061c05-e462-be95-0219-a0cdf6c17449@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:39:20 +0000
+Subject: [PATCH] apparmor: Fix an error code in aafs_create()
+Message-Id: <20170713073920.tdhewrs2ggtxylfs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170711194121.24802-1-colin.king@canonical.com>
-In-Reply-To: <20170711194121.24802-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, xen-devel@lists.xenproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On 11/07/17 21:41, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently a sock_release on map->sock will result in a null pointer
-> deference on map when map is null. Instead, the sock_relase sould
-> be on sock and not map->sock.
-> 
-> Detected by CoverityScan, CID#1450169 ("Dereference after null check")
-> 
-> Fixes: b535e2b9b78a ("xen/pvcalls: implement connect command")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We accidentally forgot to set the error code on this path.  It means we
+return NULL instead of an error pointer.  I looked through a bunch of
+callers and I don't think it really causes a big issue, but the
+documentation says we're supposed to return error pointers here.
 
-Committed to xen/tip for-linus-4.13
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Thanks,
-
-Juergen
-
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 853c2ec8e0c9..2caeb748070c 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -248,8 +248,10 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
+ 
+ 	inode_lock(dir);
+ 	dentry = lookup_one_len(name, parent, strlen(name));
+-	if (IS_ERR(dentry))
++	if (IS_ERR(dentry)) {
++		error = PTR_ERR(dentry);
+ 		goto fail_lock;
++	}
+ 
+ 	if (d_really_is_positive(dentry)) {
+ 		error = -EEXIST;
