@@ -1,60 +1,33 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 13 Jul 2017 16:13:22 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 20:23:22 +0000
 Subject: Re: [PATCH net] libceph: osdmap: Fix some NULL dereferences
-Message-Id: <CAOi1vP8tNXb7izDJXV1LzHhFMcqhFh_+_+zxsHQZnqgb_S+Etg@mail.gmail.com>
+Message-Id: <20170713202322.4joas52vuvjpx6w5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170713074517.io64uezw3qf6oush@mwanda>
-In-Reply-To: <20170713074517.io64uezw3qf6oush@mwanda>
+ <CAOi1vP8tNXb7izDJXV1LzHhFMcqhFh_+_+zxsHQZnqgb_S+Etg@mail.gmail.com>
+In-Reply-To: <CAOi1vP8tNXb7izDJXV1LzHhFMcqhFh_+_+zxsHQZnqgb_S+Etg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ilya Dryomov <idryomov@gmail.com>
 Cc: "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, "David S. Miller" <davem@davemloft.net>, Ceph Development <ceph-devel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 13, 2017 at 9:45 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> There are hidden gotos in the ceph_decode_* macros.  We need to set the
-> "err" variable on these error paths otherwise we end up returning
-> ERR_PTR(0) which is NULL.  It causes NULL dereferences in the callers.
->
-> Fixes: 278b1d709c6a ("libceph: ceph_decode_skip_* helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index 864789c5974e..c7521a847ef7 100644
-> --- a/net/ceph/osdmap.c
-> +++ b/net/ceph/osdmap.c
-> @@ -510,6 +510,7 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
->                 }
->         }
->
-> +       err = -EINVAL;
->         ceph_decode_skip_map(p, end, 32, string, bad); /* type_map */
->         ceph_decode_skip_map(p, end, 32, string, bad); /* name_map */
->         ceph_decode_skip_map(p, end, 32, string, bad); /* rule_name_map */
-> @@ -1825,9 +1826,9 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
->         if (struct_v >= 3) {
->                 /* new_erasure_code_profiles */
->                 ceph_decode_skip_map_of_map(p, end, string, string, string,
-> -                                           bad);
-> +                                           e_inval);
->                 /* old_erasure_code_profiles */
-> -               ceph_decode_skip_set(p, end, string, bad);
-> +               ceph_decode_skip_set(p, end, string, e_inval);
->         }
->
->         if (struct_v >= 4) {
+On Thu, Jul 13, 2017 at 06:13:22PM +0200, Ilya Dryomov wrote:
+> 
+> Hi Dan,
+> 
+> I applied osdmap_apply_incremental() hunk and fixed a similar bug in
+> osdmap_decode() (it's a not NULL deref, that's why smatch didn't catch
+> it).
+> 
 
-Hi Dan,
+No...  :/  Smatch complained about it, but I somehow marked it as done
+yesterday without sending a patch.  Thanks for catching that.
 
-I applied osdmap_apply_incremental() hunk and fixed a similar bug in
-osdmap_decode() (it's a not NULL deref, that's why smatch didn't catch
-it).
+The Smatch check is just looking for places where we do ERR_PTR(0) or
+ERR_PTR(valid_ptr).  That can be intentional, so there is some hand
+reviewing involved.
 
-I posted a separate patch for crush_decode().  This is the second time
-in two months you are fixing it, so I wanted something more future-proof.
+regards,
+dan carpenter
 
-See the end result at https://github.com/ceph/ceph-client/commits/testing.
-
-Thanks,
-
-                Ilya
