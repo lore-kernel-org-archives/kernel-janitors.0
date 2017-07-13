@@ -1,26 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 17 Jul 2017 15:55:56 +0000
-Subject: Re: [PATCH][next] net: bcmgenet: return NULL rather than 0 for null pointer
-Message-Id: <20170717.085556.1127444301775237113.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:45:17 +0000
+Subject: [PATCH net] libceph: osdmap: Fix some NULL dereferences
+Message-Id: <20170713074517.io64uezw3qf6oush@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170717090725.32540-1-colin.king@canonical.com>
-In-Reply-To: <20170717090725.32540-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 17 Jul 2017 10:07:25 +0100
+There are hidden gotos in the ceph_decode_* macros.  We need to set the
+"err" variable on these error paths otherwise we end up returning
+ERR_PTR(0) which is NULL.  It causes NULL dereferences in the callers.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't return plain integer 0, instead return NULL
-> 
-> Fixes sparse warning:
-> warning: Using plain integer as NULL pointer
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 278b1d709c6a ("libceph: ceph_decode_skip_* helpers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This does not apply cleanly to the net-next tree.
+diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+index 864789c5974e..c7521a847ef7 100644
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -510,6 +510,7 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
+ 		}
+ 	}
+ 
++	err = -EINVAL;
+ 	ceph_decode_skip_map(p, end, 32, string, bad); /* type_map */
+ 	ceph_decode_skip_map(p, end, 32, string, bad); /* name_map */
+ 	ceph_decode_skip_map(p, end, 32, string, bad); /* rule_name_map */
+@@ -1825,9 +1826,9 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
+ 	if (struct_v >= 3) {
+ 		/* new_erasure_code_profiles */
+ 		ceph_decode_skip_map_of_map(p, end, string, string, string,
+-					    bad);
++					    e_inval);
+ 		/* old_erasure_code_profiles */
+-		ceph_decode_skip_set(p, end, string, bad);
++		ceph_decode_skip_set(p, end, string, e_inval);
+ 	}
+ 
+ 	if (struct_v >= 4) {
