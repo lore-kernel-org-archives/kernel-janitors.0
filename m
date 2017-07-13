@@ -1,74 +1,32 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 17 Jul 2017 20:45:31 +0000
-Subject: Re: [PATCH 09/11] iio: orientation: hid-sensor-rotation: Drop unnecessary static
-Message-Id: <20170717214531.6fbc6cfa@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Jul 2017 07:46:49 +0000
+Subject: [PATCH 2/2] RDMA/ocrdma: Fix error codes in ocrdma_create_srq()
+Message-Id: <20170713074649.tmcxi3a3qpilyomq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1500149266-32357-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170713074614.obgl5mxxygcluyog@mwanda>
+In-Reply-To: <20170713074614.obgl5mxxygcluyog@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jiri Kosina <jikos@kernel.org>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Selvin Xavier <selvin.xavier-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Parav Pandit <parav.pandit-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>
+Cc: Devesh Sharma <devesh.sharma-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, ssh10 <mayhs11saini-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Artemy Kovalyov <artemyko-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat, 15 Jul 2017 22:07:44 +0200
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+If either of these allocations fail then we return ERR_PTR(0).  That's
+equivalent to NULL and results in a NULL pointer dereference in the
+caller.
 
-> Drop static on a local variable, when the variable is initialized before
-> any possible use.  Thus, the static has no benefit.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> static T x@p;
-> ...
-> x = <+...x...+>
-> 
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p != bad.p;
-> @@
-> -static
->  T x@p;
->  ... when != x
->      when strict
-> ?x = e;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Applied to the togreg branch of iio.git and pushed out
-as testing for the autobuilders to play with it.
+Fixes: fe2caefcdf58 ("RDMA/ocrdma: Add driver for Emulex OneConnect IBoE RDMA adapter")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-
-Jonathan
-> 
-> ---
-> These patches are all independent of each other.
-> 
->  drivers/iio/orientation/hid-sensor-rotation.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
-> --- a/drivers/iio/orientation/hid-sensor-rotation.c
-> +++ b/drivers/iio/orientation/hid-sensor-rotation.c
-> @@ -238,7 +238,7 @@ static int dev_rot_parse_report(struct p
->  static int hid_dev_rot_probe(struct platform_device *pdev)
->  {
->  	int ret;
-> -	static char *name;
-> +	char *name;
->  	struct iio_dev *indio_dev;
->  	struct dev_rot_state *rot_state;
->  	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
-> 
-
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index cc317e858040..27d5e8d9f08d 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1902,6 +1902,7 @@ struct ib_srq *ocrdma_create_srq(struct ib_pd *ibpd,
+ 		goto err;
+ 
+ 	if (udata = NULL) {
++		status = -ENOMEM;
+ 		srq->rqe_wr_id_tbl = kzalloc(sizeof(u64) * srq->rq.max_cnt,
+ 			    GFP_KERNEL);
+ 		if (srq->rqe_wr_id_tbl = NULL)
