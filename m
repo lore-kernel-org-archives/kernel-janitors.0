@@ -1,7 +1,7 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Thu, 13 Jul 2017 20:07:54 +0000
+From: John Johansen <john.johansen@canonical.com>
+Date: Thu, 13 Jul 2017 20:22:31 +0000
 Subject: Re: [PATCH] apparmor: Fix an error code in aafs_create()
-Message-Id: <20170713200754.GE4895@mail.hallyn.com>
+Message-Id: <46c023ef-98e2-bf4f-4da3-9c6237d3f3de@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170713073920.tdhewrs2ggtxylfs@mwanda>
 In-Reply-To: <20170713073920.tdhewrs2ggtxylfs@mwanda>
@@ -10,18 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-security-module@vger.kernel.org
 
-Quoting Dan Carpenter (dan.carpenter@oracle.com):
+On 07/13/2017 12:39 AM, Dan Carpenter wrote:
 > We accidentally forgot to set the error code on this path.  It means we
 > return NULL instead of an error pointer.  I looked through a bunch of
 > callers and I don't think it really causes a big issue, but the
 > documentation says we're supposed to return error pointers here.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
-thanks,
--serge
+I've pulled it into my tree
 
 > diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
 > index 853c2ec8e0c9..2caeb748070c 100644
@@ -39,3 +38,5 @@ thanks,
 >  
 >  	if (d_really_is_positive(dentry)) {
 >  		error = -EEXIST;
+> 
+
