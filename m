@@ -1,49 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 28 Jul 2017 14:51:35 +0000
-Subject: Re: mwifiex: usb: unlock on error in mwifiex_usb_tx_aggr_tmo()
-Message-Id: <20170728145135.D98EC60915@smtp.codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Jul 2017 11:13:16 +0000
+Subject: [PATCH] perf/x86/intel/cqm: make variable mbm_socket_max static
+Message-Id: <20170714111316.26021-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
-In-Reply-To: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Xinming Hu <huxm@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Jiri Olsa <jolsa@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We need to unlock if mwifiex_usb_prepare_tx_aggr_skb() fails.
-> 
-> Fixes: a2ca85ad721d ("mwifiex: usb: add timer to flush aggregation packets")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/usb.c b/drivers/net/wireless/marvell/mwifiex/usb.c
-> index cb1753e43ef4..880ef1cb4088 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/usb.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/usb.c
-> @@ -1112,7 +1112,7 @@ static void mwifiex_usb_tx_aggr_tmo(unsigned long context)
->  	if (err) {
->  		mwifiex_dbg(adapter, ERROR,
->  			    "prepare tx aggr skb failed, err=%d\n", err);
-> -		return;
-> +		goto unlock;
->  	}
->  
->  	if (atomic_read(&port->tx_data_urb_pending) >> @@ -1133,6 +1133,7 @@ static void mwifiex_usb_tx_aggr_tmo(unsigned long context)
->  done:
->  	if (err = -1)
->  		mwifiex_write_data_complete(adapter, skb_send, 0, -1);
-> +unlock:
->  	spin_unlock_irqrestore(&port->tx_aggr_lock, flags);
->  }
+The variable mbm_socket_max does not need to be in global scope as
+it is only used in this source, so make it static.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Cleans up sparse warning:
+symbol 'mbm_socket_max' was not declared. Should it be static?
 
-fe0c94be77a0 mwifiex: usb: unlock on error in mwifiex_usb_tx_aggr_tmo()
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/events/intel/cqm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/events/intel/cqm.c b/arch/x86/events/intel/cqm.c
+index 2521f771f2f5..b47d0768ec0d 100644
+--- a/arch/x86/events/intel/cqm.c
++++ b/arch/x86/events/intel/cqm.c
+@@ -22,7 +22,7 @@
+ static u32 cqm_max_rmid = -1;
+ static unsigned int cqm_l3_scale; /* supposedly cacheline size */
+ static bool cqm_enabled, mbm_enabled;
+-unsigned int mbm_socket_max;
++static unsigned int mbm_socket_max;
+ 
+ /*
+  * The cached intel_pqr_state is strictly per CPU and can never be
 -- 
-https://patchwork.kernel.org/patch/9832397/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
