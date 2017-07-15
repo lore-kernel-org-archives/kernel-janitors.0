@@ -1,47 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 13 Jul 2017 11:34:28 +0000
-Subject: [PATCH] [media] drxd: make const arrays slowIncrDecLUT and fastIncrDecLUT static
-Message-Id: <20170713113428.31981-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 09:58:19 +0000
+Subject: [PATCH 2/2 v2] leds: tlc591xx: add missing of_node_put
+Message-Id: <1500112699-770-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Max Kellermann <max.kellermann@gmail.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-Don't populate arrays slowIncrDecLUT and fastIncrDecLUT on the stack but
-instead make them static. Makes the object code smaller by over 100 bytes:
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-   text	   data	    bss	    dec	    hex	filename
-  27776	    832	     64	  28672	   7000	drxd_hard.o
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+iterator name for_each_child_of_node;
+@@
 
-   text	   data	    bss	    dec	    hex	filename
-  27530	    976	     64	  28570	   6f9a	drxd_hard.o
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/dvb-frontends/drxd_hard.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/leds/leds-tlc591xx.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
-index 17638e08835a..7d04400b18dd 100644
---- a/drivers/media/dvb-frontends/drxd_hard.c
-+++ b/drivers/media/dvb-frontends/drxd_hard.c
-@@ -638,8 +638,10 @@ static int SetCfgIfAgc(struct drxd_state *state, struct SCfgAgc *cfg)
- 			/* = Speed = */
- 			{
- 				const u16 maxRur = 8;
--				const u16 slowIncrDecLUT[] = { 3, 4, 4, 5, 6 };
--				const u16 fastIncrDecLUT[] = { 14, 15, 15, 16,
-+				static const u16 slowIncrDecLUT[] = {
-+					3, 4, 4, 5, 6 };
-+				const u16 fastIncrDecLUT[] = {
-+					14, 15, 15, 16,
- 					17, 18, 18, 19,
- 					20, 21, 22, 23,
- 					24, 26, 27, 28,
--- 
-2.11.0
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+index fcc87ee..f5357f6 100644
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -230,11 +230,15 @@ struct tlc591xx {
+ 
+ 	for_each_child_of_node(np, child) {
+ 		err = of_property_read_u32(child, "reg", &reg);
+-		if (err)
++		if (err) {
++			of_node_put(child);
+ 			return err;
++		}
+ 		if (reg < 0 || reg >= tlc591xx->max_leds ||
+-		    priv->leds[reg].active)
++		    priv->leds[reg].active) {
++			of_node_put(child);
+ 			return -EINVAL;
++		}
+ 		priv->leds[reg].active = true;
+ 		priv->leds[reg].ldev.name  			of_get_property(child, "label", NULL) ? : child->name;
 
