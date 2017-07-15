@@ -1,52 +1,69 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 16 Jul 2017 06:59:03 +0000
-Subject: [PATCH 2/3] thermal: core: Reorder 'thermal_zone_device_register()' error handling code
-Message-Id: <1b2b2a818d356097d5f6092745086b79d43aeafe.1500187753.git.christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 19:40:53 +0000
+Subject: [PATCH] cpufreq: s5pv210: add missing of_node_put
+Message-Id: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-Reorder code in the error handling path in order to match the way resources
-have been allocated.
+for_each_compatible_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-With this new order, we can avoid a call to 'device_unregister()' if
-'thermal_zone_create_device_groups'()' fails. At this point,
-'device_register()' has not been called yet.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/thermal/thermal_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+// <smpl>
+@@
+local idexpression n;
+expression e,e1,e2;
+statement S;
+iterator i1;
+iterator name for_each_compatible_node;
+@@
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 9743f3e65eb0..c58714800660 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1232,7 +1232,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	/* Add nodes that are always present via .groups */
- 	result = thermal_zone_create_device_groups(tz, mask);
- 	if (result)
--		goto unregister;
-+		goto remove_id;
- 
- 	/* A new thermal zone needs to be updated anyway. */
- 	atomic_set(&tz->need_update, 1);
-@@ -1294,8 +1294,9 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 	return tz;
- 
- unregister:
--	ida_simple_remove(&thermal_tz_ida, tz->id);
- 	device_unregister(&tz->device);
-+remove_id:
-+	ida_simple_remove(&thermal_tz_ida, tz->id);
- 	kfree(tz);
- 	return ERR_PTR(result);
+ for_each_compatible_node(n,e1,e2) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
+   i1(...,n,...) S
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
  }
--- 
-2.11.0
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cpufreq/s5pv210-cpufreq.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff -u -p a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -612,6 +612,7 @@ static int s5pv210_cpufreq_probe(struct
+ 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+ 			pr_err("%s: failed to get alias of dmc node '%s'\n",
+ 				__func__, np->name);
++			of_node_put(np);
+ 			return id;
+ 		}
+ 
+@@ -619,6 +620,7 @@ static int s5pv210_cpufreq_probe(struct
+ 		if (!dmc_base[id]) {
+ 			pr_err("%s: failed to map dmc%d registers\n",
+ 				__func__, id);
++			of_node_put(np);
+ 			return -EFAULT;
+ 		}
+ 	}
 
