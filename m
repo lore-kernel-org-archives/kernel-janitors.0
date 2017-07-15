@@ -1,23 +1,63 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Tue, 04 Jul 2017 17:36:55 +0000
-Subject: Re: [PATCH][drm-next] drm compat: ensure mode in drm_agp_info is being copied
-Message-Id: <20170704173655.GX10672@ZenIV.linux.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:46 +0000
+Subject: [PATCH 11/11] mfd: max8925-i2c: Drop unnecessary static
+Message-Id: <1500149266-32357-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170704164822.20177-1-colin.king@canonical.com>
-In-Reply-To: <20170704164822.20177-1-colin.king@canonical.com>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 04, 2017 at 05:48:21PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A recent compat change removed the copying of i32.mode from info.mode.
-> Add it back in to fix this removal as we currently are leaking information
-> from the stack.
-> 
-> Detected by CoverityScan, CID#1449374 ("Unitialized scalar variable")
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Folded and pushed out.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+These patches are all independent of each other.
+
+ drivers/mfd/max8925-i2c.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
+--- a/drivers/mfd/max8925-i2c.c
++++ b/drivers/mfd/max8925-i2c.c
+@@ -151,7 +151,7 @@ static int max8925_probe(struct i2c_clie
+ 				   const struct i2c_device_id *id)
+ {
+ 	struct max8925_platform_data *pdata = dev_get_platdata(&client->dev);
+-	static struct max8925_chip *chip;
++	struct max8925_chip *chip;
+ 	struct device_node *node = client->dev.of_node;
+ 
+ 	if (node && !pdata) {
+
