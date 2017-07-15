@@ -1,41 +1,63 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 31 Jul 2017 08:52:50 +0000
-Subject: Re: [PATCH 00/12] constify mmc_host_ops structures
-Message-Id: <CAPDyKFpPRNAb1s4PUnkg0iFUg-Y5J+T_5TAzxLL-4SVSSVY4MA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:43 +0000
+Subject: [PATCH 08/11] ata: Drop unnecessary static
+Message-Id: <1500149266-32357-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 29 July 2017 at 07:59, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> The mmc_host_ops structure is only stored in the ops field of an
-> mmc_host structure, which is declared as const.  Thus the mmc_host_ops
-> structure itself can be const.
->
-> Done with the help of Coccinelle.
->
-> ---
->
->  drivers/mmc/host/bcm2835.c     |    2 +-
->  drivers/mmc/host/davinci_mmc.c |    2 +-
->  drivers/mmc/host/moxart-mmc.c  |    2 +-
->  drivers/mmc/host/mtk-sd.c      |    2 +-
->  drivers/mmc/host/s3cmci.c      |    2 +-
->  drivers/mmc/host/sdricoh_cs.c  |    2 +-
->  drivers/mmc/host/sh_mmcif.c    |    2 +-
->  drivers/mmc/host/sunxi-mmc.c   |    2 +-
->  drivers/mmc/host/toshsd.c      |    2 +-
->  drivers/mmc/host/usdhi6rol0.c  |    2 +-
->  drivers/mmc/host/vub300.c      |    2 +-
->  drivers/mmc/host/wmt-sdmmc.c   |    2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks, applied for next!
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
 
-Kind regards
-Uffe
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+These patches are all independent of each other.
+
+ drivers/ata/sata_gemini.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+--- a/drivers/ata/sata_gemini.c
++++ b/drivers/ata/sata_gemini.c
+@@ -305,7 +305,7 @@ static int gemini_sata_probe(struct plat
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct sata_gemini *sg;
+-	static struct regmap *map;
++	struct regmap *map;
+ 	struct resource *res;
+ 	enum gemini_muxmode muxmode;
+ 	u32 gmode;
+
