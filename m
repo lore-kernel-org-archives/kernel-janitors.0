@@ -1,41 +1,174 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:18:58 +0000
-Subject: [PATCH 2/2] l2tp: constify inet6_protocol structures
-Message-Id: <1501273138-22771-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 07:19:07 +0000
+Subject: [PATCH] ASoC: rsnd: add missing of_node_put
+Message-Id: <1500103147-17297-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501273138-22771-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501273138-22771-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-The inet6_protocol structure is only passed as the first argument to
-inet6_add_protocol or inet6_del_protocol, both of which are declared as
-const.  Thus the inet6_protocol structure itself can be const.
+for_each_child_of_node performs an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-Also drop __read_mostly on the newly const structure.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Done with the help of Coccinelle.
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+identifier l;
+@@
+
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- net/l2tp/l2tp_ip6.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sh/rcar/ctu.c |    5 ++++-
+ sound/soc/sh/rcar/dvc.c |    5 ++++-
+ sound/soc/sh/rcar/mix.c |    5 ++++-
+ sound/soc/sh/rcar/src.c |    6 +++++-
+ sound/soc/sh/rcar/ssi.c |    6 +++++-
+ 5 files changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
-index 88b397c..d2efcd9 100644
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -788,7 +788,7 @@ static int l2tp_ip6_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
- 	.ops		= &l2tp_ip6_ops,
- };
+diff -u -p a/sound/soc/sh/rcar/mix.c b/sound/soc/sh/rcar/mix.c
+--- a/sound/soc/sh/rcar/mix.c
++++ b/sound/soc/sh/rcar/mix.c
+@@ -168,13 +168,16 @@ int rsnd_mix_probe(struct rsnd_priv *pri
+ 		clk = devm_clk_get(dev, name);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
++			of_node_put(np);
+ 			goto rsnd_mix_probe_done;
+ 		}
  
--static struct inet6_protocol l2tp_ip6_protocol __read_mostly = {
-+static const struct inet6_protocol l2tp_ip6_protocol = {
- 	.handler	= l2tp_ip6_recv,
- };
+ 		ret = rsnd_mod_init(priv, rsnd_mod_get(mix), &rsnd_mix_ops,
+ 				    clk, rsnd_mod_get_status, RSND_MOD_MIX, i);
+-		if (ret)
++		if (ret) {
++			of_node_put(np);
+ 			goto rsnd_mix_probe_done;
++		}
  
+ 		i++;
+ 	}
+diff -u -p a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -394,13 +394,16 @@ int rsnd_ctu_probe(struct rsnd_priv *pri
+ 		clk = devm_clk_get(dev, name);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
++			of_node_put(np);
+ 			goto rsnd_ctu_probe_done;
+ 		}
+ 
+ 		ret = rsnd_mod_init(priv, rsnd_mod_get(ctu), &rsnd_ctu_ops,
+ 				    clk, rsnd_mod_get_status, RSND_MOD_CTU, i);
+-		if (ret)
++		if (ret) {
++			of_node_put(np);
+ 			goto rsnd_ctu_probe_done;
++		}
+ 
+ 		i++;
+ 	}
+diff -u -p a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -1079,6 +1079,7 @@ int rsnd_ssi_probe(struct rsnd_priv *pri
+ 		clk = devm_clk_get(dev, name);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
++			of_node_put(np);
+ 			goto rsnd_ssi_probe_done;
+ 		}
+ 
+@@ -1091,6 +1092,7 @@ int rsnd_ssi_probe(struct rsnd_priv *pri
+ 		ssi->irq = irq_of_parse_and_map(np, 0);
+ 		if (!ssi->irq) {
+ 			ret = -EINVAL;
++			of_node_put(np);
+ 			goto rsnd_ssi_probe_done;
+ 		}
+ 
+@@ -1101,8 +1103,10 @@ int rsnd_ssi_probe(struct rsnd_priv *pri
+ 
+ 		ret = rsnd_mod_init(priv, rsnd_mod_get(ssi), ops, clk,
+ 				    rsnd_ssi_get_status, RSND_MOD_SSI, i);
+-		if (ret)
++		if (ret) {
++			of_node_put(np);
+ 			goto rsnd_ssi_probe_done;
++		}
+ 
+ 		i++;
+ 	}
+diff -u -p a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -581,20 +581,24 @@ int rsnd_src_probe(struct rsnd_priv *pri
+ 		src->irq = irq_of_parse_and_map(np, 0);
+ 		if (!src->irq) {
+ 			ret = -EINVAL;
++			of_node_put(np);
+ 			goto rsnd_src_probe_done;
+ 		}
+ 
+ 		clk = devm_clk_get(dev, name);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
++			of_node_put(np);
+ 			goto rsnd_src_probe_done;
+ 		}
+ 
+ 		ret = rsnd_mod_init(priv, rsnd_mod_get(src),
+ 				    &rsnd_src_ops, clk, rsnd_mod_get_status,
+ 				    RSND_MOD_SRC, i);
+-		if (ret)
++		if (ret) {
++			of_node_put(np);
+ 			goto rsnd_src_probe_done;
++		}
+ 
+ skip:
+ 		i++;
+diff -u -p a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+--- a/sound/soc/sh/rcar/dvc.c
++++ b/sound/soc/sh/rcar/dvc.c
+@@ -380,13 +380,16 @@ int rsnd_dvc_probe(struct rsnd_priv *pri
+ 		clk = devm_clk_get(dev, name);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
++			of_node_put(np);
+ 			goto rsnd_dvc_probe_done;
+ 		}
+ 
+ 		ret = rsnd_mod_init(priv, rsnd_mod_get(dvc), &rsnd_dvc_ops,
+ 				    clk, rsnd_mod_get_status, RSND_MOD_DVC, i);
+-		if (ret)
++		if (ret) {
++			of_node_put(np);
+ 			goto rsnd_dvc_probe_done;
++		}
+ 
+ 		i++;
+ 	}
 
