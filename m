@@ -1,25 +1,72 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 01 Jul 2017 21:09:58 +0000
-Subject: Re: [PATCH 2/2] scsi: lpfc: don't double count abort errors
-Message-Id: <yq1tw2vvp7d.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:37 +0000
+Subject: [PATCH 02/11] clk: moxart: Drop unnecessary static
+Message-Id: <1500149266-32357-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080352.mmfyjjxsznzx75yf@mwanda>
-In-Reply-To: <20170630080352.mmfyjjxsznzx75yf@mwanda> (Dan Carpenter's message
-        of "Fri, 30 Jun 2017 11:03:53 +0300")
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Dan,
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> If lpfc_nvmet_unsol_fcp_issue_abort() fails then we accidentally
-> increment "tgtp->xmt_abort_rsp_error" and then two lines later we
-> increment it a second time.
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
 
-Applied to 4.13/scsi-queue.
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+These patches are all independent of each other.
+
+ drivers/clk/clk-moxart.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -18,7 +18,7 @@
+ 
+ static void __init moxart_of_pll_clk_init(struct device_node *node)
+ {
+-	static void __iomem *base;
++	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	struct clk *ref_clk;
+ 	unsigned int mul;
+@@ -57,7 +57,7 @@ CLK_OF_DECLARE(moxart_pll_clock, "moxa,m
+ 
+ static void __init moxart_of_apb_clk_init(struct device_node *node)
+ {
+-	static void __iomem *base;
++	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	struct clk *pll_clk;
+ 	unsigned int div, val;
+
