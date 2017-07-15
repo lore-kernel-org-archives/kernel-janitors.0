@@ -1,67 +1,63 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 05:59:38 +0000
-Subject: [PATCH 09/12] mmc: sunxi: constify mmc_host_ops structures
-Message-Id: <1501307981-29745-10-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:40 +0000
+Subject: [PATCH 05/11] irqchip/gic/realview: Drop unnecessary static
+Message-Id: <1500149266-32357-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org
 
-The mmc_host_ops structure is only stored in the ops field of an
-mmc_host structure, which is declared as const.  Thus the mmc_host_ops
-structure itself can be const.
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Done with the help of Coccinelle.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable optional_qualifier@
-identifier i;
+@bad exists@
 position p;
+identifier x;
+type T;
 @@
-static struct mmc_host_ops i@p = { ... };
+static T x@p;
+...
+x = <+...x...+>
 
-@ok1@
-struct mmc_host *mmc;
-identifier r.i;
-position p;
 @@
-mmc->ops = &i@p
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct mmc_host_ops e;
+identifier x;
+expression e;
+type T;
+position p != bad.p;
 @@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct mmc_host_ops i = { ... };
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/mmc/host/sunxi-mmc.c |    2 +-
+These patches are all independent of each other.
+
+ drivers/irqchip/irq-gic-realview.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 6adc524..fa0601c 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1048,7 +1048,7 @@ static int sunxi_mmc_card_busy(struct mmc_host *mmc)
- 	return !!(mmc_readl(host, REG_STAS) & SDXC_CARD_DATA_BUSY);
- }
- 
--static struct mmc_host_ops sunxi_mmc_ops = {
-+static const struct mmc_host_ops sunxi_mmc_ops = {
- 	.request	 = sunxi_mmc_request,
- 	.set_ios	 = sunxi_mmc_set_ios,
- 	.get_ro		 = mmc_gpio_get_ro,
+diff -u -p a/drivers/irqchip/irq-gic-realview.c b/drivers/irqchip/irq-gic-realview.c
+--- a/drivers/irqchip/irq-gic-realview.c
++++ b/drivers/irqchip/irq-gic-realview.c
+@@ -43,7 +43,7 @@ static const struct of_device_id syscon_
+ static int __init
+ realview_gic_of_init(struct device_node *node, struct device_node *parent)
+ {
+-	static struct regmap *map;
++	struct regmap *map;
+ 	struct device_node *np;
+ 	const struct of_device_id *gic_id;
+ 	u32 pld1_ctrl;
 
