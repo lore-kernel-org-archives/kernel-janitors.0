@@ -1,39 +1,62 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:41:55 +0000
-Subject: [PATCH 08/11] USB: HWA: constify hc_driver structures
-Message-Id: <1501274518-25170-9-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:39 +0000
+Subject: [PATCH 04/11] fbdev: da8xx-fb: Drop unnecessary static
+Message-Id: <1500149266-32357-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The hc_driver structure is only passed as the first argument to
-usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-itself can be const.
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Done with the help of Coccinelle.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/usb/host/hwa-hc.c |    2 +-
+These patches are all independent of each other.
+
+ drivers/video/fbdev/da8xx-fb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/hwa-hc.c b/drivers/usb/host/hwa-hc.c
-index 1db0626..8658619 100644
---- a/drivers/usb/host/hwa-hc.c
-+++ b/drivers/usb/host/hwa-hc.c
-@@ -614,7 +614,7 @@ static int wa_fill_descr(struct wahc *wa)
- 	return result;
- }
- 
--static struct hc_driver hwahc_hc_driver = {
-+static const struct hc_driver hwahc_hc_driver = {
- 	.description = "hwa-hcd",
- 	.product_desc = "Wireless USB HWA host controller",
- 	.hcd_priv_size = sizeof(struct hwahc) - sizeof(struct usb_hcd),
+diff -u -p a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
+--- a/drivers/video/fbdev/da8xx-fb.c
++++ b/drivers/video/fbdev/da8xx-fb.c
+@@ -1341,7 +1341,7 @@ static int fb_probe(struct platform_devi
+ {
+ 	struct da8xx_lcdc_platform_data *fb_pdata  						dev_get_platdata(&device->dev);
+-	static struct resource *lcdc_regs;
++	struct resource *lcdc_regs;
+ 	struct lcd_ctrl_config *lcd_cfg;
+ 	struct fb_videomode *lcdc_info;
+ 	struct fb_info *da8xx_fb_info;
 
