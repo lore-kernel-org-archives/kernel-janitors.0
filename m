@@ -1,40 +1,68 @@
-From: Xinming Hu <huxm@marvell.com>
-Date: Mon, 17 Jul 2017 03:12:08 +0000
-Subject: Re: [PATCH] mwifiex: usb: unlock on error in mwifiex_usb_tx_aggr_tmo()
-Message-Id: <f30cbe024e584abea4b67d453b171450@SC-EXCH02.marvell.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 08:42:32 +0000
+Subject: [PATCH] thermal: tegra: delete unneeded of_node_put
+Message-Id: <1500108152-1812-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
-In-Reply-To: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Amitkumar Karwar <amitkarwar@gmail.com>
-Cc: Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Cathy Luo <cluo@marvell.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGFuIENhcnBlbnRl
-ciBbbWFpbHRvOmRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbV0NCj4gU2VudDogMjAxN8TqN9TCMTDI
-1SAxNToyMQ0KPiBUbzogQW1pdGt1bWFyIEthcndhcjsgWGlubWluZyBIdQ0KPiBDYzogTmlzaGFu
-dCBTYXJtdWthZGFtOyBHYW5hcGF0aGkgQmhhdDsgS2FsbGUgVmFsbzsNCj4gbGludXgtd2lyZWxl
-c3NAdmdlci5rZXJuZWwub3JnOyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnDQo+IFN1
-YmplY3Q6IFtFWFRdIFtQQVRDSF0gbXdpZmlleDogdXNiOiB1bmxvY2sgb24gZXJyb3IgaW4NCj4g
-bXdpZmlleF91c2JfdHhfYWdncl90bW8oKQ0KPiANCj4gRXh0ZXJuYWwgRW1haWwNCj4gDQo+IC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0NCj4gV2UgbmVlZCB0byB1bmxvY2sgaWYgbXdpZmlleF91c2JfcHJlcGFyZV90
-eF9hZ2dyX3NrYigpIGZhaWxzLg0KPiANCj4gRml4ZXM6IGEyY2E4NWFkNzIxZCAoIm13aWZpZXg6
-IHVzYjogYWRkIHRpbWVyIHRvIGZsdXNoIGFnZ3JlZ2F0aW9uIHBhY2tldHMiKQ0KPiBTaWduZWQt
-b2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L3VzYi5jDQo+
-IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L3VzYi5jDQo+IGluZGV4IGNi
-MTc1M2U0M2VmNC4uODgwZWYxY2I0MDg4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJl
-bGVzcy9tYXJ2ZWxsL213aWZpZXgvdXNiLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
-bWFydmVsbC9td2lmaWV4L3VzYi5jDQo+IEBAIC0xMTEyLDcgKzExMTIsNyBAQCBzdGF0aWMgdm9p
-ZCBtd2lmaWV4X3VzYl90eF9hZ2dyX3Rtbyh1bnNpZ25lZCBsb25nDQo+IGNvbnRleHQpDQo+ICAJ
-aWYgKGVycikgew0KPiAgCQltd2lmaWV4X2RiZyhhZGFwdGVyLCBFUlJPUiwNCj4gIAkJCSAgICAi
-cHJlcGFyZSB0eCBhZ2dyIHNrYiBmYWlsZWQsIGVycj0lZFxuIiwgZXJyKTsNCj4gLQkJcmV0dXJu
-Ow0KPiArCQlnb3RvIHVubG9jazsNCj4gIAl9DQo+IA0KPiAgCWlmIChhdG9taWNfcmVhZCgmcG9y
-dC0+dHhfZGF0YV91cmJfcGVuZGluZykgPj0gQEAgLTExMzMsNiArMTEzMyw3DQo+IEBAIHN0YXRp
-YyB2b2lkIG13aWZpZXhfdXNiX3R4X2FnZ3JfdG1vKHVuc2lnbmVkIGxvbmcgY29udGV4dCkNCj4g
-IGRvbmU6DQo+ICAJaWYgKGVyciA9PSAtMSkNCj4gIAkJbXdpZmlleF93cml0ZV9kYXRhX2NvbXBs
-ZXRlKGFkYXB0ZXIsIHNrYl9zZW5kLCAwLCAtMSk7DQo+ICt1bmxvY2s6DQo+ICAJc3Bpbl91bmxv
-Y2tfaXJxcmVzdG9yZSgmcG9ydC0+dHhfYWdncl9sb2NrLCBmbGFncyk7ICB9DQo+IA0KDQpDaGFu
-Z2UgbG9va3MgZmluZSB0byBtZS4gVGhhbmtzLg0KDQpSZWdhcmRzLA0KU2ltb24NCg=
+Device node iterators perform an of_node_put on each iteration, so putting
+an of_node_put before a continue results in a double put.
+
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression e1;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
+
+ for_each_child_of_node(e1,child) {
+   ... when != of_node_get(child)
+*  of_node_put(child);
+   ...
+*  continue;
+}
+// </smpl>
+
+Furthermore, the call to thermal_of_cooling_device_register immediately
+calls __thermal_cooling_device_register with the same arguments.  The
+latter function stores the device node argument, which is the second
+argument of for_each_child_of_node, in the returned thermal_cooling_device
+structure.  This returned structure is then stored in the cdev field of
+stc.  Thus it seems that the second argument of for_each_child_of_node
+escapes the scope of the for_each_child_of_node, so an explicit of_node_get
+on success of thermal_of_cooling_device_register is also needed.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/thermal/tegra/soctherm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 7d2db23..10f4fdd 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1014,7 +1014,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 		tcd = thermal_of_cooling_device_register(np_stcc,
+ 							 (char *)name, ts,
+ 							 &throt_cooling_ops);
+-		of_node_put(np_stcc);
+ 		if (IS_ERR_OR_NULL(tcd)) {
+ 			dev_err(dev,
+ 				"throttle-cfg: %s: failed to register cooling device\n",
+@@ -1022,6 +1021,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 			continue;
+ 		}
+ 
++		of_node_get(np_stcc);
+ 		stc->cdev = tcd;
+ 		stc->init = true;
+ 	}
+
