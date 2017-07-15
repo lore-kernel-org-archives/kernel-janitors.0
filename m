@@ -1,33 +1,57 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Mon, 17 Jul 2017 16:03:28 +0000
-Subject: Re: [PATCH][next] ubifs: fix uninitialized error variable err
-Message-Id: <07004331-e62a-7c02-97db-bc69f8256c9b@nod.at>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 16:27:41 +0000
+Subject: [PATCH] mmc: atmel-mci: add missing of_node_put
+Message-Id: <1500136061-12135-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170717160001.20285-1-colin.king@canonical.com>
-In-Reply-To: <20170717160001.20285-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, hyc.lee@gmail.com, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Colin,
+for_each_child_of_node performs an of_node_get on each iteration, so a
+break out the loop requires an of_node_put.
 
-Am 17.07.2017 um 18:00 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable err is not initialized and so the check to see if it is
-> non-zero is basically checking a random garbage value. Fix this
-> by initializing err to zero.
-> 
-> Detected by CoverityScan, CID#1451370 ("Uninitialized variable")
-> 
-> Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Thanks, geert already pointed out that I've merged a bad patch.
-I managed to merge the patch without the issues fixed that Hyunchul Lee
-identified. ;-(
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+iterator name for_each_child_of_node;
+@@
 
-Thanks,
-//richard
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/atmel-mci.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff -u -p a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -673,6 +673,7 @@ atmci_of_init(struct platform_device *pd
+ 		if (slot_id >= ATMCI_MAX_NR_SLOTS) {
+ 			dev_warn(&pdev->dev, "can't have more than %d slots\n",
+ 			         ATMCI_MAX_NR_SLOTS);
++			of_node_put(cnp);
+ 			break;
+ 		}
+ 
+
