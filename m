@@ -1,78 +1,71 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Sat, 22 Jul 2017 17:28:33 +0000
-Subject: Re: [PATCH] IB/cxgb3: Fix error codes in iwch_alloc_mr()
-Message-Id: <d300777c-6057-b7b7-f10a-0724879204dd@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="c64psOxmBcDLURhi7X9IK3IfcEK8KTU6a"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 07:48:53 +0000
+Subject: [PATCH] leds: tlc591xx: add missing of_node_put
+Message-Id: <1500104933-25286-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713074800.dlzwroi4jmuv5xfk@mwanda>
-In-Reply-To: <20170713074800.dlzwroi4jmuv5xfk@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Steve Wise <swise@chelsio.com>
-Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---c64psOxmBcDLURhi7X9IK3IfcEK8KTU6a
-Content-Type: multipart/mixed; boundary="2DWOvNiHhOxLMvHMx3lvPeTPEAhr6katW";
- protected-headers="v1"
-From: Doug Ledford <dledford@redhat.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Steve Wise <swise@chelsio.com>
-Cc: Sean Hefty <sean.hefty@intel.com>,
- Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <d300777c-6057-b7b7-f10a-0724879204dd@redhat.com>
-Subject: Re: [PATCH] IB/cxgb3: Fix error codes in iwch_alloc_mr()
-References: <20170713074800.dlzwroi4jmuv5xfk@mwanda>
-In-Reply-To: <20170713074800.dlzwroi4jmuv5xfk@mwanda>
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
---2DWOvNiHhOxLMvHMx3lvPeTPEAhr6katW
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-On 7/13/2017 3:48 AM, Dan Carpenter wrote:
-> We accidentally don't set the error code on some error paths.  It means=
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+iterator name for_each_child_of_node;
+@@
 
-> return ERR_PTR(0) which is NULL and results in a NULL dereference in th=
-e
-> caller.
->=20
-> Fixes: 13a239330abd ("RDMA/cxgb3: Don't ignore insert_handle() failures=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
-This was accepted into 4.13-rc, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FD=
-D
+---
+ drivers/leds/leds-tlc591xx.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
+diff -u -p a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -230,12 +230,18 @@ tlc591xx_probe(struct i2c_client *client
+ 
+ 	for_each_child_of_node(np, child) {
+ 		err = of_property_read_u32(child, "reg", &reg);
+-		if (err)
++		if (err) {
++			of_node_put(child);
+ 			return err;
+-		if (reg < 0 || reg >= tlc591xx->max_leds)
++		}
++		if (reg < 0 || reg >= tlc591xx->max_leds) {
++			of_node_put(child);
+ 			return -EINVAL;
+-		if (priv->leds[reg].active)
++		}
++		if (priv->leds[reg].active) {
++			of_node_put(child);
+ 			return -EINVAL;
++		}
+ 		priv->leds[reg].active = true;
+ 		priv->leds[reg].ldev.name  			of_get_property(child, "label", NULL) ? : child->name;
 
---2DWOvNiHhOxLMvHMx3lvPeTPEAhr6katW--
-
---c64psOxmBcDLURhi7X9IK3IfcEK8KTU6a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJZc4tBAAoJELgmozMOVy/dwJYP/AwMJR4PSGycbv/8xoTTYXaG
-s0IC+s/RhuJjvPHzJwb6mVz9Vf+W5knp11gOzWxBmAINavXQXD0ceeeUkQ6wLtYi
-2RpEihCgsKzoINS4K1gM1W1B8Rz63ReWDoWofWnD77RqpS0y3enBfmOqt/cvWmeP
-zFNQXiUy0a5gr7G2GoQlx/6nb2NVqumtQAr/WOR1aR+fqUcu7Jns5v2f9y//r1rK
-aNFKodd6NiBJQ7dCz38Y5+6RpjqvxG1W2pNdSM5HE1KBitDYprucLG9SzdwnTA4v
-ebbnzDhr5iw5T+LChAhtmhGmpjciykjl3RI2aIikzt644oQzSIwCFJ8IiTh0dKuy
-7/TEjaYncAKvGS/+hWt39VN5UN2Hac2oePow/KFtH5F5lHjbDyaEjNYYNJmrb/WJ
-/+/hanVqIOIQ3GthzdKmcJYJ6Z8s9sHGv+p4ZKfSb3E5QZZD6+A3XRBXWKUt6h/M
-EaCfY3HfZxQR5OafCXv5SFqog9CuSJ8i75ATfPSUpYon2y798IDD1pRYL2VvWxVz
-1qFTf/bersaICx8kPjkqr3zQQ+0qgLxNGJoUjoXdmpg4E1BARFBiUCyd44M3vfC8
-kVawNP84GcyRhlzDtlRPsBIhFDIbcK/xywArH1Stb+GUaD3EQgL42a6H3n34bMkW
-JwfsOhDbVquvuTcdcrbZ
-=0oLu
------END PGP SIGNATURE-----
-
---c64psOxmBcDLURhi7X9IK3IfcEK8KTU6a--
