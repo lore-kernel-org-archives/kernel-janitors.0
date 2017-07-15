@@ -1,34 +1,15 @@
-From: Dave Carroll <david.carroll@microsemi.com>
-Date: Thu, 27 Jul 2017 16:51:26 +0000
-Subject: RE: [PATCH 2/2] scsi: aacraid: Off by one NUL terminator
-Message-Id: <423FD6710FB8FB4F8728F93591889F9A5307D15C@avsrvexchmbx2.microsemi.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 09:58:17 +0000
+Subject: [PATCH 0/2 v2] leds: tlc591xx: add missing of_node_put
+Message-Id: <1500112699-770-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170725195110.uwrzzkzvrbfqv7ld@mwanda>
-        <yq1wp6uwp9c.fsf@oracle.com>
-        <423FD6710FB8FB4F8728F93591889F9A5307D0DC@avsrvexchmbx2.microsemi.net>
- <yq1wp6tvo3x.fsf@oracle.com>
-In-Reply-To: <yq1wp6tvo3x.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Dave,
-> 
-> > The issue is that we are making an inquiry response from
-> > container/RAID info. We could also have included a "pad" byte to
-> > terminate the string, as the fib data is 512 bytes. My assumption is
-> > that somehow back in the day, someone managed to get odd characters
-> > into the name.
-> >
-> > Terminating the string early would truncate the name ...
-> 
-> So what do you propose as a fix?
+This series first merges two conditionals and then adds of_node_put on
+jumping out of for_each_child_of_node.
 
-We can add the pad byte to the struct, and terminate the string there. I'm out the office now, but Raghava or I will send up a patch ... That way, folks won't need to contemplate what appears to be a blatant out of bounds reference.
-
--Dave
-> 
-> --
-> Martin K. Petersen      Oracle Linux Engineering
+v2 adds the merge of conditionals, resulting in fewer of_node_put calls.
