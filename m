@@ -1,26 +1,63 @@
-From: Dave Carroll <david.carroll@microsemi.com>
-Date: Thu, 27 Jul 2017 16:12:36 +0000
-Subject: RE: [PATCH 1/2] scsi: aacraid: reading out of bounds
-Message-Id: <423FD6710FB8FB4F8728F93591889F9A5307D0A4@avsrvexchmbx2.microsemi.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Jul 2017 20:07:44 +0000
+Subject: [PATCH 09/11] iio: orientation: hid-sensor-rotation: Drop unnecessary static
+Message-Id: <1500149266-32357-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170725194955.dd4g6msevoesty4t@mwanda>
- <yq11sp2y6ip.fsf@oracle.com>
-In-Reply-To: <yq11sp2y6ip.fsf@oracle.com>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> 
-> Dan,
-> 
-> > "qd.id" comes directly from the copy_from_user() on the line before so
-> > we should verify that it's within bounds.
-> 
-> Applied to 4.13/scsi-fixes. Thanks!
-> 
-> --
-> Martin K. Petersen      Oracle Linux Engineering
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Acked-by: Dave Carroll <david.carroll@microsemi.com>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+These patches are all independent of each other.
+
+ drivers/iio/orientation/hid-sensor-rotation.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
+--- a/drivers/iio/orientation/hid-sensor-rotation.c
++++ b/drivers/iio/orientation/hid-sensor-rotation.c
+@@ -238,7 +238,7 @@ static int dev_rot_parse_report(struct p
+ static int hid_dev_rot_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	static char *name;
++	char *name;
+ 	struct iio_dev *indio_dev;
+ 	struct dev_rot_state *rot_state;
+ 	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
+
