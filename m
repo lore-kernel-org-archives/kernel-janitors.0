@@ -1,27 +1,52 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 12 Jul 2017 21:07:28 +0000
-Subject: Re: [PATCH] cxlflash: return -EFAULT if copy_from_user() fails
-Message-Id: <yq1vamxl5yn.fsf@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Jul 2017 06:59:03 +0000
+Subject: [PATCH 2/3] thermal: core: Reorder 'thermal_zone_device_register()' error handling code
+Message-Id: <1b2b2a818d356097d5f6092745086b79d43aeafe.1500187753.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080106.yxyckztimezvpzrt@mwanda>
-In-Reply-To: <20170630080106.yxyckztimezvpzrt@mwanda> (Dan Carpenter's message
-        of "Fri, 30 Jun 2017 11:01:06 +0300")
+References: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>, Uma Krishnan <ukrishn@linux.vnet.ibm.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Reorder code in the error handling path in order to match the way resources
+have been allocated.
 
-Dan,
+With this new order, we can avoid a call to 'device_unregister()' if
+'thermal_zone_create_device_groups'()' fails. At this point,
+'device_register()' has not been called yet.
 
-> The copy_from/to_user() functions return the number of bytes remaining
-> to be copied but we had intended to return -EFAULT here.
->
-> Fixes: bc88ac47d5cb ("scsi: cxlflash: Support AFU debug")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/thermal/thermal_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Applied to 4.13/scsi-fixes, thanks!
-
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 9743f3e65eb0..c58714800660 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1232,7 +1232,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 	/* Add nodes that are always present via .groups */
+ 	result = thermal_zone_create_device_groups(tz, mask);
+ 	if (result)
+-		goto unregister;
++		goto remove_id;
+ 
+ 	/* A new thermal zone needs to be updated anyway. */
+ 	atomic_set(&tz->need_update, 1);
+@@ -1294,8 +1294,9 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ 	return tz;
+ 
+ unregister:
+-	ida_simple_remove(&thermal_tz_ida, tz->id);
+ 	device_unregister(&tz->device);
++remove_id:
++	ida_simple_remove(&thermal_tz_ida, tz->id);
+ 	kfree(tz);
+ 	return ERR_PTR(result);
+ }
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
