@@ -1,57 +1,36 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 17 Jul 2017 10:45:14 +0000
-Subject: Re: [PATCH] mfd: twl-core: Improve the documentation
-Message-Id: <20170717104514.u4n3vkhaiz355ohi@dell>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Jul 2017 06:59:02 +0000
+Subject: [PATCH 1/3] thermal: core: Fix a memory leak in 'thermal_zone_device_register()' error handling path
+Message-Id: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080220.ctwetsy2jfrxyn4s@mwanda>
-In-Reply-To: <20170630080220.ctwetsy2jfrxyn4s@mwanda>
+References: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 30 Jun 2017, Dan Carpenter wrote:
+'tz' is freed in some error handling paths but not in the main one.
+So free it also here to avoid a memory leak.
 
-> Saying it "returns the result" seems tautological.  The read function
-> does not return num_bytes on success, it returns zero on success.  I
-> noticed this discrepancy because some of the callers were checking for
-> >=3D 0.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/thermal/thermal_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks.
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 5a51c740e372..9743f3e65eb0 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1296,6 +1296,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+ unregister:
+ 	ida_simple_remove(&thermal_tz_ida, tz->id);
+ 	device_unregister(&tz->device);
++	kfree(tz);
+ 	return ERR_PTR(result);
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_device_register);
+-- 
+2.11.0
 
-> diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-> index c64615dca2bd..07d168f8cc81 100644
-> --- a/drivers/mfd/twl-core.c
-> +++ b/drivers/mfd/twl-core.c
-> @@ -448,7 +448,7 @@ static struct regmap *twl_get_regmap(u8 mod_no)
->   * @reg: register address (just offset will do)
->   * @num_bytes: number of bytes to transfer
->   *
-> - * Returns the result of operation - 0 is success
-> + * Returns 0 on success or else a negative error code.
->   */
->  int twl_i2c_write(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
->  {
-> @@ -476,7 +476,7 @@ EXPORT_SYMBOL(twl_i2c_write);
->   * @reg: register address (just offset will do)
->   * @num_bytes: number of bytes to transfer
->   *
-> - * Returns result of operation - num_bytes is success else failure.
-> + * Returns 0 on success or else a negative error code.
->   */
->  int twl_i2c_read(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
->  {
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
