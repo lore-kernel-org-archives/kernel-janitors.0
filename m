@@ -1,31 +1,56 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Thu, 06 Jul 2017 19:28:15 +0000
-Subject: Re: [PATCH][ext4-next] ext4: ensure error return ret is zero on successful return
-Message-Id: <20170706192815.pj4ptivvnuo2wrmy@thunk.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 16 Jul 2017 08:39:03 +0000
+Subject: [PATCH] nvme-pci: Fix an error handling path in 'nvme_probe()'
+Message-Id: <20170716083903.7108-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170623145840.26779-1-colin.king@canonical.com>
-In-Reply-To: <20170623145840.26779-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 23, 2017 at 03:58:40PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The error return ret is not set on a successful return path and
-> so it returns a garbage value. Ensure it is is set to zero on
-> a successful return.
-> 
-> Detected by CoverityScan, CID#1446616 ("Uninitialized scalar variable")
-> 
-> Fixes: 3499c0fb822d ("quota: add get_inode_usage callback to transfer multi-inode charges")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Release resources in the correct order in order not to miss a
+'put_device()' if 'nvme_dev_map()' fails.
 
-Thanks, I've folded this into the "quota: add get_inode_usage callback
-to transfer multi-inode charges" with credit for your providing the
-fix.
+Fixes: b00a726a9fd8 ("NVMe: Don't unmap controller registers on reset")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/nvme/host/pci.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-					- Ted
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index d10d2f279d19..005beffd005d 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2282,7 +2282,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	result = nvme_dev_map(dev);
+ 	if (result)
+-		goto free;
++		goto put_pci;
+ 
+ 	INIT_WORK(&dev->ctrl.reset_work, nvme_reset_work);
+ 	INIT_WORK(&dev->remove_work, nvme_remove_dead_ctrl_work);
+@@ -2291,7 +2291,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	result = nvme_setup_prp_pools(dev);
+ 	if (result)
+-		goto put_pci;
++		goto unmap;
+ 
+ 	quirks |= check_dell_samsung_bug(pdev);
+ 
+@@ -2308,9 +2308,10 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+  release_pools:
+ 	nvme_release_prp_pools(dev);
++ unmap:
++	nvme_dev_unmap(dev);
+  put_pci:
+ 	put_device(dev->dev);
+-	nvme_dev_unmap(dev);
+  free:
+ 	kfree(dev->queues);
+ 	kfree(dev);
+-- 
+2.11.0
+
