@@ -1,51 +1,39 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 25 Jul 2017 21:06:34 +0000
-Subject: Re: [PATCH] proc: Remove cast from memory allocation
-Message-Id: <CAGXu5jLAZ+SwToNx6vQqPkbZ_DjN5EuaPWWJJrNW59+EZwuK2Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Jul 2017 08:16:05 +0000
+Subject: [PATCH] ASoC: nuc900: Fix a loop timeout test
+Message-Id: <20170717081605.a6merkvdy4ngdiqj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1487745720-16967-1-git-send-email-me@tobin.cc>
-In-Reply-To: <1487745720-16967-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <seth.forshee@canonical.com>, Alexey Dobriyan <adobriyan@gmail.com>, "Eric W. Biederman" <ebiederm@xmission.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Wan ZongShun <mcuos.com@gmail.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On Tue, Feb 21, 2017 at 10:42 PM, Tobin C. Harding <me@tobin.cc> wrote:
-> Coccinelle emits WARNING: casting value returned by memory allocation
-> function to (struct proc_inode *) is useless.
->
-> Remove unnecessary cast.
->
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we exit with timeout = -1.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--Kees
-
-> ---
->  fs/proc/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 842a5ff..1eb2326 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -57,7 +57,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
->         struct proc_inode *ei;
->         struct inode *inode;
->
-> -       ei = (struct proc_inode *)kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
-> +       ei = kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
->         if (!ei)
->                 return NULL;
->         ei->pid = NULL;
-> --
-> 2.7.4
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
+index b6615affe571..fde974d52bb2 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(struct snd_ac97 *ac97,
+ 
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
+ 
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+ 
+ 	if (!timeout)
