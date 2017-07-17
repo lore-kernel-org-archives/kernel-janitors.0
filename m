@@ -1,24 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Jul 2017 23:23:26 +0000
-Subject: Re: [PATCH net-next] bpf: dev_map_alloc() shouldn't return NULL
-Message-Id: <20170724.162326.2235132369097751651.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jul 2017 16:00:01 +0000
+Subject: [PATCH][next] ubifs: fix uninitialized error variable err
+Message-Id: <20170717160001.20285-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170722074004.3abeucov67n3sbqs@mwanda>
-In-Reply-To: <20170722074004.3abeucov67n3sbqs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ast@kernel.org, john.fastabend@gmail.com, daniel@iogearbox.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Jul 2017 10:40:04 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> We forgot to set the error code on two error paths which means that we
-> return ERR_PTR(0) which is NULL.  The caller, find_and_alloc_map(), is
-> not expecting that and will have a NULL dereference.
-> 
-> Fixes: 546ac1ffb70d ("bpf: add devmap, a map for storing net device references")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable err is not initialized and so the check to see if it is
+non-zero is basically checking a random garbage value. Fix this
+by initializing err to zero.
 
-Applied, thanks Dan.
+Detected by CoverityScan, CID#1451370 ("Uninitialized variable")
+
+Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ubifs/tnc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
+index 0a213dcba2a1..ec18304fe0e1 100644
+--- a/fs/ubifs/tnc.c
++++ b/fs/ubifs/tnc.c
+@@ -1884,7 +1884,7 @@ static int search_dh_cookie(struct ubifs_info *c, const union ubifs_key *key,
+ 			    struct ubifs_dent_node *dent, uint32_t cookie,
+ 			    struct ubifs_znode **zn, int *n)
+ {
+-	int err;
++	int err = 0;
+ 	struct ubifs_znode *znode = *zn;
+ 	struct ubifs_zbranch *zbr;
+ 	union ubifs_key *dkey;
+-- 
+2.11.0
+
