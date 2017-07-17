@@ -1,81 +1,71 @@
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
-Date: Sun, 09 Jul 2017 08:57:18 +0000
-Subject: RE: [bug report] qed: iWARP CM add passive side connect
-Message-Id: <BN3PR0701MB1377D1CADB0D72DD3338789788A80@BN3PR0701MB1377.namprd07.prod.outlook.com>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 17 Jul 2017 10:46:44 +0000
+Subject: Re: [PATCH] mfd: rtsx: make arrays depth and cd_mask static const
+Message-Id: <20170717104644.igajn5icexlowvkt@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170707121708.hwjpu5ph2kmuwixb@mwanda>
-In-Reply-To: <20170707121708.hwjpu5ph2kmuwixb@mwanda>
+References: <20170630093327.8595-1-colin.king@canonical.com>
+In-Reply-To: <20170630093327.8595-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-Sent: Friday, July 07, 2017 3:17 PM
-> 
-> Hello Kalderon, Michal,
-> 
-> The patch 456a584947d5: "qed: iWARP CM add passive side connect" from Jul
-> 2, 2017, leads to the following Smatch warnings:
-> 
-> 	drivers/net/ethernet/qlogic/qed/qed_iwarp.c:585
-> qed_iwarp_print_tcp_ramrod()
-> 	warn: '%pI6' can only be followed by c
-> 	drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1521
-> qed_iwarp_print_cm_info()
-> 	warn: '%pI6' can only be followed by c
-> 
-> 
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c
->    576          if (p_tcp_ramrod->tcp.ip_version == TCP_IPV4) {
->    577                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
->    578                             "local_ip=%pI4h:%x, remote_ip=%pI4h%x, vlan=%x\n",
->    579                             p_tcp_ramrod->tcp.local_ip,
->    580                             p_tcp_ramrod->tcp.local_port,
->    581                             p_tcp_ramrod->tcp.remote_ip,
->    582                             p_tcp_ramrod->tcp.remote_port,
->    583                             p_tcp_ramrod->tcp.vlan_id);
->    584          } else {
->    585                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
->    586                             "local_ip=%pI6h:%x, remote_ip=%pI6h:%x, vlan=%x\n",
->                                                  ^                   ^
-> These seem like copy and paste errors.  With IPv6 everything that's not 'c' is
-> treated the same.  There is no 'h' options.  (I'm not really familiar with the
-> what formats people prefer).
-> 
->    587                             p_tcp_ramrod->tcp.local_ip,
->    588                             p_tcp_ramrod->tcp.local_port,
->    589                             p_tcp_ramrod->tcp.remote_ip,
->    590                             p_tcp_ramrod->tcp.remote_port,
->    591                             p_tcp_ramrod->tcp.vlan_id);
->    592          }
-> 
-> 	[ snip ]
-> 
->   1508  qed_iwarp_print_cm_info(struct qed_hwfn *p_hwfn,
->   1509                          struct qed_iwarp_cm_info *cm_info)
->   1510  {
->   1511          DP_VERBOSE(p_hwfn, QED_MSG_RDMA, "ip_version = %d\n",
->   1512                     cm_info->ip_version);
->   1513
->   1514          if (cm_info->ip_version == QED_TCP_IPV4)
->   1515                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
->   1516                             "remote_ip %pI4h:%x, local_ip %pI4h:%x vlan=%x\n",
->   1517                             cm_info->remote_ip, cm_info->remote_port,
->   1518                             cm_info->local_ip, cm_info->local_port,
->   1519                             cm_info->vlan);
->   1520          else
->   1521                  DP_VERBOSE(p_hwfn, QED_MSG_RDMA,
->   1522                             "remote_ip %pI6h:%x, local_ip %pI6h:%x vlan=%x\n",
->                                                   ^                  ^
-> Same.
-> 
->   1523                             cm_info->remote_ip, cm_info->remote_port,
->   1524                             cm_info->local_ip, cm_info->local_port,
->   1525                             cm_info->vlan);
->   1526
-> 
-> regards,
-> dan carpenter
+Please start the commit subject description with an uppercase char.
 
-Thanks Dan, I'll send a patch shortly.
+> From: Colin Ian King <colin.king@canonical.com>
+
+This is odd.  How are you sending this patch Colin?
+
+> Don't populate the arrays depath and cd_mask on the stack but make
+> them static const.  Makes the object code smaller:
+>=20
+>    text    data     bss     dec     hex filename
+>   25413    7216     448   33077    8135 drivers/mfd/rtsx_pcr.o
+>=20
+>    text    data     bss     dec     hex filename
+>   25151    7360     448   32959    80bf drivers/mfd/rtsx_pcr.o
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/mfd/rtsx_pcr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+I'll fix the $SUBJECT line.
+
+Applied, thanks.
+
+> diff --git a/drivers/mfd/rtsx_pcr.c b/drivers/mfd/rtsx_pcr.c
+> index a0ac89dfdf0f..3cf69e5c5703 100644
+> --- a/drivers/mfd/rtsx_pcr.c
+> +++ b/drivers/mfd/rtsx_pcr.c
+> @@ -644,7 +644,7 @@ int rtsx_pci_switch_clock(struct rtsx_pcr *pcr, unsig=
+ned int card_clock,
+>  {
+>  	int err, clk;
+>  	u8 n, clk_divider, mcu_cnt, div;
+> -	u8 depth[] =3D {
+> +	static const u8 depth[] =3D {
+>  		[RTSX_SSC_DEPTH_4M] =3D SSC_DEPTH_4M,
+>  		[RTSX_SSC_DEPTH_2M] =3D SSC_DEPTH_2M,
+>  		[RTSX_SSC_DEPTH_1M] =3D SSC_DEPTH_1M,
+> @@ -768,7 +768,7 @@ EXPORT_SYMBOL_GPL(rtsx_pci_card_power_off);
+> =20
+>  int rtsx_pci_card_exclusive_check(struct rtsx_pcr *pcr, int card)
+>  {
+> -	unsigned int cd_mask[] =3D {
+> +	static const unsigned int cd_mask[] =3D {
+>  		[RTSX_SD_CARD] =3D SD_EXIST,
+>  		[RTSX_MS_CARD] =3D MS_EXIST
+>  	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
