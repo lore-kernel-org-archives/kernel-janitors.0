@@ -1,42 +1,29 @@
-From: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Date: Mon, 10 Jul 2017 06:21:50 +0000
-Subject: Re: [PATCH 1/3] net: stmmac: Fix error handling path in 'alloc_dma_rx_desc_resources()'
-Message-Id: <fce9a8f9-437b-2c14-a733-d8ec956f66c8@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Jul 2017 08:12:38 +0000
+Subject: [PATCH] serial: st-asc: Potential error pointer dereference
+Message-Id: <20170717081238.bjjp5vvzq56yv2q3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1499499451.git.christophe.jaillet@wanadoo.fr>
- <12c5a0a87b6ef1ae40e35e247703082a671f2934.1499499451.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <12c5a0a87b6ef1ae40e35e247703082a671f2934.1499499451.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alexandre.torgue@st.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@st.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 7/8/2017 9:46 AM, Christophe JAILLET wrote:
-> If the first 'kmalloc_array' within the loop fails, we should free what
-> as already been allocated, as done in all other error handling path.
->
-> Fixes: 54139cf3bb33 ("net: stmmac: adding multiple buffers for rx")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+It looks like we intended to return an error code here, because we
+dereference "ascport->pinctrl" on the next lines.
 
-Acked-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Fixes: 6929cb00a501 ("serial: st-asc: Read in all Pinctrl states")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->   drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 19bba6281dab..4322fa4a13e8 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -1498,7 +1498,7 @@ static int alloc_dma_rx_desc_resources(struct stmmac_priv *priv)
->   						    sizeof(dma_addr_t),
->   						    GFP_KERNEL);
->   		if (!rx_q->rx_skbuff_dma)
-> -			return -ENOMEM;
-> +			goto err_dma;
->   
->   		rx_q->rx_skbuff = kmalloc_array(DMA_RX_SIZE,
->   						sizeof(struct sk_buff *),
-
-
+diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
+index f5335be344f6..6b0ca65027d0 100644
+--- a/drivers/tty/serial/st-asc.c
++++ b/drivers/tty/serial/st-asc.c
+@@ -758,6 +758,7 @@ static int asc_init_port(struct asc_port *ascport,
+ 	if (IS_ERR(ascport->pinctrl)) {
+ 		ret = PTR_ERR(ascport->pinctrl);
+ 		dev_err(&pdev->dev, "Failed to get Pinctrl: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	ascport->states[DEFAULT] 
