@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 12 Jul 2017 15:19:11 +0000
-Subject: Re: [PATCH net] net: ipmr: ipmr_get_table() returns NULL
-Message-Id: <20170712.081911.723573255148721051.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Jul 2017 08:13:35 +0000
+Subject: [PATCH] libceph: potential NULL dereference in ceph_msg_data_create()
+Message-Id: <20170717081335.3hhaj2k2frpq7gfa@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170712075647.zyz6pkppyerl4ktf@mwanda>
-In-Reply-To: <20170712075647.zyz6pkppyerl4ktf@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sharpd@cumulusnetworks.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ilya Dryomov <idryomov@gmail.com>, Alex Elder <elder@inktank.com>
+Cc: "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Jul 2017 10:56:47 +0300
+If kmem_cache_zalloc() returns NULL then the INIT_LIST_HEAD(&data->links);
+will Oops.  The callers aren't really prepared for NULL returns so it
+doesn't make a lot of difference in real life.
 
-> The ipmr_get_table() function doesn't return error pointers it returns
-> NULL on error.
-> 
-> Fixes: 4f75ba6982bc ("net: ipmr: Add ipmr_rtm_getroute")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 5240d9f95dfe ("libceph: replace message data pointer with list")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 0c31035bbfee..b7cc615d42ef 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -3203,8 +3203,10 @@ static struct ceph_msg_data *ceph_msg_data_create(enum ceph_msg_data_type type)
+ 		return NULL;
+ 
+ 	data = kmem_cache_zalloc(ceph_msg_data_cache, GFP_NOFS);
+-	if (data)
+-		data->type = type;
++	if (!data)
++		return NULL;
++
++	data->type = type;
+ 	INIT_LIST_HEAD(&data->links);
+ 
+ 	return data;
