@@ -1,60 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Jul 2017 08:34:23 +0000
-Subject: [PATCH v2] serial: sh-sci: Uninitialized variables in sysfs files
-Message-Id: <20170717083423.4rhsmwtbehjl7jpr@mwanda>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 17 Jul 2017 10:45:14 +0000
+Subject: Re: [PATCH] mfd: twl-core: Improve the documentation
+Message-Id: <20170717104514.u4n3vkhaiz355ohi@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170717081123.akqck2wmj7m7gtc4@mwanda>
-In-Reply-To: <20170717081123.akqck2wmj7m7gtc4@mwanda>
+References: <20170630080220.ctwetsy2jfrxyn4s@mwanda>
+In-Reply-To: <20170630080220.ctwetsy2jfrxyn4s@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The kstrtol() function returns -ERANGE as well as -EINVAL so these tests
-are not enough.  It's not a super serious bug, but my static checker
-correctly complains that the "r" variable might be used uninitialized.
+On Fri, 30 Jun 2017, Dan Carpenter wrote:
 
-Fixes: 5d23188a473d ("serial: sh-sci: make RX FIFO parameters tunable via sysfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fix subject line
+> Saying it "returns the result" seems tautological.  The read function
+> does not return num_bytes on success, it returns zero on success.  I
+> noticed this discrepancy because some of the callers were checking for
+> >=3D 0.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index da5ddfc14778..e08b16b070c0 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1085,10 +1085,12 @@ static ssize_t rx_trigger_store(struct device *dev,
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
- 	struct sci_port *sci = to_sci_port(port);
-+	int ret;
- 	long r;
- 
--	if (kstrtol(buf, 0, &r) = -EINVAL)
--		return -EINVAL;
-+	ret = kstrtol(buf, 0, &r);
-+	if (ret)
-+		return ret;
- 
- 	sci->rx_trigger = scif_set_rtrg(port, r);
- 	if (port->type = PORT_SCIFA || port->type = PORT_SCIFB)
-@@ -1116,10 +1118,12 @@ static ssize_t rx_fifo_timeout_store(struct device *dev,
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
- 	struct sci_port *sci = to_sci_port(port);
-+	int ret;
- 	long r;
- 
--	if (kstrtol(buf, 0, &r) = -EINVAL)
--		return -EINVAL;
-+	ret = kstrtol(buf, 0, &r);
-+	if (ret)
-+		return ret;
- 	sci->rx_fifo_timeout = r;
- 	scif_set_rtrg(port, 1);
- 	if (r > 0)
+Applied, thanks.
+
+> diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+> index c64615dca2bd..07d168f8cc81 100644
+> --- a/drivers/mfd/twl-core.c
+> +++ b/drivers/mfd/twl-core.c
+> @@ -448,7 +448,7 @@ static struct regmap *twl_get_regmap(u8 mod_no)
+>   * @reg: register address (just offset will do)
+>   * @num_bytes: number of bytes to transfer
+>   *
+> - * Returns the result of operation - 0 is success
+> + * Returns 0 on success or else a negative error code.
+>   */
+>  int twl_i2c_write(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
+>  {
+> @@ -476,7 +476,7 @@ EXPORT_SYMBOL(twl_i2c_write);
+>   * @reg: register address (just offset will do)
+>   * @num_bytes: number of bytes to transfer
+>   *
+> - * Returns result of operation - num_bytes is success else failure.
+> + * Returns 0 on success or else a negative error code.
+>   */
+>  int twl_i2c_read(u8 mod_no, u8 *value, u8 reg, unsigned num_bytes)
+>  {
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
 --
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
 the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
