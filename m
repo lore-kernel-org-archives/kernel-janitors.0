@@ -1,95 +1,85 @@
 From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 03 Jul 2017 11:42:01 +0000
+Date: Mon, 17 Jul 2017 11:00:56 +0000
 Subject: Re: [PATCH 9/9] mfd: max8925-i2c: Drop unnecessary static
-Message-Id: <20170703114201.ybafidokvrwg4how@dell>
+Message-Id: <20170717110056.q5fp3wvjoamov5c2@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1493928654-18768-1-git-send-email-Julia.Lawall@lip6.fr>
  <1493928654-18768-10-git-send-email-Julia.Lawall@lip6.fr>
- <CAGXu5jJdxyXtL09ps1o5LYVDvfqEbymAXz=wvQD6cysnvnacUA@mail.gmail.com>
-In-Reply-To: <CAGXu5jJdxyXtL09ps1o5LYVDvfqEbymAXz=wvQD6cysnvnacUA@mail.gmail.com>
+In-Reply-To: <1493928654-18768-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: Kees Cook <keescook@chromium.org>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 27 Jun 2017, Kees Cook wrote:
+On Thu, 04 May 2017, Julia Lawall wrote:
 
-> On Thu, May 4, 2017 at 1:10 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> > Drop static on a local variable, when the variable is initialized before
-> > any use, on every possible execution path through the function.  The st=
-atic
-> > has no benefit, and dropping it reduces the code size.
-> >
-> > The semantic patch that fixes this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @bad exists@
-> > position p;
-> > identifier x;
-> > type T;
-> > @@
-> >
-> > static T x@p;
-> > ...
-> > x =3D <+...x...+>
-> >
-> > @@
-> > identifier x;
-> > expression e;
-> > type T;
-> > position p !=3D bad.p;
-> > @@
-> >
-> > -static
-> >  T x@p;
-> >  ... when !=3D x
-> >      when strict
-> > ?x =3D e;
-> > // </smpl>
-> >
-> > The change in code size is indicates by the following output from the s=
-ize
-> > command.
-> >
-> > before:
-> >    text    data     bss     dec     hex filename
-> >    2579     240      16    2835     b13 drivers/mfd/max8925-i2c.o
-> >
-> > after:
-> >    text    data     bss     dec     hex filename
-> >    2531     240       8    2779     adb drivers/mfd/max8925-i2c.o
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  drivers/mfd/max8925-i2c.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
-> > index 5c80aea..1006323 100644
-> > --- a/drivers/mfd/max8925-i2c.c
-> > +++ b/drivers/mfd/max8925-i2c.c
-> > @@ -151,7 +151,7 @@ static int max8925_probe(struct i2c_client *client,
-> >                                    const struct i2c_device_id *id)
-> >  {
-> >         struct max8925_platform_data *pdata =3D dev_get_platdata(&clien=
-t->dev);
-> > -       static struct max8925_chip *chip;
-> > +       struct max8925_chip *chip;
-> >         struct device_node *node =3D client->dev.of_node;
-> >
-> >         if (node && !pdata) {
-> >
+> Drop static on a local variable, when the variable is initialized before
+> any use, on every possible execution path through the function.  The stat=
+ic
+> has no benefit, and dropping it reduces the code size.
 >=20
-> Acked-by: Kees Cook <keescook@chromium.org>
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 >=20
-> Kernel janitors or Andrew, can you pick this up?
+> // <smpl>
+> @bad exists@
+> position p;
+> identifier x;
+> type T;
+> @@
+>=20
+> static T x@p;
+> ...
+> x =3D <+...x...+>
+>=20
+> @@
+> identifier x;
+> expression e;
+> type T;
+> position p !=3D bad.p;
+> @@
+>=20
+> -static
+>  T x@p;
+>  ... when !=3D x
+>      when strict
+> ?x =3D e;
+> // </smpl>
+>=20
+> The change in code size is indicates by the following output from the size
+> command.
+>=20
+> before:
+>    text    data     bss     dec     hex filename
+>    2579     240      16    2835     b13 drivers/mfd/max8925-i2c.o
+>=20
+> after:
+>    text    data     bss     dec     hex filename
+>    2531     240       8    2779     adb drivers/mfd/max8925-i2c.o
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/mfd/max8925-i2c.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Didn't see this before.
+Applied, thanks.
 
-Thanks for the poke Kees, I will pick this up in due course.
+> diff --git a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
+> index 5c80aea..1006323 100644
+> --- a/drivers/mfd/max8925-i2c.c
+> +++ b/drivers/mfd/max8925-i2c.c
+> @@ -151,7 +151,7 @@ static int max8925_probe(struct i2c_client *client,
+>  				   const struct i2c_device_id *id)
+>  {
+>  	struct max8925_platform_data *pdata =3D dev_get_platdata(&client->dev);
+> -	static struct max8925_chip *chip;
+> +	struct max8925_chip *chip;
+>  	struct device_node *node =3D client->dev.of_node;
+> =20
+>  	if (node && !pdata) {
+>=20
 
 --=20
 Lee Jones
