@@ -1,27 +1,39 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 28 Jul 2017 23:59:33 +0000
-Subject: Re: [PATCH 1/3][staging-next] staging: pi433: Make a couple of functions static
-Message-Id: <20170728235933.GA24607@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 17 Jul 2017 09:07:25 +0000
+Subject: [PATCH][next] net: bcmgenet: return NULL rather than 0 for null pointer
+Message-Id: <20170717090725.32540-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718130400.25436-1-colin.king@canonical.com>
-In-Reply-To: <20170718130400.25436-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 02:03:58PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions pi433_receive and pi433_tx_thread are local to the source
-> and do not need to be in global scope, so make them static
-> 
-> Cleans up sparse warnings:
-> symbol 'pi433_receive' was not declared. Should it be static?
-> symbol 'pi433_tx_thread' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Marcus Wolf <linux@wolf-entwicklungen.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-Only one of the patches in this series applied :(
+Don't return plain integer 0, instead return NULL
+
+Fixes sparse warning:
+warning: Using plain integer as NULL pointer
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 7b0b399aaedd..13a35f504081 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1303,7 +1303,7 @@ static struct sk_buff *bcmgenet_free_tx_cb(struct device *dev,
+ 		dma_unmap_addr_set(cb, dma_addr, 0);
+ 	}
+ 
+-	return 0;
++	return NULL;
+ }
+ 
+ /* Simple helper to free a receive control block's resources */
+-- 
+2.11.0
+
