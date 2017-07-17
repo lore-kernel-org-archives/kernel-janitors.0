@@ -1,82 +1,85 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 26 Jul 2017 14:18:09 +0000
-Subject: Applied "spi: pic32: fix spelling mistakes on macro names" to the spi tree
-Message-Id: <E1daN8b-0003uP-D6@debutante>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Jul 2017 07:58:54 +0000
+Subject: [PATCH] atomisp: array underflow in ioctl
+Message-Id: <20170717075854.cmn2dgijylvpqdsp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170724214445.15383-1-colin.king@canonical.com>
-In-Reply-To: <20170724214445.15383-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Varsha Rao <rvarsha016@gmail.com>, Paolo Cretaro <melko@frugalware.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-The patch
+I noticed an array underflow in ov5693_enum_frame_size().  The code
+looks like this:
 
-   spi: pic32: fix spelling mistakes on macro names
+	int index = fse->index;
 
-has been applied to the spi tree at
+	if (index >= N_RES)
+		retur -EINVAL;
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+fse->index is a u32 that comes from the user.  We want negative values
+to be counted as -EINVAL but they aren't.  There are several ways to fix
+this but I feel like the best fix for future proofing is to change the
+type of N_RES from int to unsigned long to make it the same as if we
+were comparing against ARRAY_SIZE().
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 808f5154a75669fb08e1cc7019a4707836e21870 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 24 Jul 2017 22:44:45 +0100
-Subject: [PATCH] spi: pic32: fix spelling mistakes on macro names
-
-Trivial fix to spelling mistakes macros; fix EMPTY spellings:
-RX_FIFO_EMTPY -> RX_FIFO_EMPTY
-TX_FIFO_EMTPY -> TX_FIFO_EMPTY
-
-Note that there are no other occurrances of these macros in the
-source.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-pic32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
-index fefb688a3432..f8a45af1fa9f 100644
---- a/drivers/spi/spi-pic32.c
-+++ b/drivers/spi/spi-pic32.c
-@@ -52,14 +52,14 @@ struct pic32_spi_regs {
+diff --git a/drivers/staging/media/atomisp/i2c/gc0310.h b/drivers/staging/media/atomisp/i2c/gc0310.h
+index f31eb277f542..7d8a0aeecb6c 100644
+--- a/drivers/staging/media/atomisp/i2c/gc0310.h
++++ b/drivers/staging/media/atomisp/i2c/gc0310.h
+@@ -454,6 +454,6 @@ struct gc0310_resolution gc0310_res_video[] = {
+ #define N_RES_VIDEO (ARRAY_SIZE(gc0310_res_video))
  
- /* Bit fields of SPI Control Register */
- #define CTRL_RX_INT_SHIFT	0  /* Rx interrupt generation */
--#define  RX_FIFO_EMTPY		0
-+#define  RX_FIFO_EMPTY		0
- #define  RX_FIFO_NOT_EMPTY	1 /* not empty */
- #define  RX_FIFO_HALF_FULL	2 /* full by half or more */
- #define  RX_FIFO_FULL		3 /* completely full */
+ static struct gc0310_resolution *gc0310_res = gc0310_res_preview;
+-static int N_RES = N_RES_PREVIEW;
++static unsigned long N_RES = N_RES_PREVIEW;
+ #endif
  
- #define CTRL_TX_INT_SHIFT	2  /* TX interrupt generation */
- #define  TX_FIFO_ALL_EMPTY	0 /* completely empty */
--#define  TX_FIFO_EMTPY		1 /* empty */
-+#define  TX_FIFO_EMPTY		1 /* empty */
- #define  TX_FIFO_HALF_EMPTY	2 /* empty by half or more */
- #define  TX_FIFO_NOT_FULL	3 /* atleast one empty */
+diff --git a/drivers/staging/media/atomisp/i2c/gc2235.h b/drivers/staging/media/atomisp/i2c/gc2235.h
+index ccbc757045a5..7c3d994180cc 100644
+--- a/drivers/staging/media/atomisp/i2c/gc2235.h
++++ b/drivers/staging/media/atomisp/i2c/gc2235.h
+@@ -668,5 +668,5 @@ struct gc2235_resolution gc2235_res_video[] = {
+ #define N_RES_VIDEO (ARRAY_SIZE(gc2235_res_video))
  
--- 
-2.13.2
-
+ static struct gc2235_resolution *gc2235_res = gc2235_res_preview;
+-static int N_RES = N_RES_PREVIEW;
++static unsigned long N_RES = N_RES_PREVIEW;
+ #endif
+diff --git a/drivers/staging/media/atomisp/i2c/ov2680.h b/drivers/staging/media/atomisp/i2c/ov2680.h
+index 944fe8e3bcbf..ab8907e6c9ef 100644
+--- a/drivers/staging/media/atomisp/i2c/ov2680.h
++++ b/drivers/staging/media/atomisp/i2c/ov2680.h
+@@ -934,7 +934,6 @@ static struct ov2680_resolution ov2680_res_video[] = {
+ #define N_RES_VIDEO (ARRAY_SIZE(ov2680_res_video))
+ 
+ static struct ov2680_resolution *ov2680_res = ov2680_res_preview;
+-static int N_RES = N_RES_PREVIEW;
+-
++static unsigned long N_RES = N_RES_PREVIEW;
+ 
+ #endif
+diff --git a/drivers/staging/media/atomisp/i2c/ov2722.h b/drivers/staging/media/atomisp/i2c/ov2722.h
+index b0d40965d89e..73ecb1679718 100644
+--- a/drivers/staging/media/atomisp/i2c/ov2722.h
++++ b/drivers/staging/media/atomisp/i2c/ov2722.h
+@@ -1263,5 +1263,5 @@ struct ov2722_resolution ov2722_res_video[] = {
+ #define N_RES_VIDEO (ARRAY_SIZE(ov2722_res_video))
+ 
+ static struct ov2722_resolution *ov2722_res = ov2722_res_preview;
+-static int N_RES = N_RES_PREVIEW;
++static unsigned long N_RES = N_RES_PREVIEW;
+ #endif
+diff --git a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
+index d88ac1777d86..8c2e6794463b 100644
+--- a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
++++ b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
+@@ -1377,5 +1377,5 @@ struct ov5693_resolution ov5693_res_video[] = {
+ #define N_RES_VIDEO (ARRAY_SIZE(ov5693_res_video))
+ 
+ static struct ov5693_resolution *ov5693_res = ov5693_res_preview;
+-static int N_RES = N_RES_PREVIEW;
++static unsigned long N_RES = N_RES_PREVIEW;
+ #endif
