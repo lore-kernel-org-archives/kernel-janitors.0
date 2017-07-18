@@ -1,53 +1,35 @@
-From: Sushmita Susheelendra <ssusheel@codeaurora.org>
-Date: Mon, 10 Jul 2017 17:51:33 +0000
-Subject: Re: [PATCH] drm/msm: unlock on error in msm_gem_get_iova()
-Message-Id: <4c8833e51fdbb10186786b43e0629204@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jul 2017 09:28:49 +0000
+Subject: [PATCH] platform/x86: peaq-wmi: silence a static checker warning
+Message-Id: <20170718092849.nim5tiaycdenfyfz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710072042.fs7ovvp5ufyg5hn3@mwanda>
-In-Reply-To: <20170710072042.fs7ovvp5ufyg5hn3@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks for the catch!
+Static checkers complain because:
 
--Sushmita
+	if (peaq_ignore_events_counter && --peaq_ignore_events_counter >= 0)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The second part of the condition is always true because
+"peaq_ignore_events_counter" is unsigned.  It doesn't cause a problem
+because the first part of the condition prevents underflows, but it's
+simple enough to make the static checker happy.
 
-On 2017-07-10 01:20, Dan Carpenter wrote:
-> We recently added locking to this function but there was a direct 
-> return
-> that was overlooked where we need to unlock.
-> 
-> Fixes: 0e08270a1f01 ("drm/msm: Separate locking of buffer resources
-> from struct_mutex")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_gem.c 
-> b/drivers/gpu/drm/msm/msm_gem.c
-> index 65f35544c1ec..065d933df2c3 100644
-> --- a/drivers/gpu/drm/msm/msm_gem.c
-> +++ b/drivers/gpu/drm/msm/msm_gem.c
-> @@ -383,8 +383,10 @@ int msm_gem_get_iova(struct drm_gem_object *obj,
->  		struct page **pages;
-> 
->  		vma = add_vma(obj, aspace);
-> -		if (IS_ERR(vma))
-> -			return PTR_ERR(vma);
-> +		if (IS_ERR(vma)) {
-> +			ret = PTR_ERR(vma);
-> +			goto unlock;
-> +		}
-> 
->  		pages = get_pages(obj);
->  		if (IS_ERR(pages)) {
-> @@ -405,7 +407,7 @@ int msm_gem_get_iova(struct drm_gem_object *obj,
-> 
->  fail:
->  	del_vma(vma);
-> -
-> +unlock:
->  	mutex_unlock(&msm_obj->lock);
->  	return ret;
->  }
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/platform/x86/peaq-wmi.c b/drivers/platform/x86/peaq-wmi.c
+index 77d1f90b0794..ab5d5b060587 100644
+--- a/drivers/platform/x86/peaq-wmi.c
++++ b/drivers/platform/x86/peaq-wmi.c
+@@ -20,7 +20,7 @@
+ 
+ MODULE_ALIAS("wmi:"PEAQ_DOLBY_BUTTON_GUID);
+ 
+-static unsigned int peaq_ignore_events_counter;
++static int peaq_ignore_events_counter;
+ static struct input_polled_dev *peaq_poll_dev;
+ 
+ /*
