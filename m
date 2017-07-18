@@ -1,33 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Jul 2017 07:38:49 +0000
-Subject: [PATCH 2/2] KVM: PPC: e500mc: Fix a NULL dereference
-Message-Id: <20170713073849.tj6jqmhliyjmn3zi@mwanda>
+From: "Mrs.Meliana Trump" <ugochukwuonuorah12@gmail.com>
+Date: Tue, 18 Jul 2017 14:23:46 +0000
+Subject: Attention To me and get back to me urgent
+Message-Id: <CAOYsR4j+YuSwsq25e5AhG2mJ3x4o9SYkPEbk+QENo62t5DSC3w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Graf <agraf@suse.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We should set "err = -ENOMEM;", otherwise it means we're returning
-ERR_PTR(0) which is NULL.  It results in a NULL pointer dereference in
-the caller.
+Attention:Beneficiary
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I am  Meliana Trump, and I am writing to inform you about your Bank
+Check Draft brought back 16/07/2017 by the United Embassy Mr John
+Moore from the government of Benin Republic in the white house
+Washington DC been mandated to be deliver to your home address once
+you reconfirm it with the one we have here with us to avoid wrong
+delivery of your check draft Eighteen million united states dollars
+$18,000,000,00usd that was assigned to be delivered to your humble
+home address by Honorable president Donald Trump the president of this
+great country this week by a delivery agent Mr John Moore
 
-diff --git a/arch/powerpc/kvm/e500mc.c b/arch/powerpc/kvm/e500mc.c
-index f48a0c22e8f9..d0b6b5788afc 100644
---- a/arch/powerpc/kvm/e500mc.c
-+++ b/arch/powerpc/kvm/e500mc.c
-@@ -331,8 +331,10 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_e500mc(struct kvm *kvm,
- 		goto uninit_vcpu;
- 
- 	vcpu->arch.shared = (void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
--	if (!vcpu->arch.shared)
-+	if (!vcpu->arch.shared) {
-+		err = -ENOMEM;
- 		goto uninit_tlb;
-+	}
- 
- 	return vcpu;
- 
+Also reconfirm your details for the check delivery by filling the form
+below and send it immediately to our mrs.melianatrump@yahoo.com  in
+for verification and for prompt collection of your fund.
+
+Fill The Form Below:
+
+1. Residential Address :
+2. Next of Kin :
+3. Mobile Number:
+4. Fax Number :
+5. Occupation :
+6. Sex :
+7. Age :
+8. Nationality :
+9. Country :
+10. Marital Status :
+
+
+Accept my hearty congratulation again!
+
+Yours Sincerely,
+MRS MELIANA TRUMP
+FIRST_LADY
+1600 Pennsylvania Ave NW, Washington, DC 20500, United States
