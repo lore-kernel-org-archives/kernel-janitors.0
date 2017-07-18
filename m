@@ -1,25 +1,83 @@
-From: Johan Hedberg <johan.hedberg@gmail.com>
-Date: Fri, 28 Jul 2017 16:31:21 +0000
-Subject: Re: [PATCH] Bluetooth: btrtl: Fix a error code in rtl_load_config()
-Message-Id: <20170728163121.GA1151@x1c.home>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jul 2017 12:42:32 +0000
+Subject: [PATCH][next] spi: loopback-test: make several module parameters static
+Message-Id: <20170718124232.24644-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170728144111.chywkq2527puieo6@mwanda>
-In-Reply-To: <20170728144111.chywkq2527puieo6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Larry Finger <Larry.Finger@lwfinger.net>, Gustavo Padovan <gustavo@padovan.org>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Fri, Jul 28, 2017, Dan Carpenter wrote:
-> We accidentally return success if the kmemdup() fails.  It results in
-> a NULL dereference in the caller.
-> 
-> Fixes: 1110a2dbe698 ("Bluetooth: btrtl: Add RTL8822BE Bluetooth device")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Several module parameters are local to the source, so make them
+static. Cleans up several sparse warnings such as:
 
-Applied to bluetooth-next. Thanks.
+"symbol 'loop_req' was not declared. Should it be static?"
 
-Johan
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-loopback-test.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
+index 0d3c56e2526c..64a1e6f212c1 100644
+--- a/drivers/spi/spi-loopback-test.c
++++ b/drivers/spi/spi-loopback-test.c
+@@ -32,45 +32,45 @@
+ #include "spi-test.h"
+ 
+ /* flag to only simulate transfers */
+-int simulate_only;
++static int simulate_only;
+ module_param(simulate_only, int, 0);
+ MODULE_PARM_DESC(simulate_only, "if not 0 do not execute the spi message");
+ 
+ /* dump spi messages */
+-int dump_messages;
++static int dump_messages;
+ module_param(dump_messages, int, 0);
+ MODULE_PARM_DESC(dump_messages,
+ 		 "=1 dump the basic spi_message_structure, " \
+ 		 "=2 dump the spi_message_structure including data, " \
+ 		 "=3 dump the spi_message structure before and after execution");
+ /* the device is jumpered for loopback - enabling some rx_buf tests */
+-int loopback;
++static int loopback;
+ module_param(loopback, int, 0);
+ MODULE_PARM_DESC(loopback,
+ 		 "if set enable loopback mode, where the rx_buf "	\
+ 		 "is checked to match tx_buf after the spi_message "	\
+ 		 "is executed");
+ 
+-int loop_req;
++static int loop_req;
+ module_param(loop_req, int, 0);
+ MODULE_PARM_DESC(loop_req,
+ 		 "if set controller will be asked to enable test loop mode. " \
+ 		 "If controller supported it, MISO and MOSI will be connected");
+ 
+ /* run only a specific test */
+-int run_only_test = -1;
++static int run_only_test = -1;
+ module_param(run_only_test, int, 0);
+ MODULE_PARM_DESC(run_only_test,
+ 		 "only run the test with this number (0-based !)");
+ 
+ /* use vmalloc'ed buffers */
+-int use_vmalloc;
++static int use_vmalloc;
+ module_param(use_vmalloc, int, 0644);
+ MODULE_PARM_DESC(use_vmalloc,
+ 		 "use vmalloc'ed buffers instead of kmalloc'ed");
+ 
+ /* check rx ranges */
+-int check_ranges = 1;
++static int check_ranges = 1;
+ module_param(check_ranges, int, 0644);
+ MODULE_PARM_DESC(check_ranges,
+ 		 "checks rx_buffer pattern are valid");
+-- 
+2.11.0
+
