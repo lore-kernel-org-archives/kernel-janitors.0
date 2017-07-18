@@ -1,63 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Jul 2017 20:07:43 +0000
-Subject: [PATCH 08/11] ata: Drop unnecessary static
-Message-Id: <1500149266-32357-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jul 2017 19:38:56 +0000
+Subject: [PATCH] netfilter: fix netfilter_net_init() return
+Message-Id: <20170718193856.yh2qd2j5bloiuq5r@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Florian Westphal <fw@strlen.de>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-Drop static on a local variable, when the variable is initialized before
-any possible use.  Thus, the static has no benefit.
+We accidentally return an uninitialized variable.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Fixes: cf56c2f892a8 ("netfilter: remove old pre-netns era hook api")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
-static T x@p;
-...
-x = <+...x...+>
-
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-These patches are all independent of each other.
-
- drivers/ata/sata_gemini.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
---- a/drivers/ata/sata_gemini.c
-+++ b/drivers/ata/sata_gemini.c
-@@ -305,7 +305,7 @@ static int gemini_sata_probe(struct plat
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct sata_gemini *sg;
--	static struct regmap *map;
-+	struct regmap *map;
- 	struct resource *res;
- 	enum gemini_muxmode muxmode;
- 	u32 gmode;
-
+diff --git a/net/netfilter/core.c b/net/netfilter/core.c
+index 368610dbc3c0..974cf2a3795a 100644
+--- a/net/netfilter/core.c
++++ b/net/netfilter/core.c
+@@ -344,7 +344,7 @@ EXPORT_SYMBOL(nf_nat_decode_session_hook);
+ 
+ static int __net_init netfilter_net_init(struct net *net)
+ {
+-	int i, h, ret;
++	int i, h;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(net->nf.hooks); i++) {
+ 		for (h = 0; h < NF_MAX_HOOKS; h++)
+@@ -362,7 +362,7 @@ static int __net_init netfilter_net_init(struct net *net)
+ 	}
+ #endif
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void __net_exit netfilter_net_exit(struct net *net)
