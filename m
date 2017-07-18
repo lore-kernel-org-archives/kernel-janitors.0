@@ -1,41 +1,43 @@
-From: xiaolei li <xiaolei.li@mediatek.com>
-Date: Tue, 04 Jul 2017 01:20:47 +0000
-Subject: Re: [PATCH] mtd: nand: mtk: release lock on error path
-Message-Id: <1499131247.21448.2.camel@mhfsdcap03>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jul 2017 13:04:00 +0000
+Subject: [PATCH 3/3][staging-next] staging: pi433: fix thread_run failure check
+Message-Id: <20170718130400.25436-3-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170703104858.2226i5bmcvnhhy2x@mwanda>
-In-Reply-To: <20170703104858.2226i5bmcvnhhy2x@mwanda>
+References: <20170718130400.25436-1-colin.king@canonical.com>
+In-Reply-To: <20170718130400.25436-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mtd@lists.infradead.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-07-03 at 13:54 +0300, Dan Carpenter wrote:
-> We only want to hold the lock on the success path, not this error path.
-> 
-> Fixes: 7ec4a37c5d71 ("mtd: nand: mediatek: add support for different MTK NAND FLASH Controller IP")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/mtd/nand/mtk_ecc.c b/drivers/mtd/nand/mtk_ecc.c
-> index f38e2bb1953e..6c3a4aab0b48 100644
-> --- a/drivers/mtd/nand/mtk_ecc.c
-> +++ b/drivers/mtd/nand/mtk_ecc.c
-> @@ -273,8 +273,10 @@ int mtk_ecc_enable(struct mtk_ecc *ecc, struct mtk_ecc_config *config)
->  	mtk_ecc_wait_idle(ecc, op);
->  
->  	ret = mtk_ecc_config(ecc, config);
-> -	if (ret)
-> +	if (ret) {
-> +		mutex_unlock(&ecc->lock);
->  		return ret;
-> +	}
->  
->  	if (config->mode != ECC_NFI_MODE || op != ECC_ENCODE) {
->  		init_completion(&ecc->done);
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Xiaolei Li <xiaolei.li@mediatek.com>
+The check for thread_run failure is incorrect, use IS_ERR instead.
 
-Thanks a lot!
-Xiaolei
+Cleans up sparse error message:
+"error: incompatible types for operation (<)"
+
+Fixes: 874bcba65f9a ("staging: pi433: New driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/pi433/pi433_if.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index 95930a192de4..266e572ae66e 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -1152,8 +1152,7 @@ static int pi433_probe(struct spi_device *spi)
+ 	device->tx_task_struct = kthread_run(pi433_tx_thread,
+ 					     device,
+ 					     "pi433_tx_task");
+-	if (device->tx_task_struct < 0)
+-	{
++	if (IS_ERR(device->tx_task_struct)) {
+ 		dev_dbg(device->dev, "start of send thread failed");
+ 		goto send_thread_failed;
+ 	}
+-- 
+2.11.0
 
