@@ -1,79 +1,50 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Mon, 17 Jul 2017 08:55:45 +0000
-Subject: Re: [PATCH] cpufreq: s5pv210: add missing of_node_put
-Message-Id: <20170717084345.GN352@vireshk-i7>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 18 Jul 2017 13:03:58 +0000
+Subject: [PATCH 1/3][staging-next] staging: pi433: Make a couple of functions static
+Message-Id: <20170718130400.25436-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500147653-31229-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 15-07-17, 21:40, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e,e1,e2;
-> statement S;
-> iterator i1;
-> iterator name for_each_compatible_node;
-> @@
-> 
->  for_each_compatible_node(n,e1,e2) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
->    return n;
-> |
->    i1(...,n,...) S
-> |
-> +  of_node_put(n);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/cpufreq/s5pv210-cpufreq.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff -u -p a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> @@ -612,6 +612,7 @@ static int s5pv210_cpufreq_probe(struct
+From: Colin Ian King <colin.king@canonical.com>
 
-Just before this location we also called of_find_compatible_node()
-directly and never did a of_node_put() for that. Can you please fix
-that as well ?
+The functions pi433_receive and pi433_tx_thread are local to the source
+and do not need to be in global scope, so make them static
 
->  		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
->  			pr_err("%s: failed to get alias of dmc node '%s'\n",
->  				__func__, np->name);
-> +			of_node_put(np);
->  			return id;
->  		}
->  
-> @@ -619,6 +620,7 @@ static int s5pv210_cpufreq_probe(struct
->  		if (!dmc_base[id]) {
->  			pr_err("%s: failed to map dmc%d registers\n",
->  				__func__, id);
-> +			of_node_put(np);
->  			return -EFAULT;
->  		}
->  	}
+Cleans up sparse warnings:
+symbol 'pi433_receive' was not declared. Should it be static?
+symbol 'pi433_tx_thread' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/pi433/pi433_if.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index d9328ce5ec1d..95930a192de4 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -313,7 +313,7 @@ pi433_start_rx(struct pi433_device *dev)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-int
++static int
+ pi433_receive(void *data)
+ {
+ 	struct pi433_device *dev = data;
+@@ -463,7 +463,7 @@ pi433_receive(void *data)
+ 		return bytes_total;
+ }
+ 
+-int
++static int
+ pi433_tx_thread(void *data)
+ {
+ 	struct pi433_device *device = data;
 -- 
-viresh
+2.11.0
+
