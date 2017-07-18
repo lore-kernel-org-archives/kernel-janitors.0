@@ -1,7 +1,7 @@
-From: Stefano Stabellini <sstabellini@kernel.org>
-Date: Wed, 12 Jul 2017 07:27:30 +0000
+From: Juergen Gross <jgross@suse.com>
+Date: Tue, 18 Jul 2017 07:00:20 +0000
 Subject: Re: [PATCH] xen/pvcalls: NULL dereference in error handling
-Message-Id: <alpine.DEB.2.10.1707120027170.26679@sstabellini-ThinkPad-X260>
+Message-Id: <8cc9622e-9bf5-5d90-4e52-e6068795f78b@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170712072506.3lzevgfwuzgs5u2s@mwanda>
 In-Reply-To: <20170712072506.3lzevgfwuzgs5u2s@mwanda>
@@ -10,17 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 12 Jul 2017, Dan Carpenter wrote:
+On 12/07/17 09:25, Dan Carpenter wrote:
 > We accidentally dereference "map" when it's NULL.
 > 
 > Fixes: b535e2b9b78a ("xen/pvcalls: implement connect command")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
+The patch is okay, but the very same one has already been sent before.
+I'll take the first one.
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 
+Juergen
 
+> 
 > diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
 > index d6c4c4aecb41..01b690e1e555 100644
 > --- a/drivers/xen/pvcalls-back.c
@@ -35,3 +37,5 @@ Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 >  
 >  out:
 > 
+> 
+
