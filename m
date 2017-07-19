@@ -1,57 +1,59 @@
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 06 Jul 2017 01:02:22 +0000
-Subject: Re: [PATCH][cifs-next] cifs: set oparms.create_options rather than or'ing in CREATE_OPEN_BACKUP_INTE
-Message-Id: <CAH2r5mvDn+YnFiag3oeakjkBj3dnYxXPRrhN=p9NiDXrDY4nnQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 16:57:02 +0000
+Subject: [PATCH] rtc: sun6i: ensure clk_data is kfree'd on error
+Message-Id: <20170719165702.22220-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170705124734.12816-1-colin.king@canonical.com>
-In-Reply-To: <20170705124734.12816-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, samba-technical <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-arm-kernel@lists.infradead.org
 
-good catch - merged into cifs-2.6.git for-next
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, Jul 5, 2017 at 7:47 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently oparms.create_options is uninitialized and the code is logically
-> or'ing in CREATE_OPEN_BACKUP_INTENT onto a garbage value of
-> oparms.create_options from the stack.  Fix this by just setting the value
-> rather than or'ing in the setting.
->
-> Detected by CoverityScan, CID#1447220 ("Unitialized scale value")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2ops.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-> index 941c40b7a870..c805b7619083 100644
-> --- a/fs/cifs/smb2ops.c
-> +++ b/fs/cifs/smb2ops.c
-> @@ -1339,7 +1339,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
->         xid = get_xid();
->
->         if (backup_cred(cifs_sb))
-> -               oparms.create_options |= CREATE_OPEN_BACKUP_INTENT;
-> +               oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
->         else
->                 oparms.create_options = 0;
->
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+There are two error return paths that do not kfree clk_data and
+we end up with a memory leak. Fix these with a kfree error exit
+path.
 
+Detected by CoverityScan, CID#1402959 ("Resource Leak")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-sun6i.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 39cbc1238b92..61502221ab6e 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -204,7 +204,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+ 	rtc->base = of_io_request_and_map(node, 0, of_node_full_name(node));
+ 	if (IS_ERR(rtc->base)) {
+ 		pr_crit("Can't map RTC registers");
+-		return;
++		goto err;
+ 	}
+ 
+ 	/* Switch to the external, more precise, oscillator */
+@@ -216,7 +216,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+ 
+ 	/* Deal with old DTs */
+ 	if (!of_get_property(node, "clocks", NULL))
+-		return;
++		goto err;
+ 
+ 	rtc->int_osc = clk_hw_register_fixed_rate_with_accuracy(NULL,
+ 								"rtc-int-osc",
+@@ -246,6 +246,10 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+ 	clk_data->num = 1;
+ 	clk_data->hws[0] = &rtc->hw;
+ 	of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	return;
++
++err:
++	kfree(clk_data);
+ }
+ CLK_OF_DECLARE_DRIVER(sun6i_rtc_clk, "allwinner,sun6i-a31-rtc",
+ 		      sun6i_rtc_clk_init);
 -- 
-Thanks,
+2.11.0
 
-Steve
