@@ -1,39 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:41:56 +0000
-Subject: [PATCH 09/11] USB: whci-hcd: constify hc_driver structures
-Message-Id: <1501274518-25170-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 16:20:36 +0000
+Subject: [PATCH] staging: lustre: lnet: fix incorrect arguments order calling lstcon_session_new
+Message-Id: <20170719162036.21621-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Doug Oucharek <doug.s.oucharek@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The hc_driver structure is only passed as the first argument to
-usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-itself can be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+The arguments args->lstio_ses_force and args->lstio_ses_timeout are
+in the incorrect order. Fix this by swapping them around.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Detected by CoverityScan, CID#1226833 ("Arguments in wrong order")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/host/whci/hcd.c |    2 +-
+ drivers/staging/lustre/lnet/selftest/conctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/whci/hcd.c b/drivers/usb/host/whci/hcd.c
-index 5b3603c..cf84269 100644
---- a/drivers/usb/host/whci/hcd.c
-+++ b/drivers/usb/host/whci/hcd.c
-@@ -213,7 +213,7 @@ static void whc_endpoint_reset(struct usb_hcd *usb_hcd,
- }
+diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
+index 6ca7192b03b7..043eafb5ea40 100644
+--- a/drivers/staging/lustre/lnet/selftest/conctl.c
++++ b/drivers/staging/lustre/lnet/selftest/conctl.c
+@@ -69,8 +69,8 @@ lst_session_new_ioctl(struct lstio_session_new_args *args)
+ 	rc = lstcon_session_new(name,
+ 				args->lstio_ses_key,
+ 				args->lstio_ses_feats,
+-				args->lstio_ses_force,
+ 				args->lstio_ses_timeout,
++				args->lstio_ses_force,
+ 				args->lstio_ses_idp);
  
- 
--static struct hc_driver whc_hc_driver = {
-+static const struct hc_driver whc_hc_driver = {
- 	.description = "whci-hcd",
- 	.product_desc = "Wireless host controller",
- 	.hcd_priv_size = sizeof(struct whc) - sizeof(struct usb_hcd),
+ 	LIBCFS_FREE(name, args->lstio_ses_nmlen + 1);
+-- 
+2.11.0
 
