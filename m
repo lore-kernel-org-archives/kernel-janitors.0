@@ -1,41 +1,52 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jul 2017 09:55:47 +0000
-Subject: [PATCH] [media] atomisp2: Array underflow in atomisp_enum_input()
-Message-Id: <20170719095547.klmttai63nxbprqy@mwanda>
+Date: Wed, 19 Jul 2017 09:56:18 +0000
+Subject: [PATCH] [media] atomisp2: array underflow in ap1302_enum_frame_size()
+Message-Id: <20170719095618.g36egw4t4t5h4tzh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170719095547.klmttai63nxbprqy@mwanda>
+In-Reply-To: <20170719095547.klmttai63nxbprqy@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The problem here is this code from atomisp_enum_input():
+The problem is this code from ap1302_enum_frame_size():
 
-   581          int index = input->index;
-   582  
-   583          if (index >= isp->input_cnt)
-   584                  return -EINVAL;
-   585  
-   586          if (!isp->inputs[index].camera)
-   587                  return -EINVAL;
+   738          int index = fse->index;
+   739  
+   740          mutex_lock(&dev->input_lock);
+   741          context = ap1302_get_context(sd);
+   742          if (index >= dev->cntx_res[context].res_num) {
+   743                  mutex_unlock(&dev->input_lock);
+   744                  return -EINVAL;
+   745          }
+   746  
+   747          res_table = dev->cntx_res[context].res_table;
+   748          fse->min_width = res_table[index].width;
 
-"input->index" is a u32 which comes from the ioctl.  We want negative
-values of "index" to be counted as -EINVAL but they aren't.  I've fixed
-this by changing the type of "isp->input_cnt" to unsigned int.
+"fse->index" is a u32 that come from the user.  We want negative values
+of "index" to be treated as -EINVAL but they're not so we can read from
+before the start of the res_table[] array.
+
+I've fixed this by making "res_num" a u32.  I made "cur_res" a u32 as
+well, just for consistency.
 
 Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
-index d3667132851b..c8e0c4fe3717 100644
---- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_internal.h
-@@ -275,7 +275,7 @@ struct atomisp_device {
- 	 */
- 	struct mutex streamoff_mutex;
+diff --git a/drivers/staging/media/atomisp/i2c/ap1302.h b/drivers/staging/media/atomisp/i2c/ap1302.h
+index 9341232c580d..4d0b181a9671 100644
+--- a/drivers/staging/media/atomisp/i2c/ap1302.h
++++ b/drivers/staging/media/atomisp/i2c/ap1302.h
+@@ -158,8 +158,8 @@ struct ap1302_res_struct {
+ };
  
--	int input_cnt;
-+	unsigned int input_cnt;
- 	struct atomisp_input_subdev inputs[ATOM_ISP_MAX_INPUTS];
- 	struct v4l2_subdev *flash;
- 	struct v4l2_subdev *motor;
+ struct ap1302_context_res {
+-	s32 res_num;
+-	s32 cur_res;
++	u32 res_num;
++	u32 cur_res;
+ 	struct ap1302_res_struct *res_table;
+ };
+ 
