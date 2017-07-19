@@ -1,55 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Jul 2017 08:39:33 +0000
-Subject: [PATCH 1/3] lib/test_kmod: tidy up bounds checking
-Message-Id: <20170707083933.2mgnpqafhspbwu7h@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 19 Jul 2017 22:35:03 +0000
+Subject: [PATCH] drm/i915/selftests: Fix an error handling path in 'mock_gem_device()'
+Message-Id: <20170719223503.30580-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie, chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-There is technically a bug where we don't test for negatives in
-test_dev_config_update_uint_sync().  "new" is long and UINT_MAX is
-unsigned int so on 64 bit systems negatives are allowed.
+Goto the right label in case of error, otherwise there is a leak.
+This has been introduced by c5cf9a9147ff. In this patch a goto has not been
+updated.
 
-In the next test I removed the UINT_MAX comparison because "max" is
-already an unsigned int so we already know that "new" can't be larger
-than UINT_MAX.
+Fixes: c5cf9a9147ff ("drm/i915: Create a kmem_cache to allocate struct i915_priolist from")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/i915/selftests/mock_gem_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On the third test, I just flipped the tests around so we consistently
-test the lower bound before the upper bound.
+diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+index 627e2aa09766..8cdec455cf7d 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
++++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+@@ -206,7 +206,7 @@ struct drm_i915_private *mock_gem_device(void)
+ 	mkwrite_device_info(i915)->ring_mask = BIT(0);
+ 	i915->engine[RCS] = mock_engine(i915, "mock");
+ 	if (!i915->engine[RCS])
+-		goto err_dependencies;
++		goto err_priorities;
+ 
+ 	i915->kernel_context = mock_context(i915, NULL);
+ 	if (!i915->kernel_context)
+-- 
+2.11.0
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-index 6c1d678bcf8b..8797400b8bda 100644
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -887,7 +887,7 @@ static int test_dev_config_update_uint_sync(struct kmod_test_device *test_dev,
- 	if (ret)
- 		return ret;
- 
--	if (new > UINT_MAX)
-+	if (new < 0 || new > UINT_MAX)
- 		return -EINVAL;
- 
- 	mutex_lock(&test_dev->config_mutex);
-@@ -924,7 +924,7 @@ static int test_dev_config_update_uint_range(struct kmod_test_device *test_dev,
- 	if (ret)
- 		return ret;
- 
--	if (new < min || new >  max || new > UINT_MAX)
-+	if (new < min || new > max)
- 		return -EINVAL;
- 
- 	mutex_lock(&test_dev->config_mutex);
-@@ -946,7 +946,7 @@ static int test_dev_config_update_int(struct kmod_test_device *test_dev,
- 	if (ret)
- 		return ret;
- 
--	if (new > INT_MAX || new < INT_MIN)
-+	if (new < INT_MIN || new > INT_MAX)
- 		return -EINVAL;
- 
- 	mutex_lock(&test_dev->config_mutex);
