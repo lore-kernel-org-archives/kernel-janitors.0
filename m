@@ -1,37 +1,51 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Fri, 14 Jul 2017 01:39:14 +0000
-Subject: Re: [PATCH][net-next] svcrdma: fix an incorrect check on -E2BIG and -EINVAL
-Message-Id: <20170714013914.GA14085@fieldses.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 09:24:15 +0000
+Subject: [PATCH] Crypto: atmel-ecc: Make a couple of local functions static
+Message-Id: <20170719092415.9553-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713175115.9044-1-colin.king@canonical.com>
- <1D2A804A-9BEC-4D34-AF01-960F35E297E7@oracle.com>
-In-Reply-To: <1D2A804A-9BEC-4D34-AF01-960F35E297E7@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Colin King <colin.king@canonical.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, Jeff Layton <jlayton@poochiereds.net>, "David S . Miller" <davem@davemloft.net>, Sagi Grimberg <sagi@grimberg.me>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tudor Ambarus <tudor.ambarus@microchip.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 13, 2017 at 01:53:10PM -0400, Chuck Lever wrote:
-> 
-> > On Jul 13, 2017, at 1:51 PM, Colin King <colin.king@canonical.com> wrote:
-> > 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The current check will always be true and will always jump to
-> > err1, this looks dubious to me. I believe && should be used
-> > instead of ||.
-> > 
-> > Detected by CoverityScan, CID#1450120 ("Logically Dead Code")
-> > 
-> > Fixes: 107c1d0a991a ("svcrdma: Avoid Send Queue overflow")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-> 
-> Dan reported this today, and I have a similar patch in my
-> "pending for-rc" series. This one works too.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied and merged upstream, thanks.
+Functions atmel_ecc_i2c_client_alloc and atmel_ecc_i2c_client_free are
+local to the source and no not need to be in the global scope. Make
+them static.
 
---b.
+Cleans up sparse warnings:
+symbol 'atmel_ecc_i2c_client_alloc' was not declared. Should it be static?
+symbol 'atmel_ecc_i2c_client_free' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/atmel-ecc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/atmel-ecc.c b/drivers/crypto/atmel-ecc.c
+index 66ab1021eba5..c6e8de2b28dd 100644
+--- a/drivers/crypto/atmel-ecc.c
++++ b/drivers/crypto/atmel-ecc.c
+@@ -492,7 +492,7 @@ static int atmel_ecdh_compute_shared_secret(struct kpp_request *req)
+ 	return ret;
+ }
+ 
+-struct i2c_client *atmel_ecc_i2c_client_alloc(void)
++static struct i2c_client *atmel_ecc_i2c_client_alloc(void)
+ {
+ 	struct atmel_ecc_i2c_client_priv *i2c_priv, *min_i2c_priv = NULL;
+ 	struct i2c_client *client = ERR_PTR(-ENODEV);
+@@ -527,7 +527,7 @@ struct i2c_client *atmel_ecc_i2c_client_alloc(void)
+ 	return client;
+ }
+ 
+-void atmel_ecc_i2c_client_free(struct i2c_client *client)
++static void atmel_ecc_i2c_client_free(struct i2c_client *client)
+ {
+ 	struct atmel_ecc_i2c_client_priv *i2c_priv = i2c_get_clientdata(client);
+ 
+-- 
+2.11.0
+
