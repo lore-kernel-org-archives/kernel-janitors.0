@@ -1,35 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 15 Jul 2017 07:40:40 +0000
-Subject: Re: [PATCH] rtlwifi: rtl8821ae: Fix HW_VAR_NAV_UPPER operation
-Message-Id: <20170715074039.kx4z37s3g37d5rum@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 17:46:59 +0000
+Subject: [PATCH] net: tehuti: don't process data if it has not been copied from userspace
+Message-Id: <20170719174659.22646-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713074323.r7rjpnp6ghrdtjgx@mwanda>
- <5992b195-2ebb-a620-3324-ca2d689e11a7@lwfinger.net>
-In-Reply-To: <5992b195-2ebb-a620-3324-ca2d689e11a7@lwfinger.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, Masanari Iida <standby24x7@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 14, 2017 at 02:09:46PM -0500, Larry Finger wrote:
-> On 07/13/2017 02:43 AM, Dan Carpenter wrote:
-> > The cast here is wrong.  We want to cast the pointer but we accidentally
-> > do a no-op cast of the value.  We normally want to set us_nav_upper to
-> > WIFI_NAV_UPPER_US (30000) but because of this bug we instead set it to
-> > 184 on little endian systems and 0 on big endian ones.
-> > 
-> > Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-> 
-> Thanks for catching this error. I suspect a typo, but your fix is obviously correct.
-> 
-> Does the "Fixes" notation imply a Cc to stable?
+From: Colin Ian King <colin.king@canonical.com>
 
-No.  Fixes doesn't necessarily imply a Cc to stable.
+The array data is only populated with valid information from userspace
+if cmd != SIOCDEVPRIVATE, other cases the array contains garbage on
+the stack. The subsequent switch statement acts on a subcommand in
+data[0] which could be any garbage value if cmd is SIOCDEVPRIVATE which
+seems incorrect to me.  Instead, just return EOPNOTSUPP for the case
+where cmd = SIOCDEVPRIVATE to avoid this issue.
 
-regards,
-dan carpenter
+As a side note, I suspect that the original intention of the code
+was for this ioctl to work just for cmd = SIOCDEVPRIVATE (and the
+current logic is reversed). However, I don't wont to change the current
+semantics in case any userspace code relies on this existing behaviour.
+
+Detected by CoverityScan, CID#139647 ("Uninitialized scalar variable")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/tehuti/tehuti.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/tehuti/tehuti.c b/drivers/net/ethernet/tehuti/tehuti.c
+index 711fbbbc4b1f..163d8d16bc24 100644
+--- a/drivers/net/ethernet/tehuti/tehuti.c
++++ b/drivers/net/ethernet/tehuti/tehuti.c
+@@ -654,6 +654,8 @@ static int bdx_ioctl_priv(struct net_device *ndev, struct ifreq *ifr, int cmd)
+ 			RET(-EFAULT);
+ 		}
+ 		DBG("%d 0x%x 0x%x\n", data[0], data[1], data[2]);
++	} else {
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	if (!capable(CAP_SYS_RAWIO))
+-- 
+2.11.0
 
