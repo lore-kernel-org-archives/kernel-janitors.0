@@ -1,41 +1,55 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Tue, 18 Jul 2017 07:00:20 +0000
-Subject: Re: [PATCH] xen/pvcalls: NULL dereference in error handling
-Message-Id: <8cc9622e-9bf5-5d90-4e52-e6068795f78b@suse.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 09:36:16 +0000
+Subject: [PATCH] staging: vboxvideo: make a couple of symbols static
+Message-Id: <20170719093616.9853-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170712072506.3lzevgfwuzgs5u2s@mwanda>
-In-Reply-To: <20170712072506.3lzevgfwuzgs5u2s@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Thayer <michael.thayer@oracle.com>, Daniel Vetter <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/07/17 09:25, Dan Carpenter wrote:
-> We accidentally dereference "map" when it's NULL.
-> 
-> Fixes: b535e2b9b78a ("xen/pvcalls: implement connect command")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch is okay, but the very same one has already been sent before.
-I'll take the first one.
+Module parameter vbox_modeset and structure vbox_bo_driver do not need to
+be in global scope and hence can be made static.
 
+Cleans up a couple of sparse warnings:
+symbol 'vbox_modeset' was not declared. Should it be static?
+symbol 'vbox_bo_driver' was not declared. Should it be static?
 
-Juergen
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/vboxvideo/vbox_drv.c | 2 +-
+ drivers/staging/vboxvideo/vbox_ttm.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
-> index d6c4c4aecb41..01b690e1e555 100644
-> --- a/drivers/xen/pvcalls-back.c
-> +++ b/drivers/xen/pvcalls-back.c
-> @@ -424,7 +424,7 @@ static int pvcalls_back_connect(struct xenbus_device *dev,
->  					sock);
->  	if (!map) {
->  		ret = -EFAULT;
-> -		sock_release(map->sock);
-> +		sock_release(sock);
->  	}
->  
->  out:
-> 
-> 
+diff --git a/drivers/staging/vboxvideo/vbox_drv.c b/drivers/staging/vboxvideo/vbox_drv.c
+index 6d0600c37c0c..e18642e5027e 100644
+--- a/drivers/staging/vboxvideo/vbox_drv.c
++++ b/drivers/staging/vboxvideo/vbox_drv.c
+@@ -36,7 +36,7 @@
+ 
+ #include "vbox_drv.h"
+ 
+-int vbox_modeset = -1;
++static int vbox_modeset = -1;
+ 
+ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, vbox_modeset, int, 0400);
+diff --git a/drivers/staging/vboxvideo/vbox_ttm.c b/drivers/staging/vboxvideo/vbox_ttm.c
+index 34a905d40735..4eb410a2a1a8 100644
+--- a/drivers/staging/vboxvideo/vbox_ttm.c
++++ b/drivers/staging/vboxvideo/vbox_ttm.c
+@@ -230,7 +230,7 @@ static void vbox_ttm_tt_unpopulate(struct ttm_tt *ttm)
+ 	ttm_pool_unpopulate(ttm);
+ }
+ 
+-struct ttm_bo_driver vbox_bo_driver = {
++static struct ttm_bo_driver vbox_bo_driver = {
+ 	.ttm_tt_create = vbox_ttm_tt_create,
+ 	.ttm_tt_populate = vbox_ttm_tt_populate,
+ 	.ttm_tt_unpopulate = vbox_ttm_tt_unpopulate,
+-- 
+2.11.0
 
