@@ -1,32 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Jul 2017 07:53:00 +0000
-Subject: [PATCH] iwlwifi: pcie: Fix error code in iwl_trans_pcie_alloc()
-Message-Id: <20170712075300.sbd2vlwqf4rriale@mwanda>
+From: "Coelho, Luciano" <luciano.coelho@intel.com>
+Date: Wed, 19 Jul 2017 06:23:38 +0000
+Subject: Re: [PATCH] iwlwifi: pcie: Fix error code in iwl_trans_pcie_alloc()
+Message-Id: <1500445417.22048.254.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170712075300.sbd2vlwqf4rriale@mwanda>
+In-Reply-To: <20170712075300.sbd2vlwqf4rriale@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>, Haim Dreyfuss <haim.dreyfuss@intel.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Sara Sharon <sara.sharon@intel.com>, Liad Kaufman <liad.kaufman@intel.com>, Sharon Dvir <sharon.dvir@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Dreyfuss, Haim" <haim.dreyfuss@intel.com>, "Berg, Johannes" <johannes.berg@intel.com>
+Cc: "Kaufman, Liad" <liad.kaufman@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linuxwifi <linuxwifi@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "Dvir, Sharon" <sharon.dvir@intel.com>, "Sharon, Sara" <sara.sharon@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
 
-We accidentally forgot to propogate the error code on this path.  It
-means we return ERR_PTR(0) which is NULL and it results in a NULL
-dereference in the caller.
-
-Fixes: 2e5d4a8f61dc ("iwlwifi: pcie: Add new configuration to enable MSIX")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 92b3a55d0fbc..f95eec52508e 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -3150,7 +3150,8 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
- 	init_waitqueue_head(&trans_pcie->d0i3_waitq);
- 
- 	if (trans_pcie->msix_enabled) {
--		if (iwl_pcie_init_msix_handler(pdev, trans_pcie))
-+		ret = iwl_pcie_init_msix_handler(pdev, trans_pcie);
-+		if (ret)
- 			goto out_no_pci;
- 	 } else {
- 		ret = iwl_pcie_alloc_ict(trans);
+SGkgRGFuLA0KDQpPbiBXZWQsIDIwMTctMDctMTIgYXQgMTA6NTMgKzAzMDAsIERhbiBDYXJwZW50
+ZXIgd3JvdGU6DQo+IFdlIGFjY2lkZW50YWxseSBmb3Jnb3QgdG8gcHJvcG9nYXRlIHRoZSBlcnJv
+ciBjb2RlIG9uIHRoaXMgcGF0aC4gIEl0DQo+IG1lYW5zIHdlIHJldHVybiBFUlJfUFRSKDApIHdo
+aWNoIGlzIE5VTEwgYW5kIGl0IHJlc3VsdHMgaW4gYSBOVUxMDQo+IGRlcmVmZXJlbmNlIGluIHRo
+ZSBjYWxsZXIuDQo+IA0KPiBGaXhlczogMmU1ZDRhOGY2MWRjICgiaXdsd2lmaTogcGNpZTogQWRk
+IG5ldyBjb25maWd1cmF0aW9uIHRvIGVuYWJsZSBNU0lYIikNCj4gU2lnbmVkLW9mZi1ieTogRGFu
+IENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiANCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvbmV0L3dpcmVsZXNzL2ludGVsL2l3bHdpZmkvcGNpZS90cmFucy5jIGIvZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvaW50ZWwvaXdsd2lmaS9wY2llL3RyYW5zLmMNCj4gaW5kZXggOTJiM2E1
+NWQwZmJjLi5mOTVlZWM1MjUwOGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNz
+L2ludGVsL2l3bHdpZmkvcGNpZS90cmFucy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNz
+L2ludGVsL2l3bHdpZmkvcGNpZS90cmFucy5jDQo+IEBAIC0zMTUwLDcgKzMxNTAsOCBAQCBzdHJ1
+Y3QgaXdsX3RyYW5zICppd2xfdHJhbnNfcGNpZV9hbGxvYyhzdHJ1Y3QgcGNpX2RldiAqcGRldiwN
+Cj4gIAlpbml0X3dhaXRxdWV1ZV9oZWFkKCZ0cmFuc19wY2llLT5kMGkzX3dhaXRxKTsNCj4gIA0K
+PiAgCWlmICh0cmFuc19wY2llLT5tc2l4X2VuYWJsZWQpIHsNCj4gLQkJaWYgKGl3bF9wY2llX2lu
+aXRfbXNpeF9oYW5kbGVyKHBkZXYsIHRyYW5zX3BjaWUpKQ0KPiArCQlyZXQgPSBpd2xfcGNpZV9p
+bml0X21zaXhfaGFuZGxlcihwZGV2LCB0cmFuc19wY2llKTsNCj4gKwkJaWYgKHJldCkNCj4gIAkJ
+CWdvdG8gb3V0X25vX3BjaTsNCj4gIAkgfSBlbHNlIHsNCj4gIAkJcmV0ID0gaXdsX3BjaWVfYWxs
+b2NfaWN0KHRyYW5zKTsNCg0KWW91IGFscmVhZHkgc2VudCBhbiBlcXVpdmFsZW50IHBhdGNoOg0K
+DQpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzk4MjU4OTUvDQoNCkFuZCBJJ3Zl
+IGFscmVhZHkgc2VudCBpdCBvdXQgdG8gYmUgYXBwbGllZCBpbiA0LjEzLXJjKi4gIEknbGwgc2Vu
+ZCBhDQpwdWxsLXJlcSBmb3IgLWZpeGVzIGxhdGVyIHRoaXMgd2Vlay4NCg0KVGhhbmtzIGFueXdh
+eS4gOikNCg0KLS0NCkNoZWVycywNCkx1Y2Eu
