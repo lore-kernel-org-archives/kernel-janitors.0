@@ -1,40 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Jul 2017 07:24:23 +0000
-Subject: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
-Message-Id: <20170710072422.rs25i5oawmiaofrp@mwanda>
+Date: Wed, 19 Jul 2017 09:51:57 +0000
+Subject: [PATCH] staging: pi433: fix a precedence bug
+Message-Id: <20170719095157.3e2rnskjqbva2kwo@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-ti_bandgap_get_sensor_data() can return error pointers so we should
-check for that.  There is no need to check "data->ti_thermal" for NULL
-and we removed that from the other cleanup function so we may as well
-from it in ti_thermal_remove_sensor() to be consistent.
+We had intended to do the mask first and then the shift.  Shift has
+higher precedence so we need to add parenthesis.
 
+Fixes: 874bcba65f9a ("staging: pi433: New driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-index c211a8e4a210..9fea354ca90c 100644
---- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-@@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap *bgp, int id)
+diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+index e391ce777bc7..5089449bf775 100644
+--- a/drivers/staging/pi433/rf69.c
++++ b/drivers/staging/pi433/rf69.c
+@@ -387,7 +387,7 @@ enum lnaGain rf69_get_lna_gain(struct spi_device *spi)
  
- 	data = ti_bandgap_get_sensor_data(bgp, id);
+ 	currentValue = READ_REG(REG_LNA);
  
--	if (data && data->ti_thermal) {
-+	if (data && !IS_ERR(data)) {
- 		if (data->our_zone)
- 			thermal_zone_device_unregister(data->ti_thermal);
- 	}
-@@ -276,7 +276,7 @@ int ti_thermal_unregister_cpu_cooling(struct ti_bandgap *bgp, int id)
- 
- 	data = ti_bandgap_get_sensor_data(bgp, id);
- 
--	if (data) {
-+	if (data && !IS_ERR(data)) {
- 		cpufreq_cooling_unregister(data->cool_dev);
- 		cpufreq_cpu_put(data->policy);
- 	}
+-	switch (currentValue & MASK_LNA_CURRENT_GAIN >> 3)  // improvement: change 3 to define
++	switch ((currentValue & MASK_LNA_CURRENT_GAIN) >> 3)  // improvement: change 3 to define
+ 	{
+ 	case LNA_GAIN_AUTO:	    return automatic;
+ 	case LNA_GAIN_MAX:	    return max;
