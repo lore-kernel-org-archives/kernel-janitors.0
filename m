@@ -1,25 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 01 Jul 2017 21:09:45 +0000
-Subject: Re: [PATCH 1/2] scsi: lpfc: spin_lock_irq() is not nestable
-Message-Id: <yq1y3s7vp7q.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 19 Jul 2017 09:08:59 +0000
+Subject: [PATCH][next] x86/hyper-v: add missing void return type to hyperv_cleanup declaration
+Message-Id: <20170719090859.9248-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080250.mjbosf64qlytrsii@mwanda>
-In-Reply-To: <20170630080250.mjbosf64qlytrsii@mwanda> (Dan Carpenter's message
-        of "Fri, 30 Jun 2017 11:02:51 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+Add in missing void return type, fixes sparse warning:
+"warning: 'hyperv_cleanup()' has implicit return type"
 
-> We're calling spin_lock_irq() multiple times, the problem is that on
-> the first spin_unlock_irq() then we will re-enable IRQs and we don't
-> want that.
+Fixes: 2e252fbf777d ("x86/hyper-v: include hyperv/ only when CONFIG_HYPERV is set")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/include/asm/mshyperv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.13/scsi-queue.
-
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 01b9c0fb3aab..41fae263f8fa 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -178,7 +178,7 @@ void hyperv_cleanup(void);
+ #else /* CONFIG_HYPERV */
+ static inline void hyperv_init(void) {}
+ static inline bool hv_is_hypercall_page_setup(void) { return false; }
+-static inline hyperv_cleanup(void) {}
++static inline void hyperv_cleanup(void) {}
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
