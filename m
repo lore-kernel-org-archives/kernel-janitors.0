@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jul 2017 09:56:18 +0000
-Subject: [PATCH] [media] atomisp2: array underflow in ap1302_enum_frame_size()
-Message-Id: <20170719095618.g36egw4t4t5h4tzh@mwanda>
+Date: Wed, 19 Jul 2017 09:58:20 +0000
+Subject: [PATCH] [media] atomisp2: array underflow in imx_enum_frame_size()
+Message-Id: <20170719095820.ucy74kccuph5i737@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170719095547.klmttai63nxbprqy@mwanda>
 In-Reply-To: <20170719095547.klmttai63nxbprqy@mwanda>
@@ -9,44 +9,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-The problem is this code from ap1302_enum_frame_size():
+The code looks in imx_enum_frame_size() looks like this:
 
-   738          int index = fse->index;
-   739  
-   740          mutex_lock(&dev->input_lock);
-   741          context = ap1302_get_context(sd);
-   742          if (index >= dev->cntx_res[context].res_num) {
-   743                  mutex_unlock(&dev->input_lock);
-   744                  return -EINVAL;
-   745          }
-   746  
-   747          res_table = dev->cntx_res[context].res_table;
-   748          fse->min_width = res_table[index].width;
+  2066          int index = fse->index;
+  2067          struct imx_device *dev = to_imx_sensor(sd);
+  2068  
+  2069          mutex_lock(&dev->input_lock);
+  2070          if (index >= dev->entries_curr_table) {
+  2071                  mutex_unlock(&dev->input_lock);
+  2072                  return -EINVAL;
+  2073          }
+  2074  
+  2075          fse->min_width = dev->curr_res_table[index].width;
 
-"fse->index" is a u32 that come from the user.  We want negative values
-of "index" to be treated as -EINVAL but they're not so we can read from
-before the start of the res_table[] array.
-
-I've fixed this by making "res_num" a u32.  I made "cur_res" a u32 as
-well, just for consistency.
+"fse->index" is a u32 that comes from the user.  We want negative values
+of "index" to be -EINVAL so we don't read before the start of the
+dev->curr_res_table[] array.  I've made "entries_curr_table" unsigned
+long to fix this.  I thought about making it unsigned int, but because
+of struct alignment, it doesn't use more memory either way.
 
 Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/media/atomisp/i2c/ap1302.h b/drivers/staging/media/atomisp/i2c/ap1302.h
-index 9341232c580d..4d0b181a9671 100644
---- a/drivers/staging/media/atomisp/i2c/ap1302.h
-+++ b/drivers/staging/media/atomisp/i2c/ap1302.h
-@@ -158,8 +158,8 @@ struct ap1302_res_struct {
- };
+diff --git a/drivers/staging/media/atomisp/i2c/imx/imx.h b/drivers/staging/media/atomisp/i2c/imx/imx.h
+index 36b3f3a5a41f..41b4133ca995 100644
+--- a/drivers/staging/media/atomisp/i2c/imx/imx.h
++++ b/drivers/staging/media/atomisp/i2c/imx/imx.h
+@@ -480,7 +480,7 @@ struct imx_device {
+ 	struct imx_vcm *vcm_driver;
+ 	struct imx_otp *otp_driver;
+ 	const struct imx_resolution *curr_res_table;
+-	int entries_curr_table;
++	unsigned long entries_curr_table;
+ 	const struct firmware *fw;
+ 	struct imx_reg_addr *reg_addr;
+ 	const struct imx_reg *param_hold;
+diff --git a/drivers/staging/media/atomisp/i2c/ov8858.h b/drivers/staging/media/atomisp/i2c/ov8858.h
+index 9be6a0e63861..d3fde200c013 100644
+--- a/drivers/staging/media/atomisp/i2c/ov8858.h
++++ b/drivers/staging/media/atomisp/i2c/ov8858.h
+@@ -266,7 +266,7 @@ struct ov8858_device {
+ 	const struct ov8858_reg *regs;
+ 	struct ov8858_vcm *vcm_driver;
+ 	const struct ov8858_resolution *curr_res_table;
+-	int entries_curr_table;
++	unsigned long entries_curr_table;
  
- struct ap1302_context_res {
--	s32 res_num;
--	s32 cur_res;
-+	u32 res_num;
-+	u32 cur_res;
- 	struct ap1302_res_struct *res_table;
- };
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_ctrl *run_mode;
+diff --git a/drivers/staging/media/atomisp/i2c/ov8858_btns.h b/drivers/staging/media/atomisp/i2c/ov8858_btns.h
+index 09e3cdc1a394..f9a3cf8fbf1a 100644
+--- a/drivers/staging/media/atomisp/i2c/ov8858_btns.h
++++ b/drivers/staging/media/atomisp/i2c/ov8858_btns.h
+@@ -266,7 +266,7 @@ struct ov8858_device {
+ 	const struct ov8858_reg *regs;
+ 	struct ov8858_vcm *vcm_driver;
+ 	const struct ov8858_resolution *curr_res_table;
+-	int entries_curr_table;
++	unsigned long entries_curr_table;
  
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_ctrl *run_mode;
