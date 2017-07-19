@@ -1,37 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 19 Jul 2017 22:16:48 +0000
-Subject: [PATCH] dmaengine: ioatdma: Fix error handling path in 'ioat_dma_self_test()'
-Message-Id: <20170719221648.30253-1-christophe.jaillet@wanadoo.fr>
+From: Dave Jiang <dave.jiang@intel.com>
+Date: Wed, 19 Jul 2017 22:21:23 +0000
+Subject: Re: [PATCH] dmaengine: ioatdma: Fix error handling path in 'ioat_dma_self_test()'
+Message-Id: <cb19736e-3c70-a9c2-bbb6-977e5c4c66d4@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170719221648.30253-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170719221648.30253-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.j.williams@intel.com, vinod.koul@intel.com, dave.jiang@intel.com
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Williams, Dan J" <dan.j.williams@intel.com>, "Koul, Vinod" <vinod.koul@intel.com>
+Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-If the 'memcmp' fails, free allocated resources as done in all other
-error handling paths.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Please review carefully, this patch looks "too obvious" to me!
----
- drivers/dma/ioat/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index ed8ed1192775..948fc1f8fb5c 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -390,7 +390,7 @@ static int ioat_dma_self_test(struct ioatdma_device *ioat_dma)
- 	if (memcmp(src, dest, IOAT_TEST_SIZE)) {
- 		dev_err(dev, "Self-test copy failed compare, disabling\n");
- 		err = -ENODEV;
--		goto free_resources;
-+		goto unmap_dma;
- 	}
- 
- unmap_dma:
--- 
-2.11.0
+On 07/19/2017 03:16 PM, Christophe JAILLET wrote:
+> If the 'memcmp' fails, free allocated resources as done in all other
+> error handling paths.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Good catch! Thanks.
+
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+> Please review carefully, this patch looks "too obvious" to me!
+> ---
+>  drivers/dma/ioat/init.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+> index ed8ed1192775..948fc1f8fb5c 100644
+> --- a/drivers/dma/ioat/init.c
+> +++ b/drivers/dma/ioat/init.c
+> @@ -390,7 +390,7 @@ static int ioat_dma_self_test(struct ioatdma_device *ioat_dma)
+>  	if (memcmp(src, dest, IOAT_TEST_SIZE)) {
+>  		dev_err(dev, "Self-test copy failed compare, disabling\n");
+>  		err = -ENODEV;
+> -		goto free_resources;
+> +		goto unmap_dma;
+>  	}
+>  
+>  unmap_dma:
+> 
