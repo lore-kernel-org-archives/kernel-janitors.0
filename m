@@ -1,37 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Jul 2017 09:08:59 +0000
-Subject: [PATCH][next] x86/hyper-v: add missing void return type to hyperv_cleanup declaration
-Message-Id: <20170719090859.9248-1-colin.king@canonical.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Wed, 19 Jul 2017 15:23:07 +0000
+Subject: RE: [PATCH][next] x86/hyper-v: add missing void return type to hyperv_cleanup declaration
+Message-Id: <MWHPR21MB0479796EEDA8415D3B15F530CAA60@MWHPR21MB0479.namprd21.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170719090859.9248-1-colin.king@canonical.com>
+In-Reply-To: <20170719090859.9248-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Add in missing void return type, fixes sparse warning:
-"warning: 'hyperv_cleanup()' has implicit return type"
-
-Fixes: 2e252fbf777d ("x86/hyper-v: include hyperv/ only when CONFIG_HYPERV is set")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/include/asm/mshyperv.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 01b9c0fb3aab..41fae263f8fa 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -178,7 +178,7 @@ void hyperv_cleanup(void);
- #else /* CONFIG_HYPERV */
- static inline void hyperv_init(void) {}
- static inline bool hv_is_hypercall_page_setup(void) { return false; }
--static inline hyperv_cleanup(void) {}
-+static inline void hyperv_cleanup(void) {}
- #endif /* CONFIG_HYPERV */
- 
- #ifdef CONFIG_HYPERV_TSCPAGE
--- 
-2.11.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBKdWx5IDE5
+LCAyMDE3IDU6MDkgQU0NCj4gVG86IFZpdGFseSBLdXpuZXRzb3YgPHZrdXpuZXRzQHJlZGhhdC5j
+b20+OyBLWSBTcmluaXZhc2FuDQo+IDxreXNAbWljcm9zb2Z0LmNvbT47IEhhaXlhbmcgWmhhbmcg
+PGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+OyBTdGVwaGVuDQo+IEhlbW1pbmdlciA8c3RoZW1taW5A
+bWljcm9zb2Z0LmNvbT47IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPjsNCj4g
+SW5nbyBNb2xuYXIgPG1pbmdvQHJlZGhhdC5jb20+OyBIIC4gUGV0ZXIgQW52aW4gPGhwYUB6eXRv
+ci5jb20+Ow0KPiB4ODZAa2VybmVsLm9yZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2Vy
+bmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIHg4Ni9oeXBlci12OiBhZGQgbWlzc2lu
+ZyB2b2lkIHJldHVybiB0eXBlIHRvDQo+IGh5cGVydl9jbGVhbnVwIGRlY2xhcmF0aW9uDQo+IA0K
+PiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4g
+QWRkIGluIG1pc3Npbmcgdm9pZCByZXR1cm4gdHlwZSwgZml4ZXMgc3BhcnNlIHdhcm5pbmc6DQo+
+ICJ3YXJuaW5nOiAnaHlwZXJ2X2NsZWFudXAoKScgaGFzIGltcGxpY2l0IHJldHVybiB0eXBlIg0K
+PiANCj4gRml4ZXM6IDJlMjUyZmJmNzc3ZCAoIng4Ni9oeXBlci12OiBpbmNsdWRlIGh5cGVydi8g
+b25seSB3aGVuDQo+IENPTkZJR19IWVBFUlYgaXMgc2V0IikNCj4gU2lnbmVkLW9mZi1ieTogQ29s
+aW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IEhh
+aXlhbmcgWmhhbmcgPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+DQoNClRoYW5rcy4NCg0KDQo
