@@ -1,51 +1,56 @@
-From: "Wolf Entwicklungen" <Marcus.Wolf@Wolf-Entwicklungen.de>
-Date: Thu, 20 Jul 2017 11:04:09 +0000
-Subject: Re: [PATCH 2/3][staging-next] staging: pi433: Make functions rf69_set_bandwidth_intern static
-Message-Id: <fe33e1df059d389d869ba929a60b4352-EhVcX1pHQwdXWkQFBhENSgEKLlwACzJXX19HAVhEWENbS1kLMF52CEtUX1pBSEwcXlJRL1lQWAhaW34HUVw=-webmailer1@server01.webmailer.webmailer.hosteurope.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Jul 2017 22:12:07 +0000
+Subject: [PATCH][V2] dvb_frontend: ensure that inital front end status initialized
+Message-Id: <20170720221207.7505-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718130400.25436-1-colin.king@canonical.com>
-    <20170718130400.25436-2-colin.king@canonical.com>
-In-Reply-To: <20170718130400.25436-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Markus Elfring <elfring@users.sourceforge.net>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Shuah Khan <shuah@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Reviewed-by: Marcus Wolf <linux@wolf-entwicklungen.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-Am Di, 18.07.2017, 15:03 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function rf69_set_bandwidth_intern is local to the source
-> and do not need to be in global scope, so make it static. Also
-> break overly wide line.
->
-> Cleans up sparse warning:
-> symbol 'update_share_count' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/pi433/rf69.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-> index e391ce777bc7..04af906476e3 100644
-> --- a/drivers/staging/pi433/rf69.c
-> +++ b/drivers/staging/pi433/rf69.c
-> @@ -433,7 +433,8 @@ int rf69_set_dc_cut_off_frequency_during_afc(struct spi_device *spi, enum dccPer
->  	return rf69_set_dc_cut_off_frequency_intern(spi, REG_AFCBW, dccPercent);
->  }
->
-> -int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg, enum mantisse mantisse, u8 exponent)
-> +static int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg,
-> +				     enum mantisse mantisse, u8 exponent)
->  {
->  	u8 newValue;
->
-> --
-> 2.11.0
->
->
->
+The fe_status variable s is not initialized meaning it can have any
+random garbage status.  This could be problematic if fe->ops.tune is
+false as s is not updated by the call to fe->ops.tune() and a
+subsequent check on the change status will using a garbage value.
+Fix this by adding FE_NONE to the enum fe_status and initializing
+s to this.
+
+Detected by CoverityScan, CID#112887 ("Uninitialized scalar variable")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-core/dvb_frontend.c | 2 +-
+ include/uapi/linux/dvb/frontend.h     | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+index e3fff8f64d37..18cc3bbc699c 100644
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -631,7 +631,7 @@ static int dvb_frontend_thread(void *data)
+ 	struct dvb_frontend *fe = data;
+ 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+ 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+-	enum fe_status s;
++	enum fe_status s = FE_NONE;
+ 	enum dvbfe_algo algo;
+ 	bool re_tune = false;
+ 	bool semheld = false;
+diff --git a/include/uapi/linux/dvb/frontend.h b/include/uapi/linux/dvb/frontend.h
+index 00a20cd21ee2..afc3972b0879 100644
+--- a/include/uapi/linux/dvb/frontend.h
++++ b/include/uapi/linux/dvb/frontend.h
+@@ -127,6 +127,7 @@ enum fe_sec_mini_cmd {
+  *			to reset DiSEqC, tone and parameters
+  */
+ enum fe_status {
++	FE_NONE			= 0x00,
+ 	FE_HAS_SIGNAL		= 0x01,
+ 	FE_HAS_CARRIER		= 0x02,
+ 	FE_HAS_VITERBI		= 0x04,
+-- 
+2.11.0
 
