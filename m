@@ -1,51 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Jul 2017 09:24:15 +0000
-Subject: [PATCH] Crypto: atmel-ecc: Make a couple of local functions static
-Message-Id: <20170719092415.9553-1-colin.king@canonical.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
+Date: Thu, 20 Jul 2017 07:05:46 +0000
+Subject: Re: [PATCH] Crypto: atmel-ecc: Make a couple of local functions static
+Message-Id: <0368986a-0274-25b4-931a-6c4ddfc4d4e3@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170719092415.9553-1-colin.king@canonical.com>
+In-Reply-To: <20170719092415.9553-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tudor Ambarus <tudor.ambarus@microchip.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Functions atmel_ecc_i2c_client_alloc and atmel_ecc_i2c_client_free are
-local to the source and no not need to be in the global scope. Make
-them static.
 
-Cleans up sparse warnings:
-symbol 'atmel_ecc_i2c_client_alloc' was not declared. Should it be static?
-symbol 'atmel_ecc_i2c_client_free' was not declared. Should it be static?
+On 07/19/2017 12:24 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Functions atmel_ecc_i2c_client_alloc and atmel_ecc_i2c_client_free are
+> local to the source and no not need to be in the global scope. Make
+> them static.
+> 
+> Cleans up sparse warnings:
+> symbol 'atmel_ecc_i2c_client_alloc' was not declared. Should it be static?
+> symbol 'atmel_ecc_i2c_client_free' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/crypto/atmel-ecc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-diff --git a/drivers/crypto/atmel-ecc.c b/drivers/crypto/atmel-ecc.c
-index 66ab1021eba5..c6e8de2b28dd 100644
---- a/drivers/crypto/atmel-ecc.c
-+++ b/drivers/crypto/atmel-ecc.c
-@@ -492,7 +492,7 @@ static int atmel_ecdh_compute_shared_secret(struct kpp_request *req)
- 	return ret;
- }
- 
--struct i2c_client *atmel_ecc_i2c_client_alloc(void)
-+static struct i2c_client *atmel_ecc_i2c_client_alloc(void)
- {
- 	struct atmel_ecc_i2c_client_priv *i2c_priv, *min_i2c_priv = NULL;
- 	struct i2c_client *client = ERR_PTR(-ENODEV);
-@@ -527,7 +527,7 @@ struct i2c_client *atmel_ecc_i2c_client_alloc(void)
- 	return client;
- }
- 
--void atmel_ecc_i2c_client_free(struct i2c_client *client)
-+static void atmel_ecc_i2c_client_free(struct i2c_client *client)
- {
- 	struct atmel_ecc_i2c_client_priv *i2c_priv = i2c_get_clientdata(client);
- 
--- 
-2.11.0
-
+Thanks,
+ta
