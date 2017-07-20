@@ -1,47 +1,68 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 04 Jul 2017 09:53:56 +0000
-Subject: Re: [PATCH] coccinelle: api: detect unnecessary le16_to_cpu
-Message-Id: <alpine.DEB.2.20.1707041153160.3346@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Jul 2017 22:33:24 +0000
+Subject: [PATCH] Make functions rf69_set_bandwidth_intern and rf69_set_dc_cut_off_frequency_intern static
+Message-Id: <20170720223324.8093-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1498937290-12285-1-git-send-email-Julia.Lawall@lip6.fr>
- <20170703133602.ejcdu35ku3i63cj2@earth>
- <CAHp75VeJY8Xr2H8XK8A7Piu-38TnAeKu5Gn+edtkZmbw2quW0g@mail.gmail.com>
- <20170703171427.qtpodt7watymphac@earth>
- <CAHp75VeLV_ySCRN3B=MSoZdyrbXXqqEXrgC+hJCDoLLCJRComQ@mail.gmail.com>
- <20170703182033.5stv5eq33et63coh@earth>
- <alpine.DEB.2.20.1707041104390.3346@hadrien>
- <CAHp75VdyurjwN+DZQuKnEzNe+XgZwiLLkc0Rg0NvFr=4D2GiQA@mail.gmail.com>
-In-Reply-To: <CAHp75VdyurjwN+DZQuKnEzNe+XgZwiLLkc0Rg0NvFr=4D2GiQA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Colin Ian King <colin.king@canonical.com>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The functions rf69_set_bandwidth_intern and also
+rf69_set_dc_cut_off_frequency_intern is local to the source and
+do not need to be in global scope, so make it static. Also break
+break overly wide line. Finally, remove the function declaration
+rf69_set_dc_cut_off_frequency_intern from the rf69.h header.
 
-On Tue, 4 Jul 2017, Andy Shevchenko wrote:
+Cleans up sparse warning:
+symbol 'update_share_count' was not declared. Should it be static?
 
-> On Tue, Jul 4, 2017 at 12:11 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> > Here is a revised version (not a patch because it doesn't support all of
-> > the various modes) and the results.  It doesn't return anything beyond
-> > what was mentioned in previous mails.
-> >
-> > For the following code:
-> >
-> >         ret = i2c_smbus_read_word_data(chip->client, reg << 1);
-> >         val[0] = (u16)ret & 0xFF;
-> >         val[1] = (u16)ret >> 8;
-> >
-> > do we want to see:
-> >
-> > put_unaligned(val,i2c_smbus_read_word_data(chip->client, reg << 1));
->
-> If and only if the type of the pointer is a byte type (u8 *, char *,
-> or alike) _and_ we try to use it as a provider for 16-bit value (2
-> bytes).
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/pi433/rf69.c | 7 +++++--
+ drivers/staging/pi433/rf69.h | 1 -
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-OK, the provider part seems to add more complexity than is worth putting
-in the rule, so I will let the developer figure out what should be done.
+diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+index e391ce777bc7..170e9cc59cde 100644
+--- a/drivers/staging/pi433/rf69.c
++++ b/drivers/staging/pi433/rf69.c
+@@ -400,7 +400,9 @@ enum lnaGain rf69_get_lna_gain(struct spi_device *spi)
+ 	}
+ }
+ 
+-int rf69_set_dc_cut_off_frequency_intern(struct spi_device *spi ,u8 reg, enum dccPercent dccPercent)
++static int rf69_set_dc_cut_off_frequency_intern(struct spi_device *spi,
++						u8 reg,
++						enum dccPercent dccPercent)
+ {
+ 	switch (dccPercent) {
+ 	case dcc16Percent:	return WRITE_REG(reg, ( (READ_REG(reg) & ~MASK_BW_DCC_FREQ) | BW_DCC_16_PERCENT) );
+@@ -433,7 +435,8 @@ int rf69_set_dc_cut_off_frequency_during_afc(struct spi_device *spi, enum dccPer
+ 	return rf69_set_dc_cut_off_frequency_intern(spi, REG_AFCBW, dccPercent);
+ }
+ 
+-int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg, enum mantisse mantisse, u8 exponent)
++static int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg,
++				     enum mantisse mantisse, u8 exponent)
+ {
+ 	u8 newValue;
+ 
+diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
+index b81e0762032e..3fdf5d3d225b 100644
+--- a/drivers/staging/pi433/rf69.h
++++ b/drivers/staging/pi433/rf69.h
+@@ -41,7 +41,6 @@ int rf69_set_pa_ramp(struct spi_device *spi, enum paRamp paRamp);
+ int rf69_set_antenna_impedance(struct spi_device *spi, enum antennaImpedance antennaImpedance);
+ int rf69_set_lna_gain(struct spi_device *spi, enum lnaGain lnaGain);
+ enum lnaGain rf69_get_lna_gain(struct spi_device *spi);
+-int rf69_set_dc_cut_off_frequency_intern(struct spi_device *spi, u8 reg, enum dccPercent dccPercent);
+ int rf69_set_dc_cut_off_frequency(struct spi_device *spi, enum dccPercent dccPercent);
+ int rf69_set_dc_cut_off_frequency_during_afc(struct spi_device *spi, enum dccPercent dccPercent);
+ int rf69_set_bandwidth(struct spi_device *spi, enum mantisse mantisse, u8 exponent);
+-- 
+2.11.0
 
-thanks,
-julia
