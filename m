@@ -1,28 +1,23 @@
-From: Dave Jiang <dave.jiang@intel.com>
-Date: Wed, 19 Jul 2017 22:21:23 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 20 Jul 2017 07:24:03 +0000
 Subject: Re: [PATCH] dmaengine: ioatdma: Fix error handling path in 'ioat_dma_self_test()'
-Message-Id: <cb19736e-3c70-a9c2-bbb6-977e5c4c66d4@intel.com>
+Message-Id: <59705A93.2090305@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170719221648.30253-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170719221648.30253-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Williams, Dan J" <dan.j.williams@intel.com>, "Koul, Vinod" <vinod.koul@intel.com>
-Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dan.j.williams@intel.com, vinod.koul@intel.com, dave.jiang@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
 
-On 07/19/2017 03:16 PM, Christophe JAILLET wrote:
+Am 20.07.2017 00:16, schrieb Christophe JAILLET:
 > If the 'memcmp' fails, free allocated resources as done in all other
 > error handling paths.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Good catch! Thanks.
-
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-
 > ---
 > Please review carefully, this patch looks "too obvious" to me!
 > ---
@@ -42,4 +37,11 @@ Signed-off-by: Dave Jiang <dave.jiang@intel.com>
 >  	}
 >  
 >  unmap_dma:
-> 
+
+^^^^^^^^^^
+
+
+is the goto needed at all ?
+
+re,
+ wh
