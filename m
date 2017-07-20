@@ -1,27 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 11 Jul 2017 17:54:32 +0000
-Subject: Re: [PATCH] cisco: enic: Fic an error handling path in 'vnic_dev_init_devcmd2()'
-Message-Id: <20170711.105432.2013597475678597815.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 20 Jul 2017 10:30:14 +0000
+Subject: [PATCH][media-next] media: v4l: make local function v4l2_fwnode_endpoint_parse_csi1_bus static
+Message-Id: <20170720103014.19545-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170708045135.14753-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170708045135.14753-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: benve@cisco.com, govind@gmx.com, neepatel@cisco.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>, Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat,  8 Jul 2017 06:51:35 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> if 'ioread32()' returns 0xFFFFFFF, we have to go through the error
-> handling path as done everywhere else in this function.
-> 
-> Move the 'err_free_wq' label to better match its name and its location
-> and add a new label 'err_disable_wq'.
-> Update the code accordingly.
-> 
-> Fixes: 373fb0873d43 ("enic: add devcmd2")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The function v4l2_fwnode_endpoint_parse_csi1_bus does not need to be
+in global scope, so make it static.  Also reformat the function arguments
+as adding the static keyword made one of the source lines more than 80
+chars wide and checkpatch does not like that.
 
-Looks good, applied, thanks.
+Cleans up sparse warning:
+"symbol 'v4l2_fwnode_endpoint_parse_csi1_bus' was not declared. Should it
+be static?"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index ca755a4832fc..5fd69f59d8c8 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -154,9 +154,10 @@ static void v4l2_fwnode_endpoint_parse_parallel_bus(
+ 
+ }
+ 
+-void v4l2_fwnode_endpoint_parse_csi1_bus(struct fwnode_handle *fwnode,
+-					 struct v4l2_fwnode_endpoint *vep,
+-					 u32 bus_type)
++static void v4l2_fwnode_endpoint_parse_csi1_bus(
++	struct fwnode_handle *fwnode,
++	struct v4l2_fwnode_endpoint *vep,
++	u32 bus_type)
+ {
+ 	struct v4l2_fwnode_bus_mipi_csi1 *bus = &vep->bus.mipi_csi1;
+ 	u32 v;
+-- 
+2.11.0
+
