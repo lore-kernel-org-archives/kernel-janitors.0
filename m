@@ -1,17 +1,19 @@
-From: Shuah Khan <shuah@kernel.org>
-Date: Thu, 20 Jul 2017 23:28:25 +0000
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Date: Thu, 20 Jul 2017 23:35:37 +0000
 Subject: Re: [PATCH][V2] dvb_frontend: ensure that inital front end status initialized
-Message-Id: <95b98539-0db4-c877-35af-fd82dd78a8c1@kernel.org>
+Message-Id: <20170720203435.1b496396@vento.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170720221207.7505-1-colin.king@canonical.com>
 In-Reply-To: <20170720221207.7505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Markus Elfring <elfring@users.sourceforge.net>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Markus Elfring <elfring@users.sourceforge.net>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Shuah Khan <shuah@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/20/2017 04:12 PM, Colin King wrote:
+Em Thu, 20 Jul 2017 23:12:07 +0100
+Colin King <colin.king@canonical.com> escreveu:
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The fe_status variable s is not initialized meaning it can have any
@@ -24,13 +26,6 @@ On 07/20/2017 04:12 PM, Colin King wrote:
 > Detected by CoverityScan, CID#112887 ("Uninitialized scalar variable")
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Shuah Khan <shuahkh@osg.samsung.com>
-
-
-Looks good to me. Do you mind fixing dvb_frontend_swzigzag() as well.
-It currently initializes enum fe_status s = 0; in a separate patch.
-
 > ---
 >  drivers/media/dvb-core/dvb_frontend.c | 2 +-
 >  include/uapi/linux/dvb/frontend.h     | 1 +
@@ -61,5 +56,16 @@ It currently initializes enum fe_status s = 0; in a separate patch.
 >  	FE_HAS_SIGNAL		= 0x01,
 >  	FE_HAS_CARRIER		= 0x02,
 >  	FE_HAS_VITERBI		= 0x04,
-> 
 
+If you're willing to touch the uAPI, please update its documentation:
+
+$ git grep FE_HAS_SIGNAL Documentation/
+Documentation/media/uapi/dvb/examples.rst:       if (*stat & FE_HAS_SIGNAL)
+Documentation/media/uapi/dvb/fe-read-status.rst:          ``FE_HAS_SIGNAL``
+
+
+Regards,
+Mauro
+
+Thanks,
+Mauro
