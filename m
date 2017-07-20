@@ -1,42 +1,65 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 19 Jul 2017 21:47:57 +0000
-Subject: [PATCH] crypto: ixp4xx - Fix error handling path in 'aead_perform()'
-Message-Id: <20170719214757.29203-1-christophe.jaillet@wanadoo.fr>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 20 Jul 2017 07:37:10 +0000
+Subject: Re: [PATCH] crypto: ixp4xx - Fix error handling path in 'aead_perform()'
+Message-Id: <CAK8P3a3RuQmudGRGvpE1i=RwjJ_KVU1S+bDqX6Bp6VLB7G+2cg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170719214757.29203-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170719214757.29203-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net, arnd@arndb.de
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In commit 0f987e25cb8a, the source processing has been moved in front of
-the destination processing, but the error handling path has not been
-modified accordingly.
-Free resources in the correct order to avoid some leaks.
+On Wed, Jul 19, 2017 at 11:47 PM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> In commit 0f987e25cb8a, the source processing has been moved in front of
+> the destination processing, but the error handling path has not been
+> modified accordingly.
+> Free resources in the correct order to avoid some leaks.
+>
+> Fixes: 0f987e25cb8a ("crypto: ixp4xx - Fix false lastlen uninitialised warning")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: 0f987e25cb8a ("crypto: ixp4xx - Fix false lastlen uninitialised warning")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/crypto/ixp4xx_crypto.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for spotting my mistake!
+
+I've looked at it again and think it's unfortunately still wrong with
+your patch,
+as there is a 'goto free_buf_src' after dma_pool_alloc(), and that now needs
+to jump to free_buf_dst instead. We may also need an extra check to make
+sure we don't free an uninitialized pointer again.
+
+Can you have a look at this version below and send whatever you find
+to be correct in the end?
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
-index 427cbe012729..1ccbe15b5f16 100644
+index 427cbe012729..08b740dddb20 100644
 --- a/drivers/crypto/ixp4xx_crypto.c
 +++ b/drivers/crypto/ixp4xx_crypto.c
-@@ -1088,10 +1088,10 @@ static int aead_perform(struct aead_request *req, int encrypt,
- 	BUG_ON(qmgr_stat_overflow(SEND_QID));
- 	return -EINPROGRESS;
- 
--free_buf_src:
--	free_buf_chain(dev, req_ctx->src, crypt->src_buf);
- free_buf_dst:
- 	free_buf_chain(dev, req_ctx->dst, crypt->dst_buf);
-+free_buf_src:
-+	free_buf_chain(dev, req_ctx->src, crypt->src_buf);
- 	crypt->ctl_flags = CTL_FLAG_UNUSED;
- 	return -ENOMEM;
- }
--- 
-2.11.0
+@@ -1073,7 +1073,7 @@ static int aead_perform(struct aead_request
+*req, int encrypt,
+                req_ctx->hmac_virt = dma_pool_alloc(buffer_pool, flags,
+                                &crypt->icv_rev_aes);
+                if (unlikely(!req_ctx->hmac_virt))
+-                       goto free_buf_src;
++                       goto free_buf_dst;
+                if (!encrypt) {
+                        scatterwalk_map_and_copy(req_ctx->hmac_virt,
+                                req->src, cryptlen, authsize, 0);
+@@ -1088,10 +1088,11 @@ static int aead_perform(struct aead_request
+*req, int encrypt,
+        BUG_ON(qmgr_stat_overflow(SEND_QID));
+        return -EINPROGRESS;
 
++free_buf_dst:
++       if (crypt->dst)
++               free_buf_chain(dev, req_ctx->dst, crypt->dst_buf);
+ free_buf_src:
+        free_buf_chain(dev, req_ctx->src, crypt->src_buf);
+-free_buf_dst:
+-       free_buf_chain(dev, req_ctx->dst, crypt->dst_buf);
+        crypt->ctl_flags = CTL_FLAG_UNUSED;
+        return -ENOMEM;
+ }
