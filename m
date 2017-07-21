@@ -1,53 +1,84 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 09 Jul 2017 18:12:02 +0000
-Subject: Re: [PATCH] iio: accel: make array init_data static to reduce code size
-Message-Id: <20170709191202.29cd4c3f@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 21 Jul 2017 19:53:30 +0000
+Subject: [PATCH v2] cpufreq: s5pv210: add missing of_node_put
+Message-Id: <1500666810-21841-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170707155519.18736-1-colin.king@canonical.com>
-In-Reply-To: <20170707155519.18736-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh@kernel.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri,  7 Jul 2017 16:55:19 +0100
-Colin King <colin.king@canonical.com> wrote:
+for_each_compatible_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Making the const array init_data static rather having it on the
-> stack saves us a couple hundreds of bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    3175	    848	      0	   4023	    fb7	drivers/iio/accel/da311.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    2860	    936	      0	   3796	    ed4	drivers/iio/accel/da311.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Thanks,
+// <smpl>
+@@
+local idexpression n;
+expression e,e1,e2;
+statement S;
+iterator i1;
+iterator name for_each_compatible_node;
+@@
 
-Jonathan
-> ---
->  drivers/iio/accel/da311.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/da311.c b/drivers/iio/accel/da311.c
-> index 537cfa8b6edf..c0c1620d2a2f 100644
-> --- a/drivers/iio/accel/da311.c
-> +++ b/drivers/iio/accel/da311.c
-> @@ -139,7 +139,7 @@ static int da311_register_mask_write(struct i2c_client *client, u16 addr,
->  /* Init sequence taken from the android driver */
->  static int da311_reset(struct i2c_client *client)
->  {
-> -	const struct {
-> +	static const struct {
->  		u16 addr;
->  		u8 mask;
->  		u8 data;
+ for_each_compatible_node(n,e1,e2) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
+   i1(...,n,...) S
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
+Additionally, call of_node_put on the previous value of np, obtained from
+of_find_compatible_node, that is no longer accessible at the point of the
+for_each_compatible_node.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+v2: add the of_node_put for the call to of_find_compatible_node as well.
+
+ drivers/cpufreq/s5pv210-cpufreq.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index f82074e..5d31c2d 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -602,6 +602,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!clk_base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+ 		return -EFAULT;
+@@ -612,6 +613,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+ 			pr_err("%s: failed to get alias of dmc node '%s'\n",
+ 				__func__, np->name);
++			of_node_put(np);
+ 			return id;
+ 		}
+ 
+@@ -619,6 +621,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 		if (!dmc_base[id]) {
+ 			pr_err("%s: failed to map dmc%d registers\n",
+ 				__func__, id);
++			of_node_put(np);
+ 			return -EFAULT;
+ 		}
+ 	}
