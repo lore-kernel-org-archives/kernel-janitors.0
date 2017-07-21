@@ -1,52 +1,70 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 31 Jul 2017 05:55:16 +0000
-Subject: Re: [PATCH 12/12] mmc: bcm2835: constify mmc_host_ops structures
-Message-Id: <0beb2ef0-0a2d-5289-2956-af106d092cf6@i2se.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 21 Jul 2017 11:06:35 +0000
+Subject: [PATCH][media-next] media: dvb-frontends/stv0910: make various local variables static
+Message-Id: <20170721110635.23610-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501307981-29745-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501307981-29745-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Daniel Scheller <d.scheller.oss@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 29.07.2017 um 07:59 schrieb Julia Lawall:
-> The mmc_host_ops structure is only stored in the ops field of an
-> mmc_host structure, which is declared as const.  Thus the mmc_host_ops
-> structure itself can be const.
->
-> Done with the help of Coccinelle.
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct mmc_host_ops i@p = { ... };
->
-> @ok1@
-> struct mmc_host *mmc;
-> identifier r.i;
-> position p;
-> @@
-> mmc->ops = &i@p
->
-> @bad@
-> position p != {r.p,ok1.p};
-> identifier r.i;
-> struct mmc_host_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct mmc_host_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+The list stvlist and arrays padc_lookup, s1_sn_lookup and s2_sn_lookup
+do not need to be in global scope, so make them all static.
+
+Cleans up a bunch of smatch warnings:
+symbol 'padc_lookup' was not declared. Should it be static?
+symbol 's1_sn_lookup' was not declared. Should it be static?
+symbol 's2_sn_lookup' was not declared. Should it be static?
+symbol 'stvlist' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/stv0910.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 7e8a460449c5..bae1da3fdb2d 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -34,7 +34,7 @@
+ #define BER_SRC_S    0x20
+ #define BER_SRC_S2   0x20
+ 
+-LIST_HEAD(stvlist);
++static LIST_HEAD(stvlist);
+ 
+ enum receive_mode { RCVMODE_NONE, RCVMODE_DVBS, RCVMODE_DVBS2, RCVMODE_AUTO };
+ 
+@@ -207,7 +207,7 @@ static int write_shared_reg(struct stv *state, u16 reg, u8 mask, u8 val)
+ 	return status;
+ }
+ 
+-struct slookup s1_sn_lookup[] = {
++static struct slookup s1_sn_lookup[] = {
+ 	{   0,    9242  },  /*C/N=  0dB*/
+ 	{   5,    9105  },  /*C/N=0.5dB*/
+ 	{  10,    8950  },  /*C/N=1.0dB*/
+@@ -264,7 +264,7 @@ struct slookup s1_sn_lookup[] = {
+ 	{  510,    425  }   /*C/NQ.0dB*/
+ };
+ 
+-struct slookup s2_sn_lookup[] = {
++static struct slookup s2_sn_lookup[] = {
+ 	{  -30,  13950  },  /*C/N=-2.5dB*/
+ 	{  -25,  13580  },  /*C/N=-2.5dB*/
+ 	{  -20,  13150  },  /*C/N=-2.0dB*/
+@@ -327,7 +327,7 @@ struct slookup s2_sn_lookup[] = {
+ 	{  510,    463  },  /*C/NQ.0dB*/
+ };
+ 
+-struct slookup padc_lookup[] = {
++static struct slookup padc_lookup[] = {
+ 	{    0,  118000 }, /* PADC=+0dBm  */
+ 	{ -100,  93600  }, /* PADC=-1dBm  */
+ 	{ -200,  74500  }, /* PADC=-2dBm  */
+-- 
+2.11.0
+
