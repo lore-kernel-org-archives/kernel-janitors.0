@@ -1,30 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Jul 2017 07:40:04 +0000
-Subject: [PATCH net-next] bpf: dev_map_alloc() shouldn't return NULL
-Message-Id: <20170722074004.3abeucov67n3sbqs@mwanda>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Date: Sat, 22 Jul 2017 10:09:53 +0000
+Subject: Re: [PATCH net-next] bpf: dev_map_alloc() shouldn't return NULL
+Message-Id: <59732471.5080504@iogearbox.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170722074004.3abeucov67n3sbqs@mwanda>
+In-Reply-To: <20170722074004.3abeucov67n3sbqs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexei Starovoitov <ast@kernel.org>, John Fastabend <john.fastabend@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Alexei Starovoitov <ast@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We forgot to set the error code on two error paths which means that we
-return ERR_PTR(0) which is NULL.  The caller, find_and_alloc_map(), is
-not expecting that and will have a NULL dereference.
+On 07/22/2017 09:40 AM, Dan Carpenter wrote:
+> We forgot to set the error code on two error paths which means that we
+> return ERR_PTR(0) which is NULL.  The caller, find_and_alloc_map(), is
+> not expecting that and will have a NULL dereference.
+>
+> Fixes: 546ac1ffb70d ("bpf: add devmap, a map for storing net device references")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 546ac1ffb70d ("bpf: add devmap, a map for storing net device references")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks!
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 899364d097f5..d439ee0eadb1 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -114,6 +114,7 @@ static struct bpf_map *dev_map_alloc(union bpf_attr *attr)
- 	if (err)
- 		goto free_dtab;
- 
-+	err = -ENOMEM;
- 	/* A per cpu bitfield with a bit per possible net device */
- 	dtab->flush_needed = __alloc_percpu(
- 				BITS_TO_LONGS(attr->max_entries) *
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
