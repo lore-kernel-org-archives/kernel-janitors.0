@@ -1,91 +1,74 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 06 Jul 2017 10:04:28 +0000
-Subject: Re: [PATCH] video: fbdev: imxfb: use after free in imxfb_remove()
-Message-Id: <1955130.RvGiQGmOcs@amdc3058>
+From: Doug Ledford <dledford@redhat.com>
+Date: Sat, 22 Jul 2017 17:30:15 +0000
+Subject: Re: [PATCH v2] IB/mlx5: Fix a warning message
+Message-Id: <8fe6b27d-4485-f3d9-2c62-84a5448ad39b@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="CnUN4HQ6U4o7UeEAnGuW9DFchgl9aoaEw"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630080242.emnw7l53f52pvzeo@mwanda>
-In-Reply-To: <20170630080242.emnw7l53f52pvzeo@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+References: <20170614102009.GA5171@elgon.mountain>
+In-Reply-To: <20170614102009.GA5171-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wednesday, July 05, 2017 03:02:47 PM Dan Carpenter wrote:
-> On Tue, Jul 04, 2017 at 05:44:57PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Friday, June 30, 2017 11:02:42 AM Dan Carpenter wrote:
-> > > We free "info" then dereference it on the next line.  I've moved the
-> > > call to framebuffer_release() down a line to avoid this problem.
-> > > 
-> > > Fixes: b7d2d37276c1 ("video: imxfb: Remove unused fields from platform data structure")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > 
-> > > diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
-> > > index c166e0725be5..1d0c3592b290 100644
-> > > --- a/drivers/video/fbdev/imxfb.c
-> > > +++ b/drivers/video/fbdev/imxfb.c
-> > > @@ -1080,10 +1080,9 @@ static int imxfb_remove(struct platform_device *pdev)
-> > >  
-> > >  	fb_dealloc_cmap(&info->cmap);
-> > >  	kfree(info->pseudo_palette);
-> > > -	framebuffer_release(info);
-> > > -
-> > >  	dma_free_wc(&pdev->dev, fbi->map_size, info->screen_base,
-> > >  		    fbi->map_dma);
-> > > +	framebuffer_release(info);
-> > >  
-> > >  	iounmap(fbi->regs);
-> > 
-> > Good catch.
-> > 
-> > While you are at it, please:
-> > 
-> > - move framebuffer_release() after iounmap() (memory occupied by
-> >   fbi will also be freed by framebuffer_release() call, please see
-> >   framebuffer_alloc() for details)
-> > 
-> 
-> I'm still recovering from an illness so I might not be thinking
-> straight.  I don't see a bug here.  But I agree that it should mirror
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CnUN4HQ6U4o7UeEAnGuW9DFchgl9aoaEw
+Content-Type: multipart/mixed; boundary="38AC76scG3vDgNbIFurLE5j1BtQel6amS";
+ protected-headers="v1"
+From: Doug Ledford <dledford@redhat.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+ Matan Barak <matanb@mellanox.com>
+Cc: Leon Romanovsky <leonro@mellanox.com>, Sean Hefty <sean.hefty@intel.com>,
+ Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Message-ID: <8fe6b27d-4485-f3d9-2c62-84a5448ad39b@redhat.com>
+Subject: Re: [PATCH v2] IB/mlx5: Fix a warning message
+References: <20170614102009.GA5171@elgon.mountain>
+In-Reply-To: <20170614102009.GA5171@elgon.mountain>
 
-Please take a look at the imxfb_probe():
+--38AC76scG3vDgNbIFurLE5j1BtQel6amS
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-...
-	struct imxfb_info *fbi;
-...
-	info = framebuffer_alloc(sizeof(struct imxfb_info), &pdev->dev);
-	if (!info)
-		return -ENOMEM;
+On 6/14/2017 6:20 AM, Dan Carpenter wrote:
+> "umem" is a valid pointer.  We intended to print "*umem" or even just
+> "err" instead.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	fbi = info->par;
-...
+This was accepted into 4.13-rc, thanks.
 
-and framebuffer_alloc():
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG Key ID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FD=
+D
 
-struct fb_info *framebuffer_alloc(size_t size, struct device *dev)
-...
-	int fb_info_size = sizeof(struct fb_info);
-...
-	p = kzalloc(fb_info_size + size, GFP_KERNEL);
 
-	if (!p)
-		return NULL;
+--38AC76scG3vDgNbIFurLE5j1BtQel6amS--
 
-	info = (struct fb_info *) p;
+--CnUN4HQ6U4o7UeEAnGuW9DFchgl9aoaEw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-	if (size)
-		info->par = p + fb_info_size;
-...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-> the probe function so I'll re-write the patch.
+iQIcBAEBCAAGBQJZc4uoAAoJELgmozMOVy/dR2AQAJ2WdFvKzS8Tt/epQNh5Odeh
+2opvZlDgqUfKdivQ1tbfRF9a4rbkRB5lFPWFDQnkSLUyhpHjCNjXIZa99Bdz6jCS
+pfPXRLwPC20+kkmKtGWwbp9i9ZXtVVWadcJ8oDU4AEu+HNwMFig3gnokiXC21jCG
+s8konk6n5IN3+gADFx4mySzUT1kwk8jv8i97IKM/pVQnVWzVErb9Yv0QtQRHJlLy
+MjobS4NH5HyrnIb/QgTVogV5Jr8KHYS28h+fT14eAApk+bBpNGgE0QhmeAeMH2lj
+ILgJkqgVcfeYRkfzei3yTe1C64RMhEDQt/Rlr7rKv3U2rVLf/rIJF3NygzE5TgHl
+IjPSKM5qqi6vlIVgpAWBb65eG4ekZsptYD6bPAEMXrtwYgOOArw6bKwX86JG/4zL
+TuMS6yfHARbQ6ovFygYoSjbemn/BmUXFVIHnPBJKKo+JQTzz6np4B0dWik1Iuf75
+Pf1nmQ6N6T4AaiRPok4kNQG7T9sd/hD4E8ILMeVht2VNJ4rI0GHUGcgFCtn6j+Ne
+r6W4wgQa4XCCqkJO9kuQUb5op0S+tvSLyRzGNF6+Vf2RN6Vo+OobcL/Pu/ZmaewS
+sDHPakrDG/M+IE/OXMtR78SB5hw4tfjPBr12/T8DH9oOTHicS8/1nmM0bTiMWKbY
+aViFHW+EuPIEmrK4N2uR
+=HZ8A
+-----END PGP SIGNATURE-----
 
-Great!
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+--CnUN4HQ6U4o7UeEAnGuW9DFchgl9aoaEw--
