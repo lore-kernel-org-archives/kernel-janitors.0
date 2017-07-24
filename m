@@ -1,77 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:16:55 +0000
-Subject: [PATCH 1/2] ipv4: constify net_protocol structures
-Message-Id: <1501309016-16059-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 24 Jul 2017 21:44:45 +0000
+Subject: [PATCH] spi: pic32: fix spelling mistakes on macro names
+Message-Id: <20170724214445.15383-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The net_protocol structures are only passed as the first argument to
-inet_add_protocol, which is declared as const.  Thus the net_protocol
-structures themselves can be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Trivial fix to spelling mistakes macros; fix EMPTY spellings:
+RX_FIFO_EMTPY -> RX_FIFO_EMPTY
+TX_FIFO_EMTPY -> TX_FIFO_EMPTY
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct net_protocol i@p = { ... };
+Note that there are no other occurrances of these macros in the
+source.
 
-@ok1@
-identifier r.i;
-expression e1;
-position p;
-@@
- inet_add_protocol(&i@p,...)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct net_protocol e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct net_protocol i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/ipv4/af_inet.c |    4 ++--
+ drivers/spi/spi-pic32.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-index 5ce44fb..2e38624 100644
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1594,7 +1594,7 @@ u64 snmp_fold_field64(void __percpu *mib, int offt, size_t syncp_offset)
- };
- #endif
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index fefb688a3432..f8a45af1fa9f 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -52,14 +52,14 @@ struct pic32_spi_regs {
  
--static struct net_protocol tcp_protocol = {
-+static const struct net_protocol tcp_protocol = {
- 	.early_demux	=	tcp_v4_early_demux,
- 	.early_demux_handler =  tcp_v4_early_demux,
- 	.handler	=	tcp_v4_rcv,
-@@ -1604,7 +1604,7 @@ u64 snmp_fold_field64(void __percpu *mib, int offt, size_t syncp_offset)
- 	.icmp_strict_tag_validation = 1,
- };
+ /* Bit fields of SPI Control Register */
+ #define CTRL_RX_INT_SHIFT	0  /* Rx interrupt generation */
+-#define  RX_FIFO_EMTPY		0
++#define  RX_FIFO_EMPTY		0
+ #define  RX_FIFO_NOT_EMPTY	1 /* not empty */
+ #define  RX_FIFO_HALF_FULL	2 /* full by half or more */
+ #define  RX_FIFO_FULL		3 /* completely full */
  
--static struct net_protocol udp_protocol = {
-+static const struct net_protocol udp_protocol = {
- 	.early_demux =	udp_v4_early_demux,
- 	.early_demux_handler =	udp_v4_early_demux,
- 	.handler =	udp_rcv,
+ #define CTRL_TX_INT_SHIFT	2  /* TX interrupt generation */
+ #define  TX_FIFO_ALL_EMPTY	0 /* completely empty */
+-#define  TX_FIFO_EMTPY		1 /* empty */
++#define  TX_FIFO_EMPTY		1 /* empty */
+ #define  TX_FIFO_HALF_EMPTY	2 /* empty by half or more */
+ #define  TX_FIFO_NOT_FULL	3 /* atleast one empty */
+ 
+-- 
+2.11.0
 
