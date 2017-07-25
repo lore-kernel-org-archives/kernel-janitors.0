@@ -1,69 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:40:53 +0000
-Subject: [PATCH 1/2] decnet: dn_rtmsg: constify nf_hook_ops structures
-Message-Id: <1501310455-7896-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 25 Jul 2017 21:06:34 +0000
+Subject: Re: [PATCH] proc: Remove cast from memory allocation
+Message-Id: <CAGXu5jLAZ+SwToNx6vQqPkbZ_DjN5EuaPWWJJrNW59+EZwuK2Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1487745720-16967-1-git-send-email-me@tobin.cc>
+In-Reply-To: <1487745720-16967-1-git-send-email-me@tobin.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <seth.forshee@canonical.com>, Alexey Dobriyan <adobriyan@gmail.com>, "Eric W. Biederman" <ebiederm@xmission.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The nf_hook_ops structure is only passed as the second argument to
-nf_register_net_hook or nf_unregister_net_hook, both of which are
-declared as const.  Thus the nf_hook_ops structure itself can be
-const.
+On Tue, Feb 21, 2017 at 10:42 PM, Tobin C. Harding <me@tobin.cc> wrote:
+> Coccinelle emits WARNING: casting value returned by memory allocation
+> function to (struct proc_inode *) is useless.
+>
+> Remove unnecessary cast.
+>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
 
-Done with the help of Coccinelle.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct nf_hook_ops i@p = { ... };
+-Kees
 
-@ok1@
-identifier r.i;
-expression e;
-position p;
-@@
- \(nf_register_net_hook\|nf_unregister_net_hook\)(e,&i@p)
+> ---
+>  fs/proc/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index 842a5ff..1eb2326 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -57,7 +57,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
+>         struct proc_inode *ei;
+>         struct inode *inode;
+>
+> -       ei = (struct proc_inode *)kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
+> +       ei = kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
+>         if (!ei)
+>                 return NULL;
+>         ei->pid = NULL;
+> --
+> 2.7.4
+>
 
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct nf_hook_ops e;
-@@
-e@i@p
 
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct nf_hook_ops i = { ... };
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/decnet/netfilter/dn_rtmsg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/decnet/netfilter/dn_rtmsg.c b/net/decnet/netfilter/dn_rtmsg.c
-index aa8ffec..ab395e5 100644
---- a/net/decnet/netfilter/dn_rtmsg.c
-+++ b/net/decnet/netfilter/dn_rtmsg.c
-@@ -115,7 +115,7 @@ static inline void dnrmg_receive_user_skb(struct sk_buff *skb)
- 	RCV_SKB_FAIL(-EINVAL);
- }
- 
--static struct nf_hook_ops dnrmg_ops __read_mostly = {
-+static const struct nf_hook_ops dnrmg_ops = {
- 	.hook		= dnrmg_hook,
- 	.pf		= NFPROTO_DECNET,
- 	.hooknum	= NF_DN_ROUTE,
-
+-- 
+Kees Cook
+Pixel Security
