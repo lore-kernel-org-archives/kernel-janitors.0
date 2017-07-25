@@ -1,32 +1,81 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 24 Jul 2017 22:27:07 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Date: Tue, 25 Jul 2017 08:00:09 +0000
 Subject: Re: [PATCH 07/11] mfd: Drop unnecessary static
-Message-Id: <CAGXu5jKAO+9VjPnPWNUk3jH6iZwCy9+NPgYEQ+LFUdJciLJx0g@mail.gmail.com>
+Message-Id: <20170725080009.sm675kxlj7mhjqhi@dell>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500149266-32357-8-git-send-email-Julia.Lawall@lip6.fr> <D2DCD2EA-E216-45D4-87F5-375C30F4AC76@gmail.com>
- <alpine.DEB.2.20.1707152254380.5105@hadrien> <20170724192026.GF32425@amd>
-In-Reply-To: <20170724192026.GF32425@amd>
+ <1500149266-32357-8-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-8-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Mark D Rustad <mrustad@gmail.com>, Tony Lindgren <tony@atomide.com>, kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Tony Lindgren <tony@atomide.com>, keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 24, 2017 at 12:20 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
->
->> > > Drop static on a local variable, when the variable is initialized before
->> > > any possible use.  Thus, the static has no benefit.
->
-> Actually... it has possible other benefit -- saving stack space. I've
-> used static for that purpose before. So ... careful with the
-> automation.
+On Sat, 15 Jul 2017, Julia Lawall wrote:
 
-This means any functions like this must not be thread safe, though...
+> Drop static on a local variable, when the variable is initialized before
+> any possible use.  Thus, the static has no benefit.
+>=20
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @bad exists@
+> position p;
+> identifier x;
+> type T;
+> @@
+> static T x@p;
+> ...
+> x =3D <+...x...+>
+>=20
+> @@
+> identifier x;
+> expression e;
+> type T;
+> position p !=3D bad.p;
+> @@
+> -static
+>  T x@p;
+>  ... when !=3D x
+>      when strict
+> ?x =3D e;
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+> These patches are all independent of each other.
+>=20
+>  drivers/mfd/twl4030-irq.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
--Kees
+Looks like I didn't reply to this patch.
 
--- 
-Kees Cook
-Pixel Security
+Just to let you know, it has been applied.
+
+> diff -u -p a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+> --- a/drivers/mfd/twl4030-irq.c
+> +++ b/drivers/mfd/twl4030-irq.c
+> @@ -685,7 +685,7 @@ int twl4030_sih_setup(struct device *dev
+> =20
+>  int twl4030_init_irq(struct device *dev, int irq_num)
+>  {
+> -	static struct irq_chip	twl4030_irq_chip;
+> +	struct irq_chip		twl4030_irq_chip;
+>  	int			status, i;
+>  	int			irq_base, irq_end, nr_irqs;
+>  	struct			device_node *node =3D dev->of_node;
+>=20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
