@@ -1,77 +1,37 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 17 Jul 2017 19:58:22 +0000
-Subject: Re: [PATCH 03/11] mtd: physmap_of: Drop unnecessary static
-Message-Id: <20170717215822.3c7a0d86@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Jul 2017 19:49:55 +0000
+Subject: [PATCH 1/2] scsi: aacraid: reading out of bounds
+Message-Id: <20170725194955.dd4g6msevoesty4t@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500149266-32357-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: David Woodhouse <dwmw2@infradead.org>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le Sat, 15 Jul 2017 22:07:38 +0200,
-Julia Lawall <Julia.Lawall@lip6.fr> a =C3=A9crit :
+"qd.id" comes directly from the copy_from_user() on the line before so
+we should verify that it's within bounds.
 
-> Drop static on a local variable, when the variable is initialized before
-> any possible use.  Thus, the static has no benefit.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> static T x@p;
-> ...
-> x =3D <+...x...+>
->=20
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p !=3D bad.p;
-> @@
-> -static
->  T x@p;
->  ... when !=3D x
->      when strict
-> ?x =3D e;
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This bug predates git.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
->=20
-> ---
-> These patches are all independent of each other.
->=20
->  drivers/mtd/maps/physmap_of_versatile.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff -u -p a/drivers/mtd/maps/physmap_of_versatile.c b/drivers/mtd/maps/p=
-hysmap_of_versatile.c
-> --- a/drivers/mtd/maps/physmap_of_versatile.c
-> +++ b/drivers/mtd/maps/physmap_of_versatile.c
-> @@ -97,7 +97,7 @@ static const struct of_device_id ebi_mat
->  static int ap_flash_init(struct platform_device *pdev)
->  {
->  	struct device_node *ebi;
-> -	static void __iomem *ebi_base;
-> +	void __iomem *ebi_base;
->  	u32 val;
->  	int ret;
-> =20
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index 707ee2f5954d..4591113c49de 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -3198,10 +3198,11 @@ static int query_disk(struct aac_dev *dev, void __user *arg)
+ 		return -EBUSY;
+ 	if (copy_from_user(&qd, arg, sizeof (struct aac_query_disk)))
+ 		return -EFAULT;
+-	if (qd.cnum = -1)
++	if (qd.cnum = -1) {
++		if (qd.id < 0 || qd.id >= dev->maximum_num_containers)
++			return -EINVAL;
+ 		qd.cnum = qd.id;
+-	else if ((qd.bus = -1) && (qd.id = -1) && (qd.lun = -1))
+-	{
++	} else if ((qd.bus = -1) && (qd.id = -1) && (qd.lun = -1)) {
+ 		if (qd.cnum < 0 || qd.cnum >= dev->maximum_num_containers)
+ 			return -EINVAL;
+ 		qd.instance = dev->scsi_host_ptr->host_no;
