@@ -1,34 +1,37 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 31 Jul 2017 07:07:18 +0000
-Subject: RE: [PATCH 06/11] usb: renesas_usbhs: constify hc_driver structures
-Message-Id: <TY1PR06MB09923353E732DEB7B94E462DD8B20@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Jul 2017 19:51:10 +0000
+Subject: [PATCH 2/2] scsi: aacraid: Off by one NUL terminator
+Message-Id: <20170725195110.uwrzzkzvrbfqv7ld@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501274518-25170-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501274518-25170-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170725194955.dd4g6msevoesty4t@mwanda>
+In-Reply-To: <20170725194955.dd4g6msevoesty4t@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Mahesh Rajashekhara <Mahesh.Rajashekhara@pmcs.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+We're putting a NUL terminator one character beyond the end of the
+struct and that's obviously wrong.  On the other hand, I'm not positive
+this is the correct fix.  This change was added deliberately and was
+mentioned in the changlog of commit b836439faf04 ("aacraid: 4KB sector
+support").  The relevant section is "Also fix up a name truncation
+problem".  Can someone review this code and figure out the right thing
+to do?
 
-> From: Julia Lawall
-> Sent: Saturday, July 29, 2017 5:42 AM
-> 
-> The hc_driver structure is only passed as the first argument to
-> usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-> itself can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: b836439faf04 ("aacraid: 4KB sector support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thank you for the patch!
-
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
-
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index 4591113c49de..22c7461f65c9 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -549,7 +549,7 @@ static void get_container_name_callback(void *context, struct fib * fibptr)
+ 	if ((le32_to_cpu(get_name_reply->status) = CT_OK)
+ 	 && (get_name_reply->data[0] != '\0')) {
+ 		char *sp = get_name_reply->data;
+-		sp[sizeof(((struct aac_get_name_resp *)NULL)->data)] = '\0';
++		sp[sizeof(((struct aac_get_name_resp *)NULL)->data) - 1] = '\0';
+ 		while (*sp = ' ')
+ 			++sp;
+ 		if (*sp) {
