@@ -1,31 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Jul 2017 08:40:36 +0000
-Subject: [PATCH 2/3] lib/test_kmod: take the lock in register_test_dev_kmod()
-Message-Id: <20170707084036.f6jxmffxk67qtmce@mwanda>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 26 Jul 2017 14:17:20 +0000
+Subject: [PATCH 30/40] perf script: Remove some bogus error handling
+Message-Id: <20170726141730.30750-31-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170707083933.2mgnpqafhspbwu7h@mwanda>
+References: <20170726141730.30750-1-acme@kernel.org>
+In-Reply-To: <20170726141730.30750-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-We accidentally just drop the lock twice instead of taking it and then
-releasing it.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 39258f448d71 ("kmod: add test driver to stress test the module loader")
+If script_desc__new() fails then the current code has a NULL
+dereference.  We don't actually need to do any cleanup, we can just
+return NULL.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20170722073610.nnsyiwdcfl6bhn4t@mwanda
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-script.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/lib/test_kmod.c b/lib/test_kmod.c
-index 8797400b8bda..093b44771197 100644
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -1146,7 +1146,7 @@ static struct kmod_test_device *register_test_dev_kmod(void)
- 	struct kmod_test_device *test_dev = NULL;
- 	int ret;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d430ff42208a..378f76cdf923 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -2199,16 +2199,11 @@ static struct script_desc *script_desc__findnew(const char *name)
  
--	mutex_unlock(&reg_dev_mutex);
-+	mutex_lock(&reg_dev_mutex);
+ 	s = script_desc__new(name);
+ 	if (!s)
+-		goto out_delete_desc;
++		return NULL;
  
- 	/* int should suffice for number of devices, test for wrap */
- 	if (unlikely(num_test_devs + 1) < 0) {
+ 	script_desc__add(s);
+ 
+ 	return s;
+-
+-out_delete_desc:
+-	script_desc__delete(s);
+-
+-	return NULL;
+ }
+ 
+ static const char *ends_with(const char *str, const char *suffix)
+-- 
+2.9.4
+
