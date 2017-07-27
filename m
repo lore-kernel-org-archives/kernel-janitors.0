@@ -1,31 +1,46 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 27 Jul 2017 12:55:58 +0000
-Subject: Re: [PATCH 2/2] scsi: aacraid: Off by one NUL terminator
-Message-Id: <yq1inievy1t.fsf@oracle.com>
+From: Dave Carroll <david.carroll@microsemi.com>
+Date: Thu, 27 Jul 2017 16:26:17 +0000
+Subject: RE: [PATCH 2/2] scsi: aacraid: Off by one NUL terminator
+Message-Id: <423FD6710FB8FB4F8728F93591889F9A5307D0DC@avsrvexchmbx2.microsemi.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170725195110.uwrzzkzvrbfqv7ld@mwanda>
-        <yq1wp6uwp9c.fsf@oracle.com> <20170727090035.iqqavxvuc6hntjhs@mwanda>
-In-Reply-To: <20170727090035.iqqavxvuc6hntjhs@mwanda> (Dan Carpenter's message
-        of "Thu, 27 Jul 2017 12:00:35 +0300")
+ <yq1wp6uwp9c.fsf@oracle.com>
+In-Reply-To: <yq1wp6uwp9c.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Adaptec OEM Raid Solutions <aacraid@microsemi.com>, Mahesh Rajashekhara <Mahesh.Rajashekhara@pmcs.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: dl-esc-Aacraid Linux Driver <aacraid@microsemi.com>, Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
 
-Dan,
+> 
+> Dan,
+> 
+> > We're putting a NUL terminator one character beyond the end of the
+> > struct and that's obviously wrong.  On the other hand, I'm not
+> > positive this is the correct fix.  This change was added deliberately
+> > and was mentioned in the changlog of commit b836439faf04 ("aacraid:
+> > 4KB sector support").  The relevant section is "Also fix up a name
+> > truncation problem".  Can someone review this code and figure out the
+> > right thing to do?
+> 
+> I guess that's a feeble attempt to compensate for the fact it's not a C string. The
+> string coming from the controller firmware appears to be a fixed 16-byte length.
+> And so is the inquiry buffer that it's being copied to.
+> 
+> If the code would just use the inquiry string verbatim instead of removing
+> leading spaces and padding it. But there was probably some crappy device out
+> there that broke something for someone...
 
-> It would be simple enough to write it like you say, but it probably
-> should be done by someone who is able to test it.
+Hi Martin, Dan,
 
-Indeed, I don't have any aacraid hw.
+The issue is that we are making an inquiry response from container/RAID info. We could also have included a "pad" byte to terminate the string, as the fib data is 512 bytes. My assumption is that somehow back in the day, someone managed to get odd characters into the name.
 
-Raghava, could you please take a look at this issue?
+Terminating the string early would truncate the name ...
 
-	https://patchwork.kernel.org/patch/9863105/
-
-Thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+-Dave
+> 
+> Anyway. Terminating the string is not the right fix.
+> 
+> --
+> Martin K. Petersen      Oracle Linux Engineering
