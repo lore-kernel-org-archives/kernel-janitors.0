@@ -1,225 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Jul 2017 19:38:43 +0000
-Subject: [PATCH 0/1 v2] constify nf_conntrack_l3/4proto parameters
-Message-Id: <1501443524-13201-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 27 Jul 2017 10:58:35 +0000
+Subject: Re: [-next] rtlwifi: kfree entry until after entry->bssid has been accessed
+Message-Id: <20170727105836.02AB5607C8@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170630100843.9188-1-colin.king@canonical.com>
+In-Reply-To: <20170630100843.9188-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-When a nf_conntrack_l3/4proto parameter is not on the left hand side
-of an assignment, its address is not taken, and it is not passed to a
-function that may modify its fields, then it can be declared as const.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-This change is useful from a documentation point of view, and can
-possibly facilitate making some nf_conntrack_l4proto structures const
-subsequently.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The current code kfree's entry and then dereferences it by accessing
+> entry->bssid.  Avoid the dereference-after-free by moving the kfree
+> after the access to entry->bssid.
+> 
+> Detected by CoverityScan, CID#1448600 ("Read from pointer after free")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.  The following semantic patch shows
-the nf_conntrack_l4proto case.
+Patch applied to wireless-drivers-next.git, thanks.
 
-// <smpl>
-virtual update_results
-virtual after_start
+d0116f6f7b30 rtlwifi: kfree entry until after entry->bssid has been accessed
 
-@initialize:ocaml@
-@@
+-- 
+https://patchwork.kernel.org/patch/9819083/
 
-let unsafe = Hashtbl.create 101
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-let is_unsafe f = Hashtbl.mem unsafe f
-
-let changed = ref false
-
-
-(* The next three rules relate to the fact that we do not know the type of
-void * variables.  Fortunately this is only neede on the first iteration,
-but it still means that the whole kernel will end up being considered. *)
-
-@has depends on !after_start && !update_results@
-identifier f,x;
-position p;
-@@
-
-f@p(...,struct nf_conntrack_l3proto *x,...) { ... }
-
-@hasa depends on !after_start@
-identifier f,x;
-position p;
-@@
-
-f@p(...,struct nf_conntrack_l3proto *x[],...) { ... }
-
-@others depends on !after_start && !update_results@
-position p != {has.p,hasa.p};
-identifier f,x;
-@@
-
-f@p(...,void *x,...) { ... }
-
-@script:ocaml@
-f << others.f;
-@@
-
-changed := true;
-Hashtbl.add unsafe f ()
-
-
-@fpb depends on !update_results disable optional_qualifier, drop_cast exists@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x,fld;
-identifier bad : script:ocaml() { is_unsafe(bad) };
-assignment operator aop;
-expression e;
-local idexpression fp;
-type T;
-@@
-
-f(...,struct nf_conntrack_l3proto *x,...)
-{
-...
-(
-  return x;
-|
-  (<+...x...+>) aop e
-|
-  e aop x
-|
-  (T)x
-|
-  &(<+...x...+>)
-|
-  bad(...,x,...)
-|
-  fp(...,x,...)
-|
-  (<+...e->fld...+>)(...,x,...)
-)
-...when any
- }
-
-@script:ocaml@
-f << fpb.f;
-@@
-
-changed := true;
-Printf.eprintf "%s is unsafe\n" f;
-Hashtbl.add unsafe f ()
-
-@fpba depends on !update_results disable optional_qualifier, drop_cast exists@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x,fld;
-identifier bad : script:ocaml() { is_unsafe(bad) };
-assignment operator aop;
-expression e;
-local idexpression fp;
-type T;
-@@
-
-f(...,struct nf_conntrack_l3proto *x[],...)
-{
-...
-(
-  return \(x\|x[...]\);
-|
-  (<+...x...+>) aop e
-|
-  e aop \(x\|x[...]\)
-|
-  (T)\(x\|x[...]\)
-|
-  &(<+...x...+>)
-|
-  bad(...,\(x\|x[...]\),...)
-|
-  fp(...,\(x\|x[...]\),...)
-|
-  (<+...e->fld...+>)(...,\(x\|x[...]\),...)
-)
-... when any
- }
-
-@script:ocaml@
-f << fpba.f;
-@@
-
-changed := true;
-Printf.eprintf "%s is unsafe\n" f;
-Hashtbl.add unsafe f ()
-
-@finalize:ocaml depends on !update_results@
-tbls << merge.unsafe;
-c << merge.changed;
-@@
-
-List.iter
-    (fun t ->
-      Hashtbl.iter
-	(fun k v ->
-	  if not (Hashtbl.mem unsafe k) then Hashtbl.add unsafe k ()) t)
-    tbls;
-changed := false;
-let changed = List.exists (fun x -> !x) c in
-let it = new iteration() in
-it#add_virtual_rule After_start;
-(if not changed
-then it#add_virtual_rule Update_results);
-it#register()
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x;
-@@
-
-f(...,
-+ const
-  struct nf_conntrack_l3proto *x,...) { ... }
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x;
-type T;
-@@
-
-T f(...,
-+ const
-  struct nf_conntrack_l3proto *x,...);
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x;
-@@
-
-f(...,
-+ const
-  struct nf_conntrack_l3proto *x[],...) { ... }
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier x;
-type T;
-@@
-
-T f(...,
-+ const
-  struct nf_conntrack_l3proto *x[],...);
-// </smpl>
-
----
-
-v2: Added consideration of array parameters.  This adds transformation of
-nf_ct_l4proto_pernet_register and nf_ct_l4proto_pernet_unregister.
-
-This patch also adds transformation of ctnl_timeout_parse_policy that was
-somehow overlooked previously.
-
- include/net/netfilter/nf_conntrack_l3proto.h |    6 ++---
- include/net/netfilter/nf_conntrack_l4proto.h |   14 ++++++------
- include/net/netfilter/nf_conntrack_timeout.h |    2 -
- net/netfilter/nf_conntrack_core.c            |    8 +++----
- net/netfilter/nf_conntrack_netlink.c         |    6 ++---
- net/netfilter/nf_conntrack_proto.c           |   30 +++++++++++++--------------
- net/netfilter/nfnetlink_cttimeout.c          |    5 ++--
- 7 files changed, 36 insertions(+), 35 deletions(-)
