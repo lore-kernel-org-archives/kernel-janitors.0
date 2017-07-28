@@ -1,34 +1,47 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 27 Jul 2017 10:58:35 +0000
-Subject: Re: [-next] rtlwifi: kfree entry until after entry->bssid has been accessed
-Message-Id: <20170727105836.02AB5607C8@smtp.codeaurora.org>
+Date: Fri, 28 Jul 2017 15:43:19 +0000
+Subject: Re: rtlwifi: rtl8821ae: Fix HW_VAR_NAV_UPPER operation
+Message-Id: <20170728154319.6B1E96090D@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170630100843.9188-1-colin.king@canonical.com>
-In-Reply-To: <20170630100843.9188-1-colin.king@canonical.com>
+References: <20170713074323.r7rjpnp6ghrdtjgx@mwanda>
+In-Reply-To: <20170713074323.r7rjpnp6ghrdtjgx@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Ping-Ke Shih <pkshih@realtek.com>, Masanari Iida <standby24x7@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> The cast here is wrong.  We want to cast the pointer but we accidentally
+> do a no-op cast of the value.  We normally want to set us_nav_upper to
+> WIFI_NAV_UPPER_US (30000) but because of this bug we instead set it to
+> 184 on little endian systems and 0 on big endian ones.
 > 
-> The current code kfree's entry and then dereferences it by accessing
-> entry->bssid.  Avoid the dereference-after-free by moving the kfree
-> after the access to entry->bssid.
+> Fixes: 3c05bedb5fef ("Staging: rtl8812ae: Add Realtek 8821 PCI WIFI driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 > 
-> Detected by CoverityScan, CID#1448600 ("Read from pointer after free")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> index 2bc6bace069c..230f92a48f3c 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/hw.c
+> @@ -779,7 +779,7 @@ void rtl8821ae_set_hw_reg(struct ieee80211_hw *hw, u8 variable, u8 *val)
+>  			_rtl8821ae_resume_tx_beacon(hw);
+>  		break; }
+>  	case HW_VAR_NAV_UPPER: {
+> -		u32	us_nav_upper = ((u32)*val);
+> +		u32	us_nav_upper = *(u32 *)val;
+>  
+>  		if (us_nav_upper > HAL_92C_NAV_UPPER_UNIT * 0xFF) {
+>  			RT_TRACE(rtlpriv, COMP_INIT , DBG_WARNING,
 
 Patch applied to wireless-drivers-next.git, thanks.
 
-d0116f6f7b30 rtlwifi: kfree entry until after entry->bssid has been accessed
+d28ac7be15c7 rtlwifi: rtl8821ae: Fix HW_VAR_NAV_UPPER operation
 
 -- 
-https://patchwork.kernel.org/patch/9819083/
+https://patchwork.kernel.org/patch/9837847/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
