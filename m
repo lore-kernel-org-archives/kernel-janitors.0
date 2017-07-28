@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:41:48 +0000
-Subject: [PATCH 01/11] isp1362-hcd: constify hc_driver structures
-Message-Id: <1501274518-25170-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:52 +0000
+Subject: [PATCH 05/11] usb: host: u132-hcd: constify hc_driver structures
+Message-Id: <1501274518-25170-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -20,20 +20,20 @@ Done with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/usb/host/isp1362-hcd.c |    2 +-
+ drivers/usb/host/u132-hcd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
-index 0f2b4b3..9b7e307 100644
---- a/drivers/usb/host/isp1362-hcd.c
-+++ b/drivers/usb/host/isp1362-hcd.c
-@@ -2591,7 +2591,7 @@ static int isp1362_hc_start(struct usb_hcd *hcd)
- 
- /*-------------------------------------------------------------------------*/
- 
--static struct hc_driver isp1362_hc_driver = {
-+static const struct hc_driver isp1362_hc_driver = {
- 	.description =		hcd_name,
- 	.product_desc =		"ISP1362 Host Controller",
- 	.hcd_priv_size =	sizeof(struct isp1362_hcd),
+diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+index 43d5293..c38855a 100644
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -2941,7 +2941,7 @@ static int u132_bus_resume(struct usb_hcd *hcd)
+ #define u132_bus_suspend NULL
+ #define u132_bus_resume NULL
+ #endif
+-static struct hc_driver u132_hc_driver = {
++static const struct hc_driver u132_hc_driver = {
+ 	.description = hcd_name,
+ 	.hcd_priv_size = sizeof(struct u132),
+ 	.irq = NULL,
 
