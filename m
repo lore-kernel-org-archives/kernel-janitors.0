@@ -1,40 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 20 Jul 2017 05:49:01 +0000
-Subject: Re: [PATCH] net: tehuti: don't process data if it has not been copied from userspace
-Message-Id: <20170719.224901.2173661512386984465.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:57 +0000
+Subject: [PATCH 10/11] greybus: usb: constify hc_driver structures
+Message-Id: <1501274518-25170-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170719174659.22646-1-colin.king@canonical.com>
-In-Reply-To: <20170719174659.22646-1-colin.king@canonical.com>
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andy@greyhouse.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 19 Jul 2017 18:46:59 +0100
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array data is only populated with valid information from userspace
-> if cmd != SIOCDEVPRIVATE, other cases the array contains garbage on
-> the stack. The subsequent switch statement acts on a subcommand in
-> data[0] which could be any garbage value if cmd is SIOCDEVPRIVATE which
-> seems incorrect to me.  Instead, just return EOPNOTSUPP for the case
-> where cmd = SIOCDEVPRIVATE to avoid this issue.
-> 
-> As a side note, I suspect that the original intention of the code
-> was for this ioctl to work just for cmd = SIOCDEVPRIVATE (and the
-> current logic is reversed). However, I don't wont to change the current
-> semantics in case any userspace code relies on this existing behaviour.
-> 
-> Detected by CoverityScan, CID#139647 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Done with the help of Coccinelle.
 
-Yeah this is the safest change for now, applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Francois added the register address range checking a year after the
-driver was added, so maybe someone used this facility.
+---
+ drivers/staging/greybus/usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It should have been done via ethtool getregs...
+diff --git a/drivers/staging/greybus/usb.c b/drivers/staging/greybus/usb.c
+index ccadda0..f93a76d 100644
+--- a/drivers/staging/greybus/usb.c
++++ b/drivers/staging/greybus/usb.c
+@@ -139,7 +139,7 @@ static int hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex,
+ 	return ret;
+ }
+ 
+-static struct hc_driver usb_gb_hc_driver = {
++static const struct hc_driver usb_gb_hc_driver = {
+ 	.description = "greybus-hcd",
+ 	.product_desc = "Greybus USB Host Controller",
+ 	.hcd_priv_size = sizeof(struct gb_usb_device),
+
