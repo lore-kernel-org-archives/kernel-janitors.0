@@ -1,49 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 04 Jul 2017 05:55:15 +0000
-Subject: [PATCH] drm/i915: Fix an error hanfling path in 'i915_gem_do_execbuffer'
-Message-Id: <20170704055515.2394-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:50 +0000
+Subject: [PATCH 03/11] usb: r8a66597-hcd: constify hc_driver structures
+Message-Id: <1501274518-25170-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel.vetter@intel.com, jani.nikula@linux.intel.com, airlied@linux.ie
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-if 'eb_create()' fails, we must release some resources as done in all other
-error handling paths of this function.
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-This patch is just a guess based on surrounding gotos and function names.
-(i.e. 'get_unused_fd_flags()' and 'put_unused_fd()')
----
- drivers/gpu/drm/i915/i915_gem_execbuffer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/host/r8a66597-hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-index 9337446f1068..0746b352f820 100644
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -2180,8 +2180,9 @@ i915_gem_do_execbuffer(struct drm_device *dev,
- 		}
- 	}
+diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+index 7bf78be..5e5fc9d 100644
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -2312,7 +2312,7 @@ static int r8a66597_bus_resume(struct usb_hcd *hcd)
+ #define	r8a66597_bus_resume	NULL
+ #endif
  
--	if (eb_create(&eb))
--		return -ENOMEM;
-+	err = eb_create(&eb);
-+	if (err)
-+		goto err_put_unused_fd;
- 
- 	/*
- 	 * Take a local wakeref for preparing to dispatch the execbuf as
-@@ -2340,6 +2341,7 @@ i915_gem_do_execbuffer(struct drm_device *dev,
- err_rpm:
- 	intel_runtime_pm_put(eb.i915);
- 	eb_destroy(&eb);
-+err_put_unused_fd:
- 	if (out_fence_fd != -1)
- 		put_unused_fd(out_fence_fd);
- err_in_fence:
--- 
-2.11.0
+-static struct hc_driver r8a66597_hc_driver = {
++static const struct hc_driver r8a66597_hc_driver = {
+ 	.description =		hcd_name,
+ 	.hcd_priv_size =	sizeof(struct r8a66597),
+ 	.irq =			r8a66597_irq,
 
