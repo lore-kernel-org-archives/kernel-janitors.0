@@ -1,68 +1,39 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 05:59:37 +0000
-Subject: [PATCH 08/12] mmc: vub300: constify mmc_host_ops structures
-Message-Id: <1501307981-29745-9-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:48 +0000
+Subject: [PATCH 01/11] isp1362-hcd: constify hc_driver structures
+Message-Id: <1501274518-25170-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Olech <tony.olech-ze5PQcJzaeOs0fm86SgGizGjJy/sRE9J@public.gmane.org>
-Cc: bhumirks-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The mmc_host_ops structure is only stored in the ops field of an
-mmc_host structure, which is declared as const.  Thus the mmc_host_ops
-structure itself can be const.
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
 Done with the help of Coccinelle.
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct mmc_host_ops i@p = { ... };
-
-@ok1@
-struct mmc_host *mmc;
-identifier r.i;
-position p;
-@@
-mmc->ops = &i@p
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct mmc_host_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct mmc_host_ops i = { ... };
-// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/mmc/host/vub300.c |    2 +-
+ drivers/usb/host/isp1362-hcd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
-index fbeea1a..6e08597 100644
---- a/drivers/mmc/host/vub300.c
-+++ b/drivers/mmc/host/vub300.c
-@@ -2079,7 +2079,7 @@ static void vub300_init_card(struct mmc_host *mmc, struct mmc_card *card)
- 	dev_info(&vub300->udev->dev, "NO host QUIRKS for this card\n");
- }
+diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
+index 0f2b4b3..9b7e307 100644
+--- a/drivers/usb/host/isp1362-hcd.c
++++ b/drivers/usb/host/isp1362-hcd.c
+@@ -2591,7 +2591,7 @@ static int isp1362_hc_start(struct usb_hcd *hcd)
  
--static struct mmc_host_ops vub300_mmc_ops = {
-+static const struct mmc_host_ops vub300_mmc_ops = {
- 	.request = vub300_mmc_request,
- 	.set_ios = vub300_mmc_set_ios,
- 	.get_ro = vub300_mmc_get_ro,
+ /*-------------------------------------------------------------------------*/
+ 
+-static struct hc_driver isp1362_hc_driver = {
++static const struct hc_driver isp1362_hc_driver = {
+ 	.description =		hcd_name,
+ 	.product_desc =		"ISP1362 Host Controller",
+ 	.hcd_priv_size =	sizeof(struct isp1362_hcd),
 
