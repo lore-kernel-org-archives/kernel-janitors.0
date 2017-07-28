@@ -1,54 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 12 Jul 2017 05:17:38 +0000
-Subject: [PATCH] iwlwifi: mvm: Fix a memory leak in an error handling path in 'iwl_mvm_sar_get_wgds_table()'
-Message-Id: <20170712051738.21646-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:55 +0000
+Subject: [PATCH 08/11] USB: HWA: constify hc_driver structures
+Message-Id: <1501274518-25170-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: johannes.berg@intel.com, emmanuel.grumbach@intel.com, luciano.coelho@intel.com, linuxwifi@intel.com, kvalo@codeaurora.org, sara.sharon@intel.com
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should free 'wgds.pointer' here as done a few lines above in another
-error handling path.
-It was allocated within 'acpi_evaluate_object()'.
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-A comment in '/drivers/acpi/acpica/utalloc.c' states that:
-/* [...] Note: The caller should use acpi_os_free to free this
- * buffer created via ACPI_ALLOCATE_BUFFER.
- */
+ drivers/usb/host/hwa-hc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So, at the end of this function:
-	out_free:
-		kfree(wgds.pointer);
-should maybe be:
-	out_free:
-		acpi_os_free(wgds.pointer);
-
-If correct, several places should be fixed accordingly.
----
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index 24cc406d87ef..56d535ab696f 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -1287,8 +1287,10 @@ static int iwl_mvm_sar_get_wgds_table(struct iwl_mvm *mvm,
+diff --git a/drivers/usb/host/hwa-hc.c b/drivers/usb/host/hwa-hc.c
+index 1db0626..8658619 100644
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -614,7 +614,7 @@ static int wa_fill_descr(struct wahc *wa)
+ 	return result;
+ }
  
- 		entry = &wifi_pkg->package.elements[i + 1];
- 		if ((entry->type != ACPI_TYPE_INTEGER) ||
--		    (entry->integer.value > U8_MAX))
--			return -EINVAL;
-+		    (entry->integer.value > U8_MAX)) {
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
- 
- 		geo_table->values[i] = entry->integer.value;
- 	}
--- 
-2.11.0
+-static struct hc_driver hwahc_hc_driver = {
++static const struct hc_driver hwahc_hc_driver = {
+ 	.description = "hwa-hcd",
+ 	.product_desc = "Wireless USB HWA host controller",
+ 	.hcd_priv_size = sizeof(struct hwahc) - sizeof(struct usb_hcd),
 
