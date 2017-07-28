@@ -1,30 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Jul 2017 14:41:11 +0000
-Subject: [PATCH] Bluetooth: btrtl: Fix a error code in rtl_load_config()
-Message-Id: <20170728144111.chywkq2527puieo6@mwanda>
+From: Johan Hedberg <johan.hedberg@gmail.com>
+Date: Fri, 28 Jul 2017 16:31:21 +0000
+Subject: Re: [PATCH] Bluetooth: btrtl: Fix a error code in rtl_load_config()
+Message-Id: <20170728163121.GA1151@x1c.home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170728144111.chywkq2527puieo6@mwanda>
+In-Reply-To: <20170728144111.chywkq2527puieo6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Larry Finger <Larry.Finger@lwfinger.net>, Gustavo Padovan <gustavo@padovan.org>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally return success if the kmemdup() fails.  It results in
-a NULL dereference in the caller.
+Hi Dan,
 
-Fixes: 1110a2dbe698 ("Bluetooth: btrtl: Add RTL8822BE Bluetooth device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, Jul 28, 2017, Dan Carpenter wrote:
+> We accidentally return success if the kmemdup() fails.  It results in
+> a NULL dereference in the caller.
+> 
+> Fixes: 1110a2dbe698 ("Bluetooth: btrtl: Add RTL8822BE Bluetooth device")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 8279094dd713..d9a99b4302ea 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -279,6 +279,8 @@ static int rtl_load_config(struct hci_dev *hdev, const char *name, u8 **buff)
- 		return ret;
- 	ret = fw->size;
- 	*buff = kmemdup(fw->data, ret, GFP_KERNEL);
-+	if (!*buff)
-+		ret = -ENOMEM;
- 
- 	release_firmware(fw);
- 
+Applied to bluetooth-next. Thanks.
+
+Johan
