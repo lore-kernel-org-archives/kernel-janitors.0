@@ -1,38 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Jul 2017 09:30:10 +0000
-Subject: [PATCH] staging: fbtft: array underflow in fbtft_request_gpios_match()
-Message-Id: <20170718093010.ejsy3cgmsswmnegn@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:18:58 +0000
+Subject: [PATCH 2/2] l2tp: constify inet6_protocol structures
+Message-Id: <1501273138-22771-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501273138-22771-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501273138-22771-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"val" can be negative, so we'd write before the start of the
-par->gpio.db[] array.
+The inet6_protocol structure is only passed as the first argument to
+inet6_add_protocol or inet6_del_protocol, both of which are declared as
+const.  Thus the inet6_protocol structure itself can be const.
 
-Fixes: c296d5f9957c ("staging: fbtft: core support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Also drop __read_mostly on the newly const structure.
 
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index b742ee786615..6d0363deba61 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -84,7 +84,7 @@ static unsigned long fbtft_request_gpios_match(struct fbtft_par *par,
- 					       const struct fbtft_gpio *gpio)
- {
- 	int ret;
--	long val;
-+	unsigned int val;
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/l2tp/l2tp_ip6.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
+index 88b397c..d2efcd9 100644
+--- a/net/l2tp/l2tp_ip6.c
++++ b/net/l2tp/l2tp_ip6.c
+@@ -788,7 +788,7 @@ static int l2tp_ip6_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+ 	.ops		= &l2tp_ip6_ops,
+ };
  
- 	fbtft_par_dbg(DEBUG_REQUEST_GPIOS_MATCH, par, "%s('%s')\n",
- 		      __func__, gpio->name);
-@@ -108,7 +108,7 @@ static unsigned long fbtft_request_gpios_match(struct fbtft_par *par,
- 		par->gpio.latch = gpio->gpio;
- 		return GPIOF_OUT_INIT_LOW;
- 	} else if (gpio->name[0] = 'd' && gpio->name[1] = 'b') {
--		ret = kstrtol(&gpio->name[2], 10, &val);
-+		ret = kstrtouint(&gpio->name[2], 10, &val);
- 		if (ret = 0 && val < 16) {
- 			par->gpio.db[val] = gpio->gpio;
- 			return GPIOF_OUT_INIT_LOW;
+-static struct inet6_protocol l2tp_ip6_protocol __read_mostly = {
++static const struct inet6_protocol l2tp_ip6_protocol = {
+ 	.handler	= l2tp_ip6_recv,
+ };
+ 
+
