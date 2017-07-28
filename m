@@ -1,30 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 12 Jul 2017 21:25:42 +0000
-Subject: Re: [PATCH] scsi: libfc: pass an error pointer to fc_disc_error()
-Message-Id: <yq1wp7djqjt.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:53 +0000
+Subject: [PATCH 06/11] usb: renesas_usbhs: constify hc_driver structures
+Message-Id: <1501274518-25170-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170712073022.e24r3iad7jqxarn6@mwanda>
-In-Reply-To: <20170712073022.e24r3iad7jqxarn6@mwanda> (Dan Carpenter's message
-        of "Wed, 12 Jul 2017 10:30:22 +0300")
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Thumshirn <jth@kernel.org>, Robert Love <rml@tech9.net>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
-Dan,
+Done with the help of Coccinelle.
 
-> This patch is basically to silence a static checker warning.
->
->     drivers/scsi/libfc/fc_disc.c:326 fc_disc_error()
->     warn: passing a valid pointer to 'PTR_ERR'
->
-> It doesn't affect runtime because it treats -ENOMEM and a valid pointer
-> the same.  But the documentation says we should be passing an error
-> pointer.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to 4.13/scsi-fixes. Thank you!
+---
+ drivers/usb/renesas_usbhs/mod_host.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/usb/renesas_usbhs/mod_host.c b/drivers/usb/renesas_usbhs/mod_host.c
+index dfb346e..e256351 100644
+--- a/drivers/usb/renesas_usbhs/mod_host.c
++++ b/drivers/usb/renesas_usbhs/mod_host.c
+@@ -1285,7 +1285,7 @@ static int usbhsh_bus_nop(struct usb_hcd *hcd)
+ 	return 0;
+ }
+ 
+-static struct hc_driver usbhsh_driver = {
++static const struct hc_driver usbhsh_driver = {
+ 	.description =		usbhsh_hcd_name,
+ 	.hcd_priv_size =	sizeof(struct usbhsh_hpriv),
+ 
+
