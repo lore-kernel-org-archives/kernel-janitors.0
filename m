@@ -1,87 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 04 Jul 2017 08:31:29 +0000
-Subject: [PATCH][V2] x86/platform/uv/BAU: minor cleanup, make some local functions static
-Message-Id: <20170704083129.10559-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 28 Jul 2017 14:51:35 +0000
+Subject: Re: mwifiex: usb: unlock on error in mwifiex_usb_tx_aggr_tmo()
+Message-Id: <20170728145135.D98EC60915@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
+In-Reply-To: <20170710072115.2y4ukbl7x4rk4bac@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Banman <abanman@hpe.com>, Mike Travis <mike.travis@hpe.com>, Dimitri Sivanich <sivanich@sgi.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Xinming Hu <huxm@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Functions handle_uv2_busy, uv_flush_send_and_wait and
-find_another_by_swack are local to the source, so make them static.
-Also remove normal_busy as it is no longer used.
+> We need to unlock if mwifiex_usb_prepare_tx_aggr_skb() fails.
+> 
+> Fixes: a2ca85ad721d ("mwifiex: usb: add timer to flush aggregation packets")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/usb.c b/drivers/net/wireless/marvell/mwifiex/usb.c
+> index cb1753e43ef4..880ef1cb4088 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/usb.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/usb.c
+> @@ -1112,7 +1112,7 @@ static void mwifiex_usb_tx_aggr_tmo(unsigned long context)
+>  	if (err) {
+>  		mwifiex_dbg(adapter, ERROR,
+>  			    "prepare tx aggr skb failed, err=%d\n", err);
+> -		return;
+> +		goto unlock;
+>  	}
+>  
+>  	if (atomic_read(&port->tx_data_urb_pending) >> @@ -1133,6 +1133,7 @@ static void mwifiex_usb_tx_aggr_tmo(unsigned long context)
+>  done:
+>  	if (err = -1)
+>  		mwifiex_write_data_complete(adapter, skb_send, 0, -1);
+> +unlock:
+>  	spin_unlock_irqrestore(&port->tx_aggr_lock, flags);
+>  }
 
-Fixes various smatch warnings, such as:
-"symbol 'find_another_by_swack' was not declared. Should it be static?"
-"symbol 'handle_uv2_busy' was not declared. Should it be static?"
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/platform/uv/tlb_uv.c | 29 +++++------------------------
- 1 file changed, 5 insertions(+), 24 deletions(-)
+fe0c94be77a0 mwifiex: usb: unlock on error in mwifiex_usb_tx_aggr_tmo()
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index 2983faab5b18..e21420843641 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -588,31 +588,11 @@ static unsigned long uv2_3_read_status(unsigned long offset, int rshft, int desc
- }
- 
- /*
-- * Return whether the status of the descriptor that is normally used for this
-- * cpu (the one indexed by its hub-relative cpu number) is busy.
-- * The status of the original 32 descriptors is always reflected in the 64
-- * bits of UVH_LB_BAU_SB_ACTIVATION_STATUS_0.
-- * The bit provided by the activation_status_2 register is irrelevant to
-- * the status if it is only being tested for busy or not busy.
-- */
--int normal_busy(struct bau_control *bcp)
--{
--	int cpu = bcp->uvhub_cpu;
--	int mmr_offset;
--	int right_shift;
--
--	mmr_offset = UVH_LB_BAU_SB_ACTIVATION_STATUS_0;
--	right_shift = cpu * UV_ACT_STATUS_SIZE;
--	return (((((read_lmmr(mmr_offset) >> right_shift) &
--				UV_ACT_STATUS_MASK)) << 1) = UV2H_DESC_BUSY);
--}
--
--/*
-  * Entered when a bau descriptor has gone into a permanent busy wait because
-  * of a hardware bug.
-  * Workaround the bug.
-  */
--int handle_uv2_busy(struct bau_control *bcp)
-+static int handle_uv2_busy(struct bau_control *bcp)
- {
- 	struct ptc_stats *stat = bcp->statp;
- 
-@@ -917,7 +897,8 @@ static void handle_cmplt(int completion_status, struct bau_desc *bau_desc,
-  * Returns 1 if it gives up entirely and the original cpu mask is to be
-  * returned to the kernel.
-  */
--int uv_flush_send_and_wait(struct cpumask *flush_mask, struct bau_control *bcp,
-+static int uv_flush_send_and_wait(struct cpumask *flush_mask,
-+	struct bau_control *bcp,
- 	struct bau_desc *bau_desc)
- {
- 	int seq_number = 0;
-@@ -1212,8 +1193,8 @@ const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
-  * Search the message queue for any 'other' unprocessed message with the
-  * same software acknowledge resource bit vector as the 'msg' message.
-  */
--struct bau_pq_entry *find_another_by_swack(struct bau_pq_entry *msg,
--					   struct bau_control *bcp)
-+static struct bau_pq_entry *find_another_by_swack(struct bau_pq_entry *msg,
-+						  struct bau_control *bcp)
- {
- 	struct bau_pq_entry *msg_next = msg + 1;
- 	unsigned char swack_vec = msg->swack_vec;
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9832397/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
