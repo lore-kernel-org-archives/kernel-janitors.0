@@ -1,44 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 13 Jul 2017 12:00:20 +0000
-Subject: [PATCH] [media] dib0090: make const array dib0090_tuning_table_cband_7090e_aci static
-Message-Id: <20170713120020.32712-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 28 Jul 2017 20:41:54 +0000
+Subject: [PATCH 07/11] isp116x-hcd: constify hc_driver structures
+Message-Id: <1501274518-25170-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Olav Kongas <ok@artecdesign.ee>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The hc_driver structure is only passed as the first argument to
+usb_create_hcd, which is declared as const.  Thus the hc_driver structure
+itself can be const.
 
-Don't populate array dib0090_tuning_table_cband_7090e_aci on the stack but
-instead make it static. Makes the object code smaller by over 180 bytes:
+Done with the help of Coccinelle.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  40052	   7320	    192	  47564	   b9cc dib0090.o
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  39780	   7408	    192	  47380	   b914	dib0090.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/dvb-frontends/dib0090.c | 2 +-
+ drivers/usb/host/isp116x-hcd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/dib0090.c b/drivers/media/dvb-frontends/dib0090.c
-index 33af14df27bd..ae53a199b7af 100644
---- a/drivers/media/dvb-frontends/dib0090.c
-+++ b/drivers/media/dvb-frontends/dib0090.c
-@@ -2052,7 +2052,7 @@ int dib0090_update_tuning_table_7090(struct dvb_frontend *fe,
- 	struct dib0090_state *state = fe->tuner_priv;
- 	const struct dib0090_tuning *tune  		dib0090_tuning_table_cband_7090e_sensitivity;
--	const struct dib0090_tuning dib0090_tuning_table_cband_7090e_aci[] = {
-+	static const struct dib0090_tuning dib0090_tuning_table_cband_7090e_aci[] = {
- 		{ 300000,  0 ,  3,  0x8165, 0x2c0, 0x2d12, 0xb84e, EN_CAB },
- 		{ 650000,  0 ,  4,  0x815B, 0x280, 0x2d12, 0xb84e, EN_CAB },
- 		{ 860000,  0 ,  5,  0x84EF, 0x280, 0x2d12, 0xb84e, EN_CAB },
--- 
-2.11.0
+diff --git a/drivers/usb/host/isp116x-hcd.c b/drivers/usb/host/isp116x-hcd.c
+index d089b3f..73fec38 100644
+--- a/drivers/usb/host/isp116x-hcd.c
++++ b/drivers/usb/host/isp116x-hcd.c
+@@ -1511,7 +1511,7 @@ static int isp116x_bus_resume(struct usb_hcd *hcd)
+ 
+ #endif
+ 
+-static struct hc_driver isp116x_hc_driver = {
++static const struct hc_driver isp116x_hc_driver = {
+ 	.description = hcd_name,
+ 	.product_desc = "ISP116x Host Controller",
+ 	.hcd_priv_size = sizeof(struct isp116x),
 
