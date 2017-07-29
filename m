@@ -1,57 +1,23 @@
-From: Marcus Wolf <marcus.wolf@wolf-entwicklungen.de>
-Date: Wed, 19 Jul 2017 17:45:26 +0000
-Subject: Re: [PATCH] staging: pi433: fix a precedence bug
-Message-Id: <965068167.81962.1500486327379@ox.hosteurope.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 06:40:52 +0000
+Subject: [PATCH 0/2] constify nf_hook_ops structures
+Message-Id: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170719095157.3e2rnskjqbva2kwo@mwanda>
-In-Reply-To: <20170719095157.3e2rnskjqbva2kwo@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-decnet-user@lists.sourceforge.net
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Once again in plain text, only - sorry for frogetting to set the switch in my
-mailtool....
- 
-Hi Dan, Hi Walter,
- 
-thank you for your investigation.
- 
-rf69_get_modulation, rf69_get_lna_gain, rf69_set_lna_gain: Seems like I messed
-up a few things :-/
- 
-In the beginning, the defines were left-bound "real"  values, like you can see
-for the LNA_GAIN values. Later on, I deceided not to use left-bound "real"
-values, but to leave the bits at the position, they have in the register. These
-two impelemtation types are mixed up here. Sorry.
- 
-Result: The shift is obsolete and the LNA_GAIN defines are old-style and need to
-be reviesed. I will send a patch with a proposal in approx. half an hour.
- 
-rf69_set_deviation: Yes Dan, bitwise negate was intended.
- 
-Once again, thanks a lot for your investigation,
- 
-Marcus
- 
- 
-Thanks a lot,
- 
-Marcus
- 
+The nf_hook_ops structure is only passed as the second argument to
+nf_register_net_hook or nf_unregister_net_hook, both of which are
+declared as const.  Thus the nf_hook_ops structure itself can be
+const.
 
-> Dan Carpenter <dan.carpenter@oracle.com> hat am 19. Juli 2017 um 12:26
-> geschrieben:
->
->
-> Actually, please drop this patch. I looked at this one the same as I
-> did the other one, but I didn't look closely enough. It's the same
-> situation where we have two bugs that probably cancel each other out
-> somewhat. It maybe needs to be fixed by someone who can test the code.
->
-> In rf69_set_lna_gain() we should be left shifting << 3 but we don't.
->
-> regards,
-> dan carpenter
->
->
+Done with the help of Coccinelle.
+
+---
+
+ net/decnet/netfilter/dn_rtmsg.c    |    2 +-
+ net/ipv4/netfilter/ipt_CLUSTERIP.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
