@@ -1,36 +1,143 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 16 Jul 2017 06:59:02 +0000
-Subject: [PATCH 1/3] thermal: core: Fix a memory leak in 'thermal_zone_device_register()' error handling path
-Message-Id: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 19:23:16 +0000
+Subject: [PATCH 0/1] constify nf_conntrack_l3/4proto parameters
+Message-Id: <1501356197-26490-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-'tz' is freed in some error handling paths but not in the main one.
-So free it also here to avoid a memory leak.
+When a nf_conntrack_l3/4proto parameter is not on the left hand side
+of an assignment, its address is not taken, and it is not passed to a
+function that may modify its fields, then it can be declared as const.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This change is useful from a documentation point of view, and can
+possibly facilitate making some nf_conntrack_l4proto structures const
+subsequently.
+
+Done with the help of Coccinelle.  The following semantic patch shows
+the nf_conntrack_l4proto case.
+
+// <smpl>
+virtual update_results
+virtual after_start
+
+@initialize:ocaml@
+@@
+
+let unsafe = Hashtbl.create 101
+
+let is_unsafe f = Hashtbl.mem unsafe f
+
+let changed = ref false
+
+
+(* The next three rules relate to the fact that we do not know the type of
+void * variables.  Fortunately this is only needed on the first iteration,
+but it still means that the whole kernel will end up being considered. *)
+
+@has depends on !after_start@
+identifier f,l4proto;
+position p;
+@@
+
+f(...,struct nf_conntrack_l4proto *l4proto,...) { ... }
+
+@others depends on !after_start@
+position p != has.p;
+identifier f,x;
+@@
+
+f(...,void *x,...) { ... }
+
+@script:ocaml@
+f << others.f;
+@@
+
+changed := true;
+Hashtbl.add unsafe f ()
+
+
+@fpb depends on !update_results disable optional_qualifier exists@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier l4proto,fld;
+identifier bad : script:ocaml() { is_unsafe(bad) };
+assignment operator aop;
+expression e;
+local idexpression fp;
+@@
+
+f(...,struct nf_conntrack_l4proto *l4proto,...)
+{
+<+...
+(
+  (<+...l4proto...+>) aop e
+|
+  &(<+...l4proto...+>)
+|
+  bad(...,l4proto,...)
+|
+  fp(...,l4proto,...)
+|
+  (<+...e->fld...+>)(...,l4proto,...)
+)
+...+> }
+
+@script:ocaml@
+f << fpb.f;
+@@
+
+changed := true;
+Hashtbl.add unsafe f ()
+
+@finalize:ocaml depends on !update_results@
+tbls << merge.unsafe;
+c << merge.changed;
+@@
+
+List.iter
+    (fun t ->
+      Hashtbl.iter
+	(fun k v ->
+	  if not (Hashtbl.mem unsafe k) then Hashtbl.add unsafe k ()) t)
+    tbls;
+let changed = List.exists (fun x -> !x) c in
+let it = new iteration() in
+it#add_virtual_rule After_start;
+(if not changed
+then it#add_virtual_rule Update_results);
+it#register()
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier l4proto;
+@@
+
+f(...,
++ const
+  struct nf_conntrack_l4proto *l4proto,...) { ... }
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier l4proto;
+type T;
+@@
+
+T f(...,
++ const
+  struct nf_conntrack_l4proto *l4proto,...);
+
+// </smpl>
+
 ---
- drivers/thermal/thermal_core.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 5a51c740e372..9743f3e65eb0 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1296,6 +1296,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- unregister:
- 	ida_simple_remove(&thermal_tz_ida, tz->id);
- 	device_unregister(&tz->device);
-+	kfree(tz);
- 	return ERR_PTR(result);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_register);
--- 
-2.11.0
-
+ include/net/netfilter/nf_conntrack_l3proto.h |    6 +++---
+ include/net/netfilter/nf_conntrack_l4proto.h |    8 ++++----
+ include/net/netfilter/nf_conntrack_timeout.h |    2 +-
+ net/netfilter/nf_conntrack_core.c            |    8 ++++----
+ net/netfilter/nf_conntrack_netlink.c         |    6 +++---
+ net/netfilter/nf_conntrack_proto.c           |   20 ++++++++++----------
+ net/netfilter/nfnetlink_cttimeout.c          |    2 +-
+ 7 files changed, 26 insertions(+), 26 deletions(-)
