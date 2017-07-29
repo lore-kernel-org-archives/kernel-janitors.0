@@ -1,143 +1,68 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 19:23:16 +0000
-Subject: [PATCH 0/1] constify nf_conntrack_l3/4proto parameters
-Message-Id: <1501356197-26490-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:35 +0000
+Subject: [PATCH 06/12] mmc: toshsd: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-When a nf_conntrack_l3/4proto parameter is not on the left hand side
-of an assignment, its address is not taken, and it is not passed to a
-function that may modify its fields, then it can be declared as const.
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-This change is useful from a documentation point of view, and can
-possibly facilitate making some nf_conntrack_l4proto structures const
-subsequently.
-
-Done with the help of Coccinelle.  The following semantic patch shows
-the nf_conntrack_l4proto case.
+Done with the help of Coccinelle.
 
 // <smpl>
-virtual update_results
-virtual after_start
-
-@initialize:ocaml@
-@@
-
-let unsafe = Hashtbl.create 101
-
-let is_unsafe f = Hashtbl.mem unsafe f
-
-let changed = ref false
-
-
-(* The next three rules relate to the fact that we do not know the type of
-void * variables.  Fortunately this is only needed on the first iteration,
-but it still means that the whole kernel will end up being considered. *)
-
-@has depends on !after_start@
-identifier f,l4proto;
+@r disable optional_qualifier@
+identifier i;
 position p;
 @@
+static struct mmc_host_ops i@p = { ... };
 
-f(...,struct nf_conntrack_l4proto *l4proto,...) { ... }
-
-@others depends on !after_start@
-position p != has.p;
-identifier f,x;
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
 @@
+mmc->ops = &i@p
 
-f(...,void *x,...) { ... }
-
-@script:ocaml@
-f << others.f;
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
 @@
+e@i@p
 
-changed := true;
-Hashtbl.add unsafe f ()
-
-
-@fpb depends on !update_results disable optional_qualifier exists@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier l4proto,fld;
-identifier bad : script:ocaml() { is_unsafe(bad) };
-assignment operator aop;
-expression e;
-local idexpression fp;
+@depends on !bad disable optional_qualifier@
+identifier r.i;
 @@
-
-f(...,struct nf_conntrack_l4proto *l4proto,...)
-{
-<+...
-(
-  (<+...l4proto...+>) aop e
-|
-  &(<+...l4proto...+>)
-|
-  bad(...,l4proto,...)
-|
-  fp(...,l4proto,...)
-|
-  (<+...e->fld...+>)(...,l4proto,...)
-)
-...+> }
-
-@script:ocaml@
-f << fpb.f;
-@@
-
-changed := true;
-Hashtbl.add unsafe f ()
-
-@finalize:ocaml depends on !update_results@
-tbls << merge.unsafe;
-c << merge.changed;
-@@
-
-List.iter
-    (fun t ->
-      Hashtbl.iter
-	(fun k v ->
-	  if not (Hashtbl.mem unsafe k) then Hashtbl.add unsafe k ()) t)
-    tbls;
-let changed = List.exists (fun x -> !x) c in
-let it = new iteration() in
-it#add_virtual_rule After_start;
-(if not changed
-then it#add_virtual_rule Update_results);
-it#register()
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier l4proto;
-@@
-
-f(...,
-+ const
-  struct nf_conntrack_l4proto *l4proto,...) { ... }
-
-@depends on update_results disable optional_qualifier@
-identifier f : script:ocaml() { not(is_unsafe(f)) };
-identifier l4proto;
-type T;
-@@
-
-T f(...,
-+ const
-  struct nf_conntrack_l4proto *l4proto,...);
-
+static
++const
+ struct mmc_host_ops i = { ... };
 // </smpl>
 
----
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- include/net/netfilter/nf_conntrack_l3proto.h |    6 +++---
- include/net/netfilter/nf_conntrack_l4proto.h |    8 ++++----
- include/net/netfilter/nf_conntrack_timeout.h |    2 +-
- net/netfilter/nf_conntrack_core.c            |    8 ++++----
- net/netfilter/nf_conntrack_netlink.c         |    6 +++---
- net/netfilter/nf_conntrack_proto.c           |   20 ++++++++++----------
- net/netfilter/nfnetlink_cttimeout.c          |    2 +-
- 7 files changed, 26 insertions(+), 26 deletions(-)
+---
+ drivers/mmc/host/toshsd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/toshsd.c b/drivers/mmc/host/toshsd.c
+index 553ef41..dd961c5 100644
+--- a/drivers/mmc/host/toshsd.c
++++ b/drivers/mmc/host/toshsd.c
+@@ -550,7 +550,7 @@ static int toshsd_get_cd(struct mmc_host *mmc)
+ 	return !!(ioread16(host->ioaddr + SD_CARDSTATUS) & SD_CARD_PRESENT_0);
+ }
+ 
+-static struct mmc_host_ops toshsd_ops = {
++static const struct mmc_host_ops toshsd_ops = {
+ 	.request = toshsd_request,
+ 	.set_ios = toshsd_set_ios,
+ 	.get_ro = toshsd_get_ro,
+
