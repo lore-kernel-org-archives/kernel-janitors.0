@@ -1,72 +1,22 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Jul 2017 18:29:47 +0000
-Subject: [PATCH] [media] smiapp: make various const arrays static
-Message-Id: <20170710182947.17884-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 06:16:54 +0000
+Subject: [PATCH 0/2] constify net_protocol structures
+Message-Id: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sakari Ailus <sakari.ailus@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The net_protocol structure is only passed as the first argument to
+inet_add_protocol or inet_del_protocol, both of which are declared
+as const.  Thus the net_protocol structure itself can be const.
 
-Don't populate const arrays on the stack but instead make them static.
-Makes the object code smaller and saves nearly 550 bytes.
+Done with the help of Coccinelle.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   3638	    752	      0	   4390	   1126	smiapp-quirk.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   2802	   1040	      0	   3842	    f02	smiapp-quirk.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/smiapp/smiapp-quirk.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/smiapp/smiapp-quirk.c b/drivers/media/i2c/smiapp/smiapp-quirk.c
-index cb128eae9c54..95c0272bb014 100644
---- a/drivers/media/i2c/smiapp/smiapp-quirk.c
-+++ b/drivers/media/i2c/smiapp/smiapp-quirk.c
-@@ -71,7 +71,7 @@ static int jt8ew9_limits(struct smiapp_sensor *sensor)
- 
- static int jt8ew9_post_poweron(struct smiapp_sensor *sensor)
- {
--	const struct smiapp_reg_8 regs[] = {
-+	static const struct smiapp_reg_8 regs[] = {
- 		{ 0x30a3, 0xd8 }, /* Output port control : LVDS ports only */
- 		{ 0x30ae, 0x00 }, /* 0x0307 pll_multiplier maximum value on PLL input 9.6MHz ( 19.2MHz is divided on pre_pll_div) */
- 		{ 0x30af, 0xd0 }, /* 0x0307 pll_multiplier maximum value on PLL input 9.6MHz ( 19.2MHz is divided on pre_pll_div) */
-@@ -115,7 +115,7 @@ const struct smiapp_quirk smiapp_jt8ew9_quirk = {
- static int imx125es_post_poweron(struct smiapp_sensor *sensor)
- {
- 	/* Taken from v02. No idea what the other two are. */
--	const struct smiapp_reg_8 regs[] = {
-+	static const struct smiapp_reg_8 regs[] = {
- 		/*
- 		 * 0x3302: clk during frame blanking:
- 		 * 0x00 - HS mode, 0x01 - LP11
-@@ -145,7 +145,7 @@ static int jt8ev1_post_poweron(struct smiapp_sensor *sensor)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(&sensor->src->sd);
- 	int rval;
--	const struct smiapp_reg_8 regs[] = {
-+	static const struct smiapp_reg_8 regs[] = {
- 		{ 0x3031, 0xcd }, /* For digital binning (EQ_MONI) */
- 		{ 0x30a3, 0xd0 }, /* FLASH STROBE enable */
- 		{ 0x3237, 0x00 }, /* For control of pulse timing for ADC */
-@@ -166,7 +166,7 @@ static int jt8ev1_post_poweron(struct smiapp_sensor *sensor)
- 		{ 0x33cf, 0xec }, /* For Black sun */
- 		{ 0x3328, 0x80 }, /* Ugh. No idea what's this. */
- 	};
--	const struct smiapp_reg_8 regs_96[] = {
-+	static const struct smiapp_reg_8 regs_96[] = {
- 		{ 0x30ae, 0x00 }, /* For control of ADC clock */
- 		{ 0x30af, 0xd0 },
- 		{ 0x30b0, 0x01 },
--- 
-2.11.0
-
+ net/ipv4/af_inet.c |    4 ++--
+ net/l2tp/l2tp_ip.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
