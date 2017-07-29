@@ -1,71 +1,67 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Thu, 20 Jul 2017 23:35:37 +0000
-Subject: Re: [PATCH][V2] dvb_frontend: ensure that inital front end status initialized
-Message-Id: <20170720203435.1b496396@vento.lan>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:41 +0000
+Subject: [PATCH 12/12] mmc: bcm2835: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170720221207.7505-1-colin.king@canonical.com>
-In-Reply-To: <20170720221207.7505-1-colin.king@canonical.com>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Markus Elfring <elfring@users.sourceforge.net>, Ingo Molnar <mingo@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Shuah Khan <shuah@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Em Thu, 20 Jul 2017 23:12:07 +0100
-Colin King <colin.king@canonical.com> escreveu:
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The fe_status variable s is not initialized meaning it can have any
-> random garbage status.  This could be problematic if fe->ops.tune is
-> false as s is not updated by the call to fe->ops.tune() and a
-> subsequent check on the change status will using a garbage value.
-> Fix this by adding FE_NONE to the enum fe_status and initializing
-> s to this.
-> 
-> Detected by CoverityScan, CID#112887 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/dvb-core/dvb_frontend.c | 2 +-
->  include/uapi/linux/dvb/frontend.h     | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-> index e3fff8f64d37..18cc3bbc699c 100644
-> --- a/drivers/media/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb-core/dvb_frontend.c
-> @@ -631,7 +631,7 @@ static int dvb_frontend_thread(void *data)
->  	struct dvb_frontend *fe = data;
->  	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
->  	struct dvb_frontend_private *fepriv = fe->frontend_priv;
-> -	enum fe_status s;
-> +	enum fe_status s = FE_NONE;
->  	enum dvbfe_algo algo;
->  	bool re_tune = false;
->  	bool semheld = false;
-> diff --git a/include/uapi/linux/dvb/frontend.h b/include/uapi/linux/dvb/frontend.h
-> index 00a20cd21ee2..afc3972b0879 100644
-> --- a/include/uapi/linux/dvb/frontend.h
-> +++ b/include/uapi/linux/dvb/frontend.h
-> @@ -127,6 +127,7 @@ enum fe_sec_mini_cmd {
->   *			to reset DiSEqC, tone and parameters
->   */
->  enum fe_status {
-> +	FE_NONE			= 0x00,
->  	FE_HAS_SIGNAL		= 0x01,
->  	FE_HAS_CARRIER		= 0x02,
->  	FE_HAS_VITERBI		= 0x04,
+Done with the help of Coccinelle.
 
-If you're willing to touch the uAPI, please update its documentation:
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct mmc_host_ops i@p = { ... };
 
-$ git grep FE_HAS_SIGNAL Documentation/
-Documentation/media/uapi/dvb/examples.rst:       if (*stat & FE_HAS_SIGNAL)
-Documentation/media/uapi/dvb/fe-read-status.rst:          ``FE_HAS_SIGNAL``
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
+@@
+mmc->ops = &i@p
 
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
+@@
+e@i@p
 
-Regards,
-Mauro
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct mmc_host_ops i = { ... };
+// </smpl>
 
-Thanks,
-Mauro
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/bcm2835.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+index abba9a2..229dc18 100644
+--- a/drivers/mmc/host/bcm2835.c
++++ b/drivers/mmc/host/bcm2835.c
+@@ -1252,7 +1252,7 @@ static void bcm2835_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	mutex_unlock(&host->mutex);
+ }
+ 
+-static struct mmc_host_ops bcm2835_ops = {
++static const struct mmc_host_ops bcm2835_ops = {
+ 	.request = bcm2835_request,
+ 	.set_ios = bcm2835_set_ios,
+ 	.hw_reset = bcm2835_reset,
+
