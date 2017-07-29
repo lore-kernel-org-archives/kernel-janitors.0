@@ -1,32 +1,32 @@
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-Date: Thu, 20 Jul 2017 07:05:46 +0000
-Subject: Re: [PATCH] Crypto: atmel-ecc: Make a couple of local functions static
-Message-Id: <0368986a-0274-25b4-931a-6c4ddfc4d4e3@microchip.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:29 +0000
+Subject: [PATCH 00/12] constify mmc_host_ops structures
+Message-Id: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170719092415.9553-1-colin.king@canonical.com>
-In-Reply-To: <20170719092415.9553-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-On 07/19/2017 12:24 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Functions atmel_ecc_i2c_client_alloc and atmel_ecc_i2c_client_free are
-> local to the source and no not need to be in the global scope. Make
-> them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'atmel_ecc_i2c_client_alloc' was not declared. Should it be static?
-> symbol 'atmel_ecc_i2c_client_free' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Done with the help of Coccinelle.
 
-Acked-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
 
-Thanks,
-ta
+ drivers/mmc/host/bcm2835.c     |    2 +-
+ drivers/mmc/host/davinci_mmc.c |    2 +-
+ drivers/mmc/host/moxart-mmc.c  |    2 +-
+ drivers/mmc/host/mtk-sd.c      |    2 +-
+ drivers/mmc/host/s3cmci.c      |    2 +-
+ drivers/mmc/host/sdricoh_cs.c  |    2 +-
+ drivers/mmc/host/sh_mmcif.c    |    2 +-
+ drivers/mmc/host/sunxi-mmc.c   |    2 +-
+ drivers/mmc/host/toshsd.c      |    2 +-
+ drivers/mmc/host/usdhi6rol0.c  |    2 +-
+ drivers/mmc/host/vub300.c      |    2 +-
+ drivers/mmc/host/wmt-sdmmc.c   |    2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
