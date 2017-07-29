@@ -1,14 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 05:59:40 +0000
-Subject: [PATCH 11/12] mmc: mediatek: constify mmc_host_ops structures
-Message-Id: <1501307981-29745-12-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:32 +0000
+Subject: [PATCH 03/12] mmc: davinci: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 The mmc_host_ops structure is only stored in the ops field of an
 mmc_host structure, which is declared as const.  Thus the mmc_host_ops
@@ -48,20 +49,20 @@ static
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/mmc/host/mtk-sd.c |    2 +-
+ drivers/mmc/host/davinci_mmc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 68f4453..267f7ab 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1579,7 +1579,7 @@ static void msdc_hw_reset(struct mmc_host *mmc)
- 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index 621ce47..351330d 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -1062,7 +1062,7 @@ static void mmc_davinci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	}
  }
  
--static struct mmc_host_ops mt_msdc_ops = {
-+static const struct mmc_host_ops mt_msdc_ops = {
- 	.post_req = msdc_post_req,
- 	.pre_req = msdc_pre_req,
- 	.request = msdc_ops_request,
+-static struct mmc_host_ops mmc_davinci_ops = {
++static const struct mmc_host_ops mmc_davinci_ops = {
+ 	.request	= mmc_davinci_request,
+ 	.set_ios	= mmc_davinci_set_ios,
+ 	.get_cd		= mmc_davinci_get_cd,
 
