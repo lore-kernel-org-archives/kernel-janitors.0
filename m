@@ -1,17 +1,19 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 28 Jul 2017 20:41:47 +0000
-Subject: [PATCH 00/11] constify hc_driver structures
-Message-Id: <1501274518-25170-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 06:16:55 +0000
+Subject: [PATCH 1/2] ipv4: constify net_protocol structures
+Message-Id: <1501309016-16059-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The hc_driver structure is only passed as the first argument to
-usb_create_hcd, which is declared as const.  Thus the hc_driver structure
-itself can be const.
+The net_protocol structures are only passed as the first argument to
+inet_add_protocol, which is declared as const.  Thus the net_protocol
+structures themselves can be const.
 
 Done with the help of Coccinelle.
 
@@ -20,45 +22,56 @@ Done with the help of Coccinelle.
 identifier i;
 position p;
 @@
-
-static struct hc_driver i@p = { ... };
+static struct net_protocol i@p = { ... };
 
 @ok1@
 identifier r.i;
 expression e1;
 position p;
 @@
-
-usb_create_hcd(&i@p,...)
+ inet_add_protocol(&i@p,...)
 
 @bad@
 position p != {r.p,ok1.p};
 identifier r.i;
-struct hc_driver e;
+struct net_protocol e;
 @@
-
 e@i@p
 
 @depends on !bad disable optional_qualifier@
 identifier r.i;
 @@
-
 static
 +const
- struct hc_driver i = { ... };
+ struct net_protocol i = { ... };
 // </smpl>
 
----
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/staging/greybus/usb.c        |    2 +-
- drivers/usb/c67x00/c67x00-hcd.c      |    2 +-
- drivers/usb/host/hwa-hc.c            |    2 +-
- drivers/usb/host/isp116x-hcd.c       |    2 +-
- drivers/usb/host/isp1362-hcd.c       |    2 +-
- drivers/usb/host/max3421-hcd.c       |    2 +-
- drivers/usb/host/r8a66597-hcd.c      |    2 +-
- drivers/usb/host/sl811-hcd.c         |    2 +-
- drivers/usb/host/u132-hcd.c          |    2 +-
- drivers/usb/host/whci/hcd.c          |    2 +-
- drivers/usb/renesas_usbhs/mod_host.c |    2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+---
+ net/ipv4/af_inet.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index 5ce44fb..2e38624 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -1594,7 +1594,7 @@ u64 snmp_fold_field64(void __percpu *mib, int offt, size_t syncp_offset)
+ };
+ #endif
+ 
+-static struct net_protocol tcp_protocol = {
++static const struct net_protocol tcp_protocol = {
+ 	.early_demux	=	tcp_v4_early_demux,
+ 	.early_demux_handler =  tcp_v4_early_demux,
+ 	.handler	=	tcp_v4_rcv,
+@@ -1604,7 +1604,7 @@ u64 snmp_fold_field64(void __percpu *mib, int offt, size_t syncp_offset)
+ 	.icmp_strict_tag_validation = 1,
+ };
+ 
+-static struct net_protocol udp_protocol = {
++static const struct net_protocol udp_protocol = {
+ 	.early_demux =	udp_v4_early_demux,
+ 	.early_demux_handler =	udp_v4_early_demux,
+ 	.handler =	udp_rcv,
+
