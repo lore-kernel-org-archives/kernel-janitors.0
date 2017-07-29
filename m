@@ -1,29 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Jul 2017 07:33:40 +0000
-Subject: [PATCH 1/2] ftrace: remove an unneeded NULL check
-Message-Id: <20170712073340.4enzeojeoupuds5a@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:36 +0000
+Subject: [PATCH 07/12] mmc: usdhi6rol0: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"func" can't be NULL and it doesn't make sense to check because we've
-already derefenced it.
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 2953d558bbee..2a3c45743f54 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3950,7 +3950,7 @@ static int cache_mod(struct trace_array *tr,
- 				continue;
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct mmc_host_ops i@p = { ... };
+
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
+@@
+mmc->ops = &i@p
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct mmc_host_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/usdhi6rol0.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+index 1bd5f1a..64da6a8 100644
+--- a/drivers/mmc/host/usdhi6rol0.c
++++ b/drivers/mmc/host/usdhi6rol0.c
+@@ -1185,7 +1185,7 @@ static int usdhi6_sig_volt_switch(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	return ret;
+ }
  
- 			/* no func matches all */
--			if (!func || strcmp(func, "*") = 0 ||
-+			if (strcmp(func, "*") = 0 ||
- 			    (ftrace_mod->func &&
- 			     strcmp(ftrace_mod->func, func) = 0)) {
- 				ret = 0;
+-static struct mmc_host_ops usdhi6_ops = {
++static const struct mmc_host_ops usdhi6_ops = {
+ 	.request	= usdhi6_request,
+ 	.set_ios	= usdhi6_set_ios,
+ 	.get_cd		= usdhi6_get_cd,
+
