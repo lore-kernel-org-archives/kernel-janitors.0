@@ -1,23 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:40:52 +0000
-Subject: [PATCH 0/2] constify nf_hook_ops structures
-Message-Id: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Florian Westphal <fw@strlen.de>
+Date: Sat, 29 Jul 2017 08:44:29 +0000
+Subject: Re: [PATCH 0/2] constify nf_hook_ops structures
+Message-Id: <20170729084429.GE28392@breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-decnet-user@lists.sourceforge.net
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-decnet-user@lists.sourceforge.net, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The nf_hook_ops structure is only passed as the second argument to
-nf_register_net_hook or nf_unregister_net_hook, both of which are
-declared as const.  Thus the nf_hook_ops structure itself can be
-const.
+Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> The nf_hook_ops structure is only passed as the second argument to
+> nf_register_net_hook or nf_unregister_net_hook, both of which are
+> declared as const.  Thus the nf_hook_ops structure itself can be
+> const.
 
-Done with the help of Coccinelle.
+Right, also see
+http://patchwork.ozlabs.org/patch/793767/
 
----
-
- net/decnet/netfilter/dn_rtmsg.c    |    2 +-
- net/ipv4/netfilter/ipt_CLUSTERIP.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This series misses most of them (all arrays perhaps)?
