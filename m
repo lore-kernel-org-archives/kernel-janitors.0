@@ -1,33 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Jul 2017 07:27:10 +0000
-Subject: [PATCH] drm/i915: Fix error code in __create_hw_context()
-Message-Id: <20170712072710.2uqqhomiup6zi2qx@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:39 +0000
+Subject: [PATCH 10/12] mmc: sdricoh_cs: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel.vetter@intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Sascha Sommer <saschasommer@freenet.de>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We accidentally forget to set the error code here, which means that we
-return NULL.  The callers aren't expecting that and Oops.
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-Fixes: 4ff4b44cbb70 ("drm/i915: Store a direct lookup from object handle to vma")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_context.c b/drivers/gpu/drm/i915/i915_gem_context.c
-index 39ed58a21fc1..25a73365a5be 100644
---- a/drivers/gpu/drm/i915/i915_gem_context.c
-+++ b/drivers/gpu/drm/i915/i915_gem_context.c
-@@ -275,8 +275,10 @@ __create_hw_context(struct drm_i915_private *dev_priv,
- 	ctx->vma_lut.ht = kcalloc(ctx->vma_lut.ht_size,
- 				  sizeof(*ctx->vma_lut.ht),
- 				  GFP_KERNEL);
--	if (!ctx->vma_lut.ht)
-+	if (!ctx->vma_lut.ht) {
-+		ret = -ENOMEM;
- 		goto err_out;
-+	}
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct mmc_host_ops i@p = { ... };
+
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
+@@
+mmc->ops = &i@p
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct mmc_host_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/sdricoh_cs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdricoh_cs.c b/drivers/mmc/host/sdricoh_cs.c
+index 70cb00a..9e46039 100644
+--- a/drivers/mmc/host/sdricoh_cs.c
++++ b/drivers/mmc/host/sdricoh_cs.c
+@@ -385,7 +385,7 @@ static int sdricoh_get_ro(struct mmc_host *mmc)
+ 	return (status & STATUS_CARD_LOCKED);
+ }
  
- 	INIT_WORK(&ctx->vma_lut.resize, resize_vma_ht);
- 
+-static struct mmc_host_ops sdricoh_ops = {
++static const struct mmc_host_ops sdricoh_ops = {
+ 	.request = sdricoh_request,
+ 	.set_ios = sdricoh_set_ios,
+ 	.get_ro = sdricoh_get_ro,
+
