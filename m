@@ -1,15 +1,14 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 05:59:35 +0000
-Subject: [PATCH 06/12] mmc: toshsd: constify mmc_host_ops structures
-Message-Id: <1501307981-29745-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:30 +0000
+Subject: [PATCH 01/12] mmc: wmt-sdmmc: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 The mmc_host_ops structure is only stored in the ops field of an
 mmc_host structure, which is declared as const.  Thus the mmc_host_ops
@@ -49,20 +48,20 @@ static
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/mmc/host/toshsd.c |    2 +-
+ drivers/mmc/host/wmt-sdmmc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/toshsd.c b/drivers/mmc/host/toshsd.c
-index 553ef41..dd961c5 100644
---- a/drivers/mmc/host/toshsd.c
-+++ b/drivers/mmc/host/toshsd.c
-@@ -550,7 +550,7 @@ static int toshsd_get_cd(struct mmc_host *mmc)
- 	return !!(ioread16(host->ioaddr + SD_CARDSTATUS) & SD_CARD_PRESENT_0);
+diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
+index 21ebba8..50fe69d 100644
+--- a/drivers/mmc/host/wmt-sdmmc.c
++++ b/drivers/mmc/host/wmt-sdmmc.c
+@@ -726,7 +726,7 @@ static int wmt_mci_get_cd(struct mmc_host *mmc)
+ 	return !(cd ^ priv->cd_inverted);
  }
  
--static struct mmc_host_ops toshsd_ops = {
-+static const struct mmc_host_ops toshsd_ops = {
- 	.request = toshsd_request,
- 	.set_ios = toshsd_set_ios,
- 	.get_ro = toshsd_get_ro,
+-static struct mmc_host_ops wmt_mci_ops = {
++static const struct mmc_host_ops wmt_mci_ops = {
+ 	.request = wmt_mci_request,
+ 	.set_ios = wmt_mci_set_ios,
+ 	.get_ro = wmt_mci_get_ro,
 
