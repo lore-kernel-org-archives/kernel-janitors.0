@@ -1,22 +1,67 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Jul 2017 06:16:54 +0000
-Subject: [PATCH 0/2] constify net_protocol structures
-Message-Id: <1501309016-16059-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:38 +0000
+Subject: [PATCH 09/12] mmc: sunxi: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The net_protocol structure is only passed as the first argument to
-inet_add_protocol or inet_del_protocol, both of which are declared
-as const.  Thus the net_protocol structure itself can be const.
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
 Done with the help of Coccinelle.
 
----
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct mmc_host_ops i@p = { ... };
 
- net/ipv4/af_inet.c |    4 ++--
- net/l2tp/l2tp_ip.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
+@@
+mmc->ops = &i@p
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct mmc_host_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/sunxi-mmc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 6adc524..fa0601c 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1048,7 +1048,7 @@ static int sunxi_mmc_card_busy(struct mmc_host *mmc)
+ 	return !!(mmc_readl(host, REG_STAS) & SDXC_CARD_DATA_BUSY);
+ }
+ 
+-static struct mmc_host_ops sunxi_mmc_ops = {
++static const struct mmc_host_ops sunxi_mmc_ops = {
+ 	.request	 = sunxi_mmc_request,
+ 	.set_ios	 = sunxi_mmc_set_ios,
+ 	.get_ro		 = mmc_gpio_get_ro,
+
