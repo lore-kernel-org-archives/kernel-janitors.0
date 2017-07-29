@@ -1,74 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 10 Jul 2017 18:42:11 +0000
-Subject: Applied "ASoC: rt5663: add in missing loop counter to avoid infinite loop" to the asoc tree
-Message-Id: <E1dUddL-0000E0-M0@debutante>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 06:40:53 +0000
+Subject: [PATCH 1/2] decnet: dn_rtmsg: constify nf_hook_ops structures
+Message-Id: <1501310455-7896-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710152045.28898-1-colin.king@canonical.com>
-In-Reply-To: <20170710152045.28898-1-colin.king@canonical.com>
+References: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501310455-7896-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+The nf_hook_ops structure is only passed as the second argument to
+nf_register_net_hook or nf_unregister_net_hook, both of which are
+declared as const.  Thus the nf_hook_ops structure itself can be
+const.
 
-   ASoC: rt5663: add in missing loop counter to avoid infinite loop
+Done with the help of Coccinelle.
 
-has been applied to the asoc tree at
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct nf_hook_ops i@p = { ... };
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+@ok1@
+identifier r.i;
+expression e;
+position p;
+@@
+ \(nf_register_net_hook\|nf_unregister_net_hook\)(e,&i@p)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct nf_hook_ops e;
+@@
+e@i@p
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct nf_hook_ops i = { ... };
+// </smpl>
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6afb505c23e91a7c566705f1dd60228704501778 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 10 Jul 2017 16:20:45 +0100
-Subject: [PATCH] ASoC: rt5663: add in missing loop counter to avoid infinite
- loop
-
-The loop counter 'count' is missing an increment, so we could end up
-with an infinite loop.  Add in a pre-increment to count to fix this.
-
-Detected by CoverityScan, CID#1450120 ("Logically Dead Code")
-
-Fixes: 1a425dbf1a10 ("ASoC: rt5663: Update the calibration funciton")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5663.c | 2 +-
+ net/decnet/netfilter/dn_rtmsg.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 82edbcf39caa..5b3c50c641d8 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -3044,7 +3044,7 @@ static void rt5663_calibrate(struct rt5663_priv *rt5663)
- 		else
- 			break;
+diff --git a/net/decnet/netfilter/dn_rtmsg.c b/net/decnet/netfilter/dn_rtmsg.c
+index aa8ffec..ab395e5 100644
+--- a/net/decnet/netfilter/dn_rtmsg.c
++++ b/net/decnet/netfilter/dn_rtmsg.c
+@@ -115,7 +115,7 @@ static inline void dnrmg_receive_user_skb(struct sk_buff *skb)
+ 	RCV_SKB_FAIL(-EINVAL);
+ }
  
--		if (count > 200)
-+		if (++count > 200)
- 			break;
- 	}
- 
--- 
-2.13.2
+-static struct nf_hook_ops dnrmg_ops __read_mostly = {
++static const struct nf_hook_ops dnrmg_ops = {
+ 	.hook		= dnrmg_hook,
+ 	.pf		= NFPROTO_DECNET,
+ 	.hooknum	= NF_DN_ROUTE,
 
