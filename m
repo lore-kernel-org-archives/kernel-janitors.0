@@ -1,61 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 11 Jul 2017 09:43:49 +0000
-Subject: [PATCH] [media] fc001[23]: make const gain table arrays static
-Message-Id: <20170711094349.13263-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Jul 2017 05:59:40 +0000
+Subject: [PATCH 11/12] mmc: mediatek: constify mmc_host_ops structures
+Message-Id: <1501307981-29745-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501307981-29745-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Max Kellermann <max.kellermann@gmail.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The mmc_host_ops structure is only stored in the ops field of an
+mmc_host structure, which is declared as const.  Thus the mmc_host_ops
+structure itself can be const.
 
-Don't populate the gain tables on the stack but make them static const.
-Makes the object code smaller:
+Done with the help of Coccinelle.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   7801	   1408	      0	   9209	   23f9	drivers/media/tuners/fc0012.o
-   8483	    936	      0	   9419	   24cb	drivers/media/tuners/fc0013.o
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct mmc_host_ops i@p = { ... };
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   7696	   1464	      0	   9160	   23c8	drivers/media/tuners/fc0012.o
-   8362	   1024	      0	   9386	   24aa	drivers/media/tuners/fc0013.o
+@ok1@
+struct mmc_host *mmc;
+identifier r.i;
+position p;
+@@
+mmc->ops = &i@p
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct mmc_host_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct mmc_host_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/tuners/fc0012.c | 2 +-
- drivers/media/tuners/fc0013.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/mtk-sd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/fc0012.c b/drivers/media/tuners/fc0012.c
-index dcc323ffbde7..625ac6f51c39 100644
---- a/drivers/media/tuners/fc0012.c
-+++ b/drivers/media/tuners/fc0012.c
-@@ -351,7 +351,7 @@ static int fc0012_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
- 	int ret;
- 	unsigned char tmp;
- 	int int_temp, lna_gain, int_lna, tot_agc_gain, power;
--	const int fc0012_lna_gain_table[] = {
-+	static const int fc0012_lna_gain_table[] = {
- 		/* low gain */
- 		-63, -58, -99, -73,
- 		-63, -65, -54, -60,
-diff --git a/drivers/media/tuners/fc0013.c b/drivers/media/tuners/fc0013.c
-index 91dfa770a5cc..e606118d1a9b 100644
---- a/drivers/media/tuners/fc0013.c
-+++ b/drivers/media/tuners/fc0013.c
-@@ -511,7 +511,7 @@ static int fc0013_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
- 	int ret;
- 	unsigned char tmp;
- 	int int_temp, lna_gain, int_lna, tot_agc_gain, power;
--	const int fc0013_lna_gain_table[] = {
-+	static const int fc0013_lna_gain_table[] = {
- 		/* low gain */
- 		-63, -58, -99, -73,
- 		-63, -65, -54, -60,
--- 
-2.11.0
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 68f4453..267f7ab 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1579,7 +1579,7 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
+ }
+ 
+-static struct mmc_host_ops mt_msdc_ops = {
++static const struct mmc_host_ops mt_msdc_ops = {
+ 	.post_req = msdc_post_req,
+ 	.pre_req = msdc_pre_req,
+ 	.request = msdc_ops_request,
 
