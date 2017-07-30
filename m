@@ -1,35 +1,225 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 08 Jul 2017 07:57:10 +0000
-Subject: [PATCH] mrf24j40: Fix en error handling path in 'mrf24j40_probe()'
-Message-Id: <20170708075710.18478-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Jul 2017 19:38:43 +0000
+Subject: [PATCH 0/1 v2] constify nf_conntrack_l3/4proto parameters
+Message-Id: <1501443524-13201-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alan@signal11.us, alex.aring@gmail.com, stefan@osg.samsung.com
-Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If this check fails, we must release some resources as done everywhere
-else in this function before returning an error code.
+When a nf_conntrack_l3/4proto parameter is not on the left hand side
+of an assignment, its address is not taken, and it is not passed to a
+function that may modify its fields, then it can be declared as const.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This change is useful from a documentation point of view, and can
+possibly facilitate making some nf_conntrack_l4proto structures const
+subsequently.
+
+Done with the help of Coccinelle.  The following semantic patch shows
+the nf_conntrack_l4proto case.
+
+// <smpl>
+virtual update_results
+virtual after_start
+
+@initialize:ocaml@
+@@
+
+let unsafe = Hashtbl.create 101
+
+let is_unsafe f = Hashtbl.mem unsafe f
+
+let changed = ref false
+
+
+(* The next three rules relate to the fact that we do not know the type of
+void * variables.  Fortunately this is only neede on the first iteration,
+but it still means that the whole kernel will end up being considered. *)
+
+@has depends on !after_start && !update_results@
+identifier f,x;
+position p;
+@@
+
+f@p(...,struct nf_conntrack_l3proto *x,...) { ... }
+
+@hasa depends on !after_start@
+identifier f,x;
+position p;
+@@
+
+f@p(...,struct nf_conntrack_l3proto *x[],...) { ... }
+
+@others depends on !after_start && !update_results@
+position p != {has.p,hasa.p};
+identifier f,x;
+@@
+
+f@p(...,void *x,...) { ... }
+
+@script:ocaml@
+f << others.f;
+@@
+
+changed := true;
+Hashtbl.add unsafe f ()
+
+
+@fpb depends on !update_results disable optional_qualifier, drop_cast exists@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x,fld;
+identifier bad : script:ocaml() { is_unsafe(bad) };
+assignment operator aop;
+expression e;
+local idexpression fp;
+type T;
+@@
+
+f(...,struct nf_conntrack_l3proto *x,...)
+{
+...
+(
+  return x;
+|
+  (<+...x...+>) aop e
+|
+  e aop x
+|
+  (T)x
+|
+  &(<+...x...+>)
+|
+  bad(...,x,...)
+|
+  fp(...,x,...)
+|
+  (<+...e->fld...+>)(...,x,...)
+)
+...when any
+ }
+
+@script:ocaml@
+f << fpb.f;
+@@
+
+changed := true;
+Printf.eprintf "%s is unsafe\n" f;
+Hashtbl.add unsafe f ()
+
+@fpba depends on !update_results disable optional_qualifier, drop_cast exists@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x,fld;
+identifier bad : script:ocaml() { is_unsafe(bad) };
+assignment operator aop;
+expression e;
+local idexpression fp;
+type T;
+@@
+
+f(...,struct nf_conntrack_l3proto *x[],...)
+{
+...
+(
+  return \(x\|x[...]\);
+|
+  (<+...x...+>) aop e
+|
+  e aop \(x\|x[...]\)
+|
+  (T)\(x\|x[...]\)
+|
+  &(<+...x...+>)
+|
+  bad(...,\(x\|x[...]\),...)
+|
+  fp(...,\(x\|x[...]\),...)
+|
+  (<+...e->fld...+>)(...,\(x\|x[...]\),...)
+)
+... when any
+ }
+
+@script:ocaml@
+f << fpba.f;
+@@
+
+changed := true;
+Printf.eprintf "%s is unsafe\n" f;
+Hashtbl.add unsafe f ()
+
+@finalize:ocaml depends on !update_results@
+tbls << merge.unsafe;
+c << merge.changed;
+@@
+
+List.iter
+    (fun t ->
+      Hashtbl.iter
+	(fun k v ->
+	  if not (Hashtbl.mem unsafe k) then Hashtbl.add unsafe k ()) t)
+    tbls;
+changed := false;
+let changed = List.exists (fun x -> !x) c in
+let it = new iteration() in
+it#add_virtual_rule After_start;
+(if not changed
+then it#add_virtual_rule Update_results);
+it#register()
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+@@
+
+f(...,
++ const
+  struct nf_conntrack_l3proto *x,...) { ... }
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+type T;
+@@
+
+T f(...,
++ const
+  struct nf_conntrack_l3proto *x,...);
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+@@
+
+f(...,
++ const
+  struct nf_conntrack_l3proto *x[],...) { ... }
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+type T;
+@@
+
+T f(...,
++ const
+  struct nf_conntrack_l3proto *x[],...);
+// </smpl>
+
 ---
- drivers/net/ieee802154/mrf24j40.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ieee802154/mrf24j40.c b/drivers/net/ieee802154/mrf24j40.c
-index 7d334963dc08..da8683782ffc 100644
---- a/drivers/net/ieee802154/mrf24j40.c
-+++ b/drivers/net/ieee802154/mrf24j40.c
-@@ -1330,7 +1330,7 @@ static int mrf24j40_probe(struct spi_device *spi)
- 	if (spi->max_speed_hz > MAX_SPI_SPEED_HZ) {
- 		dev_warn(&spi->dev, "spi clock above possible maximum: %d",
- 			 MAX_SPI_SPEED_HZ);
--		return -EINVAL;
-+		goto err_register_device;
- 	}
- 
- 	ret = mrf24j40_hw_init(devrec);
--- 
-2.11.0
+v2: Added consideration of array parameters.  This adds transformation of
+nf_ct_l4proto_pernet_register and nf_ct_l4proto_pernet_unregister.
 
+This patch also adds transformation of ctnl_timeout_parse_policy that was
+somehow overlooked previously.
+
+ include/net/netfilter/nf_conntrack_l3proto.h |    6 ++---
+ include/net/netfilter/nf_conntrack_l4proto.h |   14 ++++++------
+ include/net/netfilter/nf_conntrack_timeout.h |    2 -
+ net/netfilter/nf_conntrack_core.c            |    8 +++----
+ net/netfilter/nf_conntrack_netlink.c         |    6 ++---
+ net/netfilter/nf_conntrack_proto.c           |   30 +++++++++++++--------------
+ net/netfilter/nfnetlink_cttimeout.c          |    5 ++--
+ 7 files changed, 36 insertions(+), 35 deletions(-)
