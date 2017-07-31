@@ -1,309 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Jul 2017 19:38:44 +0000
-Subject: [PATCH 1/1 v2] netfilter: constify nf_conntrack_l3/4proto parameters
-Message-Id: <1501443524-13201-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Mon, 31 Jul 2017 18:44:37 +0000
+Subject: Re: [PATCH 1/1 v2] netfilter: constify nf_conntrack_l3/4proto parameters
+Message-Id: <20170731184437.GA12928@salvia>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501443524-13201-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501443524-13201-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1501443524-13201-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501443524-13201-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: "David S. Miller" <davem@davemloft.net>, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-When a nf_conntrack_l3/4proto parameter is not on the left hand side
-of an assignment, its address is not taken, and it is not passed to a
-function that may modify its fields, then it can be declared as const.
+Hi Julia,
 
-This change is useful from a documentation point of view, and can
-possibly facilitate making some nf_conntrack_l3/4proto structures const
-subsequently.
+On Sun, Jul 30, 2017 at 09:38:44PM +0200, Julia Lawall wrote:
+> When a nf_conntrack_l3/4proto parameter is not on the left hand side
+> of an assignment, its address is not taken, and it is not passed to a
+> function that may modify its fields, then it can be declared as const.
+> 
+> This change is useful from a documentation point of view, and can
+> possibly facilitate making some nf_conntrack_l3/4proto structures const
+> subsequently.
+> 
+> Done with the help of Coccinelle.
+> 
+> Some spacing adjusted to fit within 80 characters.
 
-Done with the help of Coccinelle.
+patching file include/net/netfilter/nf_conntrack_l3proto.h
+Hunk #1 FAILED at 76.
+1 out of 1 hunk FAILED -- saving rejects to file
+include/net/netfilter/nf_conntrack_l3proto.h.rej
+patching file include/net/netfilter/nf_conntrack_l4proto.h
+patching file include/net/netfilter/nf_conntrack_timeout.h
+patching file net/netfilter/nf_conntrack_core.c
+Hunk #1 succeeded at 1176 (offset -7 lines).
+Hunk #2 succeeded at 1288 (offset -7 lines).
+patching file net/netfilter/nf_conntrack_netlink.c
+patching file net/netfilter/nf_conntrack_proto.c
+Hunk #2 FAILED at 242.
+Hunk #3 FAILED at 271.
+Hunk #4 succeeded at 257 with fuzz 1 (offset -29 lines).
+Hunk #5 succeeded at 272 (offset -29 lines).
+Hunk #6 succeeded at 295 (offset -29 lines).
+Hunk #7 succeeded at 366 (offset -29 lines).
+Hunk #8 succeeded at 391 (offset -29 lines).
+Hunk #9 succeeded at 404 (offset -29 lines).
+Hunk #10 succeeded at 415 (offset -29 lines).
+Hunk #11 succeeded at 449 (offset -29 lines).
+Hunk #12 succeeded at 485 (offset -29 lines).
+2 out of 12 hunks FAILED -- saving rejects to file
+net/netfilter/nf_conntrack_proto.c.rej
+patching file net/netfilter/nfnetlink_cttimeout.c
 
-Some spacing adjusted to fit within 80 characters.
+Could you rebase on top of nf-next git tree?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
-v2: Added consideration of array parameters.  This adds transformation of
-nf_ct_l4proto_pernet_register and nf_ct_l4proto_pernet_unregister.
-
-This patch also adds transformation of ctnl_timeout_parse_policy that was
-somehow overlooked previously.
-
- include/net/netfilter/nf_conntrack_l3proto.h |    6 ++---
- include/net/netfilter/nf_conntrack_l4proto.h |   14 ++++++------
- include/net/netfilter/nf_conntrack_timeout.h |    2 -
- net/netfilter/nf_conntrack_core.c            |    8 +++----
- net/netfilter/nf_conntrack_netlink.c         |    6 ++---
- net/netfilter/nf_conntrack_proto.c           |   30 +++++++++++++--------------
- net/netfilter/nfnetlink_cttimeout.c          |    5 ++--
- 7 files changed, 36 insertions(+), 35 deletions(-)
-
-diff --git a/include/net/netfilter/nf_conntrack_l3proto.h b/include/net/netfilter/nf_conntrack_l3proto.h
-index 6d14b36..4782b15 100644
---- a/include/net/netfilter/nf_conntrack_l3proto.h
-+++ b/include/net/netfilter/nf_conntrack_l3proto.h
-@@ -76,17 +76,17 @@ struct nf_conntrack_l3proto {
- #ifdef CONFIG_SYSCTL
- /* Protocol pernet registration. */
- int nf_ct_l3proto_pernet_register(struct net *net,
--				  struct nf_conntrack_l3proto *proto);
-+				  const struct nf_conntrack_l3proto *proto);
- #else
- static inline int nf_ct_l3proto_pernet_register(struct net *n,
--						struct nf_conntrack_l3proto *p)
-+					const struct nf_conntrack_l3proto *p)
- {
- 	return 0;
- }
- #endif
- 
- void nf_ct_l3proto_pernet_unregister(struct net *net,
--				     struct nf_conntrack_l3proto *proto);
-+				     const struct nf_conntrack_l3proto *proto);
- 
- /* Protocol global registration. */
- int nf_ct_l3proto_register(struct nf_conntrack_l3proto *proto);
-diff --git a/include/net/netfilter/nf_conntrack_l4proto.h b/include/net/netfilter/nf_conntrack_l4proto.h
-index 7032e04..c86e946 100644
---- a/include/net/netfilter/nf_conntrack_l4proto.h
-+++ b/include/net/netfilter/nf_conntrack_l4proto.h
-@@ -125,23 +125,23 @@ struct nf_conntrack_l4proto *__nf_ct_l4proto_find(u_int16_t l3proto,
- 
- struct nf_conntrack_l4proto *nf_ct_l4proto_find_get(u_int16_t l3proto,
- 						    u_int8_t l4proto);
--void nf_ct_l4proto_put(struct nf_conntrack_l4proto *p);
-+void nf_ct_l4proto_put(const struct nf_conntrack_l4proto *p);
- 
- /* Protocol pernet registration. */
- int nf_ct_l4proto_pernet_register_one(struct net *net,
--				      struct nf_conntrack_l4proto *proto);
-+				const struct nf_conntrack_l4proto *proto);
- void nf_ct_l4proto_pernet_unregister_one(struct net *net,
--					 struct nf_conntrack_l4proto *proto);
-+				const struct nf_conntrack_l4proto *proto);
- int nf_ct_l4proto_pernet_register(struct net *net,
--				  struct nf_conntrack_l4proto *proto[],
-+				  struct nf_conntrack_l4proto * const proto[],
- 				  unsigned int num_proto);
- void nf_ct_l4proto_pernet_unregister(struct net *net,
--				     struct nf_conntrack_l4proto *proto[],
--				     unsigned int num_proto);
-+				struct nf_conntrack_l4proto * const proto[],
-+				unsigned int num_proto);
- 
- /* Protocol global registration. */
- int nf_ct_l4proto_register_one(struct nf_conntrack_l4proto *proto);
--void nf_ct_l4proto_unregister_one(struct nf_conntrack_l4proto *proto);
-+void nf_ct_l4proto_unregister_one(const struct nf_conntrack_l4proto *proto);
- int nf_ct_l4proto_register(struct nf_conntrack_l4proto *proto[],
- 			   unsigned int num_proto);
- void nf_ct_l4proto_unregister(struct nf_conntrack_l4proto *proto[],
-diff --git a/include/net/netfilter/nf_conntrack_timeout.h b/include/net/netfilter/nf_conntrack_timeout.h
-index d40b893..b222957 100644
---- a/include/net/netfilter/nf_conntrack_timeout.h
-+++ b/include/net/netfilter/nf_conntrack_timeout.h
-@@ -68,7 +68,7 @@ struct nf_conn_timeout *nf_ct_timeout_ext_add(struct nf_conn *ct,
- 
- static inline unsigned int *
- nf_ct_timeout_lookup(struct net *net, struct nf_conn *ct,
--		     struct nf_conntrack_l4proto *l4proto)
-+		     const struct nf_conntrack_l4proto *l4proto)
- {
- #ifdef CONFIG_NF_CONNTRACK_TIMEOUT
- 	struct nf_conn_timeout *timeout_ext;
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 51390fe..ed4e04e 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -1183,8 +1183,8 @@ void nf_conntrack_free(struct nf_conn *ct)
- static noinline struct nf_conntrack_tuple_hash *
- init_conntrack(struct net *net, struct nf_conn *tmpl,
- 	       const struct nf_conntrack_tuple *tuple,
--	       struct nf_conntrack_l3proto *l3proto,
--	       struct nf_conntrack_l4proto *l4proto,
-+	       const struct nf_conntrack_l3proto *l3proto,
-+	       const struct nf_conntrack_l4proto *l4proto,
- 	       struct sk_buff *skb,
- 	       unsigned int dataoff, u32 hash)
- {
-@@ -1295,8 +1295,8 @@ void nf_conntrack_free(struct nf_conn *ct)
- 		  unsigned int dataoff,
- 		  u_int16_t l3num,
- 		  u_int8_t protonum,
--		  struct nf_conntrack_l3proto *l3proto,
--		  struct nf_conntrack_l4proto *l4proto)
-+		  const struct nf_conntrack_l3proto *l3proto,
-+		  const struct nf_conntrack_l4proto *l4proto)
- {
- 	const struct nf_conntrack_zone *zone;
- 	struct nf_conntrack_tuple tuple;
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index 7999e70..5d08602 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -61,8 +61,8 @@
- static char __initdata version[] = "0.93";
- 
- static int ctnetlink_dump_tuples_proto(struct sk_buff *skb,
--				       const struct nf_conntrack_tuple *tuple,
--				       struct nf_conntrack_l4proto *l4proto)
-+				const struct nf_conntrack_tuple *tuple,
-+				const struct nf_conntrack_l4proto *l4proto)
- {
- 	int ret = 0;
- 	struct nlattr *nest_parms;
-@@ -86,7 +86,7 @@ static int ctnetlink_dump_tuples_proto(struct sk_buff *skb,
- 
- static int ctnetlink_dump_tuples_ip(struct sk_buff *skb,
- 				    const struct nf_conntrack_tuple *tuple,
--				    struct nf_conntrack_l3proto *l3proto)
-+				    const struct nf_conntrack_l3proto *l3proto)
- {
- 	int ret = 0;
- 	struct nlattr *nest_parms;
-diff --git a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_proto.c
-index 1dcad22..62a2923 100644
---- a/net/netfilter/nf_conntrack_proto.c
-+++ b/net/netfilter/nf_conntrack_proto.c
-@@ -188,7 +188,7 @@ struct nf_conntrack_l4proto *
- }
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_find_get);
- 
--void nf_ct_l4proto_put(struct nf_conntrack_l4proto *p)
-+void nf_ct_l4proto_put(const struct nf_conntrack_l4proto *p)
- {
- 	module_put(p->me);
- }
-@@ -242,7 +242,7 @@ int nf_ct_l3proto_register(struct nf_conntrack_l3proto *proto)
- extern unsigned int nf_conntrack_default_on;
- 
- int nf_ct_l3proto_pernet_register(struct net *net,
--				  struct nf_conntrack_l3proto *proto)
-+				  const struct nf_conntrack_l3proto *proto)
- {
- 	if (nf_conntrack_default_on = 0)
- 		return 0;
-@@ -271,7 +271,7 @@ void nf_ct_l3proto_unregister(struct nf_conntrack_l3proto *proto)
- EXPORT_SYMBOL_GPL(nf_ct_l3proto_unregister);
- 
- void nf_ct_l3proto_pernet_unregister(struct net *net,
--				     struct nf_conntrack_l3proto *proto)
-+				     const struct nf_conntrack_l3proto *proto)
- {
- 	/*
- 	 * nf_conntrack_default_on *might* have registered hooks.
-@@ -286,7 +286,7 @@ void nf_ct_l3proto_pernet_unregister(struct net *net,
- EXPORT_SYMBOL_GPL(nf_ct_l3proto_pernet_unregister);
- 
- static struct nf_proto_net *nf_ct_l4proto_net(struct net *net,
--					      struct nf_conntrack_l4proto *l4proto)
-+				const struct nf_conntrack_l4proto *l4proto)
- {
- 	if (l4proto->get_net_proto) {
- 		/* statically built-in protocols use static per-net */
-@@ -301,7 +301,7 @@ static struct nf_proto_net *nf_ct_l4proto_net(struct net *net,
- static
- int nf_ct_l4proto_register_sysctl(struct net *net,
- 				  struct nf_proto_net *pn,
--				  struct nf_conntrack_l4proto *l4proto)
-+				  const struct nf_conntrack_l4proto *l4proto)
- {
- 	int err = 0;
- 
-@@ -324,8 +324,8 @@ int nf_ct_l4proto_register_sysctl(struct net *net,
- 
- static
- void nf_ct_l4proto_unregister_sysctl(struct net *net,
--				     struct nf_proto_net *pn,
--				     struct nf_conntrack_l4proto *l4proto)
-+				struct nf_proto_net *pn,
-+				const struct nf_conntrack_l4proto *l4proto)
- {
- #ifdef CONFIG_SYSCTL
- 	if (pn->ctl_table_header != NULL)
-@@ -395,7 +395,7 @@ int nf_ct_l4proto_register_one(struct nf_conntrack_l4proto *l4proto)
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_register_one);
- 
- int nf_ct_l4proto_pernet_register_one(struct net *net,
--				      struct nf_conntrack_l4proto *l4proto)
-+				const struct nf_conntrack_l4proto *l4proto)
- {
- 	int ret = 0;
- 	struct nf_proto_net *pn = NULL;
-@@ -420,7 +420,7 @@ int nf_ct_l4proto_pernet_register_one(struct net *net,
- }
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_pernet_register_one);
- 
--static void __nf_ct_l4proto_unregister_one(struct nf_conntrack_l4proto *l4proto)
-+static void __nf_ct_l4proto_unregister_one(const struct nf_conntrack_l4proto *l4proto)
- 
- {
- 	BUG_ON(l4proto->l3proto >= ARRAY_SIZE(nf_ct_protos));
-@@ -433,7 +433,7 @@ static void __nf_ct_l4proto_unregister_one(struct nf_conntrack_l4proto *l4proto)
- 			   &nf_conntrack_l4proto_generic);
- }
- 
--void nf_ct_l4proto_unregister_one(struct nf_conntrack_l4proto *l4proto)
-+void nf_ct_l4proto_unregister_one(const struct nf_conntrack_l4proto *l4proto)
- {
- 	mutex_lock(&nf_ct_proto_mutex);
- 	__nf_ct_l4proto_unregister_one(l4proto);
-@@ -444,7 +444,7 @@ void nf_ct_l4proto_unregister_one(struct nf_conntrack_l4proto *l4proto)
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_unregister_one);
- 
- void nf_ct_l4proto_pernet_unregister_one(struct net *net,
--					 struct nf_conntrack_l4proto *l4proto)
-+				const struct nf_conntrack_l4proto *l4proto)
- {
- 	struct nf_proto_net *pn = nf_ct_l4proto_net(net, l4proto);
- 
-@@ -478,8 +478,8 @@ int nf_ct_l4proto_register(struct nf_conntrack_l4proto *l4proto[],
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_register);
- 
- int nf_ct_l4proto_pernet_register(struct net *net,
--				  struct nf_conntrack_l4proto *l4proto[],
--				  unsigned int num_proto)
-+				struct nf_conntrack_l4proto * const l4proto[],
-+				unsigned int num_proto)
- {
- 	int ret = -EINVAL;
- 	unsigned int i;
-@@ -514,8 +514,8 @@ void nf_ct_l4proto_unregister(struct nf_conntrack_l4proto *l4proto[],
- EXPORT_SYMBOL_GPL(nf_ct_l4proto_unregister);
- 
- void nf_ct_l4proto_pernet_unregister(struct net *net,
--				     struct nf_conntrack_l4proto *l4proto[],
--				     unsigned int num_proto)
-+				struct nf_conntrack_l4proto * const l4proto[],
-+				unsigned int num_proto)
- {
- 	while (num_proto-- != 0)
- 		nf_ct_l4proto_pernet_unregister_one(net, l4proto[num_proto]);
-diff --git a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
-index 400e9ae..707a0d8 100644
---- a/net/netfilter/nfnetlink_cttimeout.c
-+++ b/net/netfilter/nfnetlink_cttimeout.c
-@@ -47,7 +47,8 @@
- };
- 
- static int
--ctnl_timeout_parse_policy(void *timeouts, struct nf_conntrack_l4proto *l4proto,
-+ctnl_timeout_parse_policy(void *timeouts,
-+			  const struct nf_conntrack_l4proto *l4proto,
- 			  struct net *net, const struct nlattr *attr)
- {
- 	int ret = 0;
-@@ -401,7 +402,7 @@ static int cttimeout_default_set(struct net *net, struct sock *ctnl,
- static int
- cttimeout_default_fill_info(struct net *net, struct sk_buff *skb, u32 portid,
- 			    u32 seq, u32 type, int event,
--			    struct nf_conntrack_l4proto *l4proto)
-+			    const struct nf_conntrack_l4proto *l4proto)
- {
- 	struct nlmsghdr *nlh;
- 	struct nfgenmsg *nfmsg;
-
+Thanks a lot!
