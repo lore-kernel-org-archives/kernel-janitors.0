@@ -1,44 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Jul 2017 07:38:29 +0000
-Subject: [PATCH 1/2] KVM: PPC: e500: fix some NULL dereferences on error
-Message-Id: <20170713073829.dqjahnakxqvpne7x@mwanda>
+From: Paul Mackerras <paulus@ozlabs.org>
+Date: Mon, 31 Jul 2017 06:03:40 +0000
+Subject: Re: [PATCH 1/2] KVM: PPC: e500: fix some NULL dereferences on error
+Message-Id: <20170731060340.yw45r7dewrdvocx3@oak.ozlabs.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170713073829.dqjahnakxqvpne7x@mwanda>
+In-Reply-To: <20170713073829.dqjahnakxqvpne7x@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Graf <agraf@suse.com>, Scott Wood <scottwood@freescale.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Graf <agraf@suse.com>, Scott Wood <scottwood@freescale.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-There are some error paths in kvmppc_core_vcpu_create_e500() where we
-forget to set the error code.  It means that we return ERR_PTR(0) which
-is NULL and it results in a NULL pointer dereference in the caller.
+On Thu, Jul 13, 2017 at 10:38:29AM +0300, Dan Carpenter wrote:
+> There are some error paths in kvmppc_core_vcpu_create_e500() where we
+> forget to set the error code.  It means that we return ERR_PTR(0) which
+> is NULL and it results in a NULL pointer dereference in the caller.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Are these user-triggerable, and therefore needing to go into 4.13
+and be back-ported to the stable trees?  Or can they wait for 4.14?
 
-diff --git a/arch/powerpc/kvm/e500.c b/arch/powerpc/kvm/e500.c
-index 32fdab57d604..f9f6468f4171 100644
---- a/arch/powerpc/kvm/e500.c
-+++ b/arch/powerpc/kvm/e500.c
-@@ -455,16 +455,20 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_e500(struct kvm *kvm,
- 	if (err)
- 		goto free_vcpu;
- 
--	if (kvmppc_e500_id_table_alloc(vcpu_e500) = NULL)
-+	if (kvmppc_e500_id_table_alloc(vcpu_e500) = NULL) {
-+		err = -ENOMEM;
- 		goto uninit_vcpu;
-+	}
- 
- 	err = kvmppc_e500_tlb_init(vcpu_e500);
- 	if (err)
- 		goto uninit_id;
- 
- 	vcpu->arch.shared = (void*)__get_free_page(GFP_KERNEL|__GFP_ZERO);
--	if (!vcpu->arch.shared)
-+	if (!vcpu->arch.shared) {
-+		err = -ENOMEM;
- 		goto uninit_tlb;
-+	}
- 
- 	return vcpu;
- 
+Paul.
