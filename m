@@ -1,29 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 05 Aug 2017 12:24:21 +0000
-Subject: [PATCH 0/4] atm: idt77252: Adjustments for some function implementations
-Message-Id: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Tue, 01 Aug 2017 23:19:18 +0000
+Subject: Re: [PATCH 3/3] lib/test_kmod: fix fs module tests
+Message-Id: <20170801231918.GA18884@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170707083933.2mgnpqafhspbwu7h@mwanda>
+ <20170707084117.jbi3g364jz75liay@mwanda>
+In-Reply-To: <20170707084117.jbi3g364jz75liay@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 5 Aug 2017 14:22:33 +0200
+On Fri, Jul 07, 2017 at 11:41:17AM +0300, Dan Carpenter wrote:
+> The break was in the wrong place so file system tests don't work as
+> intended.
 
-Some update suggestions were taken into account
-from static source code analysis.
+More importantly it leaked memory per test switch as well.
+> 
+> Fixes: 39258f448d71 ("kmod: add test driver to stress test the module loader")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (4):
-  Adjust four function calls together with a variable assignment
-  Delete an error message for a failed memory allocation in seven functions
-  Improve seven size determinations
-  Adjust ten checks for null pointers
+Thanks, queued!
 
- drivers/atm/idt77252.c | 68 ++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 38 deletions(-)
-
--- 
-2.13.4
-
+  Luis
