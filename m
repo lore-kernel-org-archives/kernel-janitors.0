@@ -1,64 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Aug 2017 06:18:41 +0000
-Subject: [PATCH 2/2] [media] dib8000: remove some bogus dead code
-Message-Id: <20170826061841.7hepoocimf5kit5g@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Aug 2017 16:27:28 +0000
+Subject: [PATCH 1/2] Revert "ipv6: constify inet6_protocol structures"
+Message-Id: <1501604849-19443-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, David Ahern <dsahern@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This function is broken.  It sets the wrong front_end to NULL.  But it's
-not used, so let's just delete it.
+This reverts commit 3a3a4e3054137c5ff5d4d306ec834f6d25d7f95b.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+inet6_add_protocol and inet6_del_protocol include casts that remove the
+effect of the const annotation on their parameter, leading to possible
+runtime crashes.
 
-diff --git a/drivers/media/dvb-frontends/dib8000.h b/drivers/media/dvb-frontends/dib8000.h
-index 2b8b4b1656a2..75cc8e47ec8f 100644
---- a/drivers/media/dvb-frontends/dib8000.h
-+++ b/drivers/media/dvb-frontends/dib8000.h
-@@ -53,7 +53,6 @@ struct dib8000_ops {
- 	enum frontend_tune_state (*get_tune_state)(struct dvb_frontend *fe);
- 	int (*set_tune_state)(struct dvb_frontend *fe, enum frontend_tune_state tune_state);
- 	int (*set_slave_frontend)(struct dvb_frontend *fe, struct dvb_frontend *fe_slave);
--	int (*remove_slave_frontend)(struct dvb_frontend *fe);
- 	struct dvb_frontend *(*get_slave_frontend)(struct dvb_frontend *fe, int slave_index);
- 	int (*i2c_enumeration)(struct i2c_adapter *host, int no_of_demods,
- 		u8 default_addr, u8 first_addr, u8 is_dib8096p);
-diff --git a/drivers/media/dvb-frontends/dib8000.c b/drivers/media/dvb-frontends/dib8000.c
-index a179a3f6563d..5d9381509b07 100644
---- a/drivers/media/dvb-frontends/dib8000.c
-+++ b/drivers/media/dvb-frontends/dib8000.c
-@@ -4255,23 +4255,6 @@ static int dib8000_set_slave_frontend(struct dvb_frontend *fe, struct dvb_fronte
- 	return -ENOMEM;
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+ net/ipv6/ip6_gre.c  |    2 +-
+ net/ipv6/tcp_ipv6.c |    2 +-
+ net/ipv6/udp.c      |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index 33865d6..67ff2aa 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1080,7 +1080,7 @@ static void ip6gre_fb_tunnel_init(struct net_device *dev)
  }
  
--static int dib8000_remove_slave_frontend(struct dvb_frontend *fe)
--{
--	struct dib8000_state *state = fe->demodulator_priv;
--	u8 index_frontend = 1;
--
--	while ((index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL))
--		index_frontend++;
--	if (index_frontend != 1) {
--		dprintk("remove slave fe %p (index %i)\n", state->fe[index_frontend-1], index_frontend-1);
--		state->fe[index_frontend] = NULL;
--		return 0;
--	}
--
--	dprintk("no frontend to be removed\n");
--	return -ENODEV;
--}
--
- static struct dvb_frontend *dib8000_get_slave_frontend(struct dvb_frontend *fe, int slave_index)
- {
- 	struct dib8000_state *state = fe->demodulator_priv;
-@@ -4506,7 +4489,6 @@ void *dib8000_attach(struct dib8000_ops *ops)
- 	ops->get_slave_frontend = dib8000_get_slave_frontend;
- 	ops->set_tune_state = dib8000_set_tune_state;
- 	ops->pid_filter_ctrl = dib8000_pid_filter_ctrl;
--	ops->remove_slave_frontend = dib8000_remove_slave_frontend;
- 	ops->get_adc_power = dib8000_get_adc_power;
- 	ops->update_pll = dib8000_update_pll;
- 	ops->tuner_sleep = dib8096p_tuner_sleep;
+ 
+-static const struct inet6_protocol ip6gre_protocol = {
++static struct inet6_protocol ip6gre_protocol __read_mostly = {
+ 	.handler     = gre_rcv,
+ 	.err_handler = ip6gre_err,
+ 	.flags       = INET6_PROTO_NOPOLICY|INET6_PROTO_FINAL,
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 39ee8e7..ced5dcf 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1944,7 +1944,7 @@ struct proto tcpv6_prot = {
+ 	.diag_destroy		= tcp_abort,
+ };
+ 
+-static const struct inet6_protocol tcpv6_protocol = {
++static struct inet6_protocol tcpv6_protocol = {
+ 	.early_demux	=	tcp_v6_early_demux,
+ 	.early_demux_handler =  tcp_v6_early_demux,
+ 	.handler	=	tcp_v6_rcv,
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 7e6d7f5..98fe456 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1457,7 +1457,7 @@ int compat_udpv6_getsockopt(struct sock *sk, int level, int optname,
+ }
+ #endif
+ 
+-static const struct inet6_protocol udpv6_protocol = {
++static struct inet6_protocol udpv6_protocol = {
+ 	.early_demux	=	udp_v6_early_demux,
+ 	.early_demux_handler =  udp_v6_early_demux,
+ 	.handler	=	udpv6_rcv,
