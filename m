@@ -1,30 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 01 Aug 2017 10:57:55 +0000
-Subject: [PATCH] IB/mlx4: Potential uninitialized variable in bringup_rss_rwqs()
-Message-Id: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Tue, 01 Aug 2017 11:19:37 +0000
+Subject: Re: [PATCH] IB/mlx4: Potential uninitialized variable in bringup_rss_rwqs()
+Message-Id: <20170801111937.GK13672@mtr-leonro.local>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1IYcr18XUmgwOrO2"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Yishai Hadas <yishaih@mellanox.com>, Guy Levi <guyle@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
+In-Reply-To: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Guy Levi <guyle-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-My static checker complains "err" can be used uninitialized.  I don't
-know the subsystem well, but to an outside observer it seems like a
-potential bug.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--1IYcr18XUmgwOrO2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-index e42acfb20588..03896e3af67f 100644
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -2035,7 +2035,7 @@ static u8 gid_type_to_qpc(enum ib_gid_type gid_type)
- static int bringup_rss_rwqs(struct ib_rwq_ind_table *ind_tbl, u8 port_num)
- {
- 	int i;
--	int err;
-+	int err = 0;
- 
- 	for (i = 0; i < (1 << ind_tbl->log_ind_tbl_size); i++) {
- 		struct ib_wq *ibwq = ind_tbl->ind_tbl[i];
+On Tue, Aug 01, 2017 at 01:57:55PM +0300, Dan Carpenter wrote:
+> My static checker complains "err" can be used uninitialized.  I don't
+> know the subsystem well, but to an outside observer it seems like a
+> potential bug.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+
+Thanks, Dan,
+I made the same patch, but didn't submit it yet.
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/commit/?h=rdma-next&id=2c714f9f58e2b6a27b941d7395f4f49a4d0e414b
+
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--1IYcr18XUmgwOrO2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlmAY8kACgkQ5GN7iDZy
+WKcdHg/7BRknHAHYuNoYGwLy/7y/V7mSQvVGldMcMJhk29HmvFoWc1GQhXmE+uqS
+a6ZycqumAYCN3gbfqRyEN8rwL6iJR+cY6xfPsrCSaU2D7trBTVdFhoHkHQFoscD6
+TZg10Ag8OiovcF06VVD+A43lqaBf8nQAL8dBX44s+7Es9yLfbpKwkbZ1nKl5gICf
+zy1EiRzSyX/JME5qAFi2m5Y//AX62SnOo2v1wbY8NLxm1IJuJF5t2YRXjatV+2u7
+6y0fVFGoNSj4si0INKcInVepqgHLMFBxca4x7eBdjJomA3n3k3SFVpjtvQj5LJal
+ck5ohktX3LpAyx+I8JjvxM/xOZrXTiUh/u9uSVXGniTjESrRveLxZfkx5ME3XQcD
+KTRmQmb/gGoCciSek0vpSBZuwY+yr2G0vRUGl2DNcfCZCcL71FCZc0qG1TDZNt9X
+UPNWFaOBoxSDKeCVzBjRB8WErcskr2vbtViTDahFHiNUU8q0ESainzKngS73WcCH
+froFoIHV5xb0Cxaz5ha1m2rNRTJMSavHdj8ES04/qO1raOtasRmxlegGHx5/Nvxz
+Jl5/jRhMsn6ivSpYm/C6sn9XdfFuZVaiZFHbbYNVpOkqfEZjX9BVeXp3BhppIubn
+hxSJfuTUdN6jUtA+vhdwnguoNYdlugBQIN/r3bngM4x9wtscR2Y=
+=x4ut
+-----END PGP SIGNATURE-----
+
+--1IYcr18XUmgwOrO2--
