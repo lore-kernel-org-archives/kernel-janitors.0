@@ -1,22 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Aug 2017 22:40:07 +0000
-Subject: Re: [PATCH sparc-next] sparc64: vcc: Check for IS_ERR() instead of NULL
-Message-Id: <20170828.154007.242468999799942558.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Aug 2017 11:01:01 +0000
+Subject: [PATCH] net/mlx5: add a missing tab
+Message-Id: <20170801110101.mf2i5e2mes4ftmkj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170826061205.nkfvekwgzpfgfuhh@mwanda>
-In-Reply-To: <20170826061205.nkfvekwgzpfgfuhh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Saeed Mahameed <saeedm-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Aug 2017 09:12:05 +0300
+The code works as intended, but the indenting is confusing.
 
-> The tty_alloc_driver() function never returns NULL, it returns error
-> pointers on error.
-> 
-> Fixes: ce808b746325 ("sparc64: vcc: TTY driver initialization and cleanup")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/sriov.c b/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
+index 28d8472b36f1..c410360da58d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/sriov.c
+@@ -113,7 +113,7 @@ static int mlx5_device_enable_sriov(struct mlx5_core_dev *dev, int num_vfs)
+ 				mlx5_core_warn(dev,
+ 					       "failed to restore VF %d settings, err %d\n",
+ 					       vf, err);
+-			continue;
++				continue;
+ 			}
+ 		}
+ 		mlx5_core_dbg(dev, "successfully enabled VF* %d\n", vf);
