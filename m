@@ -1,74 +1,45 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 16 Aug 2017 19:32:57 +0000
-Subject: Re: [PATCH 3/3] pstore: Adjust two checks for null pointers
-Message-Id: <CAGXu5jJ3B3V83gYV6djiLW0C47FBJgXsq_1SG9b2ot8J=1NzPQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Aug 2017 10:45:17 +0000
+Subject: Re: [PATCH net] mcs7780: Silence uninitialized variable warning
+Message-Id: <20170801104516.7n2uwq5wv64qaq4d@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net> <4fa42b22-6ef4-a9a3-2431-c51eeb320437@users.sourceforge.net>
-In-Reply-To: <4fa42b22-6ef4-a9a3-2431-c51eeb320437@users.sourceforge.net>
+References: <20170728144511.tf7nc672hwo35rnn@mwanda>
+ <20170729.232855.1831311386560187695.davem@davemloft.net>
+ <20170731070925.ztlfbyd7pvoz46wh@mwanda>
+ <20170731.103716.2203333144439591434.davem@davemloft.net>
+In-Reply-To: <20170731.103716.2203333144439591434.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Miller <davem@davemloft.net>
+Cc: samuel@sortiz.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 16, 2017 at 12:23 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 16 Aug 2017 21:00:16 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
->
-> The script “checkpatch.pl” pointed information out like the following.
->
-> Comparison to NULL could be written !…
->
-> Thus fix affected source code places.
+On Mon, Jul 31, 2017 at 10:37:16AM -0700, David Miller wrote:
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> Date: Mon, 31 Jul 2017 10:41:40 +0300
+> 
+> > On Sat, Jul 29, 2017 at 11:28:55PM -0700, David Miller wrote:
+> >> From: Dan Carpenter <dan.carpenter@oracle.com>
+> >> Date: Fri, 28 Jul 2017 17:45:11 +0300
+> >> 
+> >> > -	__u16 rval;
+> >> > +	__u16 rval = -1;
+> >> 
+> >> Fixing a bogus warning by assigning a signed constant to an
+> >> unsigned variable doesn't really make me all that happy.
+> >> 
+> >> I don't think I'll apply this, sorry.
+> > 
+> > There's no guarantee that small kmallocs will always succeed in future
+> > kernels so it's not *totally* bogus.
+> 
+> Perhaps the burdon of initializing the value belongs in
+> mcs_get_reg(), and you can set it properly to 0xffff
+> instead of -1.
+> 
+> Ok?
 
-I think these are find to do when changing other code, but as
-stand-alone, I'm not interested in taking them, sorry!
+Sure.  I will resend.
 
--Kees
-
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/pstore/ram.c      | 2 +-
->  fs/pstore/ram_core.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 0ef95c384bed..38b81868f7f9 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -333,7 +333,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->         record->ecc_notice_size = persistent_ram_ecc_string(prz, NULL, 0);
->
->         record->buf = kmalloc(size + record->ecc_notice_size + 1, GFP_KERNEL);
-> -       if (record->buf == NULL) {
-> +       if (!record->buf) {
->                 size = -ENOMEM;
->                 goto out;
->         }
-> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-> index 5d9f7280d757..e37b2d0cb9f4 100644
-> --- a/fs/pstore/ram_core.c
-> +++ b/fs/pstore/ram_core.c
-> @@ -223,7 +223,7 @@ static int persistent_ram_init_ecc(struct persistent_ram_zone *prz,
->          */
->         prz->rs_decoder = init_rs(prz->ecc_info.symsize, prz->ecc_info.poly,
->                                   0, 1, prz->ecc_info.ecc_size);
-> -       if (prz->rs_decoder == NULL) {
-> +       if (!prz->rs_decoder) {
->                 pr_info("init_rs failed\n");
->                 return -EINVAL;
->         }
-> --
-> 2.14.0
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+thanks,
+dan carpenter
