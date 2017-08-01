@@ -1,41 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 10:09:57 +0000
-Subject: [PATCH 1/2] [media] Cypress: Delete an error message for a failed memory allocation in cypress_load_
-Message-Id: <4c7cfbac-b9e5-4ab2-d569-d44cae90678e@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Aug 2017 11:02:01 +0000
+Subject: [PATCH] tracing: missing error code in tracer_alloc_buffers()
+Message-Id: <20170801110201.ajdkct7vwzixahvx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
-In-Reply-To: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 11:46:57 +0200
+If ring_buffer_alloc() or one of the next couple function calls fail
+then we should return -ENOMEM but the current code returns success.
 
-Omit an extra message for a memory allocation failure in this function.
+Fixes: b32614c03413 ('tracing/rb: Convert to hotplug state machine')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/common/cypress_firmware.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/media/common/cypress_firmware.c b/drivers/media/common/cypress_firmware.c
-index 50e3f76d4847..bfe47bc5f716 100644
---- a/drivers/media/common/cypress_firmware.c
-+++ b/drivers/media/common/cypress_firmware.c
-@@ -78,7 +78,5 @@ int cypress_load_firmware(struct usb_device *udev,
--	if (!hx) {
--		dev_err(&udev->dev, "%s: kmalloc() failed\n", KBUILD_MODNAME);
-+	if (!hx)
- 		return -ENOMEM;
--	}
- 
- 	/* stop the CPU */
- 	hx->data[0] = 1;
--- 
-2.14.1
-
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 42b9355033d4..625c00aab800 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8293,6 +8293,7 @@ __init static int tracer_alloc_buffers(void)
+ 	if (ret < 0)
+ 		goto out_free_cpumask;
+ 	/* Used for event triggers */
++	ret = -ENOMEM;
+ 	temp_buffer = ring_buffer_alloc(PAGE_SIZE, RB_FL_OVERWRITE);
+ 	if (!temp_buffer)
+ 		goto out_rm_hp_state;
