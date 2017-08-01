@@ -1,28 +1,226 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 06:23:44 +0000
-Subject: [PATCH 0/3] ATM-iphase: Adjustments for some function implementations
-Message-Id: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Aug 2017 10:25:00 +0000
+Subject: [PATCH 0/1 v3 nf-next] constify nf_conntrack_l3/4proto parameters
+Message-Id: <1501583101-14188-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 08:18:28 +0200
+When a nf_conntrack_l3/4proto parameter is not on the left hand side
+of an assignment, its address is not taken, and it is not passed to a
+function that may modify its fields, then it can be declared as const.
 
-A few update suggestions were taken into account
-from static source code analysis.
+This change is useful from a documentation point of view, and can
+possibly facilitate making some nf_conntrack_l4proto structures const
+subsequently.
 
-Markus Elfring (3):
-  Adjust 11 function calls together with a variable assignment
-  Delete five error messages for a failed memory allocation
-  Adjust four checks for null pointers
+Done with the help of Coccinelle.  The following semantic patch shows
+the nf_conntrack_l3proto case.
 
- drivers/atm/iphase.c | 95 +++++++++++++++++++++++++++-------------------------
- 1 file changed, 49 insertions(+), 46 deletions(-)
+// <smpl>
+virtual update_results
+virtual after_start
 
--- 
-2.13.4
+@initialize:ocaml@
+@@
 
+let unsafe = Hashtbl.create 101
+
+let is_unsafe f = Hashtbl.mem unsafe f
+
+let changed = ref false
+
+
+(* The next three rules relate to the fact that we do not know the type of
+void * variables.  Fortunately this is only neede on the first iteration,
+but it still means that the whole kernel will end up being considered. *)
+
+@has depends on !after_start && !update_results@
+identifier f,x;
+position p;
+@@
+
+f@p(...,struct nf_conntrack_l3proto *x,...) { ... }
+
+@hasa depends on !after_start@
+identifier f,x;
+position p;
+@@
+
+f@p(...,struct nf_conntrack_l3proto *x[],...) { ... }
+
+@others depends on !after_start && !update_results@
+position p != {has.p,hasa.p};
+identifier f,x;
+@@
+
+f@p(...,void *x,...) { ... }
+
+@script:ocaml@
+f << others.f;
+@@
+
+changed := true;
+Hashtbl.add unsafe f ()
+
+
+@fpb depends on !update_results disable optional_qualifier, drop_cast exists@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x,fld;
+identifier bad : script:ocaml() { is_unsafe(bad) };
+assignment operator aop;
+expression e;
+local idexpression fp;
+type T;
+@@
+
+f(...,struct nf_conntrack_l3proto *x,...)
+{
+...
+(
+  return x;
+|
+  (<+...x...+>) aop e
+|
+  e aop x
+|
+  (T)x
+|
+  &(<+...x...+>)
+|
+  bad(...,x,...)
+|
+  fp(...,x,...)
+|
+  (<+...e->fld...+>)(...,x,...)
+)
+...when any
+ }
+
+@script:ocaml@
+f << fpb.f;
+@@
+
+changed := true;
+Printf.eprintf "%s is unsafe\n" f;
+Hashtbl.add unsafe f ()
+
+@fpba depends on !update_results disable optional_qualifier, drop_cast exists@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x,fld;
+identifier bad : script:ocaml() { is_unsafe(bad) };
+assignment operator aop;
+expression e;
+local idexpression fp;
+type T;
+@@
+
+f(...,struct nf_conntrack_l3proto *x[],...)
+{
+...
+(
+  return \(x\|x[...]\);
+|
+  (<+...x...+>) aop e
+|
+  e aop \(x\|x[...]\)
+|
+  (T)\(x\|x[...]\)
+|
+  &(<+...x...+>)
+|
+  bad(...,\(x\|x[...]\),...)
+|
+  fp(...,\(x\|x[...]\),...)
+|
+  (<+...e->fld...+>)(...,\(x\|x[...]\),...)
+)
+... when any
+ }
+
+@script:ocaml@
+f << fpba.f;
+@@
+
+changed := true;
+Printf.eprintf "%s is unsafe\n" f;
+Hashtbl.add unsafe f ()
+
+@finalize:ocaml depends on !update_results@
+tbls << merge.unsafe;
+c << merge.changed;
+@@
+
+List.iter
+    (fun t ->
+      Hashtbl.iter
+	(fun k v ->
+	  if not (Hashtbl.mem unsafe k) then Hashtbl.add unsafe k ()) t)
+    tbls;
+changed := false;
+let changed = List.exists (fun x -> !x) c in
+let it = new iteration() in
+it#add_virtual_rule After_start;
+(if not changed
+then it#add_virtual_rule Update_results);
+it#register()
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+@@
+
+f(...,
++ const
+  struct nf_conntrack_l3proto *x,...) { ... }
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+type T;
+@@
+
+T f(...,
++ const
+  struct nf_conntrack_l3proto *x,...);
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+@@
+
+f(...,
+  struct nf_conntrack_l3proto *
++ const
+  x[],...) { ... }
+
+@depends on update_results disable optional_qualifier@
+identifier f : script:ocaml() { not(is_unsafe(f)) };
+identifier x;
+type T;
+@@
+
+T f(...,
+  struct nf_conntrack_l3proto *
++ const
+  x[],...);
+// </smpl>
+
+---
+
+v3:
+
+Rebased	against	nf-next.  Some functions, such as
+nf_ct_l3proto_pernet_register, are no longer defined, so they are no longer
+updated.
+
+ include/net/netfilter/nf_conntrack_l4proto.h |   14 +++++++-------
+ include/net/netfilter/nf_conntrack_timeout.h |    2 +-
+ net/netfilter/nf_conntrack_core.c            |    8 ++++----
+ net/netfilter/nf_conntrack_netlink.c         |    6 +++---
+ net/netfilter/nf_conntrack_proto.c           |   24 ++++++++++++------------
+ net/netfilter/nfnetlink_cttimeout.c          |    5 +++--
+ 6 files changed, 30 insertions(+), 29 deletions(-)
