@@ -1,34 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 20:11:49 +0000
-Subject: [PATCH 0/3] OrangeFS: Adjustments for some function implementations
-Message-Id: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Tue, 01 Aug 2017 13:09:57 +0000
+Subject: Re: [PATCH 04/11] fbdev: da8xx-fb: Drop unnecessary static
+Message-Id: <2086929.avP79hnAKk@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+        <CGME20170715203255epcas2p40497b7388043ff9ec488a3f0fbbdf63f@epcas2p4.samsung.com>
+        <1500149266-32357-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Brandenburg <martin@omnibond.com>, Mike Marshall <hubcap@omnibond.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 21:54:32 +0200
+On Saturday, July 15, 2017 10:07:39 PM Julia Lawall wrote:
+> Drop static on a local variable, when the variable is initialized before
+> any possible use.  Thus, the static has no benefit.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @bad exists@
+> position p;
+> identifier x;
+> type T;
+> @@
+> static T x@p;
+> ...
+> x = <+...x...+>
+> 
+> @@
+> identifier x;
+> expression e;
+> type T;
+> position p != bad.p;
+> @@
+> -static
+>  T x@p;
+>  ... when != x
+>      when strict
+> ?x = e;
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Patch queued for 4.14, thanks.
 
-Markus Elfring (3):
-  Delete error messages for a failed memory allocation in five functions
-  Use kcalloc() in orangefs_prepare_cdm_array()
-  Adjust three checks for null pointers
-
- fs/orangefs/acl.c              |  2 +-
- fs/orangefs/devorangefs-req.c  |  9 +++------
- fs/orangefs/orangefs-bufmap.c  | 10 ++--------
- fs/orangefs/orangefs-debugfs.c |  5 +----
- fs/orangefs/orangefs-mod.c     |  1 -
- fs/orangefs/super.c            |  4 +---
- fs/orangefs/xattr.c            |  4 ++--
- 7 files changed, 10 insertions(+), 25 deletions(-)
-
--- 
-2.14.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
