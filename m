@@ -1,52 +1,30 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 02 Aug 2017 15:12:59 +0000
-Subject: Re: [PATCH 08/11] ata: Drop unnecessary static
-Message-Id: <20170802151259.GC2311718@devbig577.frc2.facebook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Aug 2017 10:57:55 +0000
+Subject: [PATCH] IB/mlx4: Potential uninitialized variable in bringup_rss_rwqs()
+Message-Id: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500149266-32357-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, keescook@chromium.org, kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yishai Hadas <yishaih@mellanox.com>, Guy Levi <guyle@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 15, 2017 at 10:07:43PM +0200, Julia Lawall wrote:
-> Drop static on a local variable, when the variable is initialized before
-> any possible use.  Thus, the static has no benefit.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> static T x@p;
-> ...
-> x = <+...x...+>
-> 
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p != bad.p;
-> @@
-> -static
->  T x@p;
->  ... when != x
->      when strict
-> ?x = e;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+My static checker complains "err" can be used uninitialized.  I don't
+know the subsystem well, but to an outside observer it seems like a
+potential bug.
 
-Applied to libata/for-4.14.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
--- 
-tejun
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index e42acfb20588..03896e3af67f 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -2035,7 +2035,7 @@ static u8 gid_type_to_qpc(enum ib_gid_type gid_type)
+ static int bringup_rss_rwqs(struct ib_rwq_ind_table *ind_tbl, u8 port_num)
+ {
+ 	int i;
+-	int err;
++	int err = 0;
+ 
+ 	for (i = 0; i < (1 << ind_tbl->log_ind_tbl_size); i++) {
+ 		struct ib_wq *ibwq = ind_tbl->ind_tbl[i];
