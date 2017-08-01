@@ -1,35 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 23 Aug 2017 18:46:11 +0000
-Subject: Re: [PATCH][netdev-next] gre: remove duplicated assignment of iph
-Message-Id: <20170823.114611.1764472622798498530.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Aug 2017 20:09:17 +0000
+Subject: [PATCH] tcmu: Oops in unmap_thread_fn()
+Message-Id: <20170801200917.brigs5x47eujfx7a@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823111305.19185-1-colin.king@canonical.com>
-In-Reply-To: <20170823111305.19185-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Xiubo Li <lixiubo@cmss.chinamobile.com>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Aug 2017 12:13:05 +0100
+Calling list_del() on the iterator pointer in list_for_each_entry() will
+cause an oops.  We need to user the _safe() version for that.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> iph is being assigned the same value twice; remove the redundant
-> second assignment.
-> 
-> Fixes warning:
-> net/ipv4/ip_gre.c:265:2: warning: Value stored to 'iph' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: c73d02f63c16 ("tcmu: Add fifo type waiter list support to avoid starvation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It is always necessary to reload any SKB header pointer after calls
-to functions which potentially change the data buffer of the SKB.
-
-pskb_may_pull() is one such call.
-
-Therefore your patch is adding a bug.
-
-If you want to remove the dup, you must remove the first not
-the second one.
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 9258b7dd2c30..fd9fcea68d23 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -1985,7 +1985,7 @@ static struct target_backend_ops tcmu_ops = {
+ 
+ static int unmap_thread_fn(void *data)
+ {
+-	struct tcmu_dev *udev;
++	struct tcmu_dev *udev, *tmp;
+ 	loff_t off;
+ 	uint32_t start, end, block;
+ 	static uint32_t free_blocks;
+@@ -2056,7 +2056,7 @@ static int unmap_thread_fn(void *data)
+ 		 * for the global data pool blocks.
+ 		 */
+ 		mutex_lock(&root_udev_waiter_mutex);
+-		list_for_each_entry(udev, &root_udev_waiter, waiter) {
++		list_for_each_entry_safe(udev, tmp, &root_udev_waiter, waiter) {
+ 			mutex_lock(&udev->cmdr_lock);
+ 			if (udev->waiting_blocks < free_blocks) {
+ 				mutex_unlock(&udev->cmdr_lock);
