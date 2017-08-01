@@ -1,44 +1,64 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 08:09:52 +0000
-Subject: [PATCH 1/3] usb: gadget: f_midi: constify snd_rawmidi_ops structures
-Message-Id: <1502784594-14670-1-git-send-email-Julia.Lawall@lip6.fr>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Tue, 01 Aug 2017 23:10:21 +0000
+Subject: Re: [PATCH 1/3] lib/test_kmod: tidy up bounds checking
+Message-Id: <20170801231021.GY18884@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170707083933.2mgnpqafhspbwu7h@mwanda>
+In-Reply-To: <20170707083933.2mgnpqafhspbwu7h@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These snd_rawmidi_ops structures are only passed as the third
-argument of snd_rawmidi_set_ops.  This argument is const, so the
-snd_rawmidi_ops structures can be const too.
+On Fri, Jul 07, 2017 at 11:39:33AM +0300, Dan Carpenter wrote:
+> There is technically a bug where we don't test for negatives in
+> test_dev_config_update_uint_sync().  "new" is long and UINT_MAX is
+> unsigned int so on 64 bit systems negatives are allowed.
 
-Done with the help of Coccinelle.
+Good catch. I however prefer we instead just replace kstrtol() with
+kstrtoul() in both of these cases as an atomic separate patch with
+a Fixes tag. I'll do this and roll in your other patches. Below is
+what I mean as one atomic fix.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/gadget/function/f_midi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-index a5719f2..71ca86c0 100644
---- a/drivers/usb/gadget/function/f_midi.c
-+++ b/drivers/usb/gadget/function/f_midi.c
-@@ -755,13 +755,13 @@ static void f_midi_out_trigger(struct snd_rawmidi_substream *substream, int up)
- 		clear_bit(substream->number, &midi->out_triggered);
- }
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index 90c91541fc16..8fc0a7a19c83 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -880,10 +880,10 @@ static int test_dev_config_update_uint_sync(struct kmod_test_device *test_dev,
+ 					    int (*test_sync)(struct kmod_test_device *test_dev))
+ {
+ 	int ret;
+-	long new;
++	unsigned long new;
+ 	unsigned int old_val;
  
--static struct snd_rawmidi_ops gmidi_in_ops = {
-+static const struct snd_rawmidi_ops gmidi_in_ops = {
- 	.open = f_midi_in_open,
- 	.close = f_midi_in_close,
- 	.trigger = f_midi_in_trigger,
- };
+-	ret = kstrtol(buf, 10, &new);
++	ret = kstrtoul(buf, 10, &new);
+ 	if (ret)
+ 		return ret;
  
--static struct snd_rawmidi_ops gmidi_out_ops = {
-+static const struct snd_rawmidi_ops gmidi_out_ops = {
- 	.open = f_midi_out_open,
- 	.close = f_midi_out_close,
- 	.trigger = f_midi_out_trigger
+@@ -918,9 +918,9 @@ static int test_dev_config_update_uint_range(struct kmod_test_device *test_dev,
+ 					     unsigned int max)
+ {
+ 	int ret;
+-	long new;
++	unsigned long new;
+ 
+-	ret = kstrtol(buf, 10, &new);
++	ret = kstrtoul(buf, 10, &new);
+ 	if (ret)
+ 		return ret;
+ 
+> In the next test I removed the UINT_MAX comparison because "max" is
+> already an unsigned int so we already know that "new" can't be larger
+> than UINT_MAX.
 
+Makes sense, will roll this in as a separate patch on your part.
+
+> On the third test, I just flipped the tests around so we consistently
+> test the lower bound before the upper bound.
+
+And since non-functional I will also split up into another patch.
+
+  Luis
