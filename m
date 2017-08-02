@@ -1,89 +1,39 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Wed, 23 Aug 2017 00:22:53 +0000
-Subject: Re: [PATCH] ALSA: Fireface: Use common error handling code in pcm_open()
-Message-Id: <bd318065-7a0b-efd5-8ce0-0dffe37b92cf@sakamocchi.jp>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 02 Aug 2017 15:29:27 +0000
+Subject: [PATCH] usb: gadget: fsl_qe_udc: constify qe_ep0_desc
+Message-Id: <1501687767-12768-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05f76303-7370-ea37-20c2-116c04b850db@users.sourceforge.net>
-In-Reply-To: <05f76303-7370-ea37-20c2-116c04b850db@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Li Yang <leoyang.li@nxp.com>
+Cc: kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-Hi,
+qe_ep0_desc is only passed as the second argument to qe_ep_init, which is
+const, so qe_ep0_desc can be const too.
 
-On Aug 23 2017 04:51, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 22 Aug 2017 21:45:42 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   sound/firewire/fireface/ff-pcm.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/sound/firewire/fireface/ff-pcm.c b/sound/firewire/fireface/ff-pcm.c
-> index d12a0e3a4219..40975395a64a 100644
-> --- a/sound/firewire/fireface/ff-pcm.c
-> +++ b/sound/firewire/fireface/ff-pcm.c
-> @@ -138,16 +138,12 @@ static int pcm_open(struct snd_pcm_substream *substream)
->   		return err;
->   
->   	err = pcm_init_hw_params(ff, substream);
-> -	if (err < 0) {
-> -		snd_ff_stream_lock_release(ff);
-> -		return err;
-> -	}
-> +	if (err < 0)
-> +		goto release_lock;
->   
->   	err = ff->spec->protocol->get_clock(ff, &rate, &src);
-> -	if (err < 0) {
-> -		snd_ff_stream_lock_release(ff);
-> -		return err;
-> -	}
-> +	if (err < 0)
-> +		goto release_lock;
->   
->   	if (src != SND_FF_CLOCK_SRC_INTERNAL) {
->   		for (i = 0; i < CIP_SFC_COUNT; ++i) {
-> @@ -177,6 +173,10 @@ static int pcm_open(struct snd_pcm_substream *substream)
->   	snd_pcm_set_sync(substream);
->   
->   	return 0;
-> +
-> +release_lock:
-> +	snd_ff_stream_lock_release(ff);
-> +	return err;
->   }
->   
->   static int pcm_close(struct snd_pcm_substream *substream)
+Done with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A line to return for err is still left after applying this patch.
+---
+I got a lot of warnings when compiling this file, but none seemed to be
+related to the change.
 
-148         if (src != SND_FF_CLOCK_SRC_INTERNAL) {
-149                 for (i = 0; i < CIP_SFC_COUNT; ++i) {
-150                         if (amdtp_rate_table[i] = rate)
-151                                 break;
-152                 }
-153                 /*
-154                  * The unit is configured at sampling frequency 
-which packet
-155                  * streaming engine can't support.
-156                  */
-157                 if (i >= CIP_SFC_COUNT) {
-158                         snd_ff_stream_lock_release(ff);
-159                         return -EIO;
-160                 }
-161
+ drivers/usb/gadget/udc/fsl_qe_udc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/usb/gadget/udc/fsl_qe_udc.c b/drivers/usb/gadget/udc/fsl_qe_udc.c
+index 303328ce..a3e72d6 100644
+--- a/drivers/usb/gadget/udc/fsl_qe_udc.c
++++ b/drivers/usb/gadget/udc/fsl_qe_udc.c
+@@ -62,7 +62,7 @@
+ 	"ep3",
+ };
+ 
+-static struct usb_endpoint_descriptor qe_ep0_desc = {
++static const struct usb_endpoint_descriptor qe_ep0_desc = {
+ 	.bLength =		USB_DT_ENDPOINT_SIZE,
+ 	.bDescriptorType =	USB_DT_ENDPOINT,
+ 
 
-Regards
-
-Takashi Sakamoto
