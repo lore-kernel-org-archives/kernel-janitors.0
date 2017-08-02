@@ -1,45 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 20:16:27 +0000
-Subject: [PATCH 0/4] BTRFS: Adjustments for several function implementations
-Message-Id: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 02 Aug 2017 14:54:13 +0000
+Subject: [PATCH] [media] DaVinci-VPBE: constify vpbe_dev_ops
+Message-Id: <1501685653-4284-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 22:11:33 +0200
+vpbe_dev_ops is only copied into the ops field at the end of a vpbe_device
+structure, so it can be const.
 
-Some update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in btrfsic_process_superblock()
-  Adjust 32 checks for null pointers
-  Improve eight size determinations
-  Delete an unnecessary variable initialisation in tree_mod_log_eb_copy()
+---
 
- fs/btrfs/check-integrity.c |  4 +---
- fs/btrfs/ctree.c           | 16 +++++++---------
- fs/btrfs/delayed-inode.c   |  4 ++--
- fs/btrfs/extent-tree.c     |  2 +-
- fs/btrfs/extent_io.c       |  2 +-
- fs/btrfs/inode.c           |  4 ++--
- fs/btrfs/lzo.c             |  4 ++--
- fs/btrfs/qgroup.c          |  6 +++---
- fs/btrfs/raid56.c          |  2 +-
- fs/btrfs/reada.c           |  4 ++--
- fs/btrfs/scrub.c           | 12 ++++++------
- fs/btrfs/super.c           |  2 +-
- fs/btrfs/transaction.c     |  2 +-
- fs/btrfs/tree-log.c        |  4 ++--
- fs/btrfs/volumes.c         | 14 +++++++-------
- fs/btrfs/xattr.c           |  2 +-
- fs/btrfs/zlib.c            |  4 ++--
- 17 files changed, 42 insertions(+), 46 deletions(-)
+Does the ops field need to be inlined into the vpbe_device structure?
 
--- 
-2.14.0
+ drivers/media/platform/davinci/vpbe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 3679b1e..7f64625 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -790,7 +790,7 @@ static void vpbe_deinitialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	vpss_enable_clock(VPSS_VPBE_CLOCK, 0);
+ }
+ 
+-static struct vpbe_device_ops vpbe_dev_ops = {
++static const struct vpbe_device_ops vpbe_dev_ops = {
+ 	.g_cropcap = vpbe_g_cropcap,
+ 	.enum_outputs = vpbe_enum_outputs,
+ 	.set_output = vpbe_set_output,
 
