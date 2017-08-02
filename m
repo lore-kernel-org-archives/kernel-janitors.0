@@ -1,43 +1,156 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 Aug 2017 20:41:28 +0000
-Subject: [PATCH] eCryptfs: use after free in ecryptfs_release_messaging()
-Message-Id: <20170822204128.7xhtrlpvueucbisl@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 02 Aug 2017 21:01:45 +0000
+Subject: [PATCH] powerpc/macintosh: constify wf_sensor_ops structures
+Message-Id: <1501707705-32425-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-We're freeing the list iterator so we should be using the _safe()
-version of hlist_for_each_entry().
+The wf_sensor_ops structures are only stored in the ops field of a
+wf_sensor structure, which is declared as const.  Thus the
+wf_sensor_ops structures themselves can be const.
 
-Fixes: 88b4a07e6610 ("[PATCH] eCryptfs: Public key transport mechanism")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct wf_sensor_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct wf_sensor s;
+position p;
+@@
+s.ops = &i@p
+
+@ok2@
+identifier r.i;
+struct wf_sat_sensor s;
+position p;
+@@
+s.sens.ops = &i@p
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct wf_sensor_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct wf_sensor_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-It's also possible that I misunderstood this code.  Please review with
-caution.
+ drivers/macintosh/windfarm_lm75_sensor.c    |    2 +-
+ drivers/macintosh/windfarm_lm87_sensor.c    |    2 +-
+ drivers/macintosh/windfarm_max6690_sensor.c |    2 +-
+ drivers/macintosh/windfarm_smu_sat.c        |    2 +-
+ drivers/macintosh/windfarm_smu_sensors.c    |   10 +++++-----
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ecryptfs/messaging.c b/fs/ecryptfs/messaging.c
-index 286f10b0363b..4f457d5c4933 100644
---- a/fs/ecryptfs/messaging.c
-+++ b/fs/ecryptfs/messaging.c
-@@ -442,15 +442,16 @@ void ecryptfs_release_messaging(void)
- 	}
- 	if (ecryptfs_daemon_hash) {
- 		struct ecryptfs_daemon *daemon;
-+		struct hlist_node *n;
- 		int i;
+diff --git a/drivers/macintosh/windfarm_lm75_sensor.c b/drivers/macintosh/windfarm_lm75_sensor.c
+index 590214b..6cdfe71 100644
+--- a/drivers/macintosh/windfarm_lm75_sensor.c
++++ b/drivers/macintosh/windfarm_lm75_sensor.c
+@@ -82,7 +82,7 @@ static void wf_lm75_release(struct wf_sensor *sr)
+ 	kfree(lm);
+ }
  
- 		mutex_lock(&ecryptfs_daemon_hash_mux);
- 		for (i = 0; i < (1 << ecryptfs_hash_bits); i++) {
- 			int rc;
+-static struct wf_sensor_ops wf_lm75_ops = {
++static const struct wf_sensor_ops wf_lm75_ops = {
+ 	.get_value	= wf_lm75_get,
+ 	.release	= wf_lm75_release,
+ 	.owner		= THIS_MODULE,
+diff --git a/drivers/macintosh/windfarm_lm87_sensor.c b/drivers/macintosh/windfarm_lm87_sensor.c
+index c071aab..273d7d4 100644
+--- a/drivers/macintosh/windfarm_lm87_sensor.c
++++ b/drivers/macintosh/windfarm_lm87_sensor.c
+@@ -91,7 +91,7 @@ static void wf_lm87_release(struct wf_sensor *sr)
+ 	kfree(lm);
+ }
  
--			hlist_for_each_entry(daemon,
--					     &ecryptfs_daemon_hash[i],
--					     euid_chain) {
-+			hlist_for_each_entry_safe(daemon, n,
-+						  &ecryptfs_daemon_hash[i],
-+						  euid_chain) {
- 				rc = ecryptfs_exorcise_daemon(daemon);
- 				if (rc)
- 					printk(KERN_ERR "%s: Error whilst "
+-static struct wf_sensor_ops wf_lm87_ops = {
++static const struct wf_sensor_ops wf_lm87_ops = {
+ 	.get_value	= wf_lm87_get,
+ 	.release	= wf_lm87_release,
+ 	.owner		= THIS_MODULE,
+diff --git a/drivers/macintosh/windfarm_max6690_sensor.c b/drivers/macintosh/windfarm_max6690_sensor.c
+index 87e439b..6ad035e 100644
+--- a/drivers/macintosh/windfarm_max6690_sensor.c
++++ b/drivers/macintosh/windfarm_max6690_sensor.c
+@@ -55,7 +55,7 @@ static void wf_max6690_release(struct wf_sensor *sr)
+ 	kfree(max);
+ }
+ 
+-static struct wf_sensor_ops wf_max6690_ops = {
++static const struct wf_sensor_ops wf_max6690_ops = {
+ 	.get_value	= wf_max6690_get,
+ 	.release	= wf_max6690_release,
+ 	.owner		= THIS_MODULE,
+diff --git a/drivers/macintosh/windfarm_smu_sat.c b/drivers/macintosh/windfarm_smu_sat.c
+index ad6223e..5a58fc2 100644
+--- a/drivers/macintosh/windfarm_smu_sat.c
++++ b/drivers/macintosh/windfarm_smu_sat.c
+@@ -195,7 +195,7 @@ static void wf_sat_sensor_release(struct wf_sensor *sr)
+ 	kref_put(&sat->ref, wf_sat_release);
+ }
+ 
+-static struct wf_sensor_ops wf_sat_ops = {
++static const struct wf_sensor_ops wf_sat_ops = {
+ 	.get_value	= wf_sat_sensor_get,
+ 	.release	= wf_sat_sensor_release,
+ 	.owner		= THIS_MODULE,
+diff --git a/drivers/macintosh/windfarm_smu_sensors.c b/drivers/macintosh/windfarm_smu_sensors.c
+index 1cc4e49..172fd26 100644
+--- a/drivers/macintosh/windfarm_smu_sensors.c
++++ b/drivers/macintosh/windfarm_smu_sensors.c
+@@ -172,22 +172,22 @@ static int smu_slotspow_get(struct wf_sensor *sr, s32 *value)
+ }
+ 
+ 
+-static struct wf_sensor_ops smu_cputemp_ops = {
++static const struct wf_sensor_ops smu_cputemp_ops = {
+ 	.get_value	= smu_cputemp_get,
+ 	.release	= smu_ads_release,
+ 	.owner		= THIS_MODULE,
+ };
+-static struct wf_sensor_ops smu_cpuamp_ops = {
++static const struct wf_sensor_ops smu_cpuamp_ops = {
+ 	.get_value	= smu_cpuamp_get,
+ 	.release	= smu_ads_release,
+ 	.owner		= THIS_MODULE,
+ };
+-static struct wf_sensor_ops smu_cpuvolt_ops = {
++static const struct wf_sensor_ops smu_cpuvolt_ops = {
+ 	.get_value	= smu_cpuvolt_get,
+ 	.release	= smu_ads_release,
+ 	.owner		= THIS_MODULE,
+ };
+-static struct wf_sensor_ops smu_slotspow_ops = {
++static const struct wf_sensor_ops smu_slotspow_ops = {
+ 	.get_value	= smu_slotspow_get,
+ 	.release	= smu_ads_release,
+ 	.owner		= THIS_MODULE,
+@@ -327,7 +327,7 @@ static int smu_cpu_power_get(struct wf_sensor *sr, s32 *value)
+ 	return 0;
+ }
+ 
+-static struct wf_sensor_ops smu_cpu_power_ops = {
++static const struct wf_sensor_ops smu_cpu_power_ops = {
+ 	.get_value	= smu_cpu_power_get,
+ 	.release	= smu_cpu_power_release,
+ 	.owner		= THIS_MODULE,
+
