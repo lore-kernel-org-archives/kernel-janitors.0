@@ -1,43 +1,12 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 15:08:55 +0000
-Subject: [PATCH 1/9 v2] thermal: hisilicon: constify thermal_zone_of_device_ops structures
-Message-Id: <1502204943-20075-2-git-send-email-Julia.Lawall@lip6.fr>
+From: "Lv, Shuo" <Shuo.Lv@dell.com>
+Date: Wed, 02 Aug 2017 09:00:07 +0000
+Subject: tcm fc Asynchronous Event Notifications
+Message-Id: <6F7556A181C9E74390FFFEACC41B5ABB4C88D582@MX301CL01.corp.emc.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to devm_thermal_zone_of_sensor_register, which is declared
-as const.  Thus the thermal_zone_of_device_ops structure itself can
-be const.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
-v2: New patch
-
- drivers/thermal/hisi_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 9c3ce34..bd3572c 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -206,7 +206,7 @@ static int hisi_thermal_get_temp(void *_sensor, int *temp)
- 	return 0;
- }
- 
--static struct thermal_zone_of_device_ops hisi_of_thermal_ops = {
-+static const struct thermal_zone_of_device_ops hisi_of_thermal_ops = {
- 	.get_temp = hisi_thermal_get_temp,
- };
- 
-
+SGksIGRvZXMgdGhlIFRDTSBzdXBwb3J0IHRoZSBBc3luY2hyb25vdXMgRXZlbnQgTm90aWZpY2F0
+aW9ucyBmdW5jdGlvbj8NCg0K
