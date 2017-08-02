@@ -1,61 +1,76 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 10 Aug 2017 13:17:43 +0000
-Subject: Re: [PATCH] drm/amdgpu: potential shift wrapping bug
-Message-Id: <598C5CF7.8080702@bfs.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 02 Aug 2017 08:40:47 +0000
+Subject: [PATCH v3] crypto: ixp4xx - Fix error handling path in 'aead_perform()'
+Message-Id: <20170802084046.GA6740@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170810121659.7k2pqemqnd3px2qi@mwanda> <1c9843bd-8c8f-b6f7-d413-ebb508c97930@vodafone.de> <20170810125344.6g2tbgdr5xyhudly@mwanda> <b13fa138-4a14-50bc-953d-0f6ce11d8744@amd.com>
-In-Reply-To: <b13fa138-4a14-50bc-953d-0f6ce11d8744@amd.com>
+References: <20170719214757.29203-1-christophe.jaillet@wanadoo.fr>
+ <CAK8P3a3RuQmudGRGvpE1i=RwjJ_KVU1S+bDqX6Bp6VLB7G+2cg@mail.gmail.com>
+In-Reply-To: <CAK8P3a3RuQmudGRGvpE1i=RwjJ_KVU1S+bDqX6Bp6VLB7G+2cg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?B?Q2hyaXN0aWFuIEvDtg==?= =?UTF-8?B?bmln?= <deathsimple@vodafone.de>, Alex Deucher <alexander.deucher@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>, Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, "Zhang, Jerry" <Jerry.Zhang@amd.com>, Alex Xie <AlexBin.Xie@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
-
-Am 10.08.2017 15:02, schrieb Christian König:
-> Am 10.08.2017 um 14:53 schrieb Dan Carpenter:
->> On Thu, Aug 10, 2017 at 02:30:15PM +0200, Christian König wrote:
->>> Am 10.08.2017 um 14:16 schrieb Dan Carpenter:
->>>> "frag_align" is a u64, so presumably we want to use the high bits as
->>>> well instead of shift wrapping.
->>>>
->>>> Fixes: 6be7adb37d9b ("drm/amdgpu: increase fragmentation size for
->>>> Vega10 v2")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> The fragment field has only 5bits in hardware and can never be more
->>> than 31,
->>> so the correct fix would actually be using uint32_t here instead.
->>>
->> Changing it to uint32_t introduces a new static checker warning:
->>
->>      drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1465 amdgpu_vm_frag_ptes()
->>      warn: was expecting a 64 bit value instead of '~(frag_align - 1)'
->>
->> Unfortunately, I get so many thousands of those I can't normally even
->> review that sort of bug...
->>
->> Let me resend the original patch but with a modified changelog to say
->> that the bug is a false positive.
+On Thu, Jul 20, 2017 at 09:37:10AM +0200, Arnd Bergmann wrote:
+>
+> Thanks for spotting my mistake!
 > 
-> Ah, yes of course that's why I made it a 64bit value in the first place.
+> I've looked at it again and think it's unfortunately still wrong with
+> your patch,
+> as there is a 'goto free_buf_src' after dma_pool_alloc(), and that now needs
+> to jump to free_buf_dst instead. We may also need an extra check to make
+> sure we don't free an uninitialized pointer again.
 > 
-> Mhm, could we use something like (u32)(1 << pages_per_frag) instead to
-> silence the static checker warning?
+> Can you have a look at this version below and send whatever you find
+> to be correct in the end?
 > 
-> It doesn't make much sense to use a 64bit shift here.
-> 
-> Christian.
-> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Oops, looks like I introduced the bug.  Anyway, such is the danger
+of fixing compiler warnings in rarely used code.
 
+For some reason your patch is corrupted in patchwork.  Also we don't
+need to check crypt->dst as free_buf_chain is a no-op if we didn't do
+the allocation at all.  So how about this patch?
 
-Why not keeping Dan 1. patch and add a comment that pages_per_frag is always >31 ?
+---8<---
+In commit 0f987e25cb8a, the source processing has been moved in front of
+the destination processing, but the error handling path has not been
+modified accordingly.
+Free resources in the correct order to avoid some leaks.
 
-Using 32bit in a 64bit is not forbidden, and changing it causes more problems than
-it solves. But doing so should be done in a clean way.
+Fixes: 0f987e25cb8a ("crypto: ixp4xx - Fix false lastlen uninitialised warning")
+Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-just my 2 cents,
-re,
- wh
-
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 427cbe0..55dc9c2 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -1073,7 +1073,7 @@ static int aead_perform(struct aead_request *req, int encrypt,
+ 		req_ctx->hmac_virt = dma_pool_alloc(buffer_pool, flags,
+ 				&crypt->icv_rev_aes);
+ 		if (unlikely(!req_ctx->hmac_virt))
+-			goto free_buf_src;
++			goto free_buf_dst;
+ 		if (!encrypt) {
+ 			scatterwalk_map_and_copy(req_ctx->hmac_virt,
+ 				req->src, cryptlen, authsize, 0);
+@@ -1088,10 +1088,10 @@ static int aead_perform(struct aead_request *req, int encrypt,
+ 	BUG_ON(qmgr_stat_overflow(SEND_QID));
+ 	return -EINPROGRESS;
+ 
+-free_buf_src:
+-	free_buf_chain(dev, req_ctx->src, crypt->src_buf);
+ free_buf_dst:
+ 	free_buf_chain(dev, req_ctx->dst, crypt->dst_buf);
++free_buf_src:
++	free_buf_chain(dev, req_ctx->src, crypt->src_buf);
+ 	crypt->ctl_flags = CTL_FLAG_UNUSED;
+ 	return -ENOMEM;
+ }
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
