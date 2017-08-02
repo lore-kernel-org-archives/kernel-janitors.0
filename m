@@ -1,43 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 10:12:08 +0000
-Subject: [PATCH 2/2] [media] Cypress: Improve a size determination in cypress_load_firmware()
-Message-Id: <f67848f4-268c-9764-65f5-200a1f569724@users.sourceforge.net>
+From: Sam van Hunsel <ivan.dolokvich@yandex.ru>
+Date: Wed, 02 Aug 2017 17:41:01 +0000
+Subject: [PATCH] Staging: lirc: remove FSF's mailing address from GPL notice
+Message-Id: <20170802174056.GA22022@freebox.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
-In-Reply-To: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 11:55:16 +0200
+The FSF may change addresses again, as they have done in the past. Linux
+also already includes a copy of the GPL. This patch fixes an issue found by
+checkpatch.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Sam van Hunsel <ivan.dolokvich@yandex.ru>
 ---
- drivers/media/common/cypress_firmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/lirc/lirc_zilog.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/media/common/cypress_firmware.c b/drivers/media/common/cypress_firmware.c
-index bfe47bc5f716..8895158c1962 100644
---- a/drivers/media/common/cypress_firmware.c
-+++ b/drivers/media/common/cypress_firmware.c
-@@ -74,7 +74,7 @@ int cypress_load_firmware(struct usb_device *udev,
- 	struct hexline *hx;
- 	int ret, pos = 0;
+diff --git a/drivers/staging/media/lirc/lirc_zilog.c b/drivers/staging/media/lirc/lirc_zilog.c
+index 015e41bd036e..36b288d811e9 100644
+--- a/drivers/staging/media/lirc/lirc_zilog.c
++++ b/drivers/staging/media/lirc/lirc_zilog.c
+@@ -33,10 +33,6 @@
+  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *  GNU General Public License for more details.
+  *
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+  */
  
--	hx = kmalloc(sizeof(struct hexline), GFP_KERNEL);
-+	hx = kmalloc(sizeof(*hx), GFP_KERNEL);
- 	if (!hx)
- 		return -ENOMEM;
- 
+ #include <linux/module.h>
 -- 
-2.14.1
+2.13.0
 
