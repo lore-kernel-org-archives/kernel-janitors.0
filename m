@@ -1,26 +1,50 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Wed, 16 Aug 2017 12:29:55 +0000
-Subject: Re: powerpc: store the intended structure
-Message-Id: <3xXTFH6cfyz9t5T@ozlabs.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 02 Aug 2017 08:35:35 +0000
+Subject: [PATCH] 9p: constify xattr_handler structures
+Message-Id: <1501662935-26695-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1502630663-18599-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-On Sun, 2017-08-13 at 13:24:23 UTC, Julia Lawall wrote:
-> Normally the values in the resource field and the argument to ARRAY_SIZE
-> in the num_resources are the same.  In this case, the value in the reousrce
-> field is the same as the one in the previous platform_device structure, and
-> appears to be a copy-paste error.  Replace the value in the resource field
-> with the argument to the local call to ARRAY_SIZE.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The xattr_handler structures are only stored in an array of const
+structures.  Thus the xattr_handler structures themselves can be
+const.
 
-Applied to powerpc next, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-https://git.kernel.org/powerpc/c/36992606eee8016c36ad2576687e97
+---
+ fs/9p/xattr.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-cheers
+diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+index f329eee..3d45d25 100644
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -154,20 +154,20 @@ static int v9fs_xattr_handler_set(const struct xattr_handler *handler,
+ 	return v9fs_xattr_set(dentry, full_name, value, size, flags);
+ }
+ 
+-static struct xattr_handler v9fs_xattr_user_handler = {
++static const struct xattr_handler v9fs_xattr_user_handler = {
+ 	.prefix	= XATTR_USER_PREFIX,
+ 	.get	= v9fs_xattr_handler_get,
+ 	.set	= v9fs_xattr_handler_set,
+ };
+ 
+-static struct xattr_handler v9fs_xattr_trusted_handler = {
++static const struct xattr_handler v9fs_xattr_trusted_handler = {
+ 	.prefix	= XATTR_TRUSTED_PREFIX,
+ 	.get	= v9fs_xattr_handler_get,
+ 	.set	= v9fs_xattr_handler_set,
+ };
+ 
+ #ifdef CONFIG_9P_FS_SECURITY
+-static struct xattr_handler v9fs_xattr_security_handler = {
++static const struct xattr_handler v9fs_xattr_security_handler = {
+ 	.prefix	= XATTR_SECURITY_PREFIX,
+ 	.get	= v9fs_xattr_handler_get,
+ 	.set	= v9fs_xattr_handler_set,
+
