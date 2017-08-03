@@ -1,47 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:18 +0000
-Subject: [PATCH 06/17] pinctrl: sirf: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 03 Aug 2017 19:12:50 +0000
+Subject: [PATCH 1/4] axonram: Delete an error message for a failed memory allocation in axon_ram_probe()
+Message-Id: <31790d2a-26b4-54f5-e52d-5637be0b676f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
+In-Reply-To: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (pctlops and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Aug 2017 19:49:18 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/sirf/pinctrl-sirf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/sysdev/axonram.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index 80bfd47..d3ef059 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -133,7 +133,7 @@ static void sirfsoc_dt_free_map(struct pinctrl_dev *pctldev,
- 	kfree(map);
- }
+diff --git a/arch/powerpc/sysdev/axonram.c b/arch/powerpc/sysdev/axonram.c
+index 2799706106c6..b82d1b023a15 100644
+--- a/arch/powerpc/sysdev/axonram.c
++++ b/arch/powerpc/sysdev/axonram.c
+@@ -193,7 +193,6 @@ static int axon_ram_probe(struct platform_device *device)
  
--static struct pinctrl_ops sirfsoc_pctrl_ops = {
-+static const struct pinctrl_ops sirfsoc_pctrl_ops = {
- 	.get_groups_count = sirfsoc_get_groups_count,
- 	.get_group_name = sirfsoc_get_group_name,
- 	.get_group_pins = sirfsoc_get_group_pins,
-@@ -229,7 +229,7 @@ static int sirfsoc_pinmux_request_gpio(struct pinctrl_dev *pmxdev,
- 	return 0;
- }
- 
--static struct pinmux_ops sirfsoc_pinmux_ops = {
-+static const struct pinmux_ops sirfsoc_pinmux_ops = {
- 	.set_mux = sirfsoc_pinmux_set_mux,
- 	.get_functions_count = sirfsoc_pinmux_get_funcs_count,
- 	.get_function_name = sirfsoc_pinmux_get_func_name,
+ 	bank = kzalloc(sizeof(struct axon_ram_bank), GFP_KERNEL);
+ 	if (bank = NULL) {
+-		dev_err(&device->dev, "Out of memory\n");
+ 		rc = -ENOMEM;
+ 		goto failed;
+ 	}
+-- 
+2.13.4
 
