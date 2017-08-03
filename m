@@ -1,25 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 15:10:07 +0000
-Subject: [PATCH 0/5] constify snd_soc_dai_ops structures
-Message-Id: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 03 Aug 2017 19:11:15 +0000
+Subject: [PATCH 0/4] axonram: Adjustments for axon_ram_probe()
+Message-Id: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rockchip@lists.infradead.org
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, bhumirks@gmail.com, linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Aug 2017 21:02:02 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
----
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation
+  Improve a size determination in axon_ram_probe()
+  Return directly after a failed kzalloc()
+  Delete an unnecessary variable initialisation
 
- sound/soc/blackfin/bf6xx-i2s.c    |    2 +-
- sound/soc/codecs/es8316.c         |    2 +-
- sound/soc/codecs/zx_aud96p22.c    |    2 +-
- sound/soc/rockchip/rockchip_pdm.c |    2 +-
- sound/soc/spear/spdif_in.c        |    2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ arch/powerpc/sysdev/axonram.c | 43 ++++++++++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
+
+-- 
+2.13.4
+
