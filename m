@@ -1,22 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 19:58:55 +0000
-Subject: Re: pstore: Delete six error messages for a failed memory allocation
-Message-Id: <91787692-47ff-53dd-c48b-f052c0281de7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 03 Aug 2017 12:26:52 +0000
+Subject: [PATCH] staging: media: use relevant lock
+Message-Id: <1501763212-1394-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net>
- <b0842266-6f8c-cba6-3cb5-98fc49f10f07@users.sourceforge.net>
- <CAGXu5j+J9+HJumrpyfiSA5_T8OeAEkM_Q4KVY70ka_c2BDgQ3w@mail.gmail.com>
-In-Reply-To: <CAGXu5j+J9+HJumrpyfiSA5_T8OeAEkM_Q4KVY70ka_c2BDgQ3w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kees Cook <keescook@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-> I'm not interested in removing these since they provide additional
-> details about which specific allocation failed.
+The data protected is video_out2 and the lock that is released is
+&video_out2->dma_queue_lock, so it seems that that lock should be
+taken as well.
 
-Do you find the default allocation failure report insufficient?
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Regards,
-Markus
+---
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+index 857b0e8..4910cb7 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+@@ -1059,7 +1059,7 @@ static void resizer_ss_isr(struct vpfe_resizer_device *resizer)
+ 	/* If resizer B is enabled */
+ 	if (pipe->output_num > 1 && resizer->resizer_b.output =
+ 	    RESIZER_OUTPUT_MEMORY) {
+-		spin_lock(&video_out->dma_queue_lock);
++		spin_lock(&video_out2->dma_queue_lock);
+ 		vpfe_video_process_buffer_complete(video_out2);
+ 		video_out2->state = VPFE_VIDEO_BUFFER_NOT_QUEUED;
+ 		vpfe_video_schedule_next_buffer(video_out2);
+
