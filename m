@@ -1,37 +1,39 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 23 Aug 2017 13:52:59 +0000
-Subject: Re: [PATCH v2] ALSA: Fireface: Use common error handling code in pcm_open()
-Message-Id: <s5ha82qmlvo.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 03 Aug 2017 19:17:28 +0000
+Subject: [PATCH 4/4] axonram: Delete an unnecessary variable initialisation in axon_ram_probe()
+Message-Id: <d833a646-8345-4cd1-0701-4450615b7a65@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <05f76303-7370-ea37-20c2-116c04b850db@users.sourceforge.net>
-        <bd318065-7a0b-efd5-8ce0-0dffe37b92cf@sakamocchi.jp>
-        <05c137e8-e417-162b-c588-f5fc22be5ed6@users.sourceforge.net>
-In-Reply-To: <05c137e8-e417-162b-c588-f5fc22be5ed6@users.sourceforge.net>
+References: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
+In-Reply-To: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 23 Aug 2017 14:54:32 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 23 Aug 2017 14:45:20 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> v2:
-> It seems that a source code adjustment was requested by Takashi Sakamoto
-> for another if branch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Aug 2017 20:34:00 +0200
 
-Applied, thanks.
+The local variable "rc" will eventually be set only to an error code.
+Thus omit the explicit initialisation at the beginning.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/sysdev/axonram.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Takashi
+diff --git a/arch/powerpc/sysdev/axonram.c b/arch/powerpc/sysdev/axonram.c
+index 93cc902350db..5677f3371e30 100644
+--- a/arch/powerpc/sysdev/axonram.c
++++ b/arch/powerpc/sysdev/axonram.c
+@@ -184,7 +184,6 @@ static int axon_ram_probe(struct platform_device *device)
+ 	static int axon_ram_bank_id = -1;
+ 	struct axon_ram_bank *bank;
+ 	struct resource resource;
+-	int rc = 0;
+ 
+ 	axon_ram_bank_id++;
+ 
+-- 
+2.13.4
+
