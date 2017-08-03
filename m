@@ -1,42 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 18:39:44 +0000
-Subject: [PATCH 2/3] ceph: Delete an unnecessary return statement in update_dentry_lease()
-Message-Id: <8a9a3d91-91b2-81ed-eafc-66fc637de539@users.sourceforge.net>
+Date: Thu, 03 Aug 2017 19:14:21 +0000
+Subject: [PATCH 2/4] axonram: Improve a size determination in axon_ram_probe()
+Message-Id: <5dff1619-f3df-a6ef-7a75-11bae170e0d1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
-In-Reply-To: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
+References: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
+In-Reply-To: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 20:08:25 +0200
+Date: Thu, 3 Aug 2017 20:00:16 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ceph/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/sysdev/axonram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 010e7be768e6..8eae56b2d1d6 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1067,7 +1067,6 @@ static void update_dentry_lease(struct dentry *dentry,
- 	spin_unlock(&dentry->d_lock);
- 	if (old_lease_session)
- 		ceph_put_mds_session(old_lease_session);
--	return;
- }
+diff --git a/arch/powerpc/sysdev/axonram.c b/arch/powerpc/sysdev/axonram.c
+index b82d1b023a15..bf1506ec2ca4 100644
+--- a/arch/powerpc/sysdev/axonram.c
++++ b/arch/powerpc/sysdev/axonram.c
+@@ -191,7 +191,7 @@ static int axon_ram_probe(struct platform_device *device)
+ 	dev_info(&device->dev, "Found memory controller on %s\n",
+ 			device->dev.of_node->full_name);
  
- /*
+-	bank = kzalloc(sizeof(struct axon_ram_bank), GFP_KERNEL);
++	bank = kzalloc(sizeof(*bank), GFP_KERNEL);
+ 	if (bank = NULL) {
+ 		rc = -ENOMEM;
+ 		goto failed;
 -- 
-2.14.0
+2.13.4
 
