@@ -1,41 +1,41 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 22 Aug 2017 15:59:47 +0000
-Subject: Re: [PATCH v3] ALSA: pcsp: Use common error handling code in snd_card_pcsp_probe()
-Message-Id: <s5hk21v7fv0.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Aug 2017 08:17:33 +0000
+Subject: [PATCH] scsi: osst: silence underflow warning in osst_verify_frame()
+Message-Id: <20170804081733.ujuulvyh4nwgdl6n@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <08ee0d6b-788b-2845-6964-e1e55c2d2292@users.sourceforge.net>
- <20170822121625.syvr64kwyh5xjexg@mwanda>
- <s5hziar9483.wl-tiwai@suse.de>
- <f138ba40-a61f-cdab-3d9b-699dbcacad9d@users.sourceforge.net>
- <s5ho9r792yl.wl-tiwai@suse.de>
- <fc4d8c96-7de2-e8f0-4cb4-5dda795d298a@users.sourceforge.net>
- <s5hbmn78zmg.wl-tiwai@suse.de>
- <139363f6-e059-defb-357e-f18645ba9768@users.sourceforge.net>
- <s5h378j8xos.wl-tiwai@suse.de>
- <b434f976-33a1-7ced-55b5-b55487f2fb14@users.sourceforge.net>
- <s5hwp5v7i9h.wl-tiwai@suse.de>
- <49a7aeef-ba4d-7962-83cc-60d90a5a02cf@users.sourceforge.net>
-In-Reply-To: <49a7aeef-ba4d-7962-83cc-60d90a5a02cf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Willem Riede <osst@riede.org>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 22 Aug 2017 17:47:26 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 22 Aug 2017 17:33:33 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The code looks like this:
 
-Applied, thanks.
+	i = ntohl(aux->filemark_cnt);
+	if (STp->header_cache != NULL && i < OS_FM_TAB_MAX && (i > STp->filemark_cnt ||
+	    STp->first_frame_position - 1 != ntohl(STp->header_cache->dat_fm_tab.fm_tab_ent[i]))) {
 
+If i is negative then it's less than OS_FM_TAB_MAX so we read before
+the start of the STp->header_cache->dat_fm_tab.fm_tab_ent[] array.
 
-Takashi
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+There is a second static checker warning that I didn't know how to
+address:
+
+    drivers/scsi/osst.c:723 osst_verify_frame()
+    warn: potential integer overflow from user 'blk_cnt * blk_sz'
+
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 97ab5f160bc6..2db87ec04f48 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -619,7 +619,7 @@ static int osst_verify_frame(struct osst_tape * STp, int frame_seq_number, int q
+ 	os_aux_t           * aux  = STp->buffer->aux;
+ 	os_partition_t     * par  = &(aux->partition);
+ 	struct st_partstat * STps = &(STp->ps[STp->partition]);
+-	int		     blk_cnt, blk_sz, i;
++	unsigned int	     blk_cnt, blk_sz, i;
+ 
+ 	if (STp->raw) {
+ 		if (STp->buffer->syscall_result) {
