@@ -1,56 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Aug 2017 14:32:57 +0000
-Subject: Re: [PATCH] drm/i915: Fix integer overflow tests
-Message-Id: <20170817143257.m3ixmvq44aob2bqj@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 04 Aug 2017 06:09:53 +0000
+Subject: [PATCH] drm/omap: omap_display_timings: constify videomode structures
+Message-Id: <1501826993-1765-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817062310.rc6ol2c5vttvrjlx@mwanda>
- <20170817093700.5srkwji7mxexouts@ideak-desk.fi.intel.com>
- <20170817094446.rwjpo5jo76oksjog@mwanda>
- <20170817095645.bqmz7hwsaw3s5h5b@ideak-desk.fi.intel.com>
- <CAOFGe948rzTWPr0ZNg7VP-nxDkMNdEU0qSfUA90XzsaEfyO2mg@mail.gmail.com>
-In-Reply-To: <CAOFGe948rzTWPr0ZNg7VP-nxDkMNdEU0qSfUA90XzsaEfyO2mg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jason Ekstrand <jason@jlekstrand.net>
-Cc: kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>, Intel GFX <intel-gfx@lists.freedesktop.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-On Thu, Aug 17, 2017 at 07:16:03AM -0700, Jason Ekstrand wrote:
-> On Thu, Aug 17, 2017 at 2:56 AM, Imre Deak <imre.deak@intel.com> wrote:
-> 
-> > On Thu, Aug 17, 2017 at 12:50:37PM +0300, Dan Carpenter wrote:
-> > > On Thu, Aug 17, 2017 at 12:37:00PM +0300, Imre Deak wrote:
-> > > > On Thu, Aug 17, 2017 at 09:23:10AM +0300, Dan Carpenter wrote:
-> > > > > There are some potential integer overflows here on 64 bit systems.
-> > > > >
-> > > > > The condition "if (nfences > SIZE_MAX / sizeof(*fences))" can only be
-> > > > > true on 32 bit systems, it's a no-op on 64 bit, so let's ignore the
-> > > > > check for now and look a couple lines after:
-> > > > >
-> > > > >   if (!access_ok(VERIFY_READ, user, nfences * 2 * sizeof(u32)))
-> > > > >                                           ^^^^^^^^^^^
-> > > > > "nfences" is an unsigned int, so if we set it to UINT_MAX and
-> > multiply
-> > > > > by two, it's going to have an integer overflow.
-> > > >
-> > > > AFAICS it wouldn't overflow due the promotion to unsigned long
-> > > > by '* sizeof(u32)'.
-> > > >
-> > >
-> > > It first multplies "nfences * 2" as unsigned int, then it type promotes
-> > > to size_t and multiplies by sizeof().  Only the first multiplication has
-> > > an integer overflow bug.
-> >
-> > Err, that's correct. Sorry for the noise.
-> >
-> 
-> Why not just replace the "2 * sizeof(u32)" with a "sizeof(*user)".  That's
-> what we really want to check.  I have no idea how it ended up being "2 *
-> sizeof(u32)"
+The videomode structures are only copied into the vm field of a
+panel_drv_data structure, so they can be const.
 
-Yeah.  That's more readable.  I will resend.
+Done with the help of Coccinelle.
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/gpu/drm/omapdrm/displays/panel-lgphilips-lb035q02.c |    2 +-
+ drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/omapdrm/displays/panel-lgphilips-lb035q02.c b/drivers/gpu/drm/omapdrm/displays/panel-lgphilips-lb035q02.c
+index c90474a..74d1396 100644
+--- a/drivers/gpu/drm/omapdrm/displays/panel-lgphilips-lb035q02.c
++++ b/drivers/gpu/drm/omapdrm/displays/panel-lgphilips-lb035q02.c
+@@ -19,7 +19,7 @@
+ 
+ #include "../dss/omapdss.h"
+ 
+-static struct videomode lb035q02_vm = {
++static const struct videomode lb035q02_vm = {
+ 	.hactive = 320,
+ 	.vactive = 240,
+ 
+diff --git a/drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c b/drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c
+index cbf4c67..0a38a0e 100644
+--- a/drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c
++++ b/drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c
+@@ -40,7 +40,7 @@ struct panel_drv_data {
+ 	struct spi_device *spi_dev;
+ };
+ 
+-static struct videomode td028ttec1_panel_vm = {
++static const struct videomode td028ttec1_panel_vm = {
+ 	.hactive	= 480,
+ 	.vactive	= 640,
+ 	.pixelclock	= 22153000,
 
