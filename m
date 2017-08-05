@@ -1,33 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Aug 2017 10:07:41 +0000
-Subject: [PATCH] ASoC: codecs: msm8916-wcd-analog: always true condition
-Message-Id: <20170824100741.s4v24owbvocshr5n@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 10:47:07 +0000
+Subject: [PATCH 0/6] constify vb2_ops structures
+Message-Id: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: alsa-devel@alsa-project.org, Axel Lin <axel.lin@ingics.com>, Damien Riegel <damien.riegel@savoirfairelinux.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Bhumika Goyal <bhumirks@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-Static checkers complain that unsigned int val is always >= 0.  The
-context is that snd_soc_read() returns -1U on error.  This is harmless
-because we're checking that CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK is not
-set, and it will always be set for -1U.  I could have just removed the
-check against -1 but I preserved it because I thought it helped with
-readability.
+These vb2_ops structures are only stored in the ops field of a
+vb2_queue structure, which is declared as const.  Thus the vb2_ops
+structures themselves can be const.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-index 4aa878d29098..549c269acc7d 100644
---- a/sound/soc/codecs/msm8916-wcd-analog.c
-+++ b/sound/soc/codecs/msm8916-wcd-analog.c
-@@ -949,7 +949,7 @@ static irqreturn_t mbhc_btn_release_irq_handler(int irq, void *arg)
- 		u32 val = snd_soc_read(codec, CDC_A_MBHC_RESULT_1);
- 
- 		/* check if its BTN0 thats released */
--		if ((val >= 0) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
-+		if ((val != -1) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
- 			priv->mbhc_btn0_pressed = false;
- 
- 	} else {
+---
+
+ drivers/media/platform/blackfin/bfin_capture.c                |    2 +-
+ drivers/media/platform/davinci/vpbe_display.c                 |    2 +-
+ drivers/staging/media/davinci_vpfe/vpfe_video.c               |    2 +-
+ drivers/staging/media/imx/imx-media-capture.c                 |    4 ++--
+ drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c |    2 +-
+ samples/v4l/v4l2-pci-skeleton.c                               |    2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
