@@ -1,25 +1,23 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 24 Aug 2017 02:43:29 +0000
-Subject: Re: [PATCH] scsi: qedf: Fix a potential NULL pointer dereference
-Message-Id: <yq1h8wxadny.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 20:37:13 +0000
+Subject: [PATCH 0/4] constify thermal_zone_of_device_ops structures
+Message-Id: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170820170935.14767-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170820170935.14767-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Sun, 20 Aug 2017 19:09:35 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+The thermal_zone_of_device_ops structures are only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structures themselves can be const.
 
-Christophe,
+Done with the help of Coccinelle.
 
-> At the beginning of 'qedf_srr_compl()' and of 'qedf_rec_compl()', we
-> check if 'orig_io_req' is NULL. If this happens, a NULL pointer
-> dereference will occur in the error handling path.
+---
 
-Applied to 4.13/scsi-fixes. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+ drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
+ drivers/thermal/qoriq_thermal.c            |    2 +-
+ drivers/thermal/samsung/exynos_tmu.c       |    2 +-
+ drivers/thermal/zx2967_thermal.c           |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
