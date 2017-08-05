@@ -1,40 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 07 Aug 2017 15:25:35 +0000
-Subject: [PATCH] block-sx8: Delete an error message for a failed memory allocation in carm_init_one()
-Message-Id: <e28e8cff-107d-4aca-cce2-43001f95e445@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 10:47:12 +0000
+Subject: [PATCH 5/6] staging: bcm2835-camera: constify vb2_ops structures
+Message-Id: <1501930033-18249-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@fb.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 7 Aug 2017 17:14:21 +0200
+These vb2_ops structures are only stored in the ops field of a
+vb2_queue structure, which is declared as const.  Thus the vb2_ops
+structures themselves can be const.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/sx8.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/sx8.c b/drivers/block/sx8.c
-index 08586dc14e85..4b1800f6724d 100644
---- a/drivers/block/sx8.c
-+++ b/drivers/block/sx8.c
-@@ -1605,8 +1605,6 @@ static int carm_init_one (struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+index a11e047..5af758a 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+@@ -642,7 +642,7 @@ static void bm2835_mmal_unlock(struct vb2_queue *vq)
+ 	mutex_unlock(&dev->mutex);
+ }
  
- 	host = kzalloc(sizeof(*host), GFP_KERNEL);
- 	if (!host) {
--		printk(KERN_ERR DRV_NAME "(%s): memory alloc failure\n",
--		       pci_name(pdev));
- 		rc = -ENOMEM;
- 		goto err_out_regions;
- 	}
--- 
-2.13.4
+-static struct vb2_ops bm2835_mmal_video_qops = {
++static const struct vb2_ops bm2835_mmal_video_qops = {
+ 	.queue_setup = queue_setup,
+ 	.buf_prepare = buffer_prepare,
+ 	.buf_queue = buffer_queue,
 
