@@ -1,23 +1,116 @@
-From: Paul Mackerras <paulus@ozlabs.org>
-Date: Thu, 31 Aug 2017 03:40:19 +0000
-Subject: Re: [PATCH 1/2] KVM: PPC: e500: fix some NULL dereferences on error
-Message-Id: <20170831034019.GA22549@fergus.ozlabs.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 05 Aug 2017 12:28:20 +0000
+Subject: [PATCH 2/4] atm: idt77252: Delete an error message for a failed memory allocation in seven functions
+Message-Id: <845a4e7c-fccc-a81b-cff5-3962e3cac155@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170713073829.dqjahnakxqvpne7x@mwanda>
-In-Reply-To: <20170713073829.dqjahnakxqvpne7x@mwanda>
+References: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
+In-Reply-To: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Graf <agraf@suse.com>, Scott Wood <scottwood@freescale.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 13, 2017 at 10:38:29AM +0300, Dan Carpenter wrote:
-> There are some error paths in kvmppc_core_vcpu_create_e500() where we
-> forget to set the error code.  It means that we return ERR_PTR(0) which
-> is NULL and it results in a NULL pointer dereference in the caller.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 5 Aug 2017 12:45:34 +0200
 
-Thanks, both patches applied to my kvm-ppc-next branch.
+Omit an extra message for a memory allocation failure in these functions.
 
-Paul.
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/idt77252.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 6a051f5909d0..434dc4ee5f15 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -1307,8 +1307,6 @@ idt77252_rx_raw(struct idt77252_dev *card)
+ 	
+ 		sb = dev_alloc_skb(64);
+ 		if (!sb) {
+-			printk("%s: Can't allocate buffers for AAL0.\n",
+-			       card->name);
+ 			atomic_inc(&vcc->stats->rx_err);
+ 			goto drop;
+ 		}
+@@ -2007,7 +2005,6 @@ idt77252_send_oam(struct atm_vcc *vcc, void *cell, int flags)
+ 
+ 	skb = dev_alloc_skb(64);
+ 	if (!skb) {
+-		printk("%s: Out of memory in send_oam().\n", card->name);
+ 		atomic_inc(&vcc->stats->tx_err);
+ 		return -ENOMEM;
+ 	}
+@@ -2427,7 +2424,6 @@ idt77252_open(struct atm_vcc *vcc)
+ 	if (!card->vcs[index]) {
+ 		card->vcs[index] = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
+ 		if (!card->vcs[index]) {
+-			printk("%s: can't alloc vc in open()\n", card->name);
+ 			mutex_unlock(&card->mutex);
+ 			return -ENOMEM;
+ 		}
+@@ -2857,10 +2853,9 @@ open_card_oam(struct idt77252_dev *card)
+ 			index = VPCI2VC(card, vpi, vci);
+ 
+ 			vc = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
+-			if (!vc) {
+-				printk("%s: can't alloc vc\n", card->name);
++			if (!vc)
+ 				return -ENOMEM;
+-			}
++
+ 			vc->index = index;
+ 			card->vcs[index] = vc;
+ 
+@@ -2924,10 +2919,9 @@ open_card_ubr0(struct idt77252_dev *card)
+ 	struct vc_map *vc;
+ 
+ 	vc = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
+-	if (!vc) {
+-		printk("%s: can't alloc vc\n", card->name);
++	if (!vc)
+ 		return -ENOMEM;
+-	}
++
+ 	card->vcs[0] = vc;
+ 	vc->class = SCHED_UBR0;
+ 
+@@ -3410,7 +3404,6 @@ static int init_card(struct atm_dev *dev)
+ 	IPRINTK("%s: allocate %d byte for VC map.\n", card->name, size);
+ 	card->vcs = vzalloc(size);
+ 	if (!card->vcs) {
+-		printk("%s: memory allocation failure.\n", card->name);
+ 		deinit_card(card);
+ 		return -1;
+ 	}
+@@ -3420,7 +3413,6 @@ static int init_card(struct atm_dev *dev)
+ 	        card->name, size);
+ 	card->scd2vc = vzalloc(size);
+ 	if (!card->scd2vc) {
+-		printk("%s: memory allocation failure.\n", card->name);
+ 		deinit_card(card);
+ 		return -1;
+ 	}
+@@ -3430,7 +3422,6 @@ static int init_card(struct atm_dev *dev)
+ 		card->name, size);
+ 	card->soft_tst = vmalloc(size);
+ 	if (!card->soft_tst) {
+-		printk("%s: memory allocation failure.\n", card->name);
+ 		deinit_card(card);
+ 		return -1;
+ 	}
+@@ -3616,7 +3607,6 @@ static int idt77252_init_one(struct pci_dev *pcidev,
+ 
+ 	card = kzalloc(sizeof(struct idt77252_dev), GFP_KERNEL);
+ 	if (!card) {
+-		printk("idt77252-%d: can't allocate private data\n", index);
+ 		err = -ENOMEM;
+ 		goto err_out_disable_pdev;
+ 	}
+-- 
+2.13.4
+
