@@ -1,73 +1,98 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Aug 2017 17:15:27 +0000
-Subject: Applied "ASoC: blackfin: constify snd_soc_dai_ops structures" to the asoc tree
-Message-Id: <E1dhfR9-0003es-W5@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 05 Aug 2017 12:30:21 +0000
+Subject: [PATCH 3/4] atm: idt77252: Improve seven size determinations
+Message-Id: <39f09a7c-b6a6-9694-133f-237fba64a2dd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
+In-Reply-To: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>@alsa-project.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 5 Aug 2017 13:51:04 +0200
 
-   ASoC: blackfin: constify snd_soc_dai_ops structures
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a4fe6f37269623b3be21e3697d59677809ef512b Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 17:10:08 +0200
-Subject: [PATCH] ASoC: blackfin: constify snd_soc_dai_ops structures
-
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/blackfin/bf6xx-i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/atm/idt77252.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-i2s.c b/sound/soc/blackfin/bf6xx-i2s.c
-index bd3b4d464145..819cff149a25 100644
---- a/sound/soc/blackfin/bf6xx-i2s.c
-+++ b/sound/soc/blackfin/bf6xx-i2s.c
-@@ -164,7 +164,7 @@ static int bfin_i2s_resume(struct snd_soc_dai *dai)
- #define BFIN_I2S_FORMATS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
- 		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 434dc4ee5f15..e26e36a934e9 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -638,7 +638,7 @@ alloc_scq(struct idt77252_dev *card, int class)
+ {
+ 	struct scq_info *scq;
  
--static struct snd_soc_dai_ops bfin_i2s_dai_ops = {
-+static const struct snd_soc_dai_ops bfin_i2s_dai_ops = {
- 	.hw_params	= bfin_i2s_hw_params,
- 	.set_fmt	= bfin_i2s_set_dai_fmt,
- };
+-	scq = kzalloc(sizeof(struct scq_info), GFP_KERNEL);
++	scq = kzalloc(sizeof(*scq), GFP_KERNEL);
+ 	if (!scq)
+ 		return NULL;
+ 	scq->base = dma_zalloc_coherent(&card->pcidev->dev, SCQ_SIZE,
+@@ -2119,7 +2119,7 @@ idt77252_init_est(struct vc_map *vc, int pcr)
+ {
+ 	struct rate_estimator *est;
+ 
+-	est = kzalloc(sizeof(struct rate_estimator), GFP_KERNEL);
++	est = kzalloc(sizeof(*est), GFP_KERNEL);
+ 	if (!est)
+ 		return NULL;
+ 	est->maxcps = pcr < 0 ? -pcr : pcr;
+@@ -2422,7 +2422,8 @@ idt77252_open(struct atm_vcc *vcc)
+ 
+ 	index = VPCI2VC(card, vpi, vci);
+ 	if (!card->vcs[index]) {
+-		card->vcs[index] = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
++		card->vcs[index] = kzalloc(sizeof(*card->vcs[index]),
++					   GFP_KERNEL);
+ 		if (!card->vcs[index]) {
+ 			mutex_unlock(&card->mutex);
+ 			return -ENOMEM;
+@@ -2612,8 +2613,7 @@ idt77252_change_qos(struct atm_vcc *vcc, struct atm_qos *qos, int flags)
+ 			goto out;
+ 	}
+ 
+-	memcpy(&vcc->qos, qos, sizeof(struct atm_qos));
+-
++	memcpy(&vcc->qos, qos, sizeof(*qos));
+ 	set_bit(ATM_VF_HASQOS, &vcc->flags);
+ 
+ out:
+@@ -2851,8 +2851,7 @@ open_card_oam(struct idt77252_dev *card)
+ 	for (vpi = 0; vpi < (1 << card->vpibits); vpi++) {
+ 		for (vci = 3; vci < 5; vci++) {
+ 			index = VPCI2VC(card, vpi, vci);
+-
+-			vc = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
++			vc = kzalloc(sizeof(*vc), GFP_KERNEL);
+ 			if (!vc)
+ 				return -ENOMEM;
+ 
+@@ -2918,7 +2917,7 @@ open_card_ubr0(struct idt77252_dev *card)
+ {
+ 	struct vc_map *vc;
+ 
+-	vc = kzalloc(sizeof(struct vc_map), GFP_KERNEL);
++	vc = kzalloc(sizeof(*vc), GFP_KERNEL);
+ 	if (!vc)
+ 		return -ENOMEM;
+ 
+@@ -3605,7 +3604,7 @@ static int idt77252_init_one(struct pci_dev *pcidev,
+ 		return err;
+ 	}
+ 
+-	card = kzalloc(sizeof(struct idt77252_dev), GFP_KERNEL);
++	card = kzalloc(sizeof(*card), GFP_KERNEL);
+ 	if (!card) {
+ 		err = -ENOMEM;
+ 		goto err_out_disable_pdev;
 -- 
-2.13.3
+2.13.4
 
