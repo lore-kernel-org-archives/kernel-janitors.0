@@ -1,63 +1,77 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 18 Aug 2017 17:41:16 +0000
-Subject: Re: [PATCH] video: fbdev: constify copied structures
-Message-Id: <7127868.v7Fj1TocLv@amdc3058>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 10:47:13 +0000
+Subject: [PATCH 6/6] [media] media: imx: capture: constify vb2_ops structures
+Message-Id: <1501930033-18249-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170802093008epcas2p48a98827ec2c27fbd6f6de8913d47c02b@epcas2p4.samsung.com>
- <1501664679-10356-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501664679-10356-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Steve Longerbeam <slongerbeam@gmail.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
+These vb2_ops structures are only stored in the ops field of a
+vb2_queue structure, which is declared as const.  Thus the vb2_ops
+structures themselves can be const.
 
-Hi,
+Done with the help of Coccinelle.
 
-On Wednesday, August 02, 2017 11:04:39 AM Julia Lawall wrote:
-> Make const some structures that are only copied into other structures.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
-fb_fix_screeninfo and fb_var_screeninfo structures were already
-const-ified by commit 40445365a43f ("video: xilinxfb: constify
-fb_fix_screeninfo and fb_var_screeninfo structures") in my -next
-tree (git://github.com/bzolnier/linux.git fbdev-for-next) so
-I just applied xilinx_fb_default_pdata part (patch included below
-for reference).
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
 
-
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH] video: fbdev: xilinxfb: constify copied structure
-
-Make const xilinx_fb_default_pdata structure that is only copied into
-other structure.
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>,
-[b.zolnierkie: split from a bigger patch]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/video/fbdev/xilinxfb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: b/drivers/video/fbdev/xilinxfb.c
-=================================--- a/drivers/video/fbdev/xilinxfb.c	2017-08-18 19:34:11.383004874 +0200
-+++ b/drivers/video/fbdev/xilinxfb.c	2017-08-18 19:34:35.383005478 +0200
-@@ -100,7 +100,7 @@ struct xilinxfb_platform_data {
+---
+ drivers/staging/media/imx/imx-media-capture.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
+index ddab4c2..ea145ba 100644
+--- a/drivers/staging/media/imx/imx-media-capture.c
++++ b/drivers/staging/media/imx/imx-media-capture.c
+@@ -62,7 +62,7 @@ struct capture_priv {
+ /* In bytes, per queue */
+ #define VID_MEM_LIMIT	SZ_64M
+ 
+-static struct vb2_ops capture_qops;
++static const struct vb2_ops capture_qops;
+ 
  /*
-  * Default xilinxfb configuration
-  */
--static struct xilinxfb_platform_data xilinx_fb_default_pdata = {
-+static const struct xilinxfb_platform_data xilinx_fb_default_pdata = {
- 	.xres = 640,
- 	.yres = 480,
- 	.xvirt = 1024,
+  * Video ioctls follow
+@@ -503,7 +503,7 @@ static void capture_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irqrestore(&priv->q_lock, flags);
+ }
+ 
+-static struct vb2_ops capture_qops = {
++static const struct vb2_ops capture_qops = {
+ 	.queue_setup	 = capture_queue_setup,
+ 	.buf_init        = capture_buf_init,
+ 	.buf_prepare	 = capture_buf_prepare,
 
