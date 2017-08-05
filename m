@@ -1,27 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Aug 2017 11:14:21 +0000
-Subject: [PATCH 0/2] zpool: Adjustments for zpool_create_pool()
-Message-Id: <0fec59a9-ac68-33f6-533a-adfb5fa3c380@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 10:47:09 +0000
+Subject: [PATCH 2/6] [media] media: davinci: vpbe: constify vb2_ops structures
+Message-Id: <1501930033-18249-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org, Dan Streetman <ddstreet@ieee.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Aug 2017 13:12:34 +0200
+These vb2_ops structures are only stored in the ops field of a
+vb2_queue structure, which is declared as const.  Thus the vb2_ops
+structures themselves can be const.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Use common error handling code
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
- mm/zpool.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
 
--- 
-2.14.0
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/davinci/vpbe_display.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
+index ca2adfa..13d0270 100644
+--- a/drivers/media/platform/davinci/vpbe_display.c
++++ b/drivers/media/platform/davinci/vpbe_display.c
+@@ -355,7 +355,7 @@ static void vpbe_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irqrestore(&disp->dma_queue_lock, flags);
+ }
+ 
+-static struct vb2_ops video_qops = {
++static const struct vb2_ops video_qops = {
+ 	.queue_setup = vpbe_buffer_queue_setup,
+ 	.wait_prepare = vb2_ops_wait_prepare,
+ 	.wait_finish = vb2_ops_wait_finish,
 
