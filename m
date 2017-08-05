@@ -1,78 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Aug 2017 06:18:16 +0000
-Subject: [PATCH 1/2] [media] dib9000: delete some unused broken code
-Message-Id: <20170826060606.ga6vgtriducqyluw@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 05 Aug 2017 12:26:45 +0000
+Subject: [PATCH 1/4] atm: idt77252: Adjust four function calls together with a variable assignment
+Message-Id: <c03d54ed-7c1d-351b-3e84-30cc4af38c5f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
+In-Reply-To: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Max Kellermann <max.kellermann@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The dib9000_remove_slave_frontend() function isn't used.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 4 Aug 2017 22:20:08 +0200
 
-I was reviewing it because my static checker claims it writes one
-element beyond the end of the array.  That's a false positive.  What it
-actually does is, if there are two or more front ends, then it prints a
-debug message to say that it removed the first one, stored in
-state->fe[1], and then it "removes" (scare quotes on purpose) the second
-one, stored in state->fe[2].  Deleting a front end from the middle is
-not really supported and breaks code like dib9000_release() which
-assumes the first NULL front end marks the end of the list.
+The script "checkpatch.pl" pointed information out like the following.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ERROR: do not use assignment in if condition
 
-diff --git a/drivers/media/dvb-frontends/dib9000.h b/drivers/media/dvb-frontends/dib9000.h
-index b10a70aa7c9f..40883b41e66b 100644
---- a/drivers/media/dvb-frontends/dib9000.h
-+++ b/drivers/media/dvb-frontends/dib9000.h
-@@ -37,7 +37,6 @@ extern int dib9000_fw_pid_filter_ctrl(struct dvb_frontend *fe, u8 onoff);
- extern int dib9000_fw_pid_filter(struct dvb_frontend *fe, u8 id, u16 pid, u8 onoff);
- extern int dib9000_firmware_post_pll_init(struct dvb_frontend *fe);
- extern int dib9000_set_slave_frontend(struct dvb_frontend *fe, struct dvb_frontend *fe_slave);
--extern int dib9000_remove_slave_frontend(struct dvb_frontend *fe);
- extern struct dvb_frontend *dib9000_get_slave_frontend(struct dvb_frontend *fe, int slave_index);
- extern struct i2c_adapter *dib9000_get_component_bus_interface(struct dvb_frontend *fe);
- extern int dib9000_set_i2c_adapter(struct dvb_frontend *fe, struct i2c_adapter *i2c);
-@@ -97,12 +96,6 @@ static inline int dib9000_set_slave_frontend(struct dvb_frontend *fe, struct dvb
- 	return -ENODEV;
- }
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/idt77252.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index b7a168c46692..6a051f5909d0 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -1070,7 +1070,8 @@ dequeue_rx(struct idt77252_dev *card, struct rsq_entry *rsqe)
  
--static inline int dib9000_remove_slave_frontend(struct dvb_frontend *fe)
--{
--	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
--	return -ENODEV;
--}
--
- static inline struct dvb_frontend *dib9000_get_slave_frontend(struct dvb_frontend *fe, int slave_index)
- {
- 	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
-diff --git a/drivers/media/dvb-frontends/dib9000.c b/drivers/media/dvb-frontends/dib9000.c
-index 17c6f15c7e68..1b7a4331af05 100644
---- a/drivers/media/dvb-frontends/dib9000.c
-+++ b/drivers/media/dvb-frontends/dib9000.c
-@@ -2462,24 +2462,6 @@ int dib9000_set_slave_frontend(struct dvb_frontend *fe, struct dvb_frontend *fe_
- }
- EXPORT_SYMBOL(dib9000_set_slave_frontend);
+ 		cell = skb->data;
+ 		for (i = (stat & SAR_RSQE_CELLCNT); i; i--) {
+-			if ((sb = dev_alloc_skb(64)) = NULL) {
++			sb = dev_alloc_skb(64);
++			if (!sb) {
+ 				printk("%s: Can't allocate buffers for aal0.\n",
+ 				       card->name);
+ 				atomic_add(i, &vcc->stats->rx_drop);
+@@ -1304,7 +1305,8 @@ idt77252_rx_raw(struct idt77252_dev *card)
+ 			goto drop;
+ 		}
+ 	
+-		if ((sb = dev_alloc_skb(64)) = NULL) {
++		sb = dev_alloc_skb(64);
++		if (!sb) {
+ 			printk("%s: Can't allocate buffers for AAL0.\n",
+ 			       card->name);
+ 			atomic_inc(&vcc->stats->rx_err);
+@@ -3600,13 +3602,14 @@ static int idt77252_init_one(struct pci_dev *pcidev,
+ 	struct atm_dev *dev;
+ 	int i, err;
  
--int dib9000_remove_slave_frontend(struct dvb_frontend *fe)
--{
--	struct dib9000_state *state = fe->demodulator_priv;
--	u8 index_frontend = 1;
 -
--	while ((index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL))
--		index_frontend++;
--	if (index_frontend != 1) {
--		dprintk("remove slave fe %p (index %i)\n", state->fe[index_frontend - 1], index_frontend - 1);
--		state->fe[index_frontend] = NULL;
--		return 0;
--	}
--
--	dprintk("no frontend to be removed\n");
--	return -ENODEV;
--}
--EXPORT_SYMBOL(dib9000_remove_slave_frontend);
--
- struct dvb_frontend *dib9000_get_slave_frontend(struct dvb_frontend *fe, int slave_index)
- {
- 	struct dib9000_state *state = fe->demodulator_priv;
+-	if ((err = pci_enable_device(pcidev))) {
++	err = pci_enable_device(pcidev);
++	if (err) {
+ 		printk("idt77252: can't enable PCI device at %s\n", pci_name(pcidev));
+ 		return err;
+ 	}
+ 
+-	if ((err = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32)))) {
++	err = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32));
++	if (err) {
+ 		printk("idt77252: can't enable DMA for PCI device at %s\n", pci_name(pcidev));
+ 		return err;
+ 	}
+-- 
+2.13.4
+
