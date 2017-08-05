@@ -1,44 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 08:00:20 +0000
-Subject: [PATCH] ATM-lanai: Delete an error message for a failed memory allocation in lanai_init_one()
-Message-Id: <ce30adf8-c5be-df17-0c74-42061ff2fd42@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 10:47:10 +0000
+Subject: [PATCH 3/6] [media] staging: media: davinci_vpfe: constify vb2_ops structures
+Message-Id: <1501930033-18249-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 09:42:52 +0200
+These vb2_ops structures are only stored in the ops field of a
+vb2_queue structure, which is declared as const.  Thus the vb2_ops
+structures themselves can be const.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/atm/lanai.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/staging/media/davinci_vpfe/vpfe_video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/lanai.c b/drivers/atm/lanai.c
-index 2351dad78ff5..f4cb6c5870bf 100644
---- a/drivers/atm/lanai.c
-+++ b/drivers/atm/lanai.c
-@@ -2562,11 +2562,8 @@ static int lanai_init_one(struct pci_dev *pci,
- 	int result;
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+index 8b2117e..155e8c7 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+@@ -1304,7 +1304,7 @@ static void vpfe_buf_cleanup(struct vb2_buffer *vb)
+ 		list_del_init(&buf->list);
+ }
  
- 	lanai = kmalloc(sizeof(*lanai), GFP_KERNEL);
--	if (lanai = NULL) {
--		printk(KERN_ERR DEV_LABEL
--		       ": couldn't allocate dev_data structure!\n");
-+	if (!lanai)
- 		return -ENOMEM;
--	}
- 
- 	atmdev = atm_dev_register(DEV_LABEL, &pci->dev, &ops, -1, NULL);
- 	if (atmdev = NULL) {
--- 
-2.13.4
+-static struct vb2_ops video_qops = {
++static const struct vb2_ops video_qops = {
+ 	.queue_setup		= vpfe_buffer_queue_setup,
+ 	.buf_init		= vpfe_buffer_init,
+ 	.buf_prepare		= vpfe_buffer_prepare,
 
