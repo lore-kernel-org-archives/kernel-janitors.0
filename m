@@ -1,54 +1,124 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 18:02:50 +0000
-Subject: [PATCH v2 2/4] ACPI-APEI-HEST: Use kmalloc_array() in hest_ghes_dev_register()
-Message-Id: <c1abc766-db53-2b55-bd3f-a0d64df481b8@users.sourceforge.net>
+Date: Sat, 05 Aug 2017 12:32:08 +0000
+Subject: [PATCH 4/4] atm: idt77252: Adjust ten checks for null pointers
+Message-Id: <f842b298-8963-d8d3-8370-1c061bb672e8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
- <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
- <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
- <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
- <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
-In-Reply-To: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
+References: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
+In-Reply-To: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 20:55:33 +0200
+Date: Sat, 5 Aug 2017 14:04:42 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kmalloc_array".
+The script “checkpatch.pl” pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/apei/hest.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/atm/idt77252.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 832a930e98f2..24d1d3cd3371 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -195,7 +195,9 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
- 	struct ghes_arr ghes_arr;
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index e26e36a934e9..184934e05193 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -643,7 +643,7 @@ alloc_scq(struct idt77252_dev *card, int class)
+ 		return NULL;
+ 	scq->base = dma_zalloc_coherent(&card->pcidev->dev, SCQ_SIZE,
+ 					&scq->paddr, GFP_KERNEL);
+-	if (scq->base = NULL) {
++	if (!scq->base) {
+ 		kfree(scq);
+ 		return NULL;
+ 	}
+@@ -973,7 +973,7 @@ init_rsq(struct idt77252_dev *card)
  
- 	ghes_arr.count = 0;
--	ghes_arr.ghes_devs = kmalloc(sizeof(void *) * ghes_count, GFP_KERNEL);
-+	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
-+					   sizeof(*ghes_arr.ghes_devs),
-+					   GFP_KERNEL);
- 	if (!ghes_arr.ghes_devs)
- 		return -ENOMEM;
+ 	card->rsq.base = dma_zalloc_coherent(&card->pcidev->dev, RSQSIZE,
+ 					     &card->rsq.paddr, GFP_KERNEL);
+-	if (card->rsq.base = NULL) {
++	if (!card->rsq.base) {
+ 		printk("%s: can't allocate RSQ.\n", card->name);
+ 		return -1;
+ 	}
+@@ -1026,7 +1026,7 @@ dequeue_rx(struct idt77252_dev *card, struct rsq_entry *rsqe)
+ 	}
  
+ 	skb = sb_pool_skb(card, le32_to_cpu(rsqe->word_2));
+-	if (skb = NULL) {
++	if (!skb) {
+ 		printk("%s: NULL skb in %s, rsqe: %08x %08x %08x %08x\n",
+ 		       card->name, __func__,
+ 		       le32_to_cpu(rsqe->word_1), le32_to_cpu(rsqe->word_2),
+@@ -1242,7 +1242,7 @@ idt77252_rx_raw(struct idt77252_dev *card)
+ 	struct vc_map	*vc;
+ 	struct sk_buff	*sb;
+ 
+-	if (card->raw_cell_head = NULL) {
++	if (!card->raw_cell_head) {
+ 		u32 handle = le32_to_cpu(*(card->raw_cell_hnd + 1));
+ 		card->raw_cell_head = sb_pool_skb(card, handle);
+ 	}
+@@ -1375,7 +1375,7 @@ init_tsq(struct idt77252_dev *card)
+ 
+ 	card->tsq.base = dma_alloc_coherent(&card->pcidev->dev, RSQSIZE,
+ 					    &card->tsq.paddr, GFP_KERNEL);
+-	if (card->tsq.base = NULL) {
++	if (!card->tsq.base) {
+ 		printk("%s: can't allocate TSQ.\n", card->name);
+ 		return -1;
+ 	}
+@@ -1601,7 +1601,7 @@ __fill_tst(struct idt77252_dev *card, struct vc_map *vc,
+ 
+ 	avail = card->tst_size - 2;
+ 	for (e = 0; e < avail; e++) {
+-		if (card->soft_tst[e].vc = NULL)
++		if (!card->soft_tst[e].vc)
+ 			break;
+ 	}
+ 	if (e >= avail) {
+@@ -1624,7 +1624,7 @@ __fill_tst(struct idt77252_dev *card, struct vc_map *vc,
+ 	 * Fill Soft TST.
+ 	 */
+ 	while (r > 0) {
+-		if ((cl >= avail) && (card->soft_tst[e].vc = NULL)) {
++		if ((cl >= avail) && !card->soft_tst[e].vc) {
+ 			if (vc)
+ 				card->soft_tst[e].vc = vc;
+ 			else
+@@ -1948,7 +1948,7 @@ idt77252_send_skb(struct atm_vcc *vcc, struct sk_buff *skb, int oam)
+ 	struct vc_map *vc = vcc->dev_data;
+ 	int err;
+ 
+-	if (vc = NULL) {
++	if (!vc) {
+ 		printk("%s: NULL connection in send().\n", card->name);
+ 		atomic_inc(&vcc->stats->tx_err);
+ 		dev_kfree_skb(skb);
+@@ -3429,12 +3429,12 @@ static int init_card(struct atm_dev *dev)
+ 		card->soft_tst[i].vc = NULL;
+ 	}
+ 
+-	if (dev->phy = NULL) {
++	if (!dev->phy) {
+ 		printk("%s: No LT device defined.\n", card->name);
+ 		deinit_card(card);
+ 		return -1;
+ 	}
+-	if (dev->phy->ioctl = NULL) {
++	if (!dev->phy->ioctl) {
+ 		printk("%s: LT had no IOCTL function defined.\n", card->name);
+ 		deinit_card(card);
+ 		return -1;
 -- 
 2.13.4
 
