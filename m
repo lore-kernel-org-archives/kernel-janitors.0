@@ -1,52 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 Aug 2017 16:43:49 +0000
-Subject: [PATCH][next] phy: mvebu-cp110-comphy: fix -ve error return against a u32
-Message-Id: <20170831164349.2826-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 05 Aug 2017 12:24:21 +0000
+Subject: [PATCH 0/4] atm: idt77252: Adjustments for some function implementations
+Message-Id: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, "David S . Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 5 Aug 2017 14:22:33 +0200
 
-The check to see if the call to mvebu_comphy_get_mux failed is always
-false because mux is a u32 and can never be less than zero. Fix this
-by making mux an int and casting to u32 on shift later on.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1455220 ("Unsigned compared against 0")
+Markus Elfring (4):
+  Adjust four function calls together with a variable assignment
+  Delete an error message for a failed memory allocation in seven functions
+  Improve seven size determinations
+  Adjust ten checks for null pointers
 
-Fixes: d0438bd6aa09 ("phy: add the mvebu cp110 comphy driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/atm/idt77252.c | 68 ++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-index 73ebad6634a7..7e21b2a977b9 100644
---- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-@@ -468,8 +468,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
- {
- 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
- 	struct mvebu_comphy_priv *priv = lane->priv;
--	int ret;
--	u32 mux, val;
-+	int ret, mux;
-+	u32 val;
- 
- 	mux = mvebu_comphy_get_mux(lane->id, lane->port, lane->mode);
- 	if (mux < 0)
-@@ -477,7 +477,7 @@ static int mvebu_comphy_power_on(struct phy *phy)
- 
- 	regmap_read(priv->regmap, MVEBU_COMPHY_SELECTOR, &val);
- 	val &= ~(0xf << MVEBU_COMPHY_SELECTOR_PHY(lane->id));
--	val |= mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
-+	val |= (u32)mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
- 	regmap_write(priv->regmap, MVEBU_COMPHY_SELECTOR, val);
- 
- 	switch (lane->mode) {
 -- 
-2.14.1
+2.13.4
 
