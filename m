@@ -1,50 +1,68 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 02 Aug 2017 08:35:35 +0000
-Subject: [PATCH] 9p: constify xattr_handler structures
-Message-Id: <1501662935-26695-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 05 Aug 2017 20:37:15 +0000
+Subject: [PATCH 2/4] thermal: zx2967: constify thermal_zone_of_device_ops structures
+Message-Id: <1501965437-30730-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The xattr_handler structures are only stored in an array of const
-structures.  Thus the xattr_handler structures themselves can be
-const.
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structure itself can be const.
+
+Done with the help of Coccinelle.
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct thermal_zone_of_device_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+expression e1,e2,e3;
+position p;
+@@
+thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct thermal_zone_of_device_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct thermal_zone_of_device_ops i = { ... };
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- fs/9p/xattr.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/thermal/zx2967_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
-index f329eee..3d45d25 100644
---- a/fs/9p/xattr.c
-+++ b/fs/9p/xattr.c
-@@ -154,20 +154,20 @@ static int v9fs_xattr_handler_set(const struct xattr_handler *handler,
- 	return v9fs_xattr_set(dentry, full_name, value, size, flags);
+diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
+index a5670ad..6acce0b 100644
+--- a/drivers/thermal/zx2967_thermal.c
++++ b/drivers/thermal/zx2967_thermal.c
+@@ -111,7 +111,7 @@ static int zx2967_thermal_get_temp(void *data, int *temp)
+ 	return ret;
  }
  
--static struct xattr_handler v9fs_xattr_user_handler = {
-+static const struct xattr_handler v9fs_xattr_user_handler = {
- 	.prefix	= XATTR_USER_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
+-static struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
++static const struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
+ 	.get_temp = zx2967_thermal_get_temp,
  };
  
--static struct xattr_handler v9fs_xattr_trusted_handler = {
-+static const struct xattr_handler v9fs_xattr_trusted_handler = {
- 	.prefix	= XATTR_TRUSTED_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
- };
- 
- #ifdef CONFIG_9P_FS_SECURITY
--static struct xattr_handler v9fs_xattr_security_handler = {
-+static const struct xattr_handler v9fs_xattr_security_handler = {
- 	.prefix	= XATTR_SECURITY_PREFIX,
- 	.get	= v9fs_xattr_handler_get,
- 	.set	= v9fs_xattr_handler_set,
 
