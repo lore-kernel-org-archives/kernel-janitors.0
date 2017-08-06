@@ -1,53 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 15:08:03 +0000
-Subject: [PATCH] ASoC: DaVinci: Delete an error message for a failed memory allocation in two functions
-Message-Id: <e25c9d88-2f82-bd02-b0da-0342077406b1@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:10 +0000
+Subject: [PATCH 01/12] [media] st-delta: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Hugues Fruchet <hugues.fruchet@st.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 16:51:46 +0200
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Omit an extra message for a memory allocation failure in these functions.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- sound/soc/davinci/davinci-mcasp.c | 2 --
- sound/soc/davinci/davinci-vcif.c  | 5 +----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ drivers/media/platform/sti/delta/delta-v4l2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index 56ec1d301ac2..d486908d4e0e 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -1604,6 +1604,4 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
- 		if (!pdata) {
--			dev_err(&pdev->dev,
--				"Failed to allocate memory for pdata\n");
- 			ret = -ENOMEM;
- 			return pdata;
- 		}
-diff --git a/sound/soc/davinci/davinci-vcif.c b/sound/soc/davinci/davinci-vcif.c
-index c77d9218795a..5415b72393fa 100644
---- a/sound/soc/davinci/davinci-vcif.c
-+++ b/sound/soc/davinci/davinci-vcif.c
-@@ -213,8 +213,5 @@ static int davinci_vcif_probe(struct platform_device *pdev)
--	if (!davinci_vcif_dev) {
--		dev_dbg(&pdev->dev,
--			"could not allocate memory for private data\n");
-+	if (!davinci_vcif_dev)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/media/platform/sti/delta/delta-v4l2.c b/drivers/media/platform/sti/delta/delta-v4l2.c
+index ff9850e..b2dc3d2 100644
+--- a/drivers/media/platform/sti/delta/delta-v4l2.c
++++ b/drivers/media/platform/sti/delta/delta-v4l2.c
+@@ -1095,7 +1095,7 @@ static int delta_job_ready(void *priv)
+ }
  
- 	/* DMA tx params */
- 	davinci_vcif_dev->davinci_vc = davinci_vc;
--- 
-2.14.0
+ /* mem-to-mem ops */
+-static struct v4l2_m2m_ops delta_m2m_ops = {
++static const struct v4l2_m2m_ops delta_m2m_ops = {
+ 	.device_run     = delta_device_run,
+ 	.job_ready	= delta_job_ready,
+ 	.job_abort      = delta_job_abort,
 
