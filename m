@@ -1,53 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 07 Aug 2017 09:50:40 +0000
-Subject: [PATCH 1/5] drivers/mmc/host: constify sdhci_pltfm_data structures
-Message-Id: <1502099444-10473-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:37:55 +0000
+Subject: [PATCH 1/3] power: supply: charger-manager: Fix a NULL pointer dereference in 'charger_manager_probe
+Message-Id: <09a9f8a61f784779d6127b83f9540ae1db4c25be.1502058761.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The sdhci_pltfm_data structure is only passed as the second argument
-of sdhci_pltfm_init, which is const, so the sdhci_pltfm_data structure can
-be const as well.
+'devm_kzalloc()' can return NULL. Return -ENOMEM in this case in order to
+avoid a NULL pointer dereference later on.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mmc/host/sdhci-pic32.c |    2 +-
- drivers/mmc/host/sdhci-pxav3.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/charger-manager.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-pic32.c b/drivers/mmc/host/sdhci-pic32.c
-index 72c13b6..a6caa49 100644
---- a/drivers/mmc/host/sdhci-pic32.c
-+++ b/drivers/mmc/host/sdhci-pic32.c
-@@ -97,7 +97,7 @@ static unsigned int pic32_sdhci_get_ro(struct sdhci_host *host)
- 	.get_ro = pic32_sdhci_get_ro,
- };
+diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
+index adc3761831e1..52a49857e20f 100644
+--- a/drivers/power/supply/charger-manager.c
++++ b/drivers/power/supply/charger-manager.c
+@@ -1645,6 +1645,8 @@ static int charger_manager_probe(struct platform_device *pdev)
+ 	/* Initialize alarm timer */
+ 	if (alarmtimer_get_rtcdev()) {
+ 		cm_timer = devm_kzalloc(cm->dev, sizeof(*cm_timer), GFP_KERNEL);
++		if (!cm_timer)
++			return -ENOMEM;
+ 		alarm_init(cm_timer, ALARM_BOOTTIME, cm_timer_func);
+ 	}
  
--static struct sdhci_pltfm_data sdhci_pic32_pdata = {
-+static const struct sdhci_pltfm_data sdhci_pic32_pdata = {
- 	.ops = &pic32_sdhci_ops,
- 	.quirks = SDHCI_QUIRK_NO_HISPD_BIT,
- 	.quirks2 = SDHCI_QUIRK2_NO_1_8_V,
-diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-index f953f35..a344341 100644
---- a/drivers/mmc/host/sdhci-pxav3.c
-+++ b/drivers/mmc/host/sdhci-pxav3.c
-@@ -337,7 +337,7 @@ static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
- 	.set_uhs_signaling = pxav3_set_uhs_signaling,
- };
- 
--static struct sdhci_pltfm_data sdhci_pxav3_pdata = {
-+static const struct sdhci_pltfm_data sdhci_pxav3_pdata = {
- 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK
- 		| SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC
- 		| SDHCI_QUIRK_32BIT_ADMA_SIZE
+-- 
+2.11.0
 
