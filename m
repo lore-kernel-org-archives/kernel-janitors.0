@@ -1,39 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 07 Aug 2017 13:03:49 +0000
-Subject: [PATCH 4/5] block-skd: Fix a typo in a comment line in skd_do_inq_page_da()
-Message-Id: <01b19125-e167-47f7-4e32-968849fd8712@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 19:15:28 +0000
+Subject: [PATCH 0/5] mtip32xx: Adjustments for some function implementations
+Message-Id: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
-In-Reply-To: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 7 Aug 2017 14:18:50 +0200
+Date: Sun, 6 Aug 2017 21:02:34 +0200
 
-Add a missing character in this description.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/skd_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (5):
+  Delete an error message for a failed memory allocation in five functions
+  Improve a size determination in two functions
+  Delete an unnecessary variable initialisation in mtip_pci_probe()
+  Fix a typo in a comment line in mtip_hw_get_identify()
+  Adjust an input validation check in mtip_hw_debugfs_exit()
 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index 8e2c89069927..e53b40341834 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2556,7 +2556,7 @@ static void skd_do_inq_page_da(struct skd_device *skdev,
- 	pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &val);
- 	inq.pcie_subsystem_device_id = cpu_to_be16(val);
- 
--	/* Driver version, fixed lenth, padded with spaces on the right */
-+	/* Driver version, fixed length, padded with spaces on the right */
- 	inq.driver_version_length = sizeof(inq.driver_version);
- 	memset(&inq.driver_version, ' ', sizeof(inq.driver_version));
- 	memcpy(inq.driver_version, DRV_VER_COMPL,
+ drivers/block/mtip32xx/mtip32xx.c | 37 ++++++++++---------------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
+
 -- 
 2.13.4
 
