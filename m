@@ -1,77 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:42:43 +0000
-Subject: Applied "ASoC: kirkwood: Delete an error message for a failed memory allocation in kirkwood_i2s_dev_
-Message-Id: <E1dhIRv-000586-TL@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 09:54:17 +0000
+Subject: Re: [PATCH 0/7] cfag12864b: Fine-tuning for cfag12864b_init()
+Message-Id: <176b6eff-252e-2b2c-7130-ecbd7ebe21d3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2f32b2cf-dcde-ccef-24a5-f7b6ad9beb83@users.sourceforge.net>
-In-Reply-To: <2f32b2cf-dcde-ccef-24a5-f7b6ad9beb83@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The patch
+> Date: Sat, 10 Sep 2016 16:17:01 +0200
+> 
+> Some update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (7):
+>   Use kmalloc_array()
+>   Delete an error message for a failed kmalloc_array() call
+>   Return directly if the driver "ks0108" was not initialized
+>   Return directly after a failed get_zeroed_page()
+>   Rename jump labels
+>   Return an error code only as a constant
+>   Adjust two checks for null pointers
+> 
+>  drivers/auxdisplay/cfag12864b.c | 37 +++++++++++++------------------------
+>  1 file changed, 13 insertions(+), 24 deletions(-)
 
-   ASoC: kirkwood: Delete an error message for a failed memory allocation in kirkwood_i2s_dev_probe()
+Would you like to take another look at change possibilities
+for this software module?
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c7591edc2abd279018abb68aea5bdc604b8f56dd Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 09:35:33 +0200
-Subject: [PATCH] ASoC: kirkwood: Delete an error message for a failed memory
- allocation in kirkwood_i2s_dev_probe()
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/kirkwood/kirkwood-i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
-index 3b09f71b9535..105a73cc5158 100644
---- a/sound/soc/kirkwood/kirkwood-i2s.c
-+++ b/sound/soc/kirkwood/kirkwood-i2s.c
-@@ -538,10 +538,9 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
- 	int err;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "allocation failed\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
-+
- 	dev_set_drvdata(&pdev->dev, priv);
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--- 
-2.13.2
-
+Regards,
+Markus
