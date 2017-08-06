@@ -1,120 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 05:34:01 +0000
-Subject: [PATCH 3/4] [media] zr364xx: Adjust ten checks for null pointers
-Message-Id: <8a949a7b-f42a-f875-d4d7-4e0bc1f39102@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 19:22:00 +0000
+Subject: [PATCH 3/5] mtip32xx: Delete an unnecessary variable initialisation in mtip_pci_probe()
+Message-Id: <9173bae4-e19d-46d4-541c-a1f05a2e54ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
-In-Reply-To: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
+References: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
+In-Reply-To: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, linux-usb@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 22:40:47 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sun, 6 Aug 2017 20:06:42 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+The local variable "dd" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/zr364xx/zr364xx.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
-index 37cd6e20e68a..4cc6d2a9d91f 100644
---- a/drivers/media/usb/zr364xx/zr364xx.c
-+++ b/drivers/media/usb/zr364xx/zr364xx.c
-@@ -385,9 +385,9 @@ static int buffer_prepare(struct videobuf_queue *vq, struct videobuf_buffer *vb,
- 						  vb);
- 	int rc;
- 
--	DBG("%s, field=%d, fmt name = %s\n", __func__, field, cam->fmt != NULL ?
--	    cam->fmt->name : "");
--	if (cam->fmt = NULL)
-+	DBG("%s, field=%d, fmt name = %s\n", __func__, field,
-+	    cam->fmt ? cam->fmt->name : "");
-+	if (!cam->fmt)
- 		return -EINVAL;
- 
- 	buf->vb.size = cam->width * cam->height * (cam->fmt->depth >> 3);
-@@ -787,7 +787,7 @@ static int zr364xx_vidioc_try_fmt_vid_cap(struct file *file, void *priv,
- 	struct zr364xx_camera *cam = video_drvdata(file);
- 	char pixelformat_name[5];
- 
--	if (cam = NULL)
-+	if (!cam)
- 		return -ENODEV;
- 
- 	if (f->fmt.pix.pixelformat != V4L2_PIX_FMT_JPEG) {
-@@ -817,7 +817,7 @@ static int zr364xx_vidioc_g_fmt_vid_cap(struct file *file, void *priv,
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index 97cbf39b4273..cba5bc2a1493 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -4193,7 +4193,7 @@ static int mtip_pci_probe(struct pci_dev *pdev,
+ 			const struct pci_device_id *ent)
  {
- 	struct zr364xx_camera *cam;
- 
--	if (file = NULL)
-+	if (!file)
- 		return -ENODEV;
- 	cam = video_drvdata(file);
- 
-@@ -979,13 +979,13 @@ static void read_pipe_completion(struct urb *purb)
- 
- 	pipe_info = purb->context;
- 	_DBG("%s %p, status %d\n", __func__, purb, purb->status);
--	if (pipe_info = NULL) {
-+	if (!pipe_info) {
- 		printk(KERN_ERR KBUILD_MODNAME ": no context!\n");
- 		return;
- 	}
- 
- 	cam = pipe_info->cam;
--	if (cam = NULL) {
-+	if (!cam) {
- 		printk(KERN_ERR KBUILD_MODNAME ": no context!\n");
- 		return;
- 	}
-@@ -1069,7 +1069,7 @@ static void zr364xx_stop_readpipe(struct zr364xx_camera *cam)
- {
- 	struct zr364xx_pipeinfo *pipe_info;
- 
--	if (cam = NULL) {
-+	if (!cam) {
- 		printk(KERN_ERR KBUILD_MODNAME ": invalid device\n");
- 		return;
- 	}
-@@ -1273,7 +1273,7 @@ static int zr364xx_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct zr364xx_camera *cam = video_drvdata(file);
- 	int ret;
- 
--	if (cam = NULL) {
-+	if (!cam) {
- 		DBG("%s: cam = NULL\n", __func__);
- 		return -ENODEV;
- 	}
-@@ -1357,7 +1357,7 @@ static int zr364xx_board_init(struct zr364xx_camera *cam)
- 
- 	pipe->transfer_buffer = kzalloc(pipe->transfer_size,
- 					GFP_KERNEL);
--	if (pipe->transfer_buffer = NULL) {
-+	if (!pipe->transfer_buffer) {
- 		DBG("out of memory!\n");
- 		return -ENOMEM;
- 	}
-@@ -1373,7 +1373,7 @@ static int zr364xx_board_init(struct zr364xx_camera *cam)
- 		DBG("valloc %p, idx %lu, pdata %p\n",
- 			&cam->buffer.frame[i], i,
- 			cam->buffer.frame[i].lpvbits);
--		if (cam->buffer.frame[i].lpvbits = NULL) {
-+		if (!cam->buffer.frame[i].lpvbits) {
- 			printk(KERN_INFO KBUILD_MODNAME ": out of memory. Using less frames\n");
- 			break;
- 		}
+ 	int rv = 0;
+-	struct driver_data *dd = NULL;
++	struct driver_data *dd;
+ 	char cpu_list[256];
+ 	const struct cpumask *node_mask;
+ 	int cpu, i = 0, j = 0;
 -- 
-2.14.1
+2.13.4
 
