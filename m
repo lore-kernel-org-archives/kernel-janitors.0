@@ -1,34 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 13:26:17 +0000
-Subject: [PATCH 0/2] UBIFS: Adjustments for some function implementations
-Message-Id: <bd8107ce-fc62-db39-8134-59dca314da7c@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 08:16:54 +0000
+Subject: [PATCH] ATM-nicstar: Delete an error message for a failed memory allocation in ns_init_card()
+Message-Id: <15557ccf-4b14-924a-b1ce-8fa052f0e1f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 15:21:23 +0200
+Date: Sun, 6 Aug 2017 10:10:21 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in dbg_check_orphans()
-  Improve 19 size determinations
+This issue was detected by using the Coccinelle software.
 
- fs/ubifs/log.c      |  2 +-
- fs/ubifs/lpt.c      | 12 ++++++------
- fs/ubifs/orphan.c   | 10 ++++------
- fs/ubifs/recovery.c |  2 +-
- fs/ubifs/replay.c   |  8 ++++----
- fs/ubifs/scan.c     |  4 ++--
- fs/ubifs/super.c    |  2 +-
- fs/ubifs/tnc.c      |  2 +-
- 8 files changed, 20 insertions(+), 22 deletions(-)
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/nicstar.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 9588d80f318e..08d5aa8b9524 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -372,9 +372,6 @@ static int ns_init_card(int i, struct pci_dev *pcidev)
+ 
+ 	card = kmalloc(sizeof(*card), GFP_KERNEL);
+ 	if (!card) {
+-		printk
+-		    ("nicstar%d: can't allocate memory for device structure.\n",
+-		     i);
+ 		error = 2;
+ 		ns_init_card_error(card, error);
+ 		return error;
 -- 
-2.14.0
+2.13.4
 
