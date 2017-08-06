@@ -1,57 +1,73 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:23 +0000
-Subject: [PATCH 11/17] pinctrl: ingenic: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-12-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 06:30:12 +0000
+Subject: [PATCH 3/3] ATM-iphase: Adjust four checks for null pointers
+Message-Id: <693faecc-81ea-6d85-788c-b42924a2afb1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
+In-Reply-To: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (confops, pctlops, and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 5 Aug 2017 22:30:04 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Done with the help of Coccinelle.
+The script “checkpatch.pl” pointed information out like the following.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Comparison to NULL could be written !…
 
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-ingenic.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/atm/iphase.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index d8e8842..d847618 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -460,7 +460,7 @@ static inline bool ingenic_get_pin_config(struct ingenic_pinctrl *jzpc,
- 	return val & BIT(idx);
- }
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index ad4c1b41ba98..19782fed572a 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -101,7 +101,7 @@ static void ia_init_rtn_q (IARTN_Q *que)
+ static void ia_enque_head_rtn_q (IARTN_Q *que, IARTN_Q * data) 
+ {
+    data->next = NULL;
+-   if (que->next = NULL) 
++	if (!que->next)
+       que->next = que->tail = data;
+    else {
+       data->next = que->next;
+@@ -116,7 +116,7 @@ static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
+       return -ENOMEM;
+    entry->data = data;
+    entry->next = NULL;
+-   if (que->next = NULL) 
++	if (!que->next)
+       que->next = que->tail = entry;
+    else {
+       que->tail->next = entry;
+@@ -127,7 +127,7 @@ static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
  
--static struct pinctrl_ops ingenic_pctlops = {
-+static const struct pinctrl_ops ingenic_pctlops = {
- 	.get_groups_count = pinctrl_generic_get_group_count,
- 	.get_group_name = pinctrl_generic_get_group_name,
- 	.get_group_pins = pinctrl_generic_get_group_pins,
-@@ -543,7 +543,7 @@ static int ingenic_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinmux_ops ingenic_pmxops = {
-+static const struct pinmux_ops ingenic_pmxops = {
- 	.get_functions_count = pinmux_generic_get_function_count,
- 	.get_function_name = pinmux_generic_get_function_name,
- 	.get_function_groups = pinmux_generic_get_function_groups,
-@@ -696,7 +696,7 @@ static int ingenic_pinconf_group_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinconf_ops ingenic_confops = {
-+static const struct pinconf_ops ingenic_confops = {
- 	.is_generic = true,
- 	.pin_config_get = ingenic_pinconf_get,
- 	.pin_config_set = ingenic_pinconf_set,
+ static IARTN_Q * ia_deque_rtn_q (IARTN_Q *que) {
+    IARTN_Q *tmpdata;
+-   if (que->next = NULL)
++	if (!que->next)
+       return NULL;
+    tmpdata = que->next;
+    if ( que->next = que->tail)  
+@@ -1321,7 +1321,7 @@ static void rx_dle_intr(struct atm_dev *dev)
+               goto INCR_DLE;
+           }
+           ia_vcc = INPH_IA_VCC(vcc);
+-          if (ia_vcc = NULL)
++		if (!ia_vcc)
+           {
+              atomic_inc(&vcc->stats->rx_err);
+              atm_return(vcc, skb->truesize);
+-- 
+2.13.4
 
