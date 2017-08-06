@@ -1,31 +1,66 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Sun, 13 Aug 2017 16:24:14 +0000
-Subject: Re: [PATCH 1/4] selinux: Delete eight unnecessary variable assignments
-Message-Id: <20170813162414.GC4515@mail.hallyn.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:15 +0000
+Subject: [PATCH 06/12] [media] exynos-gsc: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
-	<05edc763-dddd-fe48-b98c-21e4ad5463a3@users.sourceforge.net>
-	<20170813162233.GB4515@mail.hallyn.com>
-In-Reply-To: <20170813162233.GB4515@mail.hallyn.com>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Quoting Serge E. Hallyn (serge@hallyn.com):
-> Quoting SF Markus Elfring (elfring@users.sourceforge.net):
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 13 Aug 2017 14:17:48 +0200
-> > 
-> > One local variable was reset to zero at the end of these functions.
-> > This value will also be set by a previous call of a function if it was
-> > executed successfully. Thus omit an extra assignment there.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-BTW this does add a burden to the maintainers as it makes the
-code a bit more fragile in the face of future changes.  So my
-ack means it looks ok, but if the maintainers don't want to take
-it I absolutely understand.
+Done with the help of Coccinelle.
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/exynos-gsc/gsc-m2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index 33611a4..2a2994e 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -747,7 +747,7 @@ static int gsc_m2m_mmap(struct file *file, struct vm_area_struct *vma)
+ 	.mmap		= gsc_m2m_mmap,
+ };
+ 
+-static struct v4l2_m2m_ops gsc_m2m_ops = {
++static const struct v4l2_m2m_ops gsc_m2m_ops = {
+ 	.device_run	= gsc_m2m_device_run,
+ 	.job_abort	= gsc_m2m_job_abort,
+ };
+
