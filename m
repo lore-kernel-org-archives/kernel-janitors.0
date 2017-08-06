@@ -1,27 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 19:14:29 +0000
-Subject: [PATCH 0/2] [media] DRXD: Adjustments for three function implementations
-Message-Id: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 08:41:47 +0000
+Subject: [PATCH] atm: solos-pci: Delete an error message for a failed memory allocation in fpga_probe()
+Message-Id: <997c2270-135d-0ac9-e6f0-f62cf0750a79@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 21:10:12 +0200
+Date: Sun, 6 Aug 2017 10:37:31 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in load_firmware()
-  Adjust a null pointer check in three functions
+This issue was detected by using the Coccinelle software.
 
- drivers/media/dvb-frontends/drxd_hard.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/solos-pci.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 8754793223cd..cb3424a4f91f 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -1293,7 +1293,6 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 			card->dma_alignment = 3;
+ 			card->dma_bounce = kmalloc(card->nr_ports * BUF_SIZE, GFP_KERNEL);
+ 			if (!card->dma_bounce) {
+-				dev_warn(&card->dev->dev, "Failed to allocate DMA bounce buffers\n");
+ 				err = -ENOMEM;
+ 				/* Fallback to MMIO doesn't work */
+ 				goto out_unmap_both;
 -- 
-2.14.1
+2.13.4
 
