@@ -1,117 +1,55 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Sat, 12 Aug 2017 18:03:56 +0000
-Subject: Re: [PATCH] power: supply: lp8788: Make several arrays static const * const
-Message-Id: <20170812180356.fth4xnltlccnyiyz@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="goxs6yl665dszigg"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 14:00:09 +0000
+Subject: Re: [PATCH v2 00/17] IB/mlx: Fine-tuning for several function implementations
+Message-Id: <617e30ff-2705-b053-ee28-ed9385037580@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170811215212.9985-1-colin.king@canonical.com>
-In-Reply-To: <20170811215212.9985-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Milo Kim <milo.kim@ti.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
+ <1492720654.3041.16.camel@redhat.com>
+ <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
---goxs6yl665dszigg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Aug 11, 2017 at 10:52:12PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Don't populate various read only arrays on the stack but make them
-> static const, making the object code smaller and saves 148 bytes
-> overall:
->=20
-> Before:
->    text    data     bss     dec     hex filename
->   11940    4496      64   16500    4074 lp8788-charger.o
->=20
-> After:
->    text    data     bss     dec     hex filename
->   11472    4816      64   16352    3fe0 lp8788-charger.o
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, queued.
-
--- Sebastian
-
+> Date: Fri, 21 Apr 2017 19:56:54 +0200
+> 
+> Several update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (17):
+>   Use kcalloc() in mlx4_ib_alloc_pv_bufs()
+>   Use kmalloc_array() in six functions
+>   Improve size determinations in six functions
+>   Fix a typo in a comment line
+>   Delete four unnecessary return statements
+>   Delete an unnecessary check before kfree() in free_pv_object()
+>   Move an assignment out of a check in forward_trap()
+>   Enclose 46 expressions for sizeof by parentheses
+>   Split a condition check in six functions
+>   Delete an unnecessary variable in __mlx4_ib_query_gid()
+>   Delete an unnecessary variable initialisation in mlx4_ib_add()
+>   Delete an unnecessary variable assignment in mlx4_ib_add()
+>   Delete an error message for a failed memory allocation in mlx4_ib_add()
+>   Delete unnecessary braces in mlx4_ib_add()
+>   Delete unwanted spaces behind usages of the sizeof operator
+>   Add spaces for better code readability
+>   Less function calls in create_kernel_qp() after error detection
 > ---
->  drivers/power/supply/lp8788-charger.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply=
-/lp8788-charger.c
-> index 677f7c40b25a..0f3432795f3c 100644
-> --- a/drivers/power/supply/lp8788-charger.c
-> +++ b/drivers/power/supply/lp8788-charger.c
-> @@ -626,7 +626,7 @@ static ssize_t lp8788_show_charger_status(struct devi=
-ce *dev,
->  {
->  	struct lp8788_charger *pchg =3D dev_get_drvdata(dev);
->  	enum lp8788_charging_state state;
-> -	char *desc[LP8788_MAX_CHG_STATE] =3D {
-> +	static const char * const desc[LP8788_MAX_CHG_STATE] =3D {
->  		[LP8788_OFF] =3D "CHARGER OFF",
->  		[LP8788_WARM_UP] =3D "WARM UP",
->  		[LP8788_LOW_INPUT] =3D "LOW INPUT STATE",
-> @@ -650,8 +650,10 @@ static ssize_t lp8788_show_eoc_time(struct device *d=
-ev,
->  				struct device_attribute *attr, char *buf)
->  {
->  	struct lp8788_charger *pchg =3D dev_get_drvdata(dev);
-> -	char *stime[] =3D { "400ms", "5min", "10min", "15min",
-> -			"20min", "25min", "30min", "No timeout" };
-> +	static const char * const stime[] =3D {
-> +		"400ms", "5min", "10min", "15min",
-> +		"20min", "25min", "30min", "No timeout"
-> +	};
->  	u8 val;
-> =20
->  	lp8788_read_byte(pchg->lp, LP8788_CHG_EOC, &val);
-> @@ -665,9 +667,13 @@ static ssize_t lp8788_show_eoc_level(struct device *=
-dev,
->  				struct device_attribute *attr, char *buf)
->  {
->  	struct lp8788_charger *pchg =3D dev_get_drvdata(dev);
-> -	char *abs_level[] =3D { "25mA", "49mA", "75mA", "98mA" };
-> -	char *relative_level[] =3D { "5%", "10%", "15%", "20%" };
-> -	char *level;
-> +	static const char * const abs_level[] =3D {
-> +			"25mA", "49mA", "75mA", "98mA"
-> +	};
-> +	static const char * const relative_level[] =3D {
-> +			"5%", "10%", "15%", "20%"
-> +	};
-> +	const char *level;
->  	u8 val;
->  	u8 mode;
-> =20
-> --=20
-> 2.11.0
->=20
+> 
+> v2:
+> Changes were rebased on source files from Linux next-20170421.
+> Some of them were recombined as requested by Doug Ledford.
+> 
+>  drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
+>  drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++----------------
+>  drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++-------------------
+>  drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
+>  drivers/infiniband/hw/mlx5/srq.c  |   5 +-
+>  5 files changed, 261 insertions(+), 219 deletions(-)
 
---goxs6yl665dszigg
-Content-Type: application/pgp-signature; name="signature.asc"
+Will the clarification be continued for the shown change possibilities?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlmPQwwACgkQ2O7X88g7
-+ppzshAAqPPsMNiMUMjRb0q1EWJD4NlIH/NeiavHOmrPLNuzwBvd22jlhKVMFVsL
-6zzVPj8MpM6/EGZxigiUiK3fpqYKHjL1YwG+DlT2vVmnO8FS9ZM8s2fOH142dG1n
-FbZgKHJfyx360OqgPdJi26d5BPVX8N1kR4sY4ZkOQ993ykFjKRMlMInS804jvMPX
-AEO779ako6Y/711Of/z1IzcKLxRGSq9wKBVCAFbMXpp1bnmHPfc3qsfOMv2R6llp
-k/eYzCYlatcT/RLvhdpIIKjLoqWqaHspeIYIRibcIquf4x3W2JjVoQ1rc7HryYEV
-XqNxLF6c2PSuM7to8NHZowp+8BKentPjUakYO13fZZE0hls0/WmIrM5dhiQMQElN
-xE2hKRwa4K/6ui2ZEQe4zPjtA+5PeNEO9DKJNqEaDqFLdI97/UdWJuBzxCOBUUPP
-/BhTyIfosKqry9UTMFuq9gQwyUL7/e0mp3O9wS6y7B+J95RkJYnGJG77nXNH0oMb
-ffzmGvfZiKTQd7vrtvSdYL3WYwpb3Fm76wzzPpzrox2W68KU2a85hya0rGOvdH5s
-NgU2MWmLAPxXYpUMYk5pbQVFJTpUVyO0mNGGNZWO3Upal4AQdm/gr5GuujgkONYF
-7OiGbMnTyR3zZkM8Tl5hRTr+98/ElQFVcSGwl0Air6OF6JGF6fY=
-=YJ2N
------END PGP SIGNATURE-----
-
---goxs6yl665dszigg--
+Regards,
+Markus
