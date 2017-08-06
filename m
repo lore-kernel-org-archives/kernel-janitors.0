@@ -1,113 +1,161 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 20:13:19 +0000
-Subject: [PATCH 1/3] orangefs: Delete error messages for a failed memory allocation in five functions
-Message-Id: <5ee0f84b-1149-7488-c57f-84d1dd0e65c7@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 06:26:40 +0000
+Subject: [PATCH 1/3] ATM-iphase: Adjust 11 function calls together with a variable assignment
+Message-Id: <3e7b36a6-41e0-9b55-5933-bc9ef2d5fae6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
-In-Reply-To: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
+References: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
+In-Reply-To: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Brandenburg <martin@omnibond.com>, Mike Marshall <hubcap@omnibond.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 21:00:07 +0200
+Date: Sat, 5 Aug 2017 21:39:06 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/orangefs/devorangefs-req.c  |  9 +++------
- fs/orangefs/orangefs-bufmap.c  | 10 ++--------
- fs/orangefs/orangefs-debugfs.c |  1 -
- fs/orangefs/orangefs-mod.c     |  1 -
- fs/orangefs/super.c            |  4 +---
- 5 files changed, 6 insertions(+), 19 deletions(-)
+ drivers/atm/iphase.c | 57 +++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 34 insertions(+), 23 deletions(-)
 
-diff --git a/fs/orangefs/devorangefs-req.c b/fs/orangefs/devorangefs-req.c
-index c19f0787c9c6..2826859bdc2c 100644
---- a/fs/orangefs/devorangefs-req.c
-+++ b/fs/orangefs/devorangefs-req.c
-@@ -461,13 +461,10 @@ static ssize_t orangefs_devreq_write_iter(struct kiocb *iocb,
- 	if (op->downcall.type != ORANGEFS_VFS_OP_READDIR)
- 		goto wakeup;
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index fc72b763fdd7..472762f70921 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -152,7 +152,8 @@ static void ia_hack_tcq(IADEV *dev) {
+         *(u_short *) (dev->seg_ram + dev->host_tcq_wr) = 0;
+      }                                 
+      else if (dev->desc_tbl[desc1 -1].timestamp) {
+-        if (!(iavcc_r = dev->desc_tbl[desc1 -1].iavcc)) { 
++			iavcc_r = dev->desc_tbl[desc1 - 1].iavcc;
++			if (!iavcc_r) {
+            printk("IA: Fatal err in get_desc\n");
+            continue;
+         }
+@@ -617,7 +618,8 @@ static int ia_que_tx (IADEV *iadev) {
+    num_desc = ia_avail_descs(iadev);
  
--	op->downcall.trailer_buf -		vmalloc(op->downcall.trailer_size);
--	if (op->downcall.trailer_buf = NULL) {
--		gossip_err("%s: failed trailer vmalloc.\n",
--			   __func__);
-+	op->downcall.trailer_buf = vmalloc(op->downcall.trailer_size);
-+	if (!op->downcall.trailer_buf)
- 		goto Enomem;
--	}
+    while (num_desc && (skb = skb_dequeue(&iadev->tx_backlog))) {
+-      if (!(vcc = ATM_SKB(skb)->vcc)) {
++		vcc = ATM_SKB(skb)->vcc;
++		if (!vcc) {
+          dev_kfree_skb_any(skb);
+          printk("ia_que_tx: Null vcc\n");
+          break;
+@@ -1172,8 +1174,9 @@ static int rx_pkt(struct atm_dev *dev)
+            atomic_inc(&vcc->stats->rx_err);
+ 	   goto out_free_desc;
+         }
+-		  
+-        if (!(skb = atm_alloc_charge(vcc, len, GFP_ATOMIC))) {
 +
- 	memset(op->downcall.trailer_buf, 0, op->downcall.trailer_size);
- 	if (!copy_from_iter_full(op->downcall.trailer_buf,
- 			         op->downcall.trailer_size, iter)) {
-diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-index 038d67545d9f..7ef473f3d642 100644
---- a/fs/orangefs/orangefs-bufmap.c
-+++ b/fs/orangefs/orangefs-bufmap.c
-@@ -244,20 +244,14 @@ orangefs_bufmap_alloc(struct ORANGEFS_dev_map_desc *user_desc)
- 
- 	bufmap->buffer_index_array  		kzalloc(DIV_ROUND_UP(bufmap->desc_count, BITS_PER_LONG), GFP_KERNEL);
--	if (!bufmap->buffer_index_array) {
--		gossip_err("orangefs: could not allocate %d buffer indices\n",
--				bufmap->desc_count);
-+	if (!bufmap->buffer_index_array)
- 		goto out_free_bufmap;
--	}
- 
- 	bufmap->desc_array  		kcalloc(bufmap->desc_count, sizeof(struct orangefs_bufmap_desc),
- 			GFP_KERNEL);
--	if (!bufmap->desc_array) {
--		gossip_err("orangefs: could not allocate %d descriptors\n",
--				bufmap->desc_count);
-+	if (!bufmap->desc_array)
- 		goto out_free_index_array;
--	}
- 
- 	bufmap->page_count = bufmap->total_size / PAGE_SIZE;
- 
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index 716ed337f166..93fe8f8e60f1 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -577,5 +577,4 @@ static int orangefs_prepare_cdm_array(char *debug_array_string)
- 	if (!cdm_array) {
--		pr_info("malloc failed for cdm_array!\n");
- 		rc = -ENOMEM;
- 		goto out;
++	skb = atm_alloc_charge(vcc, len, GFP_ATOMIC);
++	if (!skb) {
+            if (vcc->vci < 32)
+               printk("Drop control packets\n");
+ 	   goto out_free_desc;
+@@ -1296,7 +1299,8 @@ static void rx_dle_intr(struct atm_dev *dev)
+       desc = ATM_DESC(skb);
+       free_desc(dev, desc);  
+                
+-      if (!(len = skb->len))
++	len = skb->len;
++	if (!len)
+       {  
+           printk("rx_dle_intr: skb len 0\n");  
+ 	  dev_kfree_skb_any(skb);  
+@@ -1882,9 +1886,9 @@ static int open_tx(struct atm_vcc *vcc)
+                 }
+                 vc->type = CBR;
+                 vc->status = CRC_APPEND;
+-                if ((ret = ia_cbr_setup (iadev, vcc)) < 0) {     
+-                    return ret;
+-                }
++		ret = ia_cbr_setup(iadev, vcc);
++		if (ret < 0)
++			return ret;
+ 	} else {
+ 		printk("iadev:  Non UBR, ABR and CBR traffic not supported\n");
  	}
-diff --git a/fs/orangefs/orangefs-mod.c b/fs/orangefs/orangefs-mod.c
-index c1b5174cb5a9..85ef87245a87 100644
---- a/fs/orangefs/orangefs-mod.c
-+++ b/fs/orangefs/orangefs-mod.c
-@@ -100,5 +100,4 @@ static int __init orangefs_init(void)
- 	if (!orangefs_htable_ops_in_progress) {
--		gossip_err("Failed to initialize op hashtable");
- 		ret = -ENOMEM;
- 		goto cleanup_inode;
- 	}
-diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
-index 5a1bed6c8c6a..47f3fb9cbec4 100644
---- a/fs/orangefs/super.c
-+++ b/fs/orangefs/super.c
-@@ -107,10 +107,8 @@ static struct inode *orangefs_alloc_inode(struct super_block *sb)
- 	struct orangefs_inode_s *orangefs_inode;
- 
- 	orangefs_inode = kmem_cache_alloc(orangefs_inode_cache, GFP_KERNEL);
--	if (orangefs_inode = NULL) {
--		gossip_err("Failed to allocate orangefs_inode\n");
-+	if (!orangefs_inode)
- 		return NULL;
--	}
- 
- 	/*
- 	 * We want to clear everything except for rw_semaphore and the
+@@ -2293,15 +2297,19 @@ static int reset_sar(struct atm_dev *dev)
+ 	unsigned int pci[64];  
+ 	  
+ 	iadev = INPH_IA_DEV(dev);  
+-	for(i=0; i<64; i++)  
+-	  if ((error = pci_read_config_dword(iadev->pci,  
+-				i*4, &pci[i])) != PCIBIOS_SUCCESSFUL)  
+-  	      return error;  
++	for (i = 0; i < 64; i++) {
++		error = pci_read_config_dword(iadev->pci, i * 4, &pci[i]);
++		if (error != PCIBIOS_SUCCESSFUL)
++			return error;
++	}
++
+ 	writel(0, iadev->reg+IPHASE5575_EXT_RESET);  
+-	for(i=0; i<64; i++)  
+-	  if ((error = pci_write_config_dword(iadev->pci,  
+-					i*4, pci[i])) != PCIBIOS_SUCCESSFUL)  
+-	    return error;  
++	for (i = 0; i < 64; i++) {
++		error = pci_write_config_dword(iadev->pci, i * 4, pci[i]);
++		if (error != PCIBIOS_SUCCESSFUL)
++			return error;
++	}
++
+ 	udelay(5);  
+ 	return 0;  
+ }  
+@@ -2516,9 +2524,10 @@ static int ia_start(struct atm_dev *dev)
+         }  
+         /* @@@ should release IRQ on error */  
+ 	/* enabling memory + master */  
+-        if ((error = pci_write_config_word(iadev->pci,   
+-				PCI_COMMAND,   
+-				PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER )))   
++	error = pci_write_config_word(iadev->pci,
++				      PCI_COMMAND,
++				      PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);
++	if (error)
+ 	{  
+                 printk(KERN_ERR DEV_LABEL "(itf %d): can't enable memory+"  
+                     "master (0x%x)\n",dev->number, error);  
+@@ -2569,7 +2578,8 @@ static int ia_start(struct atm_dev *dev)
+                                readl(iadev->reg+IPHASE5575_BUS_CONTROL_REG));)  
+         phy = 0; /* resolve compiler complaint */
+         IF_INIT ( 
+-	if ((phy=ia_phy_get(dev,0)) = 0x30)  
++	phy = ia_phy_get(dev, 0);
++	if (phy = 0x30)
+ 		printk("IA: pm5346,rev.%d\n",phy&0x0f);  
+ 	else  
+ 		printk("IA: utopia,rev.%0x\n",phy);) 
+@@ -2710,15 +2720,16 @@ static int ia_open(struct atm_vcc *vcc)
+ 	ia_vcc = kmalloc(sizeof(*ia_vcc), GFP_KERNEL);  
+ 	if (!ia_vcc) return -ENOMEM;  
+ 	vcc->dev_data = ia_vcc;
+-  
+-	if ((error = open_rx(vcc)))  
++	error = open_rx(vcc);
++	if (error)
+ 	{  
+ 		IF_EVENT(printk("iadev: error in open_rx, closing\n");)  
+ 		ia_close(vcc);  
+ 		return error;  
+ 	}  
+   
+-	if ((error = open_tx(vcc)))  
++	error = open_tx(vcc);
++	if (error)
+ 	{  
+ 		IF_EVENT(printk("iadev: error in open_tx, closing\n");)  
+ 		ia_close(vcc);  
 -- 
-2.14.0
+2.13.4
 
