@@ -1,37 +1,66 @@
-From: Sam van Hunsel <ivan.dolokvich@yandex.ru>
-Date: Wed, 02 Aug 2017 17:41:01 +0000
-Subject: [PATCH] Staging: lirc: remove FSF's mailing address from GPL notice
-Message-Id: <20170802174056.GA22022@freebox.local>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:21 +0000
+Subject: [PATCH 12/12] [media] mtk-mdp: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The FSF may change addresses again, as they have done in the past. Linux
-also already includes a copy of the GPL. This patch fixes an issue found by
-checkpatch.
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Signed-off-by: Sam van Hunsel <ivan.dolokvich@yandex.ru>
+Done with the help of Coccinelle.
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/media/lirc/lirc_zilog.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/lirc/lirc_zilog.c b/drivers/staging/media/lirc/lirc_zilog.c
-index 015e41bd036e..36b288d811e9 100644
---- a/drivers/staging/media/lirc/lirc_zilog.c
-+++ b/drivers/staging/media/lirc/lirc_zilog.c
-@@ -33,10 +33,6 @@
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  *  GNU General Public License for more details.
-  *
-- *  You should have received a copy of the GNU General Public License
-- *  along with this program; if not, write to the Free Software
-- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-  */
+diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c b/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
+index 3038d62..583d477 100644
+--- a/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
++++ b/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
+@@ -1225,7 +1225,7 @@ static int mtk_mdp_m2m_release(struct file *file)
+ 	.mmap		= v4l2_m2m_fop_mmap,
+ };
  
- #include <linux/module.h>
--- 
-2.13.0
+-static struct v4l2_m2m_ops mtk_mdp_m2m_ops = {
++static const struct v4l2_m2m_ops mtk_mdp_m2m_ops = {
+ 	.device_run	= mtk_mdp_m2m_device_run,
+ 	.job_abort	= mtk_mdp_m2m_job_abort,
+ };
 
