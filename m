@@ -1,48 +1,40 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 21 Aug 2017 14:11:39 +0000
-Subject: Re: [PATCH 3/4] isofs: One check less in isofs_read_inode() after error detection
-Message-Id: <20170821141139.GD31870@quack2.suse.cz>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 12:55:01 +0000
+Subject: [PATCH] mtd: physmap_of: Fix resources leak in 'of_flash_probe()'
+Message-Id: <20170806125501.10368-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
- <157aa252-0edb-1462-cb6e-44369e8f1645@users.sourceforge.net>
-In-Reply-To: <157aa252-0edb-1462-cb6e-44369e8f1645@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat 19-08-17 09:18:42, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 19 Aug 2017 08:10:40 +0200
-> 
-> * Adjust jump targets.
-> 
-> * Avoid a repeated check for the local variable "bh" after
->   a memory allocation failure in this function.
-> 
-> * Delete an initialisation for the local variable "ret"
->   which became unnecessary with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+If 'of_flash_probe_gemini()' or 'of_flash_probe_versatile()' fail, we must
+reslease some resources, as already done in all error handling paths in
+this function.
 
-I agree that
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mtd/maps/physmap_of_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-fail:
-        goto out;
-
-in the original code is awkward and we can get rid of it. However renaming
-labels is IMO pointless and
-
->  	if (bh)
-> +release_bh:
->  		brelse(bh);
->  	return ret;
-
-is just disgusting.
-
-								Honza
-
+diff --git a/drivers/mtd/maps/physmap_of_core.c b/drivers/mtd/maps/physmap_of_core.c
+index 62fa6836f218..2c8cc97ce019 100644
+--- a/drivers/mtd/maps/physmap_of_core.c
++++ b/drivers/mtd/maps/physmap_of_core.c
+@@ -235,10 +235,10 @@ static int of_flash_probe(struct platform_device *dev)
+ 
+ 		err = of_flash_probe_gemini(dev, dp, &info->list[i].map);
+ 		if (err)
+-			return err;
++			goto err_out;
+ 		err = of_flash_probe_versatile(dev, dp, &info->list[i].map);
+ 		if (err)
+-			return err;
++			goto err_out;
+ 
+ 		err = -ENOMEM;
+ 		info->list[i].map.virt = ioremap(info->list[i].map.phys,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.11.0
+
