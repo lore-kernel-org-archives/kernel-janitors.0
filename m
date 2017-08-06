@@ -1,31 +1,59 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 12 Aug 2017 21:28:16 +0000
-Subject: Re: [PATCH 0/3] ALSA: rme96: Adjustments for six function implementations
-Message-Id: <s5hh8xcwk5r.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 10:05:15 +0000
+Subject: Re: [PATCH 00/30] ACPI-processor: Fine-tuning for several function implementations
+Message-Id: <cec1be25-0853-8a16-e13d-90a2541969e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
-In-Reply-To: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Julia Lawall <Julia.Lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 12 Aug 2017 15:38:01 +0200,
-SF Markus Elfring wrote:
+> Date: Tue, 9 Sep 2016 20:15:05 +0200
 > 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Aug 2017 15:36:54 +0200
-> 
-> A few update suggestions were taken into account
+> Several update suggestions were taken into account
 > from static source code analysis.
 > 
-> Markus Elfring (3):
->   Delete two error messages for a failed memory allocation in snd_rme96_probe()
->   Use common error handling code in snd_rme96_probe()
->   Adjust five checks for null pointers
+> Markus Elfring (30):
+>   Use kmalloc_array() in acpi_processor_get_performance_states()
+>   Improve two size determinations in acpi_processor_get_performance_states()
+>   Rename jump labels in acpi_processor_get_performance_states()
+>   Delete two unnecessary initialisations in acpi_processor_get_performance_states()
+>   Rename jump labels in acpi_processor_preregister_performance()
+>   Move a success indication in acpi_processor_preregister_performance()
+>   Rename jump labels in acpi_processor_get_psd()
+>   Delete two unnecessary initialisations in acpi_processor_get_psd()
+>   Improve a size determination in acpi_processor_get_psd()
+>   Rename jump labels in acpi_processor_get_performance_control()
+>   Delete two unnecessary initialisations in acpi_processor_get_performance_control()
+>   Rename jump labels in acpi_processor_ppc_notifier()
+>   Delete an unnecessary initialisation in acpi_processor_ppc_notifier()
+>   Delete an unnecessary initialisation in acpi_processor_get_performance_info()
+>   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
+>   Use kmalloc_array() in acpi_processor_get_throttling_states()
+>   Improve another size determination in acpi_processor_get_throttling_states()
+>   Rename jump labels in acpi_processor_get_throttling_states()
+>   Delete two unnecessary initialisations in acpi_processor_get_throttling_states()
+>   Fix jump targets in acpi_processor_get_throttling_info()
+>   Rename jump labels in acpi_processor_get_tsd()
+>   Delete two unnecessary initialisations in acpi_processor_get_tsd()
+>   Improve a size determination in acpi_processor_get_tsd()
+>   Rename jump labels in acpi_processor_get_throttling_control()
+>   Delete two unnecessary initialisations in acpi_processor_get_throttling_control()
+>   Fix jump targets in acpi_processor_reevaluate_tstate()
+>   Delete an unnecessary initialisation in acpi_processor_reevaluate_tstate()
+>   Rename a jump label in acpi_processor_get_platform_limit()
+>   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
+>   Improve jump targets in acpi_processor_update_tsd_coord()
+> 
+>  drivers/acpi/processor_perflib.c    |  87 +++++++++++++--------------
+>  drivers/acpi/processor_throttling.c | 116 ++++++++++++++++--------------------
+>  2 files changed, 93 insertions(+), 110 deletions(-)
 
-Applied all three patches, thanks.
+How do you think about to take another look at change possibilities
+for these source files?
 
-
-Takashi
+Regards,
+Markus
