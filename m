@@ -1,62 +1,66 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 30 Aug 2017 13:32:39 +0000
-Subject: Re: [PATCH] hwmon: (asc7621): make several arrays static const
-Message-Id: <2538a003-76c7-9cb8-e4d4-c2482945312a@roeck-us.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:14 +0000
+Subject: [PATCH 05/12] [media] vcodec: mediatek: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170830083225.21390-1-colin.king@canonical.com>
-In-Reply-To: <20170830083225.21390-1-colin.king@canonical.com>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, George Joseph <george.joseph@fairview5.com>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 08/30/2017 01:32 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays on the stack, instead make them static.
-> Makes the object code smaller by over 950 bytes:
-> 
-> Before:
->     text	   data	    bss	    dec	    hex	filename
->    26144	  18768	    352	  45264	   b0d0	drivers/hwmon/asc7621.o
-> 
-> After:
->     text	   data	    bss	    dec	    hex	filename
->    25029	  18928	    352	  44309	   ad15	drivers/hwmon/asc7621.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Applied to hwmon-next.
+Done with the help of Coccinelle.
 
-Thanks,
-Guenter
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-> ---
->   drivers/hwmon/asc7621.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/asc7621.c b/drivers/hwmon/asc7621.c
-> index c77644d45a02..4875e99b59c9 100644
-> --- a/drivers/hwmon/asc7621.c
-> +++ b/drivers/hwmon/asc7621.c
-> @@ -512,7 +512,7 @@ static ssize_t show_pwm_ac(struct device *dev,
->   {
->   	SETUP_SHOW_DATA_PARAM(dev, attr);
->   	u8 config, altbit, regval;
-> -	const u8 map[] = {
-> +	static const u8 map[] = {
->   		0x01, 0x02, 0x04, 0x1f, 0x00, 0x06, 0x07, 0x10,
->   		0x08, 0x0f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f
->   	};
-> @@ -533,7 +533,7 @@ static ssize_t store_pwm_ac(struct device *dev,
->   	SETUP_STORE_DATA_PARAM(dev, attr);
->   	unsigned long reqval;
->   	u8 currval, config, altbit, newval;
-> -	const u16 map[] = {
-> +	static const u16 map[] = {
->   		0x04, 0x00, 0x01, 0xff, 0x02, 0xff, 0x05, 0x06,
->   		0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0f,
->   		0x07, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> 
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c b/drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c
+index f17a86b..226f908 100644
+--- a/drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c
++++ b/drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c
+@@ -865,7 +865,7 @@ static void mtk_jpeg_job_abort(void *priv)
+ {
+ }
+ 
+-static struct v4l2_m2m_ops mtk_jpeg_m2m_ops = {
++static const struct v4l2_m2m_ops mtk_jpeg_m2m_ops = {
+ 	.device_run = mtk_jpeg_device_run,
+ 	.job_ready  = mtk_jpeg_job_ready,
+ 	.job_abort  = mtk_jpeg_job_abort,
 
