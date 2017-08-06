@@ -1,84 +1,66 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 16 Aug 2017 19:33:54 +0000
-Subject: Re: [PATCH 2/3] pstore: Improve a size determination in three functions
-Message-Id: <CAGXu5jLdTHJB576tqhpPZb_cV0B4zMnSAVkG=DzTN-dT51iAsw@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:20 +0000
+Subject: [PATCH 11/12] [media] exynos4-is: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net> <23798ef4-5559-3454-ecf4-e6844b644ff3@users.sourceforge.net>
-In-Reply-To: <23798ef4-5559-3454-ecf4-e6844b644ff3@users.sourceforge.net>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 16, 2017 at 12:22 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 16 Aug 2017 20:50:15 +0200
->
-> Replace the specification of data types by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Agreed; this is a robustness change in that changes to the variable
-structure will be correctly flowed through to the allocations.
+Done with the help of Coccinelle.
 
->
-> This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-Which script detected this?
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
 
--Kees
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
 
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/pstore/ram.c      | 3 +--
->  fs/pstore/ram_core.c | 4 ++--
->  2 files changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 42d27e5fac9f..0ef95c384bed 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -293,8 +293,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->                          */
->                         struct persistent_ram_zone *tmp_prz, *prz_next;
->
-> -                       tmp_prz = kzalloc(sizeof(struct persistent_ram_zone),
-> -                                         GFP_KERNEL);
-> +                       tmp_prz = kzalloc(sizeof(*tmp_prz), GFP_KERNEL);
->                         if (!tmp_prz)
->                                 return -ENOMEM;
->                         free_prz = true;
-> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-> index fafa8af1289c..5d9f7280d757 100644
-> --- a/fs/pstore/ram_core.c
-> +++ b/fs/pstore/ram_core.c
-> @@ -405,7 +405,7 @@ static void *persistent_ram_vmap(phys_addr_t start, size_t size,
->         else
->                 prot = pgprot_writecombine(PAGE_KERNEL);
->
-> -       pages = kmalloc_array(page_count, sizeof(struct page *), GFP_KERNEL);
-> +       pages = kmalloc_array(page_count, sizeof(*pages), GFP_KERNEL);
->         if (!pages)
->                 return NULL;
->
-> @@ -520,7 +520,7 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
->         struct persistent_ram_zone *prz;
->         int ret = -ENOMEM;
->
-> -       prz = kzalloc(sizeof(struct persistent_ram_zone), GFP_KERNEL);
-> +       prz = kzalloc(sizeof(*prz), GFP_KERNEL);
->         if (!prz)
->                 goto err;
->
-> --
-> 2.14.0
->
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/media/platform/exynos4-is/fimc-m2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Kees Cook
-Pixel Security
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index d8724fe..9027d0b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -704,7 +704,7 @@ static int fimc_m2m_release(struct file *file)
+ 	.mmap		= v4l2_m2m_fop_mmap,
+ };
+ 
+-static struct v4l2_m2m_ops m2m_ops = {
++static const struct v4l2_m2m_ops m2m_ops = {
+ 	.device_run	= fimc_device_run,
+ 	.job_abort	= fimc_job_abort,
+ };
+
