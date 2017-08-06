@@ -1,58 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 20:42:20 +0000
-Subject: [PATCH 2/3] ASoC: blackfin: Use common error handling code in sport_create()
-Message-Id: <ef3f99a2-7e51-ff07-8e68-3d74495854a9@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 09:20:11 +0000
+Subject: [PATCH] ATM-ENI: Delete an error message for a failed memory allocation in eni_start()
+Message-Id: <da947bfe-8bef-18c4-609c-e859412dd2f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
-In-Reply-To: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 22:02:47 +0200
+Date: Sun, 6 Aug 2017 11:15:17 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/blackfin/bf6xx-sport.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/atm/eni.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
-index 1bc3e0a47a57..fcddebf2558c 100644
---- a/sound/soc/blackfin/bf6xx-sport.c
-+++ b/sound/soc/blackfin/bf6xx-sport.c
-@@ -394,19 +394,18 @@ struct sport_device *sport_create(struct platform_device *pdev)
- 	sport->pdev = pdev;
- 
- 	ret = sport_get_resource(sport);
--	if (ret) {
--		kfree(sport);
--		return NULL;
--	}
-+	if (ret)
-+		goto free_data;
- 
- 	ret = sport_request_resource(sport);
--	if (ret) {
--		kfree(sport);
--		return NULL;
--	}
-+	if (ret)
-+		goto free_data;
- 
- 	dev_dbg(dev, "SPORT create success\n");
- 	return sport;
-+free_data:
-+	kfree(sport);
-+	return NULL;
- }
- EXPORT_SYMBOL(sport_create);
- 
+diff --git a/drivers/atm/eni.c b/drivers/atm/eni.c
+index ce47eb17901d..d4b11ef940ee 100644
+--- a/drivers/atm/eni.c
++++ b/drivers/atm/eni.c
+@@ -1849,8 +1849,6 @@ static int eni_start(struct atm_dev *dev)
+ 					   sizeof(*eni_dev->free_list),
+ 					   GFP_KERNEL);
+ 	if (!eni_dev->free_list) {
+-		printk(KERN_ERR DEV_LABEL "(itf %d): couldn't get free page\n",
+-		    dev->number);
+ 		error = -ENOMEM;
+ 		goto free_irq;
+ 	}
 -- 
-2.14.0
+2.13.4
 
