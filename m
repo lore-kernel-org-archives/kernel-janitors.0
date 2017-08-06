@@ -1,50 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 13 Aug 2017 15:37:15 +0000
-Subject: [PATCH] ASoC: samsung: make tm2_dapm_widgets and tm2_pm_ops static
-Message-Id: <20170813153715.18058-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:11 +0000
+Subject: [PATCH 02/12] [media] media: ti-vpe: vpe: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benoit Parrot <bparrot@ti.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-tm2_dapm_widgets and tm2_pm_ops are local to the source and do not need
-to be in global scope, so make them static.
+Done with the help of Coccinelle.
 
-Cleans up sparse warnings:
-symbol 'tm2_dapm_widgets' was not declared. Should it be static?
-symbol 'tm2_pm_ops' was not declared. Should it be static?
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- sound/soc/samsung/tm2_wm5110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/ti-vpe/vpe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
-index 24cc9d63ce87..68698f3d72f9 100644
---- a/sound/soc/samsung/tm2_wm5110.c
-+++ b/sound/soc/samsung/tm2_wm5110.c
-@@ -318,7 +318,7 @@ static const struct snd_kcontrol_new tm2_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index c471514..2873c22 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -2430,7 +2430,7 @@ static int vpe_release(struct file *file)
+ 	.vfl_dir	= VFL_DIR_M2M,
  };
  
--const struct snd_soc_dapm_widget tm2_dapm_widgets[] = {
-+static const struct snd_soc_dapm_widget tm2_dapm_widgets[] = {
- 	SND_SOC_DAPM_HP("HP", NULL),
- 	SND_SOC_DAPM_SPK("SPK", NULL),
- 	SND_SOC_DAPM_SPK("RCV", NULL),
-@@ -521,7 +521,7 @@ static void tm2_pm_complete(struct device *dev)
- 	tm2_start_sysclk(card);
- }
- 
--const struct dev_pm_ops tm2_pm_ops = {
-+static const struct dev_pm_ops tm2_pm_ops = {
- 	.prepare	= tm2_pm_prepare,
- 	.suspend	= snd_soc_suspend,
- 	.resume		= snd_soc_resume,
--- 
-2.11.0
+-static struct v4l2_m2m_ops m2m_ops = {
++static const struct v4l2_m2m_ops m2m_ops = {
+ 	.device_run	= device_run,
+ 	.job_ready	= job_ready,
+ 	.job_abort	= job_abort,
 
