@@ -1,98 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 06:28:19 +0000
-Subject: [PATCH 2/3] ATM-iphase: Delete five error messages for a failed memory allocation
-Message-Id: <ddae6055-5d63-17bf-4bce-0cfa346b3515@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:19 +0000
+Subject: [PATCH 10/12] [media] vim2m: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
-In-Reply-To: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 5 Aug 2017 22:10:41 +0200
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Omit extra messages for a memory allocation failure in these functions.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/atm/iphase.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+ drivers/media/platform/vim2m.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
-index 472762f70921..ad4c1b41ba98 100644
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -1623,11 +1623,8 @@ static int rx_init(struct atm_dev *dev)
- 	iadev->rx_free_desc_qhead = NULL;   
+diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
+index 970b9b6..afbaa35 100644
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -983,7 +983,7 @@ static int vim2m_release(struct file *file)
+ 	.release	= video_device_release_empty,
+ };
  
- 	iadev->rx_open = kzalloc(4 * iadev->num_vc, GFP_KERNEL);
--	if (!iadev->rx_open) {
--		printk(KERN_ERR DEV_LABEL "itf %d couldn't get free page\n",
--		dev->number);  
-+	if (!iadev->rx_open)
- 		goto err_free_dle;
--	}  
- 
-         iadev->rxing = 1;
-         iadev->rx_pkt_cnt = 0;
-@@ -1982,19 +1979,17 @@ static int tx_init(struct atm_dev *dev)
- 	iadev->tx_buf = kmalloc_array(iadev->num_tx_desc,
- 				      sizeof(*iadev->tx_buf),
- 				      GFP_KERNEL);
--        if (!iadev->tx_buf) {
--            printk(KERN_ERR DEV_LABEL " couldn't get mem\n");
--	    goto err_free_dle;
--        }
-+	if (!iadev->tx_buf)
-+		goto err_free_dle;
-+
-        	for (i= 0; i< iadev->num_tx_desc; i++)
-        	{
- 	    struct cpcs_trailer *cpcs;
-  
-        	    cpcs = kmalloc(sizeof(*cpcs), GFP_KERNEL|GFP_DMA);
--            if(!cpcs) {                
--		printk(KERN_ERR DEV_LABEL " couldn't get freepage\n"); 
--		goto err_free_tx_bufs;
--            }
-+		if (!cpcs)
-+			goto err_free_tx_bufs;
-+
- 	    iadev->tx_buf[i].cpcs = cpcs;
- 	    iadev->tx_buf[i].dma_addr = dma_map_single(&iadev->pci->dev,
- 						       cpcs,
-@@ -2004,10 +1999,8 @@ static int tx_init(struct atm_dev *dev)
- 	iadev->desc_tbl = kmalloc_array(iadev->num_tx_desc,
- 					sizeof(*iadev->desc_tbl),
- 					GFP_KERNEL);
--	if (!iadev->desc_tbl) {
--		printk(KERN_ERR DEV_LABEL " couldn't get mem\n");
-+	if (!iadev->desc_tbl)
- 		goto err_free_all_tx_bufs;
--	}
-   
- 	/* Communication Queues base address */  
-         i = TX_COMP_Q * iadev->memSize;
-@@ -2134,10 +2127,9 @@ static int tx_init(struct atm_dev *dev)
- 	iadev->testTable = kmalloc_array(iadev->num_vc,
- 					 sizeof(*iadev->testTable),
- 					 GFP_KERNEL);
--        if (!iadev->testTable) {
--           printk("Get freepage  failed\n");
--	   goto err_free_desc_tbl;
--        }
-+	if (!iadev->testTable)
-+		goto err_free_desc_tbl;
-+
- 	for(i=0; i<iadev->num_vc; i++)  
- 	{  
- 		memset((caddr_t)vc, 0, sizeof(*vc));  
--- 
-2.13.4
+-static struct v4l2_m2m_ops m2m_ops = {
++static const struct v4l2_m2m_ops m2m_ops = {
+ 	.device_run	= device_run,
+ 	.job_ready	= job_ready,
+ 	.job_abort	= job_abort,
 
