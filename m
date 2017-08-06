@@ -1,40 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 07:21:07 +0000
-Subject: [PATCH 3/6] [media] cx24116: Delete an unnecessary variable initialisation in cx24116_writeregN()
-Message-Id: <7af2ff80-ee62-d2d1-77af-35f34976780b@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:16 +0000
+Subject: [PATCH 07/12] [media] bdisp: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
-In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Fabien Dessenne <fabien.dessenne@st.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 08:10:38 +0200
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-The variable "ret" will eventually be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/dvb-frontends/cx24116.c | 2 +-
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
-index 69c156443b50..54f09a5a5075 100644
---- a/drivers/media/dvb-frontends/cx24116.c
-+++ b/drivers/media/dvb-frontends/cx24116.c
-@@ -221,7 +221,7 @@ static int cx24116_writereg(struct cx24116_state *state, int reg, int data)
- static int cx24116_writeregN(struct cx24116_state *state, int reg,
- 			     const u8 *data, u16 len)
- {
--	int ret = -EREMOTEIO;
-+	int ret;
- 	struct i2c_msg msg;
- 	u8 *buf;
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+index 7918b92..939da6d 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -360,7 +360,7 @@ static void bdisp_device_run(void *priv)
+ 		bdisp_job_finish(ctx, VB2_BUF_STATE_ERROR);
+ }
  
--- 
-2.14.1
+-static struct v4l2_m2m_ops bdisp_m2m_ops = {
++static const struct v4l2_m2m_ops bdisp_m2m_ops = {
+ 	.device_run     = bdisp_device_run,
+ 	.job_abort      = bdisp_job_abort,
+ };
 
