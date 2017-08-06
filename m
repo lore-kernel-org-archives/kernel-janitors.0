@@ -1,50 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 07 Aug 2017 09:50:41 +0000
-Subject: [PATCH 2/5] mmc: sdhci-bcm-kona: constify sdhci_pltfm_data and sdhci_ops structures
-Message-Id: <1502099444-10473-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 19:23:46 +0000
+Subject: [PATCH 4/5] mtip32xx: Fix a typo in a comment line in mtip_hw_get_identify()
+Message-Id: <a9161afb-c4fe-342b-c636-7a98b1d2f37d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
+In-Reply-To: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The sdhci_pltfm_data structure is only passed as the second argument
-of sdhci_pltfm_init, which is const, while the sdhci_ops structure
-is only stored in the ops field of a sdhci_pltfm_data structure,
-which is also const.  Thus both kinds of structures can be const as
-well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 6 Aug 2017 20:28:48 +0200
 
-Done with the help of Coccinelle.
+Add a missing character in this description.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mmc/host/sdhci-bcm-kona.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-index 51dd2fd..11ca95c 100644
---- a/drivers/mmc/host/sdhci-bcm-kona.c
-+++ b/drivers/mmc/host/sdhci-bcm-kona.c
-@@ -186,7 +186,7 @@ static void sdhci_bcm_kona_init_74_clocks(struct sdhci_host *host,
- 		udelay(740);
- }
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index cba5bc2a1493..18e634efed95 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -2981,7 +2981,7 @@ static int mtip_hw_get_identify(struct driver_data *dd)
+ 		}
+ 	}
  
--static struct sdhci_ops sdhci_bcm_kona_ops = {
-+static const struct sdhci_ops sdhci_bcm_kona_ops = {
- 	.set_clock = sdhci_set_clock,
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
-@@ -197,7 +197,7 @@ static void sdhci_bcm_kona_init_74_clocks(struct sdhci_host *host,
- 	.card_event = sdhci_bcm_kona_card_event,
- };
- 
--static struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
-+static const struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
- 	.ops    = &sdhci_bcm_kona_ops,
- 	.quirks = SDHCI_QUIRK_NO_CARD_NO_RESET |
- 		SDHCI_QUIRK_BROKEN_TIMEOUT_VAL | SDHCI_QUIRK_32BIT_DMA_ADDR |
+-	/* get write protect progess */
++	/* get write protect progress */
+ 	memset(&attr242, 0, sizeof(struct smart_attr));
+ 	if (mtip_get_smart_attr(dd->port, 242, &attr242))
+ 		dev_warn(&dd->pdev->dev,
+-- 
+2.13.4
 
