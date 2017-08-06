@@ -1,44 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 14 Aug 2017 16:59:13 +0000
-Subject: [PATCH] media: ddbridge: constify stv0910_p and lnbh25_cfg
-Message-Id: <1502729953-3630-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 21:37:01 +0000
+Subject: [PATCH] i40e: Fix a potential NULL pointer dereference
+Message-Id: <20170806213701.19317-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: jeffrey.t.kirsher@intel.com
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-These structures are only copied into other stuructures, so
-they can be const.
+If 'kzalloc()' fails, a NULL pointer will be dereferenced.
+Return an error code (-ENOMEM) instead.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/pci/ddbridge/ddbridge-core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
-index 7e164a37..7ff570b 100644
---- a/drivers/media/pci/ddbridge/ddbridge-core.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-core.c
-@@ -800,14 +800,14 @@ static int tuner_attach_stv6110(struct ddb_input *input, int type)
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 979110d59f67..facd48fc15d4 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -423,6 +423,9 @@ static int i40e_config_iwarp_qvlist(struct i40e_vf *vf,
+ 	       (sizeof(struct virtchnl_iwarp_qv_info) *
+ 						(qvlist_info->num_vectors - 1));
+ 	vf->qvlist_info = kzalloc(size, GFP_KERNEL);
++	if (!vf->qvlist_info)
++		return -ENOMEM;
++
+ 	vf->qvlist_info->num_vectors = qvlist_info->num_vectors;
  
--static struct stv0910_cfg stv0910_p = {
-+static const struct stv0910_cfg stv0910_p = {
- 	.adr      = 0x68,
- 	.parallel = 1,
- 	.rptlvl   = 4,
- 	.clk      = 30000000,
- };
- 
--static struct lnbh25_config lnbh25_cfg = {
-+static const struct lnbh25_config lnbh25_cfg = {
- 	.i2c_address = 0x0c << 1,
- 	.data2_config = LNBH25_TEN
- };
+ 	msix_vf = pf->hw.func_caps.num_msix_vectors_vf;
+-- 
+2.11.0
 
