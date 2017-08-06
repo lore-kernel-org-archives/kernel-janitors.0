@@ -1,24 +1,66 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Thu, 17 Aug 2017 22:06:57 +0000
-Subject: Re: [PATCH] cxgb4: Remove some dead code
-Message-Id: <1503007617.2598.1.camel@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:12 +0000
+Subject: [PATCH 03/12] [media] s5p-g2d: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170610091920.24746-1-christophe.jaillet@wanadoo.fr>
-         <047801d2e1e5$5a645190$0f2cf4b0$@opengridcomputing.com>
-In-Reply-To: <047801d2e1e5$5a645190$0f2cf4b0$@opengridcomputing.com>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>, 'Christophe JAILLET' <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, 2017-06-10 at 07:30 -0500, Steve Wise wrote:
-> Acked-by: Steve Wise <swise@opengridcomputing.com>
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-Thanks, applied.
+Done with the help of Coccinelle.
 
--- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
+
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/s5p-g2d/g2d.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+index 81ed5cd..bd655b5 100644
+--- a/drivers/media/platform/s5p-g2d/g2d.c
++++ b/drivers/media/platform/s5p-g2d/g2d.c
+@@ -611,7 +611,7 @@ static irqreturn_t g2d_isr(int irq, void *prv)
+ 	.vfl_dir	= VFL_DIR_M2M,
+ };
+ 
+-static struct v4l2_m2m_ops g2d_m2m_ops = {
++static const struct v4l2_m2m_ops g2d_m2m_ops = {
+ 	.device_run	= device_run,
+ 	.job_abort	= job_abort,
+ };
 
