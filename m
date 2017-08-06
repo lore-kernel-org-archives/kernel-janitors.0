@@ -1,48 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:25 +0000
-Subject: [PATCH 13/17] pinctrl: tb10x: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-14-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 08:00:20 +0000
+Subject: [PATCH] ATM-lanai: Delete an error message for a failed memory allocation in lanai_init_one()
+Message-Id: <ce30adf8-c5be-df17-0c74-42061ff2fd42@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (pctlops and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 6 Aug 2017 09:42:52 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-tb10x.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/atm/lanai.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index 09d3500..2e90a6d 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -577,7 +577,7 @@ static int tb10x_dt_node_to_map(struct pinctrl_dev *pctl,
- 	return ret;
- }
+diff --git a/drivers/atm/lanai.c b/drivers/atm/lanai.c
+index 2351dad78ff5..f4cb6c5870bf 100644
+--- a/drivers/atm/lanai.c
++++ b/drivers/atm/lanai.c
+@@ -2562,11 +2562,8 @@ static int lanai_init_one(struct pci_dev *pci,
+ 	int result;
  
--static struct pinctrl_ops tb10x_pinctrl_ops = {
-+static const struct pinctrl_ops tb10x_pinctrl_ops = {
- 	.get_groups_count = tb10x_get_groups_count,
- 	.get_group_name   = tb10x_get_group_name,
- 	.get_group_pins   = tb10x_get_group_pins,
-@@ -738,7 +738,7 @@ static int tb10x_pctl_set_mux(struct pinctrl_dev *pctl,
- 	return 0;
- }
+ 	lanai = kmalloc(sizeof(*lanai), GFP_KERNEL);
+-	if (lanai = NULL) {
+-		printk(KERN_ERR DEV_LABEL
+-		       ": couldn't allocate dev_data structure!\n");
++	if (!lanai)
+ 		return -ENOMEM;
+-	}
  
--static struct pinmux_ops tb10x_pinmux_ops = {
-+static const struct pinmux_ops tb10x_pinmux_ops = {
- 	.get_functions_count = tb10x_get_functions_count,
- 	.get_function_name = tb10x_get_function_name,
- 	.get_function_groups = tb10x_get_function_groups,
+ 	atmdev = atm_dev_register(DEV_LABEL, &pci->dev, &ops, -1, NULL);
+ 	if (atmdev = NULL) {
+-- 
+2.13.4
 
