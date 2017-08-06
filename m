@@ -1,79 +1,67 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 30 Aug 2017 16:49:38 +0000
-Subject: Re: [2/2] rsi: update some comments
-Message-Id: <20170830164938.CBEEF60209@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 06 Aug 2017 08:25:17 +0000
+Subject: [PATCH 08/12] [media] m2m-deinterlace: constify v4l2_m2m_ops structures
+Message-Id: <1502007921-22968-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825084037.gxgsieknkb5hxdfs@mwanda>
-In-Reply-To: <20170825084037.gxgsieknkb5hxdfs@mwanda>
+References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Andrew Zaborowski <andrew.zaborowski@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The v4l2_m2m_ops structures are only passed as the only
+argument to v4l2_m2m_init, which is declared as const.
+Thus the v4l2_m2m_ops structures themselves can be const.
 
-> These functions don't return -1 on failure.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-> index 25331aa16e8e..e78e87e99804 100644
-> --- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-> +++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-> @@ -754,7 +754,7 @@ static int rsi_mac80211_conf_tx(struct ieee80211_hw *hw,
->   * @vif: Pointer to the ieee80211_vif structure.
->   * @key: Pointer to the ieee80211_key_conf structure.
->   *
-> - * Return: status: 0 on success, -1 on failure.
-> + * Return: status: 0 on success, negative error codes on failure.
->   */
->  static int rsi_hal_key_config(struct ieee80211_hw *hw,
->  			      struct ieee80211_vif *vif,
-> @@ -1194,7 +1194,7 @@ static void rsi_set_min_rate(struct ieee80211_hw *hw,
->   * @vif: Pointer to the ieee80211_vif structure.
->   * @sta: Pointer to the ieee80211_sta structure.
->   *
-> - * Return: 0 on success, -1 on failure.
-> + * Return: 0 on success, negative error codes on failure.
->   */
->  static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
->  				struct ieee80211_vif *vif,
-> @@ -1306,7 +1306,7 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
->   * @vif: Pointer to the ieee80211_vif structure.
->   * @sta: Pointer to the ieee80211_sta structure.
->   *
-> - * Return: 0 on success, -1 on failure.
-> + * Return: 0 on success, negative error codes on failure.
->   */
->  static int rsi_mac80211_sta_remove(struct ieee80211_hw *hw,
->  				   struct ieee80211_vif *vif,
-> @@ -1426,7 +1426,7 @@ static int rsi_mac80211_set_antenna(struct ieee80211_hw *hw,
->   * @tx_ant: Bitmap for tx antenna
->   * @rx_ant: Bitmap for rx antenna
->   * 
-> - * Return: 0 on success, -1 on failure.
-> + * Return: 0 on success, negative error codes on failure.
->   */
->  static int rsi_mac80211_get_antenna(struct ieee80211_hw *hw,
->  				    u32 *tx_ant, u32 *rx_ant)
-> @@ -1533,7 +1533,7 @@ static struct ieee80211_ops mac80211_ops = {
->   * rsi_mac80211_attach() - This function is used to initialize Mac80211 stack.
->   * @common: Pointer to the driver private structure.
->   *
-> - * Return: 0 on success, -1 on failure.
-> + * Return: 0 on success, negative error codes on failure.
->   */
->  int rsi_mac80211_attach(struct rsi_common *common)
->  {
+Done with the help of Coccinelle.
 
-2 patches applied to wireless-drivers-next.git, thanks.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct v4l2_m2m_ops i@p = { ... };
 
-fc4386729491 rsi: update some comments
-0270639e899e rsi: missing unlocks on error paths
+@ok1@
+identifier r.i;
+position p;
+@@
+v4l2_m2m_init(&i@p)
 
--- 
-https://patchwork.kernel.org/patch/9921425/
+@bad@
+position p != {r.p,ok1.p};
+identifier r.i;
+struct v4l2_m2m_ops e;
+@@
+e@i@p
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct v4l2_m2m_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/m2m-deinterlace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platform/m2m-deinterlace.c
+index 980066b..98f6db2 100644
+--- a/drivers/media/platform/m2m-deinterlace.c
++++ b/drivers/media/platform/m2m-deinterlace.c
+@@ -988,7 +988,7 @@ static int deinterlace_mmap(struct file *file, struct vm_area_struct *vma)
+ 	.vfl_dir	= VFL_DIR_M2M,
+ };
+ 
+-static struct v4l2_m2m_ops m2m_ops = {
++static const struct v4l2_m2m_ops m2m_ops = {
+ 	.device_run	= deinterlace_device_run,
+ 	.job_ready	= deinterlace_job_ready,
+ 	.job_abort	= deinterlace_job_abort,
 
