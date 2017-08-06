@@ -1,60 +1,29 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 28 Aug 2017 17:12:30 +0000
-Subject: Re: [PATCH] igb: check memory allocation failure
-Message-Id: <95a0bc80-8b41-d74f-8059-ae7181493120@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:37:54 +0000
+Subject: [PATCH 0/3] power: supply: charger-manager: 1 fix and 2 minor clean-ups
+Message-Id: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170827063951.5975-1-christophe.jaillet@wanadoo.fr>
- <E0D909EE5BB15A4699798539EA149D7F0779685B@ORSMSX103.amr.corp.intel.com>
-In-Reply-To: <E0D909EE5BB15A4699798539EA149D7F0779685B@ORSMSX103.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "Waskiewicz Jr, Peter" <peter.waskiewicz.jr@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Le 28/08/2017 à 01:09, Waskiewicz Jr, Peter a écrit :
-> On 8/27/17 2:42 AM, Christophe JAILLET wrote:
->> Check memory allocation failures and return -ENOMEM in such cases, as
->> already done for other memory allocations in this function.
->>
->> This avoids NULL pointers dereference.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>    drivers/net/ethernet/intel/igb/igb_main.c | 2 ++
->>    1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
->> index fd4a46b03cc8..837d9b46a390 100644
->> --- a/drivers/net/ethernet/intel/igb/igb_main.c
->> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
->> @@ -3162,6 +3162,8 @@ static int igb_sw_init(struct igb_adapter *adapter)
->>    	/* Setup and initialize a copy of the hw vlan table array */
->>    	adapter->shadow_vfta = kcalloc(E1000_VLAN_FILTER_TBL_SIZE, sizeof(u32),
->>    				       GFP_ATOMIC);
->> +	if (!adapter->shadow_vfta)
->> +		return -ENOMEM;
-> Looks reasonable to me.
->
-> A larger issue though I see in this function is that if we return
-> -ENOMEM here, and if we return -ENOMEM from igb_init_interrupt_scheme()
-> below on failure, we leak adapter->mac_table (and adapter->shadow_vfta
-> in the latter).  We should add a proper unwind to free up the memory on
-> failure.
->
-> -PJ
->
-Hi,
+This patch series improves 'charger_manager_probe()'. The first patch is
+about a missing memory allocation failure test.
+The 2 others are just things spotted in this function:
+   - a comment that is no more up to date
+   - a style issue (which saves 1 line)
 
-in fact, there is no leak because the only caller of 'igb_sw_init()' 
-(i.e. 'igb_probe()'), already frees these resources in case of error, 
-see [1]
+Christophe JAILLET (3):
+  power: supply: charger-manager: Fix a NULL pointer dereference in
+    'charger_manager_probe()'
+  power: supply: charger-manager: Fix a comment
+  power: supply: charger-manager: Slighly simplify code
 
-These resources are also freed  in 'igb_remove()'.
+ drivers/power/supply/charger-manager.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Best reagrds,
-CJ
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/net/ethernet/intel/igb/igb_main.c#n2775
+-- 
+2.11.0
 
