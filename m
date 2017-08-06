@@ -1,24 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Aug 2017 22:23:52 +0000
-Subject: Re: [PATCH net-next] bpf: fix oops on allocation failure
-Message-Id: <20170828.152352.1578570740080935105.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:51:29 +0000
+Subject: [PATCH] scsi: mpt3sas: Fix memory allocation failure test in 'mpt3sas_base_attach()'
+Message-Id: <20170806225134.27079-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825202714.64ivixeindjph3z6@mwanda>
-In-Reply-To: <20170825202714.64ivixeindjph3z6@mwanda>
+References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ast@kernel.org, john.fastabend@gmail.com, daniel@iogearbox.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sathya.prakash@broadcom.com, chaitra.basappa@broadcom.com, suganath-prabu.subramani@broadcom.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Aug 2017 23:27:14 +0300
+In the lines above this test, 8 'kzalloc' are performed, but only 7 results
+are tested.
 
-> "err" is set to zero if bpf_map_area_alloc() fails so it means we return
-> ERR_PTR(0) which is NULL.  The caller, find_and_alloc_map(), is not
-> expecting NULL returns and will oops.
-> 
-> Fixes: 174a79ff9515 ("bpf: sockmap with sk redirect support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add the missing one (i.e. '!ioc->port_enable_cmds.reply').
 
-Applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 1a5b6e40fb5c..8a44636ab0b5 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -5494,10 +5494,10 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
+ 	ioc->ctl_cmds.status = MPT3_CMD_NOT_USED;
+ 	mutex_init(&ioc->ctl_cmds.mutex);
+ 
+-	if (!ioc->base_cmds.reply || !ioc->transport_cmds.reply ||
+-	    !ioc->scsih_cmds.reply || !ioc->tm_cmds.reply ||
+-	    !ioc->config_cmds.reply || !ioc->ctl_cmds.reply ||
+-	    !ioc->ctl_cmds.sense) {
++	if (!ioc->base_cmds.reply || !ioc->port_enable_cmds.reply ||
++	    !ioc->transport_cmds.reply || !ioc->scsih_cmds.reply ||
++	    !ioc->tm_cmds.reply || !ioc->config_cmds.reply ||
++	    !ioc->ctl_cmds.reply || !ioc->ctl_cmds.sense) {
+ 		r = -ENOMEM;
+ 		goto out_free_resources;
+ 	}
+-- 
+2.11.0
+
