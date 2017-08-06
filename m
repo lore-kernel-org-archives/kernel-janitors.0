@@ -1,53 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 Aug 2017 17:42:55 +0000
-Subject: [PATCH] drivers/fmc: make structure fmc_dbgfs_sdb_dump static and include fmc-private.h
-Message-Id: <20170830174255.6844-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Aug 2017 15:00:04 +0000
+Subject: Re: [PATCH 0/5] block-cciss: Fine-tuning for two function implementations
+Message-Id: <b85210ef-48a6-401a-06bc-7a279e1078f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Rubini <rubini@gnudd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Date: Thu, 18 Aug 2016 11:40:04 +0200
+> 
+> Some update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (5):
+>   Use memdup_user()
+>   Less function calls after error detection
+>   Delete unnecessary initialisations
+>   Move an assignment for the variable "sg_used"
+>   Replace three kzalloc() calls by kcalloc()
+> 
+>  drivers/block/cciss.c | 66 ++++++++++++++++++++++++---------------------------
+>  1 file changed, 31 insertions(+), 35 deletions(-)
 
-The structure fmc_dbgfs_sdb_dump is local to the source and does not
-need to be in global scope, so make it static.  Also, fmc-private.h
-should be included to fix up two sparse warnings on fmc_debug_init
-and fmc_debug_exit.
+How will the clarification be continued for the shown change possibilities?
 
-Cleans up sparse warnings:
-symbol 'fmc_dbgfs_sdb_dump' was not declared. Should it be static?
-symbol 'fmc_debug_init' was not declared. Should it be static?
-symbol 'fmc_debug_exit' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/fmc/fmc-debug.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
-index 32930722770c..06c43c1e8899 100644
---- a/drivers/fmc/fmc-debug.c
-+++ b/drivers/fmc/fmc-debug.c
-@@ -17,6 +17,8 @@
- #include <linux/sdb.h>
- #include <linux/fmc-sdb.h>
- 
-+#include "fmc-private.h"
-+
- #define FMC_DBG_SDB_DUMP "dump_sdb"
- 
- static char *__strip_trailing_space(char *buf, char *str, int len)
-@@ -140,7 +142,7 @@ static int fmc_sdb_dump_open(struct inode *inode, struct file *file)
- }
- 
- 
--const struct file_operations fmc_dbgfs_sdb_dump = {
-+static const struct file_operations fmc_dbgfs_sdb_dump = {
- 	.owner = THIS_MODULE,
- 	.open  = fmc_sdb_dump_open,
- 	.read = seq_read,
--- 
-2.14.1
-
+Regards,
+Markus
