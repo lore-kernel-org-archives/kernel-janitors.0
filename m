@@ -1,51 +1,40 @@
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
-Date: Tue, 29 Aug 2017 07:02:36 +0000
-Subject: RE: [PATCH] RDMA/qedr: Missing error code in qedr_init_user_queue()
-Message-Id: <DM2PR0701MB1392E1F3804F92DA2677812F889F0@DM2PR0701MB1392.namprd07.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:00:17 +0000
+Subject: [PATCH] qed: Fix a memory allocation failure test in 'qed_mcp_cmd_init()'
+Message-Id: <20170806220017.20465-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825081839.5ahvp6pehrhyyf2z@mwanda>
-In-Reply-To: <20170825081839.5ahvp6pehrhyyf2z@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "Amrani, Ram" <Ram.Amrani-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, "Kalderon@mwanda" <Kalderon@mwanda>
-Cc: "Elior, Ariel" <Ariel.Elior-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Yuval.Mintz@cavium.com, Ariel.Elior@cavium.com, everest-linux-l2@cavium.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-Sent: Friday, August 25, 2017 11:19 AM
-> To: Amrani, Ram <Ram.Amrani@cavium.com>; Kalderon@mwanda;
-> Kalderon, Michal <Michal.Kalderon@cavium.com>
-> Cc: Elior, Ariel <Ariel.Elior@cavium.com>; Doug Ledford
-> <dledford@redhat.com>; Sean Hefty <sean.hefty@intel.com>; Hal
-> Rosenstock <hal.rosenstock@gmail.com>; linux-rdma@vger.kernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: [PATCH] RDMA/qedr: Missing error code in qedr_init_user_queue()
-> 
-> We should return -ENOMEM if the kzalloc() fails.  We currently return
-> success.
-> 
-> Fixes: 69ad0e7fe845 ("RDMA/qedr: Add support for iWARP in user space")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/qedr/verbs.c
-> b/drivers/infiniband/hw/qedr/verbs.c
-> index 4e14a558734b..bce4f79370e6 100644
-> --- a/drivers/infiniband/hw/qedr/verbs.c
-> +++ b/drivers/infiniband/hw/qedr/verbs.c
-> @@ -821,8 +821,10 @@ static inline int qedr_init_user_queue(struct
-> ib_ucontext *ib_ctx,
->  				   FW_PAGE_SHIFT);
->  	} else {
->  		q->pbl_tbl = kzalloc(sizeof(*q->pbl_tbl), GFP_KERNEL);
-> -		if (!q->pbl_tbl)
-> +		if (!q->pbl_tbl) {
-> +			rc = -ENOMEM;
->  			goto err0;
-> +		}
->  	}
-> 
->  	return 0;
+We allocate 'p_info->mfw_mb_cur' and 'p_info->mfw_mb_shadow' but we check
+'p_info->mfw_mb_addr' instead of 'p_info->mfw_mb_cur'.
 
-Thanks, Dan
+'p_info->mfw_mb_addr' is never 0, because it is initiliazed a few lines
+above in 'qed_load_mcp_offsets()'.
 
-Acked-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Update the test and check the result of the 2 'kzalloc()' instead.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+index c1ecce6b9141..376485d99357 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -253,7 +253,7 @@ int qed_mcp_cmd_init(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ 	size = MFW_DRV_MSG_MAX_DWORDS(p_info->mfw_mb_length) * sizeof(u32);
+ 	p_info->mfw_mb_cur = kzalloc(size, GFP_KERNEL);
+ 	p_info->mfw_mb_shadow = kzalloc(size, GFP_KERNEL);
+-	if (!p_info->mfw_mb_shadow || !p_info->mfw_mb_addr)
++	if (!p_info->mfw_mb_cur || !p_info->mfw_mb_shadow)
+ 		goto err;
+ 
+ 	return 0;
+-- 
+2.11.0
+
