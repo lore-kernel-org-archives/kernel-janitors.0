@@ -1,43 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 15:08:57 +0000
-Subject: [PATCH 3/9 v2] thermal: rcar_gen3_thermal: constify thermal_zone_of_device_ops structures
-Message-Id: <1502204943-20075-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:37:57 +0000
+Subject: [PATCH 3/3] power: supply: charger-manager: Slighly simplify code
+Message-Id: <4cf75823640aa667fc050e75b7a86a62aa2bdaa6.1502058761.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to devm_thermal_zone_of_sensor_register, which is declared
-as const.  Thus the thermal_zone_of_device_ops structure itself can
-be const.
+Use 'sizeof(*var)' instead of the equivalent 'sizeof(data structure type)'
+because it is less verbose.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+ drivers/power/supply/charger-manager.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-v2: New patch
-
- drivers/thermal/rcar_gen3_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 37fcefd..203aca4 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -225,7 +225,7 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
- 	return 0;
- }
+diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
+index 83c08c8e2c32..6502fa7c2106 100644
+--- a/drivers/power/supply/charger-manager.c
++++ b/drivers/power/supply/charger-manager.c
+@@ -1632,8 +1632,7 @@ static int charger_manager_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
--static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
-+static const struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
- 	.get_temp	= rcar_gen3_thermal_get_temp,
- 	.set_trips	= rcar_gen3_thermal_set_trips,
- };
+-	cm = devm_kzalloc(&pdev->dev,
+-			sizeof(struct charger_manager),	GFP_KERNEL);
++	cm = devm_kzalloc(&pdev->dev, sizeof(*cm), GFP_KERNEL);
+ 	if (!cm)
+ 		return -ENOMEM;
+ 
+-- 
+2.11.0
 
