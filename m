@@ -1,31 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:09 +0000
-Subject: [PATCH 00/12] constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 06 Aug 2017 22:37:56 +0000
+Subject: [PATCH 2/3] power: supply: charger-manager: Fix a comment
+Message-Id: <f7c303456f991c6bfcafb56045bb1b5698cc0315.1502058761.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+Update a comment which is no more up to date since commit
+2ed9e9b653095.
 
-Done with the help of Coccinelle.
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+ drivers/power/supply/charger-manager.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/media/platform/exynos-gsc/gsc-m2m.c     |    2 +-
- drivers/media/platform/exynos4-is/fimc-m2m.c    |    2 +-
- drivers/media/platform/m2m-deinterlace.c        |    2 +-
- drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c |    2 +-
- drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c    |    2 +-
- drivers/media/platform/mx2_emmaprp.c            |    2 +-
- drivers/media/platform/rcar_jpu.c               |    2 +-
- drivers/media/platform/s5p-g2d/g2d.c            |    2 +-
- drivers/media/platform/sti/bdisp/bdisp-v4l2.c   |    2 +-
- drivers/media/platform/sti/delta/delta-v4l2.c   |    2 +-
- drivers/media/platform/ti-vpe/vpe.c             |    2 +-
- drivers/media/platform/vim2m.c                  |    2 +-
- 12 files changed, 12 insertions(+), 12 deletions(-)
+diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
+index 52a49857e20f..83c08c8e2c32 100644
+--- a/drivers/power/supply/charger-manager.c
++++ b/drivers/power/supply/charger-manager.c
+@@ -1651,8 +1651,8 @@ static int charger_manager_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/*
+-	 * The following two do not need to be errors.
+-	 * Users may intentionally ignore those two features.
++	 * Some of the following do not need to be errors.
++	 * Users may intentionally ignore those features.
+ 	 */
+ 	if (desc->fullbatt_uV = 0) {
+ 		dev_info(&pdev->dev, "Ignoring full-battery voltage threshold as it is not supplied\n");
+-- 
+2.11.0
+
