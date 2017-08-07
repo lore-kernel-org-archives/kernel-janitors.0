@@ -1,30 +1,36 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 12 Aug 2017 21:20:39 +0000
-Subject: Re: [PATCH] ALSA: usx2y: Delete an error message for a failed memory allocation in two functions
-Message-Id: <s5hmv74wkig.wl-tiwai@suse.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 07 Aug 2017 06:30:33 +0000
+Subject: [PATCH] extcon: cros-ec: Fix a potential NULL pointer dereference
+Message-Id: <20170807063033.8063-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ca1485e-5aaf-3c42-a24e-fb834239182e@users.sourceforge.net>
-In-Reply-To: <5ca1485e-5aaf-3c42-a24e-fb834239182e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: myungjoo.ham@samsung.com, cw00.choi@samsung.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 11 Aug 2017 18:02:15 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 11 Aug 2017 17:40:57 +0200
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Return -ENOMEM in case of memory allocation failure. This avoids a NULL
+pointer dereference.
 
-Applied, thanks.
+Fixes: c69831666109 ("extcon: cros-ec: Add extcon-cros-ec driver to support display out")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/extcon/extcon-usbc-cros-ec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+index e759ed477735..598956f1dcae 100644
+--- a/drivers/extcon/extcon-usbc-cros-ec.c
++++ b/drivers/extcon/extcon-usbc-cros-ec.c
+@@ -68,6 +68,8 @@ static int cros_ec_pd_command(struct cros_ec_extcon_info *info,
+ 	int ret;
+ 
+ 	msg = kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
+ 
+ 	msg->version = version;
+ 	msg->command = command;
+-- 
+2.11.0
 
-Takashi
