@@ -1,73 +1,87 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Aug 2017 10:11:03 +0000
-Subject: [PATCH] iio staging: tsl2x7x: clean up limit checks
-Message-Id: <20170821101103.sysrgce7qgzn2ltx@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 16:06:41 +0000
+Subject: [PATCH] z2ram: Delete four error messages for a failed memory allocation in z2_open()
+Message-Id: <83b6c012-07ca-39df-cfd4-0c4791ecda3d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@fb.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The second part of this patch is probably the most interesting.  We
-use "TSL2X7X_MAX_LUX_TABLE_SIZE * 3" as the limit instead of just
-"TSL2X7X_MAX_LUX_TABLE_SIZE".  It creates a static checker warning that
-we are going of of bounds, but in real life we always hit the break
-statement on the last element so it's fine.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 7 Aug 2017 17:56:53 +0200
 
-The situation is that we normally have arrays with 3 elements of struct
-tsl2x7x_lux which has 3 unsigned integers.  If we load the table with
-sysfs then we're allow to have 9 elements instead.
+Omit extra messages for a memory allocation failure in this function.
 
-So the size of the default table in bytes is sizeof(int) times 3 struct
-members times 3 elements.  The original code wrote it as sizeof(int)
-times the number of elements in the bigger table (9).  It happens that
-9 is the same thing as 3 * 3 but expressing it that way is misleading.
+This issue was detected by using the Coccinelle software.
 
-For the second part of the patch, the original code just had an extra
-"multiply by three" and now that is removed.  The last element in the
-array is always zeroed memory whether this uses the default tables or it
-gets loaded with sysfs so we always hit the break statement anyway.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/z2ram.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/staging/iio/light/tsl2x7x.h b/drivers/staging/iio/light/tsl2x7x.h
-index ecae92211216..1beb8d2eb848 100644
---- a/drivers/staging/iio/light/tsl2x7x.h
-+++ b/drivers/staging/iio/light/tsl2x7x.h
-@@ -23,10 +23,6 @@
- #define __TSL2X7X_H
- #include <linux/pm.h>
+diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
+index 41c95c9b2ab4..66af886cb0a0 100644
+--- a/drivers/block/z2ram.c
++++ b/drivers/block/z2ram.c
+@@ -199,12 +199,8 @@ static int z2_open(struct block_device *bdev, fmode_t mode)
+ 		z2ram_map = 
+ 			kmalloc((size/Z2RAM_CHUNKSIZE)*sizeof(z2ram_map[0]),
+ 				GFP_KERNEL);
+-		if ( z2ram_map = NULL )
+-		{
+-		    printk( KERN_ERR DEVICE_NAME
+-			": cannot get mem for z2ram_map\n" );
++		if (!z2ram_map)
+ 		    goto err_out;
+-		}
  
--/* Max number of segments allowable in LUX table */
--#define TSL2X7X_MAX_LUX_TABLE_SIZE		9
--#define MAX_DEFAULT_TABLE_BYTES (sizeof(int) * TSL2X7X_MAX_LUX_TABLE_SIZE)
--
- struct iio_dev;
+ 		while (size) {
+ 			z2ram_map[ z2ram_size++ ] = vaddr;
+@@ -224,12 +220,8 @@ static int z2_open(struct block_device *bdev, fmode_t mode)
+ 	    case Z2MINOR_COMBINED:
  
- struct tsl2x7x_lux {
-@@ -35,6 +31,11 @@ struct tsl2x7x_lux {
- 	unsigned int ch1;
- };
+ 		z2ram_map = kmalloc( max_z2_map + max_chip_map, GFP_KERNEL );
+-		if ( z2ram_map = NULL )
+-		{
+-		    printk( KERN_ERR DEVICE_NAME
+-			": cannot get mem for z2ram_map\n" );
++		if (!z2ram_map)
+ 		    goto err_out;
+-		}
  
-+/* Max number of segments allowable in LUX table */
-+#define TSL2X7X_MAX_LUX_TABLE_SIZE		9
-+/* The default tables are all 3 elements */
-+#define MAX_DEFAULT_TABLE_BYTES (sizeof(struct tsl2x7x_lux) * 3)
-+
- /**
-  * struct tsl2x7x_default_settings - power on defaults unless
-  *                                   overridden by platform data.
-diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
-index 786e93f16ce9..2db1715ff659 100644
---- a/drivers/staging/iio/light/tsl2x7x.c
-+++ b/drivers/staging/iio/light/tsl2x7x.c
-@@ -1113,7 +1113,7 @@ static ssize_t in_illuminance0_lux_table_show(struct device *dev,
- 	int i = 0;
- 	int offset = 0;
+ 		get_z2ram();
+ 		get_chipram();
+@@ -245,12 +237,8 @@ static int z2_open(struct block_device *bdev, fmode_t mode)
  
--	while (i < (TSL2X7X_MAX_LUX_TABLE_SIZE * 3)) {
-+	while (i < TSL2X7X_MAX_LUX_TABLE_SIZE) {
- 		offset += snprintf(buf + offset, PAGE_SIZE, "%u,%u,%u,",
- 			chip->tsl2x7x_device_lux[i].ratio,
- 			chip->tsl2x7x_device_lux[i].ch0,
+     	    case Z2MINOR_Z2ONLY:
+ 		z2ram_map = kmalloc( max_z2_map, GFP_KERNEL );
+-		if ( z2ram_map = NULL )
+-		{
+-		    printk( KERN_ERR DEVICE_NAME
+-			": cannot get mem for z2ram_map\n" );
++		if (!z2ram_map)
+ 		    goto err_out;
+-		}
+ 
+ 		get_z2ram();
+ 
+@@ -263,12 +251,8 @@ static int z2_open(struct block_device *bdev, fmode_t mode)
+ 
+ 	    case Z2MINOR_CHIPONLY:
+ 		z2ram_map = kmalloc( max_chip_map, GFP_KERNEL );
+-		if ( z2ram_map = NULL )
+-		{
+-		    printk( KERN_ERR DEVICE_NAME
+-			": cannot get mem for z2ram_map\n" );
++		if (!z2ram_map)
+ 		    goto err_out;
+-		}
+ 
+ 		get_chipram();
+ 
+-- 
+2.13.4
+
