@@ -1,51 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 11 Aug 2017 11:47:28 +0000
-Subject: [PATCH] tty: amba-pl011: constify vendor_data structures
-Message-Id: <1502452048-3444-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 14:41:22 +0000
+Subject: [PATCH] sunvdc: Delete an error message for a failed memory allocation in vdc_port_probe()
+Message-Id: <df7463db-10cd-4955-da64-0fb4e356c00e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King <linux@armlinux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@fb.com>, "Liam R. Howlett" <Liam.Howlett@Oracle.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-These vendor_data structures are only stored in the vendor field of
-the uart_amba_port structure, as defined in the same file, and this
-field is declared as const.  Thus the vendor_data structures can be
-const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 7 Aug 2017 16:28:54 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/block/sunvdc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-There are some other vendor_data structures in the same file, but
-they are used in a different way.
-
- drivers/tty/serial/amba-pl011.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 1888d16..ba4e795 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -128,7 +128,7 @@ static unsigned int get_fifosize_arm(struct amba_device *dev)
- 	.get_fifosize		= get_fifosize_arm,
- };
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index 6b16ead1da58..34f8619d6597 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -894,9 +894,8 @@ static int vdc_port_probe(struct vio_dev *vdev, const struct vio_device_id *id)
+ 	}
  
--static struct vendor_data vendor_sbsa = {
-+static const struct vendor_data vendor_sbsa = {
- 	.reg_offset		= pl011_std_offsets,
- 	.fr_busy		= UART01x_FR_BUSY,
- 	.fr_dsr			= UART01x_FR_DSR,
-@@ -143,7 +143,7 @@ static unsigned int get_fifosize_arm(struct amba_device *dev)
- };
+ 	port = kzalloc(sizeof(*port), GFP_KERNEL);
+-	err = -ENOMEM;
+ 	if (!port) {
+-		printk(KERN_ERR PFX "Cannot allocate vdc_port.\n");
++		err = -ENOMEM;
+ 		goto err_out_release_mdesc;
+ 	}
  
- #ifdef CONFIG_ACPI_SPCR_TABLE
--static struct vendor_data vendor_qdt_qdf2400_e44 = {
-+static const struct vendor_data vendor_qdt_qdf2400_e44 = {
- 	.reg_offset		= pl011_std_offsets,
- 	.fr_busy		= UART011_FR_TXFE,
- 	.fr_dsr			= UART01x_FR_DSR,
+-- 
+2.13.4
 
