@@ -1,55 +1,53 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 08 Aug 2017 14:39:51 +0000
-Subject: [PATCH 0/3 v2] thermal: core: Fix some error handling code in 'thermal_zone_device_register()'
-Message-Id: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 07 Aug 2017 09:50:40 +0000
+Subject: [PATCH 1/5] drivers/mmc/host: constify sdhci_pltfm_data structures
+Message-Id: <1502099444-10473-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These patches fix some issue in the error handling path in
-'thermal_zone_device_register()'
+The sdhci_pltfm_data structure is only passed as the second argument
+of sdhci_pltfm_init, which is const, so the sdhci_pltfm_data structure can
+be const as well.
 
-The first patch adds some new helper function in order to ease the resource
-management.
-Maybe using devm_ variant could also be a better choise to free manage
-these resources. As it would be a bigger change, I've not looked at it at
-all at the moment.
-Also, note that this patch triggers a checkpatch warning about missing
-identifier name in function definition. I've left it as is to keep the
-style of the .h file.
+Done with the help of Coccinelle.
 
-The 2nd patch makes use of the new helper function.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The 3rd patch reorders the error handling path of
-'thermal_zone_device_register()' in order to avoid the leaks.
+---
+ drivers/mmc/host/sdhci-pic32.c |    2 +-
+ drivers/mmc/host/sdhci-pxav3.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-*** These patches have been compiled tested only. ***
-
-I also unsure about the right place for 'ida_simple_remove' in patch 3/3.
-
-
-v1 -> v2:
-    - add some helper functions in order to release some resources more
-      easily
-    - split the error handling path into 2. One before a successful call to
-      'device_register()', and one after
-
-
-Christophe JAILLET (3):
-  thermal: core: Add some new helper functions to free resources
-  thermal: core: Use the new 'thermal_zone_destroy_device_groups()'
-    helper function
-  thermal: core: Fix resources release in error paths in
-    thermal_zone_device_register()
-
- drivers/thermal/thermal_core.c  | 29 ++++++++++++++---------------
- drivers/thermal/thermal_core.h  |  1 +
- drivers/thermal/thermal_sysfs.c | 29 +++++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+), 15 deletions(-)
-
--- 
-2.11.0
+diff --git a/drivers/mmc/host/sdhci-pic32.c b/drivers/mmc/host/sdhci-pic32.c
+index 72c13b6..a6caa49 100644
+--- a/drivers/mmc/host/sdhci-pic32.c
++++ b/drivers/mmc/host/sdhci-pic32.c
+@@ -97,7 +97,7 @@ static unsigned int pic32_sdhci_get_ro(struct sdhci_host *host)
+ 	.get_ro = pic32_sdhci_get_ro,
+ };
+ 
+-static struct sdhci_pltfm_data sdhci_pic32_pdata = {
++static const struct sdhci_pltfm_data sdhci_pic32_pdata = {
+ 	.ops = &pic32_sdhci_ops,
+ 	.quirks = SDHCI_QUIRK_NO_HISPD_BIT,
+ 	.quirks2 = SDHCI_QUIRK2_NO_1_8_V,
+diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
+index f953f35..a344341 100644
+--- a/drivers/mmc/host/sdhci-pxav3.c
++++ b/drivers/mmc/host/sdhci-pxav3.c
+@@ -337,7 +337,7 @@ static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
+ 	.set_uhs_signaling = pxav3_set_uhs_signaling,
+ };
+ 
+-static struct sdhci_pltfm_data sdhci_pxav3_pdata = {
++static const struct sdhci_pltfm_data sdhci_pxav3_pdata = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK
+ 		| SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC
+ 		| SDHCI_QUIRK_32BIT_ADMA_SIZE
 
