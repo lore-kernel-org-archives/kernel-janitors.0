@@ -1,67 +1,62 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 20:37:16 +0000
-Subject: [PATCH 3/4] thermal: exynos: constify thermal_zone_of_device_ops structures
-Message-Id: <1501965437-30730-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Mon, 07 Aug 2017 15:21:26 +0000
+Subject: Re: [PATCH 3/4] thermal: exynos: constify thermal_zone_of_device_ops structures
+Message-Id: <2246245.2R0fntX3Po@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
+ <CGME20170805210250epcas2p2f6a808ee6e3e20cd1dc19457b96ddbf4@epcas2p2.samsung.com>
+ <1501965437-30730-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501965437-30730-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to thermal_zone_of_sensor_register, which is declared as const.
-Thus the thermal_zone_of_device_ops structure itself can be const.
+On Saturday, August 05, 2017 10:37:16 PM Julia Lawall wrote:
+> The thermal_zone_of_device_ops structure is only passed as the fourth
+> argument to thermal_zone_of_sensor_register, which is declared as const.
+> Thus the thermal_zone_of_device_ops structure itself can be const.
+> 
+> Done with the help of Coccinelle.
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct thermal_zone_of_device_ops i@p = { ... };
+> 
+> @ok1@
+> identifier r.i;
+> expression e1,e2,e3;
+> position p;
+> @@
+> thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
+> 
+> @bad@
+> position p != {r.p,ok1.p};
+> identifier r.i;
+> struct thermal_zone_of_device_ops e;
+> @@
+> e@i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct thermal_zone_of_device_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct thermal_zone_of_device_ops i@p = { ... };
+Eduardo/Zhang, Please queue this patch for upstream, thanks!
 
-@ok1@
-identifier r.i;
-expression e1,e2,e3;
-position p;
-@@
-thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct thermal_zone_of_device_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct thermal_zone_of_device_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/thermal/samsung/exynos_tmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 7b8ef09..ed805c7 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1286,7 +1286,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct thermal_zone_of_device_ops exynos_sensor_ops = {
-+static const struct thermal_zone_of_device_ops exynos_sensor_ops = {
- 	.get_temp = exynos_get_temp,
- 	.set_emul_temp = exynos_tmu_set_emulation,
- };
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
