@@ -1,76 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:43:02 +0000
-Subject: Applied "ASoC: blackfin: Delete an error message for a failed memory allocation in sport_create()" t
-Message-Id: <E1dhISE-0005CD-0r@finisterre>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 07 Aug 2017 00:23:15 +0000
+Subject: [PATCH] ASoC: mediatek: Fix an error checking code
+Message-Id: <20170807002315.3512-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d3eaf797-a4a3-f4ff-c368-3961b4e16fb1@users.sourceforge.net>
-In-Reply-To: <d3eaf797-a4a3-f4ff-c368-3961b4e16fb1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-The patch
+Check the value returned by 'devm_clk_get()' instead of the clock
+identifier which can never be an ERR code.
 
-   ASoC: blackfin: Delete an error message for a failed memory allocation in sport_create()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 60ea0394a602d5abc24bd2381fa0966a8720eec1 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 21:45:37 +0200
-Subject: [PATCH] ASoC: blackfin: Delete an error message for a failed memory
- allocation in sport_create()
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: d6f3710a56e1 ("ASoC: mediatek: add structure define and clock control for 2701")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/blackfin/bf6xx-sport.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
-index dfb744381c42..1bc3e0a47a57 100644
---- a/sound/soc/blackfin/bf6xx-sport.c
-+++ b/sound/soc/blackfin/bf6xx-sport.c
-@@ -388,10 +388,9 @@ struct sport_device *sport_create(struct platform_device *pdev)
- 	int ret;
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+index b815ecc6bbf6..affa7fb25dd9 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+@@ -75,7 +75,7 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
  
- 	sport = kzalloc(sizeof(*sport), GFP_KERNEL);
--	if (!sport) {
--		dev_err(dev, "Unable to allocate memory for sport device\n");
-+	if (!sport)
- 		return NULL;
--	}
-+
- 	sport->pdev = pdev;
- 
- 	ret = sport_get_resource(sport);
+ 	for (i = 0; i < MT2701_CLOCK_NUM; i++) {
+ 		afe_priv->clocks[i] = devm_clk_get(afe->dev, aud_clks[i]);
+-		if (IS_ERR(aud_clks[i])) {
++		if (IS_ERR(afe_priv->clocks[i])) {
+ 			dev_warn(afe->dev, "%s devm_clk_get %s fail\n",
+ 				 __func__, aud_clks[i]);
+ 			return PTR_ERR(aud_clks[i]);
 -- 
-2.13.2
+2.11.0
 
