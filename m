@@ -1,59 +1,43 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 24 Aug 2017 18:53:41 +0000
-Subject: Re: [PATCH] staging: r8822be: fix null pointer dereference with a null driver_adapter
-Message-Id: <78a07acc-cf73-551c-f9ef-eb9891bbdf50@lwfinger.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 10:52:10 +0000
+Subject: [PATCH] block/ps3vram: Delete an error message for a failed memory allocation in ps3vram_cache_init(
+Message-Id: <e22ee16a-5f34-46bd-577f-9b7ca75e9035@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823150710.22313-1-colin.king@canonical.com>
-In-Reply-To: <20170823150710.22313-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 08/23/2017 10:07 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to _rtl_dbg_trace via macro HALMAC_RT_TRACE will trigger a null
-> pointer deference on the null driver_adapter.  Fix this by assigning
-> driver_adapter earlier to halmac_adapter->driver_adapter before the tracing
-> call so that a non-null driver_adapter is passed instead.
-> 
-> Detected by CoverityScan, CID#1454613 ("Explicit null dereferenced")
-> 
-> Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 7 Aug 2017 12:37:01 +0200
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-Larry
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/ps3vram.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->   drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-> index a6c8a87f755f..3a24e33228f8 100644
-> --- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-> +++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-> @@ -4447,7 +4447,7 @@ halmac_func_p2pps_88xx(struct halmac_adapter *halmac_adapter,
->   {
->   	u8 h2c_buff[HALMAC_H2C_CMD_SIZE_88XX] = {0};
->   	u16 h2c_seq_mum = 0;
-> -	void *driver_adapter = NULL;
-> +	void *driver_adapter = halmac_adapter->driver_adapter;
->   	struct halmac_api *halmac_api;
->   	struct halmac_h2c_header_info h2c_header_info;
->   	enum halmac_ret_status status = HALMAC_RET_SUCCESS;
-> @@ -4455,7 +4455,6 @@ halmac_func_p2pps_88xx(struct halmac_adapter *halmac_adapter,
->   	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
->   			"[TRACE]halmac_p2pps !!\n");
->   
-> -	driver_adapter = halmac_adapter->driver_adapter;
->   	halmac_api = (struct halmac_api *)halmac_adapter->halmac_api;
->   
->   	P2PPS_SET_OFFLOAD_EN(h2c_buff, p2p_ps->offload_en);
-> 
+diff --git a/drivers/block/ps3vram.c b/drivers/block/ps3vram.c
+index e0e81cacd781..ba97d037279e 100644
+--- a/drivers/block/ps3vram.c
++++ b/drivers/block/ps3vram.c
+@@ -409,10 +409,8 @@ static int ps3vram_cache_init(struct ps3_system_bus_device *dev)
+ 	priv->cache.page_size = CACHE_PAGE_SIZE;
+ 	priv->cache.tags = kzalloc(sizeof(struct ps3vram_tag) *
+ 				   CACHE_PAGE_COUNT, GFP_KERNEL);
+-	if (priv->cache.tags = NULL) {
+-		dev_err(&dev->core, "Could not allocate cache tags\n");
++	if (!priv->cache.tags)
+ 		return -ENOMEM;
+-	}
+ 
+ 	dev_info(&dev->core, "Created ram cache: %d entries, %d KiB each\n",
+ 		CACHE_PAGE_COUNT, CACHE_PAGE_SIZE / 1024);
+-- 
+2.13.4
 
