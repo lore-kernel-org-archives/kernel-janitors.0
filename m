@@ -1,67 +1,72 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 20:37:17 +0000
-Subject: [PATCH 4/4] thermal: bcm2835: constify thermal_zone_of_device_ops structures
-Message-Id: <1501965437-30730-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Date: Mon, 07 Aug 2017 06:41:22 +0000
+Subject: Re: [PATCH 4/4] thermal: bcm2835: constify thermal_zone_of_device_ops structures
+Message-Id: <69716e67-d210-5599-426e-61c629dea523@i2se.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1501965437-30730-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1501965437-30730-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to thermal_zone_of_sensor_register, which is declared as const.
-Thus the thermal_zone_of_device_ops structure itself can be const.
+Am 05.08.2017 um 22:37 schrieb Julia Lawall:
+> The thermal_zone_of_device_ops structure is only passed as the fourth
+> argument to thermal_zone_of_sensor_register, which is declared as const.
+> Thus the thermal_zone_of_device_ops structure itself can be const.
+>
+> Done with the help of Coccinelle.
+>
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct thermal_zone_of_device_ops i@p = { ... };
+>
+> @ok1@
+> identifier r.i;
+> expression e1,e2,e3;
+> position p;
+> @@
+> thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
+>
+> @bad@
+> position p != {r.p,ok1.p};
+> identifier r.i;
+> struct thermal_zone_of_device_ops e;
+> @@
+> e@i@p
+>
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct thermal_zone_of_device_ops i = { ... };
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct thermal_zone_of_device_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-expression e1,e2,e3;
-position p;
-@@
-thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct thermal_zone_of_device_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct thermal_zone_of_device_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index e6863c8..a4d6a0e 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -145,7 +145,7 @@ static void bcm2835_thermal_debugfs(struct platform_device *pdev)
- 	debugfs_create_regset32("regset", 0444, data->debugfsdir, regset);
- }
- 
--static struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
-+static const struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
- 	.get_temp = bcm2835_thermal_get_temp,
- };
- 
-
+>
+> ---
+>  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+> index e6863c8..a4d6a0e 100644
+> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
+> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+> @@ -145,7 +145,7 @@ static void bcm2835_thermal_debugfs(struct platform_device *pdev)
+>  	debugfs_create_regset32("regset", 0444, data->debugfsdir, regset);
+>  }
+>  
+> -static struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
+> +static const struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
+>  	.get_temp = bcm2835_thermal_get_temp,
+>  };
+>  
+>
