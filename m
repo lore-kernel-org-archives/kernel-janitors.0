@@ -1,109 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 13:36:33 +0000
-Subject: [PATCH 2/3] jfs: Improve size determinations in five functions
-Message-Id: <8ac16f00-0995-86b6-7495-f8f7028f2138@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 13:05:45 +0000
+Subject: [PATCH 5/5] block-skd: Use ARRAY_SIZE() in skd_check_status()
+Message-Id: <4b9886f6-105e-c981-88af-ce7dfcc97e7a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
-In-Reply-To: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
+References: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
+In-Reply-To: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jfs-discussion@lists.sourceforge.net, Dave Kleikamp <shaggy@kernel.org>, Fabian Frederick <fabf@skynet.be>, Jan Kara <jack@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 14:54:11 +0200
+Date: Mon, 7 Aug 2017 14:34:33 +0200
 
-* Replace the specification of data structures by pointer dereferences
-  as the parameter for the operator "sizeof" to make the corresponding size
-  determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+WARNING: Prefer ARRAY_SIZE(skd_chkstat_table)
 
-* The script "checkpatch.pl" pointed information out like the following.
-
-  ERROR: do not use assignment in if condition
-
-  Thus fix two affected source code places.
+Thus use this macro.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/jfs/jfs_imap.c     | 2 +-
- fs/jfs/jfs_logmgr.c   | 8 +++++---
- fs/jfs/jfs_metapage.c | 2 +-
- fs/jfs/super.c        | 2 +-
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/block/skd_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index da8051299e47..a7e3a61187db 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -115,5 +115,5 @@ int diMount(struct inode *ipimap)
- 	 * allocate/initialize the in-memory inode map control structure
- 	 */
- 	/* allocate the in-memory inode map control structure. */
--	imap = kmalloc(sizeof(struct inomap), GFP_KERNEL);
-+	imap = kmalloc(sizeof(*imap), GFP_KERNEL);
- 	if (!imap)
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index a21f0e9eecd4..ed103c44bd52 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -1109,7 +1109,8 @@ int lmLogOpen(struct super_block *sb)
- 		}
- 	}
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index e53b40341834..555cf4810409 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -2272,7 +2272,7 @@ skd_check_status(struct skd_device *skdev,
+ 		 skerr->key, skerr->code, skerr->qual, skerr->fruc);
  
--	if (!(log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL))) {
-+	log = kzalloc(sizeof(*log), GFP_KERNEL);
-+	if (!log) {
- 		mutex_unlock(&jfs_log_mutex);
- 		return -ENOMEM;
- 	}
-@@ -1178,7 +1179,8 @@ static int open_inline_log(struct super_block *sb)
- 	struct jfs_log *log;
- 	int rc;
- 
--	if (!(log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL)))
-+	log = kzalloc(sizeof(*log), GFP_KERNEL);
-+	if (!log)
- 		return -ENOMEM;
- 	INIT_LIST_HEAD(&log->sb_list);
- 	init_waitqueue_head(&log->syncwait);
-@@ -1839,7 +1841,7 @@ static int lbmLogInit(struct jfs_log * log)
- 			goto error;
- 		buffer = page_address(page);
- 		for (offset = 0; offset < PAGE_SIZE; offset += LOGPSIZE) {
--			lbuf = kmalloc(sizeof(struct lbuf), GFP_KERNEL);
-+			lbuf = kmalloc(sizeof(*lbuf), GFP_KERNEL);
- 			if (lbuf = NULL) {
- 				if (offset = 0)
- 					__free_page(page);
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 65120a471729..6c75a7c87c0c 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -107,7 +107,7 @@ static inline int insert_metapage(struct page *page, struct metapage *mp)
- 	if (PagePrivate(page))
- 		a = mp_anchor(page);
- 	else {
--		a = kzalloc(sizeof(struct meta_anchor), GFP_NOFS);
-+		a = kzalloc(sizeof(*a), GFP_NOFS);
- 		if (!a)
- 			return -ENOMEM;
- 		set_page_private(page, (unsigned long)a);
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index 78b41e1d5c67..381476422e8d 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -526,7 +526,7 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	jfs_info("In jfs_read_super: s_flags=0x%lx", sb->s_flags);
- 
--	sbi = kzalloc(sizeof(struct jfs_sb_info), GFP_KERNEL);
-+	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
- 	if (!sbi)
- 		return -ENOMEM;
+ 	/* Does the info match an entry in the good category? */
+-	n = sizeof(skd_chkstat_table) / sizeof(skd_chkstat_table[0]);
++	n = ARRAY_SIZE(skd_chkstat_table);
+ 	for (i = 0; i < n; i++) {
+ 		struct sns_info *sns = &skd_chkstat_table[i];
  
 -- 
-2.14.0
+2.13.4
 
