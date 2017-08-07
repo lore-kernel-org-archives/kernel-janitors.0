@@ -1,27 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 11:03:46 +0000
-Subject: [PATCH 0/2] [media] imon: Adjustments for two function implementations
-Message-Id: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 07 Aug 2017 09:50:41 +0000
+Subject: [PATCH 2/5] mmc: sdhci-bcm-kona: constify sdhci_pltfm_data and sdhci_ops structures
+Message-Id: <1502099444-10473-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 12:56:54 +0200
+The sdhci_pltfm_data structure is only passed as the second argument
+of sdhci_pltfm_init, which is const, while the sdhci_ops structure
+is only stored in the ops field of a sdhci_pltfm_data structure,
+which is also const.  Thus both kinds of structures can be const as
+well.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in imon_init_intf0()
-  Improve a size determination in two functions
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/media/rc/imon.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+---
+ drivers/mmc/host/sdhci-bcm-kona.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-2.14.1
+diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
+index 51dd2fd..11ca95c 100644
+--- a/drivers/mmc/host/sdhci-bcm-kona.c
++++ b/drivers/mmc/host/sdhci-bcm-kona.c
+@@ -186,7 +186,7 @@ static void sdhci_bcm_kona_init_74_clocks(struct sdhci_host *host,
+ 		udelay(740);
+ }
+ 
+-static struct sdhci_ops sdhci_bcm_kona_ops = {
++static const struct sdhci_ops sdhci_bcm_kona_ops = {
+ 	.set_clock = sdhci_set_clock,
+ 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+ 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+@@ -197,7 +197,7 @@ static void sdhci_bcm_kona_init_74_clocks(struct sdhci_host *host,
+ 	.card_event = sdhci_bcm_kona_card_event,
+ };
+ 
+-static struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
++static const struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
+ 	.ops    = &sdhci_bcm_kona_ops,
+ 	.quirks = SDHCI_QUIRK_NO_CARD_NO_RESET |
+ 		SDHCI_QUIRK_BROKEN_TIMEOUT_VAL | SDHCI_QUIRK_32BIT_DMA_ADDR |
 
