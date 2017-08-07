@@ -1,40 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 07:23:13 +0000
-Subject: [PATCH 5/6] [media] cx24116: Delete an unnecessary variable initialisation in cx24116_attach()
-Message-Id: <86ad8f11-90b6-4930-8243-ab2e0e0c7650@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 13:03:49 +0000
+Subject: [PATCH 4/5] block-skd: Fix a typo in a comment line in skd_do_inq_page_da()
+Message-Id: <01b19125-e167-47f7-4e32-968849fd8712@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
-In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+References: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
+In-Reply-To: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 08:30:12 +0200
+Date: Mon, 7 Aug 2017 14:18:50 +0200
 
-The variable "state" will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation at the beginning.
+Add a missing character in this description.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/cx24116.c | 2 +-
+ drivers/block/skd_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
-index 74d610207bf2..902a60d2e1b5 100644
---- a/drivers/media/dvb-frontends/cx24116.c
-+++ b/drivers/media/dvb-frontends/cx24116.c
-@@ -1117,7 +1117,7 @@ static const struct dvb_frontend_ops cx24116_ops;
- struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
- 	struct i2c_adapter *i2c)
- {
--	struct cx24116_state *state = NULL;
-+	struct cx24116_state *state;
- 	int ret;
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index 8e2c89069927..e53b40341834 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -2556,7 +2556,7 @@ static void skd_do_inq_page_da(struct skd_device *skdev,
+ 	pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &val);
+ 	inq.pcie_subsystem_device_id = cpu_to_be16(val);
  
- 	dprintk("%s\n", __func__);
+-	/* Driver version, fixed lenth, padded with spaces on the right */
++	/* Driver version, fixed length, padded with spaces on the right */
+ 	inq.driver_version_length = sizeof(inq.driver_version);
+ 	memset(&inq.driver_version, ' ', sizeof(inq.driver_version));
+ 	memcpy(inq.driver_version, DRV_VER_COMPL,
 -- 
-2.14.1
+2.13.4
 
