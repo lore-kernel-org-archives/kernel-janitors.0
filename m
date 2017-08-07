@@ -1,24 +1,49 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 22 Aug 2017 07:58:58 +0000
-Subject: Re: [PATCH] crypto: cavium/nitrox - Fix an error handling path in 'nitrox_probe()'
-Message-Id: <20170822075858.GK6269@gondor.apana.org.au>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 07 Aug 2017 09:50:43 +0000
+Subject: [PATCH 4/5] mmc: sdhci-of-arasan: constify sdhci_pltfm_data and sdhci_ops structures
+Message-Id: <1502099444-10473-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170816051606.14950-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170816051606.14950-1-christophe.jaillet@wanadoo.fr>
+References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, Jampala.Srikanth@cavium.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 16, 2017 at 07:16:06AM +0200, Christophe JAILLET wrote:
-> 'err' is known to be 0 at this point.
-> If 'kzalloc()' fails, returns -ENOMEM instead of 0 which means success.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The sdhci_pltfm_data structure is only passed as the second argument
+of sdhci_pltfm_init, which is const, while the sdhci_ops structure
+is only stored in the ops field of a sdhci_pltfm_data structure,
+which is also const.  Thus both kinds of structures can be const as
+well.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/sdhci-of-arasan.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+index 528a5d2..0720ea7 100644
+--- a/drivers/mmc/host/sdhci-of-arasan.c
++++ b/drivers/mmc/host/sdhci-of-arasan.c
+@@ -262,7 +262,7 @@ static int sdhci_arasan_voltage_switch(struct mmc_host *mmc,
+ 	return -EINVAL;
+ }
+ 
+-static struct sdhci_ops sdhci_arasan_ops = {
++static const struct sdhci_ops sdhci_arasan_ops = {
+ 	.set_clock = sdhci_arasan_set_clock,
+ 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+ 	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+@@ -271,7 +271,7 @@ static int sdhci_arasan_voltage_switch(struct mmc_host *mmc,
+ 	.set_uhs_signaling = sdhci_set_uhs_signaling,
+ };
+ 
+-static struct sdhci_pltfm_data sdhci_arasan_pdata = {
++static const struct sdhci_pltfm_data sdhci_arasan_pdata = {
+ 	.ops = &sdhci_arasan_ops,
+ 	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+
