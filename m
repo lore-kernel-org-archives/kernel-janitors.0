@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 20:23:15 +0000
-Subject: [PATCH 3/4] [media] ds3000: Delete an unnecessary variable initialisation in ds3000_attach()
-Message-Id: <a7e259a5-88a6-4967-d8e0-50217b9eb6f5@users.sourceforge.net>
+Date: Mon, 07 Aug 2017 13:02:09 +0000
+Subject: [PATCH 3/5] block-skd: Delete an unnecessary return statement in skd_pci_remove()
+Message-Id: <838a198d-fcbf-ecc1-622d-fc67d1ab8e1a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
-In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
+References: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
+In-Reply-To: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 21:51:26 +0200
+Date: Mon, 7 Aug 2017 14:10:35 +0200
 
-The variable "state" will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation at the beginning.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/ds3000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/skd_main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
-index 988a464de3e9..3e347d03acb3 100644
---- a/drivers/media/dvb-frontends/ds3000.c
-+++ b/drivers/media/dvb-frontends/ds3000.c
-@@ -833,7 +833,7 @@ static const struct dvb_frontend_ops ds3000_ops;
- struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
- 				    struct i2c_adapter *i2c)
- {
--	struct ds3000_state *state = NULL;
-+	struct ds3000_state *state;
- 	int ret;
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index fa8569d4543b..8e2c89069927 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -4831,8 +4831,6 @@ static void skd_pci_remove(struct pci_dev *pdev)
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+ 	pci_set_drvdata(pdev, NULL);
+-
+-	return;
+ }
  
- 	dprintk("%s\n", __func__);
+ static int skd_pci_suspend(struct pci_dev *pdev, pm_message_t state)
 -- 
-2.14.1
+2.13.4
 
