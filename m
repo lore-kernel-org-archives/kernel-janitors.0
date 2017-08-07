@@ -1,59 +1,70 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 10:58:30 +0000
-Subject: [PATCH 4/6] [media] media: mt9m111: constify video_subdev structures
-Message-Id: <1502189912-28794-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 07 Aug 2017 11:52:07 +0000
+Subject: Applied "ASoC: mediatek: Fix an error checking code" to the asoc tree
+Message-Id: <E1degZr-0006pT-7Y@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170807002315.3512-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170807002315.3512-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orgChristopheJAILLETchristophe.jaillet@wanadoo.fr, linux-mediatek@lists.infradead.org@alsa-project.org
 
-The v4l2_subdev_ops structure is only passed as the third argument
-of v4l2_i2c_subdev_init, which is const, so the v4l2_subdev_ops
-structure can be const as well.  The other structures are only
-stored in the v4l2_subdev_ops structure, all the fields of which are
-const, so these structures can also be const.
+The patch
 
-Done with the help of Coccinelle.
+   ASoC: mediatek: Fix an error checking code
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8d7313bfb1bb7d71a6ebc503215e4fb4a8964741 Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Mon, 7 Aug 2017 02:23:15 +0200
+Subject: [PATCH] ASoC: mediatek: Fix an error checking code
+
+Check the value returned by 'devm_clk_get()' instead of the clock
+identifier which can never be an ERR code.
+
+Fixes: d6f3710a56e1 ("ASoC: mediatek: add structure define and clock control for 2701")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/i2c/mt9m111.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
-index 72e71b7..99b992e 100644
---- a/drivers/media/i2c/mt9m111.c
-+++ b/drivers/media/i2c/mt9m111.c
-@@ -835,7 +835,7 @@ static int mt9m111_s_power(struct v4l2_subdev *sd, int on)
- 	.s_ctrl = mt9m111_s_ctrl,
- };
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+index b815ecc6bbf6..affa7fb25dd9 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+@@ -75,7 +75,7 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
  
--static struct v4l2_subdev_core_ops mt9m111_subdev_core_ops = {
-+static const struct v4l2_subdev_core_ops mt9m111_subdev_core_ops = {
- 	.s_power	= mt9m111_s_power,
- #ifdef CONFIG_VIDEO_ADV_DEBUG
- 	.g_register	= mt9m111_g_register,
-@@ -865,7 +865,7 @@ static int mt9m111_g_mbus_config(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static struct v4l2_subdev_video_ops mt9m111_subdev_video_ops = {
-+static const struct v4l2_subdev_video_ops mt9m111_subdev_video_ops = {
- 	.g_mbus_config	= mt9m111_g_mbus_config,
- };
- 
-@@ -877,7 +877,7 @@ static int mt9m111_g_mbus_config(struct v4l2_subdev *sd,
- 	.set_fmt	= mt9m111_set_fmt,
- };
- 
--static struct v4l2_subdev_ops mt9m111_subdev_ops = {
-+static const struct v4l2_subdev_ops mt9m111_subdev_ops = {
- 	.core	= &mt9m111_subdev_core_ops,
- 	.video	= &mt9m111_subdev_video_ops,
- 	.pad	= &mt9m111_subdev_pad_ops,
+ 	for (i = 0; i < MT2701_CLOCK_NUM; i++) {
+ 		afe_priv->clocks[i] = devm_clk_get(afe->dev, aud_clks[i]);
+-		if (IS_ERR(aud_clks[i])) {
++		if (IS_ERR(afe_priv->clocks[i])) {
+ 			dev_warn(afe->dev, "%s devm_clk_get %s fail\n",
+ 				 __func__, aud_clks[i]);
+ 			return PTR_ERR(aud_clks[i]);
+-- 
+2.13.3
 
