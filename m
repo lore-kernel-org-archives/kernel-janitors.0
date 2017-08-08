@@ -1,37 +1,41 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 16 Aug 2017 17:16:48 +0000
-Subject: Re: [PATCH] Revert "staging: fsl-mc: be consistent when checking strcmp() return"
-Message-Id: <20170816171647.GA27365@kroah.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 Aug 2017 09:52:32 +0000
+Subject: [PATCH][next] net: phy: mdio-bcm-unimac: fix unsigned wrap-around when decrementing timeout
+Message-Id: <20170808095232.13490-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170816171200.31259-1-colin.king@canonical.com>
-In-Reply-To: <20170816171200.31259-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 16, 2017 at 06:12:00PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The previous fix removed the equal to zero comparisons by the strcmps and
-> now the function always returns true. Revert this change to restore the
-> original correctly functioning code.
-> 
-> Detected by CoverityScan, CID#1452267 ("Constant expression result")
-> 
-> This reverts commit b93ad9a067e1515af42da7d56bc61f1a25075f94.
+From: Colin Ian King <colin.king@canonical.com>
 
-So this should say:
-Fixes: XXXXXX
+Change post-decrement compare to pre-decrement to avoid an
+unsigned integer wrap-around on timeout. This leads to the following
+!timeout check to never to be true so -ETIMEDOUT is never returned.
 
-right?
+Detected by CoverityScan, CID#1452623 ("Logically dead code")
 
-And it should get into 4.13-final, right?  Or if not, at least
-backported to 4.13-stable?
+Fixes: 69a60b0579a4 ("net: phy: mdio-bcm-unimac: factor busy polling loop")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/phy/mdio-bcm-unimac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you please resend it with the fixes tag?
+diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
+index 89425ca48412..73c5267a11fd 100644
+--- a/drivers/net/phy/mdio-bcm-unimac.c
++++ b/drivers/net/phy/mdio-bcm-unimac.c
+@@ -71,7 +71,7 @@ static int unimac_mdio_poll(void *wait_func_data)
+ 			return 0;
+ 
+ 		usleep_range(1000, 2000);
+-	} while (timeout--);
++	} while (--timeout);
+ 
+ 	if (!timeout)
+ 		return -ETIMEDOUT;
+-- 
+2.11.0
 
-thanks,
-
-greg k-h
