@@ -1,52 +1,96 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Tue, 01 Aug 2017 11:19:37 +0000
-Subject: Re: [PATCH] IB/mlx4: Potential uninitialized variable in bringup_rss_rwqs()
-Message-Id: <20170801111937.GK13672@mtr-leonro.local>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1IYcr18XUmgwOrO2"
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 08 Aug 2017 14:39:52 +0000
+Subject: [PATCH 1/3 v2] thermal: core: Add some new helper functions to free resources
+Message-Id: <98e96edd53ea3109ec127f82608c8d5df5437c9c.1502201798.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
-In-Reply-To: <20170801105755.vy4tqnmvtdtrbbo5@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Guy Levi <guyle-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+In order to easily free resources allocated by
+'thermal_zone_create_device_groups()' we need 2 new helper functions.
 
---1IYcr18XUmgwOrO2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The first one undoes 'thermal_zone_create_device_groups()'.
+The 2nd one undoes 'create_trip_attrs()', which is a function called by
+'thermal_zone_create_device_groups()'.
 
-On Tue, Aug 01, 2017 at 01:57:55PM +0300, Dan Carpenter wrote:
-> My static checker complains "err" can be used uninitialized.  I don't
-> know the subsystem well, but to an outside observer it seems like a
-> potential bug.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+These functions will be used in patch 2/3 in order to simplify
+'thermal_release()'
+I've tried to implement it as close a possible as the way the resources have
+been allocated.
+However, in 'thermal_release()', the code is simplier without some
+additionnal 'if'.
+No sure if we should prefer consistancy with allocation or simplicity of code.
+---
+ drivers/thermal/thermal_core.h  |  1 +
+ drivers/thermal/thermal_sysfs.c | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-Thanks, Dan,
-I made the same patch, but didn't submit it yet.
-https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/commit/?h=rdma-next&id=2c714f9f58e2b6a27b941d7395f4f49a4d0e414b
+diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+index 2412b3759e16..27e3b1df7360 100644
+--- a/drivers/thermal/thermal_core.h
++++ b/drivers/thermal/thermal_core.h
+@@ -71,6 +71,7 @@ int thermal_build_list_of_policies(char *buf);
+ 
+ /* sysfs I/F */
+ int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
++void thermal_zone_destroy_device_groups(struct thermal_zone_device *);
+ void thermal_cooling_device_setup_sysfs(struct thermal_cooling_device *);
+ /* used only at binding time */
+ ssize_t
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index a694de907a26..eb95d64b9446 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -605,6 +605,24 @@ static int create_trip_attrs(struct thermal_zone_device *tz, int mask)
+ 	return 0;
+ }
+ 
++/**
++ * destroy_trip_attrs() - create attributes for trip points
++ * @tz:		the thermal zone device
++ *
++ * helper function to free resources alocated by create_trip_attrs()
++ */
++static void destroy_trip_attrs(struct thermal_zone_device *tz)
++{
++	if (!tz)
++		return;
++
++	kfree(tz->trip_type_attrs);
++	kfree(tz->trip_temp_attrs);
++	if (tz->ops->get_trip_hyst)
++		kfree(tz->trip_hyst_attrs);
++	kfree(tz->trips_attribute_group.attrs);
++}
++
+ int thermal_zone_create_device_groups(struct thermal_zone_device *tz,
+ 				      int mask)
+ {
+@@ -637,6 +655,17 @@ int thermal_zone_create_device_groups(struct thermal_zone_device *tz,
+ 	return 0;
+ }
+ 
++void thermal_zone_destroy_device_groups(struct thermal_zone_device *tz)
++{
++	if (!tz)
++		return;
++
++	if (tz->trips)
++		destroy_trip_attrs(tz);
++
++	kfree(tz->device.groups);
++}
++
+ /* sys I/F for cooling device */
+ static ssize_t
+ thermal_cooling_device_type_show(struct device *dev,
+-- 
+2.11.0
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-
---1IYcr18XUmgwOrO2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlmAY8kACgkQ5GN7iDZy
-WKcdHg/7BRknHAHYuNoYGwLy/7y/V7mSQvVGldMcMJhk29HmvFoWc1GQhXmE+uqS
-a6ZycqumAYCN3gbfqRyEN8rwL6iJR+cY6xfPsrCSaU2D7trBTVdFhoHkHQFoscD6
-TZg10Ag8OiovcF06VVD+A43lqaBf8nQAL8dBX44s+7Es9yLfbpKwkbZ1nKl5gICf
-zy1EiRzSyX/JME5qAFi2m5Y//AX62SnOo2v1wbY8NLxm1IJuJF5t2YRXjatV+2u7
-6y0fVFGoNSj4si0INKcInVepqgHLMFBxca4x7eBdjJomA3n3k3SFVpjtvQj5LJal
-ck5ohktX3LpAyx+I8JjvxM/xOZrXTiUh/u9uSVXGniTjESrRveLxZfkx5ME3XQcD
-KTRmQmb/gGoCciSek0vpSBZuwY+yr2G0vRUGl2DNcfCZCcL71FCZc0qG1TDZNt9X
-UPNWFaOBoxSDKeCVzBjRB8WErcskr2vbtViTDahFHiNUU8q0ESainzKngS73WcCH
-froFoIHV5xb0Cxaz5ha1m2rNRTJMSavHdj8ES04/qO1raOtasRmxlegGHx5/Nvxz
-Jl5/jRhMsn6ivSpYm/C6sn9XdfFuZVaiZFHbbYNVpOkqfEZjX9BVeXp3BhppIubn
-hxSJfuTUdN6jUtA+vhdwnguoNYdlugBQIN/r3bngM4x9wtscR2Y=
-=x4ut
------END PGP SIGNATURE-----
-
---1IYcr18XUmgwOrO2--
