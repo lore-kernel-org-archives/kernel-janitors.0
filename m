@@ -1,50 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 08 Aug 2017 08:23:50 +0000
-Subject: Re: block/ps3vram: Delete an error message for a failed memory allocation in ps3vram_cache_init()
-Message-Id: <a4b69182-80d3-c5e6-ab7a-6da2b99e5ddc@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 Aug 2017 17:41:02 +0000
+Subject: [PATCH][V2] IB/hns: fix memory leak on ah on error return path
+Message-Id: <20170808174102.28568-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e22ee16a-5f34-46bd-577f-9b7ca75e9035@users.sourceforge.net>
- <b6b5f2f0-bbfe-8471-d8fc-e236ea0b1ea4@infradead.org>
- <dd16f28c-1613-cfb2-5349-07aaac2f2f5a@users.sourceforge.net>
- <8d140d00-935c-da0a-ff2e-167abe642bda@infradead.org>
- <32cdcd8a-1000-223c-71da-4c9119954d4e@users.sourceforge.net>
- <3a657b44-2bc8-ee05-3a42-db7af354967e@infradead.org>
- <57b472a0-0245-f821-cea8-171c34cc9df7@users.sourceforge.net>
- <db00e381-a79e-4db2-2263-458b80e4844c@infradead.org>
-In-Reply-To: <db00e381-a79e-4db2-2263-458b80e4844c@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Geoff Levand <geoff@infradead.org>, linuxppc-dev@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jens Axboe <axboe@kernel.dk>, Jim Paris <jim@jtan.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> https://patchwork.ozlabs.org/patch/798575/
-> 
-> I submitted your patch
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your constructive feedback.
-https://patchwork.ozlabs.org/patch/798850/
+When dmac is NULL, ah is not being freed on the error return path. Fix
+this by kfree'ing it.
 
+Detected by CoverityScan, CID#1452636 ("Resource Leak")
 
-> and a fix to ps3vram_probe() with the other patches in my queue.
+Fixes: d8966fcd4c25 ("IB/core: Use rdma_ah_attr accessor functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_ah.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I find it nice that you picked this change opportunity up after
-a bit of discussion (before an other developer would eventually
-have tackled it also).
+diff --git a/drivers/infiniband/hw/hns/hns_roce_ah.c b/drivers/infiniband/hw/hns/hns_roce_ah.c
+index f78a733a63ec..d545302b8ef8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_ah.c
++++ b/drivers/infiniband/hw/hns/hns_roce_ah.c
+@@ -64,8 +64,10 @@ struct ib_ah *hns_roce_create_ah(struct ib_pd *ibpd,
+ 	} else {
+ 		u8 *dmac = rdma_ah_retrieve_dmac(ah_attr);
+ 
+-		if (!dmac)
++		if (!dmac) {
++			kfree(ah);
+ 			return ERR_PTR(-EINVAL);
++		}
+ 		memcpy(ah->av.mac, dmac, ETH_ALEN);
+ 	}
+ 
+-- 
+2.11.0
 
-“Check return of ps3vram_cache_init”
-https://patchwork.ozlabs.org/patch/798853/
-
-1. Unfortunately, I find that this specific update suggestion does not fit
-   to the Linux coding style convention.
-
-   “…
-   Do not unnecessarily use braces where a single statement will do.
-   …”
-
-2. How do you think about to use the check “if (error)” instead?
-
-3. Will an additional commit description be useful?
-
-Regards,
-Markus
