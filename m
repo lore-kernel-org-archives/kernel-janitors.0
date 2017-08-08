@@ -1,72 +1,52 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 01 Aug 2017 17:00:06 +0000
-Subject: Re: [PATCH][mtd-next] mtd: spi-nor: remove redundant check on err
-Message-Id: <5980B396.7040802@bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 10:58:31 +0000
+Subject: [PATCH 5/6] [media] exynos4-is: constify video_subdev structures
+Message-Id: <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170629175054.12231-1-colin.king@canonical.com>
- <e9fe2e63-aadf-d9cf-e7b1-dc7149677600@wedev4u.fr>
-In-Reply-To: <e9fe2e63-aadf-d9cf-e7b1-dc7149677600@wedev4u.fr>
+References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Colin King <colin.king@canonical.com>, Marek Vasut <marek.vasut@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+The v4l2_subdev_ops structures are only passed as the second
+argument of v4l2_subdev_init, which is const, so the
+v4l2_subdev_ops structures can be const as well.
 
+Done with the help of Coccinelle.
 
-Am 01.08.2017 18:33, schrieb Cyrille Pitchen:
-> Hi Colin,
-> 
-> Le 29/06/2017 à 19:50, Colin King a écrit :
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variable err is not updated since the previous check on it, so
->> the subsequent check on err is redundant and can be removed.
->>
->> Detected by CoverityScan, CID#1448658 ("Logically dead code")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/mtd/spi-nor/spi-nor.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
->> index 196b52f083ae..1296c1931591 100644
->> --- a/drivers/mtd/spi-nor/spi-nor.c
->> +++ b/drivers/mtd/spi-nor/spi-nor.c
->> @@ -2307,9 +2307,6 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
->>  		default:
->>  			break;
->>  		}
->> -
->> -		if (err)
->> -			goto exit;
-> 
-> Sorry but this was done on purpose to prepare the structure of the
-> source code so it's more easy to add later parsing of optional SFDP
-> tables such as the 4-byte address instruction set table or sector erase
-> map table.
-> At that time each case of the switch statement should update the value
-> of 'err'.
-> 
-> Best regards,
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This is hard to guess, could you add a comment so the next well meaning person
-has a chance to know that this is onn purpose ?
+---
+ drivers/media/platform/exynos4-is/fimc-isp.c  |    2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-re,
- wh
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
+index 8efe916..fd793d3 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -433,7 +433,7 @@ static void fimc_isp_subdev_unregistered(struct v4l2_subdev *sd)
+ 	.s_power = fimc_isp_subdev_s_power,
+ };
+ 
+-static struct v4l2_subdev_ops fimc_is_subdev_ops = {
++static const struct v4l2_subdev_ops fimc_is_subdev_ops = {
+ 	.core = &fimc_is_core_ops,
+ 	.video = &fimc_is_subdev_video_ops,
+ 	.pad = &fimc_is_subdev_pad_ops,
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index 7d3ec5c..30282c5 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1361,7 +1361,7 @@ static void fimc_lite_subdev_unregistered(struct v4l2_subdev *sd)
+ 	.log_status = fimc_lite_log_status,
+ };
+ 
+-static struct v4l2_subdev_ops fimc_lite_subdev_ops = {
++static const struct v4l2_subdev_ops fimc_lite_subdev_ops = {
+ 	.core = &fimc_lite_core_ops,
+ 	.video = &fimc_lite_subdev_video_ops,
+ 	.pad = &fimc_lite_subdev_pad_ops,
 
-
-> Cyrille
->>  	}
->>  
->>  exit:
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
