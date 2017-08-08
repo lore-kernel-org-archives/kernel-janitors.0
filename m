@@ -1,38 +1,24 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 22 Aug 2017 20:19:39 +0000
-Subject: Re: [alsa-devel] [PATCH] ALSA: via82xx: Use common error handling code in snd_via82xx_create()
-Message-Id: <s5ha82rs6ck.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 08 Aug 2017 17:26:45 +0000
+Subject: Re: [v2 01/12] IB/ocrdma: Use kcalloc() in ocrdma_mbx_alloc_pd_range()
+Message-Id: <9cdbdfa6-7118-c830-7587-aa27929f7028@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2332472c-61d2-8c21-bf46-5c80745d6380@users.sourceforge.net>
-        <20170822190757.76e5edh5t6tgvzpu@mwanda>
-        <d9b9dc7e-9c00-3f1d-f6f8-a2e67110c449@users.sourceforge.net>
-        <20170822201400.lw3bcjlvx4lzlq5d@mwanda>
-In-Reply-To: <20170822201400.lw3bcjlvx4lzlq5d@mwanda>
+References: <fc421509-4069-da8a-b308-60b49ea91ada@users.sourceforge.net>
+ <1492720999.3041.18.camel@redhat.com>
+ <86425035-7da8-d2b1-8544-d4f7540d50c6@users.sourceforge.net>
+ <21442d70-e77b-8338-30f7-9c41d048a665@users.sourceforge.net>
+ <CANjDDBgOa=8d5747AdTAZdwueGYrZNVZBe6zSPKOC1qzyDiheg@mail.gmail.com>
+ <1493139733.3041.75.camel@redhat.com>
+In-Reply-To: <1493139733.3041.75.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>
+To: Dennis Dalessandro <dennis.dalessandro@intel.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Leon Romanovsky <leon@kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma <linux-rdma@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 22 Aug 2017 22:16:12 +0200,
-Dan Carpenter wrote:
-> 
-> On Tue, Aug 22, 2017 at 10:05:37PM +0200, SF Markus Elfring wrote:
-> > >> @@ -1121,30 +1121,27 @@ static int snd_via82xx_create(struct snd_card *card,
-> > >>  
-> > >>  	if ((err = pci_request_regions(pci, card->driver)) < 0) {
-> > >>  		kfree(chip);
-> > >> -		pci_disable_device(pci);
-> > >> -		return err;
-> > >> +		goto disable_device;
-> 
-> Ah, you're right.  It's not leaking.  I thought you deleted the
-> kfree(chip);...
+Hello,
 
-Well, this also suggests something wrong by the patch...
+How will the clarification be continued for the shown change possibilities?
 
-If you can't achieve it cleanly, better not to touch it in a
-half-baked way.
-
-
-Takashi
+Regards,
+Markus
