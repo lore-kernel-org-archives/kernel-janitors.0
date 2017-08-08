@@ -1,36 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 09:54:17 +0000
-Subject: Re: [PATCH 0/7] cfag12864b: Fine-tuning for cfag12864b_init()
-Message-Id: <176b6eff-252e-2b2c-7130-ecbd7ebe21d3@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:59 +0000
+Subject: [PATCH 5/9 v2] thermal: exynos: constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
-In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-> Date: Sat, 10 Sep 2016 16:17:01 +0200
-> 
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (7):
->   Use kmalloc_array()
->   Delete an error message for a failed kmalloc_array() call
->   Return directly if the driver "ks0108" was not initialized
->   Return directly after a failed get_zeroed_page()
->   Rename jump labels
->   Return an error code only as a constant
->   Adjust two checks for null pointers
-> 
->  drivers/auxdisplay/cfag12864b.c | 37 +++++++++++++------------------------
->  1 file changed, 13 insertions(+), 24 deletions(-)
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structure itself can be const.
 
-Would you like to take another look at change possibilities
-for this software module?
+Done with the help of Coccinelle.
 
-Regards,
-Markus
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+v2: This patch was present in the original series
+
+ drivers/thermal/samsung/exynos_tmu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 7b8ef09..ed805c7 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -1286,7 +1286,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_of_device_ops exynos_sensor_ops = {
++static const struct thermal_zone_of_device_ops exynos_sensor_ops = {
+ 	.get_temp = exynos_get_temp,
+ 	.set_emul_temp = exynos_tmu_set_emulation,
+ };
+
