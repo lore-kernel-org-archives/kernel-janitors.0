@@ -1,43 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 19:45:39 +0000
-Subject: [media] as102_fe: Improve a size determination in as102_attach()
-Message-Id: <45666d70-6afc-ccfe-c210-a3fb07ee1fb8@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:09:02 +0000
+Subject: [PATCH 8/9 v2] hwmon: (core) constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
-In-Reply-To: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 21:30:38 +0200
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to devm_thermal_zone_of_sensor_register, which is declared
+as const.  Thus the thermal_zone_of_device_ops structure itself can
+be const.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/as102_fe.c | 2 +-
+
+v2: New patch
+
+ drivers/hwmon/hwmon.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/as102_fe.c b/drivers/media/dvb-frontends/as102_fe.c
-index 1fb4ab21d786..b1c84ee914f0 100644
---- a/drivers/media/dvb-frontends/as102_fe.c
-+++ b/drivers/media/dvb-frontends/as102_fe.c
-@@ -455,7 +455,7 @@ struct dvb_frontend *as102_attach(const char *name,
- 	struct as102_state *state;
- 	struct dvb_frontend *fe;
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index 2ac578a..c9790e2 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -135,7 +135,7 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
+ 	return 0;
+ }
  
--	state = kzalloc(sizeof(struct as102_state), GFP_KERNEL);
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return NULL;
+-static struct thermal_zone_of_device_ops hwmon_thermal_ops = {
++static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
+ 	.get_temp = hwmon_thermal_get_temp,
+ };
  
--- 
-2.14.1
 
