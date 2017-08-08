@@ -1,37 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 20:44:43 +0000
-Subject: [PATCH 1/3] [media] usbvision: Delete an error message for a failed memory allocation in usbvision_p
-Message-Id: <edf82b37-bbc4-5a8d-ae51-6c13902dbf4f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 08 Aug 2017 14:39:51 +0000
+Subject: [PATCH 0/3 v2] thermal: core: Fix some error handling code in 'thermal_zone_device_register()'
+Message-Id: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
-In-Reply-To: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 22:06:05 +0200
+These patches fix some issue in the error handling path in
+'thermal_zone_device_register()'
 
-Omit an extra message for a memory allocation failure in this function.
+The first patch adds some new helper function in order to ease the resource
+management.
+Maybe using devm_ variant could also be a better choise to free manage
+these resources. As it would be a bigger change, I've not looked at it at
+all at the moment.
+Also, note that this patch triggers a checkpatch warning about missing
+identifier name in function definition. I've left it as is to keep the
+style of the .h file.
 
-This issue was detected by using the Coccinelle software.
+The 2nd patch makes use of the new helper function.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/usbvision/usbvision-video.c | 1 -
- 1 file changed, 1 deletion(-)
+The 3rd patch reorders the error handling path of
+'thermal_zone_device_register()' in order to avoid the leaks.
 
-diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
-index 756322c4ac05..b74fb2dcb6f5 100644
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -1498,4 +1498,3 @@ static int usbvision_probe(struct usb_interface *intf,
--		dev_err(&intf->dev, "usbvision: out of memory!\n");
- 		ret = -ENOMEM;
- 		goto err_pkt;
- 	}
+*** These patches have been compiled tested only. ***
+
+I also unsure about the right place for 'ida_simple_remove' in patch 3/3.
+
+
+v1 -> v2:
+    - add some helper functions in order to release some resources more
+      easily
+    - split the error handling path into 2. One before a successful call to
+      'device_register()', and one after
+
+
+Christophe JAILLET (3):
+  thermal: core: Add some new helper functions to free resources
+  thermal: core: Use the new 'thermal_zone_destroy_device_groups()'
+    helper function
+  thermal: core: Fix resources release in error paths in
+    thermal_zone_device_register()
+
+ drivers/thermal/thermal_core.c  | 29 ++++++++++++++---------------
+ drivers/thermal/thermal_core.h  |  1 +
+ drivers/thermal/thermal_sysfs.c | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+), 15 deletions(-)
+
 -- 
-2.14.0
+2.11.0
 
