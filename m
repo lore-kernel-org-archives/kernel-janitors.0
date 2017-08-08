@@ -1,56 +1,43 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 21 Aug 2017 14:03:49 +0000
-Subject: Re: [PATCH] quota_v2: Delete an error message for a failed memory allocation in v2_read_file_info()
-Message-Id: <20170821140349.GA31870@quack2.suse.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 08 Aug 2017 10:10:54 +0000
+Subject: [PATCH] IB/core: fix memory leak on ah on error return path
+Message-Id: <20170808101054.13800-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8916fd8c-2f13-e343-d648-1174563e9c38@users.sourceforge.net>
-In-Reply-To: <8916fd8c-2f13-e343-d648-1174563e9c38@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 16-08-17 16:41:00, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 16 Aug 2017 16:16:30 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, applied the patch to my tree. Thanks.
+When dmac is NULL, ah is not being freed on the error return path. Fix
+this by kfree'ing it.
 
-								Honza
+Detected by CoverityScan, CID#1452636 ("Resource Leak")
 
-> ---
->  fs/quota/quota_v2.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/quota/quota_v2.c b/fs/quota/quota_v2.c
-> index ca71bf881ad1..2259329616b7 100644
-> --- a/fs/quota/quota_v2.c
-> +++ b/fs/quota/quota_v2.c
-> @@ -109,11 +109,9 @@ static int v2_read_file_info(struct super_block *sb, int type)
->  		return -1;
->  	}
->  	info->dqi_priv = kmalloc(sizeof(struct qtree_mem_dqinfo), GFP_NOFS);
-> -	if (!info->dqi_priv) {
-> -		printk(KERN_WARNING
-> -		       "Not enough memory for quota information structure.\n");
-> +	if (!info->dqi_priv)
->  		return -ENOMEM;
-> -	}
-> +
->  	qinfo = info->dqi_priv;
->  	if (version = 0) {
->  		/* limits are stored as unsigned 32-bit data */
-> -- 
-> 2.14.0
-> 
-> 
+Fixes: d8966fcd4c25 ("IB/core: Use rdma_ah_attr accessor functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_ah.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_ah.c b/drivers/infiniband/hw/hns/hns_roce_ah.c
+index f78a733a63ec..d545302b8ef8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_ah.c
++++ b/drivers/infiniband/hw/hns/hns_roce_ah.c
+@@ -64,8 +64,10 @@ struct ib_ah *hns_roce_create_ah(struct ib_pd *ibpd,
+ 	} else {
+ 		u8 *dmac = rdma_ah_retrieve_dmac(ah_attr);
+ 
+-		if (!dmac)
++		if (!dmac) {
++			kfree(ah);
+ 			return ERR_PTR(-EINVAL);
++		}
+ 		memcpy(ah->av.mac, dmac, ETH_ALEN);
+ 	}
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.11.0
+
