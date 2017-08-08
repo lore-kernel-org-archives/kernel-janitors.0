@@ -1,39 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Aug 2017 10:37:52 +0000
-Subject: [PATCH] drm/nouveau: remove redundant null check on array mstm->msto
-Message-Id: <20170817103752.16440-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 10:58:28 +0000
+Subject: [PATCH 2/6] [media] vimc: constify video_subdev structures
+Message-Id: <1502189912-28794-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Helen Koike <helen.koike@collabora.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These structures are all only stored in fields of v4l2_subdev_ops
+structures, all of which are const, so these structures can be const
+as well.
 
-The check to see if mstm->msto is null is redundant because it is
-an array and hence can never be null.  Remove the redundant check.
+Done with the help of Coccinelle.
 
-Detected by CoverityScan, CID#1375915 ("Array compared against 0")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/nouveau/nv50_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vimc/vimc-debayer.c |    2 +-
+ drivers/media/platform/vimc/vimc-scaler.c  |    2 +-
+ drivers/media/platform/vimc/vimc-sensor.c  |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
-index f7b4326a4641..51e9081b95a0 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -3141,7 +3141,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
- 	mstc->connector.funcs->reset(&mstc->connector);
- 	nouveau_conn_attach_properties(&mstc->connector);
+diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
+index 033a131..4d663e8 100644
+--- a/drivers/media/platform/vimc/vimc-debayer.c
++++ b/drivers/media/platform/vimc/vimc-debayer.c
+@@ -373,7 +373,7 @@ static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
+ 	return 0;
+ }
  
--	for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto; i++)
-+	for (i = 0; i < ARRAY_SIZE(mstm->msto); i++)
- 		drm_mode_connector_attach_encoder(&mstc->connector, &mstm->msto[i]->encoder);
+-static struct v4l2_subdev_video_ops vimc_deb_video_ops = {
++static const struct v4l2_subdev_video_ops vimc_deb_video_ops = {
+ 	.s_stream = vimc_deb_s_stream,
+ };
  
- 	drm_object_attach_property(&mstc->connector.base, dev->mode_config.path_property, 0);
--- 
-2.11.0
+diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
+index 0a3e086..e1602e0 100644
+--- a/drivers/media/platform/vimc/vimc-scaler.c
++++ b/drivers/media/platform/vimc/vimc-scaler.c
+@@ -267,7 +267,7 @@ static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
+ 	return 0;
+ }
+ 
+-static struct v4l2_subdev_video_ops vimc_sca_video_ops = {
++static const struct v4l2_subdev_video_ops vimc_sca_video_ops = {
+ 	.s_stream = vimc_sca_s_stream,
+ };
+ 
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 615c2b1..02e68c8 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -282,7 +282,7 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
+ 	return 0;
+ }
+ 
+-static struct v4l2_subdev_video_ops vimc_sen_video_ops = {
++static const struct v4l2_subdev_video_ops vimc_sen_video_ops = {
+ 	.s_stream = vimc_sen_s_stream,
+ };
+ 
 
