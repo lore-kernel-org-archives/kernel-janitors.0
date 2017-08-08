@@ -1,35 +1,33 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 03 Aug 2017 12:26:52 +0000
-Subject: [PATCH] staging: media: use relevant lock
-Message-Id: <1501763212-1394-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 10:58:26 +0000
+Subject: [PATCH 0/6] constify video_subdev structures
+Message-Id: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The data protected is video_out2 and the lock that is released is
-&video_out2->dma_queue_lock, so it seems that that lock should be
-taken as well.
+The structures of type v4l2_subdev_ops are only passed as the second
+argument of v4l2_subdev_init or as the third argument of
+v4l2_i2c_subdev_init, both of which are const.  The structures of type
+v4l2_subdev_core_ops, v4l2_subdev_pad_ops, v4l2_subdev_sensor_ops,
+v4l2_subdev_video_ops are only stored in fields of v4l2_subdev_ops
+structures, all of which are const.  Thus all of these structures can be
+declared as const as well.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Done with the help of Coccinelle.
 
 ---
- drivers/staging/media/davinci_vpfe/dm365_resizer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-index 857b0e8..4910cb7 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
-@@ -1059,7 +1059,7 @@ static void resizer_ss_isr(struct vpfe_resizer_device *resizer)
- 	/* If resizer B is enabled */
- 	if (pipe->output_num > 1 && resizer->resizer_b.output =
- 	    RESIZER_OUTPUT_MEMORY) {
--		spin_lock(&video_out->dma_queue_lock);
-+		spin_lock(&video_out2->dma_queue_lock);
- 		vpfe_video_process_buffer_complete(video_out2);
- 		video_out2->state = VPFE_VIDEO_BUFFER_NOT_QUEUED;
- 		vpfe_video_schedule_next_buffer(video_out2);
-
+ drivers/media/i2c/mt9m111.c                   |    6 +++---
+ drivers/media/i2c/mt9t001.c                   |    8 ++++----
+ drivers/media/platform/exynos4-is/fimc-isp.c  |    2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c |    2 +-
+ drivers/media/platform/vimc/vimc-debayer.c    |    2 +-
+ drivers/media/platform/vimc/vimc-scaler.c     |    2 +-
+ drivers/media/platform/vimc/vimc-sensor.c     |    2 +-
+ drivers/media/usb/uvc/uvc_entity.c            |    2 +-
+ drivers/staging/media/atomisp/i2c/ap1302.c    |    2 +-
+ drivers/staging/media/atomisp/i2c/mt9m114.c   |    2 +-
+ 10 files changed, 15 insertions(+), 15 deletions(-)
