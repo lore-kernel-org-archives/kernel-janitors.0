@@ -1,44 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 07:45:15 +0000
-Subject: [PATCH] ASoC: kirkwood: Delete an error message for a failed memory allocation in kirkwood_i2s_dev_p
-Message-Id: <2f32b2cf-dcde-ccef-24a5-f7b6ad9beb83@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:58 +0000
+Subject: [PATCH 4/9 v2] thermal: zx2967: constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 09:35:33 +0200
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structure itself can be const.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/kirkwood/kirkwood-i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
-index 3b09f71b9535..105a73cc5158 100644
---- a/sound/soc/kirkwood/kirkwood-i2s.c
-+++ b/sound/soc/kirkwood/kirkwood-i2s.c
-@@ -538,10 +538,9 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
- 	int err;
+v2: This patch was present in the original series
+
+ drivers/thermal/zx2967_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
+index a5670ad..6acce0b 100644
+--- a/drivers/thermal/zx2967_thermal.c
++++ b/drivers/thermal/zx2967_thermal.c
+@@ -111,7 +111,7 @@ static int zx2967_thermal_get_temp(void *data, int *temp)
+ 	return ret;
+ }
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "allocation failed\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
-+
- 	dev_set_drvdata(&pdev->dev, priv);
+-static struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
++static const struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
+ 	.get_temp = zx2967_thermal_get_temp,
+ };
  
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--- 
-2.14.0
 
