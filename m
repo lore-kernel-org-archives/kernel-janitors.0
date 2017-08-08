@@ -1,41 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Aug 2017 14:48:10 +0000
-Subject: [PATCH 3/4] selinux: Delete an unnecessary return statement in ebitmap_destroy()
-Message-Id: <230e56f6-3dd9-5e6e-fa06-df22d61e0831@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 08 Aug 2017 14:39:53 +0000
+Subject: [PATCH 2/3 v2] thermal: core: Use the new 'thermal_zone_destroy_device_groups()' helper function
+Message-Id: <5b5eea549341cfe25a1dfd608898ad9899a086a4.1502201798.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
-In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+References: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1502201798.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Aug 2017 15:50:26 +0200
+Simplify code by using the new 'thermal_zone_destroy_device_groups()'
+helper function.
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- security/selinux/ss/ebitmap.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/thermal/thermal_core.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-index 03581d7ef817..697bd748760a 100644
---- a/security/selinux/ss/ebitmap.c
-+++ b/security/selinux/ss/ebitmap.c
-@@ -339,7 +339,6 @@ void ebitmap_destroy(struct ebitmap *e)
- 
- 	e->highbit = 0;
- 	e->node = NULL;
--	return;
- }
- 
- int ebitmap_read(struct ebitmap *e, void *fp)
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 5a51c740e372..2523901325d0 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -836,11 +836,7 @@ static void thermal_release(struct device *dev)
+ 	if (!strncmp(dev_name(dev), "thermal_zone",
+ 		     sizeof("thermal_zone") - 1)) {
+ 		tz = to_thermal_zone(dev);
+-		kfree(tz->trip_type_attrs);
+-		kfree(tz->trip_temp_attrs);
+-		kfree(tz->trip_hyst_attrs);
+-		kfree(tz->trips_attribute_group.attrs);
+-		kfree(tz->device.groups);
++		thermal_zone_destroy_device_groups(tz);
+ 		kfree(tz);
+ 	} else if (!strncmp(dev_name(dev), "cooling_device",
+ 			    sizeof("cooling_device") - 1)) {
 -- 
-2.14.0
+2.11.0
 
