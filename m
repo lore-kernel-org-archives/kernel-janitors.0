@@ -1,52 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 10:58:31 +0000
-Subject: [PATCH 5/6] [media] exynos4-is: constify video_subdev structures
-Message-Id: <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Tue, 08 Aug 2017 12:37:03 +0000
+Subject: Re: [PATCH 5/6] [media] exynos4-is: constify video_subdev structures
+Message-Id: <5c673a72-98f6-1501-845e-7d83fabfa659@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
+ <CGME20170808123709epcas2p229a31cfa19e3a5bf3986e547162e2613@epcas2p2.samsung.com>
+In-Reply-To: <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-The v4l2_subdev_ops structures are only passed as the second
-argument of v4l2_subdev_init, which is const, so the
-v4l2_subdev_ops structures can be const as well.
+On 08/08/2017 12:58 PM, Julia Lawall wrote:
+> The v4l2_subdev_ops structures are only passed as the second
+> argument of v4l2_subdev_init, which is const, so the
+> v4l2_subdev_ops structures can be const as well.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/platform/exynos4-is/fimc-isp.c  |    2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
-index 8efe916..fd793d3 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -433,7 +433,7 @@ static void fimc_isp_subdev_unregistered(struct v4l2_subdev *sd)
- 	.s_power = fimc_isp_subdev_s_power,
- };
- 
--static struct v4l2_subdev_ops fimc_is_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_is_subdev_ops = {
- 	.core = &fimc_is_core_ops,
- 	.video = &fimc_is_subdev_video_ops,
- 	.pad = &fimc_is_subdev_pad_ops,
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 7d3ec5c..30282c5 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1361,7 +1361,7 @@ static void fimc_lite_subdev_unregistered(struct v4l2_subdev *sd)
- 	.log_status = fimc_lite_log_status,
- };
- 
--static struct v4l2_subdev_ops fimc_lite_subdev_ops = {
-+static const struct v4l2_subdev_ops fimc_lite_subdev_ops = {
- 	.core = &fimc_lite_core_ops,
- 	.video = &fimc_lite_subdev_video_ops,
- 	.pad = &fimc_lite_subdev_pad_ops,
-
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
