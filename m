@@ -1,18 +1,18 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:13 +0000
-Subject: [PATCH 01/17] pinctrl: bcm281xx: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 10:58:29 +0000
+Subject: [PATCH 3/6] staging: atomisp: constify video_subdev structures
+Message-Id: <1502189912-28794-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-This pinconf_ops structure is only stored in the const confops
-field of a pinctrl_desc structure. Make the pinconf_ops structure
+These structures are both stored in fields of v4l2_subdev_ops
+structures, all of which are const, so these structures can be
 const as well.
 
 Done with the help of Coccinelle.
@@ -20,20 +20,34 @@ Done with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/atomisp/i2c/ap1302.c  |    2 +-
+ drivers/staging/media/atomisp/i2c/mt9m114.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-index a7cceff..bc3b232 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-@@ -1384,7 +1384,7 @@ static int bcm281xx_pinctrl_pin_config_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinconf_ops bcm281xx_pinctrl_pinconf_ops = {
-+static const struct pinconf_ops bcm281xx_pinctrl_pinconf_ops = {
- 	.pin_config_get = bcm281xx_pinctrl_pin_config_get,
- 	.pin_config_set = bcm281xx_pinctrl_pin_config_set,
+diff --git a/drivers/staging/media/atomisp/i2c/ap1302.c b/drivers/staging/media/atomisp/i2c/ap1302.c
+index bacffbe..de687c6 100644
+--- a/drivers/staging/media/atomisp/i2c/ap1302.c
++++ b/drivers/staging/media/atomisp/i2c/ap1302.c
+@@ -1098,7 +1098,7 @@ static long ap1302_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
+ 	},
  };
+ 
+-static struct v4l2_subdev_sensor_ops ap1302_sensor_ops = {
++static const struct v4l2_subdev_sensor_ops ap1302_sensor_ops = {
+ 	.g_skip_frames	= ap1302_g_skip_frames,
+ };
+ 
+diff --git a/drivers/staging/media/atomisp/i2c/mt9m114.c b/drivers/staging/media/atomisp/i2c/mt9m114.c
+index 448e072..36a0636 100644
+--- a/drivers/staging/media/atomisp/i2c/mt9m114.c
++++ b/drivers/staging/media/atomisp/i2c/mt9m114.c
+@@ -1806,7 +1806,7 @@ static int mt9m114_g_skip_frames(struct v4l2_subdev *sd, u32 *frames)
+ 	.g_frame_interval = mt9m114_g_frame_interval,
+ };
+ 
+-static struct v4l2_subdev_sensor_ops mt9m114_sensor_ops = {
++static const struct v4l2_subdev_sensor_ops mt9m114_sensor_ops = {
+ 	.g_skip_frames	= mt9m114_g_skip_frames,
+ };
+ 
 
