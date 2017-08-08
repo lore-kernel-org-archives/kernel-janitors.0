@@ -1,27 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 19:43:36 +0000
-Subject: [PATCH 0/2] [media] as102_fe: Adjustments for as102_attach()
-Message-Id: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:55 +0000
+Subject: [PATCH 1/9 v2] thermal: hisilicon: constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 21:39:12 +0200
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to devm_thermal_zone_of_sensor_register, which is declared
+as const.  Thus the thermal_zone_of_device_ops structure itself can
+be const.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/media/dvb-frontends/as102_fe.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+---
 
--- 
-2.14.1
+v2: New patch
+
+ drivers/thermal/hisi_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+index 9c3ce34..bd3572c 100644
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -206,7 +206,7 @@ static int hisi_thermal_get_temp(void *_sensor, int *temp)
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_of_device_ops hisi_of_thermal_ops = {
++static const struct thermal_zone_of_device_ops hisi_of_thermal_ops = {
+ 	.get_temp = hisi_thermal_get_temp,
+ };
+ 
 
