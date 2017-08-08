@@ -1,32 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Aug 2017 06:04:46 +0000
-Subject: [PATCH 3/3] staging: lustre: obdclass: fix checking for obd_init_checks()
-Message-Id: <20170826060446.ezohk7527vuphcy7@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:09:03 +0000
+Subject: [PATCH 9/9 v2] hwmon: (scpi) constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Evans <bevans@cray.com>, Baoyou Xie <baoyou.xie@linaro.org>, Stephen Champion <schamp@sgi.com>, frank zago <fzago@cray.com>, Henri Doreau <henri.doreau@cea.fr>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The obd_init_checks() function can either return -EOVERFLOW or -EINVAL
-but we accidentally ignore -EINVAL returns.
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to devm_thermal_zone_of_sensor_register, which is declared
+as const.  Thus the thermal_zone_of_device_ops structure itself can
+be const.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-This patch is the right thing, but it's always a bit risky turning on
-new checks and I haven't tested this.
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-index 545358923271..2df218b010e1 100644
---- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
-+++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-@@ -448,7 +448,7 @@ static int __init obdclass_init(void)
- 	obd_zombie_impexp_init();
+v2: New patch
+
+ drivers/hwmon/scpi-hwmon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/scpi-hwmon.c b/drivers/hwmon/scpi-hwmon.c
+index a586480..7e49da5 100644
+--- a/drivers/hwmon/scpi-hwmon.c
++++ b/drivers/hwmon/scpi-hwmon.c
+@@ -120,7 +120,7 @@ static int scpi_read_temp(void *dev, int *temp)
+ 	return sprintf(buf, "%s\n", sensor->info.name);
+ }
  
- 	err = obd_init_checks();
--	if (err = -EOVERFLOW)
-+	if (err)
- 		return err;
+-static struct thermal_zone_of_device_ops scpi_sensor_ops = {
++static const struct thermal_zone_of_device_ops scpi_sensor_ops = {
+ 	.get_temp = scpi_read_temp,
+ };
  
- 	class_init_uuidlist();
+
