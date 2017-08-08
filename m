@@ -1,39 +1,42 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 12 Aug 2017 05:44:30 +0000
-Subject: [PATCH 2/6] GenWQE: constify pci_error_handlers structures
-Message-Id: <1502516674-8918-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:56 +0000
+Subject: [PATCH 2/9 v2] thermal: qoriq: constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These pci_error_handlers structures are only stored in the err_handler
-field of a pci_driver structure, and this field is declared as const.  Thus
-the pci_error_handlers structures can be const too.
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to thermal_zone_of_sensor_register, which is declared as const.
+Thus the thermal_zone_of_device_ops structure itself can be const.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/misc/genwqe/card_base.c |    2 +-
+
+v2: This patch was present in the original series
+
+ drivers/thermal/qoriq_thermal.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
-index 4fd21e8..8650046 100644
---- a/drivers/misc/genwqe/card_base.c
-+++ b/drivers/misc/genwqe/card_base.c
-@@ -1333,7 +1333,7 @@ static int genwqe_sriov_configure(struct pci_dev *dev, int numvfs)
- 	return 0;
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index 4362a69..c866cc1 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -188,7 +188,7 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
+ 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
  }
  
--static struct pci_error_handlers genwqe_err_handler = {
-+static const struct pci_error_handlers genwqe_err_handler = {
- 	.error_detected = genwqe_err_error_detected,
- 	.mmio_enabled	= genwqe_err_result_none,
- 	.slot_reset	= genwqe_err_slot_reset,
+-static struct thermal_zone_of_device_ops tmu_tz_ops = {
++static const struct thermal_zone_of_device_ops tmu_tz_ops = {
+ 	.get_temp = tmu_get_temp,
+ };
+ 
 
