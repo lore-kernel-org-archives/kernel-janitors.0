@@ -1,45 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Aug 2017 12:14:26 +0000
-Subject: Re: [PATCH] staging: pi433: remove some macros, introduce some inline functions
-Message-Id: <20170802121426.l3wmnyeeoig3p44u@mwanda>
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Tue, 08 Aug 2017 08:49:18 +0000
+Subject: Re: [PATCH 2/3] thermal: core: Reorder 'thermal_zone_device_register()' error handling code
+Message-Id: <1502182158.4296.21.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ee876334d7eb4af0d2277d0b9a61fdb6-EhVcX1pHQwdXWkQFBhENSgEKLlwACzJXX19HAVhEWENbS1kLMF52CEtUX1pBSEwcXlJRL1lQWAlZWHQDVFE=-webmailer1@server03.webmailer.webmailer.hosteurope.de>
- <20170802115330.uvvzqrimbz2ixoyk@mwanda>
- <1105187501.38159.1501675658122@ox.hosteurope.de>
-In-Reply-To: <1105187501.38159.1501675658122@ox.hosteurope.de>
+References: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
+         <1b2b2a818d356097d5f6092745086b79d43aeafe.1500187753.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1b2b2a818d356097d5f6092745086b79d43aeafe.1500187753.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marcus Wolf <marcus.wolf@wolf-entwicklungen.de>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, edubezval@gmail.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 02, 2017 at 02:07:37PM +0200, Marcus Wolf wrote:
-> Hi Dan,
+On Sun, 2017-07-16 at 08:59 +0200, Christophe JAILLET wrote:
+> Reorder code in the error handling path in order to match the way
+> resources
+> have been allocated.
 > 
-> I get your point and I understand, that there need to be rules to
-> simplify the life for the maintainers...
+> With this new order, we can avoid a call to 'device_unregister()' if
+> 'thermal_zone_create_device_groups'()' fails. At this point,
+> 'device_register()' has not been called yet.
 > 
-> But I honestly must confess, that at the moment, I don't have the
-> time for doing that. I am into two customer projects, that keep me
-> very busy these weeks.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/thermal/thermal_core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> The only thing, I can offer, is to remove all the lines, dealing 
-> with the #ifdef DEBUG and leave the rest, as it is and send it again.
-> Then all other changes are related to the move from macro to inline...
-> If that helps, please let me know.
+> diff --git a/drivers/thermal/thermal_core.c
+> b/drivers/thermal/thermal_core.c
+> index 9743f3e65eb0..c58714800660 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -1232,7 +1232,7 @@ thermal_zone_device_register(const char *type,
+> int trips, int mask,
+>  	/* Add nodes that are always present via .groups */
+>  	result = thermal_zone_create_device_groups(tz, mask);
+>  	if (result)
+> -		goto unregister;
+> +		goto remove_id;
 > 
-> If it needs further fragmentation, it'll take something like half 
-> a day / a day. I most probably can spent that day end of August, 
-> begin of September the earliest.
-> 
+I agree we should release ida and free tz, like you did in this patch.
 
-One trick that might help is you can just use `git citool` and highlight
-all the rmw() lines, add selected lines to the commit, then commit that
-as one patch.  Repeat for all five patches.
+But the problem is in the code below, where device_register() fails,
+we should free the resources allocated in
+thermal_zone_create_device_groups() explicitly.
 
-The kernel process does kind of have a steep learning with redoing
-patches...  Sorry about that.
+thanks,
+rui
 
-regards,
-dan carpenter
-
+>  	/* A new thermal zone needs to be updated anyway. */
+>  	atomic_set(&tz->need_update, 1);
+> @@ -1294,8 +1294,9 @@ thermal_zone_device_register(const char *type,
+> int trips, int mask,
+>  	return tz;
+>  
+>  unregister:
+> -	ida_simple_remove(&thermal_tz_ida, tz->id);
+>  	device_unregister(&tz->device);
+> +remove_id:
+> +	ida_simple_remove(&thermal_tz_ida, tz->id);
+>  	kfree(tz);
+>  	return ERR_PTR(result);
+>  }
