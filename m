@@ -1,29 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 07:09:18 +0000
-Subject: Re: connector: Delete an error message for a failed memory allocation in cn_queue_alloc_callback_ent
-Message-Id: <11fc2d4e-bcf4-9a1c-6d73-2e67aab2a1ed@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:57 +0000
+Subject: [PATCH 3/9 v2] thermal: rcar_gen3_thermal: constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
- <E0D909EE5BB15A4699798539EA149D7F0779689E@ORSMSX103.amr.corp.intel.com>
-In-Reply-To: <E0D909EE5BB15A4699798539EA149D7F0779689E@ORSMSX103.amr.corp.intel.com>
+References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Peter Waskiewicz Jr <peter.waskiewicz.jr@intel.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Did coccinelle trip on the message
+The thermal_zone_of_device_ops structure is only passed as the fourth
+argument to devm_thermal_zone_of_sensor_register, which is declared
+as const.  Thus the thermal_zone_of_device_ops structure itself can
+be const.
 
-I suggest to reconsider this implementation detail with the combination
-of a function call like “kzalloc”.
-A script for the semantic patch language can point various update candidates
-out according to a source code search pattern which is similar to “OOM_MESSAGE”
-in the script “checkpatch.pl”.
+Done with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> or the fact you weren't returning NULL?
+---
 
-How does this concern fit to my update suggestion?
+v2: New patch
 
-Regards,
-Markus
+ drivers/thermal/rcar_gen3_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 37fcefd..203aca4 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -225,7 +225,7 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
++static const struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
+ 	.get_temp	= rcar_gen3_thermal_get_temp,
+ 	.set_trips	= rcar_gen3_thermal_set_trips,
+ };
+
