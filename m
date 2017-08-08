@@ -1,35 +1,31 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Thu, 24 Aug 2017 17:50:39 +0000
-Subject: Re: [PATCH 2/2] ext4: Improve a size determination in two functions
-Message-Id: <20170824175039.jc6m6pjb5ar6lozm@thunk.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 08 Aug 2017 15:08:54 +0000
+Subject: [PATCH 0/9 v2] constify thermal_zone_of_device_ops structures
+Message-Id: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
- <c1941b22-bdab-fccf-06e2-2f9fc50daec1@users.sourceforge.net>
- <0d7fe1c1-f1f4-3c2f-0e2a-4c8545947714@redhat.com>
-In-Reply-To: <0d7fe1c1-f1f4-3c2f-0e2a-4c8545947714@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sandeen@redhat.com
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Aug 19, 2017 at 08:49:20PM -0500, Eric Sandeen wrote:
-> On 8/19/17 6:48 AM, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 19 Aug 2017 13:14:26 +0200
-> > 
-> > Replace the specification of data structures by pointer dereferences
-> > as the parameter for the operator "sizeof" to make the corresponding size
-> > determination a bit safer according to the Linux coding style convention.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Looks good,
-> 
-> Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+The thermal_zone_of_device_ops structures are only passed as the fourth
+argument to thermal_zone_of_sensor_register or
+devm_thermal_zone_of_sensor_register, both of which are declared as const.
+Thus the thermal_zone_of_device_ops structures themselves can be const.
 
-Thanks, applied.
+v2: add structures passed to devm_thermal_zone_of_sensor_register also.
 
-					- Ted
+Done with the help of Coccinelle.
+
+---
+
+ drivers/hwmon/hwmon.c                      |    2 +-
+ drivers/hwmon/scpi-hwmon.c                 |    2 +-
+ drivers/input/touchscreen/sun4i-ts.c       |    2 +-
+ drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
+ drivers/thermal/hisi_thermal.c             |    2 +-
+ drivers/thermal/qoriq_thermal.c            |    2 +-
+ drivers/thermal/rcar_gen3_thermal.c        |    2 +-
+ drivers/thermal/samsung/exynos_tmu.c       |    2 +-
+ drivers/thermal/zx2967_thermal.c           |    2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
