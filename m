@@ -1,83 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:44:46 +0000
-Subject: Applied "ASoC: samsung: make tm2_dapm_widgets and tm2_pm_ops static" to the asoc tree
-Message-Id: <E1dhITu-0005Zv-MJ@finisterre>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Wed, 09 Aug 2017 02:02:00 +0000
+Subject: Re: [9/9, v2] hwmon: (scpi) constify thermal_zone_of_device_ops structures
+Message-Id: <20170809020200.GA508@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170813153715.18058-1-colin.king@canonical.com>
-In-Reply-To: <20170813153715.18058-1-colin.king@canonical.com>
+References: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jean Delvare <jdelvare@suse.com>, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Aug 08, 2017 at 05:09:03PM +0200, Julia Lawall wrote:
+> The thermal_zone_of_device_ops structure is only passed as the fourth
+> argument to devm_thermal_zone_of_sensor_register, which is declared
+> as const.  Thus the thermal_zone_of_device_ops structure itself can
+> be const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-   ASoC: samsung: make tm2_dapm_widgets and tm2_pm_ops static
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Applied to hwmon-next.
 
 Thanks,
-Mark
+Guenter
 
-From fa99125e2acca4e85de57cff55aea9fc7cb2930a Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sun, 13 Aug 2017 16:37:15 +0100
-Subject: [PATCH] ASoC: samsung: make tm2_dapm_widgets and tm2_pm_ops static
-
-tm2_dapm_widgets and tm2_pm_ops are local to the source and do not need
-to be in global scope, so make them static.
-
-Cleans up sparse warnings:
-symbol 'tm2_dapm_widgets' was not declared. Should it be static?
-symbol 'tm2_pm_ops' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/samsung/tm2_wm5110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
-index 24cc9d63ce87..68698f3d72f9 100644
---- a/sound/soc/samsung/tm2_wm5110.c
-+++ b/sound/soc/samsung/tm2_wm5110.c
-@@ -318,7 +318,7 @@ static const struct snd_kcontrol_new tm2_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
- };
- 
--const struct snd_soc_dapm_widget tm2_dapm_widgets[] = {
-+static const struct snd_soc_dapm_widget tm2_dapm_widgets[] = {
- 	SND_SOC_DAPM_HP("HP", NULL),
- 	SND_SOC_DAPM_SPK("SPK", NULL),
- 	SND_SOC_DAPM_SPK("RCV", NULL),
-@@ -521,7 +521,7 @@ static void tm2_pm_complete(struct device *dev)
- 	tm2_start_sysclk(card);
- }
- 
--const struct dev_pm_ops tm2_pm_ops = {
-+static const struct dev_pm_ops tm2_pm_ops = {
- 	.prepare	= tm2_pm_prepare,
- 	.suspend	= snd_soc_suspend,
- 	.resume		= snd_soc_resume,
--- 
-2.13.2
-
+> ---
+> 
+> v2: New patch
+> 
+>  drivers/hwmon/scpi-hwmon.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> diff --git a/drivers/hwmon/scpi-hwmon.c b/drivers/hwmon/scpi-hwmon.c
+> index a586480..7e49da5 100644
+> --- a/drivers/hwmon/scpi-hwmon.c
+> +++ b/drivers/hwmon/scpi-hwmon.c
+> @@ -120,7 +120,7 @@ static int scpi_read_temp(void *dev, int *temp)
+>  	return sprintf(buf, "%s\n", sensor->info.name);
+>  }
+>  
+> -static struct thermal_zone_of_device_ops scpi_sensor_ops = {
+> +static const struct thermal_zone_of_device_ops scpi_sensor_ops = {
+>  	.get_temp = scpi_read_temp,
+>  };
+>  
