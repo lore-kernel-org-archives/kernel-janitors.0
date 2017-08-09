@@ -1,30 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 15 Aug 2017 06:23:21 +0000
-Subject: Re: [PATCH] ALSA: rme9652: Use common error handling code in two functions
-Message-Id: <s5h4lt9jqna.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Aug 2017 21:28:11 +0000
+Subject: [PATCH] net/mlx5: Uninitialized variable in esw_add_uc_addr()
+Message-Id: <20170809072418.e4x5xmbvboadhe5w@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fefeea4b-68a2-5b4c-2cfc-cb05383b5474@users.sourceforge.net>
-In-Reply-To: <fefeea4b-68a2-5b4c-2cfc-cb05383b5474@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Julia Lawall <Julia.Lawall@lip6.fr>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Saeed Mahameed <saeedm@mellanox.com>
+Cc: Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 14 Aug 2017 22:10:10 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 14 Aug 2017 22:00:40 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+"err" isn't initialized if we hit the "goto fdb_add;".
 
-Applied, thanks.
+Fixes: eeb66cdb6826 ("net/mlx5: Separate between E-Switch and MPFS")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index fd51f0ea8df9..baed45c0dabe 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -376,7 +376,7 @@ static int esw_add_uc_addr(struct mlx5_eswitch *esw, struct vport_addr *vaddr)
+ {
+ 	u8 *mac = vaddr->node.addr;
+ 	u32 vport = vaddr->vport;
+-	int err;
++	int err = 0;
+ 
+ 	/* Skip mlx5_mpfs_add_mac for PFs,
+ 	 * it is already done by the PF netdev in mlx5e_execute_l2_action
