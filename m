@@ -1,76 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:42:40 +0000
-Subject: Applied "ASoC: fsi: Delete an error message for a failed memory allocation in fsi_probe()" to the as
-Message-Id: <E1dhIRs-000578-E6@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 08:03:51 +0000
+Subject: [PATCH 3/4] ALSA: emux: Adjust four checks for null pointers
+Message-Id: <ef3686fe-4f2d-8cdb-f2ed-0055f0a241c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c78da5a0-fd60-b9fd-7607-51995c1fee8c@users.sourceforge.net>
-In-Reply-To: <c78da5a0-fd60-b9fd-7607-51995c1fee8c@users.sourceforge.net>
+References: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
+In-Reply-To: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Geert Uytterhoeven <geert@linux-m68k.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: fsi: Delete an error message for a failed memory allocation in fsi_probe()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From dd80627d0688709a77233787a9c9d7e1f8e419ac Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 18:18:20 +0200
-Subject: [PATCH] ASoC: fsi: Delete an error message for a failed memory
- allocation in fsi_probe()
+Date: Wed, 9 Aug 2017 09:22:42 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus fix affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/fsi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/synth/emux/emux_seq.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
-index 005b21506556..1f41cf1ff830 100644
---- a/sound/soc/sh/fsi.c
-+++ b/sound/soc/sh/fsi.c
-@@ -1962,10 +1962,8 @@ static int fsi_probe(struct platform_device *pdev)
+diff --git a/sound/synth/emux/emux_seq.c b/sound/synth/emux/emux_seq.c
+index 12acf18c5be4..fd6cbd439511 100644
+--- a/sound/synth/emux/emux_seq.c
++++ b/sound/synth/emux/emux_seq.c
+@@ -99,7 +99,7 @@ snd_emux_init_seq(struct snd_emux *emu, struct snd_card *card, int index)
+ 		sprintf(tmpname, "%s Port %d", emu->name, i);
+ 		p = snd_emux_create_port(emu, tmpname, MIDI_CHANNELS,
+ 					 0, &pinfo);
+-		if (p = NULL) {
++		if (!p) {
+ 			snd_printk(KERN_ERR "can't create port\n");
+ 			return -ENOMEM;
+ 		}
+@@ -151,7 +151,7 @@ snd_emux_create_port(struct snd_emux *emu, char *name,
  	}
+ 	p->chset.channels = kcalloc(max_channels, sizeof(*p->chset.channels),
+ 				    GFP_KERNEL);
+-	if (p->chset.channels = NULL) {
++	if (!p->chset.channels) {
+ 		snd_printk(KERN_ERR "no memory\n");
+ 		kfree(p);
+ 		return NULL;
+@@ -373,7 +373,7 @@ int snd_emux_init_virmidi(struct snd_emux *emu, struct snd_card *card)
+ 		return 0;
  
- 	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
--	if (!master) {
--		dev_err(&pdev->dev, "Could not allocate master\n");
-+	if (!master)
+ 	emu->vmidi = kcalloc(emu->midi_ports, sizeof(*emu->vmidi), GFP_KERNEL);
+-	if (emu->vmidi = NULL)
++	if (!emu->vmidi)
  		return -ENOMEM;
--	}
  
- 	master->base = devm_ioremap_nocache(&pdev->dev,
- 					    res->start, resource_size(res));
+ 	for (i = 0; i < emu->midi_ports; i++) {
+@@ -405,7 +405,7 @@ int snd_emux_delete_virmidi(struct snd_emux *emu)
+ {
+ 	int i;
+ 
+-	if (emu->vmidi = NULL)
++	if (!emu->vmidi)
+ 		return 0;
+ 
+ 	for (i = 0; i < emu->midi_ports; i++) {
 -- 
-2.13.2
+2.13.4
 
