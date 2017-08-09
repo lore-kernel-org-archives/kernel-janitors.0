@@ -1,50 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:30:12 +0000
-Subject: [PATCH v2 0/9] ACPI-video: Fine-tuning for several function implementations
-Message-Id: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 18:00:25 +0000
+Subject: [PATCH v2 0/4] ACPI-APEI-HEST: Fine-tuning for two function implementations
+Message-Id: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
+ <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
+ <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From 2a7010a6555091b685ed51d91fea23ff9058047c Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 17:16:15 +0200
-Subject: [PATCH v2 0/9] ACPI-video: Fine-tuning for several function implementations
+Date: Wed, 9 Aug 2017 19:45:43 +0200
 
-Several update suggestions were taken into account
+A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (9):
-  Use kmalloc_array() in acpi_video_get_levels()
-  Return directly after a failed device query
-  Delete an error message for a failed kzalloc() call
-  Return directly after a failed input_allocate_device()
-  Delete unnecessary if statement in acpi_video_switch_brightness()
-  Improve a jump target in acpi_video_switch_brightness()
-  Delete an unnecessary initialisation in three functions
-  Move four assignments in acpi_video_get_levels()
-  Improve a size determination in four functions
+Markus Elfring (4):
+  Fix a typo in a comment line
+  Use kmalloc_array() in hest_ghes_dev_register()
+  Move an assignment in hest_ghes_dev_register()
+  Reduce the scope for a variable in acpi_hest_init()
 
 ---
 
 v2:
 * Desired changes were rebased on source files from Linux next-20170803.
 
-* Some update steps were recombined.
+* The number of update steps was reduced.
 
- drivers/acpi/acpi_video.c | 53 ++++++++++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 28 deletions(-)
+ drivers/acpi/apei/hest.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 -- 
 2.13.4
