@@ -1,56 +1,29 @@
-From: Timofey Titovets <nefelim4ag@gmail.com>
-Date: Mon, 21 Aug 2017 10:50:27 +0000
-Subject: Re: [PATCH 4/4] btrfs: Delete an unnecessary variable initialisation in tree_mod_log_eb_copy()
-Message-Id: <CAGqmi75EiV4nX+QCv0GR9wRbjNS5d7UernMSBdHEVsA+ubGBaQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Aug 2017 21:35:50 +0000
+Subject: [PATCH net-next] phylink: Fix an uninitialized variable bug
+Message-Id: <20170809213550.rga6tlohagu2pm2y@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net> <31e6e888-586c-3480-7d57-dbf96989a26c@users.sourceforge.net>
-In-Reply-To: <31e6e888-586c-3480-7d57-dbf96989a26c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-btrfs <linux-btrfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Don't needed, and you did miss several similar places (L573 & L895) in
-that file with explicit initialisation.
+"ret" isn't necessarily initialized here.
 
-Reviewed-by: Timofey Titovets <nefelim4ag@gmail.com>
+Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-2017-08-20 23:20 GMT+03:00 SF Markus Elfring <elfring@users.sourceforge.net>:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 20 Aug 2017 22:02:54 +0200
->
-> The variable "tm_list" will eventually be set to an appropriate pointer
-> a bit later. Thus omit the explicit initialisation at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/btrfs/ctree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-> index 3b49f39eaaf6..78387f5be0ce 100644
-> --- a/fs/btrfs/ctree.c
-> +++ b/fs/btrfs/ctree.c
-> @@ -801,7 +801,7 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
->                      unsigned long src_offset, int nr_items)
->  {
->         int ret = 0;
-> -       struct tree_mod_elem **tm_list = NULL;
-> +       struct tree_mod_elem **tm_list;
->         struct tree_mod_elem **tm_list_add, **tm_list_rem;
->         int i;
->         int locked = 0;
-> --
-> 2.14.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Have a nice day,
-Timofey.
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 32917bdd1432..bcb4755bcd95 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -958,7 +958,7 @@ int phylink_ethtool_ksettings_set(struct phylink *pl,
+ 	}
+ 	mutex_unlock(&pl->state_mutex);
+ 
+-	return ret;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(phylink_ethtool_ksettings_set);
+ 
