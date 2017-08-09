@@ -1,55 +1,31 @@
-From: "Yan, Zheng" <zyan@redhat.com>
-Date: Mon, 21 Aug 2017 01:46:54 +0000
-Subject: Re: [PATCH 0/3] Ceph: Adjustments for some function implementations
-Message-Id: <621A6044-0445-42A4-AE39-E3E300833A7F@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Aug 2017 11:19:06 +0000
+Subject: [PATCH] drm: Shift wrap bug in create_in_format_blob()
+Message-Id: <20170809111906.4rv3hzritctfktv3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
-In-Reply-To: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Daniel Vetter <daniel.vetter@intel.com>, Ben Widawsky <ben@bwidawsk.net>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
+"plane->format_count" can go up to 64.  (It's capped in
+drm_universal_plane_init().)  So we should be using ULL type instead of
+int here to prevent shift wrapping.
 
-> On 21 Aug 2017, at 02:37, SF Markus Elfring <elfring@users.sourceforge.ne=
-t> wrote:
->=20
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 20 Aug 2017 20:32:10 +0200
->=20
-> Three update suggestions were taken into account
-> from static source code analysis.
->=20
-> Markus Elfring (3):
->  Delete an error message for a failed memory allocation in __get_or_creat=
-e_frag()
->  Delete an unnecessary return statement in update_dentry_lease()
->  Adjust 36 checks for null pointers
->=20
-> fs/ceph/addr.c       |  2 +-
-> fs/ceph/cache.c      |  2 +-
-> fs/ceph/caps.c       |  4 ++--
-> fs/ceph/debugfs.c    |  2 +-
-> fs/ceph/file.c       |  2 +-
-> fs/ceph/inode.c      | 14 +++++---------
-> fs/ceph/mds_client.c | 22 +++++++++++-----------
-> fs/ceph/mdsmap.c     |  6 +++---
-> fs/ceph/super.c      | 18 +++++++++---------
-> fs/ceph/xattr.c      |  8 ++++----
-> 10 files changed, 38 insertions(+), 42 deletions(-)
->=20
-> =E2=80=94=20
+Fixes: db1689aa61bd ("drm: Create a format/modifier blob")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Whole series applied, thanks
-
-Yan, Zheng
-
-> 2.14.0
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index 5c14beee52ff..85ab1eec73e5 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -126,7 +126,7 @@ static int create_in_format_blob(struct drm_device *dev, struct drm_plane *plane
+ 							       plane->format_types[j],
+ 							       plane->modifiers[i])) {
+ 
+-				mod->formats |= 1 << j;
++				mod->formats |= 1ULL << j;
+ 			}
+ 		}
+ 
