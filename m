@@ -1,156 +1,78 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 02 Aug 2017 21:01:45 +0000
-Subject: [PATCH] powerpc/macintosh: constify wf_sensor_ops structures
-Message-Id: <1501707705-32425-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:45:32 +0000
+Subject: [PATCH v2 8/9] ACPI-video: Move four assignments in acpi_video_get_levels()
+Message-Id: <3a9c1c72-ec27-03a0-c3bd-15ae5915383b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The wf_sensor_ops structures are only stored in the ops field of a
-wf_sensor structure, which is declared as const.  Thus the
-wf_sensor_ops structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 16:21:17 +0200
 
-Done with the help of Coccinelle.
+Move the assignments for four local variables so that they will only
+be performed if the corresponding data processing succeeded
+by this function.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct wf_sensor_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct wf_sensor s;
-position p;
-@@
-s.ops = &i@p
-
-@ok2@
-identifier r.i;
-struct wf_sat_sensor s;
-position p;
-@@
-s.sens.ops = &i@p
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct wf_sensor_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct wf_sensor_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/macintosh/windfarm_lm75_sensor.c    |    2 +-
- drivers/macintosh/windfarm_lm87_sensor.c    |    2 +-
- drivers/macintosh/windfarm_max6690_sensor.c |    2 +-
- drivers/macintosh/windfarm_smu_sat.c        |    2 +-
- drivers/macintosh/windfarm_smu_sensors.c    |   10 +++++-----
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/acpi/acpi_video.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/macintosh/windfarm_lm75_sensor.c b/drivers/macintosh/windfarm_lm75_sensor.c
-index 590214b..6cdfe71 100644
---- a/drivers/macintosh/windfarm_lm75_sensor.c
-+++ b/drivers/macintosh/windfarm_lm75_sensor.c
-@@ -82,7 +82,7 @@ static void wf_lm75_release(struct wf_sensor *sr)
- 	kfree(lm);
- }
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index a899faf6ff84..3cc1798676ab 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -801,10 +801,10 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 			  int *pmax_level)
+ {
+ 	union acpi_object *obj = NULL;
+-	int i, max_level = 0, count = 0, level_ac_battery = 0;
++	int i, max_level, count, level_ac_battery;
+ 	union acpi_object *o;
+ 	struct acpi_video_device_brightness *br;
+-	int result = 0;
++	int result;
+ 	u32 value;
  
--static struct wf_sensor_ops wf_lm75_ops = {
-+static const struct wf_sensor_ops wf_lm75_ops = {
- 	.get_value	= wf_lm75_get,
- 	.release	= wf_lm75_release,
- 	.owner		= THIS_MODULE,
-diff --git a/drivers/macintosh/windfarm_lm87_sensor.c b/drivers/macintosh/windfarm_lm87_sensor.c
-index c071aab..273d7d4 100644
---- a/drivers/macintosh/windfarm_lm87_sensor.c
-+++ b/drivers/macintosh/windfarm_lm87_sensor.c
-@@ -91,7 +91,7 @@ static void wf_lm87_release(struct wf_sensor *sr)
- 	kfree(lm);
- }
+ 	if (!ACPI_SUCCESS(acpi_video_device_lcd_query_levels(device->handle,
+@@ -838,6 +838,8 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 		goto out_free;
+ 	}
  
--static struct wf_sensor_ops wf_lm87_ops = {
-+static const struct wf_sensor_ops wf_lm87_ops = {
- 	.get_value	= wf_lm87_get,
- 	.release	= wf_lm87_release,
- 	.owner		= THIS_MODULE,
-diff --git a/drivers/macintosh/windfarm_max6690_sensor.c b/drivers/macintosh/windfarm_max6690_sensor.c
-index 87e439b..6ad035e 100644
---- a/drivers/macintosh/windfarm_max6690_sensor.c
-+++ b/drivers/macintosh/windfarm_max6690_sensor.c
-@@ -55,7 +55,7 @@ static void wf_max6690_release(struct wf_sensor *sr)
- 	kfree(max);
- }
- 
--static struct wf_sensor_ops wf_max6690_ops = {
-+static const struct wf_sensor_ops wf_max6690_ops = {
- 	.get_value	= wf_max6690_get,
- 	.release	= wf_max6690_release,
- 	.owner		= THIS_MODULE,
-diff --git a/drivers/macintosh/windfarm_smu_sat.c b/drivers/macintosh/windfarm_smu_sat.c
-index ad6223e..5a58fc2 100644
---- a/drivers/macintosh/windfarm_smu_sat.c
-+++ b/drivers/macintosh/windfarm_smu_sat.c
-@@ -195,7 +195,7 @@ static void wf_sat_sensor_release(struct wf_sensor *sr)
- 	kref_put(&sat->ref, wf_sat_release);
- }
- 
--static struct wf_sensor_ops wf_sat_ops = {
-+static const struct wf_sensor_ops wf_sat_ops = {
- 	.get_value	= wf_sat_sensor_get,
- 	.release	= wf_sat_sensor_release,
- 	.owner		= THIS_MODULE,
-diff --git a/drivers/macintosh/windfarm_smu_sensors.c b/drivers/macintosh/windfarm_smu_sensors.c
-index 1cc4e49..172fd26 100644
---- a/drivers/macintosh/windfarm_smu_sensors.c
-+++ b/drivers/macintosh/windfarm_smu_sensors.c
-@@ -172,22 +172,22 @@ static int smu_slotspow_get(struct wf_sensor *sr, s32 *value)
- }
- 
- 
--static struct wf_sensor_ops smu_cputemp_ops = {
-+static const struct wf_sensor_ops smu_cputemp_ops = {
- 	.get_value	= smu_cputemp_get,
- 	.release	= smu_ads_release,
- 	.owner		= THIS_MODULE,
- };
--static struct wf_sensor_ops smu_cpuamp_ops = {
-+static const struct wf_sensor_ops smu_cpuamp_ops = {
- 	.get_value	= smu_cpuamp_get,
- 	.release	= smu_ads_release,
- 	.owner		= THIS_MODULE,
- };
--static struct wf_sensor_ops smu_cpuvolt_ops = {
-+static const struct wf_sensor_ops smu_cpuvolt_ops = {
- 	.get_value	= smu_cpuvolt_get,
- 	.release	= smu_ads_release,
- 	.owner		= THIS_MODULE,
- };
--static struct wf_sensor_ops smu_slotspow_ops = {
-+static const struct wf_sensor_ops smu_slotspow_ops = {
- 	.get_value	= smu_slotspow_get,
- 	.release	= smu_ads_release,
- 	.owner		= THIS_MODULE,
-@@ -327,7 +327,7 @@ static int smu_cpu_power_get(struct wf_sensor *sr, s32 *value)
- 	return 0;
- }
- 
--static struct wf_sensor_ops smu_cpu_power_ops = {
-+static const struct wf_sensor_ops smu_cpu_power_ops = {
- 	.get_value	= smu_cpu_power_get,
- 	.release	= smu_cpu_power_release,
- 	.owner		= THIS_MODULE,
++	max_level = 0;
++	count = 0;
+ 	for (i = 0; i < obj->package.count; i++) {
+ 		o = (union acpi_object *)&obj->package.elements[i];
+ 		if (o->type != ACPI_TYPE_INTEGER) {
+@@ -863,6 +865,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	 * In this case, the first two elements in _BCL packages
+ 	 * are also supported brightness levels that OS should take care of.
+ 	 */
++	level_ac_battery = 0;
+ 	for (i = ACPI_VIDEO_FIRST_LEVEL; i < count; i++) {
+ 		if (br->levels[i] = br->levels[ACPI_VIDEO_AC_LEVEL])
+ 			level_ac_battery++;
+@@ -895,7 +898,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	*dev_br = br;
+ 	if (pmax_level)
+ 		*pmax_level = max_level;
+-
++	result = 0;
+ out:
+ 	kfree(obj);
+ 	return result;
+-- 
+2.13.4
 
