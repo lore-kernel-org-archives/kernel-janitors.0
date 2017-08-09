@@ -1,44 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 20:17:37 +0000
-Subject: [PATCH 1/4] btrfs: Delete an error message for a failed memory allocation in btrfsic_process_superbl
-Message-Id: <f03ea416-7ebb-152b-2e32-d35551d7af26@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 09 Aug 2017 10:17:41 +0000
+Subject: [PATCH] scsi: dpt_i2o: remove redundant null check on array device
+Message-Id: <20170809101741.19163-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
-In-Reply-To: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 21:10:17 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The null check on pHba->channel[chan].device is redundant because
+device is an array and hence can never be null. Remove the check.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#115362 ("Array compared against 0")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/btrfs/check-integrity.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/dpt_i2o.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 7d65d98d2790..9701a38860d6 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -656,10 +656,8 @@ static int btrfsic_process_superblock(struct btrfsic_state *state,
- 
- 	BUG_ON(NULL = state);
- 	selected_super = kzalloc(sizeof(*selected_super), GFP_NOFS);
--	if (NULL = selected_super) {
--		pr_info("btrfsic: error, kmalloc failed!\n");
-+	if (!selected_super)
- 		return -ENOMEM;
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 256dd6791fcc..fd172b0890d3 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -1169,11 +1169,6 @@ static struct adpt_device* adpt_find_device(adpt_hba* pHba, u32 chan, u32 id, u6
+ 	if(chan < 0 || chan >= MAX_CHANNEL)
+ 		return NULL;
+ 	
+-	if( pHba->channel[chan].device = NULL){
+-		printk(KERN_DEBUG"Adaptec I2O RAID: Trying to find device before they are allocated\n");
+-		return NULL;
 -	}
- 
- 	list_for_each_entry(device, dev_head, dev_list) {
- 		int i;
+-
+ 	d = pHba->channel[chan].device[id];
+ 	if(!d || d->tid = 0) {
+ 		return NULL;
 -- 
-2.14.0
+2.11.0
 
