@@ -1,77 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 16 Aug 2017 12:09:19 +0000
-Subject: Applied "ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_probe
-Message-Id: <E1dhx8R-0005da-Ne@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 18:04:43 +0000
+Subject: [PATCH v2 4/4] ACPI-APEI-HEST: Reduce the scope for a variable in acpi_hest_init()
+Message-Id: <a5dd4279-dcc0-30a9-2fc7-5a2800b182e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
-In-Reply-To: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
+ <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
+ <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
+ <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
+In-Reply-To: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-The patch
-
-   ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_probe()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 92ec46da6e35f5f7ff39741517a9466c82d1afb9 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 11:25:41 +0200
-Subject: [PATCH] ASoC: Medfield: Delete an error message for a failed memory
- allocation in snd_mfld_mc_probe()
+Date: Mon, 5 Sep 2016 21:50:34 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Move the definition for the local variable "ghes_count" into an if branch
+so that the corresponding setting will only be performed if GHES could be
+enabled by this function.
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/boards/mfld_machine.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/acpi/apei/hest.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/boards/mfld_machine.c b/sound/soc/intel/boards/mfld_machine.c
-index 4e08885f37aa..6f44acfb4aae 100644
---- a/sound/soc/intel/boards/mfld_machine.c
-+++ b/sound/soc/intel/boards/mfld_machine.c
-@@ -376,10 +376,8 @@ static int snd_mfld_mc_probe(struct platform_device *pdev)
- 	/* audio interrupt base of SRAM location where
- 	 * interrupts are stored by System FW */
- 	mc_drv_ctx = devm_kzalloc(&pdev->dev, sizeof(*mc_drv_ctx), GFP_ATOMIC);
--	if (!mc_drv_ctx) {
--		pr_err("allocation failed\n");
-+	if (!mc_drv_ctx)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index 94b9bd494c20..c0d81387ce18 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -225,7 +225,6 @@ void __init acpi_hest_init(void)
+ {
+ 	acpi_status status;
+ 	int rc = -ENODEV;
+-	unsigned int ghes_count = 0;
  
- 	irq_mem = platform_get_resource_byname(
- 				pdev, IORESOURCE_MEM, "IRQ_BASE");
+ 	if (hest_disable) {
+ 		pr_info(HEST_PFX "Table parsing disabled.\n");
+@@ -248,6 +247,8 @@ void __init acpi_hest_init(void)
+ 		goto err;
+ 
+ 	if (!ghes_disable) {
++		unsigned int ghes_count = 0;
++
+ 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
+ 		if (rc)
+ 			goto err;
 -- 
-2.13.2
+2.13.4
 
