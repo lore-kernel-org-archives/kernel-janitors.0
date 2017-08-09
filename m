@@ -1,62 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 12:37:40 +0000
-Subject: [PATCH 1/5] btrfs: Use common error handling code in tree_mod_log_eb_copy()
-Message-Id: <2aa6dff0-92e4-d5da-30fe-69f6c81fc6d7@users.sourceforge.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Wed, 09 Aug 2017 02:01:15 +0000
+Subject: Re: [8/9, v2] hwmon: (core) constify thermal_zone_of_device_ops structures
+Message-Id: <20170809020115.GA18745@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
-In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+References: <1502204943-20075-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502204943-20075-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jean Delvare <jdelvare@suse.com>, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 09:36:48 +0200
+On Tue, Aug 08, 2017 at 05:09:02PM +0200, Julia Lawall wrote:
+> The thermal_zone_of_device_ops structure is only passed as the fourth
+> argument to devm_thermal_zone_of_sensor_register, which is declared
+> as const.  Thus the thermal_zone_of_device_ops structure itself can
+> be const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Add a jump target so that a bit of exception handling can be better reused
-in this function.
+Applied to hwmon-next.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/btrfs/ctree.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Thanks,
+Guenter
 
-diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-index 6d49db7d86be..d29cf946ebf9 100644
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -823,17 +823,13 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
- 	for (i = 0; i < nr_items; i++) {
- 		tm_list_rem[i] = alloc_tree_mod_elem(src, i + src_offset,
- 		    MOD_LOG_KEY_REMOVE, GFP_NOFS);
--		if (!tm_list_rem[i]) {
--			ret = -ENOMEM;
--			goto free_tms;
--		}
-+		if (!tm_list_rem[i])
-+			goto e_nomem;
- 
- 		tm_list_add[i] = alloc_tree_mod_elem(dst, i + dst_offset,
- 		    MOD_LOG_KEY_ADD, GFP_NOFS);
--		if (!tm_list_add[i]) {
--			ret = -ENOMEM;
--			goto free_tms;
--		}
-+		if (!tm_list_add[i])
-+			goto e_nomem;
- 	}
- 
- 	if (tree_mod_dont_log(fs_info, NULL))
-@@ -854,6 +850,8 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
- 
- 	return 0;
- 
-+e_nomem:
-+	ret = -ENOMEM;
- free_tms:
- 	for (i = 0; i < nr_items * 2; i++) {
- 		if (tm_list[i] && !RB_EMPTY_NODE(&tm_list[i]->node))
--- 
-2.14.0
-
+> ---
+> 
+> v2: New patch
+> 
+>  drivers/hwmon/hwmon.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index 2ac578a..c9790e2 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -135,7 +135,7 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
+>  	return 0;
+>  }
+>  
+> -static struct thermal_zone_of_device_ops hwmon_thermal_ops = {
+> +static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
+>  	.get_temp = hwmon_thermal_get_temp,
+>  };
+>  
