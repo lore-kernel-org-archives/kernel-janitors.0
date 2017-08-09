@@ -1,25 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Aug 2017 23:07:39 +0000
-Subject: Re: [PATCH net] nfp: double free on error in probe
-Message-Id: <20170829.160739.1984273425912196249.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Aug 2017 10:25:21 +0000
+Subject: [PATCH] cgroup: remove unneeded checks
+Message-Id: <20170809102521.pizo5vlqhb5unrin@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170829190855.fabfktv2dg57x3gs@mwanda>
-In-Reply-To: <20170829190855.fabfktv2dg57x3gs@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jakub.kicinski@netronome.com, simon.horman@netronome.com, oss-drivers@netronome.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>
+Cc: Zefan Li <lizefan@huawei.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Aug 2017 22:15:16 +0300
+"descendants" and "depth" are declared as int, so they can't be larger
+than INT_MAX.  Static checkers complain and it's slightly confusing for
+humans as well so let's just remove these conditions.
 
-> Both the nfp_net_pf_app_start() and the nfp_net_pci_probe() functions
-> call nfp_net_pf_app_stop_ctrl(pf) so there is a double free.  The free
-> should be done from the probe function because it's allocated there so
-> I have removed the call from nfp_net_pf_app_start().
-> 
-> Fixes: 02082701b974 ("nfp: create control vNICs and wire up rx/tx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index bf8a6e2db278..5988781d7128 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3247,7 +3247,7 @@ static ssize_t cgroup_max_descendants_write(struct kernfs_open_file *of,
+ 			return ret;
+ 	}
+ 
+-	if (descendants < 0 || descendants > INT_MAX)
++	if (descendants < 0)
+ 		return -ERANGE;
+ 
+ 	cgrp = cgroup_kn_lock_live(of->kn, false);
+@@ -3290,7 +3290,7 @@ static ssize_t cgroup_max_depth_write(struct kernfs_open_file *of,
+ 			return ret;
+ 	}
+ 
+-	if (depth < 0 || depth > INT_MAX)
++	if (depth < 0)
+ 		return -ERANGE;
+ 
+ 	cgrp = cgroup_kn_lock_live(of->kn, false);
