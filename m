@@ -1,64 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 16:00:44 +0000
-Subject: [PATCH 05/14] vme: Return directly in two functions
-Message-Id: <dab1287a-3748-baec-2ace-b7467885be1c@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:42:49 +0000
+Subject: [PATCH v2 6/9] ACPI-video: Improve a jump target in acpi_video_switch_brightness()
+Message-Id: <dd6a897c-0dd1-f49c-b3c9-eb995ec48a7f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
-In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 24 Aug 2017 22:32:14 +0200
+Date: Wed, 9 Aug 2017 15:45:35 +0200
 
-Return directly without using an intermediate local variable
-in these functions.
+* Avoid another duplicate check for the local variable "result"
+  then at the end.
+
+* Jump directly to an error message in the case that the desired brightness
+  can not be switched.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/vme/vme.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/acpi/acpi_video.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
-index a2e36e6a0d84..986799d64993 100644
---- a/drivers/vme/vme.c
-+++ b/drivers/vme/vme.c
-@@ -1996,28 +1996,26 @@ static int vme_bus_match(struct device *dev, struct device_driver *drv)
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 8295ae1deab9..e279ed221961 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1411,19 +1411,19 @@ acpi_video_switch_brightness(struct work_struct *work)
+ 		return;
  
- static int vme_bus_probe(struct device *dev)
- {
--	int retval = -ENODEV;
- 	struct vme_driver *driver;
- 	struct vme_dev *vdev = dev_to_vme_dev(dev);
+ 	if (!device->brightness)
+-		goto out;
++		goto report_failure;
  
- 	driver = dev->platform_data;
- 	if (driver->probe)
--		retval = driver->probe(vdev);
-+		return driver->probe(vdev);
+ 	result = acpi_video_device_lcd_get_level_current(device,
+ 							 &level_current,
+ 							 false);
+ 	if (result)
+-		goto out;
++		goto report_failure;
  
--	return retval;
-+	return -ENODEV;
- }
+ 	level_next = acpi_video_get_next_level(device, level_current, event);
  
- static int vme_bus_remove(struct device *dev)
- {
--	int retval = -ENODEV;
- 	struct vme_driver *driver;
- 	struct vme_dev *vdev = dev_to_vme_dev(dev);
- 
- 	driver = dev->platform_data;
- 	if (driver->remove)
--		retval = driver->remove(vdev);
-+		return driver->remove(vdev);
- 
--	return retval;
-+	return -ENODEV;
- }
- 
- struct bus_type vme_bus_type = {
+ 	result = acpi_video_device_lcd_set_level(device, level_next);
+-out:
+ 	if (result)
++ report_failure:
+ 		printk(KERN_ERR PREFIX "Failed to switch the brightness\n");
+ 	else
+ 		backlight_force_update(device->backlight,
 -- 
-2.14.0
+2.13.4
 
