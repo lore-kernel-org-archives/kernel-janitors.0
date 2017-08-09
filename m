@@ -1,73 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Aug 2017 17:15:24 +0000
-Subject: Applied "ASoC: rockchip: constify snd_soc_dai_ops structures" to the asoc tree
-Message-Id: <E1dhfR6-0003dt-LY@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:44:07 +0000
+Subject: [PATCH v2 7/9] ACPI-video: Delete an unnecessary initialisation in three functions
+Message-Id: <7a5b6015-2b04-ef31-1765-b00386238aa9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-rockchip@lists.infradead.orgMarkBrownbroonie@kernel.org, linux-arm-kernel@lists.infradead.org@alsa-project.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 15:55:35 +0200
 
-   ASoC: rockchip: constify snd_soc_dai_ops structures
+Three local variables will be set to appropriate values a bit later.
+Thus omit the explicit initialisation at the beginning of these functions.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0966a2588779d0d44706f973c1e8ff240be43017 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 17:10:09 +0200
-Subject: [PATCH] ASoC: rockchip: constify snd_soc_dai_ops structures
-
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/rockchip/rockchip_pdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_pdm.c b/sound/soc/rockchip/rockchip_pdm.c
-index c5ddeed97260..400e29edb1c9 100644
---- a/sound/soc/rockchip/rockchip_pdm.c
-+++ b/sound/soc/rockchip/rockchip_pdm.c
-@@ -249,7 +249,7 @@ static int rockchip_pdm_dai_probe(struct snd_soc_dai *dai)
- 	return 0;
- }
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index e279ed221961..a899faf6ff84 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -803,7 +803,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	union acpi_object *obj = NULL;
+ 	int i, max_level = 0, count = 0, level_ac_battery = 0;
+ 	union acpi_object *o;
+-	struct acpi_video_device_brightness *br = NULL;
++	struct acpi_video_device_brightness *br;
+ 	int result = 0;
+ 	u32 value;
  
--static struct snd_soc_dai_ops rockchip_pdm_dai_ops = {
-+static const struct snd_soc_dai_ops rockchip_pdm_dai_ops = {
- 	.set_fmt = rockchip_pdm_set_fmt,
- 	.trigger = rockchip_pdm_trigger,
- 	.hw_params = rockchip_pdm_hw_params,
+@@ -921,7 +921,7 @@ acpi_video_init_brightness(struct acpi_video_device *device)
+ 	int i, max_level = 0;
+ 	unsigned long long level, level_old;
+ 	struct acpi_video_device_brightness *br = NULL;
+-	int result = -EINVAL;
++	int result;
+ 
+ 	result = acpi_video_get_levels(device->dev, &br, &max_level);
+ 	if (result)
+@@ -1295,7 +1295,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
+ 	int i;
+ 	struct acpi_video_enumerated_device *active_list;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *dod = NULL;
++	union acpi_object *dod;
+ 	union acpi_object *obj;
+ 
+ 	if (!video->cap._DOD)
 -- 
-2.13.3
+2.13.4
 
