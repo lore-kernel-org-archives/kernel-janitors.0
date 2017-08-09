@@ -1,31 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Aug 2017 14:03:58 +0000
-Subject: [PATCH] regulator: da9063: Return an error code on probe failure
-Message-Id: <20170830140358.k3i3rehnrtdrys4t@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 08:04:46 +0000
+Subject: [PATCH 4/4] ALSA: emux: Delete two error messages for a failed memory allocation in snd_emux_create_
+Message-Id: <ed0f8f37-928a-9996-5105-3b5794710954@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
+In-Reply-To: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Support Opensource <support.opensource@diasemi.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-If "regl_pdata->n_regulators = 0" is true then we accidentally return
-PTR_ERR(<some_valid_pointer>) instead of an error code.  I've changed it
-to return -ENODEV instead.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 09:30:34 +0200
 
-Fixes: 69ca3e58d178 ("regulator: da9063: Add Dialog DA9063 voltage regulators support.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit extra messages for a memory allocation failure in this function.
 
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index c6af343f54ea..6a8f9cd69f52 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -736,7 +736,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
- 	if (IS_ERR(regl_pdata) || regl_pdata->n_regulators = 0) {
- 		dev_err(&pdev->dev,
- 			"No regulators defined for the platform\n");
--		return PTR_ERR(regl_pdata);
-+		return -ENODEV;
- 	}
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/synth/emux/emux_seq.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/synth/emux/emux_seq.c b/sound/synth/emux/emux_seq.c
+index fd6cbd439511..396c406d0f77 100644
+--- a/sound/synth/emux/emux_seq.c
++++ b/sound/synth/emux/emux_seq.c
+@@ -145,14 +145,12 @@ snd_emux_create_port(struct snd_emux *emu, char *name,
  
- 	/* Find regulators set for particular device model */
+ 	/* Allocate structures for this channel */
+ 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+-	if (!p) {
+-		snd_printk(KERN_ERR "no memory\n");
++	if (!p)
+ 		return NULL;
+-	}
++
+ 	p->chset.channels = kcalloc(max_channels, sizeof(*p->chset.channels),
+ 				    GFP_KERNEL);
+ 	if (!p->chset.channels) {
+-		snd_printk(KERN_ERR "no memory\n");
+ 		kfree(p);
+ 		return NULL;
+ 	}
+-- 
+2.13.4
+
