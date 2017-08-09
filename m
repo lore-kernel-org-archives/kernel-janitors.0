@@ -1,39 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:48 +0000
-Subject: [PATCH 09/11] serial: m32r_sio: constify uart_ops structures
-Message-Id: <1502605310-4314-10-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:38:12 +0000
+Subject: [PATCH v2 3/9] ACPI-video: Delete an error message for a failed kzalloc() call
+Message-Id: <f1a7dd48-312c-348b-be56-52f8263428af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 15:07:53 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/m32r_sio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/m32r_sio.c b/drivers/tty/serial/m32r_sio.c
-index 218b711..5b3bd95 100644
---- a/drivers/tty/serial/m32r_sio.c
-+++ b/drivers/tty/serial/m32r_sio.c
-@@ -854,7 +854,7 @@ static void m32r_sio_config_port(struct uart_port *port, int unused)
- 	return 0;
- }
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 7a9cda6c0a6b..f83ece9c830c 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -821,7 +821,6 @@ int acpi_video_get_levels(struct acpi_device *device,
  
--static struct uart_ops m32r_sio_pops = {
-+static const struct uart_ops m32r_sio_pops = {
- 	.tx_empty	= m32r_sio_tx_empty,
- 	.set_mctrl	= m32r_sio_set_mctrl,
- 	.get_mctrl	= m32r_sio_get_mctrl,
+ 	br = kzalloc(sizeof(*br), GFP_KERNEL);
+ 	if (!br) {
+-		printk(KERN_ERR "can't allocate memory\n");
+ 		result = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.13.4
 
