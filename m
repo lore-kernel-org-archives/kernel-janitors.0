@@ -1,29 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 31 Aug 2017 13:46:05 +0000
-Subject: Re: [PATCH] pinctrl: Delete an error message for a failed memory allocation in two functions
-Message-Id: <CACRpkdaK0-em+pSw+gGrMsyOjQpnrtq9=3iYJf4MLstXUYcbsA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 08:00:23 +0000
+Subject: [PATCH 0/4] ALSA: emux: Adjustments for four function implementations
+Message-Id: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eb8e1ba3-f9f3-a780-73cc-4be7eb7145e6@users.sourceforge.net>
-In-Reply-To: <eb8e1ba3-f9f3-a780-73cc-4be7eb7145e6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Aug 26, 2017 at 8:33 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 09:50:05 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 26 Aug 2017 20:30:04 +0200
->
-> Omit an extra message for a memory allocation failure in these functions.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+A few update suggestions were taken into account
+from static source code analysis.
 
-Patch applied.
+Markus Elfring (4):
+  Adjust one function call together with a variable assignment
+  Improve a size determination in two functions
+  Adjust four checks for null pointers
+  Delete two error messages for a failed memory allocation in snd_emux_create_port()
 
-Yours,
-Linus Walleij
+ sound/synth/emux/emux_seq.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.13.4
+
