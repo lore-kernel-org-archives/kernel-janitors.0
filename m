@@ -1,68 +1,62 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 20:37:15 +0000
-Subject: [PATCH 2/4] thermal: zx2967: constify thermal_zone_of_device_ops structures
-Message-Id: <1501965437-30730-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:40:05 +0000
+Subject: [PATCH v2 4/9] ACPI-video: Return directly after a failed input_allocate_device()
+Message-Id: <fda98e08-1fd5-58e3-8dfe-208c35058064@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to thermal_zone_of_sensor_register, which is declared as const.
-Thus the thermal_zone_of_device_ops structure itself can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Aug 2017 15:15:16 +0200
 
-Done with the help of Coccinelle.
+* Return directly after a call of the function "input_allocate_device"
+  failed at the beginning.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct thermal_zone_of_device_ops i@p = { ... };
+* Delete the jump label "out" which became unnecessary with
+  this refactoring.
 
-@ok1@
-identifier r.i;
-expression e1,e2,e3;
-position p;
-@@
-thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct thermal_zone_of_device_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct thermal_zone_of_device_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/zx2967_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
-index a5670ad..6acce0b 100644
---- a/drivers/thermal/zx2967_thermal.c
-+++ b/drivers/thermal/zx2967_thermal.c
-@@ -111,7 +111,7 @@ static int zx2967_thermal_get_temp(void *data, int *temp)
- 	return ret;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index f83ece9c830c..09ea1f115f55 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1903,10 +1903,8 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
+ 	int error;
+ 
+ 	video->input = input = input_allocate_device();
+-	if (!input) {
+-		error = -ENOMEM;
+-		goto out;
+-	}
++	if (!input)
++		return -ENOMEM;
+ 
+ 	error = acpi_video_bus_start_devices(video);
+ 	if (error)
+@@ -1946,7 +1944,6 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
+ err_free_input:
+ 	input_free_device(input);
+ 	video->input = NULL;
+-out:
+ 	return error;
  }
  
--static struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
-+static const struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
- 	.get_temp = zx2967_thermal_get_temp,
- };
- 
+-- 
+2.13.4
 
