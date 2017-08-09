@@ -1,105 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 11:58:36 +0000
-Subject: [PATCH 1/5] net/9p: Delete an error message for a failed memory allocation in five functions
-Message-Id: <e703fb59-bdc3-fd0d-3cba-3ec970c9328a@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 15:33:41 +0000
+Subject: [PATCH v2 1/9] ACPI-video: Use kmalloc_array() in acpi_video_get_levels()
+Message-Id: <c6ae871a-5dc5-c295-ecf7-5d5350e87f24@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
-In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
+ <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
+ <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
+ <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
+ <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
+ <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 08:25:41 +0200
+Date: Wed, 9 Aug 2017 14:52:25 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/9p/client.c       | 7 ++-----
- net/9p/trans_fd.c     | 6 ++----
- net/9p/trans_rdma.c   | 6 ++----
- net/9p/trans_virtio.c | 1 -
- 4 files changed, 6 insertions(+), 14 deletions(-)
+ drivers/acpi/acpi_video.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 4674235b0d9b..2273181e9ba9 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -160,11 +160,9 @@ static int parse_opts(char *opts, struct p9_client *clnt)
- 		return 0;
- 
- 	tmp_options = kstrdup(opts, GFP_KERNEL);
--	if (!tmp_options) {
--		p9_debug(P9_DEBUG_ERROR,
--			 "failed to allocate copy of option string\n");
-+	if (!tmp_options)
- 		return -ENOMEM;
--	}
-+
- 	options = tmp_options;
- 
- 	while ((p = strsep(&options, ",")) != NULL) {
-@@ -277,7 +275,6 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
- 					sizeof(struct p9_req_t), GFP_ATOMIC);
- 
- 			if (!c->reqs[row]) {
--				pr_err("Couldn't grow tag array\n");
- 				spin_unlock_irqrestore(&c->lock, flags);
- 				return ERR_PTR(-ENOMEM);
- 			}
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index ddfa86648f95..3c272e5bc9ea 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -762,11 +762,9 @@ static int parse_opts(char *params, struct p9_fd_opts *opts)
- 		return 0;
- 
- 	tmp_options = kstrdup(params, GFP_KERNEL);
--	if (!tmp_options) {
--		p9_debug(P9_DEBUG_ERROR,
--			 "failed to allocate copy of option string\n");
-+	if (!tmp_options)
- 		return -ENOMEM;
--	}
-+
- 	options = tmp_options;
- 
- 	while ((p = strsep(&options, ",")) != NULL) {
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 6d8e3031978f..f98b6aae308b 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -205,11 +205,9 @@ static int parse_opts(char *params, struct p9_rdma_opts *opts)
- 		return 0;
- 
- 	tmp_options = kstrdup(params, GFP_KERNEL);
--	if (!tmp_options) {
--		p9_debug(P9_DEBUG_ERROR,
--			 "failed to allocate copy of option string\n");
-+	if (!tmp_options)
- 		return -ENOMEM;
--	}
-+
- 	options = tmp_options;
- 
- 	while ((p = strsep(&options, ",")) != NULL) {
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index f24b25c25106..8a2cf9748398 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -552,7 +552,6 @@ static int p9_virtio_probe(struct virtio_device *vdev)
- 
- 	chan = kmalloc(sizeof(struct virtio_chan), GFP_KERNEL);
- 	if (!chan) {
--		pr_err("Failed to allocate virtio 9P channel\n");
- 		err = -ENOMEM;
- 		goto fail;
- 	}
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 0972ec0e2eb8..1aaf2b591ca8 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -832,8 +832,9 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	 * in order to account for buggy BIOS which don't export the first two
+ 	 * special levels (see below)
+ 	 */
+-	br->levels = kmalloc((obj->package.count + ACPI_VIDEO_FIRST_LEVEL) *
+-	                     sizeof(*br->levels), GFP_KERNEL);
++	br->levels = kmalloc_array(obj->package.count + ACPI_VIDEO_FIRST_LEVEL,
++				   sizeof(*br->levels),
++				   GFP_KERNEL);
+ 	if (!br->levels) {
+ 		result = -ENOMEM;
+ 		goto out_free;
 -- 
-2.14.0
+2.13.4
 
