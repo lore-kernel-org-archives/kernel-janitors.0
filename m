@@ -1,61 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:26 +0000
-Subject: [PATCH 14/17] pinctrl: tz1090-pdc: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-15-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 09 Aug 2017 18:03:48 +0000
+Subject: [PATCH v2 3/4] ACPI-APEI-HEST: Move an assignment in hest_ghes_dev_register()
+Message-Id: <7a0fcfb4-3f47-4031-017a-be078df43ba1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
+ <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
+ <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
+ <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
+In-Reply-To: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (confops, pctlops, and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 21:15:22 +0200
 
-Done with the help of Coccinelle.
+Move one assignment for a data structure member in one local variable
+so that its setting will only be performed after a corresponding memory
+allocation succeeded by this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/acpi/apei/hest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This seems to target the metag architecture for which I don't know how to
-compile.
-
- drivers/pinctrl/pinctrl-tz1090-pdc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tz1090-pdc.c b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-index e70e362..5cfa93c 100644
---- a/drivers/pinctrl/pinctrl-tz1090-pdc.c
-+++ b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-@@ -486,7 +486,7 @@ static int tz1090_pdc_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index 24d1d3cd3371..94b9bd494c20 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -194,13 +194,13 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
+ 	int rc, i;
+ 	struct ghes_arr ghes_arr;
  
--static struct pinctrl_ops tz1090_pdc_pinctrl_ops = {
-+static const struct pinctrl_ops tz1090_pdc_pinctrl_ops = {
- 	.get_groups_count	= tz1090_pdc_pinctrl_get_groups_count,
- 	.get_group_name		= tz1090_pdc_pinctrl_get_group_name,
- 	.get_group_pins		= tz1090_pdc_pinctrl_get_group_pins,
-@@ -631,7 +631,7 @@ static void tz1090_pdc_pinctrl_gpio_disable_free(
- 	}
- }
+-	ghes_arr.count = 0;
+ 	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
+ 					   sizeof(*ghes_arr.ghes_devs),
+ 					   GFP_KERNEL);
+ 	if (!ghes_arr.ghes_devs)
+ 		return -ENOMEM;
  
--static struct pinmux_ops tz1090_pdc_pinmux_ops = {
-+static const struct pinmux_ops tz1090_pdc_pinmux_ops = {
- 	.get_functions_count	= tz1090_pdc_pinctrl_get_funcs_count,
- 	.get_function_name	= tz1090_pdc_pinctrl_get_func_name,
- 	.get_function_groups	= tz1090_pdc_pinctrl_get_func_groups,
-@@ -905,7 +905,7 @@ static int tz1090_pdc_pinconf_group_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinconf_ops tz1090_pdc_pinconf_ops = {
-+static const struct pinconf_ops tz1090_pdc_pinconf_ops = {
- 	.is_generic			= true,
- 	.pin_config_get			= tz1090_pdc_pinconf_get,
- 	.pin_config_set			= tz1090_pdc_pinconf_set,
++	ghes_arr.count = 0;
+ 	rc = apei_hest_parse(hest_parse_ghes, &ghes_arr);
+ 	if (rc)
+ 		goto err;
+-- 
+2.13.4
 
