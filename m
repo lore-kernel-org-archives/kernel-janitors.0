@@ -1,74 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 24 Aug 2017 10:50:10 +0000
-Subject: Applied "ASoC: codecs: msm8916-wcd-analog: always true condition" to the asoc tree
-Message-Id: <E1dkpiE-0000tb-Ii@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 13:03:19 +0000
+Subject: [PATCH 3/5] ASoC: dapm: Use kcalloc() in snd_soc_dapm_new_widgets()
+Message-Id: <62be9e32-1b8d-3980-7998-72f82c62a6fe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170824100741.s4v24owbvocshr5n@mwanda>
-In-Reply-To: <20170824100741.s4v24owbvocshr5n@mwanda>
+References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
+In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org, Axel Lin <axel.lin@ingics.com>, Damien Riegel <damien.riegel@savoirfairelinux.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Bhumika Goyal <bhumirks@gmail.com>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 14:30:48 +0200
 
-   ASoC: codecs: msm8916-wcd-analog: always true condition
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-has been applied to the asoc tree at
+  This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 56026714bd45fccda710114982789c5145285560 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Aug 2017 13:07:41 +0300
-Subject: [PATCH] ASoC: codecs: msm8916-wcd-analog: always true condition
-
-Static checkers complain that unsigned int val is always >= 0.  The
-context is that snd_soc_read() returns -1U on error.  This is harmless
-because we're checking that CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK is not
-set, and it will always be set for -1U.  I could have just removed the
-check against -1 but I preserved it because I thought it helped with
-readability.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/msm8916-wcd-analog.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/soc-dapm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-index f834a639b350..cd4d60ef4c77 100644
---- a/sound/soc/codecs/msm8916-wcd-analog.c
-+++ b/sound/soc/codecs/msm8916-wcd-analog.c
-@@ -949,7 +949,7 @@ static irqreturn_t mbhc_btn_release_irq_handler(int irq, void *arg)
- 		u32 val = snd_soc_read(codec, CDC_A_MBHC_RESULT_1);
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index e673961210e6..3fa9f023bff7 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3027,9 +3027,9 @@ int snd_soc_dapm_new_widgets(struct snd_soc_card *card)
+ 			continue;
  
- 		/* check if its BTN0 thats released */
--		if ((val >= 0) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
-+		if ((val != -1) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
- 			priv->mbhc_btn0_pressed = false;
- 
- 	} else {
+ 		if (w->num_kcontrols) {
+-			w->kcontrols = kzalloc(w->num_kcontrols *
+-						sizeof(struct snd_kcontrol *),
+-						GFP_KERNEL);
++			w->kcontrols = kcalloc(w->num_kcontrols,
++					       sizeof(*w->kcontrols),
++					       GFP_KERNEL);
+ 			if (!w->kcontrols) {
+ 				mutex_unlock(&card->dapm_mutex);
+ 				return -ENOMEM;
 -- 
-2.14.1
+2.14.0
 
