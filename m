@@ -1,67 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:16 +0000
-Subject: [PATCH 07/12] [media] bdisp: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 Aug 2017 15:57:09 +0000
+Subject: [PATCH] perf/x86/intel/bts: make bts_pmu static
+Message-Id: <20170810155709.7094-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabien Dessenne <fabien.dessenne@st.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Will Deacon <will.deacon@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+The structure bts_pmu is local to the source and do not need to be in
+global scope, so make it static.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
+Cleans up sparse warning:
+warning: symbol 'bts_pmu' was not declared. Should it be static?
 
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/sti/bdisp/bdisp-v4l2.c |    2 +-
+ arch/x86/events/intel/bts.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-index 7918b92..939da6d 100644
---- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-+++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-@@ -360,7 +360,7 @@ static void bdisp_device_run(void *priv)
- 		bdisp_job_finish(ctx, VB2_BUF_STATE_ERROR);
- }
- 
--static struct v4l2_m2m_ops bdisp_m2m_ops = {
-+static const struct v4l2_m2m_ops bdisp_m2m_ops = {
- 	.device_run     = bdisp_device_run,
- 	.job_abort      = bdisp_job_abort,
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 8ae8c5ce3a1f..ddd8d3516bfc 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -69,7 +69,7 @@ struct bts_buffer {
+ 	struct bts_phys	buf[0];
  };
+ 
+-struct pmu bts_pmu;
++static struct pmu bts_pmu;
+ 
+ static size_t buf_size(struct page *page)
+ {
+-- 
+2.11.0
 
