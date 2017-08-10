@@ -1,50 +1,47 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Thu, 17 Aug 2017 12:34:02 +0000
-Subject: Re: [PATCH] i2c: mux: pinctrl: potential NULL dereference on error
-Message-Id: <a08c1f34-9487-c606-77b9-8ea73a3ed30f@axentia.se>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:19 +0000
+Subject: [PATCH 07/17] pinctrl: digicolor: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817115355.fsc3z64eih7wjze6@mwanda>
-In-Reply-To: <20170817115355.fsc3z64eih7wjze6@mwanda>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+These structures are only stored in fields of a pinctrl_desc
+structure (pctlops and pmxops) that are const. Make the
+structures const as well.
 
-On 2017-08-17 13:53, Dan Carpenter wrote:
-> If i2c_mux_alloc() fails then we'd have a NULL derefecrence here.
-> 
-> Fixes: c4aee3e1b0de ("i2c: mux: pinctrl: remove platform_data")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-Indeed, thanks for the patch. Applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-(IIUC, small memory allocations are not supposed to fail so this is
- not really a "real" problem?)
+---
+ drivers/pinctrl/pinctrl-digicolor.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-FTR, I have work in progress that further cleans up i2c muxes.
-Most .remove functions disappear from drivers/i2c/muxes/ and
-most i2c mux users outside of i2c/muxes are also simplified for
-a nice net loss in lines-of-code, and this bug would simply not
-have happened with that. Oh well, that's not for the this cycle
-anyway...
-
-Cheers,
-peda
-
-> diff --git a/drivers/i2c/muxes/i2c-mux-pinctrl.c b/drivers/i2c/muxes/i2c-mux-pinctrl.c
-> index 20b90a7a1e61..cc6818aabab5 100644
-> --- a/drivers/i2c/muxes/i2c-mux-pinctrl.c
-> +++ b/drivers/i2c/muxes/i2c-mux-pinctrl.c
-> @@ -173,7 +173,7 @@ static int i2c_mux_pinctrl_probe(struct platform_device *pdev)
->  err_del_adapter:
->  	i2c_mux_del_adapters(muxc);
->  err_put_parent:
-> -	i2c_put_adapter(muxc->parent);
-> +	i2c_put_adapter(parent);
->  
->  	return ret;
->  }
-> 
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index 639a57e..ce269ce 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -79,7 +79,7 @@ static int dc_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
+ 	return 0;
+ }
+ 
+-static struct pinctrl_ops dc_pinctrl_ops = {
++static const struct pinctrl_ops dc_pinctrl_ops = {
+ 	.get_groups_count	= dc_get_groups_count,
+ 	.get_group_name		= dc_get_group_name,
+ 	.get_group_pins		= dc_get_group_pins,
+@@ -161,7 +161,7 @@ static int dc_pmx_request_gpio(struct pinctrl_dev *pcdev,
+ 	return 0;
+ }
+ 
+-static struct pinmux_ops dc_pmxops = {
++static const struct pinmux_ops dc_pmxops = {
+ 	.get_functions_count	= dc_get_functions_count,
+ 	.get_function_name	= dc_get_fname,
+ 	.get_function_groups	= dc_get_groups,
 
