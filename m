@@ -1,29 +1,30 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 12 Aug 2017 21:33:41 +0000
-Subject: Re: [PATCH] ALSA: mixart: Delete an error message for a failed memory allocation in snd_mixart_creat
-Message-Id: <s5hbmnkwjwq.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Aug 2017 09:54:59 +0000
+Subject: [PATCH 1/2 net-next] hns3pf: fix hns3_del_tunnel_port()
+Message-Id: <20170810090720.eh4l6gxsubmwqxo6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b5d2cdc9-a2d7-a264-7802-99217cee65c4@users.sourceforge.net>
-In-Reply-To: <b5d2cdc9-a2d7-a264-7802-99217cee65c4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Julia Lawall <Julia.Lawall@lip6.fr>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Salil Mehta <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jiri@mellanox.com>, Jamal Hadi Salim <jhs@mojatatu.com>, lipeng <lipeng321@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 12 Aug 2017 18:51:51 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Aug 2017 18:45:42 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This function has a copy and paste bug so it accidentally calls the add
+function instead of the delete function.
 
-Applied, thanks.
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+index 069ae426aa24..e519795dff7c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -1138,7 +1138,7 @@ static void hns3_del_tunnel_port(struct net_device *netdev, u16 port,
+ 	udp_tnl->dst_port = 0;
+ 	/* TBD send command to hardware to del port  */
+ 	if (h->ae_algo->ops->del_tunnel_udp)
+-		h->ae_algo->ops->add_tunnel_udp(h, port);
++		h->ae_algo->ops->del_tunnel_udp(h, port);
+ }
+ 
+ /* hns3_nic_udp_tunnel_add - Get notifiacetion about UDP tunnel ports
