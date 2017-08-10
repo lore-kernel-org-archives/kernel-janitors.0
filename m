@@ -1,87 +1,47 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 04 Aug 2017 12:09:46 +0000
-Subject: [PATCH 3/5] [media] cx231xx: constify videobuf_queue_ops structures
-Message-Id: <1501848588-22628-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:18 +0000
+Subject: [PATCH 06/17] pinctrl: sirf: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-These videobuf_queue_ops structures are only passed as the second
-argument to videobuf_queue_vmalloc_init, which is declared as const.
-Thus the videobuf_queue_ops structures themselves can be const.
+These structures are only stored in fields of a pinctrl_desc
+structure (pctlops and pmxops) that are const. Make the
+structures const as well.
 
 Done with the help of Coccinelle.
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct videobuf_queue_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-expression e1;
-position p;
-@@
-videobuf_queue_vmalloc_init(e1,&i@p,...)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct videobuf_queue_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct videobuf_queue_ops i = { ... };
-// </smpl>
-
-In the first case, there is a second commented call to
-videobuf_queue_sg_init with the structure as the second argument.  If that
-code will be uncommented, the const will remain correct, because the second
-parameter of that function is also const.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/usb/cx231xx/cx231xx-417.c   |    2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-sirf.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index 8d5eb99..d538fa4 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -1490,7 +1490,7 @@ static void bb_buf_release(struct videobuf_queue *q,
- 	free_buffer(q, buf);
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 80bfd47..d3ef059 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -133,7 +133,7 @@ static void sirfsoc_dt_free_map(struct pinctrl_dev *pctldev,
+ 	kfree(map);
  }
  
--static struct videobuf_queue_ops cx231xx_qops = {
-+static const struct videobuf_queue_ops cx231xx_qops = {
- 	.buf_setup    = bb_buf_setup,
- 	.buf_prepare  = bb_buf_prepare,
- 	.buf_queue    = bb_buf_queue,
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index f67f868..179b848 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -859,7 +859,7 @@ static void buffer_release(struct videobuf_queue *vq,
- 	free_buffer(vq, buf);
+-static struct pinctrl_ops sirfsoc_pctrl_ops = {
++static const struct pinctrl_ops sirfsoc_pctrl_ops = {
+ 	.get_groups_count = sirfsoc_get_groups_count,
+ 	.get_group_name = sirfsoc_get_group_name,
+ 	.get_group_pins = sirfsoc_get_group_pins,
+@@ -229,7 +229,7 @@ static int sirfsoc_pinmux_request_gpio(struct pinctrl_dev *pmxdev,
+ 	return 0;
  }
  
--static struct videobuf_queue_ops cx231xx_video_qops = {
-+static const struct videobuf_queue_ops cx231xx_video_qops = {
- 	.buf_setup = buffer_setup,
- 	.buf_prepare = buffer_prepare,
- 	.buf_queue = buffer_queue,
+-static struct pinmux_ops sirfsoc_pinmux_ops = {
++static const struct pinmux_ops sirfsoc_pinmux_ops = {
+ 	.set_mux = sirfsoc_pinmux_set_mux,
+ 	.get_functions_count = sirfsoc_pinmux_get_funcs_count,
+ 	.get_function_name = sirfsoc_pinmux_get_func_name,
 
