@@ -1,40 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 11:23:10 +0000
-Subject: [PATCH] ASoC: Broadwell RT5677: Delete an error message for a failed memory allocation in bdw_rt5677
-Message-Id: <30b48ffc-8149-e1bc-d3cd-b8ff3bc8062f@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:28 +0000
+Subject: [PATCH 16/17] pinctrl: ti-iodelay: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ben Zhang <benzh@chromium.org>, Dylan Reid <dgreid@chromium.org>, Jaroslav Kysela <perex@perex.cz>, John Keeping <john@metanate.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 13:05:40 +0200
+These structures are only stored in fields of a pinctrl_desc
+structure (confops and pctlops) that are const. Make the
+structures const as well.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/boards/bdw-rt5677.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/intel/boards/bdw-rt5677.c b/sound/soc/intel/boards/bdw-rt5677.c
-index 058b8ccedf02..4b1431c3b460 100644
---- a/sound/soc/intel/boards/bdw-rt5677.c
-+++ b/sound/soc/intel/boards/bdw-rt5677.c
-@@ -349,7 +349,5 @@ static int bdw_rt5677_probe(struct platform_device *pdev)
--	if (!bdw_rt5677) {
--		dev_err(&pdev->dev, "Can't allocate bdw_rt5677\n");
-+	if (!bdw_rt5677)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 362c509..5c1b632 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -716,7 +716,7 @@ static void ti_iodelay_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ }
+ #endif
  
- 	snd_soc_card_set_drvdata(&bdw_rt5677_card, bdw_rt5677);
+-static struct pinctrl_ops ti_iodelay_pinctrl_ops = {
++static const struct pinctrl_ops ti_iodelay_pinctrl_ops = {
+ 	.get_groups_count = pinctrl_generic_get_group_count,
+ 	.get_group_name = pinctrl_generic_get_group_name,
+ 	.get_group_pins = pinctrl_generic_get_group_pins,
+@@ -726,7 +726,7 @@ static void ti_iodelay_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	.dt_node_to_map = ti_iodelay_dt_node_to_map,
+ };
  
--- 
-2.14.0
+-static struct pinconf_ops ti_iodelay_pinctrl_pinconf_ops = {
++static const struct pinconf_ops ti_iodelay_pinctrl_pinconf_ops = {
+ 	.pin_config_group_get = ti_iodelay_pinconf_group_get,
+ 	.pin_config_group_set = ti_iodelay_pinconf_group_set,
+ #ifdef CONFIG_DEBUG_FS
 
