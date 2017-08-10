@@ -1,44 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 12 Aug 2017 22:00:17 +0000
-Subject: [PATCH] rtlwifi: btcoex: make function btc8723b2ant_dac_swing static
-Message-Id: <20170812220017.6505-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 13:00:27 +0000
+Subject: [PATCH 0/5] ASoC: dapm: Adjustments for some function implementations
+Message-Id: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 14:54:32 +0200
 
-The function btc8723b2ant_dac_swing  is local to the source and
-does not need to be in global scope, so make it static.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Cleans up sparse warning:
-symbol 'btc8723b2ant_dac_swing' was not declared. Should it be static?
+Markus Elfring (5):
+  Delete error messages for a failed memory allocation in snd_soc_dapm_new_pcm()
+  Improve a size determination in two functions
+  Use kcalloc() in snd_soc_dapm_new_widgets()
+  Adjust one function call together with a variable assignment
+  Adjust seven checks for null pointers
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/soc-dapm.c | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-index 31965f0ef69d..9d2ecfbc7b33 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-@@ -833,9 +833,9 @@ static void btc8723b2ant_set_sw_fulltime_dac_swing(struct btc_coexist *btcoex,
- 		btc8723b2ant_set_dac_swing_reg(btcoex, 0x18);
- }
- 
--void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
--			    bool force_exec, bool dac_swing_on,
--			    u32 dac_swing_lvl)
-+static void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
-+				   bool force_exec, bool dac_swing_on,
-+				   u32 dac_swing_lvl)
- {
- 	struct rtl_priv *rtlpriv = btcoexist->adapter;
- 
 -- 
-2.11.0
+2.14.0
 
