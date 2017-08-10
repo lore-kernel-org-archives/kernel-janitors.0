@@ -1,42 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 19:44:40 +0000
-Subject: [PATCH 1/2] [media] as102_fe: Delete an error message for a failed memory allocation in as102_attach
-Message-Id: <9c0645bc-181a-4f34-49b7-8de4150b1555@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:29 +0000
+Subject: [PATCH 17/17] pinctrl: vt8500: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-18-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
-In-Reply-To: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 21:26:12 +0200
+These structures are only stored in fields of a pinctrl_desc
+structure (confops, pctlops, and pmxops) that are const. Make the
+structures const as well.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/as102_fe.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/pinctrl/vt8500/pinctrl-wmt.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/as102_fe.c b/drivers/media/dvb-frontends/as102_fe.c
-index 98d575f2744c..1fb4ab21d786 100644
---- a/drivers/media/dvb-frontends/as102_fe.c
-+++ b/drivers/media/dvb-frontends/as102_fe.c
-@@ -459,7 +459,6 @@ struct dvb_frontend *as102_attach(const char *name,
--	if (state = NULL) {
--		pr_err("%s: unable to allocate memory for state\n", __func__);
-+	if (!state)
- 		return NULL;
--	}
-+
- 	fe = &state->frontend;
- 	fe->demodulator_priv = state;
- 	state->ops = ops;
--- 
-2.14.1
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+index 974e646..d73956b 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
+@@ -163,7 +163,7 @@ static int wmt_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static struct pinmux_ops wmt_pinmux_ops = {
++static const struct pinmux_ops wmt_pinmux_ops = {
+ 	.get_functions_count = wmt_pmx_get_functions_count,
+ 	.get_function_name = wmt_pmx_get_function_name,
+ 	.get_function_groups = wmt_pmx_get_function_groups,
+@@ -409,7 +409,7 @@ static int wmt_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	return err;
+ }
+ 
+-static struct pinctrl_ops wmt_pctl_ops = {
++static const struct pinctrl_ops wmt_pctl_ops = {
+ 	.get_groups_count = wmt_get_groups_count,
+ 	.get_group_name	= wmt_get_group_name,
+ 	.get_group_pins	= wmt_get_group_pins,
+@@ -472,7 +472,7 @@ static int wmt_pinconf_set(struct pinctrl_dev *pctldev, unsigned pin,
+ 	return 0;
+ }
+ 
+-static struct pinconf_ops wmt_pinconf_ops = {
++static const struct pinconf_ops wmt_pinconf_ops = {
+ 	.pin_config_get = wmt_pinconf_get,
+ 	.pin_config_set = wmt_pinconf_set,
+ };
 
