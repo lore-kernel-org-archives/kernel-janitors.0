@@ -1,60 +1,39 @@
-From: Peter Rosin <peda@axentia.se>
-Date: Sat, 26 Aug 2017 08:16:57 +0000
-Subject: Re: [PATCH] iio: multiplexer: check memory allocation failure
-Message-Id: <1773a907-698f-d441-2fac-5a8f134aa3dd@axentia.se>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:14 +0000
+Subject: [PATCH 02/17] pinctrl: artpec6: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170826054952.1449-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170826054952.1449-1-christophe.jaillet@wanadoo.fr>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Lars Persson <lars.persson@axis.com>, Niklas Cassel <niklas.cassel@axis.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017-08-26 07:49, Christophe JAILLET wrote:
-> Check memory allocation failures and return -ENOMEM in such cases, as
-> already done few lines above for another memory allocation.
-> 
-> This avoids NULL pointers dereference.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This pinctrl_ops structure is only stored in the const pctlops
+field of a pinctrl_desc structure. Make the pinctrl_ops structure
+const as well.
 
-Hi!
+Done with the help of Coccinelle.
 
-This is a dup of an older patch [1].
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Cheers,
-peda
+---
+ drivers/pinctrl/pinctrl-artpec6.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://patchwork.kernel.org/patch/9829567/
-
-> ---
->  drivers/iio/multiplexer/iio-mux.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> index 37ba007f8dca..74831fcd0313 100644
-> --- a/drivers/iio/multiplexer/iio-mux.c
-> +++ b/drivers/iio/multiplexer/iio-mux.c
-> @@ -285,6 +285,9 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
->  	child->ext_info_cache = devm_kzalloc(dev,
->  					     sizeof(*child->ext_info_cache) *
->  					     num_ext_info, GFP_KERNEL);
-> +	if (!child->ext_info_cache)
-> +		return -ENOMEM;
-> +
->  	for (i = 0; i < num_ext_info; ++i) {
->  		child->ext_info_cache[i].size = -1;
->  
-> @@ -309,6 +312,9 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
->  
->  		child->ext_info_cache[i].data = devm_kmemdup(dev, page, ret + 1,
->  							     GFP_KERNEL);
-> +		if (!child->ext_info_cache[i].data)
-> +			return -ENOMEM;
-> +
->  		child->ext_info_cache[i].data[ret] = 0;
->  		child->ext_info_cache[i].size = ret;
->  	}
-> 
+diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+index 357516d..e33781c 100644
+--- a/drivers/pinctrl/pinctrl-artpec6.c
++++ b/drivers/pinctrl/pinctrl-artpec6.c
+@@ -445,7 +445,7 @@ static unsigned int artpec6_pconf_drive_field_to_mA(int field)
+ 	}
+ }
+ 
+-static struct pinctrl_ops artpec6_pctrl_ops = {
++static const struct pinctrl_ops artpec6_pctrl_ops = {
+ 	.get_group_pins		= artpec6_get_group_pins,
+ 	.get_groups_count	= artpec6_get_groups_count,
+ 	.get_group_name		= artpec6_get_group_name,
 
