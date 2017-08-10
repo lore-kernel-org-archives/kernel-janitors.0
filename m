@@ -1,48 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 13:40:06 +0000
-Subject: [PATCH 1/3] ALSA: rme96: Delete two error messages for a failed memory allocation in snd_rme96_probe
-Message-Id: <523430da-d833-28dc-58dd-ea95b9f04149@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Aug 2017 12:45:10 +0000
+Subject: [PATCH] stm: Potential read overflow in stm_char_policy_set_ioctl()
+Message-Id: <20170810122250.desrz5rvyjheyltg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
-In-Reply-To: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 14:24:41 +0200
+The "size" variable comes from the user so we need to verify that it's
+large enough to hold an stp_policy_id struct.
 
-Omit extra messages for a memory allocation failure in this function.
+Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/rme96.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/sound/pci/rme96.c b/sound/pci/rme96.c
-index 2e19ba55e754..82e8c78e48ca 100644
---- a/sound/pci/rme96.c
-+++ b/sound/pci/rme96.c
-@@ -2489,15 +2489,11 @@ snd_rme96_probe(struct pci_dev *pci,
- #ifdef CONFIG_PM_SLEEP
- 	rme96->playback_suspend_buffer = vmalloc(RME96_BUFFER_SIZE);
- 	if (!rme96->playback_suspend_buffer) {
--		dev_err(card->dev,
--			   "Failed to allocate playback suspend buffer!\n");
- 		snd_card_free(card);
- 		return -ENOMEM;
- 	}
- 	rme96->capture_suspend_buffer = vmalloc(RME96_BUFFER_SIZE);
- 	if (!rme96->capture_suspend_buffer) {
--		dev_err(card->dev,
--			   "Failed to allocate capture suspend buffer!\n");
- 		snd_card_free(card);
- 		return -ENOMEM;
- 	}
--- 
-2.14.0
-
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 0e731143f6a4..9414900575d8 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -566,7 +566,7 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
+ 	if (copy_from_user(&size, arg, sizeof(size)))
+ 		return -EFAULT;
+ 
+-	if (size >= PATH_MAX + sizeof(*id))
++	if (size < sizeof(*id) || size >= PATH_MAX + sizeof(*id))
+ 		return -EINVAL;
+ 
+ 	/*
