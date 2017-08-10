@@ -1,84 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 11:16:21 +0000
-Subject: [PATCH 3/3] [media] Siano: Adjust five checks for null pointers
-Message-Id: <2000da6b-ca21-18a1-dc04-d2b127084153@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 13:04:05 +0000
+Subject: [PATCH 4/5] ASoC: dapm: Adjust one function call together with a variable assignment
+Message-Id: <38a6abaa-8b6c-509d-468e-fa34cf81069d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
-In-Reply-To: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
+References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
+In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 12:50:28 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 10 Aug 2017 14:34:35 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+The script "checkpatch.pl" pointed information out like the following.
 
-Comparison to NULL could be written !…
+ERROR: do not use assignment in if condition
 
-Thus fix the affected source code places.
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/common/siano/smscoreapi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ sound/soc/soc-dapm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index ad1c41f727b1..e4ea2a0c7a24 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -749,7 +749,7 @@ static int smscore_sendrequest_and_wait(struct smscore_device_t *coredev,
- 		void *buffer, size_t size, struct completion *completion) {
- 	int rc;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 3fa9f023bff7..4eea84d821c4 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3441,7 +3441,8 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 	const char *prefix;
+ 	int ret;
  
--	if (completion = NULL)
-+	if (!completion)
- 		return -EINVAL;
- 	init_completion(completion);
+-	if ((w = dapm_cnew_widget(widget)) = NULL)
++	w = dapm_cnew_widget(widget);
++	if (!w)
+ 		return NULL;
  
-@@ -1151,8 +1151,8 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
- 	}
- 	pr_debug("Firmware name: %s\n", fw_filename);
- 
--	if (loadfirmware_handler = NULL && !(coredev->device_flags
--			& SMS_DEVICE_FAMILY2))
-+	if (!loadfirmware_handler &&
-+	    !(coredev->device_flags & SMS_DEVICE_FAMILY2))
- 		return -EINVAL;
- 
- 	rc = request_firmware(&fw, fw_filename, coredev->device);
-@@ -1789,7 +1789,7 @@ int smsclient_sendrequest(struct smscore_client_t *client,
- 	struct sms_msg_hdr *phdr = (struct sms_msg_hdr *) buffer;
- 	int rc;
- 
--	if (client = NULL) {
-+	if (!client) {
- 		pr_err("Got NULL client\n");
- 		return -EINVAL;
- 	}
-@@ -1797,7 +1797,7 @@ int smsclient_sendrequest(struct smscore_client_t *client,
- 	coredev = client->coredev;
- 
- 	/* check that no other channel with same id exists */
--	if (coredev = NULL) {
-+	if (!coredev) {
- 		pr_err("Got NULL coredev\n");
- 		return -EINVAL;
- 	}
-@@ -1954,7 +1954,7 @@ int smscore_gpio_configure(struct smscore_device_t *coredev, u8 pin_num,
- 	if (pin_num > MAX_GPIO_PIN_NUMBER)
- 		return -EINVAL;
- 
--	if (p_gpio_config = NULL)
-+	if (!p_gpio_config)
- 		return -EINVAL;
- 
- 	total_len = sizeof(struct sms_msg_hdr) + (sizeof(u32) * 6);
+ 	switch (w->id) {
 -- 
-2.14.1
+2.14.0
 
