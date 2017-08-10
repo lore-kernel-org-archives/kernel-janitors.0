@@ -1,73 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 06:30:12 +0000
-Subject: [PATCH 3/3] ATM-iphase: Adjust four checks for null pointers
-Message-Id: <693faecc-81ea-6d85-788c-b42924a2afb1@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 16:23:19 +0000
+Subject: [PATCH] ASoC: fsi: Delete an error message for a failed memory allocation in fsi_probe()
+Message-Id: <c78da5a0-fd60-b9fd-7607-51995c1fee8c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
-In-Reply-To: <c30df8dd-a6e9-23c1-842b-afa8696e10d4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Geert Uytterhoeven <geert@linux-m68k.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 5 Aug 2017 22:30:04 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 10 Aug 2017 18:18:20 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-Comparison to NULL could be written !…
+This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code places.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/atm/iphase.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/sh/fsi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
-index ad4c1b41ba98..19782fed572a 100644
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -101,7 +101,7 @@ static void ia_init_rtn_q (IARTN_Q *que)
- static void ia_enque_head_rtn_q (IARTN_Q *que, IARTN_Q * data) 
- {
-    data->next = NULL;
--   if (que->next = NULL) 
-+	if (!que->next)
-       que->next = que->tail = data;
-    else {
-       data->next = que->next;
-@@ -116,7 +116,7 @@ static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
-       return -ENOMEM;
-    entry->data = data;
-    entry->next = NULL;
--   if (que->next = NULL) 
-+	if (!que->next)
-       que->next = que->tail = entry;
-    else {
-       que->tail->next = entry;
-@@ -127,7 +127,7 @@ static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index 005b21506556..1f41cf1ff830 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -1962,10 +1962,8 @@ static int fsi_probe(struct platform_device *pdev)
+ 	}
  
- static IARTN_Q * ia_deque_rtn_q (IARTN_Q *que) {
-    IARTN_Q *tmpdata;
--   if (que->next = NULL)
-+	if (!que->next)
-       return NULL;
-    tmpdata = que->next;
-    if ( que->next = que->tail)  
-@@ -1321,7 +1321,7 @@ static void rx_dle_intr(struct atm_dev *dev)
-               goto INCR_DLE;
-           }
-           ia_vcc = INPH_IA_VCC(vcc);
--          if (ia_vcc = NULL)
-+		if (!ia_vcc)
-           {
-              atomic_inc(&vcc->stats->rx_err);
-              atm_return(vcc, skb->truesize);
+ 	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
+-	if (!master) {
+-		dev_err(&pdev->dev, "Could not allocate master\n");
++	if (!master)
+ 		return -ENOMEM;
+-	}
+ 
+ 	master->base = devm_ioremap_nocache(&pdev->dev,
+ 					    res->start, resource_size(res));
 -- 
-2.13.4
+2.14.0
 
