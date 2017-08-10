@@ -1,36 +1,38 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 14 Aug 2017 05:43:56 +0000
-Subject: [PATCH] [media] v4l2: av7110_v4l: constify v4l2_audio structure
-Message-Id: <1502689436-31008-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:15 +0000
+Subject: [PATCH 03/17] pinctrl: armada-37xx: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-This v4l2_audio structure is only copied into other structures,
-so it can be const.
+This pinconf_ops structure is only stored in the const pinconf_ops
+field of a pinctrl_desc structure. Make the pinconf_ops structure
+const as well.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/pci/ttpci/av7110_v4l.c |    2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/ttpci/av7110_v4l.c b/drivers/media/pci/ttpci/av7110_v4l.c
-index 397fe14..e4cf42c 100644
---- a/drivers/media/pci/ttpci/av7110_v4l.c
-+++ b/drivers/media/pci/ttpci/av7110_v4l.c
-@@ -218,7 +218,7 @@ static int stv0297_set_tv_freq(struct saa7146_dev *dev, u32 freq)
- static struct saa7146_standard dvb_standard[];
- static struct saa7146_standard standard[];
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index f024e25..997ff05 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -243,7 +243,7 @@ static int armada_37xx_pin_config_group_set(struct pinctrl_dev *pctldev,
+ 	return -ENOTSUPP;
+ }
  
--static struct v4l2_audio msp3400_v4l2_audio = {
-+static const struct v4l2_audio msp3400_v4l2_audio = {
- 	.index = 0,
- 	.name = "Television",
- 	.capability = V4L2_AUDCAP_STEREO
+-static struct pinconf_ops armada_37xx_pinconf_ops = {
++static const struct pinconf_ops armada_37xx_pinconf_ops = {
+ 	.is_generic = true,
+ 	.pin_config_group_get = armada_37xx_pin_config_group_get,
+ 	.pin_config_group_set = armada_37xx_pin_config_group_set,
 
