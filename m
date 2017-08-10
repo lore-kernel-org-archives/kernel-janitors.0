@@ -1,87 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 20:56:19 +0000
-Subject: [PATCH 3/4] w1-masters: Delete an error message for a failed memory allocation in four functions
-Message-Id: <aa0c09b1-8984-85d2-491f-80e11780409d@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:23 +0000
+Subject: [PATCH 11/17] pinctrl: ingenic: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
-In-Reply-To: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 21:40:29 +0200
+These structures are only stored in fields of a pinctrl_desc
+structure (confops, pctlops, and pmxops) that are const. Make the
+structures const as well.
 
-Omit an extra message for a memory allocation failure in these functions.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/w1/masters/ds2490.c    | 5 ++---
- drivers/w1/masters/matrox_w1.c | 7 +------
- drivers/w1/masters/omap_hdq.c  | 4 +---
- drivers/w1/masters/w1-gpio.c   | 4 +---
- 4 files changed, 5 insertions(+), 15 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/w1/masters/ds2490.c b/drivers/w1/masters/ds2490.c
-index 46ccb2fc4f60..c0ee6ca9ce93 100644
---- a/drivers/w1/masters/ds2490.c
-+++ b/drivers/w1/masters/ds2490.c
-@@ -998,7 +998,6 @@ static int ds_probe(struct usb_interface *intf,
--	if (!dev) {
--		pr_info("Failed to allocate new DS9490R structure.\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
-+
- 	dev->udev = usb_get_dev(udev);
- 	if (!dev->udev) {
- 		err = -ENOMEM;
-diff --git a/drivers/w1/masters/matrox_w1.c b/drivers/w1/masters/matrox_w1.c
-index d83d7c99d81d..62be2f9cdb4e 100644
---- a/drivers/w1/masters/matrox_w1.c
-+++ b/drivers/w1/masters/matrox_w1.c
-@@ -140,10 +140,5 @@ static int matrox_w1_probe(struct pci_dev *pdev, const struct pci_device_id *ent
--	if (!dev) {
--		dev_err(&pdev->dev,
--			"%s: Failed to create new matrox_device object.\n",
--			__func__);
-+	if (!dev)
- 		return -ENOMEM;
--	}
--
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index d8e8842..d847618 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -460,7 +460,7 @@ static inline bool ingenic_get_pin_config(struct ingenic_pinctrl *jzpc,
+ 	return val & BIT(idx);
+ }
  
- 	dev->bus_master = (struct w1_bus_master *)(dev + 1);
+-static struct pinctrl_ops ingenic_pctlops = {
++static const struct pinctrl_ops ingenic_pctlops = {
+ 	.get_groups_count = pinctrl_generic_get_group_count,
+ 	.get_group_name = pinctrl_generic_get_group_name,
+ 	.get_group_pins = pinctrl_generic_get_group_pins,
+@@ -543,7 +543,7 @@ static int ingenic_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
  
-diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
-index 83fc9aab34e8..6349fcd650dc 100644
---- a/drivers/w1/masters/omap_hdq.c
-+++ b/drivers/w1/masters/omap_hdq.c
-@@ -669,7 +669,5 @@ static int omap_hdq_probe(struct platform_device *pdev)
--	if (!hdq_data) {
--		dev_dbg(&pdev->dev, "unable to allocate memory\n");
-+	if (!hdq_data)
- 		return -ENOMEM;
--	}
+-static struct pinmux_ops ingenic_pmxops = {
++static const struct pinmux_ops ingenic_pmxops = {
+ 	.get_functions_count = pinmux_generic_get_function_count,
+ 	.get_function_name = pinmux_generic_get_function_name,
+ 	.get_function_groups = pinmux_generic_get_function_groups,
+@@ -696,7 +696,7 @@ static int ingenic_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
  
- 	hdq_data->dev = dev;
- 	platform_set_drvdata(pdev, hdq_data);
-diff --git a/drivers/w1/masters/w1-gpio.c b/drivers/w1/masters/w1-gpio.c
-index a90728ceec5a..6e8b18bf9fb1 100644
---- a/drivers/w1/masters/w1-gpio.c
-+++ b/drivers/w1/masters/w1-gpio.c
-@@ -133,7 +133,5 @@ static int w1_gpio_probe(struct platform_device *pdev)
--	if (!master) {
--		dev_err(&pdev->dev, "Out of memory\n");
-+	if (!master)
- 		return -ENOMEM;
--	}
- 
- 	err = devm_gpio_request(&pdev->dev, pdata->pin, "w1");
- 	if (err) {
--- 
-2.14.0
+-static struct pinconf_ops ingenic_confops = {
++static const struct pinconf_ops ingenic_confops = {
+ 	.is_generic = true,
+ 	.pin_config_get = ingenic_pinconf_get,
+ 	.pin_config_set = ingenic_pinconf_set,
 
