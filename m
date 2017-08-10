@@ -1,73 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 08:03:51 +0000
-Subject: [PATCH 3/4] ALSA: emux: Adjust four checks for null pointers
-Message-Id: <ef3686fe-4f2d-8cdb-f2ed-0055f0a241c0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:25 +0000
+Subject: [PATCH 13/17] pinctrl: tb10x: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
-In-Reply-To: <412aa3a5-c8b6-c1fe-febb-0d62927dacc2@users.sourceforge.net>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 09:22:42 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+These structures are only stored in fields of a pinctrl_desc
+structure (pctlops and pmxops) that are const. Make the
+structures const as well.
 
-The script “checkpatch.pl” pointed information out like the following.
+Done with the help of Coccinelle.
 
-Comparison to NULL could be written !…
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thus fix affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/synth/emux/emux_seq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-tb10x.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/synth/emux/emux_seq.c b/sound/synth/emux/emux_seq.c
-index 12acf18c5be4..fd6cbd439511 100644
---- a/sound/synth/emux/emux_seq.c
-+++ b/sound/synth/emux/emux_seq.c
-@@ -99,7 +99,7 @@ snd_emux_init_seq(struct snd_emux *emu, struct snd_card *card, int index)
- 		sprintf(tmpname, "%s Port %d", emu->name, i);
- 		p = snd_emux_create_port(emu, tmpname, MIDI_CHANNELS,
- 					 0, &pinfo);
--		if (p = NULL) {
-+		if (!p) {
- 			snd_printk(KERN_ERR "can't create port\n");
- 			return -ENOMEM;
- 		}
-@@ -151,7 +151,7 @@ snd_emux_create_port(struct snd_emux *emu, char *name,
- 	}
- 	p->chset.channels = kcalloc(max_channels, sizeof(*p->chset.channels),
- 				    GFP_KERNEL);
--	if (p->chset.channels = NULL) {
-+	if (!p->chset.channels) {
- 		snd_printk(KERN_ERR "no memory\n");
- 		kfree(p);
- 		return NULL;
-@@ -373,7 +373,7 @@ int snd_emux_init_virmidi(struct snd_emux *emu, struct snd_card *card)
- 		return 0;
+diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
+index 09d3500..2e90a6d 100644
+--- a/drivers/pinctrl/pinctrl-tb10x.c
++++ b/drivers/pinctrl/pinctrl-tb10x.c
+@@ -577,7 +577,7 @@ static int tb10x_dt_node_to_map(struct pinctrl_dev *pctl,
+ 	return ret;
+ }
  
- 	emu->vmidi = kcalloc(emu->midi_ports, sizeof(*emu->vmidi), GFP_KERNEL);
--	if (emu->vmidi = NULL)
-+	if (!emu->vmidi)
- 		return -ENOMEM;
+-static struct pinctrl_ops tb10x_pinctrl_ops = {
++static const struct pinctrl_ops tb10x_pinctrl_ops = {
+ 	.get_groups_count = tb10x_get_groups_count,
+ 	.get_group_name   = tb10x_get_group_name,
+ 	.get_group_pins   = tb10x_get_group_pins,
+@@ -738,7 +738,7 @@ static int tb10x_pctl_set_mux(struct pinctrl_dev *pctl,
+ 	return 0;
+ }
  
- 	for (i = 0; i < emu->midi_ports; i++) {
-@@ -405,7 +405,7 @@ int snd_emux_delete_virmidi(struct snd_emux *emu)
- {
- 	int i;
- 
--	if (emu->vmidi = NULL)
-+	if (!emu->vmidi)
- 		return 0;
- 
- 	for (i = 0; i < emu->midi_ports; i++) {
--- 
-2.13.4
+-static struct pinmux_ops tb10x_pinmux_ops = {
++static const struct pinmux_ops tb10x_pinmux_ops = {
+ 	.get_functions_count = tb10x_get_functions_count,
+ 	.get_function_name = tb10x_get_function_name,
+ 	.get_function_groups = tb10x_get_function_groups,
 
