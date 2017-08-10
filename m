@@ -1,64 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:42:49 +0000
-Subject: [PATCH v2 6/9] ACPI-video: Improve a jump target in acpi_video_switch_brightness()
-Message-Id: <dd6a897c-0dd1-f49c-b3c9-eb995ec48a7f@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Aug 2017 12:23:34 +0000
+Subject: [PATCH] [media] staging: atomisp: fix bounds checking in mt9m114_s_exposure_selection()
+Message-Id: <20170810122334.tqruyh6xelk7fg6i@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
- <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
-In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Varsha Rao <rvarsha016@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans de Goede <hdegoede@redhat.com>, sayli karnik <karniksayli1995@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 15:45:35 +0200
+These clamp_t() calls are no-ops because we don't save the results.  It
+leads to an array out of bounds bug.
 
-* Avoid another duplicate check for the local variable "result"
-  then at the end.
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-* Jump directly to an error message in the case that the desired brightness
-  can not be switched.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/acpi_video.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 8295ae1deab9..e279ed221961 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1411,19 +1411,19 @@ acpi_video_switch_brightness(struct work_struct *work)
- 		return;
+diff --git a/drivers/staging/media/atomisp/i2c/mt9m114.c b/drivers/staging/media/atomisp/i2c/mt9m114.c
+index 448e072ca037..7816bc428641 100644
+--- a/drivers/staging/media/atomisp/i2c/mt9m114.c
++++ b/drivers/staging/media/atomisp/i2c/mt9m114.c
+@@ -1209,10 +1209,10 @@ static int mt9m114_s_exposure_selection(struct v4l2_subdev *sd,
+ 		return -EINVAL;
+ 	}
  
- 	if (!device->brightness)
--		goto out;
-+		goto report_failure;
+-	clamp_t(int, win_left, 0, 4);
+-	clamp_t(int, win_top, 0, 4);
+-	clamp_t(int, win_right, 0, 4);
+-	clamp_t(int, win_bottom, 0, 4);
++	win_left   = clamp_t(int, win_left, 0, 4);
++	win_top    = clamp_t(int, win_top, 0, 4);
++	win_right  = clamp_t(int, win_right, 0, 4);
++	win_bottom = clamp_t(int, win_bottom, 0, 4);
  
- 	result = acpi_video_device_lcd_get_level_current(device,
- 							 &level_current,
- 							 false);
- 	if (result)
--		goto out;
-+		goto report_failure;
- 
- 	level_next = acpi_video_get_next_level(device, level_current, event);
- 
- 	result = acpi_video_device_lcd_set_level(device, level_next);
--out:
- 	if (result)
-+ report_failure:
- 		printk(KERN_ERR PREFIX "Failed to switch the brightness\n");
- 	else
- 		backlight_force_update(device->backlight,
--- 
-2.13.4
-
+ 	ret = mt9m114_write_reg_array(client, mt9m114_exp_average, NO_POLLING);
+ 	if (ret) {
