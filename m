@@ -1,44 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 13:27:54 +0000
-Subject: [PATCH 1/2] UBIFS: Delete an error message for a failed memory allocation in dbg_check_orphans()
-Message-Id: <a387b1b9-471c-71b5-88f6-c448857f403b@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 Aug 2017 16:09:18 +0000
+Subject: [PATCH] perf/x86/intel/rapl: make array rapl_attr_groups static
+Message-Id: <20170810160918.7461-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bd8107ce-fc62-db39-8134-59dca314da7c@users.sourceforge.net>
-In-Reply-To: <bd8107ce-fc62-db39-8134-59dca314da7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, David Carrillo-Cisneros <davidcc@google.com>, Peter Zijlstra <peterz@infradead.org>, Vince Weaver <vincent.weaver@maine.edu>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Borislav Petkov <bp@suse.de>, Harry Pan <harry.pan@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 10:18:59 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The array rapl_attr_groups  is local to the source and do not need to be in
+global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+warning: symbol 'rapl_attr_groups' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ubifs/orphan.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/events/intel/rapl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/orphan.c b/fs/ubifs/orphan.c
-index caf2d123e9ee..f5b01f9f9985 100644
---- a/fs/ubifs/orphan.c
-+++ b/fs/ubifs/orphan.c
-@@ -924,10 +924,8 @@ static int dbg_check_orphans(struct ubifs_info *c)
- 	ci.leaf_cnt = 0;
- 	ci.root = RB_ROOT;
- 	ci.node = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
--	if (!ci.node) {
--		ubifs_err(c, "out of memory");
-+	if (!ci.node)
- 		return -ENOMEM;
--	}
+diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
+index a45e2114a846..8e2457cb6b4a 100644
+--- a/arch/x86/events/intel/rapl.c
++++ b/arch/x86/events/intel/rapl.c
+@@ -559,7 +559,7 @@ static struct attribute_group rapl_pmu_format_group = {
+ 	.attrs = rapl_formats_attr,
+ };
  
- 	err = dbg_scan_orphans(c, &ci);
- 	if (err)
+-const struct attribute_group *rapl_attr_groups[] = {
++static const struct attribute_group *rapl_attr_groups[] = {
+ 	&rapl_pmu_attr_group,
+ 	&rapl_pmu_format_group,
+ 	&rapl_pmu_events_group,
 -- 
-2.14.0
+2.11.0
 
