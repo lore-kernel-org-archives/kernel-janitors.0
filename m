@@ -1,56 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:16 +0000
-Subject: [PATCH 04/17] pinctrl: st: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Date: Thu, 10 Aug 2017 11:03:42 +0000
+Subject: Re: [PATCH 04/17] pinctrl: st: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <ff3ddade-259e-0638-b066-cb20c9161cb7@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (confops, pctlops, and pmxops) that are const. Make the
-structures const as well.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/pinctrl/pinctrl-st.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 7ac8b1e..aed8006 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -861,7 +861,7 @@ static void st_pctl_dt_free_map(struct pinctrl_dev *pctldev,
- {
- }
- 
--static struct pinctrl_ops st_pctlops = {
-+static const struct pinctrl_ops st_pctlops = {
- 	.get_groups_count	= st_pctl_get_groups_count,
- 	.get_group_pins		= st_pctl_get_group_pins,
- 	.get_group_name		= st_pctl_get_group_name,
-@@ -928,7 +928,7 @@ static int st_pmx_set_gpio_direction(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinmux_ops st_pmxops = {
-+static const struct pinmux_ops st_pmxops = {
- 	.get_functions_count	= st_pmx_get_funcs_count,
- 	.get_function_name	= st_pmx_get_fname,
- 	.get_function_groups	= st_pmx_get_groups,
-@@ -1025,7 +1025,7 @@ static void st_pinconf_dbg_show(struct pinctrl_dev *pctldev,
- 		ST_PINCONF_UNPACK_RT_DELAY(config));
- }
- 
--static struct pinconf_ops st_confops = {
-+static const struct pinconf_ops st_confops = {
- 	.pin_config_get		= st_pinconf_get,
- 	.pin_config_set		= st_pinconf_set,
- 	.pin_config_dbg_show	= st_pinconf_dbg_show,
-
+SGkgSnVsaWENCg0KT24gMDgvMTAvMjAxNyAxMjowNiBQTSwgSnVsaWEgTGF3YWxsIHdyb3RlOg0K
+PiBUaGVzZSBzdHJ1Y3R1cmVzIGFyZSBvbmx5IHN0b3JlZCBpbiBmaWVsZHMgb2YgYSBwaW5jdHJs
+X2Rlc2MNCj4gc3RydWN0dXJlIChjb25mb3BzLCBwY3Rsb3BzLCBhbmQgcG14b3BzKSB0aGF0IGFy
+ZSBjb25zdC4gTWFrZSB0aGUNCj4gc3RydWN0dXJlcyBjb25zdCBhcyB3ZWxsLg0KPiANCj4gRG9u
+ZSB3aXRoIHRoZSBoZWxwIG9mIENvY2NpbmVsbGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKdWxp
+YSBMYXdhbGwgPEp1bGlhLkxhd2FsbEBsaXA2LmZyPg0KPiANCj4gLS0tDQo+ICAgZHJpdmVycy9w
+aW5jdHJsL3BpbmN0cmwtc3QuYyB8ICAgIDYgKysrLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDMg
+aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L3BpbmN0cmwvcGluY3RybC1zdC5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3QuYw0KPiBp
+bmRleCA3YWM4YjFlLi5hZWQ4MDA2IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGlu
+Y3RybC1zdC5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0LmMNCj4gQEAgLTg2
+MSw3ICs4NjEsNyBAQCBzdGF0aWMgdm9pZCBzdF9wY3RsX2R0X2ZyZWVfbWFwKHN0cnVjdCBwaW5j
+dHJsX2RldiAqcGN0bGRldiwNCj4gICB7DQo+ICAgfQ0KPiAgIA0KPiAtc3RhdGljIHN0cnVjdCBw
+aW5jdHJsX29wcyBzdF9wY3Rsb3BzID0gew0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBwaW5jdHJs
+X29wcyBzdF9wY3Rsb3BzID0gew0KPiAgIAkuZ2V0X2dyb3Vwc19jb3VudAk9IHN0X3BjdGxfZ2V0
+X2dyb3Vwc19jb3VudCwNCj4gICAJLmdldF9ncm91cF9waW5zCQk9IHN0X3BjdGxfZ2V0X2dyb3Vw
+X3BpbnMsDQo+ICAgCS5nZXRfZ3JvdXBfbmFtZQkJPSBzdF9wY3RsX2dldF9ncm91cF9uYW1lLA0K
+PiBAQCAtOTI4LDcgKzkyOCw3IEBAIHN0YXRpYyBpbnQgc3RfcG14X3NldF9ncGlvX2RpcmVjdGlv
+bihzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+ICAgCXJldHVybiAwOw0KPiAgIH0NCj4g
+ICANCj4gLXN0YXRpYyBzdHJ1Y3QgcGlubXV4X29wcyBzdF9wbXhvcHMgPSB7DQo+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IHBpbm11eF9vcHMgc3RfcG14b3BzID0gew0KPiAgIAkuZ2V0X2Z1bmN0aW9u
+c19jb3VudAk9IHN0X3BteF9nZXRfZnVuY3NfY291bnQsDQo+ICAgCS5nZXRfZnVuY3Rpb25fbmFt
+ZQk9IHN0X3BteF9nZXRfZm5hbWUsDQo+ICAgCS5nZXRfZnVuY3Rpb25fZ3JvdXBzCT0gc3RfcG14
+X2dldF9ncm91cHMsDQo+IEBAIC0xMDI1LDcgKzEwMjUsNyBAQCBzdGF0aWMgdm9pZCBzdF9waW5j
+b25mX2RiZ19zaG93KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4gICAJCVNUX1BJTkNP
+TkZfVU5QQUNLX1JUX0RFTEFZKGNvbmZpZykpOw0KPiAgIH0NCj4gICANCj4gLXN0YXRpYyBzdHJ1
+Y3QgcGluY29uZl9vcHMgc3RfY29uZm9wcyA9IHsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcGlu
+Y29uZl9vcHMgc3RfY29uZm9wcyA9IHsNCj4gICAJLnBpbl9jb25maWdfZ2V0CQk9IHN0X3BpbmNv
+bmZfZ2V0LA0KPiAgIAkucGluX2NvbmZpZ19zZXQJCT0gc3RfcGluY29uZl9zZXQsDQo+ICAgCS5w
+aW5fY29uZmlnX2RiZ19zaG93CT0gc3RfcGluY29uZl9kYmdfc2hvdywNCj4gDQoNCkFja2VkLWJ5
+OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw=
