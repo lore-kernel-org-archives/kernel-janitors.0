@@ -1,55 +1,43 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Fri, 11 Aug 2017 02:00:33 +0000
-Subject: Re: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
-Message-Id: <1502416833.2598.3.camel@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 16:46:28 +0000
+Subject: [PATCH] ASoC: rockchip: Delete an error message for a failed memory allocation in rockchip_i2s_probe
+Message-Id: <85e3e6a2-ecbd-5988-2460-d4f8ca6062f9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710072422.rs25i5oawmiaofrp@mwanda>
-In-Reply-To: <20170710072422.rs25i5oawmiaofrp@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Eduardo Valentin <edubezval@gmail.com>
-Cc: Keerthy <j-keerthy@ti.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 2017-07-10 at 10:24 +0300, Dan Carpenter wrote:
-> ti_bandgap_get_sensor_data() can return error pointers so we should
-> check for that.  There is no need to check "data->ti_thermal" for
-> NULL
-> and we removed that from the other cleanup function so we may as well
-> from it in ti_thermal_remove_sensor() to be consistent.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> index c211a8e4a210..9fea354ca90c 100644
-> --- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> +++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> @@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap
-> *bgp, int id)
->  
->  	data = ti_bandgap_get_sensor_data(bgp, id);
->  
-> -	if (data && data->ti_thermal) {
-> +	if (data && !IS_ERR(data)) {
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 18:38:09 +0200
 
-what about
-	if (!IS_ERR_OR_NULL(data))
+Omit an extra message for a memory allocation failure in this function.
 
-thanks,
-rui
+This issue was detected by using the Coccinelle software.
 
->  		if (data->our_zone)
->  			thermal_zone_device_unregister(data-
-> >ti_thermal);
->  	}
-> @@ -276,7 +276,7 @@ int ti_thermal_unregister_cpu_cooling(struct
-> ti_bandgap *bgp, int id)
->  
->  	data = ti_bandgap_get_sensor_data(bgp, id);
->  
-> -	if (data) {
-> +	if (data && !IS_ERR(data)) {
->  		cpufreq_cooling_unregister(data->cool_dev);
->  		cpufreq_cpu_put(data->policy);
->  	}
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/rockchip/rockchip_i2s.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
+index 199338fdeda0..b6590467fd14 100644
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -579,10 +579,8 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
+ 	int val;
+ 
+ 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
+-	if (!i2s) {
+-		dev_err(&pdev->dev, "Can't allocate rk_i2s_dev\n");
++	if (!i2s)
+ 		return -ENOMEM;
+-	}
+ 
+ 	i2s->dev = &pdev->dev;
+ 
+-- 
+2.14.0
+
