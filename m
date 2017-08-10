@@ -1,60 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 16:56:50 +0000
-Subject: [PATCH 2/3] ecryptfs: Return an error code only as a constant in ecryptfs_add_global_auth_tok()
-Message-Id: <0a02a893-798a-d126-3e64-45f8f5185bc7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:22 +0000
+Subject: [PATCH 10/17] pinctrl: adi2: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
-In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ecryptfs@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 17:51:53 +0200
+These structures are only stored in fields of a pinctrl_desc
+structure (pctlops and pmxops) that are const. Make the
+structures const as well.
 
-* Return an error code without storing it in an intermediate variable.
+Done with the help of Coccinelle.
 
-* Delete the jump target "out" and the local variable "rc"
-  which became unnecessary with this refactoring.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ecryptfs/keystore.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-adi2.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-index 0131b0547699..47c1fd73638d 100644
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@ -2519,14 +2519,12 @@ ecryptfs_add_global_auth_tok(struct ecryptfs_mount_crypt_stat *mount_crypt_stat,
- 			     char *sig, u32 global_auth_tok_flags)
- {
- 	struct ecryptfs_global_auth_tok *new_auth_tok;
--	int rc = 0;
- 
- 	new_auth_tok = kmem_cache_zalloc(ecryptfs_global_auth_tok_cache,
- 					GFP_KERNEL);
--	if (!new_auth_tok) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (!new_auth_tok)
-+		return -ENOMEM;
-+
- 	memcpy(new_auth_tok->sig, sig, ECRYPTFS_SIG_SIZE_HEX);
- 	new_auth_tok->flags = global_auth_tok_flags;
- 	new_auth_tok->sig[ECRYPTFS_SIG_SIZE_HEX] = '\0';
-@@ -2534,7 +2532,6 @@ ecryptfs_add_global_auth_tok(struct ecryptfs_mount_crypt_stat *mount_crypt_stat,
- 	list_add(&new_auth_tok->mount_crypt_stat_list,
- 		 &mount_crypt_stat->global_auth_tok_list);
- 	mutex_unlock(&mount_crypt_stat->global_auth_tok_list_mutex);
--out:
--	return rc;
-+	return 0;
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index 54569a7..56aa181 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -612,7 +612,7 @@ static int adi_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
+ 	return 0;
  }
  
--- 
-2.14.0
+-static struct pinctrl_ops adi_pctrl_ops = {
++static const struct pinctrl_ops adi_pctrl_ops = {
+ 	.get_groups_count = adi_get_groups_count,
+ 	.get_group_name = adi_get_group_name,
+ 	.get_group_pins = adi_get_group_pins,
+@@ -696,7 +696,7 @@ static int adi_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static struct pinmux_ops adi_pinmux_ops = {
++static const struct pinmux_ops adi_pinmux_ops = {
+ 	.set_mux = adi_pinmux_set,
+ 	.get_functions_count = adi_pinmux_get_funcs_count,
+ 	.get_function_name = adi_pinmux_get_func_name,
 
