@@ -1,82 +1,97 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 10 Aug 2017 15:42:09 +0000
-Subject: Applied "ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compres
-Message-Id: <E1dfpb7-0001hZ-F5@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 13:05:07 +0000
+Subject: [PATCH 5/5] ASoC: dapm: Adjust seven checks for null pointers
+Message-Id: <32343b0d-447a-6b1a-ff11-506d14a82d15@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
-In-Reply-To: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
+References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
+In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compress()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7a0cf42edd9cc335572aa8614df0ebefa2f537be Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 16:21:34 +0200
-Subject: [PATCH] ASoC: compress: Delete error messages for a failed memory
- allocation in snd_soc_new_compress()
+Date: Thu, 10 Aug 2017 14:41:30 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit extra messages for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Thus fix affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-compress.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ sound/soc/soc-dapm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
-index 206f36bf43e8..6c867d50e036 100644
---- a/sound/soc/soc-compress.c
-+++ b/sound/soc/soc-compress.c
-@@ -764,15 +764,12 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
- 		direction = SND_COMPRESS_CAPTURE;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 4eea84d821c4..5a85b8773289 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -146,7 +146,7 @@ static void pop_dbg(struct device *dev, u32 pop_time, const char *fmt, ...)
+ 		return;
  
- 	compr = kzalloc(sizeof(*compr), GFP_KERNEL);
--	if (compr = NULL) {
--		snd_printk(KERN_ERR "Cannot allocate compr\n");
-+	if (!compr)
+ 	buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+-	if (buf = NULL)
++	if (!buf)
+ 		return;
+ 
+ 	va_start(args, fmt);
+@@ -883,7 +883,7 @@ static int dapm_create_or_share_kcontrol(struct snd_soc_dapm_widget *w,
+ 			long_name = kasprintf(GFP_KERNEL, "%s %s",
+ 				 w->name + prefix_len,
+ 				 w->kcontrol_news[kci].name);
+-			if (long_name = NULL)
++			if (!long_name)
+ 				return -ENOMEM;
+ 
+ 			name = long_name;
+@@ -1086,7 +1086,7 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
+ 		size++;
+ 
+ 	*list = kzalloc(sizeof(**list) + size * sizeof(*w), GFP_KERNEL);
+-	if (*list = NULL)
++	if (!*list)
  		return -ENOMEM;
--	}
  
- 	compr->ops = devm_kzalloc(rtd->card->dev, sizeof(soc_compr_ops),
- 				  GFP_KERNEL);
--	if (compr->ops = NULL) {
--		dev_err(rtd->card->dev, "Cannot allocate compressed ops\n");
-+	if (!compr->ops) {
- 		ret = -ENOMEM;
- 		goto compr_err;
+ 	list_for_each_entry(w, widgets, work_list)
+@@ -2668,7 +2668,7 @@ static int snd_soc_dapm_add_path(struct snd_soc_dapm_context *dapm,
+ 		path->is_supply = 1;
+ 
+ 	/* connect static paths */
+-	if (control = NULL) {
++	if (!control) {
+ 		path->connect = 1;
+ 	} else {
+ 		switch (wsource->id) {
+@@ -2777,12 +2777,12 @@ static int snd_soc_dapm_add_route(struct snd_soc_dapm_context *dapm,
+ 	if (!wsource)
+ 		wsource = wtsource;
+ 
+-	if (wsource = NULL) {
++	if (!wsource) {
+ 		dev_err(dapm->dev, "ASoC: no source widget found for %s\n",
+ 			route->source);
+ 		return -ENODEV;
+ 	}
+-	if (wsink = NULL) {
++	if (!wsink) {
+ 		dev_err(dapm->dev, "ASoC: no sink widget found for %s\n",
+ 			route->sink);
+ 		return -ENODEV;
+@@ -3489,7 +3489,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 		w->name = kasprintf(GFP_KERNEL, "%s %s", prefix, widget->name);
+ 	else
+ 		w->name = kstrdup_const(widget->name, GFP_KERNEL);
+-	if (w->name = NULL) {
++	if (!w->name) {
+ 		kfree(w);
+ 		return NULL;
  	}
 -- 
-2.13.2
+2.14.0
 
