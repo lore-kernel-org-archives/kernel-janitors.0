@@ -1,57 +1,82 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 15:57:19 +0000
-Subject: [PATCH 03/14] vme: Move an assignment in vme_new_dma_list()
-Message-Id: <296b53ad-dd93-255d-a69a-f48ced245af9@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 10 Aug 2017 15:42:09 +0000
+Subject: Applied "ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compres
+Message-Id: <E1dfpb7-0001hZ-F5@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
-In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+References: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
+In-Reply-To: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compress()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7a0cf42edd9cc335572aa8614df0ebefa2f537be Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 24 Aug 2017 22:04:45 +0200
+Date: Thu, 10 Aug 2017 16:21:34 +0200
+Subject: [PATCH] ASoC: compress: Delete error messages for a failed memory
+ allocation in snd_soc_new_compress()
 
-Assign a pointer to a data structure member without using an intermediate
-local variable.
+Omit extra messages for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/vme/vme.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ sound/soc/soc-compress.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
-index 1afddf5eafd4..d890410e472d 100644
---- a/drivers/vme/vme.c
-+++ b/drivers/vme/vme.c
-@@ -948,7 +948,6 @@ EXPORT_SYMBOL(vme_dma_request);
-  */
- struct vme_dma_list *vme_new_dma_list(struct vme_resource *resource)
- {
--	struct vme_dma_resource *ctrlr;
- 	struct vme_dma_list *dma_list;
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 206f36bf43e8..6c867d50e036 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -764,15 +764,12 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 		direction = SND_COMPRESS_CAPTURE;
  
- 	if (resource->type != VME_DMA) {
-@@ -956,14 +955,14 @@ struct vme_dma_list *vme_new_dma_list(struct vme_resource *resource)
- 		return NULL;
+ 	compr = kzalloc(sizeof(*compr), GFP_KERNEL);
+-	if (compr = NULL) {
+-		snd_printk(KERN_ERR "Cannot allocate compr\n");
++	if (!compr)
+ 		return -ENOMEM;
+-	}
+ 
+ 	compr->ops = devm_kzalloc(rtd->card->dev, sizeof(soc_compr_ops),
+ 				  GFP_KERNEL);
+-	if (compr->ops = NULL) {
+-		dev_err(rtd->card->dev, "Cannot allocate compressed ops\n");
++	if (!compr->ops) {
+ 		ret = -ENOMEM;
+ 		goto compr_err;
  	}
- 
--	ctrlr = list_entry(resource->entry, struct vme_dma_resource, list);
--
- 	dma_list = kmalloc(sizeof(*dma_list), GFP_KERNEL);
- 	if (!dma_list)
- 		return NULL;
- 
- 	INIT_LIST_HEAD(&dma_list->entries);
--	dma_list->parent = ctrlr;
-+	dma_list->parent = list_entry(resource->entry,
-+				      struct vme_dma_resource,
-+				      list);
- 	mutex_init(&dma_list->mtx);
- 
- 	return dma_list;
 -- 
-2.14.0
+2.13.2
 
