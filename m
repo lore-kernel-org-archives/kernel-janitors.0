@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 13:03:19 +0000
-Subject: [PATCH 3/5] ASoC: dapm: Use kcalloc() in snd_soc_dapm_new_widgets()
-Message-Id: <62be9e32-1b8d-3980-7998-72f82c62a6fe@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 13:02:35 +0000
+Subject: [PATCH 2/5] ASoC: dapm: Improve a size determination in two functions
+Message-Id: <16fbe262-3b6b-2395-be43-285dc2ff5420@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
 In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
@@ -12,40 +12,43 @@ To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 14:30:48 +0200
+Date: Thu, 10 Aug 2017 14:15:47 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/soc-dapm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/soc-dapm.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index e673961210e6..3fa9f023bff7 100644
+index 3adb914bc009..e673961210e6 100644
 --- a/sound/soc/soc-dapm.c
 +++ b/sound/soc/soc-dapm.c
-@@ -3027,9 +3027,9 @@ int snd_soc_dapm_new_widgets(struct snd_soc_card *card)
- 			continue;
+@@ -2651,7 +2651,7 @@ static int snd_soc_dapm_add_path(struct snd_soc_dapm_context *dapm,
+ 	if (ret)
+ 		return ret;
  
- 		if (w->num_kcontrols) {
--			w->kcontrols = kzalloc(w->num_kcontrols *
--						sizeof(struct snd_kcontrol *),
--						GFP_KERNEL);
-+			w->kcontrols = kcalloc(w->num_kcontrols,
-+					       sizeof(*w->kcontrols),
-+					       GFP_KERNEL);
- 			if (!w->kcontrols) {
- 				mutex_unlock(&card->dapm_mutex);
- 				return -ENOMEM;
+-	path = kzalloc(sizeof(struct snd_soc_dapm_path), GFP_KERNEL);
++	path = kzalloc(sizeof(*path), GFP_KERNEL);
+ 	if (!path)
+ 		return -ENOMEM;
+ 
+@@ -3859,10 +3859,9 @@ int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
+ 	}
+ 	kcontrol_dai_link[0].private_value = private_value;
+ 	/* duplicate kcontrol_dai_link on heap so that memory persists */
+-	template.kcontrol_news -				devm_kmemdup(card->dev, &kcontrol_dai_link[0],
+-					sizeof(struct snd_kcontrol_new),
+-					GFP_KERNEL);
++	template.kcontrol_news = devm_kmemdup(card->dev, &kcontrol_dai_link[0],
++					      sizeof(*template.kcontrol_news),
++					      GFP_KERNEL);
+ 	if (!template.kcontrol_news) {
+ 		ret = -ENOMEM;
+ 		goto outfree_private_value;
 -- 
 2.14.0
 
