@@ -1,20 +1,35 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 24 Aug 2017 16:56:08 +0000
-Subject: Re: [PATCH][V2] netfilter: fix indent on if statements
-Message-Id: <20170824165608.GA25637@salvia>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:12 +0000
+Subject: [PATCH 00/17] constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170815095034.21058-1-colin.king@canonical.com>
-In-Reply-To: <20170815095034.21058-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, Aug 15, 2017 at 10:50:34AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The returns on some if statements are not indented correctly,
-> add in the missing tab.
+These structures are only stored in fields of a pinctrl_desc
+structure that are const. Make the structures const as well.
 
-Applied, thanks.
+Done with the help of Coccinelle.
+
+---
+
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c  |    4 ++--
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c  |    6 +++---
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c      |    2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    2 +-
+ drivers/pinctrl/pinctrl-adi2.c              |    4 ++--
+ drivers/pinctrl/pinctrl-artpec6.c           |    2 +-
+ drivers/pinctrl/pinctrl-digicolor.c         |    4 ++--
+ drivers/pinctrl/pinctrl-ingenic.c           |    6 +++---
+ drivers/pinctrl/pinctrl-rza1.c              |    2 +-
+ drivers/pinctrl/pinctrl-st.c                |    6 +++---
+ drivers/pinctrl/pinctrl-tb10x.c             |    4 ++--
+ drivers/pinctrl/pinctrl-tz1090-pdc.c        |    6 +++---
+ drivers/pinctrl/pinctrl-tz1090.c            |    6 +++---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c       |    2 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c         |    4 ++--
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c     |    4 ++--
+ drivers/pinctrl/vt8500/pinctrl-wmt.c        |    6 +++---
+ 17 files changed, 35 insertions(+), 35 deletions(-)
