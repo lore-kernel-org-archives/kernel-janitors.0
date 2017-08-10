@@ -1,37 +1,49 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 06 Aug 2017 22:37:55 +0000
-Subject: [PATCH 1/3] power: supply: charger-manager: Fix a NULL pointer dereference in 'charger_manager_probe
-Message-Id: <09a9f8a61f784779d6127b83f9540ae1db4c25be.1502058761.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 14:26:23 +0000
+Subject: [PATCH] ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compress
+Message-Id: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sre@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-'devm_kzalloc()' can return NULL. Return -ENOMEM in this case in order to
-avoid a NULL pointer dereference later on.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 16:21:34 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Omit extra messages for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/power/supply/charger-manager.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/soc-compress.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
-index adc3761831e1..52a49857e20f 100644
---- a/drivers/power/supply/charger-manager.c
-+++ b/drivers/power/supply/charger-manager.c
-@@ -1645,6 +1645,8 @@ static int charger_manager_probe(struct platform_device *pdev)
- 	/* Initialize alarm timer */
- 	if (alarmtimer_get_rtcdev()) {
- 		cm_timer = devm_kzalloc(cm->dev, sizeof(*cm_timer), GFP_KERNEL);
-+		if (!cm_timer)
-+			return -ENOMEM;
- 		alarm_init(cm_timer, ALARM_BOOTTIME, cm_timer_func);
- 	}
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 206f36bf43e8..6c867d50e036 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -764,15 +764,12 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 		direction = SND_COMPRESS_CAPTURE;
  
+ 	compr = kzalloc(sizeof(*compr), GFP_KERNEL);
+-	if (compr = NULL) {
+-		snd_printk(KERN_ERR "Cannot allocate compr\n");
++	if (!compr)
+ 		return -ENOMEM;
+-	}
+ 
+ 	compr->ops = devm_kzalloc(rtd->card->dev, sizeof(soc_compr_ops),
+ 				  GFP_KERNEL);
+-	if (compr->ops = NULL) {
+-		dev_err(rtd->card->dev, "Cannot allocate compressed ops\n");
++	if (!compr->ops) {
+ 		ret = -ENOMEM;
+ 		goto compr_err;
+ 	}
 -- 
-2.11.0
+2.14.0
 
