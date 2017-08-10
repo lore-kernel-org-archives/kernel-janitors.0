@@ -1,53 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 30 Aug 2017 11:16:16 +0000
-Subject: [PATCH] iio: imu: inv_mpu6050: make arrays hz and d static
-Message-Id: <20170830111616.27559-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:20 +0000
+Subject: [PATCH 08/17] pinctrl: aspeed: g4: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Baptiste Maneyrol <JManeyrol@invensense.com>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These structures are only stored in fields of a pinctrl_desc
+structure (pctlops, and pmxops) that are const. Make the
+structures const as well.
 
-Don't populate the arrays on the stack, instead make them static.
-Makes the object code smaller by 135 bytes:
+Done with the help of Coccinelle.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  15135	   4240	    128	  19503	   4c2f	inv_mpu_core.o
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  14840	   4400	    128	  19368	   4ba8	inv_mpu_core.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-index 44830bce13df..6692f5e08dc8 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-@@ -570,10 +570,12 @@ static int inv_mpu6050_write_raw(struct iio_dev *indio_dev,
-  */
- static int inv_mpu6050_set_lpf(struct inv_mpu6050_state *st, int rate)
- {
--	const int hz[] = {188, 98, 42, 20, 10, 5};
--	const int d[] = {INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
--			INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
--			INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ};
-+	static const int hz[] = {188, 98, 42, 20, 10, 5};
-+	static const int d[] = {
-+		INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
-+		INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
-+		INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ
-+	};
- 	int i, h, result;
- 	u8 data;
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+index df56e58..05b1530 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+@@ -2401,7 +2401,7 @@
+ 	.nconfigs = ARRAY_SIZE(aspeed_g4_configs),
+ };
  
--- 
-2.14.1
+-static struct pinmux_ops aspeed_g4_pinmux_ops = {
++static const struct pinmux_ops aspeed_g4_pinmux_ops = {
+ 	.get_functions_count = aspeed_pinmux_get_fn_count,
+ 	.get_function_name = aspeed_pinmux_get_fn_name,
+ 	.get_function_groups = aspeed_pinmux_get_fn_groups,
+@@ -2410,7 +2410,7 @@
+ 	.strict = true,
+ };
+ 
+-static struct pinctrl_ops aspeed_g4_pinctrl_ops = {
++static const struct pinctrl_ops aspeed_g4_pinctrl_ops = {
+ 	.get_groups_count = aspeed_pinctrl_get_groups_count,
+ 	.get_group_name = aspeed_pinctrl_get_group_name,
+ 	.get_group_pins = aspeed_pinctrl_get_group_pins,
 
