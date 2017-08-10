@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Aug 2017 12:38:43 +0000
+Date: Thu, 10 Aug 2017 12:53:44 +0000
 Subject: Re: [PATCH] drm/amdgpu: potential shift wrapping bug
-Message-Id: <20170810123843.eqykjblnyhepv3im@mwanda>
+Message-Id: <20170810125344.6g2tbgdr5xyhudly@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170810121659.7k2pqemqnd3px2qi@mwanda>
  <1c9843bd-8c8f-b6f7-d413-ebb508c97930@vodafone.de>
@@ -26,7 +26,16 @@ On Thu, Aug 10, 2017 at 02:30:15PM +0200, Christian K=F6nig wrote:
 > so the correct fix would actually be using uint32_t here instead.
 >=20
 
-Alright.  Thanks.  I'll resend.
+Changing it to uint32_t introduces a new static checker warning:
+
+    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1465 amdgpu_vm_frag_ptes()
+    warn: was expecting a 64 bit value instead of '~(frag_align - 1)'
+
+Unfortunately, I get so many thousands of those I can't normally even
+review that sort of bug...
+
+Let me resend the original patch but with a modified changelog to say
+that the bug is a false positive.
 
 regards,
 dan carpenter
