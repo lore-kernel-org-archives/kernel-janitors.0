@@ -1,46 +1,56 @@
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Wed, 16 Aug 2017 05:32:19 +0000
-Subject: Re: [PATCH] scsi: cxlflash: Fix an error handling path in 'cxlflash_disk_attach()'
-Message-Id: <0b3495e0-dd8d-3269-39fe-9f29d751f74b@au1.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:16 +0000
+Subject: [PATCH 04/17] pinctrl: st: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170815201835.781F76A041@b03ledav003.gho.boulder.ibm.com>
-In-Reply-To: <20170815201835.781F76A041@b03ledav003.gho.boulder.ibm.com>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, manoj@linux.vnet.ibm.com, mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 16/08/17 06:18, Christophe JAILLET wrote:
-> 'rc' is known to be 0 at this point.
-> If 'create_context()' fails, returns -ENOMEM instead of 0 which means
-> success.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+These structures are only stored in fields of a pinctrl_desc
+structure (confops, pctlops, and pmxops) that are const. Make the
+structures const as well.
 
-ENOMEM seems right here.
+Done with the help of Coccinelle.
 
-Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ---
->   drivers/scsi/cxlflash/superpipe.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
-> index ad0f9968ccfb..08da593cb2f6 100644
-> --- a/drivers/scsi/cxlflash/superpipe.c
-> +++ b/drivers/scsi/cxlflash/superpipe.c
-> @@ -1390,6 +1390,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
->   	if (unlikely(!ctxi)) {
->   		dev_err(dev, "%s: Failed to create context ctxid=%d\n",
->   			__func__, ctxid);
-> +		rc = -ENOMEM;
->   		goto err;
->   	}
->   
-> 
+---
+ drivers/pinctrl/pinctrl-st.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 7ac8b1e..aed8006 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -861,7 +861,7 @@ static void st_pctl_dt_free_map(struct pinctrl_dev *pctldev,
+ {
+ }
+ 
+-static struct pinctrl_ops st_pctlops = {
++static const struct pinctrl_ops st_pctlops = {
+ 	.get_groups_count	= st_pctl_get_groups_count,
+ 	.get_group_pins		= st_pctl_get_group_pins,
+ 	.get_group_name		= st_pctl_get_group_name,
+@@ -928,7 +928,7 @@ static int st_pmx_set_gpio_direction(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static struct pinmux_ops st_pmxops = {
++static const struct pinmux_ops st_pmxops = {
+ 	.get_functions_count	= st_pmx_get_funcs_count,
+ 	.get_function_name	= st_pmx_get_fname,
+ 	.get_function_groups	= st_pmx_get_groups,
+@@ -1025,7 +1025,7 @@ static void st_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 		ST_PINCONF_UNPACK_RT_DELAY(config));
+ }
+ 
+-static struct pinconf_ops st_confops = {
++static const struct pinconf_ops st_confops = {
+ 	.pin_config_get		= st_pinconf_get,
+ 	.pin_config_set		= st_pinconf_set,
+ 	.pin_config_dbg_show	= st_pinconf_dbg_show,
 
