@@ -1,51 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 13:01:46 +0000
-Subject: [PATCH 1/5] ASoC: dapm: Delete error messages for a failed memory allocation in snd_soc_dapm_new_pcm
-Message-Id: <5742ec2a-2f88-717f-7286-aa0cac1bcb9c@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:13 +0000
+Subject: [PATCH 01/17] pinctrl: bcm281xx: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
-In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 14:09:19 +0200
+This pinconf_ops structure is only stored in the const confops
+field of a pinctrl_desc structure. Make the pinconf_ops structure
+const as well.
 
-Omit extra messages for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/soc-dapm.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index dcef67a9bd48..3adb914bc009 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3854,8 +3854,6 @@ int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
- 			(void *)(kcontrol_dai_link[0].private_value),
- 			sizeof(struct soc_enum), GFP_KERNEL);
- 	if (!private_value) {
--		dev_err(card->dev, "ASoC: Failed to create control for %s widget\n",
--			link_name);
- 		ret = -ENOMEM;
- 		goto outfree_link_name;
- 	}
-@@ -3866,8 +3864,6 @@ int snd_soc_dapm_new_pcm(struct snd_soc_card *card,
- 					sizeof(struct snd_kcontrol_new),
- 					GFP_KERNEL);
- 	if (!template.kcontrol_news) {
--		dev_err(card->dev, "ASoC: Failed to create control for %s widget\n",
--			link_name);
- 		ret = -ENOMEM;
- 		goto outfree_private_value;
- 	}
--- 
-2.14.0
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+index a7cceff..bc3b232 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+@@ -1384,7 +1384,7 @@ static int bcm281xx_pinctrl_pin_config_set(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static struct pinconf_ops bcm281xx_pinctrl_pinconf_ops = {
++static const struct pinconf_ops bcm281xx_pinctrl_pinconf_ops = {
+ 	.pin_config_get = bcm281xx_pinctrl_pin_config_get,
+ 	.pin_config_set = bcm281xx_pinctrl_pin_config_set,
+ };
 
