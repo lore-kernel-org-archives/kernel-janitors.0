@@ -1,31 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Aug 2017 06:04:18 +0000
-Subject: [PATCH 2/3] staging: lustre: obdclass: return -EFAULT if copy_from_user() fails
-Message-Id: <20170826060418.quvhtwbayenb7a5j@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Aug 2017 10:06:17 +0000
+Subject: [PATCH 05/17] pinctrl: sirf: atlas7: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Message-Id: <1502359589-15970-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: linux-arm-kernel@lists.infradead.org
 
-The copy_from_user() function returns the number of bytes which we
-weren't able to copy.  We don't want to return that to the user but
-instead we want to return -EFAULT.
+This pinmux_ops structure is only stored in the const pmxops field
+of a pinctrl_desc structure. Make the pinmux_ops structure const as
+well.
 
-Fixes: d7e09d0397e8 ("staging: add Lustre file system client support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-index 57c84e8e1d8e..545358923271 100644
---- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
-+++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-@@ -180,7 +180,8 @@ int class_handle_ioctl(unsigned int cmd, unsigned long arg)
- 			err = -ENOMEM;
- 			goto out;
- 		}
--		err = copy_from_user(lcfg, data->ioc_pbuf1, data->ioc_plen1);
-+		if (copy_from_user(lcfg, data->ioc_pbuf1, data->ioc_plen1))
-+			err = -EFAULT;
- 		if (!err)
- 			err = lustre_cfg_sanity_check(lcfg, data->ioc_plen1);
- 		if (!err)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index d1ef82c..17c326c 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5261,7 +5261,7 @@ static int atlas7_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-static struct pinmux_ops atlas7_pinmux_ops = {
++static const struct pinmux_ops atlas7_pinmux_ops = {
+ 	.get_functions_count = atlas7_pmx_get_funcs_count,
+ 	.get_function_name = atlas7_pmx_get_func_name,
+ 	.get_function_groups = atlas7_pmx_get_func_groups,
+
