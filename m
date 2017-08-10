@@ -1,81 +1,110 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Aug 2017 08:43:51 +0000
-Subject: [PATCH 1/2] rsi: missing unlocks on error paths
-Message-Id: <20170825082645.z2hiotefhzizb7sr@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 10 Aug 2017 15:41:57 +0000
+Subject: Applied "ASoC: rsnd: Delete an error message for a failed memory allocation in three functions" to t
+Message-Id: <E1dfpav-0001fF-Kv@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <181b6355-b6b6-eeae-d85b-9fb465d96b85@users.sourceforge.net>
+In-Reply-To: <181b6355-b6b6-eeae-d85b-9fb465d96b85@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, Andrew Zaborowski <andrew.zaborowski@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Fengguang Wu <fengguang.wu@intel.com>, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marek Vasut <marek.vasut+renesas@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-There is a missing unlock if rsi_find_sta() fails in
-rsi_mac80211_ampdu_action() or if we hit the -EINVAL path in
-rsi_mac80211_sta_add().
+The patch
 
-Fixes: 3528608f3a79 ("rsi: handle station connection in AP mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   ASoC: rsnd: Delete an error message for a failed memory allocation in three functions
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-index 8b983d03f2da..25331aa16e8e 100644
---- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
-@@ -906,7 +906,8 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
- 		rsta = rsi_find_sta(common, sta->addr);
- 		if (!rsta) {
- 			rsi_dbg(ERR_ZONE, "No station mapped\n");
--			return 0;
-+			status = 0;
-+			goto unlock;
- 		}
- 		sta_id = rsta->sta_id;
- 	}
-@@ -974,6 +975,7 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
- 		break;
- 	}
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0d7820d0918efa6c2a53acdfc47cbfc3b48df727 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Aug 2017 17:13:19 +0200
+Subject: [PATCH] ASoC: rsnd: Delete an error message for a failed memory
+ allocation in three functions
+
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/adg.c  | 4 +---
+ sound/soc/sh/rcar/core.c | 4 +---
+ sound/soc/sh/rcar/gen.c  | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 5b5389e5b92b..938baff86ef2 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -586,10 +586,8 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+ 	int ret;
  
-+unlock:
- 	mutex_unlock(&common->mutex);
- 	return status;
- }
-@@ -1202,6 +1204,7 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
- 	struct rsi_common *common = adapter->priv;
- 	bool sta_exist = false;
- 	struct rsi_sta *rsta;
-+	int status = 0;
+ 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
+-	if (!adg) {
+-		dev_err(dev, "ADG allocate failed\n");
++	if (!adg)
+ 		return -ENOMEM;
+-	}
  
- 	rsi_dbg(INFO_ZONE, "Station Add: %pM\n", sta->addr);
+ 	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
+ 		      NULL, NULL, 0, 0);
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 2c12ad2b2b34..650cc28b0fb6 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1401,10 +1401,8 @@ static int rsnd_probe(struct platform_device *pdev)
+ 	 *	init priv data
+ 	 */
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(dev, "priv allocate failed\n");
++	if (!priv)
+ 		return -ENODEV;
+-	}
  
-@@ -1215,8 +1218,8 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
- 		/* Check if max stations reached */
- 		if (common->num_stations >= common->max_stations) {
- 			rsi_dbg(ERR_ZONE, "Reject: Max Stations exists\n");
--			mutex_unlock(&common->mutex);
--			return -EOPNOTSUPP;
-+			status = -EOPNOTSUPP;
-+			goto unlock;
- 		}
- 		for (cnt = 0; cnt < common->max_stations; cnt++) {
- 			rsta = &common->stations[cnt];
-@@ -1241,7 +1244,8 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
- 			rsi_dbg(ERR_ZONE,
- 				"%s: Some problem reaching here...\n",
- 				__func__);
--			return -EINVAL;
-+			status = -EINVAL;
-+			goto unlock;
- 		}
- 		rsta = &common->stations[sta_idx];
- 		rsta->sta = sta;
-@@ -1289,9 +1293,10 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
- 		}
- 	}
+ 	priv->pdev	= pdev;
+ 	priv->flags	= (unsigned long)of_device_get_match_data(dev);
+diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
+index ee00e3516911..f04c4100043a 100644
+--- a/sound/soc/sh/rcar/gen.c
++++ b/sound/soc/sh/rcar/gen.c
+@@ -406,10 +406,8 @@ int rsnd_gen_probe(struct rsnd_priv *priv)
+ 	int ret;
  
-+unlock:
- 	mutex_unlock(&common->mutex);
+ 	gen = devm_kzalloc(dev, sizeof(*gen), GFP_KERNEL);
+-	if (!gen) {
+-		dev_err(dev, "GEN allocate failed\n");
++	if (!gen)
+ 		return -ENOMEM;
+-	}
  
--	return 0;
-+	return status;
- }
+ 	priv->gen = gen;
  
- /**
+-- 
+2.13.2
+
