@@ -1,29 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 17 Aug 2017 17:06:35 +0000
-Subject: Re: [PATCH][net-next] net: hns3: ensure media_type is unitialized
-Message-Id: <20170817.100635.571751073337398396.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Aug 2017 09:56:14 +0000
+Subject: [PATCH 2/2 net-next] hns3pf: Fix some harmless copy and paste bugs
+Message-Id: <20170810095549.jxkthoyym5gn5oh3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817090107.14310-1-colin.king@canonical.com>
-In-Reply-To: <20170817090107.14310-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, huangdaode@hisilicon.com, lipeng321@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jiri@mellanox.com>, Jamal Hadi Salim <jhs@mojatatu.com>, Daode Huang <huangdaode@hisilicon.com>, "Wei Hu (Xavier)" <xavier.huwei@huawei.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 17 Aug 2017 10:01:07 +0100
+These were copy and paste bugs, but I believe they are harmless.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Media type is only set if h->ae_algo->ops->get_media_type is called
-> so there is a possibility that media_type is uninitialized when it is
-> used a switch statement.  Fix this by initializing media_type to
-> HNAE3_MEDIA_TYPE_UNKNOWN.
-> 
-> Detected by CoverityScan, CID#1452624("Uninitialized scalar variable")
-> 
-> Fixes: 496d03e960ae ("net: hns3: Add Ethtool support to HNS3 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+index e519795dff7c..9589b7e1d24c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -330,7 +330,7 @@ static int hns3_nic_mc_sync(struct net_device *netdev,
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 
+-	if (h->ae_algo->ops->add_uc_addr)
++	if (h->ae_algo->ops->add_mc_addr)
+ 		return h->ae_algo->ops->add_mc_addr(h, addr);
+ 
+ 	return 0;
+@@ -342,7 +342,7 @@ static int hns3_nic_mc_unsync(struct net_device *netdev,
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 
+-	if (h->ae_algo->ops->rm_uc_addr)
++	if (h->ae_algo->ops->rm_mc_addr)
+ 		return h->ae_algo->ops->rm_mc_addr(h, addr);
+ 
+ 	return 0;
