@@ -1,47 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Aug 2017 17:21:40 +0000
-Subject: [PATCH][V2] Revert "staging: fsl-mc: be consistent when checking strcmp() return"
-Message-Id: <20170816172140.31376-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Aug 2017 06:57:36 +0000
+Subject: [PATCH 1/2] regmap: constify regmap_bus structures
+Message-Id: <1502434657-16701-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These regmap_bus structures are only passed as the second argument to
+__devm_regmap_init or __regmap_init, both of which are const, so the
+regmap_bus structures can be const too.
 
-The previous fix removed the equal to zero comparisons by the strcmps and
-now the function always returns true. Revert this change to restore the
-original correctly functioning code.
+Done with the help of Coccinelle.
 
-Detected by CoverityScan, CID#1452267 ("Constant expression result")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This reverts commit b93ad9a067e1515af42da7d56bc61f1a25075f94.
-
-Fixes: b93ad9a067e1 ("staging: fsl-mc: be consistent when checking strcmp() return")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/fsl-mc/bus/fsl-mc-allocator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/base/regmap/regmap-spi.c  |    2 +-
+ drivers/base/regmap/regmap-spmi.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
-index b37a6f48225f..8ea3920400a0 100644
---- a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
-+++ b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
-@@ -16,9 +16,9 @@
- 
- static bool __must_check fsl_mc_is_allocatable(const char *obj_type)
- {
--	return strcmp(obj_type, "dpbp") ||
--	       strcmp(obj_type, "dpmcp") ||
--	       strcmp(obj_type, "dpcon");
-+	return strcmp(obj_type, "dpbp") = 0 ||
-+	       strcmp(obj_type, "dpmcp") = 0 ||
-+	       strcmp(obj_type, "dpcon") = 0;
+diff --git a/drivers/base/regmap/regmap-spi.c b/drivers/base/regmap/regmap-spi.c
+index edd9a83..c7150dd 100644
+--- a/drivers/base/regmap/regmap-spi.c
++++ b/drivers/base/regmap/regmap-spi.c
+@@ -102,7 +102,7 @@ static int regmap_spi_read(void *context,
+ 	return spi_write_then_read(spi, reg, reg_size, val, val_size);
  }
  
- /**
--- 
-2.11.0
+-static struct regmap_bus regmap_spi = {
++static const struct regmap_bus regmap_spi = {
+ 	.write = regmap_spi_write,
+ 	.gather_write = regmap_spi_gather_write,
+ 	.async_write = regmap_spi_async_write,
+diff --git a/drivers/base/regmap/regmap-spmi.c b/drivers/base/regmap/regmap-spmi.c
+index 4a36e41..0bfb8ed 100644
+--- a/drivers/base/regmap/regmap-spmi.c
++++ b/drivers/base/regmap/regmap-spmi.c
+@@ -83,7 +83,7 @@ static int regmap_spmi_base_write(void *context, const void *data,
+ 					     count - 1);
+ }
+ 
+-static struct regmap_bus regmap_spmi_base = {
++static const struct regmap_bus regmap_spmi_base = {
+ 	.read				= regmap_spmi_base_read,
+ 	.write				= regmap_spmi_base_write,
+ 	.gather_write			= regmap_spmi_base_gather_write,
+@@ -203,7 +203,7 @@ static int regmap_spmi_ext_write(void *context, const void *data,
+ 					    count - 2);
+ }
+ 
+-static struct regmap_bus regmap_spmi_ext = {
++static const struct regmap_bus regmap_spmi_ext = {
+ 	.read				= regmap_spmi_ext_read,
+ 	.write				= regmap_spmi_ext_write,
+ 	.gather_write			= regmap_spmi_ext_gather_write,
 
