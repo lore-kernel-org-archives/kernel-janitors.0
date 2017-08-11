@@ -1,35 +1,76 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Aug 2017 19:16:45 +0000
-Subject: Re: [PATCH 1/2] ext4: Delete an error message for a failed memory allocation in ext4_multi_mount_pro
-Message-Id: <20170824191645.ha3bw5n24lqcpxd7@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 Aug 2017 21:52:12 +0000
+Subject: [PATCH] power: supply: lp8788: Make several arrays static const * const
+Message-Id: <20170811215212.9985-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
- <5bf432ae-398d-718c-8105-3092a240a8ef@users.sourceforge.net>
- <b21f6c3d-2cad-3f72-f410-f608ea5f4cea@redhat.com>
-In-Reply-To: <b21f6c3d-2cad-3f72-f410-f608ea5f4cea@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sandeen@redhat.com
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Milo Kim <milo.kim@ti.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 19, 2017 at 12:08:29PM -0500, Eric Sandeen wrote:
-> On 8/19/17 6:47 AM, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 19 Aug 2017 13:04:50 +0200
-> > 
-> > Omit an extra message for a memory allocation failure in this function.
-> 
-> I might be dense, but what makes this message "extra?"
-> 
-> (I suppose kmalloc squawks too if it fails, but is Coccinelle
-> now warning about explicit memory allocation failure warnings?)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah...  Checkpatch complains that the kmalloc squawks is enough.
-"WARNING: Possible unnecessary 'out of memory' message".  This
-allocation is small so it's guaranteed to succeed in current kernels.
+Don't populate various read only arrays on the stack but make them
+static const, making the object code smaller and saves 148 bytes
+overall:
 
-regards,
-dan carpenter
+Before:
+   text    data     bss     dec     hex filename
+  11940    4496      64   16500    4074 lp8788-charger.o
+
+After:
+   text    data     bss     dec     hex filename
+  11472    4816      64   16352    3fe0 lp8788-charger.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/lp8788-charger.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply/lp8788-charger.c
+index 677f7c40b25a..0f3432795f3c 100644
+--- a/drivers/power/supply/lp8788-charger.c
++++ b/drivers/power/supply/lp8788-charger.c
+@@ -626,7 +626,7 @@ static ssize_t lp8788_show_charger_status(struct device *dev,
+ {
+ 	struct lp8788_charger *pchg = dev_get_drvdata(dev);
+ 	enum lp8788_charging_state state;
+-	char *desc[LP8788_MAX_CHG_STATE] = {
++	static const char * const desc[LP8788_MAX_CHG_STATE] = {
+ 		[LP8788_OFF] = "CHARGER OFF",
+ 		[LP8788_WARM_UP] = "WARM UP",
+ 		[LP8788_LOW_INPUT] = "LOW INPUT STATE",
+@@ -650,8 +650,10 @@ static ssize_t lp8788_show_eoc_time(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct lp8788_charger *pchg = dev_get_drvdata(dev);
+-	char *stime[] = { "400ms", "5min", "10min", "15min",
+-			"20min", "25min", "30min", "No timeout" };
++	static const char * const stime[] = {
++		"400ms", "5min", "10min", "15min",
++		"20min", "25min", "30min", "No timeout"
++	};
+ 	u8 val;
+ 
+ 	lp8788_read_byte(pchg->lp, LP8788_CHG_EOC, &val);
+@@ -665,9 +667,13 @@ static ssize_t lp8788_show_eoc_level(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct lp8788_charger *pchg = dev_get_drvdata(dev);
+-	char *abs_level[] = { "25mA", "49mA", "75mA", "98mA" };
+-	char *relative_level[] = { "5%", "10%", "15%", "20%" };
+-	char *level;
++	static const char * const abs_level[] = {
++			"25mA", "49mA", "75mA", "98mA"
++	};
++	static const char * const relative_level[] = {
++			"5%", "10%", "15%", "20%"
++	};
++	const char *level;
+ 	u8 val;
+ 	u8 mode;
+ 
+-- 
+2.11.0
 
