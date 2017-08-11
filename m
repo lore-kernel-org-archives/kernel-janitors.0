@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 19:11:36 +0000
-Subject: [PATCH 1/3] ALSA: mpu401: Delete an error message for a failed memory allocation in snd_mpu401_uart_
-Message-Id: <3d183343-50cf-1683-fade-1dbbee33dfba@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 10:46:54 +0000
+Subject: [PATCH] ASoC: Baytrail SST MAX98090: Delete an error message for a failed memory allocation in byt_m
+Message-Id: <95614c7b-9856-94f8-4550-a87048cfe283@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
-In-Reply-To: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 20:20:11 +0200
+Date: Fri, 11 Aug 2017 12:42:40 +0200
 
 Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/drivers/mpu401/mpu401_uart.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/intel/boards/byt-max98090.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/drivers/mpu401/mpu401_uart.c b/sound/drivers/mpu401/mpu401_uart.c
-index 3a7c317ae012..cc347386fc2b 100644
---- a/sound/drivers/mpu401/mpu401_uart.c
-+++ b/sound/drivers/mpu401/mpu401_uart.c
-@@ -545,7 +545,6 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
- 		return err;
- 	mpu = kzalloc(sizeof(*mpu), GFP_KERNEL);
- 	if (mpu = NULL) {
--		snd_printk(KERN_ERR "mpu401_uart: cannot allocate\n");
- 		snd_device_free(card, rmidi);
+diff --git a/sound/soc/intel/boards/byt-max98090.c b/sound/soc/intel/boards/byt-max98090.c
+index 047be7fa0ce9..fa68bb32adef 100644
+--- a/sound/soc/intel/boards/byt-max98090.c
++++ b/sound/soc/intel/boards/byt-max98090.c
+@@ -152,10 +152,8 @@ static int byt_max98090_probe(struct platform_device *pdev)
+ 	int ret_val;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_ATOMIC);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "allocation failed\n");
++	if (!priv)
  		return -ENOMEM;
- 	}
+-	}
+ 
+ 	ret_val = devm_acpi_dev_add_driver_gpios(dev->parent, acpi_byt_max98090_gpios);
+ 	if (ret_val)
 -- 
 2.14.0
 
