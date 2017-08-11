@@ -1,42 +1,105 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 11:04:49 +0000
-Subject: [PATCH 1/2] [media] imon: Delete an error message for a failed memory allocation in imon_init_intf0(
-Message-Id: <fa1210a3-ced1-f39e-2cb8-5fe258778336@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 20:43:14 +0000
+Subject: [PATCH 3/3] ASoC: blackfin: Add some spaces for better code readability
+Message-Id: <2c2fabf2-3238-ab23-4df8-d93c702ff51e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
-In-Reply-To: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
+References: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
+In-Reply-To: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 12:40:07 +0200
+Date: Fri, 11 Aug 2017 22:20:07 +0200
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+Use space characters at some source code places according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/imon.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/blackfin/bf6xx-sport.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-index bd76534a2749..e6978f1b7f2c 100644
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -2313,7 +2313,6 @@ static struct imon_context *imon_init_intf0(struct usb_interface *intf,
--	if (!ictx) {
--		dev_err(dev, "%s: kzalloc failed for context", __func__);
-+	if (!ictx)
- 		goto exit;
--	}
-+
- 	rx_urb = usb_alloc_urb(0, GFP_KERNEL);
- 	if (!rx_urb)
- 		goto rx_urb_alloc_failed;
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+index fcddebf2558c..d2caadfe7b6d 100644
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ b/sound/soc/blackfin/bf6xx-sport.c
+@@ -129,7 +129,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
+ 
+ 	for (i = 0; i < fragcount; ++i) {
+ 		desc[i].next_desc_addr  = &(desc[i + 1]);
+-		desc[i].start_addr = (unsigned long)buf + i*fragsize;
++		desc[i].start_addr = (unsigned long)buf + i * fragsize;
+ 		desc[i].cfg = cfg;
+ 		desc[i].x_count = count;
+ 		desc[i].x_modify = wdsize;
+@@ -138,7 +138,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
+ 	}
+ 
+ 	/* make circular */
+-	desc[fragcount-1].next_desc_addr = desc;
++	desc[fragcount - 1].next_desc_addr = desc;
+ }
+ 
+ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+@@ -148,7 +148,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+ 	unsigned int cfg;
+ 	dma_addr_t addr;
+ 
+-	count = fragsize/sport->wdsize;
++	count = fragsize / sport->wdsize;
+ 
+ 	if (sport->tx_desc)
+ 		dma_free_coherent(NULL, sport->tx_desc_size,
+@@ -166,8 +166,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+ 	cfg = DMAFLOW_LIST | DI_EN | compute_wdsize(sport->wdsize) | NDSIZE_6;
+ 
+ 	setup_desc(sport->tx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, count, sport->wdsize);
+-
++		   cfg | DMAEN, count, sport->wdsize);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(sport_config_tx_dma);
+@@ -179,7 +178,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
+ 	unsigned int cfg;
+ 	dma_addr_t addr;
+ 
+-	count = fragsize/sport->wdsize;
++	count = fragsize / sport->wdsize;
+ 
+ 	if (sport->rx_desc)
+ 		dma_free_coherent(NULL, sport->rx_desc_size,
+@@ -198,8 +197,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
+ 		| WNR | NDSIZE_6;
+ 
+ 	setup_desc(sport->rx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, count, sport->wdsize);
+-
++		   cfg | DMAEN, count, sport->wdsize);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(sport_config_rx_dma);
+@@ -226,7 +224,7 @@ static irqreturn_t sport_tx_irq(int irq, void *dev_id)
+ 	static unsigned long status;
+ 
+ 	status = get_dma_curr_irqstat(sport->tx_dma_chan);
+-	if (status & (DMA_DONE|DMA_ERR)) {
++	if (status & (DMA_DONE | DMA_ERR)) {
+ 		clear_dma_irqstat(sport->tx_dma_chan);
+ 		SSYNC();
+ 	}
+@@ -241,7 +239,7 @@ static irqreturn_t sport_rx_irq(int irq, void *dev_id)
+ 	unsigned long status;
+ 
+ 	status = get_dma_curr_irqstat(sport->rx_dma_chan);
+-	if (status & (DMA_DONE|DMA_ERR)) {
++	if (status & (DMA_DONE | DMA_ERR)) {
+ 		clear_dma_irqstat(sport->rx_dma_chan);
+ 		SSYNC();
+ 	}
 -- 
-2.14.1
+2.14.0
 
