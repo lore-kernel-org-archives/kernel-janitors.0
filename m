@@ -1,33 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 10:58:26 +0000
-Subject: [PATCH 0/6] constify video_subdev structures
-Message-Id: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Fri, 11 Aug 2017 02:00:33 +0000
+Subject: Re: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
+Message-Id: <1502416833.2598.3.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170710072422.rs25i5oawmiaofrp@mwanda>
+In-Reply-To: <20170710072422.rs25i5oawmiaofrp@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Eduardo Valentin <edubezval@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The structures of type v4l2_subdev_ops are only passed as the second
-argument of v4l2_subdev_init or as the third argument of
-v4l2_i2c_subdev_init, both of which are const.  The structures of type
-v4l2_subdev_core_ops, v4l2_subdev_pad_ops, v4l2_subdev_sensor_ops,
-v4l2_subdev_video_ops are only stored in fields of v4l2_subdev_ops
-structures, all of which are const.  Thus all of these structures can be
-declared as const as well.
+On Mon, 2017-07-10 at 10:24 +0300, Dan Carpenter wrote:
+> ti_bandgap_get_sensor_data() can return error pointers so we should
+> check for that.  There is no need to check "data->ti_thermal" for
+> NULL
+> and we removed that from the other cleanup function so we may as well
+> from it in ti_thermal_remove_sensor() to be consistent.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> index c211a8e4a210..9fea354ca90c 100644
+> --- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> +++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> @@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap
+> *bgp, int id)
+>  
+>  	data = ti_bandgap_get_sensor_data(bgp, id);
+>  
+> -	if (data && data->ti_thermal) {
+> +	if (data && !IS_ERR(data)) {
 
-Done with the help of Coccinelle.
+what about
+	if (!IS_ERR_OR_NULL(data))
 
----
+thanks,
+rui
 
- drivers/media/i2c/mt9m111.c                   |    6 +++---
- drivers/media/i2c/mt9t001.c                   |    8 ++++----
- drivers/media/platform/exynos4-is/fimc-isp.c  |    2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c |    2 +-
- drivers/media/platform/vimc/vimc-debayer.c    |    2 +-
- drivers/media/platform/vimc/vimc-scaler.c     |    2 +-
- drivers/media/platform/vimc/vimc-sensor.c     |    2 +-
- drivers/media/usb/uvc/uvc_entity.c            |    2 +-
- drivers/staging/media/atomisp/i2c/ap1302.c    |    2 +-
- drivers/staging/media/atomisp/i2c/mt9m114.c   |    2 +-
- 10 files changed, 15 insertions(+), 15 deletions(-)
+>  		if (data->our_zone)
+>  			thermal_zone_device_unregister(data-
+> >ti_thermal);
+>  	}
+> @@ -276,7 +276,7 @@ int ti_thermal_unregister_cpu_cooling(struct
+> ti_bandgap *bgp, int id)
+>  
+>  	data = ti_bandgap_get_sensor_data(bgp, id);
+>  
+> -	if (data) {
+> +	if (data && !IS_ERR(data)) {
+>  		cpufreq_cooling_unregister(data->cool_dev);
+>  		cpufreq_cpu_put(data->policy);
+>  	}
