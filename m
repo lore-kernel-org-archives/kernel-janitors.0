@@ -1,41 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 10:18:22 +0000
-Subject: Re: [PATCH 00/13] DRBD-receiver: Fine-tuning for six function implementations
-Message-Id: <25b445bb-22b4-fb77-83c2-d33009e7c9cd@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Aug 2017 11:47:28 +0000
+Subject: [PATCH] tty: amba-pl011: constify vendor_data structures
+Message-Id: <1502452048-3444-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-> Date: Sat, 10 Sep 2016 22:13:22 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (13):
->   Use kmalloc_array() in receive_uuids()
->   Delete an error message for a failed kmalloc_array() call
->   Move an assignment in receive_uuids()
->   Improve a size determination in drbd_do_features()
->   Delete an unnecessary initialisation in receive_sizes()
->   Improve a size determination in receive_sizes()
->   Delete an error message for a failed kzalloc() call in receive_sizes()
->   Move an assignment in receive_sizes()
->   Improve determination of sizes in receive_SyncParam()
->   Delete error messages for failed resource allocations in receive_SyncParam()
->   Improve a size determination in receive_protocol()
->   Delete error messages for failed resource allocations in receive_protocol()
->   Improve determination of sizes in receive_Barrier()
-> 
->  drivers/block/drbd/drbd_receiver.c | 45 ++++++++++++++++----------------------
->  1 file changed, 19 insertions(+), 26 deletions(-)
+These vendor_data structures are only stored in the vendor field of
+the uart_amba_port structure, as defined in the same file, and this
+field is declared as const.  Thus the vendor_data structures can be
+const too.
 
-Would you like to take another look at change possibilities
-for this software module?
+Done with the help of Coccinelle.
 
-Regards,
-Markus
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+There are some other vendor_data structures in the same file, but
+they are used in a different way.
+
+ drivers/tty/serial/amba-pl011.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 1888d16..ba4e795 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -128,7 +128,7 @@ static unsigned int get_fifosize_arm(struct amba_device *dev)
+ 	.get_fifosize		= get_fifosize_arm,
+ };
+ 
+-static struct vendor_data vendor_sbsa = {
++static const struct vendor_data vendor_sbsa = {
+ 	.reg_offset		= pl011_std_offsets,
+ 	.fr_busy		= UART01x_FR_BUSY,
+ 	.fr_dsr			= UART01x_FR_DSR,
+@@ -143,7 +143,7 @@ static unsigned int get_fifosize_arm(struct amba_device *dev)
+ };
+ 
+ #ifdef CONFIG_ACPI_SPCR_TABLE
+-static struct vendor_data vendor_qdt_qdf2400_e44 = {
++static const struct vendor_data vendor_qdt_qdf2400_e44 = {
+ 	.reg_offset		= pl011_std_offsets,
+ 	.fr_busy		= UART011_FR_TXFE,
+ 	.fr_dsr			= UART01x_FR_DSR,
+
