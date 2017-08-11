@@ -1,67 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 13:32:55 +0000
-Subject: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functions
-Message-Id: <671f4a88-bee9-85b4-ea9b-68abcdb40443@users.sourceforge.net>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 11 Aug 2017 14:44:31 +0000
+Subject: Re: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functio
+Message-Id: <1502462671.3099.13.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <671f4a88-bee9-85b4-ea9b-68abcdb40443@users.sourceforge.net>
+In-Reply-To: <671f4a88-bee9-85b4-ea9b-68abcdb40443@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, Fabio Estevam <fabio.estevam@nxp.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, Fabio Estevam <fabio.estevam@nxp.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From 885ccd6c63291dcd4854a0cbaab5188cdc3db805 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 15:10:43 +0200
-Subject: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functions
+On Fri, 2017-08-11 at 15:32 +0200, SF Markus Elfring wrote:
+> From 885ccd6c63291dcd4854a0cbaab5188cdc3db805 Mon Sep 17 00:00:00 2001
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 11 Aug 2017 15:10:43 +0200
+> Subject: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functions
+> 
+> Omit an extra message for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
-Omit an extra message for a memory allocation failure in these functions.
+This doesn't have anything to do with refactoring strings.
 
-This issue was detected by using the Coccinelle software.
+Just note that allocations without GFP_NOWARN do a dump_stack()
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/fsl/fsl_asrc_dma.c | 4 +---
- sound/soc/fsl/fsl_dma.c      | 1 -
- sound/soc/fsl/fsl_ssi.c      | 4 +---
- 3 files changed, 2 insertions(+), 7 deletions(-)
+> diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
+[]
+> @@ -282,7 +282,5 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
+> -	if (!pair) {
+> -		dev_err(dev, "failed to allocate pair\n");
+> +	if (!pair)
+>  		return -ENOMEM;
+> -	}
 
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index 282d841840b1..2baf19608bd0 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -282,7 +282,5 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
--	if (!pair) {
--		dev_err(dev, "failed to allocate pair\n");
-+	if (!pair)
- 		return -ENOMEM;
--	}
- 
- 	pair->asrc_priv = asrc_priv;
- 
-diff --git a/sound/soc/fsl/fsl_dma.c b/sound/soc/fsl/fsl_dma.c
-index ccadefceeff2..0ce172f86d6c 100644
---- a/sound/soc/fsl/fsl_dma.c
-+++ b/sound/soc/fsl/fsl_dma.c
-@@ -907,5 +907,4 @@ static int fsl_soc_dma_probe(struct platform_device *pdev)
- 	if (!dma) {
--		dev_err(&pdev->dev, "could not allocate dma object\n");
- 		of_node_put(ssi_np);
- 		return -ENOMEM;
- 	}
-diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-index 173cb8496641..64598d1183f8 100644
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -1435,7 +1435,5 @@ static int fsl_ssi_probe(struct platform_device *pdev)
--	if (!ssi_private) {
--		dev_err(&pdev->dev, "could not allocate DAI object\n");
-+	if (!ssi_private)
- 		return -ENOMEM;
--	}
- 
- 	ssi_private->soc = of_id->data;
- 	ssi_private->dev = &pdev->dev;
--- 
-2.14.0
-
+Use normal diff output that shows 3 lines of context
+above and below the patched lines.
