@@ -1,29 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 03 Aug 2017 19:11:15 +0000
-Subject: [PATCH 0/4] axonram: Adjustments for axon_ram_probe()
-Message-Id: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Aug 2017 06:57:37 +0000
+Subject: [PATCH 2/2] bus: sunxi-rsb: constify regmap_bus structures
+Message-Id: <1502434657-16701-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 3 Aug 2017 21:02:02 +0200
+This regmap_bus structure is only passed as the second argument to
+__devm_regmap_init, which is const, so the regmap_bus structure can be
+const too.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation
-  Improve a size determination in axon_ram_probe()
-  Return directly after a failed kzalloc()
-  Delete an unnecessary variable initialisation
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- arch/powerpc/sysdev/axonram.c | 43 ++++++++++++++++++-------------------------
- 1 file changed, 18 insertions(+), 25 deletions(-)
+---
+ drivers/bus/sunxi-rsb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-2.13.4
+diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+index 795c9d9..dc3d781 100644
+--- a/drivers/bus/sunxi-rsb.c
++++ b/drivers/bus/sunxi-rsb.c
+@@ -423,7 +423,7 @@ static void regmap_sunxi_rsb_free_ctx(void *context)
+ 	kfree(ctx);
+ }
+ 
+-static struct regmap_bus regmap_sunxi_rsb = {
++static const struct regmap_bus regmap_sunxi_rsb = {
+ 	.reg_write = regmap_sunxi_rsb_reg_write,
+ 	.reg_read = regmap_sunxi_rsb_reg_read,
+ 	.free_context = regmap_sunxi_rsb_free_ctx,
 
