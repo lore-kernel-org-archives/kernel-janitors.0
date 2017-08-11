@@ -1,29 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 12 Aug 2017 21:34:55 +0000
-Subject: Re: [PATCH] ALSA: opl3: Delete an error message for a failed memory allocation in snd_opl3_new()
-Message-Id: <s5h8tiowjuo.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Aug 2017 20:16:06 +0000
+Subject: [PATCH] drm/omap: Potential NULL deref in omap_crtc_duplicate_state()
+Message-Id: <20170811201604.7v7txdmlf4knvdqf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5991f20d-dbad-a916-76be-375ade7de737@users.sourceforge.net>
-In-Reply-To: <5991f20d-dbad-a916-76be-375ade7de737@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Fabian Frederick <fabf@skynet.be>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sat, 12 Aug 2017 20:02:14 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Aug 2017 19:54:20 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+If the kmalloc() fails then we dereference "state" when we set
+"state->zpos".
 
-Applied, thanks.
+Fixes: 3dfeb631a15d ("drm/omap: Rework the rotation-on-crtc hack")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
+diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
+index 400d0d2f6790..cc85c16cbc2a 100644
+--- a/drivers/gpu/drm/omapdrm/omap_crtc.c
++++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
+@@ -589,8 +589,10 @@ omap_crtc_duplicate_state(struct drm_crtc *crtc)
+ 	current_state = to_omap_crtc_state(crtc->state);
+ 
+ 	state = kmalloc(sizeof(*state), GFP_KERNEL);
+-	if (state)
+-		__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
++	if (!state)
++		return NULL;
++
++	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
+ 
+ 	state->zpos = current_state->zpos;
+ 	state->rotation = current_state->rotation;
