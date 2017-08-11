@@ -1,38 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 10:00:15 +0000
-Subject: [PATCH] hfsplus: Delete an error message for a failed memory allocation in hfsplus_create_attributes
-Message-Id: <7c98ed1d-24a1-2bd9-6302-3d4de9d9943c@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 14:12:19 +0000
+Subject: [PATCH] ASoC: dwc: Delete an error message for a failed memory allocation in dw_i2s_probe()
+Message-Id: <c6b7021a-ed0d-cc2e-d722-4960e060e8d3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Alex Deucher <alexander.deucher@amd.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Jose Abreu <Jose.Abreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 11:34:48 +0200
+Date: Fri, 11 Aug 2017 16:04:53 +0200
 
 Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/hfsplus/xattr.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/dwc/dwc-i2s.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index d37bb88dc746..b921eeb8cc31 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -209,7 +209,6 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
+diff --git a/sound/soc/dwc/dwc-i2s.c b/sound/soc/dwc/dwc-i2s.c
+index eebe9d34e7a0..e27e21f8569a 100644
+--- a/sound/soc/dwc/dwc-i2s.c
++++ b/sound/soc/dwc/dwc-i2s.c
+@@ -617,10 +617,8 @@ static int dw_i2s_probe(struct platform_device *pdev)
+ 	const char *clk_id;
  
- 	buf = kzalloc(node_size, GFP_NOFS);
- 	if (!buf) {
--		pr_err("failed to allocate memory for header node\n");
- 		err = -ENOMEM;
- 		goto end_attr_file_creation;
- 	}
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+-	if (!dev) {
+-		dev_warn(&pdev->dev, "kzalloc fail\n");
++	if (!dev)
+ 		return -ENOMEM;
+-	}
+ 
+ 	dw_i2s_dai = devm_kzalloc(&pdev->dev, sizeof(*dw_i2s_dai), GFP_KERNEL);
+ 	if (!dw_i2s_dai)
 -- 
 2.14.0
 
