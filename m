@@ -1,94 +1,51 @@
-From: Salil Mehta <salil.mehta@huawei.com>
-Date: Mon, 14 Aug 2017 09:41:55 +0000
-Subject: RE: [bug report] net: hns3: Add Ethtool support to HNS3 driver
-Message-Id: <F4CC6FACFEB3C54C9141D49AD221F7F93B860495@FRAEML521-MBX.china.huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Aug 2017 07:55:42 +0000
+Subject: Re: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
+Message-Id: <20170811075510.cnaisfliycev43w4@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170809072628.5akkozttathdk3up@mwanda>
-In-Reply-To: <20170809072628.5akkozttathdk3up@mwanda>
+References: <20170710072422.rs25i5oawmiaofrp@mwanda>
+ <1502416833.2598.3.camel@intel.com>
+In-Reply-To: <1502416833.2598.3.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Fri, Aug 11, 2017 at 10:00:33AM +0800, Zhang Rui wrote:
+> On Mon, 2017-07-10 at 10:24 +0300, Dan Carpenter wrote:
+> > ti_bandgap_get_sensor_data() can return error pointers so we should
+> > check for that.=A0=A0There is no need to check "data->ti_thermal" for
+> > NULL
+> > and we removed that from the other cleanup function so we may as well
+> > from it in ti_thermal_remove_sensor() to be consistent.
+> >=20
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >=20
+> > diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> > b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> > index c211a8e4a210..9fea354ca90c 100644
+> > --- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> > +++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+> > @@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap
+> > *bgp, int id)
+> > =A0
+> > =A0	data =3D ti_bandgap_get_sensor_data(bgp, id);
+> > =A0
+> > -	if (data && data->ti_thermal) {
+> > +	if (data && !IS_ERR(data)) {
+>=20
+> what about
+> 	if (!IS_ERR_OR_NULL(data))
+>=20
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Thursday, August 10, 2017 10:01 AM
-> To: Salil Mehta
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: [bug report] net: hns3: Add Ethtool support to HNS3 driver
-> 
-> Hello Salil,
-> 
-> The patch 496d03e960ae: "net: hns3: Add Ethtool support to HNS3
-> driver" from Aug 2, 2017, leads to the following static checker
-> warning:
-Thanks for identifying these. Will fix these!
+Duh.  Of course, let me resend.
 
-> 
-> 	drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c:335
-> hns3_get_link_ksettings()
-> 	error: uninitialized symbol 'media_type'.
-> 
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
->    300  static int hns3_get_link_ksettings(struct net_device *netdev,
->    301                                     struct
-> ethtool_link_ksettings *cmd)
->    302  {
->    303          struct hns3_nic_priv *priv = netdev_priv(netdev);
->    304          struct hnae3_handle *h = priv->ae_handle;
->    305          u32 supported_caps;
->    306          u32 advertised_caps;
->    307          u8 media_type;
->                    ^^^^^^^^^^
->    308          u8 link_stat;
->    309          u8 auto_neg;
->    310          u8 duplex;
->    311          u32 speed;
->    312
->    313          if (!h->ae_algo || !h->ae_algo->ops)
->    314                  return -EOPNOTSUPP;
->    315
->    316          /* 1.auto_neg&speed&duplex from cmd */
->    317          if (h->ae_algo->ops->get_ksettings_an_result) {
->    318                  h->ae_algo->ops->get_ksettings_an_result(h,
-> &auto_neg,
->    319
-> &speed, &duplex);
->    320                  cmd->base.autoneg = auto_neg;
->    321                  cmd->base.speed = speed;
->    322                  cmd->base.duplex = duplex;
->    323
->    324                  link_stat = hns3_get_link(netdev);
->    325                  if (!link_stat) {
->    326                          cmd->base.speed = (u32)SPEED_UNKNOWN;
->    327                          cmd->base.duplex = DUPLEX_UNKNOWN;
->    328                  }
->    329          }
->    330
->    331          /* 2.media_type get from bios parameter block */
->    332          if (h->ae_algo->ops->get_media_type)
->    333                  h->ae_algo->ops->get_media_type(h,
-> &media_type);
->                                                             ^^^^^^^^^^
-> Probably make this unconditional?
-Right. Will check the absence of the function earlier. Will fix.
+regards,
+dan carpenter
 
-Thanks
-> 
->    334
->    335          switch (media_type) {
->    336          case HNAE3_MEDIA_TYPE_FIBER:
->    337                  cmd->base.port = PORT_FIBRE;
->    338                  supported_caps = HNS3_LM_FIBRE_BIT |
-> HNS3_LM_AUTONEG_BIT |
->    339                          HNS3_LM_PAUSE_BIT |
-> HNS3_LM_1000BASET_FULL_BIT;
->    340
->    341                  advertised_caps = supported_caps;
->    342                  break;
-> 
-> 
-> regards,
-> dan carpenter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
