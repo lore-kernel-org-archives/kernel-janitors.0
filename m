@@ -1,39 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 15:10:09 +0000
-Subject: [PATCH 2/5] ASoC: rockchip: constify snd_soc_dai_ops structures
-Message-Id: <1502809812-13891-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 20:42:20 +0000
+Subject: [PATCH 2/3] ASoC: blackfin: Use common error handling code in sport_create()
+Message-Id: <ef3f99a2-7e51-ff07-8e68-3d74495854a9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
+In-Reply-To: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 22:02:47 +0200
 
-Done with the help of Coccinelle.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/rockchip/rockchip_pdm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/blackfin/bf6xx-sport.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_pdm.c b/sound/soc/rockchip/rockchip_pdm.c
-index c5ddeed..400e29e 100644
---- a/sound/soc/rockchip/rockchip_pdm.c
-+++ b/sound/soc/rockchip/rockchip_pdm.c
-@@ -249,7 +249,7 @@ static int rockchip_pdm_dai_probe(struct snd_soc_dai *dai)
- 	return 0;
- }
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+index 1bc3e0a47a57..fcddebf2558c 100644
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ b/sound/soc/blackfin/bf6xx-sport.c
+@@ -394,19 +394,18 @@ struct sport_device *sport_create(struct platform_device *pdev)
+ 	sport->pdev = pdev;
  
--static struct snd_soc_dai_ops rockchip_pdm_dai_ops = {
-+static const struct snd_soc_dai_ops rockchip_pdm_dai_ops = {
- 	.set_fmt = rockchip_pdm_set_fmt,
- 	.trigger = rockchip_pdm_trigger,
- 	.hw_params = rockchip_pdm_hw_params,
+ 	ret = sport_get_resource(sport);
+-	if (ret) {
+-		kfree(sport);
+-		return NULL;
+-	}
++	if (ret)
++		goto free_data;
+ 
+ 	ret = sport_request_resource(sport);
+-	if (ret) {
+-		kfree(sport);
+-		return NULL;
+-	}
++	if (ret)
++		goto free_data;
+ 
+ 	dev_dbg(dev, "SPORT create success\n");
+ 	return sport;
++free_data:
++	kfree(sport);
++	return NULL;
+ }
+ EXPORT_SYMBOL(sport_create);
+ 
+-- 
+2.14.0
 
