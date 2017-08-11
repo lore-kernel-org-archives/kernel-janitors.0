@@ -1,25 +1,45 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Sun, 06 Aug 2017 23:27:53 +0000
-Subject: Re: [PATCH] tcmu: Oops in unmap_thread_fn()
-Message-Id: <1502062073.22966.45.camel@haakon3.daterainc.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 18:00:30 +0000
+Subject: [PATCH] ALSA: usb: caiaq: audio: Delete two error messages for a failed memory allocation in alloc_u
+Message-Id: <8cb2a553-e247-f432-48ef-1a7438416366@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170801200917.brigs5x47eujfx7a@mwanda>
-In-Reply-To: <20170801200917.brigs5x47eujfx7a@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Xiubo Li <lixiubo@cmss.chinamobile.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Daniel Mack <zonque@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2017-08-01 at 23:09 +0300, Dan Carpenter wrote:
-> Calling list_del() on the iterator pointer in list_for_each_entry() will
-> cause an oops.  We need to user the _safe() version for that.
-> 
-> Fixes: c73d02f63c16 ("tcmu: Add fifo type waiter list support to avoid starvation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 19:39:06 +0200
 
-Applied to target-pending/for-next.
+Omit extra messages for a memory allocation failure in this function.
 
-Thanks DanC.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/usb/caiaq/audio.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/usb/caiaq/audio.c b/sound/usb/caiaq/audio.c
+index 8f66ba730d69..1f306155e76a 100644
+--- a/sound/usb/caiaq/audio.c
++++ b/sound/usb/caiaq/audio.c
+@@ -731,7 +731,6 @@ static struct urb **alloc_urbs(struct snd_usb_caiaqdev *cdev, int dir, int *ret)
+ 
+ 	urbs = kmalloc(N_URBS * sizeof(*urbs), GFP_KERNEL);
+ 	if (!urbs) {
+-		dev_err(dev, "unable to kmalloc() urbs, OOM!?\n");
+ 		*ret = -ENOMEM;
+ 		return NULL;
+ 	}
+@@ -746,7 +745,6 @@ static struct urb **alloc_urbs(struct snd_usb_caiaqdev *cdev, int dir, int *ret)
+ 		urbs[i]->transfer_buffer  			kmalloc(FRAMES_PER_URB * BYTES_PER_FRAME, GFP_KERNEL);
+ 		if (!urbs[i]->transfer_buffer) {
+-			dev_err(dev, "unable to kmalloc() transfer buffer, OOM!?\n");
+ 			*ret = -ENOMEM;
+ 			return urbs;
+ 		}
+-- 
+2.14.0
 
