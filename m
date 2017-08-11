@@ -1,20 +1,39 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Sun, 13 Aug 2017 16:24:34 +0000
-Subject: Re: [PATCH 2/4] selinux: Adjust jump targets in ebitmap_read()
-Message-Id: <20170813162434.GD4515@mail.hallyn.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 11 Aug 2017 18:33:04 +0000
+Subject: [PATCH][next] Bluetooth: kfree tmp rather than an alias to it
+Message-Id: <20170811183304.17580-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
-	<2c4582c9-efc1-4b8c-1095-84e00062c7de@users.sourceforge.net>
-In-Reply-To: <2c4582c9-efc1-4b8c-1095-84e00062c7de@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S . Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting SF Markus Elfring (elfring@users.sourceforge.net):
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 13 Aug 2017 15:21:43 +0200
-> 
-> Adjust jump targets so that the function implementation becomes smaller.
+From: Colin Ian King <colin.king@canonical.com>
 
-By how much?
+While the kfree of dhkey_a is of the same address of tmp, it
+probably is clearer and more human readable if tmp is kfree'd
+rather than dhkey_a.
+
+Detected by CoverityScan, CID#1448650 ("Free of address-of expression")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bluetooth/selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/selftest.c b/net/bluetooth/selftest.c
+index ee92c925ecc5..34a1227f4391 100644
+--- a/net/bluetooth/selftest.c
++++ b/net/bluetooth/selftest.c
+@@ -164,7 +164,7 @@ static int __init test_ecdh_sample(const u8 priv_a[32], const u8 priv_b[32],
+ 		ret = -EINVAL;
+ 
+ out:
+-	kfree(dhkey_a);
++	kfree(tmp);
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
+
