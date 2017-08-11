@@ -1,41 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Aug 2017 08:07:51 +0000
-Subject: [PATCH] [media] adv7604: Prevent out of bounds access
-Message-Id: <20170804080751.ysp543gbsg4peqdp@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Aug 2017 06:57:35 +0000
+Subject: [PATCH 0/2] constify regmap_bus structures
+Message-Id: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-These can only be accessed with CAP_SYS_ADMIN so it's not a critical
-security issue.  The problem is that "page" is controlled by the user in
-the ioctl().  The test to see if the bit is set in state->info->page_mask
-is not sufficient because "page" can be very high and shift wrap around
-to a bit which is set.
+These regmap_bus structures are only passed as the second argument to
+__devm_regmap_init or __regmap_init, both of which are const, so the
+regmap_bus structures can be const too.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 660bacb8f7d9..8c633b8f30e7 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -618,7 +618,7 @@ static int adv76xx_read_reg(struct v4l2_subdev *sd, unsigned int reg)
- 	unsigned int val;
- 	int err;
- 
--	if (!(BIT(page) & state->info->page_mask))
-+	if (page >= ADV76XX_PAGE_MAX || !(BIT(page) & state->info->page_mask))
- 		return -EINVAL;
- 
- 	reg &= 0xff;
-@@ -633,7 +633,7 @@ static int adv76xx_write_reg(struct v4l2_subdev *sd, unsigned int reg, u8 val)
- 	struct adv76xx_state *state = to_state(sd);
- 	unsigned int page = reg >> 8;
- 
--	if (!(BIT(page) & state->info->page_mask))
-+	if (page >= ADV76XX_PAGE_MAX || !(BIT(page) & state->info->page_mask))
- 		return -EINVAL;
- 
- 	reg &= 0xff;
+---
+
+ drivers/base/regmap/regmap-spi.c  |    2 +-
+ drivers/base/regmap/regmap-spmi.c |    4 ++--
+ drivers/bus/sunxi-rsb.c           |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
