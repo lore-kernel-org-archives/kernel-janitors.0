@@ -1,34 +1,50 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 23 Aug 2017 23:22:54 +0000
-Subject: Re: [PATCH] staging: lustre: obd: check for allocation failure
-Message-Id: <20170823232254.GA6868@kroah.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 16:02:15 +0000
+Subject: [PATCH] ALSA: usx2y: Delete an error message for a failed memory allocation in two functions
+Message-Id: <5ca1485e-5aaf-3c42-a24e-fb834239182e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823064917.afedqlponb5qu6og@mwanda>
-In-Reply-To: <20170823064917.afedqlponb5qu6og@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 23, 2017 at 09:51:31AM +0300, Dan Carpenter wrote:
-> lustre_cfg_new() can fail with ERR_PTR(-ENOMEM) so we should check for
-> that.
-> 
-> Fixes: d7e09d0397e8 ("staging: add Lustre file system client support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/lustre/lustre/obdclass/obd_mount.c b/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-> index 8e0d4b1d86dc..7cb99f11caa0 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-> @@ -159,6 +159,8 @@ static int do_lcfg(char *cfgname, lnet_nid_t nid, int cmd,
->  		lustre_cfg_bufs_set_string(&bufs, 4, s4);
->  
->  	lcfg = lustre_cfg_new(cmd, &bufs);
-> +	if (IS_ERR(lcfg))
-> +		return PTR_ERR(lcfg);
->  	lcfg->lcfg_nid = nid;
->  	rc = class_process_config(lcfg);
->  	lustre_cfg_free(lcfg);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 17:40:57 +0200
 
-Doesn't apply to my tree anymore :(
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/usb/usx2y/usbusx2yaudio.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/usb/usx2y/usbusx2yaudio.c b/sound/usb/usx2y/usbusx2yaudio.c
+index dd40ca9d858a..612aa7ff7e18 100644
+--- a/sound/usb/usx2y/usbusx2yaudio.c
++++ b/sound/usb/usx2y/usbusx2yaudio.c
+@@ -422,7 +422,5 @@ static int usX2Y_urbs_allocate(struct snd_usX2Y_substream *subs)
+-		if (NULL = subs->tmpbuf) {
+-			snd_printk(KERN_ERR "cannot malloc tmpbuf\n");
++		if (!subs->tmpbuf)
+ 			return -ENOMEM;
+-		}
+ 	}
+ 	/* allocate and initialize data urbs */
+ 	for (i = 0; i < NRURBS; i++) {
+@@ -952,7 +950,6 @@ static int usX2Y_audio_stream_new(struct snd_card *card, int playback_endpoint,
+-		if (NULL = usX2Y_substream[i]) {
+-			snd_printk(KERN_ERR "cannot malloc\n");
++		if (!usX2Y_substream[i])
+ 			return -ENOMEM;
+-		}
++
+ 		usX2Y_substream[i]->usX2Y = usX2Y(card);
+ 	}
+ 
+-- 
+2.14.0
+
