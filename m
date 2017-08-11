@@ -1,62 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 04 Aug 2017 14:46:51 +0000
-Subject: [PATCH] powerpc/eeh: Delete an error message for a failed memory allocation in two functions
-Message-Id: <0a35cb55-9f6b-21ca-565f-cab26237c962@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 20:40:27 +0000
+Subject: [PATCH 0/3] ASoC-Blackfin: Adjustments for some function implementations
+Message-Id: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Russell Currey <ruscur@russell.cc>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 4 Aug 2017 16:37:56 +0200
+Date: Fri, 11 Aug 2017 22:34:56 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in sport_create()
+  Use common error handling code in sport_create()
+  Add some spaces for better code readability
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/kernel/eeh_dev.c   | 5 +----
- arch/powerpc/kernel/eeh_event.c | 5 ++---
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ sound/soc/blackfin/bf6xx-sport.c | 38 +++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-diff --git a/arch/powerpc/kernel/eeh_dev.c b/arch/powerpc/kernel/eeh_dev.c
-index d6b2ca70d14d..2742ecbadf18 100644
---- a/arch/powerpc/kernel/eeh_dev.c
-+++ b/arch/powerpc/kernel/eeh_dev.c
-@@ -55,11 +55,8 @@ struct eeh_dev *eeh_dev_init(struct pci_dn *pdn)
- 
- 	/* Allocate EEH device */
- 	edev = kzalloc(sizeof(*edev), GFP_KERNEL);
--	if (!edev) {
--		pr_warn("%s: out of memory\n",
--			__func__);
-+	if (!edev)
- 		return NULL;
--	}
- 
- 	/* Associate EEH device with OF node */
- 	pdn->edev = edev;
-diff --git a/arch/powerpc/kernel/eeh_event.c b/arch/powerpc/kernel/eeh_event.c
-index accbf8b5fd46..c62bd90e038f 100644
---- a/arch/powerpc/kernel/eeh_event.c
-+++ b/arch/powerpc/kernel/eeh_event.c
-@@ -132,10 +132,9 @@ int eeh_send_failure_event(struct eeh_pe *pe)
- 	struct eeh_event *event;
- 
- 	event = kzalloc(sizeof(*event), GFP_ATOMIC);
--	if (!event) {
--		pr_err("EEH: out of memory, event not handled\n");
-+	if (!event)
- 		return -ENOMEM;
--	}
-+
- 	event->pe = pe;
- 
- 	/* We may or may not be called in an interrupt context */
 -- 
-2.13.4
+2.14.0
 
