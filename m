@@ -1,55 +1,61 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Mon, 28 Aug 2017 21:21:07 +0000
-Subject: Re: [PATCH] cpufreq: ti: Fix 'of_node_put' being called twice in error handling path
-Message-Id: <13108044.7jpZQWdzkb@aspire.rjw.lan>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 17:04:41 +0000
+Subject: [PATCH] ALSA: usb: Delete an error message for a failed memory allocation in two functions
+Message-Id: <cb279f5a-1994-ae47-7e8f-8aae793d16d2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170819202246.18415-1-christophe.jaillet@wanadoo.fr> <20170820132106.GA21417@ubuntu>
-In-Reply-To: <20170820132106.GA21417@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Akshay Bhat <akshay.bhat@timesys.com>, Daniel Mack <daniel@zonque.org>, Dennis Kadioglu <denk@post.com>, Jaroslav Kysela <perex@perex.cz>, Johan Hovold <johan@kernel.org>, Nobutaka Okabe <nob77413@gmail.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sunday, August 20, 2017 3:21:06 PM CEST Viresh Kumar wrote:
-> On 19-08-17, 22:22, Christophe JAILLET wrote:
-> > If 'dev_pm_opp_set_supported_hw()' fails, 'opp_data->opp_node' refcount
-> > will be decremented 2 times.
-> > One, just a few lines above, and another one in the error handling path.
-> > 
-> > Fix it by simply moving the 'of_node_put' call of the normal path.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/cpufreq/ti-cpufreq.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> > index a7b5658c0460..b29cd3398463 100644
-> > --- a/drivers/cpufreq/ti-cpufreq.c
-> > +++ b/drivers/cpufreq/ti-cpufreq.c
-> > @@ -245,8 +245,6 @@ static int ti_cpufreq_init(void)
-> >  	if (ret)
-> >  		goto fail_put_node;
-> >  
-> > -	of_node_put(opp_data->opp_node);
-> > -
-> >  	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(opp_data->cpu_dev,
-> >  							  version, VERSION_COUNT));
-> >  	if (ret) {
-> > @@ -255,6 +253,8 @@ static int ti_cpufreq_init(void)
-> >  		goto fail_put_node;
-> >  	}
-> >  
-> > +	of_node_put(opp_data->opp_node);
-> > +
-> >  register_cpufreq_dt:
-> >  	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 18:38:25 +0200
 
-Applied, thanks!
+Omit an extra message for a memory allocation failure in these functions.
 
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/usb/quirks.c | 5 ++---
+ sound/usb/stream.c | 4 +---
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index d7b0b0a3a2db..9db40d58b4e2 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -146,10 +146,9 @@ static int create_fixed_stream_quirk(struct snd_usb_audio *chip,
+ 	unsigned *rate_table = NULL;
+ 
+ 	fp = kmemdup(quirk->data, sizeof(*fp), GFP_KERNEL);
+-	if (!fp) {
+-		usb_audio_err(chip, "cannot memdup\n");
++	if (!fp)
+ 		return -ENOMEM;
+-	}
++
+ 	INIT_LIST_HEAD(&fp->list);
+ 	if (fp->nr_rates > MAX_NR_RATES) {
+ 		kfree(fp);
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 8e9548bc1f1a..d1776e5517ff 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -658,10 +658,8 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
+ 			continue;
+ 
+ 		fp = kzalloc(sizeof(*fp), GFP_KERNEL);
+-		if (! fp) {
+-			dev_err(&dev->dev, "cannot malloc\n");
++		if (!fp)
+ 			return -ENOMEM;
+-		}
+ 
+ 		fp->iface = iface_no;
+ 		fp->altsetting = altno;
+-- 
+2.14.0
 
