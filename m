@@ -1,55 +1,43 @@
-From: Andrew Banman <abanman@hpe.com>
-Date: Thu, 10 Aug 2017 17:46:22 +0000
-Subject: Re: [PATCH] x86/platform/uv: make timeout_base_ns const and process_uv2_message static
-Message-Id: <20170810174621.GA130421@stormcage.americas.sgi.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 09:33:56 +0000
+Subject: [PATCH] ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_probe(
+Message-Id: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170810163006.13926-1-colin.king@canonical.com>
-In-Reply-To: <20170810163006.13926-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Banman <abanman@hpe.com>, Mike Travis <mike.travis@hpe.com>, Dimitri Sivanich <sivanich@sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Acked-by: Andrew Banman <abanman@hpe.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 11:25:41 +0200
 
-On Thu, Aug 10, 2017 at 05:30:06PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Make array timeout_base_ns const. Also the function process_uv2_message
-> is local to the source and do not need to be in global scope, so make it
-> static.
-> 
-> Cleans up sparse warning:
-> symbol 'process_uv2_message' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/platform/uv/tlb_uv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-> index 3e4bdb442fbc..f44c0bc95aa2 100644
-> --- a/arch/x86/platform/uv/tlb_uv.c
-> +++ b/arch/x86/platform/uv/tlb_uv.c
-> @@ -26,7 +26,7 @@
->  static struct bau_operations ops __ro_after_init;
->  
->  /* timeouts in nanoseconds (indexed by UVH_AGING_PRESCALE_SEL urgency7 30:28) */
-> -static int timeout_base_ns[] = {
-> +static const int timeout_base_ns[] = {
->  		20,
->  		160,
->  		1280,
-> @@ -1216,7 +1216,7 @@ static struct bau_pq_entry *find_another_by_swack(struct bau_pq_entry *msg,
->   * set a bit in the UVH_LB_BAU_INTD_SOFTWARE_ACKNOWLEDGE register.
->   * Such a message must be ignored.
->   */
-> -void process_uv2_message(struct msg_desc *mdp, struct bau_control *bcp)
-> +static void process_uv2_message(struct msg_desc *mdp, struct bau_control *bcp)
->  {
->  	unsigned long mmr_image;
->  	unsigned char swack_vec;
-> -- 
-> 2.11.0
-> 
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/intel/boards/mfld_machine.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/sound/soc/intel/boards/mfld_machine.c b/sound/soc/intel/boards/mfld_machine.c
+index 4e08885f37aa..6f44acfb4aae 100644
+--- a/sound/soc/intel/boards/mfld_machine.c
++++ b/sound/soc/intel/boards/mfld_machine.c
+@@ -376,10 +376,8 @@ static int snd_mfld_mc_probe(struct platform_device *pdev)
+ 	/* audio interrupt base of SRAM location where
+ 	 * interrupts are stored by System FW */
+ 	mc_drv_ctx = devm_kzalloc(&pdev->dev, sizeof(*mc_drv_ctx), GFP_ATOMIC);
+-	if (!mc_drv_ctx) {
+-		pr_err("allocation failed\n");
++	if (!mc_drv_ctx)
+ 		return -ENOMEM;
+-	}
+ 
+ 	irq_mem = platform_get_resource_byname(
+ 				pdev, IORESOURCE_MEM, "IRQ_BASE");
+-- 
+2.14.0
+
