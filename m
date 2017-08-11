@@ -1,39 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 27 Aug 2017 06:46:50 +0000
-Subject: [PATCH] ASoC: davinci-mcasp: check memory allocation failure
-Message-Id: <20170827064650.7562-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 20:41:23 +0000
+Subject: [PATCH 1/3] ASoC: blackfin: Delete an error message for a failed memory allocation in sport_create()
+Message-Id: <d3eaf797-a4a3-f4ff-c368-3961b4e16fb1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
+In-Reply-To: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, peter.ujfalusi@ti.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Check memory allocation failures and return -ENOMEM in such cases, as
-already done above for another memory allocation.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 21:45:37 +0200
 
-This avoids NULL pointers dereference.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/davinci/davinci-mcasp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/blackfin/bf6xx-sport.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index d486908d4e0e..f395bbc7c354 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -1851,6 +1851,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
- 	mcasp->context.xrsr_regs = devm_kzalloc(&pdev->dev,
- 					sizeof(u32) * mcasp->num_serializer,
- 					GFP_KERNEL);
-+	if (!mcasp->context.xrsr_regs) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
- #endif
- 	mcasp->serial_dir = pdata->serial_dir;
- 	mcasp->version = pdata->version;
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+index dfb744381c42..1bc3e0a47a57 100644
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ b/sound/soc/blackfin/bf6xx-sport.c
+@@ -388,10 +388,9 @@ struct sport_device *sport_create(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	sport = kzalloc(sizeof(*sport), GFP_KERNEL);
+-	if (!sport) {
+-		dev_err(dev, "Unable to allocate memory for sport device\n");
++	if (!sport)
+ 		return NULL;
+-	}
++
+ 	sport->pdev = pdev;
+ 
+ 	ret = sport_get_resource(sport);
 -- 
-2.11.0
+2.14.0
 
