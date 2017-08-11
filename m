@@ -1,40 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 Aug 2017 15:57:09 +0000
-Subject: [PATCH] perf/x86/intel/bts: make bts_pmu static
-Message-Id: <20170810155709.7094-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 11:23:10 +0000
+Subject: [PATCH] ASoC: Broadwell RT5677: Delete an error message for a failed memory allocation in bdw_rt5677
+Message-Id: <30b48ffc-8149-e1bc-d3cd-b8ff3bc8062f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Will Deacon <will.deacon@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ben Zhang <benzh@chromium.org>, Dylan Reid <dgreid@chromium.org>, Jaroslav Kysela <perex@perex.cz>, John Keeping <john@metanate.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 13:05:40 +0200
 
-The structure bts_pmu is local to the source and do not need to be in
-global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
-warning: symbol 'bts_pmu' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/events/intel/bts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/boards/bdw-rt5677.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
-index 8ae8c5ce3a1f..ddd8d3516bfc 100644
---- a/arch/x86/events/intel/bts.c
-+++ b/arch/x86/events/intel/bts.c
-@@ -69,7 +69,7 @@ struct bts_buffer {
- 	struct bts_phys	buf[0];
- };
+diff --git a/sound/soc/intel/boards/bdw-rt5677.c b/sound/soc/intel/boards/bdw-rt5677.c
+index 058b8ccedf02..4b1431c3b460 100644
+--- a/sound/soc/intel/boards/bdw-rt5677.c
++++ b/sound/soc/intel/boards/bdw-rt5677.c
+@@ -349,7 +349,5 @@ static int bdw_rt5677_probe(struct platform_device *pdev)
+-	if (!bdw_rt5677) {
+-		dev_err(&pdev->dev, "Can't allocate bdw_rt5677\n");
++	if (!bdw_rt5677)
+ 		return -ENOMEM;
+-	}
  
--struct pmu bts_pmu;
-+static struct pmu bts_pmu;
+ 	snd_soc_card_set_drvdata(&bdw_rt5677_card, bdw_rt5677);
  
- static size_t buf_size(struct page *page)
- {
 -- 
-2.11.0
+2.14.0
 
