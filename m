@@ -1,36 +1,39 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 24 Aug 2017 09:54:10 +0000
-Subject: Re: rtlwifi: make a couple arrays larger
-Message-Id: <20170824095410.1E2B9606B7@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 05:44:32 +0000
+Subject: [PATCH 4/6] scsi: be2iscsi: constify pci_error_handlers structures
+Message-Id: <1502516674-8918-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170818080519.mvjls5pgnxeknzpk@mwanda>
-In-Reply-To: <20170818080519.mvjls5pgnxeknzpk@mwanda>
+References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Ping-Ke Shih <pkshih@realtek.com>, Maxim Samoylov <max7255@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+These pci_error_handlers structures are only stored in the err_handler
+field of a pci_driver structure, and this field is declared as const.  Thus
+the pci_error_handlers structures can be const too.
 
-> This is a static checker fix.  "cal_num" is 10.  We're declaring the
-> tx_dt[] and rx_td[] arrays as 3 element arrays.  The static checker
-> complains that we do:
-> 
-> 	tx_dt[cal] = (vdf_y[1]>>20)-(vdf_y[0]>>20);
-> 
-> "cal" is the iterator and it is in the 0-9 range so it looks like
-> we could corrupt memory.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Done with the help of Coccinelle.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-d9ee6015e573 rtlwifi: make a couple arrays larger
+---
+ drivers/scsi/be2iscsi/be_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-https://patchwork.kernel.org/patch/9907821/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index b4542e7..511732a 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -5786,7 +5786,7 @@ static void beiscsi_remove(struct pci_dev *pcidev)
+ }
+ 
+ 
+-static struct pci_error_handlers beiscsi_eeh_handlers = {
++static const struct pci_error_handlers beiscsi_eeh_handlers = {
+ 	.error_detected = beiscsi_eeh_err_detected,
+ 	.slot_reset = beiscsi_eeh_reset,
+ 	.resume = beiscsi_eeh_resume,
 
