@@ -1,22 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 25 Aug 2017 04:48:34 +0000
-Subject: Re: [PATCH net-next] hinic: uninitialized variable in hinic_api_cmd_init()
-Message-Id: <20170824.214834.959375646627489858.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 05:44:28 +0000
+Subject: [PATCH 0/6] constify pci_error_handlers structures
+Message-Id: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170824104739.gw422ufydwmiu4gi@mwanda>
-In-Reply-To: <20170824104739.gw422ufydwmiu4gi@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: aviad.krawczyk@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Aug 2017 13:47:39 +0300
+These pci_error_handlers structures are only stored in the err_handler
+field of a pci_driver structure, and this field is declared as const.  Thus
+the pci_error_handlers structures can be const too.
 
-> We never set the error code in this function.
-> 
-> Fixes: eabf0fad81d5 ("net-next/hinic: Initialize api cmd resources")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-Applied, thanks.
+---
+
+ drivers/misc/genwqe/card_base.c      |    2 +-
+ drivers/scsi/aacraid/linit.c         |    2 +-
+ drivers/scsi/be2iscsi/be_main.c      |    2 +-
+ drivers/scsi/bfa/bfad.c              |    2 +-
+ drivers/scsi/csiostor/csio_init.c    |    2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
