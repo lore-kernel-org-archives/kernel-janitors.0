@@ -1,39 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:49 +0000
-Subject: [PATCH 10/11] serial: mpc52xx: constify uart_ops structures
-Message-Id: <1502605310-4314-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 12 Aug 2017 22:02:54 +0000
+Subject: NACK: [PATCH] rtlwifi: btcoex: make function btc8723b2ant_dac_swing static
+Message-Id: <2cd21542-1129-d93d-480b-752afbf11b8d@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20170812220017.6505-1-colin.king@canonical.com>
+In-Reply-To: <20170812220017.6505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/tty/serial/mpc52xx_uart.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/mpc52xx_uart.c b/drivers/tty/serial/mpc52xx_uart.c
-index 4cacaad..791c4c7 100644
---- a/drivers/tty/serial/mpc52xx_uart.c
-+++ b/drivers/tty/serial/mpc52xx_uart.c
-@@ -1347,7 +1347,7 @@ static u8 mpc5125_psc_get_mr1(struct uart_port *port)
- }
- 
- 
--static struct uart_ops mpc52xx_uart_ops = {
-+static const struct uart_ops mpc52xx_uart_ops = {
- 	.tx_empty	= mpc52xx_uart_tx_empty,
- 	.set_mctrl	= mpc52xx_uart_set_mctrl,
- 	.get_mctrl	= mpc52xx_uart_get_mctrl,
-
+On 12/08/17 23:00, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function btc8723b2ant_dac_swing  is local to the source and
+> does not need to be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> symbol 'btc8723b2ant_dac_swing' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+> index 31965f0ef69d..9d2ecfbc7b33 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+> @@ -833,9 +833,9 @@ static void btc8723b2ant_set_sw_fulltime_dac_swing(struct btc_coexist *btcoex,
+>  		btc8723b2ant_set_dac_swing_reg(btcoex, 0x18);
+>  }
+>  
+> -void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
+> -			    bool force_exec, bool dac_swing_on,
+> -			    u32 dac_swing_lvl)
+> +static void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
+> +				   bool force_exec, bool dac_swing_on,
+> +				   u32 dac_swing_lvl)
+>  {
+>  	struct rtl_priv *rtlpriv = btcoexist->adapter;
+>  
+> 
+Sent out wrong patch. Please ignore.
