@@ -1,52 +1,28 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Tue, 15 Aug 2017 12:32:49 +0000
-Subject: Re: [PATCH] char: ipmi: make function ipmi_get_info_from_resources static
-Message-Id: <63345843-f2ca-a873-0121-3756fc0a3917@acm.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 19:10:12 +0000
+Subject: [PATCH 0/3] ALSA: mpu401: Adjustments for three function implementations
+Message-Id: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170815100958.21542-1-colin.king@canonical.com>
-In-Reply-To: <20170815100958.21542-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 08/15/2017 05:09 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function ipmi_get_info_from_resources is local to the source and
-> does not need to be in global scope, so make it static.  Add in
-> newline to function declaration to make it checkpatch warning clean.
->
-> Cleans up sparse warnings:
-> symbol 'ipmi_get_info_from_resources' was not declared. Should it
-> be static?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 21:05:21 +0200
 
-Should be static, yes.  Queued for the next release, and in the next tree.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Thanks,
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in snd_mpu401_uart_new()
+  Use common error handling code in snd_mpu401_uart_new()
+  Adjust four checks for null pointers
 
--corey
+ sound/drivers/mpu401/mpu401_uart.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/char/ipmi/ipmi_si_intf.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index c8632d537a59..1c2ff8e7daeb 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -2275,8 +2275,9 @@ static void spmi_find_bmc(void)
->   #endif
->   
->   #if defined(CONFIG_DMI) || defined(CONFIG_ACPI)
-> -struct resource *ipmi_get_info_from_resources(struct platform_device *pdev,
-> -					      struct smi_info *info)
-> +static struct resource *
-> +ipmi_get_info_from_resources(struct platform_device *pdev,
-> +			     struct smi_info *info)
->   {
->   	struct resource *res, *res_second;
->   
-
+-- 
+2.14.0
 
