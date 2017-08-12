@@ -1,26 +1,45 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Thu, 31 Aug 2017 11:36:21 +0000
-Subject: Re: powerpc/44x: mask and shift to zero bug
-Message-Id: <3xjgLY3B4Qz9t2y@ozlabs.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 06:33:02 +0000
+Subject: [PATCH] ASoC: Intel: constify snd_compr_codec_caps structures
+Message-Id: <1502519582-3338-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170825103340.op3uphrv3eyeutiz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Matthias Fuchs <matthias.fuchs@esd-electronics.com>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Bhumika Goyal <bhumirks@gmail.com>
 
-On Fri, 2017-08-25 at 10:33:40 UTC, Dan Carpenter wrote:
-> My static checker complains that 0x00001800 >> 13 is zero.  Looking at
-> the context, it seems like a copy and paste bug from the line below and
-> probably 0x3 << 13 or 0x00006000 was intended.
-> 
-> Fixes: 2af59f7d5c3e ("[POWERPC] 4xx: Add 405GPr and 405EP support in boot wrapper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+These snd_compr_codec_caps structures are only copied into other
+structures, so they can be const.
 
-Applied to powerpc next, thanks.
+Done with the help of Coccinelle.
 
-https://git.kernel.org/powerpc/c/8d046759f6ad75824fdf7b9c9a3da0
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-cheers
+---
+ sound/soc/intel/atom/sst/sst_drv_interface.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/atom/sst/sst_drv_interface.c b/sound/soc/intel/atom/sst/sst_drv_interface.c
+index ce689c5..71af544 100644
+--- a/sound/soc/intel/atom/sst/sst_drv_interface.c
++++ b/sound/soc/intel/atom/sst/sst_drv_interface.c
+@@ -407,7 +407,7 @@ static int sst_cdev_caps(struct snd_compr_caps *caps)
+ 	return 0;
+ }
+ 
+-static struct snd_compr_codec_caps caps_mp3 = {
++static const struct snd_compr_codec_caps caps_mp3 = {
+ 	.num_descriptors = 1,
+ 	.descriptor[0].max_ch = 2,
+ 	.descriptor[0].sample_rates[0] = 48000,
+@@ -424,7 +424,7 @@ static int sst_cdev_caps(struct snd_compr_caps *caps)
+ 	.descriptor[0].formats = 0,
+ };
+ 
+-static struct snd_compr_codec_caps caps_aac = {
++static const struct snd_compr_codec_caps caps_aac = {
+ 	.num_descriptors = 2,
+ 	.descriptor[1].max_ch = 2,
+ 	.descriptor[0].sample_rates[0] = 48000,
+
