@@ -1,25 +1,50 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 29 Aug 2017 02:13:22 +0000
-Subject: Re: [PATCH] scsi: qedi: off by one in qedi_get_cmd_from_tid()
-Message-Id: <yq1378b2kal.fsf@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 06:20:36 +0000
+Subject: [PATCH] omapfb: constify omap_video_timings structures
+Message-Id: <1502518836-27189-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825103657.6kwprvwfks7szn3b@mwanda>
-In-Reply-To: <20170825103657.6kwprvwfks7szn3b@mwanda> (Dan Carpenter's message
-        of "Fri, 25 Aug 2017 13:36:57 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QLogic-Storage-Upstream@cavium.com, Manish Rangankar <manish.rangankar@cavium.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
+These omap_video_timings structures are only copied into other
+structures, so they can be const.
 
-Dan,
+Done with the help of Coccinelle.
 
-> The > here should be >= or we end up reading one element beyond the
-> end of the qedi->itt_map[] array.  The qedi->itt_map[] array is
-> allocated in qedi_alloc_itt().
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to 4.13/scsi-fixes. Thank you!
+---
+ drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c |    2 +-
+ drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c
+index f14691c..6cd759c 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c
+@@ -18,7 +18,7 @@
+ 
+ #include <video/omapfb_dss.h>
+ 
+-static struct omap_video_timings lb035q02_timings = {
++static const struct omap_video_timings lb035q02_timings = {
+ 	.x_res = 320,
+ 	.y_res = 240,
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c
+index b529a8c..57e9e14 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c
+@@ -41,7 +41,7 @@ struct panel_drv_data {
+ 	struct spi_device *spi_dev;
+ };
+ 
+-static struct omap_video_timings td028ttec1_panel_timings = {
++static const struct omap_video_timings td028ttec1_panel_timings = {
+ 	.x_res		= 480,
+ 	.y_res		= 640,
+ 	.pixelclock	= 22153000,
+
