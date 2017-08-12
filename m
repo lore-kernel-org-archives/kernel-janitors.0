@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Aug 2017 12:45:10 +0000
-Subject: [PATCH] stm: Potential read overflow in stm_char_policy_set_ioctl()
-Message-Id: <20170810122250.desrz5rvyjheyltg@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 05:44:30 +0000
+Subject: [PATCH 2/6] GenWQE: constify pci_error_handlers structures
+Message-Id: <1502516674-8918-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
 
-The "size" variable comes from the user so we need to verify that it's
-large enough to hold an stp_policy_id struct.
+These pci_error_handlers structures are only stored in the err_handler
+field of a pci_driver structure, and this field is declared as const.  Thus
+the pci_error_handlers structures can be const too.
 
-Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index 0e731143f6a4..9414900575d8 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -566,7 +566,7 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
- 	if (copy_from_user(&size, arg, sizeof(size)))
- 		return -EFAULT;
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/misc/genwqe/card_base.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
+index 4fd21e8..8650046 100644
+--- a/drivers/misc/genwqe/card_base.c
++++ b/drivers/misc/genwqe/card_base.c
+@@ -1333,7 +1333,7 @@ static int genwqe_sriov_configure(struct pci_dev *dev, int numvfs)
+ 	return 0;
+ }
  
--	if (size >= PATH_MAX + sizeof(*id))
-+	if (size < sizeof(*id) || size >= PATH_MAX + sizeof(*id))
- 		return -EINVAL;
- 
- 	/*
+-static struct pci_error_handlers genwqe_err_handler = {
++static const struct pci_error_handlers genwqe_err_handler = {
+ 	.error_detected = genwqe_err_error_detected,
+ 	.mmio_enabled	= genwqe_err_result_none,
+ 	.slot_reset	= genwqe_err_slot_reset,
+
