@@ -1,43 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 20:31:23 +0000
-Subject: [PATCH 1/3] [media] cx24113: Delete an error message for a failed memory allocation in cx24113_attac
-Message-Id: <8273a111-9edf-7079-fc6a-ea674b06f43a@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 05:44:33 +0000
+Subject: [PATCH 5/6] [SCSI] csiostor: constify pci_error_handlers structures
+Message-Id: <1502516674-8918-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
-In-Reply-To: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
+References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 22:08:09 +0200
+These pci_error_handlers structures are only stored in the err_handler
+field of a pci_driver structure, and this field is declared as const.  Thus
+the pci_error_handlers structures can be const too.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/cx24113.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/scsi/csiostor/csio_init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/cx24113.c b/drivers/media/dvb-frontends/cx24113.c
-index 0118c2658cf7..8fc7333c76b7 100644
---- a/drivers/media/dvb-frontends/cx24113.c
-+++ b/drivers/media/dvb-frontends/cx24113.c
-@@ -557,8 +557,7 @@ struct dvb_frontend *cx24113_attach(struct dvb_frontend *fe,
- 	int rc;
--	if (state = NULL) {
--		cx_err("Unable to kzalloc\n");
-+
-+	if (!state)
- 		goto error;
--	}
+diff --git a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
+index 28a9c7d..ab4fbcf 100644
+--- a/drivers/scsi/csiostor/csio_init.c
++++ b/drivers/scsi/csiostor/csio_init.c
+@@ -1168,7 +1168,7 @@ static void csio_remove_one(struct pci_dev *pdev)
+ 	dev_err(&pdev->dev, "resume of device failed: %d\n", rv);
+ }
  
- 	/* setup the state */
- 	state->config = config;
--- 
-2.14.1
+-static struct pci_error_handlers csio_err_handler = {
++static const struct pci_error_handlers csio_err_handler = {
+ 	.error_detected = csio_pci_error_detected,
+ 	.slot_reset	= csio_pci_slot_reset,
+ 	.resume		= csio_pci_resume,
 
