@@ -1,42 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 19:26:44 +0000
-Subject: [PATCH] sbus: Delete an error message for a failed memory allocation in uctrl_probe()
-Message-Id: <f53e3426-14b4-dceb-6599-1d15f3eeee84@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 12 Aug 2017 21:34:03 +0000
+Subject: [PATCH] w1: ds2438: make several functions static
+Message-Id: <20170812213403.5807-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sebastian Reichel <sre@kernel.org>, "Andrew F . Davis" <afd@ti.com>, Mariusz Bialonczyk <manio@skyboo.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 21:21:33 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The functions w1_ds2438_get_page, w1_ds2438_get_temperature,
+w1_ds2438_change_config_bit and w1_ds2438_get_voltage are local to
+the source and do not need to be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warnings:
+symbol 'w1_ds2438_get_page' was not declared. Should it be static?
+symbol 'w1_ds2438_get_temperature' was not declared. Should it be static?
+symbol 'w1_ds2438_change_config_bit' was not declared. Should it be static?
+symbol 'w1_ds2438_get_voltage' was not declared. Should it be static?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/sbus/char/uctrl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/w1/slaves/w1_ds2438.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/sbus/char/uctrl.c b/drivers/sbus/char/uctrl.c
-index 0a5013350acd..f3b9f7e87ffa 100644
---- a/drivers/sbus/char/uctrl.c
-+++ b/drivers/sbus/char/uctrl.c
-@@ -352,10 +352,8 @@ static int uctrl_probe(struct platform_device *op)
- 	int err = -ENOMEM;
+diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
+index 6487fb772a20..4753c91c579a 100644
+--- a/drivers/w1/slaves/w1_ds2438.c
++++ b/drivers/w1/slaves/w1_ds2438.c
+@@ -51,7 +51,7 @@
+ #define DS2438_CURRENT_MSB		0x06
+ #define DS2438_THRESHOLD		0x07
  
- 	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p) {
--		printk(KERN_ERR "uctrl: Unable to allocate device struct.\n");
-+	if (!p)
- 		goto out;
--	}
+-int w1_ds2438_get_page(struct w1_slave *sl, int pageno, u8 *buf)
++static int w1_ds2438_get_page(struct w1_slave *sl, int pageno, u8 *buf)
+ {
+ 	unsigned int retries = W1_DS2438_RETRIES;
+ 	u8 w1_buf[2];
+@@ -85,7 +85,7 @@ int w1_ds2438_get_page(struct w1_slave *sl, int pageno, u8 *buf)
+ 	return -1;
+ }
  
- 	p->regs = of_ioremap(&op->resource[0], 0,
- 			     resource_size(&op->resource[0]),
+-int w1_ds2438_get_temperature(struct w1_slave *sl, int16_t *temperature)
++static int w1_ds2438_get_temperature(struct w1_slave *sl, int16_t *temperature)
+ {
+ 	unsigned int retries = W1_DS2438_RETRIES;
+ 	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
+@@ -127,7 +127,7 @@ int w1_ds2438_get_temperature(struct w1_slave *sl, int16_t *temperature)
+ 	return ret;
+ }
+ 
+-int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
++static int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
+ {
+ 	unsigned int retries = W1_DS2438_RETRIES;
+ 	u8 w1_buf[3];
+@@ -186,7 +186,8 @@ int w1_ds2438_change_config_bit(struct w1_slave *sl, u8 mask, u8 value)
+ 	return -1;
+ }
+ 
+-uint16_t w1_ds2438_get_voltage(struct w1_slave *sl, int adc_input, uint16_t *voltage)
++static uint16_t w1_ds2438_get_voltage(struct w1_slave *sl,
++				      int adc_input, uint16_t *voltage)
+ {
+ 	unsigned int retries = W1_DS2438_RETRIES;
+ 	u8 w1_buf[DS2438_PAGE_SIZE + 1 /*for CRC*/];
 -- 
-2.14.0
+2.11.0
 
