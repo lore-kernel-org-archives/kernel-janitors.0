@@ -1,41 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 15:08:59 +0000
-Subject: [PATCH 5/9 v2] thermal: exynos: constify thermal_zone_of_device_ops structures
-Message-Id: <1502204943-20075-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 19:11:36 +0000
+Subject: [PATCH 1/3] ALSA: mpu401: Delete an error message for a failed memory allocation in snd_mpu401_uart_
+Message-Id: <3d183343-50cf-1683-fade-1dbbee33dfba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
+In-Reply-To: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to thermal_zone_of_sensor_register, which is declared as const.
-Thus the thermal_zone_of_device_ops structure itself can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 20:20:11 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ sound/drivers/mpu401/mpu401_uart.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-v2: This patch was present in the original series
-
- drivers/thermal/samsung/exynos_tmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 7b8ef09..ed805c7 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1286,7 +1286,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct thermal_zone_of_device_ops exynos_sensor_ops = {
-+static const struct thermal_zone_of_device_ops exynos_sensor_ops = {
- 	.get_temp = exynos_get_temp,
- 	.set_emul_temp = exynos_tmu_set_emulation,
- };
+diff --git a/sound/drivers/mpu401/mpu401_uart.c b/sound/drivers/mpu401/mpu401_uart.c
+index 3a7c317ae012..cc347386fc2b 100644
+--- a/sound/drivers/mpu401/mpu401_uart.c
++++ b/sound/drivers/mpu401/mpu401_uart.c
+@@ -545,7 +545,6 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
+ 		return err;
+ 	mpu = kzalloc(sizeof(*mpu), GFP_KERNEL);
+ 	if (mpu = NULL) {
+-		snd_printk(KERN_ERR "mpu401_uart: cannot allocate\n");
+ 		snd_device_free(card, rmidi);
+ 		return -ENOMEM;
+ 	}
+-- 
+2.14.0
 
