@@ -1,104 +1,99 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 20:50:34 +0000
-Subject: [PATCH 2/3] [media] usbvision: Adjust eight checks for null pointers
-Message-Id: <0a1d8712-5b0d-d453-88a1-b39556c9d09d@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 15:34:38 +0000
+Subject: [PATCH 2/3] ALSA: rme9652: Improve eight size determinations
+Message-Id: <ae12596b-becf-7af4-3959-5c2430b32eaf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
-In-Reply-To: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
+References: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
+In-Reply-To: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 22:16:52 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sat, 12 Aug 2017 16:50:06 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/usbvision/usbvision-video.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/pci/rme9652/hdspm.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
-index b74fb2dcb6f5..e6807bad9792 100644
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -904,7 +904,7 @@ static ssize_t usbvision_read(struct file *file, char __user *buf,
- 	PDEBUG(DBG_IO, "%s: %ld bytes, noblock=%d", __func__,
- 	       (unsigned long)count, noblock);
+diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
+index d448cf474c1b..8d339fb7c24b 100644
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -6221,7 +6221,7 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
+ 		}
+ 		levels->status2 = hdspm_read(hdspm, HDSPM_statusRegister2);
  
--	if (!USBVISION_IS_OPERATIONAL(usbvision) || (buf = NULL))
-+	if (!USBVISION_IS_OPERATIONAL(usbvision) || !buf)
- 		return -EFAULT;
+-		s = copy_to_user(argp, levels, sizeof(struct hdspm_peak_rms));
++		s = copy_to_user(argp, levels, sizeof(*levels));
+ 		if (0 != s) {
+ 			/* dev_err(hdspm->card->dev, "copy_to_user(.., .., %lu): %lu
+ 			 [Levels]\n", sizeof(struct hdspm_peak_rms), s);
+@@ -6266,7 +6266,7 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
+ 			ltc.input_format = no_video;
+ 		}
  
- 	/* This entry point is compatible with the mmap routines
-@@ -1234,7 +1234,7 @@ static void usbvision_vdev_init(struct usb_usbvision *usbvision,
- {
- 	struct usb_device *usb_dev = usbvision->dev;
+-		s = copy_to_user(argp, &ltc, sizeof(struct hdspm_ltc));
++		s = copy_to_user(argp, &ltc, sizeof(ltc));
+ 		if (0 != s) {
+ 			/*
+ 			  dev_err(hdspm->card->dev, "copy_to_user(.., .., %lu): %lu [LTC]\n", sizeof(struct hdspm_ltc), s); */
+@@ -6357,7 +6357,7 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
+ 		if (copy_from_user(&mixer, argp, sizeof(mixer)))
+ 			return -EFAULT;
+ 		if (copy_to_user((void __user *)mixer.mixer, hdspm->mixer,
+-					sizeof(struct hdspm_mixer)))
++				 sizeof(*mixer.mixer)))
+ 			return -EFAULT;
+ 		break;
  
--	if (usb_dev = NULL) {
-+	if (!usb_dev) {
- 		dev_err(&usbvision->dev->dev,
- 			"%s: usbvision->dev is not set\n", __func__);
- 		return;
-@@ -1323,4 +1323,4 @@ static struct usb_usbvision *usbvision_alloc(struct usb_device *dev,
--	if (usbvision = NULL)
-+	if (!usbvision)
- 		return NULL;
+@@ -6636,8 +6636,8 @@ static int snd_hdspm_create(struct snd_card *card,
+ 	hdspm->irq = pci->irq;
  
- 	usbvision->dev = dev;
-@@ -1334,7 +1334,7 @@ static struct usb_usbvision *usbvision_alloc(struct usb_device *dev,
+ 	dev_dbg(card->dev, "kmalloc Mixer memory of %zd Bytes\n",
+-			sizeof(struct hdspm_mixer));
+-	hdspm->mixer = kzalloc(sizeof(struct hdspm_mixer), GFP_KERNEL);
++		sizeof(*hdspm->mixer));
++	hdspm->mixer = kzalloc(sizeof(*hdspm->mixer), GFP_KERNEL);
+ 	if (!hdspm->mixer)
+ 		return -ENOMEM;
  
- 	/* prepare control urb for control messages during interrupts */
- 	usbvision->ctrl_urb = usb_alloc_urb(USBVISION_URB_FRAMES, GFP_KERNEL);
--	if (usbvision->ctrl_urb = NULL)
-+	if (!usbvision->ctrl_urb)
- 		goto err_unreg;
- 
- 	return usbvision;
-@@ -1380,7 +1380,7 @@ static void usbvision_configure_video(struct usb_usbvision *usbvision)
- {
- 	int model;
- 
--	if (usbvision = NULL)
-+	if (!usbvision)
- 		return;
- 
- 	model = usbvision->dev_model;
-@@ -1474,7 +1474,7 @@ static int usbvision_probe(struct usb_interface *intf,
+@@ -6774,8 +6774,7 @@ static int snd_hdspm_create(struct snd_card *card,
+ 		if (hdspm_read(hdspm, HDSPM_statusRegister2) &
+ 				HDSPM_s2_tco_detect) {
+ 			hdspm->midiPorts++;
+-			hdspm->tco = kzalloc(sizeof(struct hdspm_tco),
+-					GFP_KERNEL);
++			hdspm->tco = kzalloc(sizeof(*hdspm->tco), GFP_KERNEL);
+ 			if (NULL != hdspm->tco) {
+ 				hdspm_tco_write(hdspm);
+ 			}
+@@ -6789,8 +6788,7 @@ static int snd_hdspm_create(struct snd_card *card,
+ 	case AES32:
+ 		if (hdspm_read(hdspm, HDSPM_statusRegister) & HDSPM_tco_detect) {
+ 			hdspm->midiPorts++;
+-			hdspm->tco = kzalloc(sizeof(struct hdspm_tco),
+-					GFP_KERNEL);
++			hdspm->tco = kzalloc(sizeof(*hdspm->tco), GFP_KERNEL);
+ 			if (NULL != hdspm->tco) {
+ 				hdspm_tco_write(hdspm);
+ 			}
+@@ -6941,7 +6939,7 @@ static int snd_hdspm_probe(struct pci_dev *pci,
  	}
  
- 	usbvision = usbvision_alloc(dev, intf);
--	if (usbvision = NULL) {
-+	if (!usbvision) {
- 		dev_err(&intf->dev, "%s: couldn't allocate USBVision struct\n", __func__);
- 		ret = -ENOMEM;
- 		goto err_usb;
-@@ -1494,5 +1494,5 @@ static int usbvision_probe(struct usb_interface *intf,
- 	usbvision->num_alt = uif->num_altsetting;
- 	PDEBUG(DBG_PROBE, "Alternate settings: %i", usbvision->num_alt);
- 	usbvision->alt_max_pkt_size = kmalloc(32 * usbvision->num_alt, GFP_KERNEL);
--	if (usbvision->alt_max_pkt_size = NULL) {
-+	if (!usbvision->alt_max_pkt_size) {
- 		ret = -ENOMEM;
-@@ -1565,7 +1565,7 @@ static void usbvision_disconnect(struct usb_interface *intf)
+ 	err = snd_card_new(&pci->dev, index[dev], id[dev],
+-			   THIS_MODULE, sizeof(struct hdspm), &card);
++			   THIS_MODULE, sizeof(*hdspm), &card);
+ 	if (err < 0)
+ 		return err;
  
- 	PDEBUG(DBG_PROBE, "");
- 
--	if (usbvision = NULL) {
-+	if (!usbvision) {
- 		pr_err("%s: usb_get_intfdata() failed\n", __func__);
- 		return;
- 	}
 -- 
 2.14.0
 
