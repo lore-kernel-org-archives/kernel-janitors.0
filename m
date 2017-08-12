@@ -1,46 +1,42 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 22 Aug 2017 16:32:40 +0000
-Subject: Re: [PATCH][next] efi/reboot: make function pointer orig_pm_power_off static
-Message-Id: <CAKv+Gu98+6mJhn9KxHvtQ5LQdgmtc2Yd4LBJjK=ds91AGX4o9Q@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 16:28:06 +0000
+Subject: [PATCH] ALSA: pcxhr: Delete an error message for a failed memory allocation in pcxhr_create()
+Message-Id: <f30e314b-4666-2880-8051-976c631b3718@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170822155040.32058-1-colin.king@canonical.com>
-In-Reply-To: <20170822155040.32058-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 22 August 2017 at 16:50, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function pointer orig_pm_power_off is local to the source and does
-> not need to be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> symbol 'orig_pm_power_off' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 18:14:54 +0200
 
-Queued, thanks.
+Omit an extra message for a memory allocation failure in this function.
 
-> ---
->  drivers/firmware/efi/reboot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/efi/reboot.c b/drivers/firmware/efi/reboot.c
-> index 7117e2d0c7f9..22874544d301 100644
-> --- a/drivers/firmware/efi/reboot.c
-> +++ b/drivers/firmware/efi/reboot.c
-> @@ -5,7 +5,7 @@
->  #include <linux/efi.h>
->  #include <linux/reboot.h>
->
-> -void (*orig_pm_power_off)(void);
-> +static void (*orig_pm_power_off)(void);
->
->  int efi_reboot_quirk_mode = -1;
->
-> --
-> 2.14.1
->
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/pcxhr/pcxhr.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/sound/pci/pcxhr/pcxhr.c b/sound/pci/pcxhr/pcxhr.c
+index fa919f52e225..376fd76caec2 100644
+--- a/sound/pci/pcxhr/pcxhr.c
++++ b/sound/pci/pcxhr/pcxhr.c
+@@ -1215,10 +1215,8 @@ static int pcxhr_create(struct pcxhr_mgr *mgr,
+ 	};
+ 
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+-	if (! chip) {
+-		dev_err(card->dev, "cannot allocate chip\n");
++	if (!chip)
+ 		return -ENOMEM;
+-	}
+ 
+ 	chip->card = card;
+ 	chip->chip_idx = idx;
+-- 
+2.14.0
+
