@@ -1,41 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 13:35:30 +0000
-Subject: [PATCH 1/3] jfs: Delete an error message for a failed memory allocation in diMount()
-Message-Id: <12f705e1-7ba2-af59-b86d-91134153dca9@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Aug 2017 05:44:34 +0000
+Subject: [PATCH 6/6] bfa: constify pci_error_handlers structures
+Message-Id: <1502516674-8918-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
-In-Reply-To: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
+References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jfs-discussion@lists.sourceforge.net, Dave Kleikamp <shaggy@kernel.org>, Fabian Frederick <fabf@skynet.be>, Jan Kara <jack@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 09:19:24 +0200
+These pci_error_handlers structures are only stored in the err_handler
+field of a pci_driver structure, and this field is declared as const.  Thus
+the pci_error_handlers structures can be const too.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/jfs/jfs_imap.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/bfa/bfad.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-index f36ef68905a7..da8051299e47 100644
---- a/fs/jfs/jfs_imap.c
-+++ b/fs/jfs/jfs_imap.c
-@@ -119,7 +119,5 @@ int diMount(struct inode *ipimap)
--	if (imap = NULL) {
--		jfs_err("diMount: kmalloc returned NULL!");
-+	if (!imap)
- 		return -ENOMEM;
--	}
- 
- 	/* read the on-disk inode map control structure. */
- 
--- 
-2.14.0
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index 5caf5f3..2861694 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -1683,7 +1683,7 @@ struct pci_device_id bfad_id_table[] = {
+ /*
+  * PCI error recovery handlers.
+  */
+-static struct pci_error_handlers bfad_err_handler = {
++static const struct pci_error_handlers bfad_err_handler = {
+ 	.error_detected = bfad_pci_error_detected,
+ 	.slot_reset = bfad_pci_slot_reset,
+ 	.mmio_enabled = bfad_pci_mmio_enabled,
 
