@@ -1,42 +1,74 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Aug 2017 20:21:15 +0000
-Subject: Re: [PATCH] drm: Shift wrap bug in create_in_format_blob()
-Message-Id: <20170810202115.6jdmnusnhb2fc3g7@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 19:12:39 +0000
+Subject: [PATCH 2/3] ALSA: mpu401: Use common error handling code in snd_mpu401_uart_new()
+Message-Id: <06592078-5382-5f6a-f9aa-c85f293e1734@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170809111906.4rv3hzritctfktv3@mwanda>
- <20170809143650.ql6juzihjfylebft@art_vandelay>
- <CAPj87rNrFXUTByzCTr8h28ieskEo+HB21RtfZ2KNCBXGQ+ShZg@mail.gmail.com>
-In-Reply-To: <CAPj87rNrFXUTByzCTr8h28ieskEo+HB21RtfZ2KNCBXGQ+ShZg@mail.gmail.com>
+References: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
+In-Reply-To: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Sean Paul <seanpaul@chromium.org>, Ben Widawsky <ben@bwidawsk.net>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 09, 2017 at 03:38:33PM +0100, Daniel Stone wrote:
-> On 9 August 2017 at 15:36, Sean Paul <seanpaul@chromium.org> wrote:
-> > On Wed, Aug 09, 2017 at 02:19:06PM +0300, Dan Carpenter wrote:
-> >> "plane->format_count" can go up to 64.  (It's capped in
-> >> drm_universal_plane_init().)  So we should be using ULL type instead of
-> >> int here to prevent shift wrapping.
-> >>
-> >> Fixes: db1689aa61bd ("drm: Create a format/modifier blob")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > Thank you for the fix, Dan.
-> >
-> > I've applied it to drm-misc-next.
-> 
-> Yes, thanks Dan!
-> 
-> Out of interest, how was this found? With sparse?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 20:40:17 +0200
 
-These are Smatch checks that I haven't totally cleaned up enough to
-publish yet.  I have a couple versions of this check.  This one is doing
-cross function analysis so it knows that ->format_count can go up to 64
-bits.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/drivers/mpu401/mpu401_uart.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/sound/drivers/mpu401/mpu401_uart.c b/sound/drivers/mpu401/mpu401_uart.c
+index cc347386fc2b..e8bdea193eab 100644
+--- a/sound/drivers/mpu401/mpu401_uart.c
++++ b/sound/drivers/mpu401/mpu401_uart.c
+@@ -545,8 +545,8 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
+ 		return err;
+ 	mpu = kzalloc(sizeof(*mpu), GFP_KERNEL);
+ 	if (mpu = NULL) {
+-		snd_device_free(card, rmidi);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto free_device;
+ 	}
+ 	rmidi->private_data = mpu;
+ 	rmidi->private_free = snd_mpu401_uart_free;
+@@ -562,8 +562,8 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
+ 			snd_printk(KERN_ERR "mpu401_uart: "
+ 				   "unable to grab port 0x%lx size %d\n",
+ 				   port, res_size);
+-			snd_device_free(card, rmidi);
+-			return -EBUSY;
++			err = -EBUSY;
++			goto free_device;
+ 		}
+ 	}
+ 	if (info_flags & MPU401_INFO_MMIO) {
+@@ -583,8 +583,8 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
+ 				"MPU401 UART", (void *) mpu)) {
+ 			snd_printk(KERN_ERR "mpu401_uart: "
+ 				   "unable to grab IRQ %d\n", irq);
+-			snd_device_free(card, rmidi);
+-			return -EBUSY;
++			err = -EBUSY;
++			goto free_device;
+ 		}
+ 	}
+ 	if (irq < 0 && !(info_flags & MPU401_INFO_IRQ_HOOK))
+@@ -612,6 +612,9 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
+ 	if (rrawmidi)
+ 		*rrawmidi = rmidi;
+ 	return 0;
++free_device:
++	snd_device_free(card, rmidi);
++	return err;
+ }
+ 
+ EXPORT_SYMBOL(snd_mpu401_uart_new);
+-- 
+2.14.0
 
