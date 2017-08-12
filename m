@@ -1,45 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 12 Aug 2017 06:33:02 +0000
-Subject: [PATCH] ASoC: Intel: constify snd_compr_codec_caps structures
-Message-Id: <1502519582-3338-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 15:33:30 +0000
+Subject: [PATCH 1/3] ALSA: rme9652: Delete an error message for a failed memory allocation in snd_hdspm_creat
+Message-Id: <7f0e9d18-4402-61d3-b5d4-3ea0b581ccd8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
+In-Reply-To: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Bhumika Goyal <bhumirks@gmail.com>
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These snd_compr_codec_caps structures are only copied into other
-structures, so they can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Aug 2017 16:10:32 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/atom/sst/sst_drv_interface.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/rme9652/hdspm.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_drv_interface.c b/sound/soc/intel/atom/sst/sst_drv_interface.c
-index ce689c5..71af544 100644
---- a/sound/soc/intel/atom/sst/sst_drv_interface.c
-+++ b/sound/soc/intel/atom/sst/sst_drv_interface.c
-@@ -407,7 +407,7 @@ static int sst_cdev_caps(struct snd_compr_caps *caps)
- 	return 0;
- }
+diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
+index 2a3a916e5d15..d448cf474c1b 100644
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -6641,9 +6641,5 @@ static int snd_hdspm_create(struct snd_card *card,
+-	if (!hdspm->mixer) {
+-		dev_err(card->dev,
+-			"unable to kmalloc Mixer memory of %d Bytes\n",
+-				(int)sizeof(struct hdspm_mixer));
++	if (!hdspm->mixer)
+ 		return -ENOMEM;
+-	}
  
--static struct snd_compr_codec_caps caps_mp3 = {
-+static const struct snd_compr_codec_caps caps_mp3 = {
- 	.num_descriptors = 1,
- 	.descriptor[0].max_ch = 2,
- 	.descriptor[0].sample_rates[0] = 48000,
-@@ -424,7 +424,7 @@ static int sst_cdev_caps(struct snd_compr_caps *caps)
- 	.descriptor[0].formats = 0,
- };
- 
--static struct snd_compr_codec_caps caps_aac = {
-+static const struct snd_compr_codec_caps caps_aac = {
- 	.num_descriptors = 2,
- 	.descriptor[1].max_ch = 2,
- 	.descriptor[0].sample_rates[0] = 48000,
+ 	hdspm->port_names_in = NULL;
+ 	hdspm->port_names_out = NULL;
+-- 
+2.14.0
 
