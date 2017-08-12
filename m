@@ -1,26 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 12 Aug 2017 05:44:28 +0000
-Subject: [PATCH 0/6] constify pci_error_handlers structures
-Message-Id: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Sat, 12 Aug 2017 07:44:51 +0000
+Subject: Re: [PATCH 0/6] constify pci_error_handlers structures
+Message-Id: <20170812074451.GA3589@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-scsi@vger.kernel.org, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 
-These pci_error_handlers structures are only stored in the err_handler
-field of a pci_driver structure, and this field is declared as const.  Thus
-the pci_error_handlers structures can be const too.
+On Sat, Aug 12, 2017 at 07:44:28AM +0200, Julia Lawall wrote:
+> These pci_error_handlers structures are only stored in the err_handler
+> field of a pci_driver structure, and this field is declared as const.  Thus
+> the pci_error_handlers structures can be const too.
+> 
+> Done with the help of Coccinelle.
 
-Done with the help of Coccinelle.
-
----
-
- drivers/misc/genwqe/card_base.c      |    2 +-
- drivers/scsi/aacraid/linit.c         |    2 +-
- drivers/scsi/be2iscsi/be_main.c      |    2 +-
- drivers/scsi/bfa/bfad.c              |    2 +-
- drivers/scsi/csiostor/csio_init.c    |    2 +-
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+If you're doing a scripted conversion of the pci_error_handlers
+structured I'd much rather see that structure killed off and folded
+into the pci_driver one.
