@@ -1,41 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 03 Aug 2017 19:12:50 +0000
-Subject: [PATCH 1/4] axonram: Delete an error message for a failed memory allocation in axon_ram_probe()
-Message-Id: <31790d2a-26b4-54f5-e52d-5637be0b676f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 12 Aug 2017 22:00:17 +0000
+Subject: [PATCH] rtlwifi: btcoex: make function btc8723b2ant_dac_swing static
+Message-Id: <20170812220017.6505-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
-In-Reply-To: <009fdef0-b2c9-5e98-d32d-14149aec92c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, Yan-Hsuan Chuang <yhchuang@realtek.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 3 Aug 2017 19:49:18 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The function btc8723b2ant_dac_swing  is local to the source and
+does not need to be in global scope, so make it static.
 
-This issue was detected by using the Coccinelle software.
+Cleans up sparse warning:
+symbol 'btc8723b2ant_dac_swing' was not declared. Should it be static?
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/powerpc/sysdev/axonram.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/axonram.c b/arch/powerpc/sysdev/axonram.c
-index 2799706106c6..b82d1b023a15 100644
---- a/arch/powerpc/sysdev/axonram.c
-+++ b/arch/powerpc/sysdev/axonram.c
-@@ -193,7 +193,6 @@ static int axon_ram_probe(struct platform_device *device)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+index 31965f0ef69d..9d2ecfbc7b33 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
+@@ -833,9 +833,9 @@ static void btc8723b2ant_set_sw_fulltime_dac_swing(struct btc_coexist *btcoex,
+ 		btc8723b2ant_set_dac_swing_reg(btcoex, 0x18);
+ }
  
- 	bank = kzalloc(sizeof(struct axon_ram_bank), GFP_KERNEL);
- 	if (bank = NULL) {
--		dev_err(&device->dev, "Out of memory\n");
- 		rc = -ENOMEM;
- 		goto failed;
- 	}
+-void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
+-			    bool force_exec, bool dac_swing_on,
+-			    u32 dac_swing_lvl)
++static void btc8723b2ant_dac_swing(struct btc_coexist *btcoexist,
++				   bool force_exec, bool dac_swing_on,
++				   u32 dac_swing_lvl)
+ {
+ 	struct rtl_priv *rtlpriv = btcoexist->adapter;
+ 
 -- 
-2.13.4
+2.11.0
 
