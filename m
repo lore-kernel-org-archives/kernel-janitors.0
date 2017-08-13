@@ -1,86 +1,39 @@
-From: Steve Longerbeam <slongerbeam@gmail.com>
-Date: Mon, 14 Aug 2017 23:14:49 +0000
-Subject: Re: [PATCH 6/6] [media] media: imx: capture: constify vb2_ops structures
-Message-Id: <2a79a4c7-b1e4-f142-6740-0b9f2d2a6f4d@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:43 +0000
+Subject: [PATCH 04/11] serial: sunsu: constify uart_ops structures
+Message-Id: <1502605310-4314-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501930033-18249-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501930033-18249-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, sparclinux@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks,
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-Reviewed-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+Done with the help of Coccinelle.
 
-Steve
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 08/05/2017 03:47 AM, Julia Lawall wrote:
-> These vb2_ops structures are only stored in the ops field of a
-> vb2_queue structure, which is declared as const.  Thus the vb2_ops
-> structures themselves can be const.
->
-> Done with the help of Coccinelle.
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct vb2_ops i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> struct vb2_queue e;
-> position p;
-> @@
-> e.ops = &i@p;
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct vb2_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->   struct vb2_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->   drivers/staging/media/imx/imx-media-capture.c |    4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-> index ddab4c2..ea145ba 100644
-> --- a/drivers/staging/media/imx/imx-media-capture.c
-> +++ b/drivers/staging/media/imx/imx-media-capture.c
-> @@ -62,7 +62,7 @@ struct capture_priv {
->   /* In bytes, per queue */
->   #define VID_MEM_LIMIT	SZ_64M
->   
-> -static struct vb2_ops capture_qops;
-> +static const struct vb2_ops capture_qops;
->   
->   /*
->    * Video ioctls follow
-> @@ -503,7 +503,7 @@ static void capture_stop_streaming(struct vb2_queue *vq)
->   	spin_unlock_irqrestore(&priv->q_lock, flags);
->   }
->   
-> -static struct vb2_ops capture_qops = {
-> +static const struct vb2_ops capture_qops = {
->   	.queue_setup	 = capture_queue_setup,
->   	.buf_init        = capture_buf_init,
->   	.buf_prepare	 = capture_buf_prepare,
->
+---
+ drivers/tty/serial/sunsu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 5380407..95d34d7 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -958,7 +958,7 @@ static void sunsu_config_port(struct uart_port *port, int flags)
+ 	return uart_config[type].name;
+ }
+ 
+-static struct uart_ops sunsu_pops = {
++static const struct uart_ops sunsu_pops = {
+ 	.tx_empty	= sunsu_tx_empty,
+ 	.set_mctrl	= sunsu_set_mctrl,
+ 	.get_mctrl	= sunsu_get_mctrl,
 
