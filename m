@@ -1,44 +1,39 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 16 Aug 2017 15:32:37 +0000
-Subject: Re: [PATCH] IB/core: fix memory leak on ah on error return path
-Message-Id: <1502897557.33760.12.camel@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:44 +0000
+Subject: [PATCH 05/11] serial: uuc_uart: constify uart_ops structures
+Message-Id: <1502605310-4314-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170808101054.13800-1-colin.king@canonical.com>
-         <20170808102026.GG3926@linux-x5ow.site>
-         <866a49ab-6f7b-4b46-062b-6230e48da725@canonical.com>
-         <20170808125927.GK3926@linux-x5ow.site>
-         <VI1PR0502MB30082DCBDA1C4B0F071D3DABD18A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
-In-Reply-To: <VI1PR0502MB30082DCBDA1C4B0F071D3DABD18A0-o1MPJYiShExKsLr+rGaxW8DSnupUy6xnnBOFsp37pqbUKgpGm//BTAC/G2K4zDHf@public.gmane.org>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Parav Pandit <parav-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Timur Tabi <timur@tabi.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-08-08 at 19:48 +0000, Parav Pandit wrote:
-> Hi,
-> 
-> I need to top post because comments are unrelated to past discussion.
-> 
-> rdma_ah_retrieve_dmac() can never fail for RoCE as its returning
-> pointer from structure ah_attr.
-> Provider driver doesn't need to check for null pointer as ib/core
-> would never call provider if it's not RoCE provider.
-> So this memory leak only exist in theory.
-> 
-> When its null, driver should WARN_ON/BUG_ON in extreme case, but
-> that's not necessary either.
-> 
-> I have patch is progress under internal review that does nice small
-> cleanup in many provider drivers that eliminates the check
-> completely.
-> Waiting for Moni to finish the review.
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-This sounds like a nice patch to push into for-next, but in the
-meantime I took the V2 of this patch as it silences a checker warning.
+Done with the help of Coccinelle.
 
--- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/tty/serial/ucc_uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
+index 481eb29..55b7027 100644
+--- a/drivers/tty/serial/ucc_uart.c
++++ b/drivers/tty/serial/ucc_uart.c
+@@ -1085,7 +1085,7 @@ static int qe_uart_verify_port(struct uart_port *port,
+  *
+  * Details on these functions can be found in Documentation/serial/driver
+  */
+-static struct uart_ops qe_uart_pops = {
++static const struct uart_ops qe_uart_pops = {
+ 	.tx_empty       = qe_uart_tx_empty,
+ 	.set_mctrl      = qe_uart_set_mctrl,
+ 	.get_mctrl      = qe_uart_get_mctrl,
 
