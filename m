@@ -1,46 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 12:01:11 +0000
-Subject: [PATCH 3/5] net/9p: Add a jump target in p9_client_walk()
-Message-Id: <5b39be44-cbec-9838-77c6-00b99f5fe0a2@users.sourceforge.net>
+Date: Sun, 13 Aug 2017 14:48:10 +0000
+Subject: [PATCH 3/4] selinux: Delete an unnecessary return statement in ebitmap_destroy()
+Message-Id: <230e56f6-3dd9-5e6e-fa06-df22d61e0831@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
-In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 10:07:22 +0200
+Date: Sun, 13 Aug 2017 15:50:26 +0200
 
-Replace a variable assignment by a goto statement so that an extra check
-will be avoided at the end of this function.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/9p/client.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ security/selinux/ss/ebitmap.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 2ca55d4b0b7d..6c2fc796edfb 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -1237,12 +1237,11 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
- clunk_fid:
- 	kfree(wqids);
- 	p9_client_clunk(fid);
--	fid = NULL;
--
-+	goto exit;
- error:
- 	if (fid && (fid != oldfid))
- 		p9_fid_destroy(fid);
--
-+exit:
- 	return ERR_PTR(err);
+diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
+index 03581d7ef817..697bd748760a 100644
+--- a/security/selinux/ss/ebitmap.c
++++ b/security/selinux/ss/ebitmap.c
+@@ -339,7 +339,6 @@ void ebitmap_destroy(struct ebitmap *e)
+ 
+ 	e->highbit = 0;
+ 	e->node = NULL;
+-	return;
  }
- EXPORT_SYMBOL(p9_client_walk);
+ 
+ int ebitmap_read(struct ebitmap *e, void *fp)
 -- 
 2.14.0
 
