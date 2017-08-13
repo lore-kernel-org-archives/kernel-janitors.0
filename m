@@ -1,66 +1,39 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:21 +0000
-Subject: [PATCH 12/12] [media] mtk-mdp: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-13-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:48 +0000
+Subject: [PATCH 09/11] serial: m32r_sio: constify uart_ops structures
+Message-Id: <1502605310-4314-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
 Done with the help of Coccinelle.
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c |    2 +-
+ drivers/tty/serial/m32r_sio.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c b/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
-index 3038d62..583d477 100644
---- a/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
-+++ b/drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c
-@@ -1225,7 +1225,7 @@ static int mtk_mdp_m2m_release(struct file *file)
- 	.mmap		= v4l2_m2m_fop_mmap,
- };
+diff --git a/drivers/tty/serial/m32r_sio.c b/drivers/tty/serial/m32r_sio.c
+index 218b711..5b3bd95 100644
+--- a/drivers/tty/serial/m32r_sio.c
++++ b/drivers/tty/serial/m32r_sio.c
+@@ -854,7 +854,7 @@ static void m32r_sio_config_port(struct uart_port *port, int unused)
+ 	return 0;
+ }
  
--static struct v4l2_m2m_ops mtk_mdp_m2m_ops = {
-+static const struct v4l2_m2m_ops mtk_mdp_m2m_ops = {
- 	.device_run	= mtk_mdp_m2m_device_run,
- 	.job_abort	= mtk_mdp_m2m_job_abort,
- };
+-static struct uart_ops m32r_sio_pops = {
++static const struct uart_ops m32r_sio_pops = {
+ 	.tx_empty	= m32r_sio_tx_empty,
+ 	.set_mctrl	= m32r_sio_set_mctrl,
+ 	.get_mctrl	= m32r_sio_get_mctrl,
 
