@@ -1,41 +1,38 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Tue, 08 Aug 2017 08:38:24 +0000
-Subject: Re: [PATCH 1/3] thermal: core: Fix a memory leak in 'thermal_zone_device_register()' error handling 
-Message-Id: <1502181504.4296.17.camel@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:40 +0000
+Subject: [PATCH 01/11] serial: meson: constify uart_ops structures
+Message-Id: <1502605310-4314-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1500187753.git.christophe.jaillet@wanadoo.fr>
-         <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dcc79547980dca6c42c16c60f76cf8b4cbd5a392.1500187753.git.christophe.jaillet@wanadoo.fr>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, edubezval@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linus-amlogic@lists.infradead.org
 
-On Sun, 2017-07-16 at 08:59 +0200, Christophe JAILLET wrote:
-> 'tz' is freed in some error handling paths but not in the main one.
-> So free it also here to avoid a memory leak.
-> 
-After device registered, tz is freed in thermal_release().
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-thanks,
-rui
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/thermal/thermal_core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/thermal/thermal_core.c
-> b/drivers/thermal/thermal_core.c
-> index 5a51c740e372..9743f3e65eb0 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -1296,6 +1296,7 @@ thermal_zone_device_register(const char *type,
-> int trips, int mask,
->  unregister:
->  	ida_simple_remove(&thermal_tz_ida, tz->id);
->  	device_unregister(&tz->device);
-> +	kfree(tz);
->  	return ERR_PTR(result);
->  }
->  EXPORT_SYMBOL_GPL(thermal_zone_device_register);
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/tty/serial/meson_uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+index 42e4a4c..07c0f98 100644
+--- a/drivers/tty/serial/meson_uart.c
++++ b/drivers/tty/serial/meson_uart.c
+@@ -424,7 +424,7 @@ static void meson_uart_config_port(struct uart_port *port, int flags)
+ 	}
+ }
+ 
+-static struct uart_ops meson_uart_ops = {
++static const struct uart_ops meson_uart_ops = {
+ 	.set_mctrl      = meson_uart_set_mctrl,
+ 	.get_mctrl      = meson_uart_get_mctrl,
+ 	.tx_empty	= meson_uart_tx_empty,
+
