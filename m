@@ -1,39 +1,38 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 12 Aug 2017 05:44:32 +0000
-Subject: [PATCH 4/6] scsi: be2iscsi: constify pci_error_handlers structures
-Message-Id: <1502516674-8918-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:41 +0000
+Subject: [PATCH 02/11] serial: owl: constify uart_ops structures
+Message-Id: <1502605310-4314-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Ketan Mukadam <ketan.mukadam@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-These pci_error_handlers structures are only stored in the err_handler
-field of a pci_driver structure, and this field is declared as const.  Thus
-the pci_error_handlers structures can be const too.
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/scsi/be2iscsi/be_main.c |    2 +-
+ drivers/tty/serial/owl-uart.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index b4542e7..511732a 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -5786,7 +5786,7 @@ static void beiscsi_remove(struct pci_dev *pcidev)
+diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
+index 683b054..b9c85936 100644
+--- a/drivers/tty/serial/owl-uart.c
++++ b/drivers/tty/serial/owl-uart.c
+@@ -473,7 +473,7 @@ static void owl_uart_config_port(struct uart_port *port, int flags)
+ 	}
  }
  
- 
--static struct pci_error_handlers beiscsi_eeh_handlers = {
-+static const struct pci_error_handlers beiscsi_eeh_handlers = {
- 	.error_detected = beiscsi_eeh_err_detected,
- 	.slot_reset = beiscsi_eeh_reset,
- 	.resume = beiscsi_eeh_resume,
+-static struct uart_ops owl_uart_ops = {
++static const struct uart_ops owl_uart_ops = {
+ 	.set_mctrl = owl_uart_set_mctrl,
+ 	.get_mctrl = owl_uart_get_mctrl,
+ 	.tx_empty = owl_uart_tx_empty,
 
