@@ -1,44 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 Aug 2017 14:21:20 +0000
-Subject: [PATCH] [media] em28xx: calculate left volume level correctly
-Message-Id: <20170822142120.14348-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:50 +0000
+Subject: [PATCH 11/11] serial: mux: constify uart_ops structures
+Message-Id: <1502605310-4314-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-The calculation of the left volume looks suspect, the value of
-0x1f - ((val << 8) & 0x1f) is always 0x1f. The debug prior to the
-assignemnt of value[1] prints the left volume setting using the
-calculation 0x1f - (val >> 8) & 0x1f which looks correct to me.
-Fix the left volume by using the correct expression as used in
-the debug.
+Done with the help of Coccinelle.
 
-Detected by CoverityScan, CID#146140 ("Wrong operator used")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: 850d24a5a861 ("[media] em28xx-alsa: add mixer support for AC97 volume controls")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/em28xx/em28xx-audio.c | 2 +-
+ drivers/tty/serial/mux.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
-index 261620a57420..4628d73f46f2 100644
---- a/drivers/media/usb/em28xx/em28xx-audio.c
-+++ b/drivers/media/usb/em28xx/em28xx-audio.c
-@@ -564,7 +564,7 @@ static int em28xx_vol_get(struct snd_kcontrol *kcontrol,
- 		val, (int)kcontrol->private_value);
+diff --git a/drivers/tty/serial/mux.c b/drivers/tty/serial/mux.c
+index 8a4be4b..940ea40 100644
+--- a/drivers/tty/serial/mux.c
++++ b/drivers/tty/serial/mux.c
+@@ -427,7 +427,7 @@ static int mux_console_setup(struct console *co, char *options)
+ #define MUX_CONSOLE	NULL
+ #endif
  
- 	value->value.integer.value[0] = 0x1f - (val & 0x1f);
--	value->value.integer.value[1] = 0x1f - ((val << 8) & 0x1f);
-+	value->value.integer.value[1] = 0x1f - ((val >> 8) & 0x1f);
- 
- 	return 0;
- }
--- 
-2.14.1
+-static struct uart_ops mux_pops = {
++static const struct uart_ops mux_pops = {
+ 	.tx_empty =		mux_tx_empty,
+ 	.set_mctrl =		mux_set_mctrl,
+ 	.get_mctrl =		mux_get_mctrl,
 
