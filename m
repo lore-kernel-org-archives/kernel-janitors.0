@@ -1,42 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 09 Aug 2017 10:17:41 +0000
-Subject: [PATCH] scsi: dpt_i2o: remove redundant null check on array device
-Message-Id: <20170809101741.19163-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:39 +0000
+Subject: [PATCH 00/11] constify uart_ops structures
+Message-Id: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus-amlogic@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-The null check on pHba->channel[chan].device is redundant because
-device is an array and hence can never be null. Remove the check.
+Done with the help of Coccinelle.
 
-Detected by CoverityScan, CID#115362 ("Array compared against 0")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/dpt_i2o.c | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index 256dd6791fcc..fd172b0890d3 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1169,11 +1169,6 @@ static struct adpt_device* adpt_find_device(adpt_hba* pHba, u32 chan, u32 id, u6
- 	if(chan < 0 || chan >= MAX_CHANNEL)
- 		return NULL;
- 	
--	if( pHba->channel[chan].device = NULL){
--		printk(KERN_DEBUG"Adaptec I2O RAID: Trying to find device before they are allocated\n");
--		return NULL;
--	}
--
- 	d = pHba->channel[chan].device[id];
- 	if(!d || d->tid = 0) {
- 		return NULL;
--- 
-2.11.0
-
+ drivers/tty/serial/21285.c                  |    2 +-
+ drivers/tty/serial/apbuart.c                |    2 +-
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c |    2 +-
+ drivers/tty/serial/m32r_sio.c               |    2 +-
+ drivers/tty/serial/meson_uart.c             |    2 +-
+ drivers/tty/serial/mpc52xx_uart.c           |    2 +-
+ drivers/tty/serial/mux.c                    |    2 +-
+ drivers/tty/serial/owl-uart.c               |    2 +-
+ drivers/tty/serial/sunsab.c                 |    2 +-
+ drivers/tty/serial/sunsu.c                  |    2 +-
+ drivers/tty/serial/ucc_uart.c               |    2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
