@@ -1,51 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Aug 2017 11:23:09 +0000
-Subject: [PATCH][next] tracing: remove redundant unread variable ret
-Message-Id: <20170823112309.19383-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:47 +0000
+Subject: [PATCH 08/11] serial: cpm_uart: constify uart_ops structures
+Message-Id: <1502605310-4314-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-Integer ret is being assigned but never used and hence it is
-redundant. Remove it, fixes clang warning:
+Done with the help of Coccinelle.
 
-trace_events_hist.c:1077:3: warning: Value stored to 'ret' is never read
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/trace_events_hist.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1c21d0e2a145..f123b5d0c226 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1062,7 +1062,7 @@ static void hist_trigger_show(struct seq_file *m,
- 			      struct event_trigger_data *data, int n)
- {
- 	struct hist_trigger_data *hist_data;
--	int n_entries, ret = 0;
-+	int n_entries;
+diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+index f6bcc19..9ac142c 100644
+--- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
++++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+@@ -1123,7 +1123,7 @@ static void cpm_put_poll_char(struct uart_port *port,
+ }
+ #endif /* CONFIG_CONSOLE_POLL */
  
- 	if (n > 0)
- 		seq_puts(m, "\n\n");
-@@ -1073,10 +1073,8 @@ static void hist_trigger_show(struct seq_file *m,
- 
- 	hist_data = data->private_data;
- 	n_entries = print_entries(m, hist_data);
--	if (n_entries < 0) {
--		ret = n_entries;
-+	if (n_entries < 0)
- 		n_entries = 0;
--	}
- 
- 	seq_printf(m, "\nTotals:\n    Hits: %llu\n    Entries: %u\n    Dropped: %llu\n",
- 		   (u64)atomic64_read(&hist_data->map->hits),
--- 
-2.14.1
+-static struct uart_ops cpm_uart_pops = {
++static const struct uart_ops cpm_uart_pops = {
+ 	.tx_empty	= cpm_uart_tx_empty,
+ 	.set_mctrl	= cpm_uart_set_mctrl,
+ 	.get_mctrl	= cpm_uart_get_mctrl,
 
