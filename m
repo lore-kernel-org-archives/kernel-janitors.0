@@ -1,40 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 13 Aug 2017 15:28:08 +0000
-Subject: [PATCH] ASoC: zx_aud96p22: make array aud96p22_dt_ids static
-Message-Id: <20170813152808.17774-1-colin.king@canonical.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Aug 2017 06:21:45 +0000
+Subject: [PATCH 06/11] serial: 21285: constify uart_ops structures
+Message-Id: <1502605310-4314-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bhumika Goyal <bhumirks@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+These uart_ops structures are only stored in the ops field of a
+uart_port structure and this fields is const, so the uart_ops
+structures can also be const.
 
-The array aud96p22_dt_ids is local to the source and does not need to be
-in global scope, so make it static.
+Done with the help of Coccinelle.
 
-Cleans up sparse warning:
-symbol 'aud96p22_dt_ids' was not declared. Should it be static?
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/zx_aud96p22.c | 2 +-
+ drivers/tty/serial/21285.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/zx_aud96p22.c b/sound/soc/codecs/zx_aud96p22.c
-index 36d0a7087a54..78017fb69c04 100644
---- a/sound/soc/codecs/zx_aud96p22.c
-+++ b/sound/soc/codecs/zx_aud96p22.c
-@@ -382,7 +382,7 @@ static int aud96p22_i2c_remove(struct i2c_client *i2c)
- 	return 0;
+diff --git a/drivers/tty/serial/21285.c b/drivers/tty/serial/21285.c
+index 9b208bd..804632b 100644
+--- a/drivers/tty/serial/21285.c
++++ b/drivers/tty/serial/21285.c
+@@ -334,7 +334,7 @@ static int serial21285_verify_port(struct uart_port *port, struct serial_struct
+ 	return ret;
  }
  
--const struct of_device_id aud96p22_dt_ids[] = {
-+static const struct of_device_id aud96p22_dt_ids[] = {
- 	{ .compatible = "zte,zx-aud96p22", },
- 	{ }
- };
--- 
-2.11.0
+-static struct uart_ops serial21285_ops = {
++static const struct uart_ops serial21285_ops = {
+ 	.tx_empty	= serial21285_tx_empty,
+ 	.get_mctrl	= serial21285_get_mctrl,
+ 	.set_mctrl	= serial21285_set_mctrl,
 
