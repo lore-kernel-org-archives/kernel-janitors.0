@@ -1,32 +1,134 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Thu, 24 Aug 2017 17:44:45 +0000
-Subject: Re: ext4: Delete an error message for a failed memory allocation in ext4_multi_mount_protect()
-Message-Id: <20170824174445.gfrkr35m4vcfuoat@thunk.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Aug 2017 14:46:53 +0000
+Subject: [PATCH 2/4] selinux: Adjust jump targets in ebitmap_read()
+Message-Id: <2c4582c9-efc1-4b8c-1095-84e00062c7de@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
- <5bf432ae-398d-718c-8105-3092a240a8ef@users.sourceforge.net>
- <b21f6c3d-2cad-3f72-f410-f608ea5f4cea@redhat.com>
- <e522d9a5-4d5a-b4a1-fe94-bb3aae4c5976@users.sourceforge.net>
-In-Reply-To: <e522d9a5-4d5a-b4a1-fe94-bb3aae4c5976@users.sourceforge.net>
+References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Eric Sandeen <esandeen@redhat.com>, linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-On Sat, Aug 19, 2017 at 08:00:31PM +0200, SF Markus Elfring wrote:
-> >> Omit an extra message for a memory allocation failure in this function.
-> > 
-> > I might be dense, but what makes this message "extra?"
-> > 
-> > (I suppose kmalloc squawks too if it fails,
-> 
-> Do you find the default allocation failure report sufficient?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Aug 2017 15:21:43 +0200
 
-From a helpdesk reporting situation, having a more specific message
-when there is a MMP failure causing the mount to fail is definitely
-useful.
+Adjust jump targets so that the function implementation becomes smaller.
 
-So, NACK.
+* Move an error message so that it is present only once here.
 
-					- Ted
+* Avoid another check for the local variable "rc" at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/ebitmap.c | 38 ++++++++++++++++++--------------------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
+
+diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
+index ccf372db689c..03581d7ef817 100644
+--- a/security/selinux/ss/ebitmap.c
++++ b/security/selinux/ss/ebitmap.c
+@@ -350,21 +350,20 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 	__le32 buf[3];
+ 	int rc, i;
+ 
+-	ebitmap_init(e);
+-
+ 	rc = next_entry(buf, fp, sizeof buf);
+ 	if (rc < 0)
+ 		goto out;
+ 
+-	mapunit = le32_to_cpu(buf[0]);
++	ebitmap_init(e);
+ 	e->highbit = le32_to_cpu(buf[1]);
+ 	count = le32_to_cpu(buf[2]);
++	mapunit = le32_to_cpu(buf[0]);
+ 
+ 	if (mapunit != BITS_PER_U64) {
+ 		printk(KERN_ERR "SELinux: ebitmap: map size %u does not "
+ 		       "match my size %zd (high bit was %d)\n",
+ 		       mapunit, BITS_PER_U64, e->highbit);
+-		goto bad;
++		goto destroy_bitmap;
+ 	}
+ 
+ 	/* round up e->highbit */
+@@ -377,27 +376,26 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 	}
+ 
+ 	if (e->highbit && !count)
+-		goto bad;
++		goto destroy_bitmap;
+ 
+ 	for (i = 0; i < count; i++) {
+ 		rc = next_entry(&startbit, fp, sizeof(u32));
+-		if (rc < 0) {
+-			printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
+-			goto bad;
+-		}
++		if (rc)
++			goto report_truncated_map;
++
+ 		startbit = le32_to_cpu(startbit);
+ 
+ 		if (startbit & (mapunit - 1)) {
+ 			printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
+ 			       "not a multiple of the map unit size (%u)\n",
+ 			       startbit, mapunit);
+-			goto bad;
++			goto destroy_bitmap;
+ 		}
+ 		if (startbit > e->highbit - mapunit) {
+ 			printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
+ 			       "beyond the end of the bitmap (%u)\n",
+ 			       startbit, (e->highbit - mapunit));
+-			goto bad;
++			goto destroy_bitmap;
+ 		}
+ 
+ 		if (!n || startbit >= n->startbit + EBITMAP_SIZE) {
+@@ -407,7 +405,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 				printk(KERN_ERR
+ 				       "SELinux: ebitmap: out of memory\n");
+ 				rc = -ENOMEM;
+-				goto bad;
++				goto destroy_bitmap;
+ 			}
+ 			/* round down */
+ 			tmp->startbit = startbit - (startbit % EBITMAP_SIZE);
+@@ -420,14 +418,13 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 			printk(KERN_ERR "SELinux: ebitmap: start bit %d"
+ 			       " comes after start bit %d\n",
+ 			       startbit, n->startbit);
+-			goto bad;
++			goto destroy_bitmap;
+ 		}
+ 
+ 		rc = next_entry(&map, fp, sizeof(u64));
+-		if (rc < 0) {
+-			printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
+-			goto bad;
+-		}
++		if (rc)
++			goto report_truncated_map;
++
+ 		map = le64_to_cpu(map);
+ 
+ 		index = (startbit - n->startbit) / EBITMAP_UNIT_SIZE;
+@@ -438,9 +435,10 @@ int ebitmap_read(struct ebitmap *e, void *fp)
+ 	}
+ out:
+ 	return rc;
+-bad:
+-	if (!rc)
+-		rc = -EINVAL;
++report_truncated_map:
++	printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
++	rc = -EINVAL;
++destroy_bitmap:
+ 	ebitmap_destroy(e);
+ 	goto out;
+ }
+-- 
+2.14.0
+
