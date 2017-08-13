@@ -1,42 +1,69 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 23 Aug 2017 08:35:00 +0000
-Subject: Re: [PATCH 3/6] ALSA: pcm: Adjust 11 checks for null pointers
-Message-Id: <s5hfucir8az.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Aug 2017 14:50:07 +0000
+Subject: [PATCH 4/4] selinux: Adjust five checks for null pointers
+Message-Id: <b74d176c-b028-7e82-80c6-a3014d57d648@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
-        <s5h378isw2d.wl-tiwai@suse.de>
-        <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
-        <fc79090d-7ed8-9083-4726-29769e0ef8d8@users.sourceforge.net>
-In-Reply-To: <fc79090d-7ed8-9083-4726-29769e0ef8d8@users.sourceforge.net>
+References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
+In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
-On Wed, 23 Aug 2017 10:25:49 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 23 Aug 2017 09:28:00 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written …
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Aug 2017 16:16:05 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Converting only these alone doesn't give any big merit.  Another patch
-in the series fixed the style if ((err = xxx)), so it's fine, though.
+The script “checkpatch.pl” pointed information out like the following.
 
-checkpatch is no bible, after all.
+Comparison to NULL could be written …
 
+Thus fix affected source code places.
 
-thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/ebitmap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Takashi
+diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
+index 697bd748760a..c778135989f5 100644
+--- a/security/selinux/ss/ebitmap.c
++++ b/security/selinux/ss/ebitmap.c
+@@ -96,12 +96,12 @@ int ebitmap_netlbl_export(struct ebitmap *ebmap,
+ 	unsigned int iter;
+ 	int rc;
+ 
+-	if (e_iter = NULL) {
++	if (!e_iter) {
+ 		*catmap = NULL;
+ 		return 0;
+ 	}
+ 
+-	if (*catmap != NULL)
++	if (*catmap)
+ 		netlbl_catmap_free(*catmap);
+ 	*catmap = NULL;
+ 
+@@ -161,14 +161,14 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
+ 			continue;
+ 		}
+ 
+-		if (e_iter = NULL ||
++		if (!e_iter ||
+ 		    offset >= e_iter->startbit + EBITMAP_SIZE) {
+ 			e_prev = e_iter;
+ 			e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
+-			if (e_iter = NULL)
++			if (!e_iter)
+ 				goto netlbl_import_failure;
+ 			e_iter->startbit = offset - (offset % EBITMAP_SIZE);
+-			if (e_prev = NULL)
++			if (!e_prev)
+ 				ebmap->node = e_iter;
+ 			else
+ 				e_prev->next = e_iter;
+-- 
+2.14.0
+
