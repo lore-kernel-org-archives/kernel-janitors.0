@@ -1,74 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 15 Aug 2017 17:15:17 +0000
-Subject: Applied "ASoC: codecs: zx_aud96p22: constify snd_soc_dai_ops structures" to the asoc tree
-Message-Id: <E1dhfQz-0003bZ-Tv@debutante>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 13 Aug 2017 15:28:08 +0000
+Subject: [PATCH] ASoC: zx_aud96p22: make array aud96p22_dt_ids static
+Message-Id: <20170813152808.17774-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>@alsa-project.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bhumika Goyal <bhumirks@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: codecs: zx_aud96p22: constify snd_soc_dai_ops structures
+The array aud96p22_dt_ids is local to the source and does not need to be
+in global scope, so make it static.
 
-has been applied to the asoc tree at
+Cleans up sparse warning:
+symbol 'aud96p22_dt_ids' was not declared. Should it be static?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 66f41da341cd97ad362c4a40e1c9a0a28d746f81 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 17:10:11 +0200
-Subject: [PATCH] ASoC: codecs: zx_aud96p22: constify snd_soc_dai_ops
- structures
-
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
-
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
  sound/soc/codecs/zx_aud96p22.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/zx_aud96p22.c b/sound/soc/codecs/zx_aud96p22.c
-index bc23ce1a30a1..0e5b43b948b4 100644
+index 36d0a7087a54..78017fb69c04 100644
 --- a/sound/soc/codecs/zx_aud96p22.c
 +++ b/sound/soc/codecs/zx_aud96p22.c
-@@ -312,7 +312,7 @@ static int aud96p22_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+@@ -382,7 +382,7 @@ static int aud96p22_i2c_remove(struct i2c_client *i2c)
  	return 0;
  }
  
--static struct snd_soc_dai_ops aud96p22_dai_ops = {
-+static const struct snd_soc_dai_ops aud96p22_dai_ops = {
- 	.set_fmt = aud96p22_set_fmt,
+-const struct of_device_id aud96p22_dt_ids[] = {
++static const struct of_device_id aud96p22_dt_ids[] = {
+ 	{ .compatible = "zte,zx-aud96p22", },
+ 	{ }
  };
- 
 -- 
-2.13.3
+2.11.0
 
