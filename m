@@ -1,75 +1,48 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Sun, 13 Aug 2017 15:41:33 +0000
+From: Yanhao Mo <yanhaocs@gmail.com>
+Date: Mon, 14 Aug 2017 11:00:50 +0000
 Subject: Re: [PATCH 4/4] selinux: Adjust five checks for null pointers
-Message-Id: <20170813154133.GA4515@mail.hallyn.com>
+Message-Id: <20170814110048.eqn23wzy6dxbpzsj@sid>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="66pdskfie4bwia7t"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
-	<b74d176c-b028-7e82-80c6-a3014d57d648@users.sourceforge.net>
+ <b74d176c-b028-7e82-80c6-a3014d57d648@users.sourceforge.net>
 In-Reply-To: <b74d176c-b028-7e82-80c6-a3014d57d648@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-security-module@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Alexey Dobriyan <adobriyan@gmail.com>, Daniel Jurgens <danielj@mellanox.com>, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Junil Lee <junil0814.lee@lge.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Quoting SF Markus Elfring (elfring@users.sourceforge.net):
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 13 Aug 2017 16:16:05 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written …
 
-...  could be written all sorts of ways.  But what's the advantage of this?
-Personally I find "x = NULL" easier to read, and AFAIK psychology backs me
-up on the idea that negation is harder on the brain and worth avoiding when
-possible.
+--66pdskfie4bwia7t
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Aug 13, 2017 at 04:50:07PM +0200, SF Markus Elfring wrote:
+>=20
+> Comparison to NULL could be written =E2=80=A6
+>=20
 > Thus fix affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/ebitmap.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-> index 697bd748760a..c778135989f5 100644
-> --- a/security/selinux/ss/ebitmap.c
-> +++ b/security/selinux/ss/ebitmap.c
-> @@ -96,12 +96,12 @@ int ebitmap_netlbl_export(struct ebitmap *ebmap,
->  	unsigned int iter;
->  	int rc;
->  
-> -	if (e_iter = NULL) {
-> +	if (!e_iter) {
->  		*catmap = NULL;
->  		return 0;
->  	}
->  
-> -	if (*catmap != NULL)
-> +	if (*catmap)
->  		netlbl_catmap_free(*catmap);
->  	*catmap = NULL;
->  
-> @@ -161,14 +161,14 @@ int ebitmap_netlbl_import(struct ebitmap *ebmap,
->  			continue;
->  		}
->  
-> -		if (e_iter = NULL ||
-> +		if (!e_iter ||
->  		    offset >= e_iter->startbit + EBITMAP_SIZE) {
->  			e_prev = e_iter;
->  			e_iter = kmem_cache_zalloc(ebitmap_node_cachep, GFP_ATOMIC);
-> -			if (e_iter = NULL)
-> +			if (!e_iter)
->  				goto netlbl_import_failure;
->  			e_iter->startbit = offset - (offset % EBITMAP_SIZE);
-> -			if (e_prev = NULL)
-> +			if (!e_prev)
->  				ebmap->node = e_iter;
->  			else
->  				e_prev->next = e_iter;
-> -- 
-> 2.14.0
+
+I think this is just a matter of personal preference.
+
+--66pdskfie4bwia7t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb9bJQfCTGv6uM2+ujv2XAviIsq4FAlmRguAACgkQjv2XAviI
+sq5CDw//eewgeM88mhq4cBC4SSRyuyHSeGm3u1x4m/GJHjctfLlcJKu4xfgzxbKa
+6CZnwOIZ9fO8kcmw0e1q1gWZ0uyMdsCIgcW1zyX1Dge+dAIcSNdU/Vdt6a5oUmDk
+DnDpGCYdNp1nh8CNMRnlMsIkAIx1RsgaXgTntnb28BM/yCMiwdcoxKujBWZZII59
+UVV7XoIedaM+cRTN6yZtGAViIIOCZL1kH7J+9d65rdCY2cgCMu56jUrJrN3q1iTY
+ZifjThMRodvv4MFvoOk5cmobyuJtPql+NqsGIWRUK4+xpMvY3JHXBeY7yLXP/S45
++97EOEQ5Mbu3hHelsNVpfFqR2QNrVuW8J97uvYJanuFBFUrmJO5fxalETEljxCYH
+yXty0HczNLHCJWGUAs0PRZ+u7Y2lMxy3qNk9J9+LUL+KApMsxKAUCfwsnrHYhYsR
+vZaWZB/v5OQwG1hE2ElGsWL8TdIGd3T2l4uHPnSq8EG+4mj++tO6mA7zBMWHrNnX
+6O2SuBbIM9ZTJG+u30C6KXaWU2dAvHdXuVlS6LS5+m22cpCDrEDwW5A9LWUTn6TY
+VInoCSei7k/usPfegKdjQ43pccqbSk/N4yve8J5B5ajPHMV2JSW+tuSg6bl90kTx
+ERIkagRt/r9BomAcqM6ksDP2JjROYTnsmjUUVUBtrZBO14CA8mc=
+=u+dx
+-----END PGP SIGNATURE-----
+
+--66pdskfie4bwia7t--
