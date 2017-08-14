@@ -1,60 +1,89 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 12 Aug 2017 22:50:28 +0000
-Subject: [PATCH] ASoC: hdmi-codec: make a function and two arrays static
-Message-Id: <20170812225028.7437-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Aug 2017 16:42:58 +0000
+Subject: Applied "ASoC: blackfin: Use common error handling code in sport_create()" to the asoc tree
+Message-Id: <E1dhISA-0005BA-7h@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ef3f99a2-7e51-ff07-8e68-3d74495854a9@users.sourceforge.net>
+In-Reply-To: <ef3f99a2-7e51-ff07-8e68-3d74495854a9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Bhumika Goyal <bhumirks@gmail.com>, Vincent Abriou <vincent.abriou@st.com>, Jon Medhurst <tixy@linaro.org>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-The function hdmi_codec_eld_chmap and arrays hdmi_codec_stereo_chmaps
-and hdmi_codec_8ch_chmaps are local to the source and do not need to
-be in global scope, so make them static.
+   ASoC: blackfin: Use common error handling code in sport_create()
 
-Cleans up sparse warnings:
-symbol 'hdmi_codec_eld_chmap' was not declared. Should it be static?
-symbol 'hdmi_codec_stereo_chmaps' was not declared. Should it be static?
-symbol 'hdmi_codec_8ch_chmaps' was not declared. Should it be static?
+has been applied to the asoc tree at
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 11fca34b2783408dbf37e42a38e4b55d54d6fa3a Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 22:02:47 +0200
+Subject: [PATCH] ASoC: blackfin: Use common error handling code in
+ sport_create()
+
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/hdmi-codec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/blackfin/bf6xx-sport.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index f288404f0a61..7aba4f312809 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -67,14 +67,14 @@ struct hdmi_codec_cea_spk_alloc {
- };
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+index 1bc3e0a47a57..fcddebf2558c 100644
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ b/sound/soc/blackfin/bf6xx-sport.c
+@@ -394,19 +394,18 @@ struct sport_device *sport_create(struct platform_device *pdev)
+ 	sport->pdev = pdev;
  
- /* Channel maps  stereo HDMI */
--const struct snd_pcm_chmap_elem hdmi_codec_stereo_chmaps[] = {
-+static const struct snd_pcm_chmap_elem hdmi_codec_stereo_chmaps[] = {
- 	{ .channels = 2,
- 	  .map = { SNDRV_CHMAP_FL, SNDRV_CHMAP_FR } },
- 	{ }
- };
+ 	ret = sport_get_resource(sport);
+-	if (ret) {
+-		kfree(sport);
+-		return NULL;
+-	}
++	if (ret)
++		goto free_data;
  
- /* Channel maps for multi-channel playbacks, up to 8 n_ch */
--const struct snd_pcm_chmap_elem hdmi_codec_8ch_chmaps[] = {
-+static const struct snd_pcm_chmap_elem hdmi_codec_8ch_chmaps[] = {
- 	{ .channels = 2, /* CA_ID 0x00 */
- 	  .map = { SNDRV_CHMAP_FL, SNDRV_CHMAP_FR } },
- 	{ .channels = 4, /* CA_ID 0x01 */
-@@ -340,7 +340,7 @@ static unsigned long hdmi_codec_spk_mask_from_alloc(int spk_alloc)
- 	return spk_mask;
+ 	ret = sport_request_resource(sport);
+-	if (ret) {
+-		kfree(sport);
+-		return NULL;
+-	}
++	if (ret)
++		goto free_data;
+ 
+ 	dev_dbg(dev, "SPORT create success\n");
+ 	return sport;
++free_data:
++	kfree(sport);
++	return NULL;
  }
+ EXPORT_SYMBOL(sport_create);
  
--void hdmi_codec_eld_chmap(struct hdmi_codec_priv *hcp)
-+static void hdmi_codec_eld_chmap(struct hdmi_codec_priv *hcp)
- {
- 	u8 spk_alloc;
- 	unsigned long spk_mask;
 -- 
-2.11.0
+2.13.2
 
