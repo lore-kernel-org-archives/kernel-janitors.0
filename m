@@ -1,62 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 Aug 2017 13:24:49 +0000
-Subject: [PATCH] fsl/fman: make arrays port_ids static, reduces object code size
-Message-Id: <20170831132449.27600-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Aug 2017 09:36:01 +0000
+Subject: [PATCH 2/2] kmemleak: Use seq_puts() in print_unreferenced()
+Message-Id: <b764965b-1d80-83c6-72f0-7b64d1036168@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
+In-Reply-To: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Aug 2017 11:23:11 +0200
 
-Don't populate the arrays port_ids on the stack, instead make them static.
-Makes the object code smaller by over 700 bytes:
+The script "checkpatch.pl" pointed information out like the following.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  28785	   5832	    192	  34809	   87f9	fman.o
+WARNING: Prefer seq_puts to seq_printf
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  27921	   5992	    192	  34105	   8539	fman.o
+Thus fix the affected source code place.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/freescale/fman/fman.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ mm/kmemleak.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-index f420dac2f484..9530405030a7 100644
---- a/drivers/net/ethernet/freescale/fman/fman.c
-+++ b/drivers/net/ethernet/freescale/fman/fman.c
-@@ -2368,15 +2368,21 @@ u32 fman_get_qman_channel_id(struct fman *fman, u32 port_id)
- 	int i;
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index c6c798d90b2e..cfac550d4d00 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -373,7 +373,7 @@ static void print_unreferenced(struct seq_file *seq,
+ 		   object->comm, object->pid, object->jiffies,
+ 		   msecs_age / 1000, msecs_age % 1000);
+ 	hex_dump_object(seq, object);
+-	seq_printf(seq, "  backtrace:\n");
++	seq_puts(seq, "  backtrace:\n");
  
- 	if (fman->state->rev_info.major >= 6) {
--		u32 port_ids[] = {0x30, 0x31, 0x28, 0x29, 0x2a, 0x2b,
--				  0x2c, 0x2d, 0x2, 0x3, 0x4, 0x5, 0x7, 0x7};
-+		static const u32 port_ids[] = {
-+			0x30, 0x31, 0x28, 0x29, 0x2a, 0x2b,
-+			0x2c, 0x2d, 0x2, 0x3, 0x4, 0x5, 0x7, 0x7
-+		};
-+
- 		for (i = 0; i < fman->state->num_of_qman_channels; i++) {
- 			if (port_ids[i] = port_id)
- 				break;
- 		}
- 	} else {
--		u32 port_ids[] = {0x30, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x1,
--				  0x2, 0x3, 0x4, 0x5, 0x7, 0x7};
-+		static const u32 port_ids[] = {
-+			0x30, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x1,
-+			0x2, 0x3, 0x4, 0x5, 0x7, 0x7
-+		};
-+
- 		for (i = 0; i < fman->state->num_of_qman_channels; i++) {
- 			if (port_ids[i] = port_id)
- 				break;
+ 	for (i = 0; i < object->trace_len; i++) {
+ 		void *ptr = (void *)object->trace[i];
 -- 
-2.14.1
+2.14.0
 
