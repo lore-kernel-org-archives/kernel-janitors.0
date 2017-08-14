@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:44:57 +0000
-Subject: Applied "ASoC: max98926: make max98926_spk_tlv and max98926_current_tlv static" to the asoc tree
-Message-Id: <E1dhIU5-0005cp-EE@finisterre>
+Date: Mon, 14 Aug 2017 16:44:54 +0000
+Subject: Applied "ASoC: rt5514: make array rt5514_dai static" to the asoc tree
+Message-Id: <E1dhIU2-0005bq-7n@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170813150033.17049-1-colin.king@canonical.com>
-In-Reply-To: <20170813150033.17049-1-colin.king@canonical.com>
+References: <20170813150803.17292-1-colin.king@canonical.com>
+In-Reply-To: <20170813150803.17292-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bhumika Goyal <bhumirks@gmail.com>, "Gustavo A . R . Silva" <garsilva@embeddedor.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
 The patch
 
-   ASoC: max98926: make max98926_spk_tlv and max98926_current_tlv static
+   ASoC: rt5514: make array rt5514_dai static
 
 has been applied to the asoc tree at
 
@@ -38,40 +38,38 @@ to this mail.
 Thanks,
 Mark
 
-From 9ab51b9469e6a63dbf4385bdd02704e87b65a039 Mon Sep 17 00:00:00 2001
+From e5e8e6182a3b9514cde41d957684b59ee8f6cf21 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Sun, 13 Aug 2017 16:00:33 +0100
-Subject: [PATCH] ASoC: max98926: make max98926_spk_tlv and
- max98926_current_tlv static
+Date: Sun, 13 Aug 2017 16:08:03 +0100
+Subject: [PATCH] ASoC: rt5514: make array rt5514_dai static
 
-max98926_spk_tlv and max98926_current_tlv are local to the source and do
-not need to be in global scope, so make them static.
+The array rt5514_dai is local to the source and does not need to be in
+global scope, so make it static.
 
 Cleans up sparse warnings:
-symbol 'max98926_spk_tlv' was not declared. Should it be static?
-symbol 'max98926_current_tlv' was not declared. Should it be static?
+symbol 'rt5514_dai' was not declared. Should it be static?
+
+warning: symbol 'rt5514_dai' was not declared. Should it be static?
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98926.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5514.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/max98926.c b/sound/soc/codecs/max98926.c
-index f16145d8ee6b..13d2708657e1 100644
---- a/sound/soc/codecs/max98926.c
-+++ b/sound/soc/codecs/max98926.c
-@@ -213,8 +213,8 @@ static bool max98926_readable_register(struct device *dev, unsigned int reg)
- 	}
+diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
+index 0eabe569ab73..a694ce9fed86 100644
+--- a/sound/soc/codecs/rt5514.c
++++ b/sound/soc/codecs/rt5514.c
+@@ -1066,7 +1066,7 @@ static const struct snd_soc_dai_ops rt5514_aif_dai_ops = {
+ 	.set_tdm_slot = rt5514_set_tdm_slot,
  };
  
--DECLARE_TLV_DB_SCALE(max98926_spk_tlv, -600, 100, 0);
--DECLARE_TLV_DB_RANGE(max98926_current_tlv,
-+static DECLARE_TLV_DB_SCALE(max98926_spk_tlv, -600, 100, 0);
-+static DECLARE_TLV_DB_RANGE(max98926_current_tlv,
- 	0, 11, TLV_DB_SCALE_ITEM(20, 20, 0),
- 	12, 15, TLV_DB_SCALE_ITEM(320, 40, 0),
- );
+-struct snd_soc_dai_driver rt5514_dai[] = {
++static struct snd_soc_dai_driver rt5514_dai[] = {
+ 	{
+ 		.name = "rt5514-aif1",
+ 		.id = 0,
 -- 
 2.13.2
 
