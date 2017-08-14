@@ -1,7 +1,7 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 14 Aug 2017 03:30:41 +0000
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Date: Mon, 14 Aug 2017 03:59:21 +0000
 Subject: Re: [PATCH] powerpc/perf: double unlock bug in imc_common_cpuhp_mem_free()
-Message-Id: <87bmnisu5a.fsf@concordia.ellerman.id.au>
+Message-Id: <0b9f75e5-4519-4d84-cf05-771c16e80db5@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170811200541.qlxcpp3og33sdki3@mwanda>
 In-Reply-To: <20170811200541.qlxcpp3og33sdki3@mwanda>
@@ -9,11 +9,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Cc: Paul Mackerras <paulus@samba.org>, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Cc: Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Hemant Kumar <hemant@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
 
+
+On Saturday 12 August 2017 01:35 AM, Dan Carpenter wrote:
 > There is a typo so we call unlock instead of lock.
+
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+
+nest_imc_refc used to maintain list of perf sessions thats using the
+nest units currently. This is needed in turning off nest engine microcode
+when not in use.
+
+Yes will send a patch to fix ref->lock change.
+
+Thanks for fix
+
+Maddy
+
 >
 > Fixes: 885dcd709ba9 ("powerpc/perf: Add nest IMC PMU support")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
@@ -21,23 +35,19 @@ Dan Carpenter <dan.carpenter@oracle.com> writes:
 > I also don't understand how the &nest_imc_refc[node_id].lock works.  Why
 > can't we use ref->lock everywhere?  They seem equivalent, and my static
 > checker complains if we call the same lock different names.
-
-That looks like a bug to me, ie. we should always use ref.
-
-Maddy?
-
-cheers
-
+>
 > diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
 > index 46cd912af060..52017f6eafd9 100644
 > --- a/arch/powerpc/perf/imc-pmu.c
 > +++ b/arch/powerpc/perf/imc-pmu.c
 > @@ -1124,7 +1124,7 @@ static void cleanup_all_thread_imc_memory(void)
->  static void imc_common_cpuhp_mem_free(struct imc_pmu *pmu_ptr)
->  {
->  	if (pmu_ptr->domain = IMC_DOMAIN_NEST) {
+>   static void imc_common_cpuhp_mem_free(struct imc_pmu *pmu_ptr)
+>   {
+>   	if (pmu_ptr->domain = IMC_DOMAIN_NEST) {
 > -		mutex_unlock(&nest_init_lock);
 > +		mutex_lock(&nest_init_lock);
->  		if (nest_pmus = 1) {
->  			cpuhp_remove_state(CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE);
->  			kfree(nest_imc_refc);
+>   		if (nest_pmus = 1) {
+>   			cpuhp_remove_state(CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE);
+>   			kfree(nest_imc_refc);
+>
+
