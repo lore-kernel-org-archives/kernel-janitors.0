@@ -1,68 +1,77 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 01 Aug 2017 16:27:28 +0000
-Subject: [PATCH 1/2] Revert "ipv6: constify inet6_protocol structures"
-Message-Id: <1501604849-19443-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Aug 2017 16:42:43 +0000
+Subject: Applied "ASoC: kirkwood: Delete an error message for a failed memory allocation in kirkwood_i2s_dev_
+Message-Id: <E1dhIRv-000586-TL@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <2f32b2cf-dcde-ccef-24a5-f7b6ad9beb83@users.sourceforge.net>
+In-Reply-To: <2f32b2cf-dcde-ccef-24a5-f7b6ad9beb83@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, David Ahern <dsahern@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-This reverts commit 3a3a4e3054137c5ff5d4d306ec834f6d25d7f95b.
+The patch
 
-inet6_add_protocol and inet6_del_protocol include casts that remove the
-effect of the const annotation on their parameter, leading to possible
-runtime crashes.
+   ASoC: kirkwood: Delete an error message for a failed memory allocation in kirkwood_i2s_dev_probe()
 
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c7591edc2abd279018abb68aea5bdc604b8f56dd Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Aug 2017 09:35:33 +0200
+Subject: [PATCH] ASoC: kirkwood: Delete an error message for a failed memory
+ allocation in kirkwood_i2s_dev_probe()
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/kirkwood/kirkwood-i2s.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- net/ipv6/ip6_gre.c  |    2 +-
- net/ipv6/tcp_ipv6.c |    2 +-
- net/ipv6/udp.c      |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 3b09f71b9535..105a73cc5158 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -538,10 +538,9 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 	int err;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "allocation failed\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
++
+ 	dev_set_drvdata(&pdev->dev, priv);
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+2.13.2
 
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index 33865d6..67ff2aa 100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1080,7 +1080,7 @@ static void ip6gre_fb_tunnel_init(struct net_device *dev)
- }
- 
- 
--static const struct inet6_protocol ip6gre_protocol = {
-+static struct inet6_protocol ip6gre_protocol __read_mostly = {
- 	.handler     = gre_rcv,
- 	.err_handler = ip6gre_err,
- 	.flags       = INET6_PROTO_NOPOLICY|INET6_PROTO_FINAL,
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 39ee8e7..ced5dcf 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1944,7 +1944,7 @@ struct proto tcpv6_prot = {
- 	.diag_destroy		= tcp_abort,
- };
- 
--static const struct inet6_protocol tcpv6_protocol = {
-+static struct inet6_protocol tcpv6_protocol = {
- 	.early_demux	=	tcp_v6_early_demux,
- 	.early_demux_handler =  tcp_v6_early_demux,
- 	.handler	=	tcp_v6_rcv,
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index 7e6d7f5..98fe456 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -1457,7 +1457,7 @@ int compat_udpv6_getsockopt(struct sock *sk, int level, int optname,
- }
- #endif
- 
--static const struct inet6_protocol udpv6_protocol = {
-+static struct inet6_protocol udpv6_protocol = {
- 	.early_demux	=	udp_v6_early_demux,
- 	.early_demux_handler =  udp_v6_early_demux,
- 	.handler	=	udpv6_rcv,
