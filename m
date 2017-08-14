@@ -1,76 +1,135 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 16:42:11 +0000
-Subject: [PATCH 8/8] CIFS: One function call less in cifs_do_create() after error detection
-Message-Id: <3b7e0d4a-6707-c44f-8775-9e10a291fcd2@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Aug 2017 16:42:53 +0000
+Subject: Applied "ASoC: blackfin: Add some spaces for better code readability" to the asoc tree
+Message-Id: <E1dhIS5-0005AB-H8@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
-In-Reply-To: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
+References: <2c2fabf2-3238-ab23-4df8-d93c702ff51e@users.sourceforge.net>
+In-Reply-To: <2c2fabf2-3238-ab23-4df8-d93c702ff51e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: blackfin: Add some spaces for better code readability
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 11f25bbaaa87bf583a453b202db9c8ee9b3cbd50 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 17:47:44 +0200
+Date: Fri, 11 Aug 2017 22:20:07 +0200
+Subject: [PATCH] ASoC: blackfin: Add some spaces for better code readability
 
-The kfree() function was called in a few cases by the
-cifs_do_create() function during error handling even if
-the passed variable contained a null pointer.
-
-Add a jump target according to the Linux coding style convention.
+Use space characters at some source code places according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/cifs/dir.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/soc/blackfin/bf6xx-sport.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index 69babcf4f653..73e68aa5326e 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -258,7 +258,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
- 				CIFSSMBClose(xid, tcon, fid->netfid);
- 				iput(newinode);
- 				rc = -EISDIR;
--				goto out;
-+				goto free_path;
- 			}
+diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
+index fcddebf2558c..d2caadfe7b6d 100644
+--- a/sound/soc/blackfin/bf6xx-sport.c
++++ b/sound/soc/blackfin/bf6xx-sport.c
+@@ -129,7 +129,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
  
- 			if (!S_ISREG(newinode->i_mode)) {
-@@ -301,7 +301,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
- 			break;
- 
- 		default:
--			goto out;
-+			goto free_path;
- 		}
- 		/*
- 		 * fallthrough to retry, using older open call, this is case
-@@ -334,13 +334,13 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
- 
- 	if (!server->ops->open) {
- 		rc = -ENOSYS;
--		goto out;
-+		goto free_path;
+ 	for (i = 0; i < fragcount; ++i) {
+ 		desc[i].next_desc_addr  = &(desc[i + 1]);
+-		desc[i].start_addr = (unsigned long)buf + i*fragsize;
++		desc[i].start_addr = (unsigned long)buf + i * fragsize;
+ 		desc[i].cfg = cfg;
+ 		desc[i].x_count = count;
+ 		desc[i].x_modify = wdsize;
+@@ -138,7 +138,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
  	}
  
- 	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
- 	if (buf = NULL) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto free_path;
+ 	/* make circular */
+-	desc[fragcount-1].next_desc_addr = desc;
++	desc[fragcount - 1].next_desc_addr = desc;
+ }
+ 
+ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+@@ -148,7 +148,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+ 	unsigned int cfg;
+ 	dma_addr_t addr;
+ 
+-	count = fragsize/sport->wdsize;
++	count = fragsize / sport->wdsize;
+ 
+ 	if (sport->tx_desc)
+ 		dma_free_coherent(NULL, sport->tx_desc_size,
+@@ -166,8 +166,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
+ 	cfg = DMAFLOW_LIST | DI_EN | compute_wdsize(sport->wdsize) | NDSIZE_6;
+ 
+ 	setup_desc(sport->tx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, count, sport->wdsize);
+-
++		   cfg | DMAEN, count, sport->wdsize);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(sport_config_tx_dma);
+@@ -179,7 +178,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
+ 	unsigned int cfg;
+ 	dma_addr_t addr;
+ 
+-	count = fragsize/sport->wdsize;
++	count = fragsize / sport->wdsize;
+ 
+ 	if (sport->rx_desc)
+ 		dma_free_coherent(NULL, sport->rx_desc_size,
+@@ -198,8 +197,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
+ 		| WNR | NDSIZE_6;
+ 
+ 	setup_desc(sport->rx_desc, buf, fragcount, fragsize,
+-			cfg|DMAEN, count, sport->wdsize);
+-
++		   cfg | DMAEN, count, sport->wdsize);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(sport_config_rx_dma);
+@@ -226,7 +224,7 @@ static irqreturn_t sport_tx_irq(int irq, void *dev_id)
+ 	static unsigned long status;
+ 
+ 	status = get_dma_curr_irqstat(sport->tx_dma_chan);
+-	if (status & (DMA_DONE|DMA_ERR)) {
++	if (status & (DMA_DONE | DMA_ERR)) {
+ 		clear_dma_irqstat(sport->tx_dma_chan);
+ 		SSYNC();
  	}
+@@ -241,7 +239,7 @@ static irqreturn_t sport_rx_irq(int irq, void *dev_id)
+ 	unsigned long status;
  
- 	/*
-@@ -444,6 +444,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
- 
- out:
- 	kfree(buf);
-+free_path:
- 	kfree(full_path);
- 	return rc;
- 
+ 	status = get_dma_curr_irqstat(sport->rx_dma_chan);
+-	if (status & (DMA_DONE|DMA_ERR)) {
++	if (status & (DMA_DONE | DMA_ERR)) {
+ 		clear_dma_irqstat(sport->rx_dma_chan);
+ 		SSYNC();
+ 	}
 -- 
-2.14.0
+2.13.2
 
