@@ -1,42 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 18:00:25 +0000
-Subject: [PATCH v2 0/4] ACPI-APEI-HEST: Fine-tuning for two function implementations
-Message-Id: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Aug 2017 16:42:40 +0000
+Subject: Applied "ASoC: fsi: Delete an error message for a failed memory allocation in fsi_probe()" to the as
+Message-Id: <E1dhIRs-000578-E6@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
- <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
- <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
- <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
+References: <c78da5a0-fd60-b9fd-7607-51995c1fee8c@users.sourceforge.net>
+In-Reply-To: <c78da5a0-fd60-b9fd-7607-51995c1fee8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Geert Uytterhoeven <geert@linux-m68k.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: fsi: Delete an error message for a failed memory allocation in fsi_probe()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From dd80627d0688709a77233787a9c9d7e1f8e419ac Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 19:45:43 +0200
+Date: Thu, 10 Aug 2017 18:18:20 +0200
+Subject: [PATCH] ASoC: fsi: Delete an error message for a failed memory
+ allocation in fsi_probe()
 
-A few update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (4):
-  Fix a typo in a comment line
-  Use kmalloc_array() in hest_ghes_dev_register()
-  Move an assignment in hest_ghes_dev_register()
-  Reduce the scope for a variable in acpi_hest_init()
+This issue was detected by using the Coccinelle software.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/sh/fsi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-v2:
-* Desired changes were rebased on source files from Linux next-20170803.
-
-* The number of update steps was reduced.
-
- drivers/acpi/apei/hest.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index 005b21506556..1f41cf1ff830 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -1962,10 +1962,8 @@ static int fsi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
+-	if (!master) {
+-		dev_err(&pdev->dev, "Could not allocate master\n");
++	if (!master)
+ 		return -ENOMEM;
+-	}
+ 
+ 	master->base = devm_ioremap_nocache(&pdev->dev,
+ 					    res->start, resource_size(res));
 -- 
-2.13.4
+2.13.2
 
