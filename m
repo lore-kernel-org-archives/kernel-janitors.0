@@ -1,24 +1,36 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Tue, 08 Aug 2017 12:37:03 +0000
-Subject: Re: [PATCH 5/6] [media] exynos4-is: constify video_subdev structures
-Message-Id: <5c673a72-98f6-1501-845e-7d83fabfa659@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 14 Aug 2017 17:13:26 +0000
+Subject: [PATCH] sound: emu8000: constify emu8000_ops
+Message-Id: <1502730806-11637-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
- <CGME20170808123709epcas2p229a31cfa19e3a5bf3986e547162e2613@epcas2p2.samsung.com>
-In-Reply-To: <1502189912-28794-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-On 08/08/2017 12:58 PM, Julia Lawall wrote:
-> The v4l2_subdev_ops structures are only passed as the second
-> argument of v4l2_subdev_init, which is const, so the
-> v4l2_subdev_ops structures can be const as well.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
+The structure emu8000_ops is only copied into another structure, so
+it can be const.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/isa/sb/emu8000_callback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/isa/sb/emu8000_callback.c b/sound/isa/sb/emu8000_callback.c
+index d28d712..5a48550 100644
+--- a/sound/isa/sb/emu8000_callback.c
++++ b/sound/isa/sb/emu8000_callback.c
+@@ -62,7 +62,7 @@ static int load_fx(struct snd_emux *emu, int type, int mode,
+ /*
+  * set up operators
+  */
+-static struct snd_emux_operators emu8000_ops = {
++static const struct snd_emux_operators emu8000_ops = {
+ 	.owner =	THIS_MODULE,
+ 	.get_voice =	get_voice,
+ 	.prepare =	start_voice,
+
