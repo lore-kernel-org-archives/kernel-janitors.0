@@ -1,47 +1,52 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Mon, 07 Aug 2017 06:41:03 +0000
-Subject: Re: [PATCH] extcon: cros-ec: Fix a potential NULL pointer dereference
-Message-Id: <59880B7F.2020300@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Aug 2017 09:35:02 +0000
+Subject: [PATCH 1/2] kmemleak: Delete an error message for a failed memory allocation in two functions
+Message-Id: <986426ab-4ca9-ee56-9712-d06c25a2ed1a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170807063041epcas1p24acf2ca9a0dc16bbf1a800ad0dbb3e01@epcas1p2.samsung.com>
-        <20170807063033.8063-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170807063033.8063-1-christophe.jaillet@wanadoo.fr>
+References: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
+In-Reply-To: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, myungjoo.ham@samsung.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Aug 2017 10:50:22 +0200
 
-On 2017년 08월 07일 15:30, Christophe JAILLET wrote:
-> Return -ENOMEM in case of memory allocation failure. This avoids a NULL
-> pointer dereference.
-> 
-> Fixes: c69831666109 ("extcon: cros-ec: Add extcon-cros-ec driver to support display out")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/extcon/extcon-usbc-cros-ec.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
-> index e759ed477735..598956f1dcae 100644
-> --- a/drivers/extcon/extcon-usbc-cros-ec.c
-> +++ b/drivers/extcon/extcon-usbc-cros-ec.c
-> @@ -68,6 +68,8 @@ static int cros_ec_pd_command(struct cros_ec_extcon_info *info,
->  	int ret;
->  
->  	msg = kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
-> +	if (!msg)
-> +		return -ENOMEM;
->  
->  	msg->version = version;
->  	msg->command = command;
-> 
+Omit an extra message for a memory allocation failure in these functions.
 
-Applied it. Thanks.
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ mm/kmemleak.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 7780cd83a495..c6c798d90b2e 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -555,7 +555,6 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 
+ 	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
+ 	if (!object) {
+-		pr_warn("Cannot allocate a kmemleak_object structure\n");
+ 		kmemleak_disable();
+ 		return NULL;
+ 	}
+@@ -775,10 +774,8 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
+ 	}
+ 
+ 	area = kmem_cache_alloc(scan_area_cache, gfp_kmemleak_mask(gfp));
+-	if (!area) {
+-		pr_warn("Cannot allocate a scan area\n");
++	if (!area)
+ 		goto out;
+-	}
+ 
+ 	spin_lock_irqsave(&object->lock, flags);
+ 	if (size = SIZE_MAX) {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.0
+
