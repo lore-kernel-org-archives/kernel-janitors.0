@@ -1,67 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 20:24:26 +0000
-Subject: [PATCH 4/4] [media] ds3000: Delete jump targets in ds3000_attach()
-Message-Id: <6845c215-eeb8-5286-6049-ea4befb645ae@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 14 Aug 2017 16:59:13 +0000
+Subject: [PATCH] media: ddbridge: constify stv0910_p and lnbh25_cfg
+Message-Id: <1502729953-3630-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
-In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 22:02:54 +0200
+These structures are only copied into other stuructures, so
+they can be const.
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+Done with the help of Coccinelle.
 
-* Move a bit of exception handling code into an if branch.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-* Delete two jump targets which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/ds3000.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/pci/ddbridge/ddbridge-core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
-index 3e347d03acb3..bd4f8278c906 100644
---- a/drivers/media/dvb-frontends/ds3000.c
-+++ b/drivers/media/dvb-frontends/ds3000.c
-@@ -841,7 +841,7 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
--		goto error2;
-+		return NULL;
- 
- 	state->config = config;
- 	state->i2c = i2c;
-@@ -850,8 +850,9 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
- 	/* check if the demod is present */
- 	ret = ds3000_readreg(state, 0x00) & 0xfe;
- 	if (ret != 0xe0) {
-+		kfree(state);
- 		printk(KERN_ERR "Invalid probe, probably not a DS3000\n");
--		goto error3;
-+		return NULL;
- 	}
- 
- 	printk(KERN_INFO "DS3000 chip version: %d.%d attached.\n",
-@@ -869,11 +870,6 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
- 	 */
- 	ds3000_set_voltage(&state->frontend, SEC_VOLTAGE_OFF);
- 	return &state->frontend;
--
--error3:
--	kfree(state);
--error2:
--	return NULL;
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 7e164a37..7ff570b 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -800,14 +800,14 @@ static int tuner_attach_stv6110(struct ddb_input *input, int type)
+ 	return 0;
  }
- EXPORT_SYMBOL(ds3000_attach);
  
--- 
-2.14.1
+-static struct stv0910_cfg stv0910_p = {
++static const struct stv0910_cfg stv0910_p = {
+ 	.adr      = 0x68,
+ 	.parallel = 1,
+ 	.rptlvl   = 4,
+ 	.clk      = 30000000,
+ };
+ 
+-static struct lnbh25_config lnbh25_cfg = {
++static const struct lnbh25_config lnbh25_cfg = {
+ 	.i2c_address = 0x0c << 1,
+ 	.data2_config = LNBH25_TEN
+ };
 
