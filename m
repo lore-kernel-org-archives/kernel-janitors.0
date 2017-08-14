@@ -1,67 +1,37 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 10:58:28 +0000
-Subject: [PATCH 2/6] [media] vimc: constify video_subdev structures
-Message-Id: <1502189912-28794-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 14 Aug 2017 05:58:37 +0000
+Subject: [PATCH] [media] pxa_camera: constify v4l2_clk_ops structure
+Message-Id: <1502690317-9478-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Helen Koike <helen.koike@collabora.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-These structures are all only stored in fields of v4l2_subdev_ops
-structures, all of which are const, so these structures can be const
-as well.
+This v4l2_clk_ops structure is only passed as the first argument of
+v4l2_clk_register, which is const, so the v4l2_clk_ops structure can
+also be const.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/platform/vimc/vimc-debayer.c |    2 +-
- drivers/media/platform/vimc/vimc-scaler.c  |    2 +-
- drivers/media/platform/vimc/vimc-sensor.c  |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/pxa_camera.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
-index 033a131..4d663e8 100644
---- a/drivers/media/platform/vimc/vimc-debayer.c
-+++ b/drivers/media/platform/vimc/vimc-debayer.c
-@@ -373,7 +373,7 @@ static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
- 	return 0;
- }
- 
--static struct v4l2_subdev_video_ops vimc_deb_video_ops = {
-+static const struct v4l2_subdev_video_ops vimc_deb_video_ops = {
- 	.s_stream = vimc_deb_s_stream,
+diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
+index 0d4af6d..4a800a4 100644
+--- a/drivers/media/platform/pxa_camera.c
++++ b/drivers/media/platform/pxa_camera.c
+@@ -2100,7 +2100,7 @@ static int pxac_fops_camera_release(struct file *filp)
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
  };
  
-diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
-index 0a3e086..e1602e0 100644
---- a/drivers/media/platform/vimc/vimc-scaler.c
-+++ b/drivers/media/platform/vimc/vimc-scaler.c
-@@ -267,7 +267,7 @@ static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
- 	return 0;
- }
- 
--static struct v4l2_subdev_video_ops vimc_sca_video_ops = {
-+static const struct v4l2_subdev_video_ops vimc_sca_video_ops = {
- 	.s_stream = vimc_sca_s_stream,
+-static struct v4l2_clk_ops pxa_camera_mclk_ops = {
++static const struct v4l2_clk_ops pxa_camera_mclk_ops = {
  };
  
-diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
-index 615c2b1..02e68c8 100644
---- a/drivers/media/platform/vimc/vimc-sensor.c
-+++ b/drivers/media/platform/vimc/vimc-sensor.c
-@@ -282,7 +282,7 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
- 	return 0;
- }
- 
--static struct v4l2_subdev_video_ops vimc_sen_video_ops = {
-+static const struct v4l2_subdev_video_ops vimc_sen_video_ops = {
- 	.s_stream = vimc_sen_s_stream,
- };
- 
+ static const struct video_device pxa_camera_videodev_template = {
 
