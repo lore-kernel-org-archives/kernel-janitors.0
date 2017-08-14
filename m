@@ -1,43 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 20:52:41 +0000
-Subject: [PATCH 3/3] [media] usbvision: Improve a size determination in usbvision_alloc()
-Message-Id: <0c35f860-fcae-4bbf-5b7b-19dd36af25e6@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 14 Aug 2017 05:43:56 +0000
+Subject: [PATCH] [media] v4l2: av7110_v4l: constify v4l2_audio structure
+Message-Id: <1502689436-31008-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
-In-Reply-To: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 22:22:13 +0200
+This v4l2_audio structure is only copied into other structures,
+so it can be const.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/usbvision/usbvision-video.c | 2 +-
+ drivers/media/pci/ttpci/av7110_v4l.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
-index e6807bad9792..960272d3c924 100644
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -1319,7 +1319,7 @@ static struct usb_usbvision *usbvision_alloc(struct usb_device *dev,
- {
- 	struct usb_usbvision *usbvision;
+diff --git a/drivers/media/pci/ttpci/av7110_v4l.c b/drivers/media/pci/ttpci/av7110_v4l.c
+index 397fe14..e4cf42c 100644
+--- a/drivers/media/pci/ttpci/av7110_v4l.c
++++ b/drivers/media/pci/ttpci/av7110_v4l.c
+@@ -218,7 +218,7 @@ static int stv0297_set_tv_freq(struct saa7146_dev *dev, u32 freq)
+ static struct saa7146_standard dvb_standard[];
+ static struct saa7146_standard standard[];
  
--	usbvision = kzalloc(sizeof(struct usb_usbvision), GFP_KERNEL);
-+	usbvision = kzalloc(sizeof(*usbvision), GFP_KERNEL);
- 	if (!usbvision)
- 		return NULL;
- 
--- 
-2.14.0
+-static struct v4l2_audio msp3400_v4l2_audio = {
++static const struct v4l2_audio msp3400_v4l2_audio = {
+ 	.index = 0,
+ 	.name = "Television",
+ 	.capability = V4L2_AUDCAP_STEREO
 
