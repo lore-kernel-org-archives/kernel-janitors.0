@@ -1,45 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 20:41:23 +0000
-Subject: [PATCH 1/3] ASoC: blackfin: Delete an error message for a failed memory allocation in sport_create()
-Message-Id: <d3eaf797-a4a3-f4ff-c368-3961b4e16fb1@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Aug 2017 16:44:50 +0000
+Subject: Applied "ASoC: zx_aud96p22: make array aud96p22_dt_ids static" to the asoc tree
+Message-Id: <E1dhITy-0005aq-ID@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
-In-Reply-To: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
+References: <20170626090014.8977-1-colin.king@canonical.com>
+In-Reply-To: <20170626090014.8977-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 21:45:37 +0200
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: zx_aud96p22: make array aud96p22_dt_ids static
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From def4b1243e56774fdc47de9292111a344f14e88c Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sun, 13 Aug 2017 16:28:08 +0100
+Subject: [PATCH] ASoC: zx_aud96p22: make array aud96p22_dt_ids static
+
+The array aud96p22_dt_ids is local to the source and does not need to be
+in global scope, so make it static.
+
+Cleans up sparse warning:
+symbol 'aud96p22_dt_ids' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/blackfin/bf6xx-sport.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/codecs/zx_aud96p22.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
-index dfb744381c42..1bc3e0a47a57 100644
---- a/sound/soc/blackfin/bf6xx-sport.c
-+++ b/sound/soc/blackfin/bf6xx-sport.c
-@@ -388,10 +388,9 @@ struct sport_device *sport_create(struct platform_device *pdev)
- 	int ret;
+diff --git a/sound/soc/codecs/zx_aud96p22.c b/sound/soc/codecs/zx_aud96p22.c
+index 032fb7cf6cbd..bc23ce1a30a1 100644
+--- a/sound/soc/codecs/zx_aud96p22.c
++++ b/sound/soc/codecs/zx_aud96p22.c
+@@ -382,7 +382,7 @@ static int aud96p22_i2c_remove(struct i2c_client *i2c)
+ 	return 0;
+ }
  
- 	sport = kzalloc(sizeof(*sport), GFP_KERNEL);
--	if (!sport) {
--		dev_err(dev, "Unable to allocate memory for sport device\n");
-+	if (!sport)
- 		return NULL;
--	}
-+
- 	sport->pdev = pdev;
- 
- 	ret = sport_get_resource(sport);
+-const struct of_device_id aud96p22_dt_ids[] = {
++static const struct of_device_id aud96p22_dt_ids[] = {
+ 	{ .compatible = "zte,zx-aud96p22", },
+ 	{ }
+ };
 -- 
-2.14.0
+2.13.2
 
