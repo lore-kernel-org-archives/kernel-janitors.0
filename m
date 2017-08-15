@@ -1,38 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Aug 2017 11:50:37 +0000
-Subject: Re: [PATCH] lib/cmdline.c: add to the get_options() documentation
-Message-Id: <20170821115036.mg2v7wfl565kksht@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Aug 2017 09:50:34 +0000
+Subject: [PATCH][V2] netfilter: fix indent on if statements
+Message-Id: <20170815095034.21058-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170821094602.baz6tv2v23sem3kw@mwanda>
- <D8F70276-D32C-4977-B66F-C78A60EE8C8A@gmail.com>
-In-Reply-To: <D8F70276-D32C-4977-B66F-C78A60EE8C8A@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ilya Matveychikov <matvejchikov@gmail.com>
-Cc: Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ben.hutchings@codethink.co.uk
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 21, 2017 at 02:42:52PM +0400, Ilya Matveychikov wrote:
-> 
-> > On Aug 21, 2017, at 1:46 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > 
-> > I wasn't sure how get_options() worked, so I looked at examples.  And by
-> > sheer chance the first example I picked the only example which uses it
-> > incorrectly...  I've added some comments that hopefully help.
-> > 
-> 
-> See also comments on my patch from Ben Hutchings:
-> https://patchwork.kernel.org/patch/9811617/
+From: Colin Ian King <colin.king@canonical.com>
 
-Ugh...  The implementation of get_options() looks gnarly, yes.  That
-affects the part of my comment which says:
+The returns on some if statements are not indented correctly,
+add in the missing tab.
 
-+ *     string.  It stores the number of numbers as the first element in the
-+ *     array.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bridge/netfilter/ebt_ip.c  | 4 ++--
+ net/bridge/netfilter/ebt_ip6.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-If we are going to keep the current behavior then we should specify that
-ints[0] can be higher than "nints - 1".  But I feel like the current
-behavior is wrong and that get_range() should never return more than n.
+diff --git a/net/bridge/netfilter/ebt_ip.c b/net/bridge/netfilter/ebt_ip.c
+index d06968bdf5ec..2b46c50abce0 100644
+--- a/net/bridge/netfilter/ebt_ip.c
++++ b/net/bridge/netfilter/ebt_ip.c
+@@ -64,14 +64,14 @@ ebt_ip_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 			if (NF_INVF(info, EBT_IP_DPORT,
+ 				    dst < info->dport[0] ||
+ 				    dst > info->dport[1]))
+-			return false;
++				return false;
+ 		}
+ 		if (info->bitmask & EBT_IP_SPORT) {
+ 			u32 src = ntohs(pptr->src);
+ 			if (NF_INVF(info, EBT_IP_SPORT,
+ 				    src < info->sport[0] ||
+ 				    src > info->sport[1]))
+-			return false;
++				return false;
+ 		}
+ 	}
+ 	return true;
+diff --git a/net/bridge/netfilter/ebt_ip6.c b/net/bridge/netfilter/ebt_ip6.c
+index 4617491be41e..2a5a52a53ec4 100644
+--- a/net/bridge/netfilter/ebt_ip6.c
++++ b/net/bridge/netfilter/ebt_ip6.c
+@@ -89,7 +89,7 @@ ebt_ip6_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 			if (NF_INVF(info, EBT_IP6_SPORT,
+ 				    src < info->sport[0] ||
+ 				    src > info->sport[1]))
+-			return false;
++				return false;
+ 		}
+ 		if ((info->bitmask & EBT_IP6_ICMP6) &&
+ 		    NF_INVF(info, EBT_IP6_ICMP6,
+-- 
+2.11.0
 
-regards,
-dan carpenter
