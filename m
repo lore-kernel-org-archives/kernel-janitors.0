@@ -1,29 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 12 Aug 2017 21:26:36 +0000
-Subject: Re: [PATCH] ALSA: trident: Delete an error message for a failed memory allocation in snd_trident_tlb
-Message-Id: <s5hinhswk8j.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Aug 2017 14:31:33 +0000
+Subject: [PATCH] thunderbolt: fix incorrect value assigned to req->response_type
+Message-Id: <20170815143133.26500-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20c860e6-2aeb-eb8b-2ba7-fba216a70cfa@users.sourceforge.net>
-In-Reply-To: <20c860e6-2aeb-eb8b-2ba7-fba216a70cfa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Fabian Frederick <fabf@skynet.be>, Julia Lawall <Julia.Lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 12 Aug 2017 13:31:55 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Aug 2017 13:20:16 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+req->response_type is being assigned the sizeof TB_CFG_PKG_RESET
+and should actually be assigned TB_CFG_PKG_RESET. Fix this.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thunderbolt/ctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 69c0232a22f8..fb40dd0588b9 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -804,7 +804,7 @@ struct tb_cfg_result tb_cfg_reset(struct tb_ctl *ctl, u64 route,
+ 	req->request_type = TB_CFG_PKG_RESET;
+ 	req->response = &reply;
+ 	req->response_size = sizeof(reply);
+-	req->response_type = sizeof(TB_CFG_PKG_RESET);
++	req->response_type = TB_CFG_PKG_RESET;
+ 
+ 	res = tb_cfg_request_sync(ctl, req, timeout_msec);
+ 
+-- 
+2.11.0
+
