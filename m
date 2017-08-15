@@ -1,50 +1,41 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Tue, 29 Aug 2017 21:00:58 +0000
-Subject: Re: [PATCH][pci-next] PCI: endpoint: fix incorrect end of table check in while loop
-Message-Id: <20170829210058.GQ8154@bhelgaas-glaptop.roam.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Aug 2017 09:46:30 +0000
+Subject: [PATCH] acpi/processor: make function acpi_processor_check_duplicates static
+Message-Id: <20170815094630.20836-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823160303.23366-1-colin.king@canonical.com>
-In-Reply-To: <20170823160303.23366-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 23, 2017 at 05:03:03PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, the while loop will iterate until a matching name is found
-> or until the id pointer wraps around to NULL (the latter is incorrect).
-> 
-> The end of a pci_epf_device_id table is terminated with zero'd entries
-> for name and driver_data, so can change the while loop to iterate while
-> the first character in the name is a non-zero character.
-> 
-> Detected by CoverityScan, CID#1454557 ("Logically dead code")
-> 
-> Fixes: 9e9d6eb48623 ("PCI: endpoint: Add an API to get matching "pci_epf_device_id")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Folded into the original patch, thanks!
+The function acpi_processor_check_duplicates is local to the source and
+does not need to be in global scope, so make it static.
 
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index ae6fac5995e3..70eccc04ee7f 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -273,7 +273,7 @@ pci_epf_match_device(const struct pci_epf_device_id *id, struct pci_epf *epf)
->  	if (!id || !epf)
->  		return NULL;
->  
-> -	while (id) {
-> +	while (*id->name) {
->  		if (strcmp(epf->name, id->name) = 0)
->  			return id;
->  		id++;
-> -- 
-> 2.14.1
-> 
+Cleans up sparse warnings:
+symbol 'acpi_processor_check_duplicates' was not declared. Should it
+be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/acpi_processor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index f098e25b6b41..86c10599d9f8 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -670,7 +670,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 
+ }
+ 
+-void __init acpi_processor_check_duplicates(void)
++static void __init acpi_processor_check_duplicates(void)
+ {
+ 	/* check the correctness for all processors in ACPI namespace */
+ 	acpi_walk_namespace(ACPI_TYPE_PROCESSOR, ACPI_ROOT_OBJECT,
+-- 
+2.11.0
+
