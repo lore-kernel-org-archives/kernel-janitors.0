@@ -1,53 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Aug 2017 10:30:30 +0000
-Subject: [PATCH] x86/ldt: Off by one in get_segment_base()
-Message-Id: <20170818102516.gqwm4xdvvuvjw5ho@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 15:10:12 +0000
+Subject: [PATCH 5/5] ASoC: spear: constify snd_soc_dai_ops structures
+Message-Id: <1502809812-13891-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-ldt->entries[] is allocated in alloc_ldt_struct().  It has
-ldt->nr_entries elements and ldt->nr_entries is capped at LDT_ENTRIES.
-So if "idx" is = ldt->nr_entries then we're reading beyond the end of
-the buffer.  It seems duplicative to have two limit checks when one
-would work just as well so I removed the check against LDT_ENTRIES.
+These snd_soc_dai_ops structures are only stored in the ops field of
+a snd_soc_dai_driver structure, which is const.  Thus, the
+snd_soc_dai_ops structures can be const too.
 
-The gdt_page.gdt[] array has GDT_ENTRIES entries.
+Done with the help of Coccinelle.
 
-Fixes: d07bdfd322d3 ("perf/x86: Fix USER/KERNEL tagging of samples properly")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-This is a static checker fix.  I'm pretty certain it's correct.  But I
-don't understand the code terribly well, so please let me know and I'll
-be happy to send a v2 if needed.
+ sound/soc/spear/spdif_in.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index af12e294caed..939050169d12 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2335,12 +2335,9 @@ static unsigned long get_segment_base(unsigned int segment)
- #ifdef CONFIG_MODIFY_LDT_SYSCALL
- 		struct ldt_struct *ldt;
+diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
+index 01b28e5..78a6a36 100644
+--- a/sound/soc/spear/spdif_in.c
++++ b/sound/soc/spear/spdif_in.c
+@@ -151,7 +151,7 @@ static int spdif_in_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	return ret;
+ }
  
--		if (idx > LDT_ENTRIES)
--			return 0;
--
- 		/* IRQs are off, so this synchronizes with smp_store_release */
- 		ldt = lockless_dereference(current->active_mm->context.ldt);
--		if (!ldt || idx > ldt->nr_entries)
-+		if (!ldt || idx >= ldt->nr_entries)
- 			return 0;
- 
- 		desc = &ldt->entries[idx];
-@@ -2348,7 +2345,7 @@ static unsigned long get_segment_base(unsigned int segment)
- 		return 0;
- #endif
- 	} else {
--		if (idx > GDT_ENTRIES)
-+		if (idx >= GDT_ENTRIES)
- 			return 0;
- 
- 		desc = raw_cpu_ptr(gdt_page.gdt) + idx;
+-static struct snd_soc_dai_ops spdif_in_dai_ops = {
++static const struct snd_soc_dai_ops spdif_in_dai_ops = {
+ 	.shutdown	= spdif_in_shutdown,
+ 	.trigger	= spdif_in_trigger,
+ 	.hw_params	= spdif_in_hw_params,
+
