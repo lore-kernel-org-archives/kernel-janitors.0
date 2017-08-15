@@ -1,68 +1,23 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 04 Aug 2017 12:09:47 +0000
-Subject: [PATCH 4/5] [media] tm6000: constify videobuf_queue_ops structures
-Message-Id: <1501848588-22628-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 08:36:51 +0000
+Subject: [PATCH 0/3] constify snd_rawmidi_ops structures
+Message-Id: <1502786211-20520-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org
 
-These videobuf_queue_ops structures are only passed as the second
-argument to videobuf_queue_vmalloc_init, which is declared as const.
-Thus the videobuf_queue_ops structures themselves can be const.
+These snd_rawmidi_ops structures are only passed as the third
+argument of snd_rawmidi_set_ops.  This argument is const, so the
+snd_rawmidi_ops structures can be const too.
 
 Done with the help of Coccinelle.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct videobuf_queue_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-expression e1;
-position p;
-@@
-videobuf_queue_vmalloc_init(e1,&i@p,...)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct videobuf_queue_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct videobuf_queue_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
 ---
- drivers/media/usb/tm6000/tm6000-video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index cec1321..ec8c4d2 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -801,7 +801,7 @@ static void buffer_release(struct videobuf_queue *vq, struct videobuf_buffer *vb
- 	free_buffer(vq, buf);
- }
- 
--static struct videobuf_queue_ops tm6000_video_qops = {
-+static const struct videobuf_queue_ops tm6000_video_qops = {
- 	.buf_setup      = buffer_setup,
- 	.buf_prepare    = buffer_prepare,
- 	.buf_queue      = buffer_queue,
-
+ drivers/hid/hid-prodikeys.c          |    2 +-
+ drivers/usb/gadget/function/f_midi.c |    4 ++--
+ sound/firewire/motu/motu-midi.c      |    4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
