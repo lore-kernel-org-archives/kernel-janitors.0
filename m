@@ -1,37 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Aug 2017 13:42:16 +0000
-Subject: Re: [PATCH 4/5] btrfs: Use common error handling code in update_ref_path()
-Message-Id: <20170821134215.4wpttdh5siuax5b3@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Aug 2017 13:51:45 +0000
+Subject: [PATCH] scsi: mpt3sas: fix pr_info message continuation
+Message-Id: <20170815135145.25792-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
- <7083c299-4803-68c8-ae57-c0e74f5d9229@users.sourceforge.net>
- <dcd64dfb-944a-2a81-b4a2-8d7ce71d811b@suse.com>
-In-Reply-To: <dcd64dfb-944a-2a81-b4a2-8d7ce71d811b@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 21, 2017 at 09:08:04AM -0400, Jeff Mahoney wrote:
-> On 8/21/17 8:41 AM, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 21 Aug 2017 13:34:29 +0200
-> > 
-> > Add a jump target so that a bit of exception handling can be better reused
-> > in this function.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> 
-> Adding a jump label in the middle of a conditional for "common" error
-> handling makes the code more difficult to understand.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-I have said that a bunch of times.  It's like bashing my face into the
-keyboard for all the good it does.  On the other hand, some people
-accept these oddly placed labels...  No one else writes code like this
-so far as I know.
+An optional discovery status should be printed with a pr_cont
+and needs a leading space to make it more readable. The final
+new line should also be a pr_cont and the indentation is out
+by one, so fix that too.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 8a44636ab0b5..87999905bca3 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -615,9 +615,9 @@ _base_display_event_data(struct MPT3SAS_ADAPTER *ioc,
+ 		    (event_data->ReasonCode = MPI2_EVENT_SAS_DISC_RC_STARTED) ?
+ 		    "start" : "stop");
+ 		if (event_data->DiscoveryStatus)
+-			pr_info("discovery_status(0x%08x)",
++			pr_cont(" discovery_status(0x%08x)",
+ 			    le32_to_cpu(event_data->DiscoveryStatus));
+-			pr_info("\n");
++		pr_cont("\n");
+ 		return;
+ 	}
+ 	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
+-- 
+2.11.0
 
