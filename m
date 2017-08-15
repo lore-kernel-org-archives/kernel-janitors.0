@@ -1,33 +1,43 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 23 Aug 2017 08:39:45 +0000
-Subject: Re: [PATCH 4/6] ALSA: timer: Use common error handling code in alsa_timer_init()
-Message-Id: <s5h8tiar832.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 08:09:54 +0000
+Subject: [PATCH 3/3] ALSA: firewire-motu: constify snd_rawmidi_ops structures
+Message-Id: <1502784594-14670-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
- <s5h378isw2d.wl-tiwai@suse.de>
- <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
- <f390776b-343f-3787-8520-0754ddfe8154@users.sourceforge.net>
-In-Reply-To: <f390776b-343f-3787-8520-0754ddfe8154@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Vegard Nossum <vegard.nossum@oracle.com>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Ingo Molnar <mingo@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, bhumirks@gmail.com
 
-On Wed, 23 Aug 2017 10:27:14 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 23 Aug 2017 09:30:41 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+These snd_rawmidi_ops structures are only passed as the third
+argument of snd_rawmidi_set_ops.  This argument is const, so the
+snd_rawmidi_ops structures can be const too.
 
-Applied, thanks.
+Done with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Takashi
+---
+ sound/firewire/motu/motu-midi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/firewire/motu/motu-midi.c b/sound/firewire/motu/motu-midi.c
+index e3acfcc..e55cab6 100644
+--- a/sound/firewire/motu/motu-midi.c
++++ b/sound/firewire/motu/motu-midi.c
+@@ -128,12 +128,12 @@ static void set_midi_substream_names(struct snd_motu *motu,
+ 
+ int snd_motu_create_midi_devices(struct snd_motu *motu)
+ {
+-	static struct snd_rawmidi_ops capture_ops = {
++	static const struct snd_rawmidi_ops capture_ops = {
+ 		.open		= midi_capture_open,
+ 		.close		= midi_capture_close,
+ 		.trigger	= midi_capture_trigger,
+ 	};
+-	static struct snd_rawmidi_ops playback_ops = {
++	static const struct snd_rawmidi_ops playback_ops = {
+ 		.open		= midi_playback_open,
+ 		.close		= midi_playback_close,
+ 		.trigger	= midi_playback_trigger,
+
