@@ -1,54 +1,46 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 09 Aug 2017 02:02:00 +0000
-Subject: Re: [9/9, v2] hwmon: (scpi) constify thermal_zone_of_device_ops structures
-Message-Id: <20170809020200.GA508@roeck-us.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 12:01:11 +0000
+Subject: [PATCH 3/5] net/9p: Add a jump target in p9_client_walk()
+Message-Id: <5b39be44-cbec-9838-77c6-00b99f5fe0a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jean Delvare <jdelvare@suse.com>, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 08, 2017 at 05:09:03PM +0200, Julia Lawall wrote:
-> The thermal_zone_of_device_ops structure is only passed as the fourth
-> argument to devm_thermal_zone_of_sensor_register, which is declared
-> as const.  Thus the thermal_zone_of_device_ops structure itself can
-> be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 10:07:22 +0200
 
-Applied to hwmon-next.
+Replace a variable assignment by a goto statement so that an extra check
+will be avoided at the end of this function.
 
-Thanks,
-Guenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/9p/client.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> ---
-> 
-> v2: New patch
-> 
->  drivers/hwmon/scpi-hwmon.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> diff --git a/drivers/hwmon/scpi-hwmon.c b/drivers/hwmon/scpi-hwmon.c
-> index a586480..7e49da5 100644
-> --- a/drivers/hwmon/scpi-hwmon.c
-> +++ b/drivers/hwmon/scpi-hwmon.c
-> @@ -120,7 +120,7 @@ static int scpi_read_temp(void *dev, int *temp)
->  	return sprintf(buf, "%s\n", sensor->info.name);
->  }
->  
-> -static struct thermal_zone_of_device_ops scpi_sensor_ops = {
-> +static const struct thermal_zone_of_device_ops scpi_sensor_ops = {
->  	.get_temp = scpi_read_temp,
->  };
->  
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 2ca55d4b0b7d..6c2fc796edfb 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -1237,12 +1237,11 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
+ clunk_fid:
+ 	kfree(wqids);
+ 	p9_client_clunk(fid);
+-	fid = NULL;
+-
++	goto exit;
+ error:
+ 	if (fid && (fid != oldfid))
+ 		p9_fid_destroy(fid);
+-
++exit:
+ 	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL(p9_client_walk);
+-- 
+2.14.0
+
