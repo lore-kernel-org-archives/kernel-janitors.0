@@ -1,39 +1,105 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 20:26:48 +0000
-Subject: [PATCH 3/3] SCSI-sg: Fix a typo in a comment line in sg_ioctl()
-Message-Id: <51971166-583b-071f-a9cb-1f00cc852756@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 11:58:36 +0000
+Subject: [PATCH 1/5] net/9p: Delete an error message for a failed memory allocation in five functions
+Message-Id: <e703fb59-bdc3-fd0d-3cba-3ec970c9328a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
-In-Reply-To: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
+References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 22:06:59 +0200
+Date: Tue, 15 Aug 2017 08:25:41 +0200
 
-Fix a word in this description.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/sg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/9p/client.c       | 7 ++-----
+ net/9p/trans_fd.c     | 6 ++----
+ net/9p/trans_rdma.c   | 6 ++----
+ net/9p/trans_virtio.c | 1 -
+ 4 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 4a2db7ff14cc..c80899d249c6 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -891,7 +891,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
- 	case SG_SET_FORCE_LOW_DMA:
- 		/*
- 		 * N.B. This ioctl never worked properly, but failed to
--		 * return an error value. So returning '0' to keep compability
-+		 * return an error value. So returning '0' to keep compatibility
- 		 * with legacy applications.
- 		 */
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 4674235b0d9b..2273181e9ba9 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -160,11 +160,9 @@ static int parse_opts(char *opts, struct p9_client *clnt)
  		return 0;
+ 
+ 	tmp_options = kstrdup(opts, GFP_KERNEL);
+-	if (!tmp_options) {
+-		p9_debug(P9_DEBUG_ERROR,
+-			 "failed to allocate copy of option string\n");
++	if (!tmp_options)
+ 		return -ENOMEM;
+-	}
++
+ 	options = tmp_options;
+ 
+ 	while ((p = strsep(&options, ",")) != NULL) {
+@@ -277,7 +275,6 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
+ 					sizeof(struct p9_req_t), GFP_ATOMIC);
+ 
+ 			if (!c->reqs[row]) {
+-				pr_err("Couldn't grow tag array\n");
+ 				spin_unlock_irqrestore(&c->lock, flags);
+ 				return ERR_PTR(-ENOMEM);
+ 			}
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index ddfa86648f95..3c272e5bc9ea 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -762,11 +762,9 @@ static int parse_opts(char *params, struct p9_fd_opts *opts)
+ 		return 0;
+ 
+ 	tmp_options = kstrdup(params, GFP_KERNEL);
+-	if (!tmp_options) {
+-		p9_debug(P9_DEBUG_ERROR,
+-			 "failed to allocate copy of option string\n");
++	if (!tmp_options)
+ 		return -ENOMEM;
+-	}
++
+ 	options = tmp_options;
+ 
+ 	while ((p = strsep(&options, ",")) != NULL) {
+diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+index 6d8e3031978f..f98b6aae308b 100644
+--- a/net/9p/trans_rdma.c
++++ b/net/9p/trans_rdma.c
+@@ -205,11 +205,9 @@ static int parse_opts(char *params, struct p9_rdma_opts *opts)
+ 		return 0;
+ 
+ 	tmp_options = kstrdup(params, GFP_KERNEL);
+-	if (!tmp_options) {
+-		p9_debug(P9_DEBUG_ERROR,
+-			 "failed to allocate copy of option string\n");
++	if (!tmp_options)
+ 		return -ENOMEM;
+-	}
++
+ 	options = tmp_options;
+ 
+ 	while ((p = strsep(&options, ",")) != NULL) {
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index f24b25c25106..8a2cf9748398 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -552,7 +552,6 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+ 
+ 	chan = kmalloc(sizeof(struct virtio_chan), GFP_KERNEL);
+ 	if (!chan) {
+-		pr_err("Failed to allocate virtio 9P channel\n");
+ 		err = -ENOMEM;
+ 		goto fail;
+ 	}
 -- 
 2.14.0
 
