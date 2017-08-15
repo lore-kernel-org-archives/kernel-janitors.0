@@ -1,24 +1,30 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 07 Aug 2017 10:18:33 +0000
-Subject: Re: [PATCH 06/12] [media] exynos-gsc: constify v4l2_m2m_ops structures
-Message-Id: <44bf7134-14c9-fcb2-75d1-398a900e6de3@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 15:35:42 +0000
+Subject: [PATCH 0/3] fs-udf: Adjustments for some function implementations
+Message-Id: <6eedcf1a-57f0-2ba4-d1b8-47a8da945d87@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502007921-22968-7-git-send-email-Julia.Lawall@lip6.fr>
- <CGME20170807101839epcas2p41e7c3092b876487e132a8a640e9ed262@epcas2p4.samsung.com>
-In-Reply-To: <1502007921-22968-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 08/06/2017 10:25 AM, Julia Lawall wrote:
-> The v4l2_m2m_ops structures are only passed as the only
-> argument to v4l2_m2m_init, which is declared as const.
-> Thus the v4l2_m2m_ops structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 17:10:12 +0200
 
-> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
+A few update suggestions were taken into account
+from static source code analysis.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in two functions
+  Improve six size determinations
+  Adjust two checks for null pointers
+
+ fs/udf/inode.c | 13 ++++---------
+ fs/udf/namei.c |  2 +-
+ fs/udf/super.c | 12 +++++-------
+ 3 files changed, 10 insertions(+), 17 deletions(-)
+
+-- 
+2.14.0
+
