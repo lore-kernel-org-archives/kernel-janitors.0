@@ -1,37 +1,45 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 09:00:17 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 15 Aug 2017 09:29:42 +0000
 Subject: Re: [PATCH 3/3] ALSA: firewire-motu: constify snd_rawmidi_ops structures
-Message-Id: <alpine.DEB.2.20.1708151058560.3849@hadrien>
+Message-Id: <s5ha831p4ah.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502784594-14670-3-git-send-email-Julia.Lawall@lip6.fr> <s5ho9rhi519.wl-tiwai@suse.de>
-In-Reply-To: <s5ho9rhi519.wl-tiwai@suse.de>
+References: <1502784594-14670-3-git-send-email-Julia.Lawall@lip6.fr>
+        <s5ho9rhi519.wl-tiwai@suse.de>
+        <alpine.DEB.2.20.1708151058560.3849@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1708151058560.3849@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
+To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: Clemens Ladisch <clemens@ladisch.de>, alsa-devel@alsa-project.org, bhumirks@gmail.com, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-On Tue, 15 Aug 2017, Takashi Iwai wrote:
-
-> On Tue, 15 Aug 2017 10:09:54 +0200,
-> Julia Lawall wrote:
+On Tue, 15 Aug 2017 11:00:17 +0200,
+Julia Lawall wrote:
+> 
+> 
+> 
+> On Tue, 15 Aug 2017, Takashi Iwai wrote:
+> 
+> > On Tue, 15 Aug 2017 10:09:54 +0200,
+> > Julia Lawall wrote:
+> > >
+> > > These snd_rawmidi_ops structures are only passed as the third
+> > > argument of snd_rawmidi_set_ops.  This argument is const, so the
+> > > snd_rawmidi_ops structures can be const too.
+> > >
+> > > Done with the help of Coccinelle.
+> > >
+> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 > >
-> > These snd_rawmidi_ops structures are only passed as the third
-> > argument of snd_rawmidi_set_ops.  This argument is const, so the
-> > snd_rawmidi_ops structures can be const too.
-> >
-> > Done with the help of Coccinelle.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> What are other two patches?  Since I haven't received a cover letter,
-> no idea whether I overlooked them or not relevant with my tree...
+> > What are other two patches?  Since I haven't received a cover letter,
+> > no idea whether I overlooked them or not relevant with my tree...
+> 
+> Oops, I forgot to make a cover letter for this.  The others are:
+> 
+> drivers/hid/hid-prodikeys.c
+> drivers/usb/gadget/function/f_midi.c
 
-Oops, I forgot to make a cover letter for this.  The others are:
+OK, thanks!
 
-drivers/hid/hid-prodikeys.c
-drivers/usb/gadget/function/f_midi.c
 
-julia
+Takashi
