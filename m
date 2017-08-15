@@ -1,43 +1,35 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Tue, 29 Aug 2017 09:14:11 +0000
-Subject: Re: [PATCH] clocksource: Delete an error message for a failed memory allocation in bcm2835_timer_ini
-Message-Id: <a292aac5-b98e-6f84-8ef4-e9a00c582ba8@linaro.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 15 Aug 2017 20:18:14 +0000
+Subject: [PATCH] scsi: cxlflash: Fix an error handling path in 'cxlflash_disk_attach()'
+Message-Id: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1907fa5f-e1c3-a2dd-99e0-f06150086351@users.sourceforge.net>
-In-Reply-To: <1907fa5f-e1c3-a2dd-99e0-f06150086351@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: manoj@linux.vnet.ibm.com, mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 27/08/2017 21:46, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 27 Aug 2017 21:38:13 +0200
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+'rc' is known to be 0 at this point.
+If 'create_context()' fails, returns -ENOMEM instead of 0 which means
+success.
 
-I have applied it.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/cxlflash/superpipe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks.
+diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
+index ad0f9968ccfb..08da593cb2f6 100644
+--- a/drivers/scsi/cxlflash/superpipe.c
++++ b/drivers/scsi/cxlflash/superpipe.c
+@@ -1390,6 +1390,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
+ 	if (unlikely(!ctxi)) {
+ 		dev_err(dev, "%s: Failed to create context ctxid=%d\n",
+ 			__func__, ctxid);
++		rc = -ENOMEM;
+ 		goto err;
+ 	}
+ 
+-- 
+2.11.0
 
-  -- Daniel
-
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
