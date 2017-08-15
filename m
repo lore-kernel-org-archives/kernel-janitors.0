@@ -1,42 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Aug 2017 17:36:02 +0000
-Subject: [PATCH] ima: Delete an error message for a failed memory allocation in ima_add_digest_entry()
-Message-Id: <dcbe18c8-a7e3-b26e-a95b-2d3cc2531081@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 15:10:10 +0000
+Subject: [PATCH 3/5] ASoC: codecs: es8316: constify snd_soc_dai_ops structures
+Message-Id: <1502809812-13891-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, bhumirks@gmail.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Aug 2017 19:29:11 +0200
+These snd_soc_dai_ops structures are only stored in the ops field of
+a snd_soc_dai_driver structure, which is const.  Thus, the
+snd_soc_dai_ops structures can be const too.
 
-Omit an extra message for a memory allocation failure in this function.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/integrity/ima/ima_queue.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/codecs/es8316.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index a02a86d51102..3b60e72aecb2 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -100,10 +100,9 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	unsigned int key;
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 4f35af6..da2d353 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -502,7 +502,7 @@ static int es8316_mute(struct snd_soc_dai *dai, int mute)
+ #define ES8316_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | \
+ 			SNDRV_PCM_FMTBIT_S24_LE)
  
- 	qe = kmalloc(sizeof(*qe), GFP_KERNEL);
--	if (qe = NULL) {
--		pr_err("OUT OF MEMORY ERROR creating queue entry\n");
-+	if (!qe)
- 		return -ENOMEM;
--	}
-+
- 	qe->entry = entry;
- 
- 	INIT_LIST_HEAD(&qe->later);
--- 
-2.14.0
+-static struct snd_soc_dai_ops es8316_ops = {
++static const struct snd_soc_dai_ops es8316_ops = {
+ 	.startup = es8316_pcm_startup,
+ 	.hw_params = es8316_pcm_hw_params,
+ 	.set_fmt = es8316_set_dai_fmt,
 
