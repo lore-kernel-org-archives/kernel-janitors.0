@@ -1,41 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 19:07:32 +0000
-Subject: [PATCH 2/3] jffs2: Improve a size determination in jffs2_scan_medium()
-Message-Id: <1e4c5674-fb48-ab5f-fa9b-4e9b30dde6bc@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 15 Aug 2017 17:15:27 +0000
+Subject: Applied "ASoC: blackfin: constify snd_soc_dai_ops structures" to the asoc tree
+Message-Id: <E1dhfR9-0003es-W5@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
-In-Reply-To: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
+References: <1502809812-13891-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502809812-13891-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 20:22:15 +0200
+The patch
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+   ASoC: blackfin: constify snd_soc_dai_ops structures
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a4fe6f37269623b3be21e3697d59677809ef512b Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 17:10:08 +0200
+Subject: [PATCH] ASoC: blackfin: constify snd_soc_dai_ops structures
+
+These snd_soc_dai_ops structures are only stored in the ops field of
+a snd_soc_dai_driver structure, which is const.  Thus, the
+snd_soc_dai_ops structures can be const too.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/jffs2/scan.c | 2 +-
+ sound/soc/blackfin/bf6xx-i2s.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jffs2/scan.c b/fs/jffs2/scan.c
-index 90431dd613b8..d7696151b47d 100644
---- a/fs/jffs2/scan.c
-+++ b/fs/jffs2/scan.c
-@@ -132,5 +132,5 @@ int jffs2_scan_medium(struct jffs2_sb_info *c)
- 	}
+diff --git a/sound/soc/blackfin/bf6xx-i2s.c b/sound/soc/blackfin/bf6xx-i2s.c
+index bd3b4d464145..819cff149a25 100644
+--- a/sound/soc/blackfin/bf6xx-i2s.c
++++ b/sound/soc/blackfin/bf6xx-i2s.c
+@@ -164,7 +164,7 @@ static int bfin_i2s_resume(struct snd_soc_dai *dai)
+ #define BFIN_I2S_FORMATS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
+ 		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
  
- 	if (jffs2_sum_active()) {
--		s = kzalloc(sizeof(struct jffs2_summary), GFP_KERNEL);
-+		s = kzalloc(sizeof(*s), GFP_KERNEL);
- 		if (!s) {
+-static struct snd_soc_dai_ops bfin_i2s_dai_ops = {
++static const struct snd_soc_dai_ops bfin_i2s_dai_ops = {
+ 	.hw_params	= bfin_i2s_hw_params,
+ 	.set_fmt	= bfin_i2s_set_dai_fmt,
+ };
 -- 
-2.14.0
+2.13.3
 
