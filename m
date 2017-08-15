@@ -1,74 +1,35 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:47:21 +0000
-Subject: [PATCH v2 9/9] ACPI-video: Improve a size determination in four functions
-Message-Id: <3b229259-6268-9bbd-f960-4ce382b0ab23@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 11:56:37 +0000
+Subject: [PATCH 0/5] net/9p: Fine-tuning for some function implementations
+Message-Id: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
- <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
-In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 16:45:29 +0200
+Date: Tue, 15 Aug 2017 13:43:21 +0200
 
-Replace the specification of a data structures by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/acpi_video.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Markus Elfring (5):
+  Delete an error message for a failed memory allocation in five functions
+  Improve 19 size determinations
+  Add a jump target in p9_client_walk()
+  Adjust a jump target in p9_client_attach()
+  Delete an unnecessary variable initialisation in p9_client_attach()
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 3cc1798676ab..d999f4e49b98 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1140,7 +1140,7 @@ acpi_video_bus_get_one_device(struct acpi_device *device,
- 	if (ACPI_FAILURE(status))
- 		return 0;
- 
--	data = kzalloc(sizeof(struct acpi_video_device), GFP_KERNEL);
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
-@@ -1321,7 +1321,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
- 			  dod->package.count));
- 
- 	active_list = kcalloc(1 + dod->package.count,
--			      sizeof(struct acpi_video_enumerated_device),
-+			      sizeof(*active_list),
- 			      GFP_KERNEL);
- 	if (!active_list) {
- 		status = -ENOMEM;
-@@ -1742,7 +1742,7 @@ static void acpi_video_dev_register_backlight(struct acpi_video_device *device)
- 		pci_dev_put(pdev);
- 	}
- 
--	memset(&props, 0, sizeof(struct backlight_properties));
-+	memset(&props, 0, sizeof(props));
- 	props.type = BACKLIGHT_FIRMWARE;
- 	props.max_brightness  		device->brightness->count - ACPI_VIDEO_FIRST_LEVEL - 1;
-@@ -2007,7 +2007,7 @@ static int acpi_video_bus_add(struct acpi_device *device)
- 			return -ENODEV;
- 	}
- 
--	video = kzalloc(sizeof(struct acpi_video_bus), GFP_KERNEL);
-+	video = kzalloc(sizeof(*video), GFP_KERNEL);
- 	if (!video)
- 		return -ENOMEM;
- 
+ net/9p/client.c       | 51 +++++++++++++++++++++------------------------------
+ net/9p/protocol.c     |  6 +++---
+ net/9p/trans_fd.c     | 16 +++++++---------
+ net/9p/trans_rdma.c   |  8 +++-----
+ net/9p/trans_virtio.c |  6 ++----
+ net/9p/util.c         |  2 +-
+ 6 files changed, 37 insertions(+), 52 deletions(-)
+
 -- 
-2.13.4
+2.14.0
 
