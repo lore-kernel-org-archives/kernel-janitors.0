@@ -1,72 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 05 Aug 2017 12:26:45 +0000
-Subject: [PATCH 1/4] atm: idt77252: Adjust four function calls together with a variable assignment
-Message-Id: <c03d54ed-7c1d-351b-3e84-30cc4af38c5f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 15 Aug 2017 14:08:28 +0000
+Subject: [PATCH] scsi: add missing indent on a for loop statement
+Message-Id: <20170815140828.26133-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
-In-Reply-To: <df946de6-8112-2a23-ec98-ac6418ca8486@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Willem Riede <osst@riede.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 4 Aug 2017 22:20:08 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The for loop is statement is missing an indent, add it.
 
-ERROR: do not use assignment in if condition
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/atm/idt77252.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/scsi/osst.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
-index b7a168c46692..6a051f5909d0 100644
---- a/drivers/atm/idt77252.c
-+++ b/drivers/atm/idt77252.c
-@@ -1070,7 +1070,8 @@ dequeue_rx(struct idt77252_dev *card, struct rsq_entry *rsqe)
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 97ab5f160bc6..241908aca468 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -5434,7 +5434,7 @@ static int append_to_buffer(const char __user *ubp, struct osst_buffer *st_bp, i
  
- 		cell = skb->data;
- 		for (i = (stat & SAR_RSQE_CELLCNT); i; i--) {
--			if ((sb = dev_alloc_skb(64)) = NULL) {
-+			sb = dev_alloc_skb(64);
-+			if (!sb) {
- 				printk("%s: Can't allocate buffers for aal0.\n",
- 				       card->name);
- 				atomic_add(i, &vcc->stats->rx_drop);
-@@ -1304,7 +1305,8 @@ idt77252_rx_raw(struct idt77252_dev *card)
- 			goto drop;
- 		}
- 	
--		if ((sb = dev_alloc_skb(64)) = NULL) {
-+		sb = dev_alloc_skb(64);
-+		if (!sb) {
- 			printk("%s: Can't allocate buffers for AAL0.\n",
- 			       card->name);
- 			atomic_inc(&vcc->stats->rx_err);
-@@ -3600,13 +3602,14 @@ static int idt77252_init_one(struct pci_dev *pcidev,
- 	struct atm_dev *dev;
- 	int i, err;
- 
--
--	if ((err = pci_enable_device(pcidev))) {
-+	err = pci_enable_device(pcidev);
-+	if (err) {
- 		printk("idt77252: can't enable PCI device at %s\n", pci_name(pcidev));
- 		return err;
- 	}
- 
--	if ((err = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32)))) {
-+	err = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32));
-+	if (err) {
- 		printk("idt77252: can't enable DMA for PCI device at %s\n", pci_name(pcidev));
- 		return err;
- 	}
+ 	for (i=0, offset=st_bp->buffer_bytes;
+ 	     i < st_bp->sg_segs && offset >= st_bp->sg[i].length; i++)
+-	offset -= st_bp->sg[i].length;
++		offset -= st_bp->sg[i].length;
+ 	if (i = st_bp->sg_segs) {  /* Should never happen */
+ 		printk(KERN_WARNING "osst :A: Append_to_buffer offset overflow.\n");
+ 		return (-EIO);
 -- 
-2.13.4
+2.11.0
 
