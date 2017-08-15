@@ -1,57 +1,77 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:21 +0000
-Subject: [PATCH 09/17] pinctrl: aspeed: g5: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-10-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 12:02:15 +0000
+Subject: [PATCH 4/5] net/9p: Adjust a jump target in p9_client_attach()
+Message-Id: <ace81690-0817-7271-13eb-e510c83d7daa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (confops, pctlops, and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 11:17:23 +0200
 
-Done with the help of Coccinelle.
+Adjust jump labels so that the function implementation becomes smaller.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Delete an extra variable assignment and a check (at the end of
+this function).
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/9p/client.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 634b371..187abd7 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -2492,7 +2492,7 @@
- 	.nconfigs = ARRAY_SIZE(aspeed_g5_configs),
- };
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 6c2fc796edfb..38c08171acc6 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -1133,25 +1133,23 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
+ 	p9_debug(P9_DEBUG_9P, ">>> TATTACH afid %d uname %s aname %s\n",
+ 		 afid ? afid->fid : -1, uname, aname);
+ 	fid = p9_fid_create(clnt);
+-	if (IS_ERR(fid)) {
+-		err = PTR_ERR(fid);
+-		fid = NULL;
+-		goto error;
+-	}
++	if (IS_ERR(fid))
++		return fid;
++
+ 	fid->uid = n_uname;
  
--static struct pinmux_ops aspeed_g5_pinmux_ops = {
-+static const struct pinmux_ops aspeed_g5_pinmux_ops = {
- 	.get_functions_count = aspeed_pinmux_get_fn_count,
- 	.get_function_name = aspeed_pinmux_get_fn_name,
- 	.get_function_groups = aspeed_pinmux_get_fn_groups,
-@@ -2501,7 +2501,7 @@
- 	.strict = true,
- };
+ 	req = p9_client_rpc(clnt, P9_TATTACH, "ddss?u", fid->fid,
+ 			afid ? afid->fid : P9_NOFID, uname, aname, n_uname);
+ 	if (IS_ERR(req)) {
+ 		err = PTR_ERR(req);
+-		goto error;
++		goto destroy_fid;
+ 	}
  
--static struct pinctrl_ops aspeed_g5_pinctrl_ops = {
-+static const struct pinctrl_ops aspeed_g5_pinctrl_ops = {
- 	.get_groups_count = aspeed_pinctrl_get_groups_count,
- 	.get_group_name = aspeed_pinctrl_get_group_name,
- 	.get_group_pins = aspeed_pinctrl_get_group_pins,
-@@ -2510,7 +2510,7 @@
- 	.dt_free_map = pinctrl_utils_free_map,
- };
+ 	err = p9pdu_readf(req->rc, clnt->proto_version, "Q", &qid);
+ 	if (err) {
+ 		trace_9p_protocol_dump(clnt, req->rc);
+ 		p9_free_req(clnt, req);
+-		goto error;
++		goto destroy_fid;
+ 	}
  
--static struct pinconf_ops aspeed_g5_conf_ops = {
-+static const struct pinconf_ops aspeed_g5_conf_ops = {
- 	.is_generic = true,
- 	.pin_config_get = aspeed_pin_config_get,
- 	.pin_config_set = aspeed_pin_config_set,
+ 	p9_debug(P9_DEBUG_9P, "<<< RATTACH qid %x.%llx.%x\n",
+@@ -1161,10 +1159,8 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
+ 
+ 	p9_free_req(clnt, req);
+ 	return fid;
+-
+-error:
+-	if (fid)
+-		p9_fid_destroy(fid);
++destroy_fid:
++	p9_fid_destroy(fid);
+ 	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL(p9_client_attach);
+-- 
+2.14.0
 
