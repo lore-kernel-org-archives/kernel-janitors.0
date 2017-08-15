@@ -1,52 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 18:03:48 +0000
-Subject: [PATCH v2 3/4] ACPI-APEI-HEST: Move an assignment in hest_ghes_dev_register()
-Message-Id: <7a0fcfb4-3f47-4031-017a-be078df43ba1@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 15 Aug 2017 08:09:52 +0000
+Subject: [PATCH 1/3] usb: gadget: f_midi: constify snd_rawmidi_ops structures
+Message-Id: <1502784594-14670-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
- <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
- <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
- <CAJZ5v0i5EW1UpLfaogyD-s4P4vXdgWndwjOpF5ykPDXE=eZVSA@mail.gmail.com>
- <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
-In-Reply-To: <9f6e5436-e550-b64c-db39-b9da668766b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Hanjun Guo <hanjun.guo@linaro.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Felipe Balbi <balbi@kernel.org>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:15:22 +0200
+These snd_rawmidi_ops structures are only passed as the third
+argument of snd_rawmidi_set_ops.  This argument is const, so the
+snd_rawmidi_ops structures can be const too.
 
-Move one assignment for a data structure member in one local variable
-so that its setting will only be performed after a corresponding memory
-allocation succeeded by this function.
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/acpi/apei/hest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/f_midi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 24d1d3cd3371..94b9bd494c20 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -194,13 +194,13 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
- 	int rc, i;
- 	struct ghes_arr ghes_arr;
+diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
+index a5719f2..71ca86c0 100644
+--- a/drivers/usb/gadget/function/f_midi.c
++++ b/drivers/usb/gadget/function/f_midi.c
+@@ -755,13 +755,13 @@ static void f_midi_out_trigger(struct snd_rawmidi_substream *substream, int up)
+ 		clear_bit(substream->number, &midi->out_triggered);
+ }
  
--	ghes_arr.count = 0;
- 	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
- 					   sizeof(*ghes_arr.ghes_devs),
- 					   GFP_KERNEL);
- 	if (!ghes_arr.ghes_devs)
- 		return -ENOMEM;
+-static struct snd_rawmidi_ops gmidi_in_ops = {
++static const struct snd_rawmidi_ops gmidi_in_ops = {
+ 	.open = f_midi_in_open,
+ 	.close = f_midi_in_close,
+ 	.trigger = f_midi_in_trigger,
+ };
  
-+	ghes_arr.count = 0;
- 	rc = apei_hest_parse(hest_parse_ghes, &ghes_arr);
- 	if (rc)
- 		goto err;
--- 
-2.13.4
+-static struct snd_rawmidi_ops gmidi_out_ops = {
++static const struct snd_rawmidi_ops gmidi_out_ops = {
+ 	.open = f_midi_out_open,
+ 	.close = f_midi_out_close,
+ 	.trigger = f_midi_out_trigger
 
