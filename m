@@ -1,36 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 14 Aug 2017 17:13:26 +0000
-Subject: [PATCH] sound: emu8000: constify emu8000_ops
-Message-Id: <1502730806-11637-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 15 Aug 2017 06:23:07 +0000
+Subject: Re: [PATCH] sound: emu8000: constify emu8000_ops
+Message-Id: <s5h60dpjqno.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1502730806-11637-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502730806-11637-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
 
-The structure emu8000_ops is only copied into another structure, so
-it can be const.
+On Mon, 14 Aug 2017 19:13:26 +0200,
+Julia Lawall wrote:
+> 
+> The structure emu8000_ops is only copied into another structure, so
+> it can be const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Applied, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- sound/isa/sb/emu8000_callback.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/isa/sb/emu8000_callback.c b/sound/isa/sb/emu8000_callback.c
-index d28d712..5a48550 100644
---- a/sound/isa/sb/emu8000_callback.c
-+++ b/sound/isa/sb/emu8000_callback.c
-@@ -62,7 +62,7 @@ static int load_fx(struct snd_emux *emu, int type, int mode,
- /*
-  * set up operators
-  */
--static struct snd_emux_operators emu8000_ops = {
-+static const struct snd_emux_operators emu8000_ops = {
- 	.owner =	THIS_MODULE,
- 	.get_voice =	get_voice,
- 	.prepare =	start_voice,
-
+Takashi
