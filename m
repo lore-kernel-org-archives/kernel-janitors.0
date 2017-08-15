@@ -1,57 +1,56 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Aug 2017 10:53:35 +0000
-Subject: [bug report] liquidio: moved liquidio_napi_poll to lio_core.c
-Message-Id: <20170817105335.n3wvejgisrvserii@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 15:38:55 +0000
+Subject: [PATCH 3/3] fs-udf: Adjust two checks for null pointers
+Message-Id: <1e627b28-e9e6-44a1-e43c-4c32b106e11e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6eedcf1a-57f0-2ba4-d1b8-47a8da945d87@users.sourceforge.net>
+In-Reply-To: <6eedcf1a-57f0-2ba4-d1b8-47a8da945d87@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hello Intiyaz Basha,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Aug 2017 17:03:06 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This is a semi-automatic email about new static checker warnings.
+The script “checkpatch.pl” pointed information out like the following.
 
-The patch d314ac222829: "liquidio: moved liquidio_napi_poll to
-lio_core.c" from Aug 14, 2017, leads to the following Smatch
-complaint:
+Comparison to NULL could be written !…
 
-    drivers/net/ethernet/cavium/liquidio/lio_core.c:670 liquidio_napi_poll()
-    error: we previously assumed 'iq' could be null (see line 648)
+Thus fix affected source code places.
 
-drivers/net/ethernet/cavium/liquidio/lio_core.c
-   647	
-   648		/* Flush the instruction queue */
-   649		iq = oct->instr_queue[iq_no];
-   650		if (iq) {
-                    ^^
-Exising code checks for NULL.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/udf/super.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-   651			/* TODO: move this check to inside octeon_flush_iq,
-   652			 * once check_db_timeout is removed
-   653			 */
-   654			if (atomic_read(&iq->instr_pending))
-   655				/* Process iq buffers with in the budget limits */
-   656				tx_done = octeon_flush_iq(oct, iq, budget);
-   657			else
-   658				tx_done = 1;
-   659			/* Update iq read-index rather than waiting for next interrupt.
-   660			 * Return back if tx_done is false.
-   661			 */
-   662			/* sub-queue status update */
-   663			lio_update_txq_status(oct, iq_no);
-   664		} else {
-   665			dev_err(&oct->pci_dev->dev, "%s:  iq (%d) num invalid\n",
-   666				__func__, iq_no);
-   667		}
-   668	
-   669	#define MAX_REG_CNT  2000000U
-   670		/* force enable interrupt if reg cnts are high to avoid wraparound */
-   671		if (((work_done < budget) && (tx_done)) ||
-   672		    (iq->pkt_in_done >= MAX_REG_CNT) ||
-                     ^^^^^^^^^^^^^^^
-The old code had a check for NULL here as well, but the re-shuffled code
-removed it.
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 0dc7c2d9f0fa..93c59630512b 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -321,7 +321,8 @@ static void udf_sb_free_partitions(struct super_block *sb)
+ {
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	int i;
+-	if (sbi->s_partmaps = NULL)
++
++	if (!sbi->s_partmaps)
+ 		return;
+ 	for (i = 0; i < sbi->s_partitions; i++)
+ 		udf_free_partition(&sbi->s_partmaps[i]);
+@@ -1068,7 +1069,7 @@ static struct udf_bitmap *udf_sb_alloc_bitmap(struct super_block *sb, u32 index)
+ 	else
+ 		bitmap = vzalloc(size); /* TODO: get rid of vzalloc */
+ 
+-	if (bitmap = NULL)
++	if (!bitmap)
+ 		return NULL;
+ 
+ 	bitmap->s_nr_groups = nr_groups;
+-- 
+2.14.0
 
-regards,
-dan carpenter
