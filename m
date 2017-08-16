@@ -1,65 +1,42 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 12:49:39 +0000
-Subject: Re: [PATCH 6/6] [media] uvcvideo: constify video_subdev structures
-Message-Id: <alpine.DEB.2.20.1708081449060.28470@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Aug 2017 09:29:40 +0000
+Subject: [PATCH] IB/mlx5: make function mlx5_ib_get_vector_affinity
+Message-Id: <20170816092940.11158-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502189912-28794-1-git-send-email-Julia.Lawall@lip6.fr> <1502189912-28794-7-git-send-email-Julia.Lawall@lip6.fr> <2365094.bHN9TxZSFH@avalon>
-In-Reply-To: <2365094.bHN9TxZSFH@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The function mlx5_ib_get_vector_affinity is local to the source
+and does not need to be in global scope, so make it static.
 
-On Tue, 8 Aug 2017, Laurent Pinchart wrote:
+Cleans up sparse warning:
+symbol 'mlx5_ib_get_vector_affinity' was not declared. Should it be static?
 
-> Hi Julia,
->
-> Thank you for the patch.
->
-> On Tuesday 08 Aug 2017 12:58:32 Julia Lawall wrote:
-> > uvc_subdev_ops is only passed as the second argument of
-> > v4l2_subdev_init, which is const, so uvc_subdev_ops can be
-> > const as well.
-> >
-> > Done with the help of Coccinelle.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> and applied to my tree (with the first word of the commit message after the
-> prefix capitalized to match the rest of the driver's commit messages, let me
-> know if that's a problem :-)).
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/mlx5/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-No, of course not.  I will try to watch out for that in the future.
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index cde7d1ce4a3c..a9e684deb6a4 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -3816,8 +3816,8 @@ static void init_delay_drop(struct mlx5_ib_dev *dev)
+ 		mlx5_ib_warn(dev, "Failed to init delay drop debugfs\n");
+ }
+ 
+-const struct cpumask *mlx5_ib_get_vector_affinity(struct ib_device *ibdev,
+-		int comp_vector)
++static const struct cpumask *mlx5_ib_get_vector_affinity(
++	struct ib_device *ibdev, int comp_vector)
+ {
+ 	struct mlx5_ib_dev *dev = to_mdev(ibdev);
+ 
+-- 
+2.11.0
 
-julia
-
-> >
-> > ---
-> >  drivers/media/usb/uvc/uvc_entity.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_entity.c
-> > b/drivers/media/usb/uvc/uvc_entity.c index ac386bb..554063c 100644
-> > --- a/drivers/media/usb/uvc/uvc_entity.c
-> > +++ b/drivers/media/usb/uvc/uvc_entity.c
-> > @@ -61,7 +61,7 @@ static int uvc_mc_create_links(struct uvc_video_chain
-> > *chain, return 0;
-> >  }
-> >
-> > -static struct v4l2_subdev_ops uvc_subdev_ops = {
-> > +static const struct v4l2_subdev_ops uvc_subdev_ops = {
-> >  };
-> >
-> >  void uvc_mc_cleanup_entity(struct uvc_entity *entity)
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
