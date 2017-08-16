@@ -1,41 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 Aug 2017 13:34:16 +0000
-Subject: [PATCH] staging/rts5208: fix incorrect shift to extract upper nybble
-Message-Id: <20170818133416.16329-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 19:20:21 +0000
+Subject: [PATCH 0/3] pstore: Adjustments for some function implementations
+Message-Id: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wayne Porter <wporter82@gmail.com>, Namrata A Shettar <namrataashettar@gmail.com>, Jonas Rickert <jrickertkc@gmail.com>, Louie Lu <louie.lu@hopebaytech.com>, Daniel Micay <danielmicay@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 21:06:54 +0200
 
-The mask of sns_key_info1 suggests the upper nybble is being extracted
-however the following shift of 8 bits is too large and always results in
-0.  Fix this by shifting only by 4 bits to correctly get the upper nybble.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#142891 ("Operands don't affect result")
+Markus Elfring (3):
+  Delete six error messages for a failed memory allocation
+  Improve a size determination in three functions
+  Adjust two checks for null pointers
 
-Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rts5208/rtsx_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/pstore/ram.c      | 11 +++--------
+ fs/pstore/ram_core.c | 21 +++++++--------------
+ 2 files changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/staging/rts5208/rtsx_scsi.c b/drivers/staging/rts5208/rtsx_scsi.c
-index 36b5a11f21d2..a401b13f5f5e 100644
---- a/drivers/staging/rts5208/rtsx_scsi.c
-+++ b/drivers/staging/rts5208/rtsx_scsi.c
-@@ -414,7 +414,7 @@ void set_sense_data(struct rtsx_chip *chip, unsigned int lun, u8 err_code,
- 	sense->ascq = ascq;
- 	if (sns_key_info0 != 0) {
- 		sense->sns_key_info[0] = SKSV | sns_key_info0;
--		sense->sns_key_info[1] = (sns_key_info1 & 0xf0) >> 8;
-+		sense->sns_key_info[1] = (sns_key_info1 & 0xf0) >> 4;
- 		sense->sns_key_info[2] = sns_key_info1 & 0x0f;
- 	}
- }
 -- 
-2.11.0
+2.14.0
 
