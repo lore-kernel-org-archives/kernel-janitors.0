@@ -1,25 +1,46 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 16 Aug 2017 02:11:50 +0000
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Wed, 16 Aug 2017 05:32:19 +0000
 Subject: Re: [PATCH] scsi: cxlflash: Fix an error handling path in 'cxlflash_disk_attach()'
-Message-Id: <yq1378stg61.fsf@oracle.com>
+Message-Id: <0b3495e0-dd8d-3269-39fe-9f29d751f74b@au1.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Tue, 15 Aug 2017 22:18:14 +0200")
+References: <20170815201835.781F76A041@b03ledav003.gho.boulder.ibm.com>
+In-Reply-To: <20170815201835.781F76A041@b03ledav003.gho.boulder.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: manoj@linux.vnet.ibm.com, mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, manoj@linux.vnet.ibm.com, mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-Christophe,
-
+On 16/08/17 06:18, Christophe JAILLET wrote:
 > 'rc' is known to be 0 at this point.
 > If 'create_context()' fails, returns -ENOMEM instead of 0 which means
 > success.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to 4.14/scsi-queue. Thanks!
+ENOMEM seems right here.
+
+Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+
+> ---
+>   drivers/scsi/cxlflash/superpipe.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
+> index ad0f9968ccfb..08da593cb2f6 100644
+> --- a/drivers/scsi/cxlflash/superpipe.c
+> +++ b/drivers/scsi/cxlflash/superpipe.c
+> @@ -1390,6 +1390,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
+>   	if (unlikely(!ctxi)) {
+>   		dev_err(dev, "%s: Failed to create context ctxid=%d\n",
+>   			__func__, ctxid);
+> +		rc = -ENOMEM;
+>   		goto err;
+>   	}
+>   
+> 
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
+
