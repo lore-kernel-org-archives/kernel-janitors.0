@@ -1,72 +1,144 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 17 Aug 2017 22:16:47 +0000
-Subject: Re: [PATCH][V2] drm/nouveau: perform null check on msto[i] rathern than msto
-Message-Id: <83ec451a-ceaa-5d62-948e-c34bbd670c0e@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Aug 2017 09:05:11 +0000
+Subject: [PATCH] net/mlx4: fix spelling mistake: "availible" -> "available"
+Message-Id: <20170816090511.10463-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817220323.26717-1-colin.king@canonical.com>
- <CAKb7Uvh0G_KyVjh=p59R_qLF8qz+j0_s93WhscAhMYcV1-Z1AA@mail.gmail.com>
-In-Reply-To: <CAKb7Uvh0G_KyVjh=p59R_qLF8qz+j0_s93WhscAhMYcV1-Z1AA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+To: Tariq Toukan <tariqt@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/08/17 23:07, Ilia Mirkin wrote:
-> On Thu, Aug 17, 2017 at 6:03 PM, Colin King <colin.king@canonical.com> wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The null check on the array msto is incorrect since msto is never
->> null. The null check should be instead on msto[i] since this is
->> being dereferenced in the call to drm_mode_connector_attach_encoder.
->>
->> Thanks to Emil Velikov for pointing out the mistake in my original
->> fix and for suggesting the correct fix.
->>
->> Detected by CoverityScan, CID#1375915 ("Array compared against 0")
->>
->> Fixes: f479c0ba4a17 ("drm/nouveau/kms/nv50: initial support for DP 1.2 multi-stream")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/gpu/drm/nouveau/nv50_display.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
->> index f7b4326a4641..ed444ecd9e85 100644
->> --- a/drivers/gpu/drm/nouveau/nv50_display.c
->> +++ b/drivers/gpu/drm/nouveau/nv50_display.c
->> @@ -3141,7 +3141,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
->>         mstc->connector.funcs->reset(&mstc->connector);
->>         nouveau_conn_attach_properties(&mstc->connector);
->>
->> -       for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto; i++)
->> +       for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto[i]; i++)
-> 
-> Ben will have to rule on which way is correct, but another
-> interpretation is that it should be
-> 
-> for (...; i < ARRAY_SIZE; i++)
->   if (mstm->msto[i])
->     do_stuff()
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, I suspect that is a better generic solution top cope with potential
-"holes".
-> 
-> I haven't the faintest clue whether the msto array can have "holes" or not.
+Trivial fix to spelling mistakes in the mlx4 driver
 
-Indeed. Let's see what Ben says.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/cmd.c    | 16 ++++++++--------
+ drivers/net/ethernet/mellanox/mlx4/fw_qos.c |  6 +++---
+ drivers/net/ethernet/mellanox/mlx4/fw_qos.h | 10 +++++-----
+ 3 files changed, 16 insertions(+), 16 deletions(-)
 
-
-> 
->>                 drm_mode_connector_attach_encoder(&mstc->connector, &mstm->msto[i]->encoder);
->>
->>         drm_object_attach_property(&mstc->connector.base, dev->mode_config.path_property, 0);
->> --
->> 2.11.0
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/net/ethernet/mellanox/mlx4/cmd.c b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+index 674773b28b2e..6309389b09a7 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+@@ -1958,19 +1958,19 @@ static void mlx4_allocate_port_vpps(struct mlx4_dev *dev, int port)
+ 	int i;
+ 	int err;
+ 	int num_vfs;
+-	u16 availible_vpp;
++	u16 available_vpp;
+ 	u8 vpp_param[MLX4_NUM_UP];
+ 	struct mlx4_qos_manager *port_qos;
+ 	struct mlx4_priv *priv = mlx4_priv(dev);
+ 
+-	err = mlx4_ALLOCATE_VPP_get(dev, port, &availible_vpp, vpp_param);
++	err = mlx4_ALLOCATE_VPP_get(dev, port, &available_vpp, vpp_param);
+ 	if (err) {
+-		mlx4_info(dev, "Failed query availible VPPs\n");
++		mlx4_info(dev, "Failed query available VPPs\n");
+ 		return;
+ 	}
+ 
+ 	port_qos = &priv->mfunc.master.qos_ctl[port];
+-	num_vfs = (availible_vpp /
++	num_vfs = (available_vpp /
+ 		   bitmap_weight(port_qos->priority_bm, MLX4_NUM_UP));
+ 
+ 	for (i = 0; i < MLX4_NUM_UP; i++) {
+@@ -1985,14 +1985,14 @@ static void mlx4_allocate_port_vpps(struct mlx4_dev *dev, int port)
+ 	}
+ 
+ 	/* Query actual allocated VPP, just to make sure */
+-	err = mlx4_ALLOCATE_VPP_get(dev, port, &availible_vpp, vpp_param);
++	err = mlx4_ALLOCATE_VPP_get(dev, port, &available_vpp, vpp_param);
+ 	if (err) {
+-		mlx4_info(dev, "Failed query availible VPPs\n");
++		mlx4_info(dev, "Failed query available VPPs\n");
+ 		return;
+ 	}
+ 
+ 	port_qos->num_of_qos_vfs = num_vfs;
+-	mlx4_dbg(dev, "Port %d Availible VPPs %d\n", port, availible_vpp);
++	mlx4_dbg(dev, "Port %d Availible VPPs %d\n", port, available_vpp);
+ 
+ 	for (i = 0; i < MLX4_NUM_UP; i++)
+ 		mlx4_dbg(dev, "Port %d UP %d Allocated %d VPPs\n", port, i,
+@@ -2891,7 +2891,7 @@ static int mlx4_set_vport_qos(struct mlx4_priv *priv, int slave, int port,
+ 	memset(vpp_qos, 0, sizeof(struct mlx4_vport_qos_param) * MLX4_NUM_UP);
+ 
+ 	if (slave > port_qos->num_of_qos_vfs) {
+-		mlx4_info(dev, "No availible VPP resources for this VF\n");
++		mlx4_info(dev, "No available VPP resources for this VF\n");
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlx4/fw_qos.c b/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
+index 8f2fde0487c4..3a09d7122d3b 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
++++ b/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
+@@ -65,7 +65,7 @@ struct mlx4_set_port_scheduler_context {
+ 
+ /* Granular Qos (per VF) section */
+ struct mlx4_alloc_vpp_param {
+-	__be32 availible_vpp;
++	__be32 available_vpp;
+ 	__be32 vpp_p_up[MLX4_NUM_UP];
+ };
+ 
+@@ -157,7 +157,7 @@ int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8 port, u8 *tc_tx_bw,
+ EXPORT_SYMBOL(mlx4_SET_PORT_SCHEDULER);
+ 
+ int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8 port,
+-			  u16 *availible_vpp, u8 *vpp_p_up)
++			  u16 *available_vpp, u8 *vpp_p_up)
+ {
+ 	int i;
+ 	int err;
+@@ -179,7 +179,7 @@ int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8 port,
+ 		goto out;
+ 
+ 	/* Total number of supported VPPs */
+-	*availible_vpp = (u16)be32_to_cpu(out_param->availible_vpp);
++	*available_vpp = (u16)be32_to_cpu(out_param->available_vpp);
+ 
+ 	for (i = 0; i < MLX4_NUM_UP; i++)
+ 		vpp_p_up[i] = (u8)be32_to_cpu(out_param->vpp_p_up[i]);
+diff --git a/drivers/net/ethernet/mellanox/mlx4/fw_qos.h b/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
+index ac1f331878e6..582997577a04 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
++++ b/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
+@@ -84,23 +84,23 @@ int mlx4_SET_PORT_PRIO2TC(struct mlx4_dev *dev, u8 port, u8 *prio2tc);
+ int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8 port, u8 *tc_tx_bw,
+ 			    u8 *pg, u16 *ratelimit);
+ /**
+- * mlx4_ALLOCATE_VPP_get - Query port VPP availible resources and allocation.
+- * Before distribution of VPPs to priorities, only availible_vpp is returned.
++ * mlx4_ALLOCATE_VPP_get - Query port VPP available resources and allocation.
++ * Before distribution of VPPs to priorities, only available_vpp is returned.
+  * After initialization it returns the distribution of VPPs among priorities.
+  *
+  * @dev: mlx4_dev.
+  * @port: Physical port number.
+- * @availible_vpp: Pointer to variable where number of availible VPPs is stored
++ * @available_vpp: Pointer to variable where number of available VPPs is stored
+  * @vpp_p_up: Distribution of VPPs to priorities is stored in this array
+  *
+  * Returns 0 on success or a negative mlx4_core errno code.
+  **/
+ int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8 port,
+-			  u16 *availible_vpp, u8 *vpp_p_up);
++			  u16 *available_vpp, u8 *vpp_p_up);
+ /**
+  * mlx4_ALLOCATE_VPP_set - Distribution of VPPs among differnt priorities.
+  * The total number of VPPs assigned to all for a port must not exceed
+- * the value reported by availible_vpp in mlx4_ALLOCATE_VPP_get.
++ * the value reported by available_vpp in mlx4_ALLOCATE_VPP_get.
+  * VPP allocation is allowed only after the port type has been set,
+  * and while no QPs are open for this port.
+  *
+-- 
+2.11.0
 
