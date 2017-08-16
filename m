@@ -1,49 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 07 Aug 2017 09:50:42 +0000
-Subject: [PATCH 3/5] mmc: sdhci-sirf: constify sdhci_pltfm_data and sdhci_ops structures
-Message-Id: <1502099444-10473-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 16:14:52 +0000
+Subject: [PATCH 1/2] fs-qnx6: Delete an error message for a failed memory allocation in qnx6_mmi_fill_super()
+Message-Id: <888c8fc4-11bb-008b-7396-be4fd2a695a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <55b824fd-3f8a-4ca6-583f-27f584cd237a@users.sourceforge.net>
+In-Reply-To: <55b824fd-3f8a-4ca6-583f-27f584cd237a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Fabian Frederick <fabf@skynet.be>, Kai Bankett <chaosman@ontika.net>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The sdhci_pltfm_data structure is only passed as the second argument
-of sdhci_pltfm_init, which is const, while the sdhci_ops structure
-is only stored in the ops field of a sdhci_pltfm_data structure,
-which is also const.  Thus both kinds of structures can be const as
-well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 17:07:26 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mmc/host/sdhci-sirf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/qnx6/super_mmi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-sirf.c b/drivers/mmc/host/sdhci-sirf.c
-index c251c6c..556b0cf 100644
---- a/drivers/mmc/host/sdhci-sirf.c
-+++ b/drivers/mmc/host/sdhci-sirf.c
-@@ -146,7 +146,7 @@ static int sdhci_sirf_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	return rc;
- }
+diff --git a/fs/qnx6/super_mmi.c b/fs/qnx6/super_mmi.c
+index 62aaf3e3126a..fdcfc99e2db6 100644
+--- a/fs/qnx6/super_mmi.c
++++ b/fs/qnx6/super_mmi.c
+@@ -100,10 +100,8 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
+ 	}
  
--static struct sdhci_ops sdhci_sirf_ops = {
-+static const struct sdhci_ops sdhci_sirf_ops = {
- 	.read_l = sdhci_sirf_readl_le,
- 	.read_w = sdhci_sirf_readw_le,
- 	.platform_execute_tuning = sdhci_sirf_execute_tuning,
-@@ -157,7 +157,7 @@ static int sdhci_sirf_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
- };
+ 	qsb = kmalloc(sizeof(*qsb), GFP_KERNEL);
+-	if (!qsb) {
+-		pr_err("unable to allocate memory.\n");
++	if (!qsb)
+ 		goto out;
+-	}
  
--static struct sdhci_pltfm_data sdhci_sirf_pdata = {
-+static const struct sdhci_pltfm_data sdhci_sirf_pdata = {
- 	.ops = &sdhci_sirf_ops,
- 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
- 		SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 	if (fs64_to_cpu(sbi, sb1->sb_serial) >
+ 					fs64_to_cpu(sbi, sb2->sb_serial)) {
+-- 
+2.14.0
 
