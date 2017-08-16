@@ -1,26 +1,38 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 17 Aug 2017 00:30:04 +0000
-Subject: Re: [PATCH] scsi: mpt3sas: fix pr_info message continuation
-Message-Id: <yq1tw17ox2r.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Aug 2017 08:54:17 +0000
+Subject: [PATCH resend] thunderbolt: Fix reset response_type
+Message-Id: <20170816085417.7xlnl54jkx2p36qs@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170815135145.25792-1-colin.king@canonical.com>
-In-Reply-To: <20170815135145.25792-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 15 Aug 2017 14:51:45 +0100")
+In-Reply-To: <735914a9-3d8f-7d98-35c3-6e2e046e70c2@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas Noever <andreas.noever@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Michael Jamet <michael.jamet@intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>
 
+There is a mistake here where we accidentally use sizeof(TB_CFG_PKG_RESET)
+instead of just TB_CFG_PKG_RESET.  The size of an int is 4 so it's the
+same as TB_CFG_PKG_NOTIFY_ACK.
 
-Colin,
+Fixes: d7f781bfdbf4 ("thunderbolt: Rework control channel to be more reliable")
+Reported-by: Colin King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Resending with Greg CC'd.  This was also:
+Signed-off-by: Andreas Noever <andreas.noever@gmail.com>
+But I wasn't sure if I should add that tag.
 
-> An optional discovery status should be printed with a pr_cont and
-> needs a leading space to make it more readable. The final new line
-> should also be a pr_cont and the indentation is out by one, so fix
-> that too.
-
-Applied to 4.14/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 69c0232a22f8..fb40dd0588b9 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -804,7 +804,7 @@ struct tb_cfg_result tb_cfg_reset(struct tb_ctl *ctl, u64 route,
+ 	req->request_type = TB_CFG_PKG_RESET;
+ 	req->response = &reply;
+ 	req->response_size = sizeof(reply);
+-	req->response_type = sizeof(TB_CFG_PKG_RESET);
++	req->response_type = TB_CFG_PKG_RESET;
+ 
+ 	res = tb_cfg_request_sync(ctl, req, timeout_msec);
+ 
