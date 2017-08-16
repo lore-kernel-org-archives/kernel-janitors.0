@@ -1,48 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:20 +0000
-Subject: [PATCH 08/17] pinctrl: aspeed: g4: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 13:26:17 +0000
+Subject: [PATCH 0/2] UBIFS: Adjustments for some function implementations
+Message-Id: <bd8107ce-fc62-db39-8134-59dca314da7c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (pctlops, and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 15:21:23 +0200
 
-Done with the help of Coccinelle.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in dbg_check_orphans()
+  Improve 19 size determinations
 
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ubifs/log.c      |  2 +-
+ fs/ubifs/lpt.c      | 12 ++++++------
+ fs/ubifs/orphan.c   | 10 ++++------
+ fs/ubifs/recovery.c |  2 +-
+ fs/ubifs/replay.c   |  8 ++++----
+ fs/ubifs/scan.c     |  4 ++--
+ fs/ubifs/super.c    |  2 +-
+ fs/ubifs/tnc.c      |  2 +-
+ 8 files changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-index df56e58..05b1530 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-@@ -2401,7 +2401,7 @@
- 	.nconfigs = ARRAY_SIZE(aspeed_g4_configs),
- };
- 
--static struct pinmux_ops aspeed_g4_pinmux_ops = {
-+static const struct pinmux_ops aspeed_g4_pinmux_ops = {
- 	.get_functions_count = aspeed_pinmux_get_fn_count,
- 	.get_function_name = aspeed_pinmux_get_fn_name,
- 	.get_function_groups = aspeed_pinmux_get_fn_groups,
-@@ -2410,7 +2410,7 @@
- 	.strict = true,
- };
- 
--static struct pinctrl_ops aspeed_g4_pinctrl_ops = {
-+static const struct pinctrl_ops aspeed_g4_pinctrl_ops = {
- 	.get_groups_count = aspeed_pinctrl_get_groups_count,
- 	.get_group_name = aspeed_pinctrl_get_group_name,
- 	.get_group_pins = aspeed_pinctrl_get_group_pins,
+-- 
+2.14.0
 
