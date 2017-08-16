@@ -1,30 +1,39 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 18 Aug 2017 16:03:42 +0000
-Subject: Re: [PATCH] i40iw: Simplify code
-Message-Id: <1503072222.2598.17.camel@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 16 Aug 2017 05:05:06 +0000
+Subject: [PATCH] EDAC, altera: Fix an error handling path in 'altr_edac_device_probe()'
+Message-Id: <20170816050506.14541-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170716110923.14907-1-christophe.jaillet@wanadoo.fr>
-         <20170717193151.GB16652@ssaleem-MOBL4.amr.corp.intel.com>
-In-Reply-To: <20170717193151.GB16652@ssaleem-MOBL4.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shiraz Saleem <shiraz.saleem@intel.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: faisal.latif@intel.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thor.thayer@linux.intel.com, bp@alien8.de, mchehab@kernel.org
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, 2017-07-17 at 14:31 -0500, Shiraz Saleem wrote:
-> On Sun, Jul 16, 2017 at 01:09:23PM +0200, Christophe JAILLET wrote:
-> > Axe a few lines of code and re-use existing error handling path to
-> > avoid
-> > code duplication.
-> > 
-> 
-> Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
+'res' is known to be 0 at this point.
+If 'devm_ioremap()' fails, returns -ENOMEM instead of 0 which means
+success.
 
-Thanks, applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/edac/altera_edac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index fa2e5db56d24..346c4987b284 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -747,8 +747,10 @@ static int altr_edac_device_probe(struct platform_device *pdev)
+ 	drvdata->edac_dev_name = ecc_name;
+ 
+ 	drvdata->base = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (!drvdata->base)
++	if (!drvdata->base) {
++		res = -ENOMEM;
+ 		goto fail1;
++	}
+ 
+ 	/* Get driver specific data for this EDAC device */
+ 	drvdata->data = of_match_node(altr_edac_device_of_match, np)->data;
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.11.0
 
