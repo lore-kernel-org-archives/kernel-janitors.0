@@ -1,39 +1,45 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Fri, 25 Aug 2017 11:08:22 +0000
-Subject: Re: [PATCH v2] irqdomain: potential Oops in irq_domain_push_irq()
-Message-Id: <alpine.DEB.2.20.1708251306410.1883@nanos>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Aug 2017 17:12:00 +0000
+Subject: [PATCH] Revert "staging: fsl-mc: be consistent when checking strcmp() return"
+Message-Id: <20170816171200.31259-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825091000.z5taav6xj2yds6ch@mwanda>
-In-Reply-To: <20170825091000.z5taav6xj2yds6ch@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, David Daney <david.daney@cavium.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wei Yongjun <weiyongjun1@huawei.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 25 Aug 2017, Dan Carpenter wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This code generates a Smatch warning:
-> 
->     kernel/irq/irqdomain.c:1511 irq_domain_push_irq()
->     warn: variable dereferenced before check 'root_irq_data' (see line 1508)
-> 
-> irq_get_irq_data() does sometimes return NULL pointers so it does look
-> like this code could Oops.  I've moved the check for NULL earlier to
-> fix this bug.
+The previous fix removed the equal to zero comparisons by the strcmps and
+now the function always returns true. Revert this change to restore the
+original correctly functioning code.
 
-From Documentation/process/submitting-patches.rst:
+Detected by CoverityScan, CID#1452267 ("Constant expression result")
 
- "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-  to do frotz", as if you are giving orders to the codebase to change
-  its behaviour."
+This reverts commit b93ad9a067e1515af42da7d56bc61f1a25075f94.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/fsl-mc/bus/fsl-mc-allocator.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Is it that hard to read _and_ understand what those instructions mean?
-
-Thanks,
-
-	tglx
-
-
+diff --git a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
+index b37a6f48225f..8ea3920400a0 100644
+--- a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
++++ b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
+@@ -16,9 +16,9 @@
+ 
+ static bool __must_check fsl_mc_is_allocatable(const char *obj_type)
+ {
+-	return strcmp(obj_type, "dpbp") ||
+-	       strcmp(obj_type, "dpmcp") ||
+-	       strcmp(obj_type, "dpcon");
++	return strcmp(obj_type, "dpbp") = 0 ||
++	       strcmp(obj_type, "dpmcp") = 0 ||
++	       strcmp(obj_type, "dpcon") = 0;
+ }
+ 
+ /**
+-- 
+2.11.0
 
