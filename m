@@ -1,42 +1,26 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 15:08:58 +0000
-Subject: [PATCH 4/9 v2] thermal: zx2967: constify thermal_zone_of_device_ops structures
-Message-Id: <1502204943-20075-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Wed, 16 Aug 2017 12:29:55 +0000
+Subject: Re: powerpc: store the intended structure
+Message-Id: <3xXTFH6cfyz9t5T@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1502630663-18599-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to thermal_zone_of_sensor_register, which is declared as const.
-Thus the thermal_zone_of_device_ops structure itself can be const.
+On Sun, 2017-08-13 at 13:24:23 UTC, Julia Lawall wrote:
+> Normally the values in the resource field and the argument to ARRAY_SIZE
+> in the num_resources are the same.  In this case, the value in the reousrce
+> field is the same as the one in the previous platform_device structure, and
+> appears to be a copy-paste error.  Replace the value in the resource field
+> with the argument to the local call to ARRAY_SIZE.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Applied to powerpc next, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+https://git.kernel.org/powerpc/c/36992606eee8016c36ad2576687e97
 
----
-
-v2: This patch was present in the original series
-
- drivers/thermal/zx2967_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
-index a5670ad..6acce0b 100644
---- a/drivers/thermal/zx2967_thermal.c
-+++ b/drivers/thermal/zx2967_thermal.c
-@@ -111,7 +111,7 @@ static int zx2967_thermal_get_temp(void *data, int *temp)
- 	return ret;
- }
- 
--static struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
-+static const struct thermal_zone_of_device_ops zx2967_of_thermal_ops = {
- 	.get_temp = zx2967_thermal_get_temp,
- };
- 
-
+cheers
