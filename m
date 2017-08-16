@@ -1,57 +1,38 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 02 Aug 2017 12:24:09 +0000
-Subject: Re: [PATCH nf-next] netfilter: constify nf_loginfo structures
-Message-Id: <20170802122409.GB13459@salvia>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 16 Aug 2017 05:16:06 +0000
+Subject: [PATCH] crypto: cavium/nitrox - Fix an error handling path in 'nitrox_probe()'
+Message-Id: <20170816051606.14950-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501584483-999-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501584483-999-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, coreteam@netfilter.org, netfilter-devel@vger.kernel.org, Florian Westphal <fw@strlen.de>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+To: herbert@gondor.apana.org.au, davem@davemloft.net, Jampala.Srikanth@cavium.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Aug 01, 2017 at 12:48:03PM +0200, Julia Lawall wrote:
-> The nf_loginfo structures are only passed as the seventh argument to
-> nf_log_trace, which is declared as const or stored in a local const
-> variable.  Thus the nf_loginfo structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct nf_loginfo i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> expression list[6] es;
-> position p;
-> @@
->  nf_log_trace(es,&i@p,...)
-> 
-> @ok2@
-> identifier r.i;
-> const struct nf_loginfo *e;
-> position p;
-> @@
->  e = &i@p
-> 
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> struct nf_loginfo e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct nf_loginfo i = { ... };
-> // </smpl>
+'err' is known to be 0 at this point.
+If 'kzalloc()' fails, returns -ENOMEM instead of 0 which means success.
 
-Applied, thanks Julia.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index 9ccefb9b7232..fee7cb2ce747 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -513,8 +513,10 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 	pci_set_master(pdev);
+ 
+ 	ndev = kzalloc(sizeof(*ndev), GFP_KERNEL);
+-	if (!ndev)
++	if (!ndev) {
++		err = -ENOMEM;
+ 		goto ndev_fail;
++	}
+ 
+ 	pci_set_drvdata(pdev, ndev);
+ 	ndev->pdev = pdev;
+-- 
+2.11.0
+
