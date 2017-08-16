@@ -1,24 +1,40 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 17 Aug 2017 16:51:24 +0000
-Subject: Re: [PATCH] scsi: hpsa: fix the device_id in hpsa_update_device_info()
-Message-Id: <yq1wp62kuib.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Aug 2017 09:16:59 +0000
+Subject: [PATCH][i2c-next] i2c-cht-wc: make cht_wc_i2c_adap_driver static
+Message-Id: <20170816091659.10738-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817144444.tocisnlw6grmaf75@mwanda>
-In-Reply-To: <20170817144444.tocisnlw6grmaf75@mwanda> (Dan Carpenter's message
-        of "Thu, 17 Aug 2017 17:44:44 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Don Brace <don.brace@microsemi.com>, ". Hannes Reinecke" <hare@suse.de>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan,
+The structure cht_wc_i2c_adap_driver is local to the source
+and does not need to be in global scope, so make it static.
 
-> The parentheses are in the wrong place so we specify the length as
-> "sizeof(this_device->device_id) < 0" which is zero.
+Cleans up sparse warning:
+symbol 'cht_wc_i2c_adap_driver' was not declared. Should it be static?
 
-Applied to 4.14/scsi-queue. Thank you!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-cht-wc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/busses/i2c-cht-wc.c b/drivers/i2c/busses/i2c-cht-wc.c
+index fe5caf70c7fe..01c94c918d4c 100644
+--- a/drivers/i2c/busses/i2c-cht-wc.c
++++ b/drivers/i2c/busses/i2c-cht-wc.c
+@@ -322,7 +322,7 @@ static struct platform_device_id cht_wc_i2c_adap_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, cht_wc_i2c_adap_id_table);
+ 
+-struct platform_driver cht_wc_i2c_adap_driver = {
++static struct platform_driver cht_wc_i2c_adap_driver = {
+ 	.probe = cht_wc_i2c_adap_i2c_probe,
+ 	.remove = cht_wc_i2c_adap_i2c_remove,
+ 	.driver = {
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
