@@ -1,34 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Aug 2017 20:16:06 +0000
-Subject: [PATCH] drm/omap: Potential NULL deref in omap_crtc_duplicate_state()
-Message-Id: <20170811201604.7v7txdmlf4knvdqf@mwanda>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Wed, 16 Aug 2017 09:55:08 +0000
+Subject: Re: [PATCH] drm/omap: Potential NULL deref in omap_crtc_duplicate_state()
+Message-Id: <6a981cc0-0bd9-4ca1-aac6-3dece2bd1fec@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170811201604.7v7txdmlf4knvdqf@mwanda>
+In-Reply-To: <20170811201604.7v7txdmlf4knvdqf@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8-sig"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <dan.carpenter@oracle.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-If the kmalloc() fails then we dereference "state" when we set
-"state->zpos".
-
-Fixes: 3dfeb631a15d ("drm/omap: Rework the rotation-on-crtc hack")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
-index 400d0d2f6790..cc85c16cbc2a 100644
---- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-+++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-@@ -589,8 +589,10 @@ omap_crtc_duplicate_state(struct drm_crtc *crtc)
- 	current_state = to_omap_crtc_state(crtc->state);
- 
- 	state = kmalloc(sizeof(*state), GFP_KERNEL);
--	if (state)
--		__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
-+	if (!state)
-+		return NULL;
-+
-+	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
- 
- 	state->zpos = current_state->zpos;
- 	state->rotation = current_state->rotation;
+77u/ClRleGFzIEluc3RydW1lbnRzIEZpbmxhbmQgT3ksIFBvcmtrYWxhbmthdHUgMjIsIDAwMTgw
+IEhlbHNpbmtpLiBZLXR1bm51cy9CdXNpbmVzcyBJRDogMDYxNTUyMS00LiBLb3RpcGFpa2thL0Rv
+bWljaWxlOiBIZWxzaW5raQoKT24gMTEvMDgvMTcgMjM6MTYsIERhbiBDYXJwZW50ZXIgd3JvdGU6
+Cj4gSWYgdGhlIGttYWxsb2MoKSBmYWlscyB0aGVuIHdlIGRlcmVmZXJlbmNlICJzdGF0ZSIgd2hl
+biB3ZSBzZXQKPiAic3RhdGUtPnpwb3MiLgo+IAo+IEZpeGVzOiAzZGZlYjYzMWExNWQgKCJkcm0v
+b21hcDogUmV3b3JrIHRoZSByb3RhdGlvbi1vbi1jcnRjIGhhY2siKQo+IFNpZ25lZC1vZmYtYnk6
+IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KPiAKPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+b21hcGRybS9vbWFwX2NydGMuYwo+IGluZGV4IDQwMGQwZDJmNjc5MC4uY2M4NWMxNmNiYzJhIDEw
+MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfY3J0Yy5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9jcnRjLmMKPiBAQCAtNTg5LDggKzU4OSwxMCBA
+QCBvbWFwX2NydGNfZHVwbGljYXRlX3N0YXRlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiAgCWN1
+cnJlbnRfc3RhdGUgPSB0b19vbWFwX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOwo+ICAKPiAgCXN0
+YXRlID0ga21hbGxvYyhzaXplb2YoKnN0YXRlKSwgR0ZQX0tFUk5FTCk7Cj4gLQlpZiAoc3RhdGUp
+Cj4gLQkJX19kcm1fYXRvbWljX2hlbHBlcl9jcnRjX2R1cGxpY2F0ZV9zdGF0ZShjcnRjLCAmc3Rh
+dGUtPmJhc2UpOwo+ICsJaWYgKCFzdGF0ZSkKPiArCQlyZXR1cm4gTlVMTDsKPiArCj4gKwlfX2Ry
+bV9hdG9taWNfaGVscGVyX2NydGNfZHVwbGljYXRlX3N0YXRlKGNydGMsICZzdGF0ZS0+YmFzZSk7
+Cj4gIAo+ICAJc3RhdGUtPnpwb3MgPSBjdXJyZW50X3N0YXRlLT56cG9zOwo+ICAJc3RhdGUtPnJv
+dGF0aW9uID0gY3VycmVudF9zdGF0ZS0+cm90YXRpb247Cj4gCgpUaGFua3MhIEFwcGxpZWQuCgog
+VG9taQoKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
+c3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
+am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3Zn
+ZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
