@@ -1,73 +1,67 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Fri, 18 Aug 2017 16:04:09 +0000
-Subject: Re: [PATCH 2/2] lockd: Adjust 61 checks for null pointers
-Message-Id: <1503072249.4719.22.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 19:22:32 +0000
+Subject: [PATCH 2/3] pstore: Improve a size determination in three functions
+Message-Id: <23798ef4-5559-3454-ecf4-e6844b644ff3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e53b2d3a-239a-268c-5674-3c50b02c966f@users.sourceforge.net>
-         <e76e873f-f18e-5bdd-cc93-255321b3d98f@users.sourceforge.net>
-         <1503071631.44656.4.camel@primarydata.com>
-In-Reply-To: <1503071631.44656.4.camel@primarydata.com>
+References: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net>
+In-Reply-To: <97737d95-d6aa-d24f-1af0-9d4895ceaed2@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Trond Myklebust <trondmy@primarydata.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "bfields@fieldses.org" <bfields@fieldses.org>, hch <hch@lst.de>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "elfring@users.sourceforge.net" <elfring@users.sourceforge.net>, bcodding redhat <bcodding@redhat.com>, "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2017-08-18 at 15:53 +0000, Trond Myklebust wrote:
-> On Thu, 2017-08-17 at 16:34 +0200, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Thu, 17 Aug 2017 16:00:18 +0200
-> > MIME-Version: 1.0
-> > Content-Type: text/plain; charset=UTF-8
-> > Content-Transfer-Encoding: 8bit
-> > 
-> > The script “checkpatch.pl” pointed information out like the
-> > following.
-> > 
-> > Comparison to NULL could be written …
-> > 
-> > Thus fix the affected source code places.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  fs/lockd/clnt4xdr.c | 12 ++++++------
-> >  fs/lockd/clntlock.c | 10 +++++-----
-> >  fs/lockd/clntproc.c | 12 ++++++------
-> >  fs/lockd/clntxdr.c  | 12 ++++++------
-> >  fs/lockd/host.c     | 22 +++++++++++-----------
-> >  fs/lockd/mon.c      | 16 ++++++++--------
-> >  fs/lockd/svc.c      |  4 ++--
-> >  fs/lockd/svc4proc.c |  6 +++---
-> >  fs/lockd/svclock.c  | 14 +++++++-------
-> >  fs/lockd/svcproc.c  |  6 +++---
-> >  fs/lockd/svcshare.c |  2 +-
-> >  fs/lockd/svcsubs.c  |  3 +--
-> >  12 files changed, 59 insertions(+), 60 deletions(-)
-> > 
-> > diff --git a/fs/lockd/clnt4xdr.c b/fs/lockd/clnt4xdr.c
-> > index c349fc0f9b80..ec6473d194fd 100644
-> > --- a/fs/lockd/clnt4xdr.c
-> > +++ b/fs/lockd/clnt4xdr.c
-> > @@ -131,7 +131,7 @@ static int decode_netobj(struct xdr_stream *xdr,
-> >  	__be32 *p;
-> >  
-> >  	p = xdr_inline_decode(xdr, 4);
-> > -	if (unlikely(p = NULL))
-> > +	if (unlikely(!p))
-> 
-> Oh STOP with the checkpatch wankfest!
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 16 Aug 2017 20:50:15 +0200
 
-:)
+Replace the specification of data types by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-To elaborate: these kinds of patches are particularly unwelcome. In
-particular, these sorts of changes make it difficult to backport later
-patches to earlier kernels.
+This issue was detected by using the Coccinelle software.
 
-If you're doing meaningful work in these areas of code, then feel free
-to change the style at the same time. If not though, it's best to leave
-them alone.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/pstore/ram.c      | 3 +--
+ fs/pstore/ram_core.c | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Cheers,
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 42d27e5fac9f..0ef95c384bed 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -293,8 +293,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+ 			 */
+ 			struct persistent_ram_zone *tmp_prz, *prz_next;
+ 
+-			tmp_prz = kzalloc(sizeof(struct persistent_ram_zone),
+-					  GFP_KERNEL);
++			tmp_prz = kzalloc(sizeof(*tmp_prz), GFP_KERNEL);
+ 			if (!tmp_prz)
+ 				return -ENOMEM;
+ 			free_prz = true;
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index fafa8af1289c..5d9f7280d757 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -405,7 +405,7 @@ static void *persistent_ram_vmap(phys_addr_t start, size_t size,
+ 	else
+ 		prot = pgprot_writecombine(PAGE_KERNEL);
+ 
+-	pages = kmalloc_array(page_count, sizeof(struct page *), GFP_KERNEL);
++	pages = kmalloc_array(page_count, sizeof(*pages), GFP_KERNEL);
+ 	if (!pages)
+ 		return NULL;
+ 
+@@ -520,7 +520,7 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
+ 	struct persistent_ram_zone *prz;
+ 	int ret = -ENOMEM;
+ 
+-	prz = kzalloc(sizeof(struct persistent_ram_zone), GFP_KERNEL);
++	prz = kzalloc(sizeof(*prz), GFP_KERNEL);
+ 	if (!prz)
+ 		goto err;
+ 
 -- 
-Jeff Layton <jlayton@redhat.com>
+2.14.0
+
