@@ -1,39 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:47 +0000
-Subject: [PATCH 08/11] serial: cpm_uart: constify uart_ops structures
-Message-Id: <1502605310-4314-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 16 Aug 2017 12:01:05 +0000
+Subject: [PATCH][leds-next] leds: pca955x: remove redundant null check on array name
+Message-Id: <20170816120105.1963-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+The check to see if pdata-leds[i].name is redundant as name is
+a 32 byte char array and hence can never be null.  Remove the
+redundant check.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Detected by CoverityScan, CID#1454218 ("Array compared against 0")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-pca955x.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-index f6bcc19..9ac142c 100644
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -1123,7 +1123,7 @@ static void cpm_put_poll_char(struct uart_port *port,
- }
- #endif /* CONFIG_CONSOLE_POLL */
- 
--static struct uart_ops cpm_uart_pops = {
-+static const struct uart_ops cpm_uart_pops = {
- 	.tx_empty	= cpm_uart_tx_empty,
- 	.set_mctrl	= cpm_uart_set_mctrl,
- 	.get_mctrl	= cpm_uart_get_mctrl,
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index f062d1e7640f..b12b7ea51867 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -473,10 +473,9 @@ static int pca955x_probe(struct i2c_client *client,
+ 			 * Platform data can specify LED names and
+ 			 * default triggers
+ 			 */
+-			if (pdata->leds[i].name)
+-				snprintf(pca955x_led->name,
+-					sizeof(pca955x_led->name), "pca955x:%s",
+-					pdata->leds[i].name);
++			snprintf(pca955x_led->name,
++				sizeof(pca955x_led->name), "pca955x:%s",
++				pdata->leds[i].name);
+ 			if (pdata->leds[i].default_trigger)
+ 				pca955x_led->led_cdev.default_trigger  					pdata->leds[i].default_trigger;
+-- 
+2.11.0
 
