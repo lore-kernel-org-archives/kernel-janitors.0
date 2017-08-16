@@ -1,35 +1,25 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 15 Aug 2017 20:18:14 +0000
-Subject: [PATCH] scsi: cxlflash: Fix an error handling path in 'cxlflash_disk_attach()'
-Message-Id: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
+From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+Date: Wed, 16 Aug 2017 00:21:31 +0000
+Subject: Re: [PATCH] scsi: cxlflash: Fix an error handling path in 'cxlflash_disk_attach()'
+Message-Id: <D62EAC69-693C-4231-95F9-B48F47AB241C@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170815201814.12929-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: manoj@linux.vnet.ibm.com, mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Uma Krishnan <ukrishn@linux.vnet.ibm.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-'rc' is known to be 0 at this point.
-If 'create_context()' fails, returns -ENOMEM instead of 0 which means
-success.
+> On Aug 15, 2017, at 3:18 PM, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> 
+> 'rc' is known to be 0 at this point.
+> If 'create_context()' fails, returns -ENOMEM instead of 0 which means
+> success.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/cxlflash/superpipe.c | 1 +
- 1 file changed, 1 insertion(+)
+Yep, that's a bug.
 
-diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
-index ad0f9968ccfb..08da593cb2f6 100644
---- a/drivers/scsi/cxlflash/superpipe.c
-+++ b/drivers/scsi/cxlflash/superpipe.c
-@@ -1390,6 +1390,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
- 	if (unlikely(!ctxi)) {
- 		dev_err(dev, "%s: Failed to create context ctxid=%d\n",
- 			__func__, ctxid);
-+		rc = -ENOMEM;
- 		goto err;
- 	}
- 
--- 
-2.11.0
+Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
 
