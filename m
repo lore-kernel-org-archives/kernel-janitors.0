@@ -1,26 +1,46 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 02 Aug 2017 12:23:55 +0000
-Subject: Re: [PATCH 1/1 v3 nf-next] netfilter: constify nf_conntrack_l3/4proto parameters
-Message-Id: <20170802122355.GA13459@salvia>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 16 Aug 2017 05:31:03 +0000
+Subject: [PATCH] sata: ahci-da850: Fix some error handling paths in 'ahci_da850_probe()'
+Message-Id: <20170816053103.19773-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501583101-14188-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501583101-14188-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501583101-14188-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tj@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, Aug 01, 2017 at 12:25:01PM +0200, Julia Lawall wrote:
-> When a nf_conntrack_l3/4proto parameter is not on the left hand side
-> of an assignment, its address is not taken, and it is not passed to a
-> function that may modify its fields, then it can be declared as const.
-> 
-> This change is useful from a documentation point of view, and can
-> possibly facilitate making some nf_conntrack_l3/4proto structures const
-> subsequently.
-> 
-> Done with the help of Coccinelle.
+'rc' is known to be 0 at this point.
+If 'platform_get_resource()' or 'devm_ioremap()' fail, return -ENOMEM
+instead of 0 which means success.
 
-Applied, thanks Julia.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/ata/ahci_da850.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/ahci_da850.c b/drivers/ata/ahci_da850.c
+index 1a50cd3b4233..eb46cad4d514 100644
+--- a/drivers/ata/ahci_da850.c
++++ b/drivers/ata/ahci_da850.c
+@@ -216,12 +216,16 @@ static int ahci_da850_probe(struct platform_device *pdev)
+ 		return rc;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!res)
++	if (!res) {
++		rc = -ENOMEM;
+ 		goto disable_resources;
++	}
+ 
+ 	pwrdn_reg = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!pwrdn_reg)
++	if (!pwrdn_reg) {
++		rc = -ENOMEM;
+ 		goto disable_resources;
++	}
+ 
+ 	da850_sata_init(dev, pwrdn_reg, hpriv->mmio, mpy);
+ 
+-- 
+2.11.0
+
