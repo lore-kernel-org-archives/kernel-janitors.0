@@ -1,128 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 16:15:57 +0000
-Subject: [PATCH 2/2] fs-qnx6: Less checks in qnx6_mmi_fill_super() after error detection
-Message-Id: <44582469-f671-267a-0a60-cbe50fd16b51@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 16 Aug 2017 12:09:19 +0000
+Subject: Applied "ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_probe
+Message-Id: <E1dhx8R-0005da-Ne@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55b824fd-3f8a-4ca6-583f-27f584cd237a@users.sourceforge.net>
-In-Reply-To: <55b824fd-3f8a-4ca6-583f-27f584cd237a@users.sourceforge.net>
+References: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
+In-Reply-To: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabian Frederick <fabf@skynet.be>, Kai Bankett <chaosman@ontika.net>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_probe()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 92ec46da6e35f5f7ff39741517a9466c82d1afb9 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 18:00:24 +0200
+Date: Fri, 11 Aug 2017 11:25:41 +0200
+Subject: [PATCH] ASoC: Medfield: Delete an error message for a failed memory
+ allocation in snd_mfld_mc_probe()
 
-Two pointer checks could be repeated by the qnx6_mmi_fill_super() function
-during error handling even if the relevant properties can be determined
-for the involved variables before by source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-* Adjust jump targets so that extra checks can be omitted at the end.
+This issue was detected by using the Coccinelle software.
 
-* Delete an initialisation for the variables "bh2" and "qsb"
-  which became unnecessary with this refactoring.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/qnx6/super_mmi.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ sound/soc/intel/boards/mfld_machine.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/qnx6/super_mmi.c b/fs/qnx6/super_mmi.c
-index fdcfc99e2db6..eb98479f9ec1 100644
---- a/fs/qnx6/super_mmi.c
-+++ b/fs/qnx6/super_mmi.c
-@@ -34,9 +34,9 @@ static void qnx6_mmi_copy_sb(struct qnx6_super_block *qsb,
+diff --git a/sound/soc/intel/boards/mfld_machine.c b/sound/soc/intel/boards/mfld_machine.c
+index 4e08885f37aa..6f44acfb4aae 100644
+--- a/sound/soc/intel/boards/mfld_machine.c
++++ b/sound/soc/intel/boards/mfld_machine.c
+@@ -376,10 +376,8 @@ static int snd_mfld_mc_probe(struct platform_device *pdev)
+ 	/* audio interrupt base of SRAM location where
+ 	 * interrupts are stored by System FW */
+ 	mc_drv_ctx = devm_kzalloc(&pdev->dev, sizeof(*mc_drv_ctx), GFP_ATOMIC);
+-	if (!mc_drv_ctx) {
+-		pr_err("allocation failed\n");
++	if (!mc_drv_ctx)
+ 		return -ENOMEM;
+-	}
  
- struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- {
--	struct buffer_head *bh1, *bh2 = NULL;
-+	struct buffer_head *bh1, *bh2;
- 	struct qnx6_mmi_super_block *sb1, *sb2;
--	struct qnx6_super_block *qsb = NULL;
-+	struct qnx6_super_block *qsb;
- 	struct qnx6_sb_info *sbi;
- 	__u64 offset;
- 
-@@ -52,7 +52,7 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- 	if (fs32_to_cpu(sbi, sb1->sb_magic) != QNX6_SUPER_MAGIC) {
- 		if (!silent) {
- 			pr_err("wrong signature (magic) in superblock #1.\n");
--			goto out;
-+			goto brelse_first;
- 		}
- 	}
- 
-@@ -60,7 +60,7 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- 	if (fs32_to_cpu(sbi, sb1->sb_checksum) ! 				crc32_be(0, (char *)(bh1->b_data + 8), 504)) {
- 		pr_err("superblock #1 checksum error\n");
--		goto out;
-+		goto brelse_first;
- 	}
- 
- 	/* calculate second superblock blocknumber */
-@@ -70,38 +70,38 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- 	/* set new blocksize */
- 	if (!sb_set_blocksize(s, fs32_to_cpu(sbi, sb1->sb_blocksize))) {
- 		pr_err("unable to set blocksize\n");
--		goto out;
-+		goto brelse_first;
- 	}
- 	/* blocksize invalidates bh - pull it back in */
- 	brelse(bh1);
- 	bh1 = sb_bread(s, 0);
- 	if (!bh1)
--		goto out;
-+		goto exit;
- 	sb1 = (struct qnx6_mmi_super_block *)bh1->b_data;
- 
- 	/* read second superblock */
- 	bh2 = sb_bread(s, offset);
- 	if (!bh2) {
- 		pr_err("unable to read the second superblock\n");
--		goto out;
-+		goto brelse_first;
- 	}
- 	sb2 = (struct qnx6_mmi_super_block *)bh2->b_data;
- 	if (fs32_to_cpu(sbi, sb2->sb_magic) != QNX6_SUPER_MAGIC) {
- 		if (!silent)
- 			pr_err("wrong signature (magic) in superblock #2.\n");
--		goto out;
-+		goto brelse_second;
- 	}
- 
- 	/* checksum check - start at byte 8 and end at byte 512 */
- 	if (fs32_to_cpu(sbi, sb2->sb_checksum)
- 			!= crc32_be(0, (char *)(bh2->b_data + 8), 504)) {
- 		pr_err("superblock #1 checksum error\n");
--		goto out;
-+		goto brelse_second;
- 	}
- 
- 	qsb = kmalloc(sizeof(*qsb), GFP_KERNEL);
- 	if (!qsb)
--		goto out;
-+		goto brelse_second;
- 
- 	if (fs64_to_cpu(sbi, sb1->sb_serial) >
- 					fs64_to_cpu(sbi, sb2->sb_serial)) {
-@@ -136,11 +136,10 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- 
- 	/* success */
- 	return sbi->sb;
--
--out:
--	if (bh1 != NULL)
--		brelse(bh1);
--	if (bh2 != NULL)
--		brelse(bh2);
-+brelse_second:
-+	brelse(bh2);
-+brelse_first:
-+	brelse(bh1);
-+exit:
- 	return NULL;
- }
+ 	irq_mem = platform_get_resource_byname(
+ 				pdev, IORESOURCE_MEM, "IRQ_BASE");
 -- 
-2.14.0
+2.13.2
 
