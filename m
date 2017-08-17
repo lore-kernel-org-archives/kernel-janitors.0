@@ -1,43 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 16:46:28 +0000
-Subject: [PATCH] ASoC: rockchip: Delete an error message for a failed memory allocation in rockchip_i2s_probe
-Message-Id: <85e3e6a2-ecbd-5988-2460-d4f8ca6062f9@users.sourceforge.net>
+Date: Thu, 17 Aug 2017 20:14:39 +0000
+Subject: [PATCH 2/3] orangefs: Use kcalloc() in orangefs_prepare_cdm_array()
+Message-Id: <705dd4fa-3daf-08fb-23c8-1888b67bc1ce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
+In-Reply-To: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Martin Brandenburg <martin@omnibond.com>, Mike Marshall <hubcap@omnibond.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 18:38:09 +0200
+Date: Thu, 17 Aug 2017 21:18:01 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/rockchip/rockchip_i2s.c | 4 +---
+ fs/orangefs/orangefs-debugfs.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 199338fdeda0..b6590467fd14 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -579,10 +579,8 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	int val;
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index 93fe8f8e60f1..5f59917fd631 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -571,7 +571,5 @@ static int orangefs_prepare_cdm_array(char *debug_array_string)
+ 		goto out;
+ 	}
  
- 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
--	if (!i2s) {
--		dev_err(&pdev->dev, "Can't allocate rk_i2s_dev\n");
-+	if (!i2s)
- 		return -ENOMEM;
--	}
- 
- 	i2s->dev = &pdev->dev;
- 
+-	cdm_array -		kzalloc(cdm_element_count * sizeof(struct client_debug_mask),
+-			GFP_KERNEL);
++	cdm_array = kcalloc(cdm_element_count, sizeof(*cdm_array), GFP_KERNEL);
+ 	if (!cdm_array) {
 -- 
 2.14.0
 
