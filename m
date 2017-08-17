@@ -1,44 +1,51 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Tue, 15 Aug 2017 13:51:55 +0000
-Subject: Re: [PATCH] usb: gadget: dummy: fix infinite loop because of missing loop decrement
-Message-Id: <Pine.LNX.4.44L0.1708150951260.1684-100000@iolanthe.rowland.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 17 Aug 2017 05:14:05 +0000
+Subject: [PATCH] mcb: Fix an error handling path in 'chameleon_parse_cells()'
+Message-Id: <20170817051405.24946-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170815073845.18880-1-colin.king@canonical.com>
-References: <20170815073845.18880-1-colin.king@canonical.com>
-In-Reply-To: <20170815073845.18880-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@nxp.com>, Johan Hovold <johan@kernel.org>, Yuyang Du <yuyang.du@intel.com>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: morbidrsa@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 15 Aug 2017, Colin King wrote:
+If 'chameleon_get_bar()' fails, we will return 0, which mean success.
+We should return the corresponding error code instead.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The while loop never terminates because the loop counter i is never
-> decremented. Fix this by decrementing i.
-> 
-> Detected by CoverityScan, CID#751073 ("Infinite Loop")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/gadget/udc/dummy_hcd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
-> index 3c3760315910..a030d7923d7d 100644
-> --- a/drivers/usb/gadget/udc/dummy_hcd.c
-> +++ b/drivers/usb/gadget/udc/dummy_hcd.c
-> @@ -2776,7 +2776,7 @@ static int __init init(void)
->  		if (retval < 0) {
->  			i--;
->  			while (i >= 0)
-> -				platform_device_del(the_udc_pdev[i]);
-> +				platform_device_del(the_udc_pdev[i--]);
->  			goto err_add_udc;
->  		}
->  	}
+Remove the useless initialisation of 'ret' which was hiding the issue.
+(if 'ret' is not set, gcc generates a warning ("warning: ‘ret’ may be used
+uninitialized in this function"))
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mcb/mcb-parse.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
+index ee7fb6ec96bd..7369bda3442f 100644
+--- a/drivers/mcb/mcb-parse.c
++++ b/drivers/mcb/mcb-parse.c
+@@ -182,7 +182,7 @@ int chameleon_parse_cells(struct mcb_bus *bus, phys_addr_t mapbase,
+ 	int num_cells = 0;
+ 	uint32_t dtype;
+ 	int bar_count;
+-	int ret = 0;
++	int ret;
+ 	u32 hsize;
+ 
+ 	hsize = sizeof(struct chameleon_fpga_header);
+@@ -210,8 +210,10 @@ int chameleon_parse_cells(struct mcb_bus *bus, phys_addr_t mapbase,
+ 		 header->filename);
+ 
+ 	bar_count = chameleon_get_bar(&p, mapbase, &cb);
+-	if (bar_count < 0)
++	if (bar_count < 0) {
++		ret = bar_count;
+ 		goto free_header;
++	}
+ 
+ 	for_each_chameleon_cell(dtype, p) {
+ 		switch (dtype) {
+-- 
+2.11.0
 
