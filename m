@@ -1,67 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:18 +0000
-Subject: [PATCH 09/12] [media] media: mx2-emmaprp: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Aug 2017 10:37:52 +0000
+Subject: [PATCH] drm/nouveau: remove redundant null check on array mstm->msto
+Message-Id: <20170817103752.16440-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+The check to see if mstm->msto is null is redundant because it is
+an array and hence can never be null.  Remove the redundant check.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
+Detected by CoverityScan, CID#1375915 ("Array compared against 0")
 
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/mx2_emmaprp.c |    2 +-
+ drivers/gpu/drm/nouveau/nv50_display.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/mx2_emmaprp.c
-index 03e47e0..7fd209e 100644
---- a/drivers/media/platform/mx2_emmaprp.c
-+++ b/drivers/media/platform/mx2_emmaprp.c
-@@ -882,7 +882,7 @@ static int emmaprp_mmap(struct file *file, struct vm_area_struct *vma)
- 	.vfl_dir	= VFL_DIR_M2M,
- };
+diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
+index f7b4326a4641..51e9081b95a0 100644
+--- a/drivers/gpu/drm/nouveau/nv50_display.c
++++ b/drivers/gpu/drm/nouveau/nv50_display.c
+@@ -3141,7 +3141,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
+ 	mstc->connector.funcs->reset(&mstc->connector);
+ 	nouveau_conn_attach_properties(&mstc->connector);
  
--static struct v4l2_m2m_ops m2m_ops = {
-+static const struct v4l2_m2m_ops m2m_ops = {
- 	.device_run	= emmaprp_device_run,
- 	.job_abort	= emmaprp_job_abort,
- 	.lock		= emmaprp_lock,
+-	for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto; i++)
++	for (i = 0; i < ARRAY_SIZE(mstm->msto); i++)
+ 		drm_mode_connector_attach_encoder(&mstc->connector, &mstm->msto[i]->encoder);
+ 
+ 	drm_object_attach_property(&mstc->connector.base, dev->mode_config.path_property, 0);
+-- 
+2.11.0
 
