@@ -1,41 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Aug 2017 08:17:33 +0000
-Subject: [PATCH] scsi: osst: silence underflow warning in osst_verify_frame()
-Message-Id: <20170804081733.ujuulvyh4nwgdl6n@mwanda>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 17 Aug 2017 00:32:26 +0000
+Subject: Re: [PATCH] scsi: osst: silence underflow warning in osst_verify_frame()
+Message-Id: <yq1pobvowyt.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170804081733.ujuulvyh4nwgdl6n@mwanda>
+In-Reply-To: <20170804081733.ujuulvyh4nwgdl6n@mwanda> (Dan Carpenter's message
+        of "Fri, 4 Aug 2017 11:17:33 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willem Riede <osst@riede.org>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Willem Riede <osst@riede.org>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code looks like this:
 
-	i = ntohl(aux->filemark_cnt);
-	if (STp->header_cache != NULL && i < OS_FM_TAB_MAX && (i > STp->filemark_cnt ||
-	    STp->first_frame_position - 1 != ntohl(STp->header_cache->dat_fm_tab.fm_tab_ent[i]))) {
+Dan,
 
-If i is negative then it's less than OS_FM_TAB_MAX so we read before
-the start of the STp->header_cache->dat_fm_tab.fm_tab_ent[] array.
+> If i is negative then it's less than OS_FM_TAB_MAX so we read before
+> the start of the STp->header_cache->dat_fm_tab.fm_tab_ent[] array.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-There is a second static checker warning that I didn't know how to
-address:
+Applied to 4.14/scsi-queue. Thanks!
 
-    drivers/scsi/osst.c:723 osst_verify_frame()
-    warn: potential integer overflow from user 'blk_cnt * blk_sz'
-
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 97ab5f160bc6..2db87ec04f48 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -619,7 +619,7 @@ static int osst_verify_frame(struct osst_tape * STp, int frame_seq_number, int q
- 	os_aux_t           * aux  = STp->buffer->aux;
- 	os_partition_t     * par  = &(aux->partition);
- 	struct st_partstat * STps = &(STp->ps[STp->partition]);
--	int		     blk_cnt, blk_sz, i;
-+	unsigned int	     blk_cnt, blk_sz, i;
- 
- 	if (STp->raw) {
- 		if (STp->buffer->syscall_result) {
+-- 
+Martin K. Petersen	Oracle Linux Engineering
