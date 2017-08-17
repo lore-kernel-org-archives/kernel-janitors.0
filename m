@@ -1,52 +1,42 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 16 Aug 2017 04:55:54 +0000
-Subject: Re: [PATCH] ASoC: Medfield: Delete an error message for a failed memory allocation in snd_mfld_mc_pr
-Message-Id: <20170816045853.GP3053@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Aug 2017 09:01:07 +0000
+Subject: [PATCH][net-next] net: hns3: ensure media_type is unitialized
+Message-Id: <20170817090107.14310-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
-In-Reply-To: <161e9c4c-1c97-d06f-35ec-3f165ad9e52e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, Daode Huang <huangdaode@hisilicon.com>, "David S . Miller" <davem@davemloft.net>, lipeng <lipeng321@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 11, 2017 at 11:33:56AM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 11 Aug 2017 11:25:41 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-By: Vinod Koul <vinod.koul@intel.com>
+Media type is only set if h->ae_algo->ops->get_media_type is called
+so there is a possibility that media_type is uninitialized when it is
+used a switch statement.  Fix this by initializing media_type to
+HNAE3_MEDIA_TYPE_UNKNOWN.
 
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  sound/soc/intel/boards/mfld_machine.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/intel/boards/mfld_machine.c b/sound/soc/intel/boards/mfld_machine.c
-> index 4e08885f37aa..6f44acfb4aae 100644
-> --- a/sound/soc/intel/boards/mfld_machine.c
-> +++ b/sound/soc/intel/boards/mfld_machine.c
-> @@ -376,10 +376,8 @@ static int snd_mfld_mc_probe(struct platform_device *pdev)
->  	/* audio interrupt base of SRAM location where
->  	 * interrupts are stored by System FW */
->  	mc_drv_ctx = devm_kzalloc(&pdev->dev, sizeof(*mc_drv_ctx), GFP_ATOMIC);
-> -	if (!mc_drv_ctx) {
-> -		pr_err("allocation failed\n");
-> +	if (!mc_drv_ctx)
->  		return -ENOMEM;
-> -	}
->  
->  	irq_mem = platform_get_resource_byname(
->  				pdev, IORESOURCE_MEM, "IRQ_BASE");
-> -- 
-> 2.14.0
-> 
+Detected by CoverityScan, CID#1452624("Uninitialized scalar variable")
 
+Fixes: 496d03e960ae ("net: hns3: Add Ethtool support to HNS3 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
+index 0ad65e47c77e..53cab3ad4cda 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
+@@ -304,7 +304,7 @@ static int hns3_get_link_ksettings(struct net_device *netdev,
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	u32 supported_caps;
+ 	u32 advertised_caps;
+-	u8 media_type;
++	u8 media_type = HNAE3_MEDIA_TYPE_UNKNOWN;
+ 	u8 link_stat;
+ 	u8 auto_neg;
+ 	u8 duplex;
 -- 
-~Vinod
+2.11.0
+
