@@ -1,55 +1,19 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 14:00:09 +0000
-Subject: Re: [PATCH v2 00/17] IB/mlx: Fine-tuning for several function implementations
-Message-Id: <617e30ff-2705-b053-ee28-ed9385037580@users.sourceforge.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 17 Aug 2017 17:19:55 +0000
+Subject: Re: [PATCH] Make functions rf69_set_bandwidth_intern and rf69_set_dc_cut_off_frequency_intern static
+Message-Id: <20170817171955.GA13922@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1935365a-bd7c-461e-6a84-0c5d3a501fff@users.sourceforge.net>
- <1492720654.3041.16.camel@redhat.com>
- <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
-In-Reply-To: <a56f9301-e116-c59c-681a-9108519920e5@users.sourceforge.net>
+References: <20170720223324.8093-1-colin.king@canonical.com>
+In-Reply-To: <20170720223324.8093-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leonro@mellanox.com>, Majd Dibbiny <majd@mellanox.com>, Matan Barak <matanb@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Marcus Wolf <linux@Wolf-Entwicklungen.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Date: Fri, 21 Apr 2017 19:56:54 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (17):
->   Use kcalloc() in mlx4_ib_alloc_pv_bufs()
->   Use kmalloc_array() in six functions
->   Improve size determinations in six functions
->   Fix a typo in a comment line
->   Delete four unnecessary return statements
->   Delete an unnecessary check before kfree() in free_pv_object()
->   Move an assignment out of a check in forward_trap()
->   Enclose 46 expressions for sizeof by parentheses
->   Split a condition check in six functions
->   Delete an unnecessary variable in __mlx4_ib_query_gid()
->   Delete an unnecessary variable initialisation in mlx4_ib_add()
->   Delete an unnecessary variable assignment in mlx4_ib_add()
->   Delete an error message for a failed memory allocation in mlx4_ib_add()
->   Delete unnecessary braces in mlx4_ib_add()
->   Delete unwanted spaces behind usages of the sizeof operator
->   Add spaces for better code readability
->   Less function calls in create_kernel_qp() after error detection
-> ---
-> 
-> v2:
-> Changes were rebased on source files from Linux next-20170421.
-> Some of them were recombined as requested by Doug Ledford.
-> 
->  drivers/infiniband/hw/mlx4/mad.c  |  72 ++++++++--------
->  drivers/infiniband/hw/mlx4/main.c | 164 ++++++++++++++++++++----------------
->  drivers/infiniband/hw/mlx4/qp.c   | 173 +++++++++++++++++++-------------------
->  drivers/infiniband/hw/mlx5/qp.c   |  66 ++++++++++-----
->  drivers/infiniband/hw/mlx5/srq.c  |   5 +-
->  5 files changed, 261 insertions(+), 219 deletions(-)
+On Thu, Jul 20, 2017 at 11:33:24PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 
-Will the clarification be continued for the shown change possibilities?
+Your subject needs work :(
 
-Regards,
-Markus
+Also does not apply to my tree at all :(
