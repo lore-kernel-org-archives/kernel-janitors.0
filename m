@@ -1,23 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 26 Aug 2017 00:14:03 +0000
-Subject: Re: [PATCH] hinic: skb_pad() frees on error
-Message-Id: <20170825.171403.275382416735776894.davem@davemloft.net>
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 17 Aug 2017 22:06:57 +0000
+Subject: Re: [PATCH] cxgb4: Remove some dead code
+Message-Id: <1503007617.2598.1.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825082428.hpnbs4i74bubm4cz@mwanda>
-In-Reply-To: <20170825082428.hpnbs4i74bubm4cz@mwanda>
+References: <20170610091920.24746-1-christophe.jaillet@wanadoo.fr>
+         <047801d2e1e5$5a645190$0f2cf4b0$@opengridcomputing.com>
+In-Reply-To: <047801d2e1e5$5a645190$0f2cf4b0$@opengridcomputing.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: aviad.krawczyk@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>, 'Christophe JAILLET' <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Aug 2017 11:24:28 +0300
+On Sat, 2017-06-10 at 07:30 -0500, Steve Wise wrote:
+> Acked-by: Steve Wise <swise@opengridcomputing.com>
 
-> The skb_pad() function frees the skb on error, so this code has a double
-> free.
-> 
-> Fixes: 00e57a6d4ad3 ("net-next/hinic: Add Tx operation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks, applied.
 
-Applied, thanks.
+-- 
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
