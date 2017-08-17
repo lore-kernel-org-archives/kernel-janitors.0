@@ -1,51 +1,29 @@
-From: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>
-Date: Thu, 10 Aug 2017 13:38:49 +0000
-Subject: Re: [PATCH 04/12] [media] V4L2: platform: rcar_jpu: constify v4l2_m2m_ops structures
-Message-Id: <CALi4nhp_xQodYy9Y=Cma4NSJh5wwPKhSksfj+HAtJ4jnCMHrxg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Aug 2017 11:53:55 +0000
+Subject: [PATCH] i2c: mux: pinctrl: potential NULL dereference on error
+Message-Id: <20170817115355.fsc3z64eih7wjze6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr> <1502007921-22968-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 6, 2017 at 11:25 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The v4l2_m2m_ops structures are only passed as the only
-> argument to v4l2_m2m_init, which is declared as const.
-> Thus the v4l2_m2m_ops structures themselves can be const.
->
-> Done with the help of Coccinelle.
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct v4l2_m2m_ops i@p = { ... };
->
-> @ok1@
-> identifier r.i;
-> position p;
-> @@
-> v4l2_m2m_init(&i@p)
->
-> @bad@
-> position p != {r.p,ok1.p};
-> identifier r.i;
-> struct v4l2_m2m_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct v4l2_m2m_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+If i2c_mux_alloc() fails then we'd have a NULL dereference here.
 
-Acked-by: Ulyanov Mikhail <mikhail.ulyanov@cogentembedded.com>
+Fixes: c4aee3e1b0de ("i2c: mux: pinctrl: remove platform_data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/i2c/muxes/i2c-mux-pinctrl.c b/drivers/i2c/muxes/i2c-mux-pinctrl.c
+index 20b90a7a1e61..cc6818aabab5 100644
+--- a/drivers/i2c/muxes/i2c-mux-pinctrl.c
++++ b/drivers/i2c/muxes/i2c-mux-pinctrl.c
+@@ -173,7 +173,7 @@ static int i2c_mux_pinctrl_probe(struct platform_device *pdev)
+ err_del_adapter:
+ 	i2c_mux_del_adapters(muxc);
+ err_put_parent:
+-	i2c_put_adapter(muxc->parent);
++	i2c_put_adapter(parent);
+ 
+ 	return ret;
+ }
