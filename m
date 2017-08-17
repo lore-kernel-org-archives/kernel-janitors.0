@@ -1,43 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Aug 2017 09:36:01 +0000
-Subject: [PATCH 2/2] kmemleak: Use seq_puts() in print_unreferenced()
-Message-Id: <b764965b-1d80-83c6-72f0-7b64d1036168@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Aug 2017 09:17:10 +0000
+Subject: [PATCH][next] input: axp20x-pek: make dev_attr_startup and dev_attr_shutdown static
+Message-Id: <20170817091710.15095-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
-In-Reply-To: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org, Catalin Marinas <catalin.marinas@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Aug 2017 11:23:11 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The functions dev_attr_startup and dev_attr_shutdown are local to the
+source and do not need to be in global scope, so make them static.
 
-WARNING: Prefer seq_puts to seq_printf
+Cleans up sparse warnings:
+symbol 'dev_attr_startup' was not declared. Should it be static?
+symbol 'dev_attr_shutdown' was not declared. Should it be static?
 
-Thus fix the affected source code place.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- mm/kmemleak.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/misc/axp20x-pek.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index c6c798d90b2e..cfac550d4d00 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -373,7 +373,7 @@ static void print_unreferenced(struct seq_file *seq,
- 		   object->comm, object->pid, object->jiffies,
- 		   msecs_age / 1000, msecs_age % 1000);
- 	hex_dump_object(seq, object);
--	seq_printf(seq, "  backtrace:\n");
-+	seq_puts(seq, "  backtrace:\n");
+diff --git a/drivers/input/misc/axp20x-pek.c b/drivers/input/misc/axp20x-pek.c
+index 4f7d208071d4..1fa8cd1b2dbf 100644
+--- a/drivers/input/misc/axp20x-pek.c
++++ b/drivers/input/misc/axp20x-pek.c
+@@ -191,9 +191,10 @@ static ssize_t axp20x_store_attr_shutdown(struct device *dev,
+ 				 axp20x_pek->info->shutdown_mask, buf, count);
+ }
  
- 	for (i = 0; i < object->trace_len; i++) {
- 		void *ptr = (void *)object->trace[i];
+-DEVICE_ATTR(startup, 0644, axp20x_show_attr_startup, axp20x_store_attr_startup);
+-DEVICE_ATTR(shutdown, 0644, axp20x_show_attr_shutdown,
+-	    axp20x_store_attr_shutdown);
++static DEVICE_ATTR(startup, 0644, axp20x_show_attr_startup,
++		   axp20x_store_attr_startup);
++static DEVICE_ATTR(shutdown, 0644, axp20x_show_attr_shutdown,
++		   axp20x_store_attr_shutdown);
+ 
+ static struct attribute *axp20x_attributes[] = {
+ 	&dev_attr_startup.attr,
 -- 
-2.14.0
+2.11.0
 
