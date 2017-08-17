@@ -1,41 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 20:33:25 +0000
-Subject: [media] cx24113: Improve a size determination in cx24113_attach()
-Message-Id: <ca26f674-9d0d-9bc4-06d9-8a15c69af131@users.sourceforge.net>
+Date: Thu, 17 Aug 2017 14:33:35 +0000
+Subject: [PATCH 1/2] lockd: Delete an error message for a failed memory allocation in reclaimer()
+Message-Id: <350de6ea-41ff-1b86-ff50-26c677447f00@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
-In-Reply-To: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
+References: <e53b2d3a-239a-268c-5674-3c50b02c966f@users.sourceforge.net>
+In-Reply-To: <e53b2d3a-239a-268c-5674-3c50b02c966f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Benjamin Coddington <bcodding@redhat.com>, Christoph Hellwig <hch@lst.de>, Colin Ian King <colin.king@canonical.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 22:17:25 +0200
+Date: Wed, 16 Aug 2017 22:35:24 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/cx24113.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/lockd/clntlock.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/cx24113.c b/drivers/media/dvb-frontends/cx24113.c
-index 09c3fd1840f2..ee1f704f81f2 100644
---- a/drivers/media/dvb-frontends/cx24113.c
-+++ b/drivers/media/dvb-frontends/cx24113.c
-@@ -552,8 +552,7 @@ struct dvb_frontend *cx24113_attach(struct dvb_frontend *fe,
- 		const struct cx24113_config *config, struct i2c_adapter *i2c)
- {
- 	/* allocate memory for the internal state */
--	struct cx24113_state *state -		kzalloc(sizeof(struct cx24113_state), GFP_KERNEL);
-+	struct cx24113_state *state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	int rc;
+diff --git a/fs/lockd/clntlock.c b/fs/lockd/clntlock.c
+index 27d577dbe51a..96c1d14c18f1 100644
+--- a/fs/lockd/clntlock.c
++++ b/fs/lockd/clntlock.c
+@@ -235,12 +235,8 @@ reclaimer(void *ptr)
+ 	struct net *net = host->net;
  
- 	if (!state)
+ 	req = kmalloc(sizeof(*req), GFP_KERNEL);
+-	if (!req) {
+-		printk(KERN_ERR "lockd: reclaimer unable to alloc memory."
+-				" Locks for %s won't be reclaimed!\n",
+-				host->h_name);
++	if (!req)
+ 		return 0;
+-	}
+ 
+ 	allow_signal(SIGKILL);
+ 
 -- 
-2.14.1
+2.14.0
 
