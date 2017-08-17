@@ -1,43 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 19:09:16 +0000
-Subject: [PATCH] [media] img-ir: Delete an error message for a failed memory allocation in img_ir_probe()
-Message-Id: <74e8f4f2-9086-2edb-c64b-e88918b9f742@users.sourceforge.net>
+Date: Thu, 17 Aug 2017 14:32:10 +0000
+Subject: [PATCH 0/2] lockd: Adjustments for some function implementations
+Message-Id: <e53b2d3a-239a-268c-5674-3c50b02c966f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Benjamin Coddington <bcodding@redhat.com>, Christoph Hellwig <hch@lst.de>, Colin Ian King <colin.king@canonical.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 21:04:20 +0200
+Date: Thu, 17 Aug 2017 16:17:18 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in reclaimer()
+  Adjust 61 checks for null pointers
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/rc/img-ir/img-ir-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/lockd/clnt4xdr.c | 12 ++++++------
+ fs/lockd/clntlock.c | 16 ++++++----------
+ fs/lockd/clntproc.c | 12 ++++++------
+ fs/lockd/clntxdr.c  | 12 ++++++------
+ fs/lockd/host.c     | 22 +++++++++++-----------
+ fs/lockd/mon.c      | 16 ++++++++--------
+ fs/lockd/svc.c      |  4 ++--
+ fs/lockd/svc4proc.c |  6 +++---
+ fs/lockd/svclock.c  | 14 +++++++-------
+ fs/lockd/svcproc.c  |  6 +++---
+ fs/lockd/svcshare.c |  2 +-
+ fs/lockd/svcsubs.c  |  3 +--
+ 12 files changed, 60 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/media/rc/img-ir/img-ir-core.c b/drivers/media/rc/img-ir/img-ir-core.c
-index 03fe080278df..bcbabeeab12a 100644
---- a/drivers/media/rc/img-ir/img-ir-core.c
-+++ b/drivers/media/rc/img-ir/img-ir-core.c
-@@ -92,10 +92,9 @@ static int img_ir_probe(struct platform_device *pdev)
- 
- 	/* Private driver data */
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "cannot allocate device data\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
-+
- 	platform_set_drvdata(pdev, priv);
- 	priv->dev = &pdev->dev;
- 	spin_lock_init(&priv->lock);
 -- 
-2.14.1
+2.14.0
 
