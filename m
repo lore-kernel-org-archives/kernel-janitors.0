@@ -1,22 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 22 Aug 2017 17:30:18 +0000
-Subject: Re: [PATCH net] ethernet: xircom: small clean up in setup_xirc2ps_cs()
-Message-Id: <20170822.103018.1072025777350760025.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Aug 2017 07:09:54 +0000
+Subject: [PATCH] scsi: sg: off by one in sg_ioctl()
+Message-Id: <20170817070954.d4gg7hqgg2qjf6d3@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170821094730.ydm2xwsqbkyadybi@mwanda>
-In-Reply-To: <20170821094730.ydm2xwsqbkyadybi@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jarod@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, matvejchikov@gmail.com, bhe@redhat.com, akpm@linux-foundation.org, mingo@kernel.org, linux-kernel@vger.kernel.org
+To: Doug Gilbert <dgilbert@interlog.com>, Hannes Reinecke <hare@suse.de>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Aug 2017 12:47:30 +0300
+If "val" is SG_MAX_QUEUE then we are one element beyond the end of the
+"rinfo" array so the > should be >=.
 
-> The get_options() function takes the whole ARRAY_SIZE().  It doesn't
-> matter here because we don't use more than 7 elements.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 109bade9c625 ("scsi: sg: use standard lists for sg_requests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index d7ff71e0c85c..84e782d8e7c3 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1021,7 +1021,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 			read_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 			val = 0;
+ 			list_for_each_entry(srp, &sfp->rq_list, entry) {
+-				if (val > SG_MAX_QUEUE)
++				if (val >= SG_MAX_QUEUE)
+ 					break;
+ 				memset(&rinfo[val], 0, SZ_SG_REQ_INFO);
+ 				rinfo[val].req_state = srp->done + 1;
