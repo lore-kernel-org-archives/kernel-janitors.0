@@ -1,42 +1,69 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 13 Aug 2017 15:08:03 +0000
-Subject: [PATCH] ASoC: rt5514: make array rt5514_dai static
-Message-Id: <20170813150803.17292-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 17 Aug 2017 20:15:28 +0000
+Subject: [PATCH 3/3] orangefs: Adjust three checks for null pointers
+Message-Id: <de3d2074-9ba4-7bf6-02cc-eb8387b59524@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
+In-Reply-To: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Martin Brandenburg <martin@omnibond.com>, Mike Marshall <hubcap@omnibond.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 17 Aug 2017 21:35:16 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The array rt5514_dai is local to the source and does not need to be in
-global scope, so make it static.
+The script “checkpatch.pl” pointed information out like the following.
 
-Cleans up sparse warnings:
-symbol 'rt5514_dai' was not declared. Should it be static?
+Comparison to NULL could be written !…
 
-warning: symbol 'rt5514_dai' was not declared. Should it be static?
+Thus fix affected source code places.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rt5514.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/orangefs/acl.c   | 2 +-
+ fs/orangefs/xattr.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
-index 7afcb57989af..d7956ababd11 100644
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -1066,7 +1066,7 @@ static const struct snd_soc_dai_ops rt5514_aif_dai_ops = {
- 	.set_tdm_slot = rt5514_set_tdm_slot,
- };
+diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
+index 7a3754488312..4ea7da31e7f0 100644
+--- a/fs/orangefs/acl.c
++++ b/fs/orangefs/acl.c
+@@ -35,7 +35,7 @@ struct posix_acl *orangefs_get_acl(struct inode *inode, int type)
+ 	 * I don't do that for now.
+ 	 */
+ 	value = kmalloc(ORANGEFS_MAX_XATTR_VALUELEN, GFP_KERNEL);
+-	if (value = NULL)
++	if (!value)
+ 		return ERR_PTR(-ENOMEM);
  
--struct snd_soc_dai_driver rt5514_dai[] = {
-+static struct snd_soc_dai_driver rt5514_dai[] = {
- 	{
- 		.name = "rt5514-aif1",
- 		.id = 0,
+ 	gossip_debug(GOSSIP_ACL_DEBUG,
+diff --git a/fs/orangefs/xattr.c b/fs/orangefs/xattr.c
+index 237c9c04dc3b..8d40e01ed0f8 100644
+--- a/fs/orangefs/xattr.c
++++ b/fs/orangefs/xattr.c
+@@ -239,7 +239,7 @@ int orangefs_inode_setxattr(struct inode *inode, const char *name,
+ 	internal_flag = convert_to_internal_xattr_flags(flags);
+ 
+ 	/* This is equivalent to a removexattr */
+-	if (size = 0 && value = NULL) {
++	if (size = 0 && !value) {
+ 		gossip_debug(GOSSIP_XATTR_DEBUG,
+ 			     "removing xattr (%s)\n",
+ 			     name);
+@@ -311,7 +311,7 @@ ssize_t orangefs_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 	int i = 0;
+ 	int returned_count = 0;
+ 
+-	if (size > 0 && buffer = NULL) {
++	if (size > 0 && !buffer) {
+ 		gossip_err("%s: bogus NULL pointers\n", __func__);
+ 		return -EINVAL;
+ 	}
 -- 
-2.11.0
+2.14.0
 
