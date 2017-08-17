@@ -1,25 +1,42 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 07 Aug 2017 15:13:40 +0000
-Subject: Re: [PATCH] block/ps3vram: Delete an error message for a failed memory allocation in ps3vram_cache_i
-Message-Id: <1502118820.2219.19.camel@perches.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Thu, 17 Aug 2017 12:21:17 +0000
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: remove redundant null check on array mstm->msto
+Message-Id: <CACvgo53Bg=HkA-ohgrybg=FqS-p-oxehhsnrA_ZpQpGPo7Oy7Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e22ee16a-5f34-46bd-577f-9b7ca75e9035@users.sourceforge.net>
- <b6b5f2f0-bbfe-8471-d8fc-e236ea0b1ea4@infradead.org>
-In-Reply-To: <b6b5f2f0-bbfe-8471-d8fc-e236ea0b1ea4@infradead.org>
+References: <20170817103752.16440-1-colin.king@canonical.com>
+In-Reply-To: <20170817103752.16440-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geoff Levand <geoff@infradead.org>, SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 
-On Mon, 2017-08-07 at 08:10 -0700, Geoff Levand wrote:
-> On 08/07/2017 03:52 AM, SF Markus Elfring wrote:
-> > Omit an extra message for a memory allocation failure in this function.
-> NACK
-> 
-> When a user asks me for help I would certainly like to get 
-> 'Could not allocate cache tags' as apposed to nothing, since
-> the return value of ps3vram_cache_init() is not checked.
+On 17 August 2017 at 11:37, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check to see if mstm->msto is null is redundant because it is
+> an array and hence can never be null.  Remove the redundant check.
+>
+> Detected by CoverityScan, CID#1375915 ("Array compared against 0")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/nouveau/nv50_display.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
+> index f7b4326a4641..51e9081b95a0 100644
+> --- a/drivers/gpu/drm/nouveau/nv50_display.c
+> +++ b/drivers/gpu/drm/nouveau/nv50_display.c
+> @@ -3141,7 +3141,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
+>         mstc->connector.funcs->reset(&mstc->connector);
+>         nouveau_conn_attach_properties(&mstc->connector);
+>
+> -       for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto; i++)
+> +       for (i = 0; i < ARRAY_SIZE(mstm->msto); i++)
+I think that should be mstm->msto[i]. After all we are dereferencing
+the pointer, so we don't want to crash.
 
-You still get a dump_stack on alloc failure.
+>                 drm_mode_connector_attach_encoder(&mstc->connector, &mstm->msto[i]->encoder);
 
+-Emil
