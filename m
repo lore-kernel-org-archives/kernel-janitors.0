@@ -1,30 +1,44 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 22 Aug 2017 17:43:50 +0000
-Subject: Re: [PATCH] ALSA: ctxfi: Use common error handling code in two functions
-Message-Id: <s5htw0zsdk9.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 17 Aug 2017 22:03:23 +0000
+Subject: [PATCH][V2] drm/nouveau: perform null check on msto[i] rathern than msto
+Message-Id: <20170817220323.26717-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6293f7ce-a3c7-ace8-cab4-26d09f4e0c91@users.sourceforge.net>
-In-Reply-To: <6293f7ce-a3c7-ace8-cab4-26d09f4e0c91@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, 22 Aug 2017 18:50:16 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 22 Aug 2017 18:43:42 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+The null check on the array msto is incorrect since msto is never
+null. The null check should be instead on msto[i] since this is
+being dereferenced in the call to drm_mode_connector_attach_encoder.
 
+Thanks to Emil Velikov for pointing out the mistake in my original
+fix and for suggesting the correct fix.
 
-Takashi
+Detected by CoverityScan, CID#1375915 ("Array compared against 0")
+
+Fixes: f479c0ba4a17 ("drm/nouveau/kms/nv50: initial support for DP 1.2 multi-stream")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nv50_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
+index f7b4326a4641..ed444ecd9e85 100644
+--- a/drivers/gpu/drm/nouveau/nv50_display.c
++++ b/drivers/gpu/drm/nouveau/nv50_display.c
+@@ -3141,7 +3141,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
+ 	mstc->connector.funcs->reset(&mstc->connector);
+ 	nouveau_conn_attach_properties(&mstc->connector);
+ 
+-	for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto; i++)
++	for (i = 0; i < ARRAY_SIZE(mstm->msto) && mstm->msto[i]; i++)
+ 		drm_mode_connector_attach_encoder(&mstc->connector, &mstm->msto[i]->encoder);
+ 
+ 	drm_object_attach_property(&mstc->connector.base, dev->mode_config.path_property, 0);
+-- 
+2.11.0
+
