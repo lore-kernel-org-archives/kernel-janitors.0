@@ -1,39 +1,17 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Aug 2017 06:41:53 +0000
-Subject: [PATCH] nvmet_fc: use list_for_each_safe()
-Message-Id: <20170817064023.daho5p5dncqhqdar@mwanda>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Thu, 17 Aug 2017 07:33:13 +0000
+Subject: Re: [PATCH] nvmet_fc: use list_for_each_safe()
+Message-Id: <20170817073313.GA28231@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170817064023.daho5p5dncqhqdar@mwanda>
+In-Reply-To: <20170817064023.daho5p5dncqhqdar@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We are freeing the list and the current code dereferences "deferfcp"
-after it's freed.  Let's use list_for_each_entry_safe() instead.
+On Thu, Aug 17, 2017 at 09:41:53AM +0300, Dan Carpenter wrote:
+> We are freeing the list and the current code dereferences "deferfcp"
+> after it's freed.  Let's use list_for_each_entry_safe() instead.
 
-Fixes: 0fb228d30b8d ("nvmet_fc: add defer_req callback for deferment of cmd buffer return")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 1b7f2520a20d..a42158c83f25 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -704,7 +704,7 @@ nvmet_fc_delete_target_queue(struct nvmet_fc_tgt_queue *queue)
- {
- 	struct nvmet_fc_tgtport *tgtport = queue->assoc->tgtport;
- 	struct nvmet_fc_fcp_iod *fod = queue->fod;
--	struct nvmet_fc_defer_fcp_req *deferfcp;
-+	struct nvmet_fc_defer_fcp_req *deferfcp, *next;
- 	unsigned long flags;
- 	int i, writedataactive;
- 	bool disconnect;
-@@ -735,7 +735,8 @@ nvmet_fc_delete_target_queue(struct nvmet_fc_tgt_queue *queue)
- 	}
- 
- 	/* Cleanup defer'ed IOs in queue */
--	list_for_each_entry(deferfcp, &queue->avail_defer_list, req_list) {
-+	list_for_each_entry_safe(deferfcp, next, &queue->avail_defer_list,
-+				 req_list) {
- 		list_del(&deferfcp->req_list);
- 		kfree(deferfcp);
- 	}
+James already sent the same patch and I've got it queued up.
