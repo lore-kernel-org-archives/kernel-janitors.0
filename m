@@ -1,17 +1,35 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Thu, 17 Aug 2017 07:33:13 +0000
-Subject: Re: [PATCH] nvmet_fc: use list_for_each_safe()
-Message-Id: <20170817073313.GA28231@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Aug 2017 07:27:02 +0000
+Subject: [PATCH net-next] bpf: fix a return in sockmap_get_from_fd()
+Message-Id: <20170818071210.wyq37kura6wz6bx6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817064023.daho5p5dncqhqdar@mwanda>
-In-Reply-To: <20170817064023.daho5p5dncqhqdar@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 17, 2017 at 09:41:53AM +0300, Dan Carpenter wrote:
-> We are freeing the list and the current code dereferences "deferfcp"
-> after it's freed.  Let's use list_for_each_entry_safe() instead.
+"map" is a valid pointer.  We wanted to return "err" instead.  Also
+let's return a zero literal at the end.
 
-James already sent the same patch and I've got it queued up.
+Fixes: 174a79ff9515 ("bpf: sockmap with sk redirect support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index d2f2bdf71ffa..b8cb1b3c9bfb 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1125,11 +1125,11 @@ static int sockmap_get_from_fd(const union bpf_attr *attr, int ptype)
+ 		fdput(f);
+ 		bpf_prog_put(prog1);
+ 		bpf_prog_put(prog2);
+-		return PTR_ERR(map);
++		return err;
+ 	}
+ 
+ 	fdput(f);
+-	return err;
++	return 0;
+ }
+ 
+ static int bpf_prog_attach(const union bpf_attr *attr)
