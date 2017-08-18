@@ -1,29 +1,41 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Thu, 31 Aug 2017 11:36:05 +0000
-Subject: Re: powerpc: remapping too much memory
-Message-Id: <3xjgLF5Q9Lz9t2W@ozlabs.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Aug 2017 13:34:16 +0000
+Subject: [PATCH] staging/rts5208: fix incorrect shift to extract upper nybble
+Message-Id: <20170818133416.16329-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170628114907.kf3t65mrdbq7rsfm@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Scott Wood <oss@buserror.net>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wayne Porter <wporter82@gmail.com>, Namrata A Shettar <namrataashettar@gmail.com>, Jonas Rickert <jrickertkc@gmail.com>, Louie Lu <louie.lu@hopebaytech.com>, Daniel Micay <danielmicay@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2017-06-28 at 11:49:07 UTC, Dan Carpenter wrote:
-> There is a cut and paste error here so we use "sizeof(struct mpc83xx_pmc)"
-> to remap the memory for "clock_regs".  That sizeof() is 20 bytes and we
-> only need to remap 12 bytes.  It presumably doesn't affect run time too
-> much...
-> 
-> I changed them to both use "sizeof(*variable_name)" because that's the
-> prefered kernel style these days.
-> 
-> Fixes: d49747bdfb2d ("powerpc/mpc83xx: Power Management support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to powerpc next, thanks.
+The mask of sns_key_info1 suggests the upper nybble is being extracted
+however the following shift of 8 bits is too large and always results in
+0.  Fix this by shifting only by 4 bits to correctly get the upper nybble.
 
-https://git.kernel.org/powerpc/c/c65540453e150844367ffe98e45d51
+Detected by CoverityScan, CID#142891 ("Operands don't affect result")
 
-cheers
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rts5208/rtsx_scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rts5208/rtsx_scsi.c b/drivers/staging/rts5208/rtsx_scsi.c
+index 36b5a11f21d2..a401b13f5f5e 100644
+--- a/drivers/staging/rts5208/rtsx_scsi.c
++++ b/drivers/staging/rts5208/rtsx_scsi.c
+@@ -414,7 +414,7 @@ void set_sense_data(struct rtsx_chip *chip, unsigned int lun, u8 err_code,
+ 	sense->ascq = ascq;
+ 	if (sns_key_info0 != 0) {
+ 		sense->sns_key_info[0] = SKSV | sns_key_info0;
+-		sense->sns_key_info[1] = (sns_key_info1 & 0xf0) >> 8;
++		sense->sns_key_info[1] = (sns_key_info1 & 0xf0) >> 4;
+ 		sense->sns_key_info[2] = sns_key_info1 & 0x0f;
+ 	}
+ }
+-- 
+2.11.0
+
