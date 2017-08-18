@@ -1,44 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Tue, 29 Aug 2017 20:22:04 +0000
-Subject: Re: [PATCH][serial-next] serial: 8250: don't dereference em485 until it has been null checked
-Message-Id: <1504038124.25945.155.camel@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Aug 2017 12:37:03 +0000
+Subject: [PATCH] sdhci: remove redundant check of zero slots
+Message-Id: <20170818123703.14870-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170829165815.23429-1-colin.king@canonical.com>
-         <20170829200411.wbqdsihcnhpg2gmr@mwanda>
-In-Reply-To: <20170829200411.wbqdsihcnhpg2gmr@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Phil Elwell <phil@raspberrypi.org>, Jan Kiszka <jan.kiszka@siemens.com>, Eric Anholt <eric@anholt.net>, Thor Thayer <tthayer@opensource.altera.com>, Rafael Gago <rafael.gago@gmail.com>, David Lechner <david@lechnology.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-08-29 at 23:04 +0300, Dan Carpenter wrote:
-> On Tue, Aug 29, 2017 at 05:58:15PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently, the pointer em485 is dereferenced to get p and then later
-> > em485 is checked to see if it is null before calling __start_tx. In
-> > the case where em485 is null, we get a null pointer dereference. Fix
-> > this by moving the deference and the associated spinlock/unlocks on
-> > p to the code block where em485 is known to be not null.
-> > 
-> > Detected by CoverityScan, CID#14555001 ("Dereference before null
-> > check")
-> > 
-> > Fixes 6e0a5de2136b ("serial: 8250: Use hrtimers for rs485 delays")
-> 
-> I don't understand which tree this commit is from.  I have it fetched
-> but when I do a git log on drivers/tty/serial/8250/8250_port.c then I
-> don't see it.  I have today's linux-next.
+From: Colin Ian King <colin.king@canonical.com>
 
-I see it, though I have tty-next as well.
+Slots can never be zero, PCI_SLOTS_INFO_SLOTS returns a value in the
+range 0..7; slots is one more than this, 1..8 so cannot be zero and
+so the zero check is redundant and can be removed.
 
+Detected by CoverityScan, CID#744269 ("Logically Dead Code")
 
-> I'm pretty sure "t" isn't ever NULL.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-(I'm pretty sure there is a false positive, though code would be cleaned
-to avoid such reports)
-
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 2c853cfa8389..43b2b09131bd 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1669,8 +1669,6 @@ static int sdhci_pci_probe(struct pci_dev *pdev,
+ 
+ 	slots = PCI_SLOT_INFO_SLOTS(slots) + 1;
+ 	dev_dbg(&pdev->dev, "found %d slot(s)\n", slots);
+-	if (slots = 0)
+-		return -ENODEV;
+ 
+ 	BUG_ON(slots > MAX_SLOTS);
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.11.0
+
