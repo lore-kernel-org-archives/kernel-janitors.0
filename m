@@ -1,39 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 08:41:47 +0000
-Subject: [PATCH] atm: solos-pci: Delete an error message for a failed memory allocation in fpga_probe()
-Message-Id: <997c2270-135d-0ac9-e6f0-f62cf0750a79@users.sourceforge.net>
+Date: Fri, 18 Aug 2017 13:30:52 +0000
+Subject: [PATCH 0/3] JFS: Adjustments for several function implementations
+Message-Id: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+To: jfs-discussion@lists.sourceforge.net, Dave Kleikamp <shaggy@kernel.org>, Fabian Frederick <fabf@skynet.be>, Jan Kara <jack@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 10:37:31 +0200
+Date: Fri, 18 Aug 2017 15:22:11 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in diMount()
+  Improve size determinations in five functions
+  Adjust 67 checks for null pointers
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/atm/solos-pci.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/jfs/jfs_dmap.c     | 44 ++++++++++++++++++++++----------------------
+ fs/jfs/jfs_dtree.c    |  6 +++---
+ fs/jfs/jfs_imap.c     | 31 ++++++++++++++-----------------
+ fs/jfs/jfs_logmgr.c   | 26 ++++++++++++++------------
+ fs/jfs/jfs_metapage.c |  7 +++----
+ fs/jfs/jfs_mount.c    |  6 +++---
+ fs/jfs/jfs_txnmgr.c   |  6 +++---
+ fs/jfs/jfs_unicode.c  |  3 +--
+ fs/jfs/jfs_xtree.c    |  6 +++---
+ fs/jfs/namei.c        |  3 +--
+ fs/jfs/resize.c       |  2 +-
+ fs/jfs/super.c        |  6 +++---
+ fs/jfs/xattr.c        | 10 +++++-----
+ 13 files changed, 76 insertions(+), 80 deletions(-)
 
-diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
-index 8754793223cd..cb3424a4f91f 100644
---- a/drivers/atm/solos-pci.c
-+++ b/drivers/atm/solos-pci.c
-@@ -1293,7 +1293,6 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 			card->dma_alignment = 3;
- 			card->dma_bounce = kmalloc(card->nr_ports * BUF_SIZE, GFP_KERNEL);
- 			if (!card->dma_bounce) {
--				dev_warn(&card->dev->dev, "Failed to allocate DMA bounce buffers\n");
- 				err = -ENOMEM;
- 				/* Fallback to MMIO doesn't work */
- 				goto out_unmap_both;
 -- 
-2.13.4
+2.14.0
 
