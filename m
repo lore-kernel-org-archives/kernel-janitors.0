@@ -1,48 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:36:34 +0000
-Subject: [PATCH v2 2/9] ACPI-video: Return directly after a failed device query
-Message-Id: <a063b27d-2ef4-6029-230c-970a46d0834e@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Aug 2017 10:30:30 +0000
+Subject: [PATCH] x86/ldt: Off by one in get_segment_base()
+Message-Id: <20170818102516.gqwm4xdvvuvjw5ho@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
- <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
-In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 15:00:45 +0200
+ldt->entries[] is allocated in alloc_ldt_struct().  It has
+ldt->nr_entries elements and ldt->nr_entries is capped at LDT_ENTRIES.
+So if "idx" is = ldt->nr_entries then we're reading beyond the end of
+the buffer.  It seems duplicative to have two limit checks when one
+would work just as well so I removed the check against LDT_ENTRIES.
 
-Return directly after a function call "acpi_video_device_lcd_query_levels"
-failed at the beginning.
+The gdt_page.gdt[] array has GDT_ENTRIES entries.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: d07bdfd322d3 ("perf/x86: Fix USER/KERNEL tagging of samples properly")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/acpi/acpi_video.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This is a static checker fix.  I'm pretty certain it's correct.  But I
+don't understand the code terribly well, so please let me know and I'll
+be happy to send a v2 if needed.
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 1aaf2b591ca8..7a9cda6c0a6b 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -811,8 +811,7 @@ int acpi_video_get_levels(struct acpi_device *device,
- 								&obj))) {
- 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Could not query available "
- 						"LCD brightness level\n"));
--		result = -ENODEV;
--		goto out;
-+		return -ENODEV;
- 	}
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index af12e294caed..939050169d12 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2335,12 +2335,9 @@ static unsigned long get_segment_base(unsigned int segment)
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 		struct ldt_struct *ldt;
  
- 	if (obj->package.count < ACPI_VIDEO_FIRST_LEVEL) {
--- 
-2.13.4
-
+-		if (idx > LDT_ENTRIES)
+-			return 0;
+-
+ 		/* IRQs are off, so this synchronizes with smp_store_release */
+ 		ldt = lockless_dereference(current->active_mm->context.ldt);
+-		if (!ldt || idx > ldt->nr_entries)
++		if (!ldt || idx >= ldt->nr_entries)
+ 			return 0;
+ 
+ 		desc = &ldt->entries[idx];
+@@ -2348,7 +2345,7 @@ static unsigned long get_segment_base(unsigned int segment)
+ 		return 0;
+ #endif
+ 	} else {
+-		if (idx > GDT_ENTRIES)
++		if (idx >= GDT_ENTRIES)
+ 			return 0;
+ 
+ 		desc = raw_cpu_ptr(gdt_page.gdt) + idx;
