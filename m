@@ -1,40 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 10:56:17 +0000
-Subject: Re: [PATCH 00/11] virtio-console: Fine-tuning for 14 function implementations
-Message-Id: <c913fff3-b373-73a1-71f0-e74591e19bb4@users.sourceforge.net>
+Date: Fri, 18 Aug 2017 19:05:31 +0000
+Subject: [PATCH 0/3] JFFS2: Adjustments for seven function implementations
+Message-Id: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Date: Wed, 14 Sep 2016 15:43:21 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (11):
->   Use kmalloc_array() in init_vqs()
->   Less function calls in init_vqs() after error detection
->   Rename a jump label in init()
->   Rename jump labels in virtcons_probe()
->   Rename jump labels in add_port()
->   Rename a jump label in port_fops_open()
->   Rename a jump label in port_fops_splice_write()
->   Rename jump labels in port_fops_write()
->   Rename a jump label in __send_to_port()
->   Rename jump labels in alloc_buf()
->   Rename a jump label in five functions
-> 
->  drivers/char/virtio_console.c | 155 ++++++++++++++++++++++++------------------
->  1 file changed, 87 insertions(+), 68 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 18 Aug 2017 20:50:05 +0200
 
-Would you like to take another look at change possibilities
-for this software module?
+Three update suggestions were taken into account
+from static source code analysis.
 
-Regards,
-Markus
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in four functions
+  Improve a size determination in jffs2_scan_medium()
+  Adjust a null pointer check in two functions
+
+ fs/jffs2/compr.c    | 5 ++---
+ fs/jffs2/dir.c      | 1 -
+ fs/jffs2/erase.c    | 5 +----
+ fs/jffs2/gc.c       | 5 ++---
+ fs/jffs2/nodemgmt.c | 3 +--
+ fs/jffs2/scan.c     | 2 +-
+ fs/jffs2/security.c | 2 +-
+ 7 files changed, 8 insertions(+), 15 deletions(-)
+
+-- 
+2.14.0
+
