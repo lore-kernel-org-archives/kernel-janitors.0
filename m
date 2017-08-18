@@ -1,64 +1,42 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 11 Aug 2017 05:17:06 +0000
-Subject: Re: [PATCH 0/9 v2] constify thermal_zone_of_device_ops structures
-Message-Id: <alpine.DEB.2.20.1708110716270.2204@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-634072267-1502428627=:2204"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 18 Aug 2017 13:49:25 +0000
+Subject: [PATCH] mlx5: ensure 0 is returned when vport is zero
+Message-Id: <20170818134925.16604-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502422611.2598.19.camel@intel.com>
-In-Reply-To: <1502422611.2598.19.camel@intel.com>
-To: linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---8323329-634072267-1502428627=:2204
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently, if vport is zero then then an uninialized return status
+in err is returned.  Since the only return status at the end of the
+function esw_add_uc_addr is zero for the current set of return paths
+we may as well just return 0 rather than err to fix this issue.
 
+Detected by CoverityScan, CID#1452698 ("Uninitialized scalar variable")
 
-On Fri, 11 Aug 2017, Zhang Rui wrote:
+Fixes: eeb66cdb6826 ("net/mlx5: Separate between E-Switch and MPFS")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Tue, 2017-08-08 at 17:08 +0200, Julia Lawall wrote:
-> > The thermal_zone_of_device_ops structures are only passed as the
-> > fourth
-> > argument to thermal_zone_of_sensor_register or
-> > devm_thermal_zone_of_sensor_register, both of which are declared as
-> > const.
-> > Thus the thermal_zone_of_device_ops structures themselves can be
-> > const.
-> >
-> > v2: add structures passed to devm_thermal_zone_of_sensor_register
-> > also.
-> >
-> > Done with the help of Coccinelle.
-> >
-> I don't see the patches changes out of drivers/thermal.
->
-> As there is no dependencies between these patches, I guess I will only
-> take patches that changes drivers/thermal.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index 6d9fb6ac6e9b..c77f4c0c7769 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -401,7 +401,7 @@ static int esw_add_uc_addr(struct mlx5_eswitch *esw, struct vport_addr *vaddr)
+ 	esw_debug(esw->dev, "\tADDED UC MAC: vport[%d] %pM fr(%p)\n",
+ 		  vport, mac, vaddr->flow_rule);
+ 
+-	return err;
++	return 0;
+ }
+ 
+ static int esw_del_uc_addr(struct mlx5_eswitch *esw, struct vport_addr *vaddr)
+-- 
+2.11.0
 
-No dependencies.  Each individual patch was only sent to its maintainers.
-
-julia
-
->
-> thanks,
-> rui
-> > ---
-> >
-> >  drivers/hwmon/hwmon.c                      |    2 +-
-> >  drivers/hwmon/scpi-hwmon.c                 |    2 +-
-> >  drivers/input/touchscreen/sun4i-ts.c       |    2 +-
-> >  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
-> >  drivers/thermal/hisi_thermal.c             |    2 +-
-> >  drivers/thermal/qoriq_thermal.c            |    2 +-
-> >  drivers/thermal/rcar_gen3_thermal.c        |    2 +-
-> >  drivers/thermal/samsung/exynos_tmu.c       |    2 +-
-> >  drivers/thermal/zx2967_thermal.c           |    2 +-
-> >  9 files changed, 9 insertions(+), 9 deletions(-)
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-634072267-1502428627=:2204--
