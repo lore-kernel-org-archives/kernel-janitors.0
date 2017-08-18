@@ -1,135 +1,88 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 14 Aug 2017 16:42:53 +0000
-Subject: Applied "ASoC: blackfin: Add some spaces for better code readability" to the asoc tree
-Message-Id: <E1dhIS5-0005AB-H8@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 18 Aug 2017 19:06:34 +0000
+Subject: [PATCH 1/3] jffs2: Delete an error message for a failed memory allocation in four functions
+Message-Id: <1ebc1611-6181-f7ab-f8e9-747944f5f819@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2c2fabf2-3238-ab23-4df8-d93c702ff51e@users.sourceforge.net>
-In-Reply-To: <2c2fabf2-3238-ab23-4df8-d93c702ff51e@users.sourceforge.net>
+References: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
+In-Reply-To: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   ASoC: blackfin: Add some spaces for better code readability
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 11f25bbaaa87bf583a453b202db9c8ee9b3cbd50 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 22:20:07 +0200
-Subject: [PATCH] ASoC: blackfin: Add some spaces for better code readability
+Date: Fri, 18 Aug 2017 20:06:44 +0200
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/blackfin/bf6xx-sport.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ fs/jffs2/compr.c | 5 ++---
+ fs/jffs2/dir.c   | 1 -
+ fs/jffs2/erase.c | 5 +----
+ fs/jffs2/gc.c    | 5 ++---
+ 4 files changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-sport.c b/sound/soc/blackfin/bf6xx-sport.c
-index fcddebf2558c..d2caadfe7b6d 100644
---- a/sound/soc/blackfin/bf6xx-sport.c
-+++ b/sound/soc/blackfin/bf6xx-sport.c
-@@ -129,7 +129,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
+diff --git a/fs/jffs2/compr.c b/fs/jffs2/compr.c
+index 4849a4c9a0e2..96d19ef95b11 100644
+--- a/fs/jffs2/compr.c
++++ b/fs/jffs2/compr.c
+@@ -80,10 +80,9 @@ static int jffs2_selected_compress(u8 compr, unsigned char *data_in,
+ 	char *output_buf;
  
- 	for (i = 0; i < fragcount; ++i) {
- 		desc[i].next_desc_addr  = &(desc[i + 1]);
--		desc[i].start_addr = (unsigned long)buf + i*fragsize;
-+		desc[i].start_addr = (unsigned long)buf + i * fragsize;
- 		desc[i].cfg = cfg;
- 		desc[i].x_count = count;
- 		desc[i].x_modify = wdsize;
-@@ -138,7 +138,7 @@ static void setup_desc(struct dmasg *desc, void *buf, int fragcount,
- 	}
+ 	output_buf = kmalloc(*cdatalen, GFP_KERNEL);
+-	if (!output_buf) {
+-		pr_warn("No memory for compressor allocation. Compression failed.\n");
++	if (!output_buf)
+ 		return ret;
+-	}
++
+ 	orig_slen = *datalen;
+ 	orig_dlen = *cdatalen;
+ 	spin_lock(&jffs2_compressor_list_lock);
+diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+index 0a754f38462e..0b126df5ecc6 100644
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -350,7 +350,6 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
+ 	/* We use f->target field to store the target path. */
+ 	f->target = kmemdup(target, targetlen + 1, GFP_KERNEL);
+ 	if (!f->target) {
+-		pr_warn("Can't allocate %d bytes of memory\n", targetlen + 1);
+ 		mutex_unlock(&f->sem);
+ 		jffs2_complete_reservation(c);
+ 		ret = -ENOMEM;
+diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
+index 4a6cf289be24..d944748524ad 100644
+--- a/fs/jffs2/erase.c
++++ b/fs/jffs2/erase.c
+@@ -380,8 +380,5 @@ static int jffs2_block_check_erase(struct jffs2_sb_info *c, struct jffs2_erasebl
+-	if (!ebuf) {
+-		pr_warn("Failed to allocate page buffer for verifying erase at 0x%08x. Refiling\n",
+-			jeb->offset);
++	if (!ebuf)
+ 		return -EAGAIN;
+-	}
  
- 	/* make circular */
--	desc[fragcount-1].next_desc_addr = desc;
-+	desc[fragcount - 1].next_desc_addr = desc;
- }
+ 	jffs2_dbg(1, "Verifying erase at 0x%08x\n", jeb->offset);
  
- int sport_config_tx_dma(struct sport_device *sport, void *buf,
-@@ -148,7 +148,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
- 	unsigned int cfg;
- 	dma_addr_t addr;
- 
--	count = fragsize/sport->wdsize;
-+	count = fragsize / sport->wdsize;
- 
- 	if (sport->tx_desc)
- 		dma_free_coherent(NULL, sport->tx_desc_size,
-@@ -166,8 +166,7 @@ int sport_config_tx_dma(struct sport_device *sport, void *buf,
- 	cfg = DMAFLOW_LIST | DI_EN | compute_wdsize(sport->wdsize) | NDSIZE_6;
- 
- 	setup_desc(sport->tx_desc, buf, fragcount, fragsize,
--			cfg|DMAEN, count, sport->wdsize);
--
-+		   cfg | DMAEN, count, sport->wdsize);
- 	return 0;
- }
- EXPORT_SYMBOL(sport_config_tx_dma);
-@@ -179,7 +178,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
- 	unsigned int cfg;
- 	dma_addr_t addr;
- 
--	count = fragsize/sport->wdsize;
-+	count = fragsize / sport->wdsize;
- 
- 	if (sport->rx_desc)
- 		dma_free_coherent(NULL, sport->rx_desc_size,
-@@ -198,8 +197,7 @@ int sport_config_rx_dma(struct sport_device *sport, void *buf,
- 		| WNR | NDSIZE_6;
- 
- 	setup_desc(sport->rx_desc, buf, fragcount, fragsize,
--			cfg|DMAEN, count, sport->wdsize);
--
-+		   cfg | DMAEN, count, sport->wdsize);
- 	return 0;
- }
- EXPORT_SYMBOL(sport_config_rx_dma);
-@@ -226,7 +224,7 @@ static irqreturn_t sport_tx_irq(int irq, void *dev_id)
- 	static unsigned long status;
- 
- 	status = get_dma_curr_irqstat(sport->tx_dma_chan);
--	if (status & (DMA_DONE|DMA_ERR)) {
-+	if (status & (DMA_DONE | DMA_ERR)) {
- 		clear_dma_irqstat(sport->tx_dma_chan);
- 		SSYNC();
- 	}
-@@ -241,7 +239,7 @@ static irqreturn_t sport_rx_irq(int irq, void *dev_id)
- 	unsigned long status;
- 
- 	status = get_dma_curr_irqstat(sport->rx_dma_chan);
--	if (status & (DMA_DONE|DMA_ERR)) {
-+	if (status & (DMA_DONE | DMA_ERR)) {
- 		clear_dma_irqstat(sport->rx_dma_chan);
- 		SSYNC();
- 	}
+diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
+index 9ed0f26cf023..9e49392458e3 100644
+--- a/fs/jffs2/gc.c
++++ b/fs/jffs2/gc.c
+@@ -780,7 +780,6 @@ static int jffs2_garbage_collect_metadata(struct jffs2_sb_info *c, struct jffs2_
+-		if (!mdata) {
+-			pr_warn("kmalloc of mdata failed in jffs2_garbage_collect_metadata()\n");
++		if (!mdata)
+ 			return -ENOMEM;
+-		}
++
+ 		ret = jffs2_read_dnode(c, f, fn, mdata, 0, mdatalen);
+ 		if (ret) {
+ 			pr_warn("read of old metadata failed in jffs2_garbage_collect_metadata(): %d\n",
 -- 
-2.13.2
+2.14.0
 
