@@ -1,39 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 19:23:46 +0000
-Subject: [PATCH 4/5] mtip32xx: Fix a typo in a comment line in mtip_hw_get_identify()
-Message-Id: <a9161afb-c4fe-342b-c636-7a98b1d2f37d@users.sourceforge.net>
+Date: Fri, 18 Aug 2017 19:08:42 +0000
+Subject: [PATCH 3/3] jffs2: Adjust a null pointer check in two functions
+Message-Id: <7be00642-75c6-f774-49f8-51a264b3404d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
-In-Reply-To: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
+References: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
+In-Reply-To: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 20:28:48 +0200
+Date: Fri, 18 Aug 2017 20:40:35 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add a missing character in this description.
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/mtip32xx/mtip32xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jffs2/nodemgmt.c | 3 +--
+ fs/jffs2/security.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index cba5bc2a1493..18e634efed95 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -2981,7 +2981,7 @@ static int mtip_hw_get_identify(struct driver_data *dd)
- 		}
- 	}
+diff --git a/fs/jffs2/nodemgmt.c b/fs/jffs2/nodemgmt.c
+index a7bbe879cfc3..d5346ba782f7 100644
+--- a/fs/jffs2/nodemgmt.c
++++ b/fs/jffs2/nodemgmt.c
+@@ -242,8 +242,7 @@ int jffs2_reserve_space_gc(struct jffs2_sb_info *c, uint32_t minsize,
  
--	/* get write protect progess */
-+	/* get write protect progress */
- 	memset(&attr242, 0, sizeof(struct smart_attr));
- 	if (mtip_get_smart_attr(dd->port, 242, &attr242))
- 		dev_warn(&dd->pdev->dev,
+ static void jffs2_close_nextblock(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb)
+ {
+-
+-	if (c->nextblock = NULL) {
++	if (!c->nextblock) {
+ 		jffs2_dbg(1, "%s(): Erase block at 0x%08x has already been placed in a list\n",
+ 			  __func__, jeb->offset);
+ 		return;
+diff --git a/fs/jffs2/security.c b/fs/jffs2/security.c
+index c2332e30f218..9859b522721f 100644
+--- a/fs/jffs2/security.c
++++ b/fs/jffs2/security.c
+@@ -29,7 +29,7 @@ static int jffs2_initxattrs(struct inode *inode,
+ 	const struct xattr *xattr;
+ 	int err = 0;
+ 
+-	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
++	for (xattr = xattr_array; xattr->name; xattr++) {
+ 		err = do_jffs2_setxattr(inode, JFFS2_XPREFIX_SECURITY,
+ 					xattr->name, xattr->value,
+ 					xattr->value_len, 0);
 -- 
-2.13.4
+2.14.0
 
