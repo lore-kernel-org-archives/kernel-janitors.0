@@ -1,177 +1,30 @@
-From: "Boyer, Andrew" <Andrew.Boyer@dell.com>
-Date: Wed, 16 Aug 2017 13:27:09 +0000
-Subject: Re: [PATCH] net/mlx4: fix spelling mistake: "availible" -> "available"
-Message-Id: <D5B9C03F.1D2C0%Andrew.Boyer@emc.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Aug 2017 10:32:48 +0000
+Subject: [PATCH] pinctrl: rza1: off by one in rza1_parse_gpiochip()
+Message-Id: <20170818103248.ddguatdt5jhm5zx7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170816090511.10463-1-colin.king@canonical.com>
-In-Reply-To: <20170816090511.10463-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Tariq Toukan <tariqt@mellanox.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The rza1_pctl->ports[] array has RZA1_NPORTS (12) elements.  The > here
+should be >= to prevent an out of bounds access.
 
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 8/16/17, 5:05 AM, "linux-rdma-owner@vger.kernel.org on behalf of Colin
-King" <linux-rdma-owner@vger.kernel.org on behalf of
-colin.king@canonical.com> wrote:
-
->From: Colin Ian King <colin.king@canonical.com>
->
->Trivial fix to spelling mistakes in the mlx4 driver
->
->Signed-off-by: Colin Ian King <colin.king@canonical.com>
->---
-> drivers/net/ethernet/mellanox/mlx4/cmd.c    | 16 ++++++++--------
-> drivers/net/ethernet/mellanox/mlx4/fw_qos.c |  6 +++---
-> drivers/net/ethernet/mellanox/mlx4/fw_qos.h | 10 +++++-----
-> 3 files changed, 16 insertions(+), 16 deletions(-)
->
->diff --git a/drivers/net/ethernet/mellanox/mlx4/cmd.c
->b/drivers/net/ethernet/mellanox/mlx4/cmd.c
->index 674773b28b2e..6309389b09a7 100644
->--- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
->+++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
->@@ -1958,19 +1958,19 @@ static void mlx4_allocate_port_vpps(struct
->mlx4_dev *dev, int port)
-> 	int i;
-> 	int err;
-> 	int num_vfs;
->-	u16 availible_vpp;
->+	u16 available_vpp;
-> 	u8 vpp_param[MLX4_NUM_UP];
-> 	struct mlx4_qos_manager *port_qos;
-> 	struct mlx4_priv *priv = mlx4_priv(dev);
-> 
->-	err = mlx4_ALLOCATE_VPP_get(dev, port, &availible_vpp, vpp_param);
->+	err = mlx4_ALLOCATE_VPP_get(dev, port, &available_vpp, vpp_param);
-> 	if (err) {
->-		mlx4_info(dev, "Failed query availible VPPs\n");
->+		mlx4_info(dev, "Failed query available VPPs\n");
-> 		return;
-> 	}
-> 
-> 	port_qos = &priv->mfunc.master.qos_ctl[port];
->-	num_vfs = (availible_vpp /
->+	num_vfs = (available_vpp /
-> 		   bitmap_weight(port_qos->priority_bm, MLX4_NUM_UP));
-> 
-> 	for (i = 0; i < MLX4_NUM_UP; i++) {
->@@ -1985,14 +1985,14 @@ static void mlx4_allocate_port_vpps(struct
->mlx4_dev *dev, int port)
-> 	}
-> 
-> 	/* Query actual allocated VPP, just to make sure */
->-	err = mlx4_ALLOCATE_VPP_get(dev, port, &availible_vpp, vpp_param);
->+	err = mlx4_ALLOCATE_VPP_get(dev, port, &available_vpp, vpp_param);
-> 	if (err) {
->-		mlx4_info(dev, "Failed query availible VPPs\n");
->+		mlx4_info(dev, "Failed query available VPPs\n");
-> 		return;
-> 	}
-> 
-> 	port_qos->num_of_qos_vfs = num_vfs;
->-	mlx4_dbg(dev, "Port %d Availible VPPs %d\n", port, availible_vpp);
->+	mlx4_dbg(dev, "Port %d Availible VPPs %d\n", port, available_vpp);
-
-One more here, in the text.          ^^^
-
-> 
-> 	for (i = 0; i < MLX4_NUM_UP; i++)
-> 		mlx4_dbg(dev, "Port %d UP %d Allocated %d VPPs\n", port, i,
->@@ -2891,7 +2891,7 @@ static int mlx4_set_vport_qos(struct mlx4_priv
->*priv, int slave, int port,
-> 	memset(vpp_qos, 0, sizeof(struct mlx4_vport_qos_param) * MLX4_NUM_UP);
-> 
-> 	if (slave > port_qos->num_of_qos_vfs) {
->-		mlx4_info(dev, "No availible VPP resources for this VF\n");
->+		mlx4_info(dev, "No available VPP resources for this VF\n");
-> 		return -EINVAL;
-> 	}
-> 
->diff --git a/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
->b/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
->index 8f2fde0487c4..3a09d7122d3b 100644
->--- a/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
->+++ b/drivers/net/ethernet/mellanox/mlx4/fw_qos.c
->@@ -65,7 +65,7 @@ struct mlx4_set_port_scheduler_context {
-> 
-> /* Granular Qos (per VF) section */
-> struct mlx4_alloc_vpp_param {
->-	__be32 availible_vpp;
->+	__be32 available_vpp;
-> 	__be32 vpp_p_up[MLX4_NUM_UP];
-> };
-> 
->@@ -157,7 +157,7 @@ int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8
->port, u8 *tc_tx_bw,
-> EXPORT_SYMBOL(mlx4_SET_PORT_SCHEDULER);
-> 
-> int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8 port,
->-			  u16 *availible_vpp, u8 *vpp_p_up)
->+			  u16 *available_vpp, u8 *vpp_p_up)
-> {
-> 	int i;
-> 	int err;
->@@ -179,7 +179,7 @@ int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8
->port,
-> 		goto out;
-> 
-> 	/* Total number of supported VPPs */
->-	*availible_vpp = (u16)be32_to_cpu(out_param->availible_vpp);
->+	*available_vpp = (u16)be32_to_cpu(out_param->available_vpp);
-> 
-> 	for (i = 0; i < MLX4_NUM_UP; i++)
-> 		vpp_p_up[i] = (u8)be32_to_cpu(out_param->vpp_p_up[i]);
->diff --git a/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
->b/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
->index ac1f331878e6..582997577a04 100644
->--- a/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
->+++ b/drivers/net/ethernet/mellanox/mlx4/fw_qos.h
->@@ -84,23 +84,23 @@ int mlx4_SET_PORT_PRIO2TC(struct mlx4_dev *dev, u8
->port, u8 *prio2tc);
-> int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8 port, u8 *tc_tx_bw,
-> 			    u8 *pg, u16 *ratelimit);
-> /**
->- * mlx4_ALLOCATE_VPP_get - Query port VPP availible resources and
->allocation.
->- * Before distribution of VPPs to priorities, only availible_vpp is
->returned.
->+ * mlx4_ALLOCATE_VPP_get - Query port VPP available resources and
->allocation.
->+ * Before distribution of VPPs to priorities, only available_vpp is
->returned.
->  * After initialization it returns the distribution of VPPs among
->priorities.
->  *
->  * @dev: mlx4_dev.
->  * @port: Physical port number.
->- * @availible_vpp: Pointer to variable where number of availible VPPs is
->stored
->+ * @available_vpp: Pointer to variable where number of available VPPs is
->stored
->  * @vpp_p_up: Distribution of VPPs to priorities is stored in this array
->  *
->  * Returns 0 on success or a negative mlx4_core errno code.
->  **/
-> int mlx4_ALLOCATE_VPP_get(struct mlx4_dev *dev, u8 port,
->-			  u16 *availible_vpp, u8 *vpp_p_up);
->+			  u16 *available_vpp, u8 *vpp_p_up);
-> /**
->  * mlx4_ALLOCATE_VPP_set - Distribution of VPPs among differnt
->priorities.
->  * The total number of VPPs assigned to all for a port must not exceed
->- * the value reported by availible_vpp in mlx4_ALLOCATE_VPP_get.
->+ * the value reported by available_vpp in mlx4_ALLOCATE_VPP_get.
->  * VPP allocation is allowed only after the port type has been set,
->  * and while no QPs are open for this port.
->  *
->-- 
->2.11.0
->
->--
->To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 7e30134b3d18..464dbf2f0816 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1088,7 +1088,7 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
+ 	 */
+ 	pinctrl_base = of_args.args[1];
+ 	gpioport = RZA1_PIN_ID_TO_PORT(pinctrl_base);
+-	if (gpioport > RZA1_NPORTS) {
++	if (gpioport >= RZA1_NPORTS) {
+ 		dev_err(rza1_pctl->dev,
+ 			"Invalid values in property %s\n", list_name);
+ 		return -EINVAL;
