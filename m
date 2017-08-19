@@ -1,72 +1,32 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Mon, 07 Aug 2017 06:41:22 +0000
-Subject: Re: [PATCH 4/4] thermal: bcm2835: constify thermal_zone_of_device_ops structures
-Message-Id: <69716e67-d210-5599-426e-61c629dea523@i2se.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 18:00:31 +0000
+Subject: Re: ext4: Delete an error message for a failed memory allocation in ext4_multi_mount_protect()
+Message-Id: <e522d9a5-4d5a-b4a1-fe94-bb3aae4c5976@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501965437-30730-1-git-send-email-Julia.Lawall@lip6.fr>
- <1501965437-30730-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501965437-30730-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
+ <5bf432ae-398d-718c-8105-3092a240a8ef@users.sourceforge.net>
+ <b21f6c3d-2cad-3f72-f410-f608ea5f4cea@redhat.com>
+In-Reply-To: <b21f6c3d-2cad-3f72-f410-f608ea5f4cea@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Eric Sandeen <esandeen@redhat.com>, linux-ext4@vger.kernel.org
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Am 05.08.2017 um 22:37 schrieb Julia Lawall:
-> The thermal_zone_of_device_ops structure is only passed as the fourth
-> argument to thermal_zone_of_sensor_register, which is declared as const.
-> Thus the thermal_zone_of_device_ops structure itself can be const.
->
-> Done with the help of Coccinelle.
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct thermal_zone_of_device_ops i@p = { ... };
->
-> @ok1@
-> identifier r.i;
-> expression e1,e2,e3;
-> position p;
-> @@
-> thermal_zone_of_sensor_register(e1,e2,e3,&i@p)
->
-> @bad@
-> position p != {r.p,ok1.p};
-> identifier r.i;
-> struct thermal_zone_of_device_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct thermal_zone_of_device_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>> Omit an extra message for a memory allocation failure in this function.
+> 
+> I might be dense, but what makes this message "extra?"
+> 
+> (I suppose kmalloc squawks too if it fails,
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Do you find the default allocation failure report sufficient?
 
->
-> ---
->  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-> index e6863c8..a4d6a0e 100644
-> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
-> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-> @@ -145,7 +145,7 @@ static void bcm2835_thermal_debugfs(struct platform_device *pdev)
->  	debugfs_create_regset32("regset", 0444, data->debugfsdir, regset);
->  }
->  
-> -static struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
-> +static const struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
->  	.get_temp = bcm2835_thermal_get_temp,
->  };
->  
->
+
+> but is Coccinelle now warning about explicit memory allocation failure warnings?)
+
+This software tool can help to find source code places for further
+development considerations. Would you like to clarify a corresponding
+search pattern a bit more?
+
+Regards,
+Markus
