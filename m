@@ -1,59 +1,84 @@
-From: Leon Romanovsky <leonro@mellanox.com>
-Date: Wed, 16 Aug 2017 10:03:34 +0000
-Subject: Re: [PATCH] IB/mlx5: make function mlx5_ib_get_vector_affinity
-Message-Id: <20170816100334.GL24282@mtr-leonro.local>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="yV94raM4eJLN8srE"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 07:18:42 +0000
+Subject: [PATCH 3/4] isofs: One check less in isofs_read_inode() after error detection
+Message-Id: <157aa252-0edb-1462-cb6e-44369e8f1645@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170816092940.11158-1-colin.king@canonical.com>
-In-Reply-To: <20170816092940.11158-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Matan Barak <matanb@mellanox.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
+In-Reply-To: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 08:10:40 +0200
 
---yV94raM4eJLN8srE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Adjust jump targets.
 
-On Wed, Aug 16, 2017 at 10:29:40AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function mlx5_ib_get_vector_affinity is local to the source
-> and does not need to be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> symbol 'mlx5_ib_get_vector_affinity' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/mlx5/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+* Avoid a repeated check for the local variable "bh" after
+  a memory allocation failure in this function.
 
-Hi Colin,
+* Delete an initialisation for the local variable "ret"
+  which became unnecessary with this refactoring.
 
-It was already posted to the mailing list:
-https://patchwork.kernel.org/patch/9901353/
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/isofs/inode.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Thanks
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index db43f52f2268..f6d6c2ca8723 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1304,7 +1304,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 	unsigned int de_len;
+ 	unsigned long offset;
+ 	struct iso_inode_info *ei = ISOFS_I(inode);
+-	int ret = -EIO;
++	int ret;
+ 
+ 	block = ei->i_iget5_block;
+ 	bh = sb_bread(inode->i_sb, block);
+@@ -1322,7 +1322,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 		tmpde = kmalloc(de_len, GFP_KERNEL);
+ 		if (!tmpde) {
+ 			ret = -ENOMEM;
+-			goto fail;
++			goto release_bh;
+ 		}
+ 		memcpy(tmpde, bh->b_data + offset, frag1);
+ 		brelse(bh);
+@@ -1377,7 +1377,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 	if (de->flags[-high_sierra] & 0x80) {
+ 		ret = isofs_read_level3_size(inode);
+ 		if (ret < 0)
+-			goto fail;
++			goto free_tmp;
+ 		ret = -EIO;
+ 	} else {
+ 		ei->i_next_section_block = 0;
+@@ -1475,16 +1475,17 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 		init_special_inode(inode, inode->i_mode, inode->i_rdev);
+ 
+ 	ret = 0;
+-out:
++free_tmp:
+ 	kfree(tmpde);
+ 	if (bh)
++release_bh:
+ 		brelse(bh);
+ 	return ret;
+ 
+ out_badread:
+ 	printk(KERN_WARNING "ISOFS: unable to read i-node block\n");
+-fail:
+-	goto out;
++	ret = -EIO;
++	goto free_tmp;
+ }
+ 
+ struct isofs_iget5_callback_data {
+-- 
+2.14.0
 
---yV94raM4eJLN8srE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlmUGHUACgkQ5GN7iDZy
-WKfK+hAAnPZ0sxCEW4qOZdNbAUcCaoGf9uAP8pI33FqDY6EnqbXnC0UID9WryHe6
-H8vxBEwZNlDb8Gtvb4lVownthY61vpVu9o4xV7OJf/3Ey5MyD5x12S6x12BWkxRc
-KvM3ZwKrbxqjBVTGdP9MJgC+0bjFd2HJE2e0h+kxUpeO+GqdYztm5Da92OIJY+KU
-EMNMNF9PUV5eLPzKO9yTc9wutMwMI2crlKPKQPiXlO/jgPXZE4qOdpJdAK6Qn0Hm
-o2vJhleFOZ/q943AgFdP9JVzzUQnQ/MVBK5QLrSjiQojG4DUUuYKXLD74Vn/jv2w
-UnbZ91yHlhh3e3lG4jdAfsh2lqxPGIYA6euoQP3filrwLbXA5CFuaZp8NsTYr4fh
-swb7d79d0deEmP9/mczEqLcjOriR8o7zWo9Kumdv22jjis87r5joKTPFqTY1mijr
-DeyAyCANJhphhjR/Xevb2KkhA3plIvuvojNDmfqPntp3jrojHCy73pYo+im1blyO
-01GhAvJrwAvZUPz2JPzdvP9RGhQzPEUCltcKAaVKi53eEiVPnMrKHQK7Y9YioWM+
-L03cvMffyJZfplqVyVEFTXwV79LQtKHrcmf2l3oCtRpj755kLCz6pnSoNo0CYXRS
-KrjQeHdMZ5pbORnU7v1iOKggPEHLZ5us7/h2w9YYrT6Y/zzA7LA=
-=xU+e
------END PGP SIGNATURE-----
-
---yV94raM4eJLN8srE--
