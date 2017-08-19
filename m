@@ -1,62 +1,78 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 11 Aug 2017 06:57:36 +0000
-Subject: [PATCH 1/2] regmap: constify regmap_bus structures
-Message-Id: <1502434657-16701-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 16:57:50 +0000
+Subject: [PATCH 3/3] ecryptfs: Adjust four checks for null pointers
+Message-Id: <b6809bfc-991b-881a-90ac-eb08d4bfef4c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502434657-16701-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
+In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: ecryptfs@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These regmap_bus structures are only passed as the second argument to
-__devm_regmap_init or __regmap_init, both of which are const, so the
-regmap_bus structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 18:00:22 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Done with the help of Coccinelle.
+The script “checkpatch.pl” pointed information out like the following.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Comparison to NULL could be written …
 
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/base/regmap/regmap-spi.c  |    2 +-
- drivers/base/regmap/regmap-spmi.c |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ fs/ecryptfs/crypto.c   | 6 +++---
+ fs/ecryptfs/keystore.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/regmap/regmap-spi.c b/drivers/base/regmap/regmap-spi.c
-index edd9a83..c7150dd 100644
---- a/drivers/base/regmap/regmap-spi.c
-+++ b/drivers/base/regmap/regmap-spi.c
-@@ -102,7 +102,7 @@ static int regmap_spi_read(void *context,
- 	return spi_write_then_read(spi, reg, reg_size, val, val_size);
- }
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index 4a7ef33d4d79..1cd0902bc936 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -1649,7 +1649,7 @@ ecryptfs_add_new_key_tfm(struct ecryptfs_key_tfm **key_tfm, char *cipher_name,
+ 	BUG_ON(!mutex_is_locked(&key_tfm_list_mutex));
  
--static struct regmap_bus regmap_spi = {
-+static const struct regmap_bus regmap_spi = {
- 	.write = regmap_spi_write,
- 	.gather_write = regmap_spi_gather_write,
- 	.async_write = regmap_spi_async_write,
-diff --git a/drivers/base/regmap/regmap-spmi.c b/drivers/base/regmap/regmap-spmi.c
-index 4a36e41..0bfb8ed 100644
---- a/drivers/base/regmap/regmap-spmi.c
-+++ b/drivers/base/regmap/regmap-spmi.c
-@@ -83,7 +83,7 @@ static int regmap_spmi_base_write(void *context, const void *data,
- 					     count - 1);
- }
+ 	tmp_tfm = kmem_cache_alloc(ecryptfs_key_tfm_cache, GFP_KERNEL);
+-	if (key_tfm != NULL)
++	if (key_tfm)
+ 		(*key_tfm) = tmp_tfm;
+ 	if (!tmp_tfm) {
+ 		rc = -ENOMEM;
+@@ -1668,7 +1668,7 @@ ecryptfs_add_new_key_tfm(struct ecryptfs_key_tfm **key_tfm, char *cipher_name,
+ 		       "cipher with name = [%s]; rc = [%d]\n",
+ 		       tmp_tfm->cipher_name, rc);
+ 		kmem_cache_free(ecryptfs_key_tfm_cache, tmp_tfm);
+-		if (key_tfm != NULL)
++		if (key_tfm)
+ 			(*key_tfm) = NULL;
+ 		goto out;
+ 	}
+@@ -1859,7 +1859,7 @@ ecryptfs_decode_from_filename(unsigned char *dst, size_t *dst_size,
+ 	size_t src_byte_offset = 0;
+ 	size_t dst_byte_offset = 0;
  
--static struct regmap_bus regmap_spmi_base = {
-+static const struct regmap_bus regmap_spmi_base = {
- 	.read				= regmap_spmi_base_read,
- 	.write				= regmap_spmi_base_write,
- 	.gather_write			= regmap_spmi_base_gather_write,
-@@ -203,7 +203,7 @@ static int regmap_spmi_ext_write(void *context, const void *data,
- 					    count - 2);
- }
- 
--static struct regmap_bus regmap_spmi_ext = {
-+static const struct regmap_bus regmap_spmi_ext = {
- 	.read				= regmap_spmi_ext_read,
- 	.write				= regmap_spmi_ext_write,
- 	.gather_write			= regmap_spmi_ext_gather_write,
+-	if (dst = NULL) {
++	if (!dst) {
+ 		(*dst_size) = ecryptfs_max_decoded_size(src_size);
+ 		goto out;
+ 	}
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 47c1fd73638d..5c961e76b211 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -678,7 +678,7 @@ ecryptfs_write_tag_70_packet(char *dest, size_t *remaining_bytes,
+ 	 *    separator, and then the filename */
+ 	s->max_packet_size = (ECRYPTFS_TAG_70_MAX_METADATA_SIZE
+ 			      + s->block_aligned_filename_size);
+-	if (dest = NULL) {
++	if (!dest) {
+ 		(*packet_size) = s->max_packet_size;
+ 		goto out_unlock;
+ 	}
+-- 
+2.14.0
 
