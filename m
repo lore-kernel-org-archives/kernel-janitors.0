@@ -1,27 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 14 Aug 2017 03:10:08 +0000
-Subject: Re: [PATCH] virtio-net: make array guest_offloads static
-Message-Id: <20170813.201008.318311086414456095.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 07:19:34 +0000
+Subject: [PATCH 4/4] isofs: Delete an unnecessary variable initialisation in isofs_read_inode()
+Message-Id: <0f5ac17e-16bc-7a36-262a-ec7d78de497f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170812214553.6073-1-colin.king@canonical.com>
-In-Reply-To: <20170812214553.6073-1-colin.king@canonical.com>
+References: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
+In-Reply-To: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: mst@redhat.com, jasowang@redhat.com, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 12 Aug 2017 22:45:53 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 08:13:46 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array guest_offloads is local to the source and does not need to
-> be in global scope, so make it static. Also tweak formatting.
-> 
-> Cleans up sparse warnings:
-> symbol 'guest_offloads' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The local variable "bh" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/isofs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index f6d6c2ca8723..3a33b3db712a 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1298,7 +1298,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 	unsigned long bufsize = ISOFS_BUFFER_SIZE(inode);
+ 	unsigned long block;
+ 	int high_sierra = sbi->s_high_sierra;
+-	struct buffer_head *bh = NULL;
++	struct buffer_head *bh;
+ 	struct iso_directory_record *de;
+ 	struct iso_directory_record *tmpde = NULL;
+ 	unsigned int de_len;
+-- 
+2.14.0
+
