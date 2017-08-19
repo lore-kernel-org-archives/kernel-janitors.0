@@ -1,23 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 11 Aug 2017 21:32:49 +0000
-Subject: Re: [PATCH 1/2 net-next] hns3pf: fix hns3_del_tunnel_port()
-Message-Id: <20170811.143249.1660948289275185489.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 11:47:40 +0000
+Subject: [PATCH 1/2] ext4: Delete an error message for a failed memory allocation in ext4_multi_mount_protect
+Message-Id: <5bf432ae-398d-718c-8105-3092a240a8ef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170810090720.eh4l6gxsubmwqxo6@mwanda>
-In-Reply-To: <20170810090720.eh4l6gxsubmwqxo6@mwanda>
+References: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
+In-Reply-To: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, jiri@mellanox.com, jhs@mojatatu.com, lipeng321@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Aug 2017 12:54:59 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 13:04:50 +0200
 
-> This function has a copy and paste bug so it accidentally calls the add
-> function instead of the delete function.
-> 
-> Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ext4/mmp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
+index eb9835638680..1ce00453f612 100644
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -371,7 +371,6 @@ int ext4_multi_mount_protect(struct super_block *sb,
+-	if (!mmpd_data) {
+-		ext4_warning(sb, "not enough memory for mmpd_data");
++	if (!mmpd_data)
+ 		goto failed;
+-	}
++
+ 	mmpd_data->sb = sb;
+ 	mmpd_data->bh = bh;
+ 
+-- 
+2.14.0
+
