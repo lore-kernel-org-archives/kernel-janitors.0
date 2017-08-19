@@ -1,35 +1,47 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 08 Aug 2017 10:38:20 +0000
-Subject: Re: [PATCH 0/5] constify sdhci_pltfm_data and sdhci_ops structures
-Message-Id: <CAPDyKFq_o4miacACc_hFdCD78s+tAxQ3sTHn9KPjV7vWNKX-iw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 19 Aug 2017 20:22:46 +0000
+Subject: [PATCH] cpufreq: ti: Fix 'of_node_put' being called twice in error handling path
+Message-Id: <20170819202246.18415-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502099444-10473-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 7 August 2017 at 11:50, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The sdhci_pltfm_data structures are only passed as the second
-> argument of sdhci_pltfm_init, which is const, while the sdhci_ops
-> structures are only stored in the ops field of a sdhci_pltfm_data
-> structure, which is also const.  Thus both kinds of structures can
-> be const as well.
->
-> Done with the help of Coccinelle.
->
-> ---
->
->  drivers/mmc/host/sdhci-bcm-kona.c  |    4 ++--
->  drivers/mmc/host/sdhci-brcmstb.c   |    2 +-
->  drivers/mmc/host/sdhci-of-arasan.c |    4 ++--
->  drivers/mmc/host/sdhci-pic32.c     |    2 +-
->  drivers/mmc/host/sdhci-pxav3.c     |    2 +-
->  drivers/mmc/host/sdhci-sirf.c      |    4 ++--
->  6 files changed, 9 insertions(+), 9 deletions(-)
+If 'dev_pm_opp_set_supported_hw()' fails, 'opp_data->opp_node' refcount
+will be decremented 2 times.
+One, just a few lines above, and another one in the error handling path.
 
-Thanks, applied for next!
+Fix it by simply moving the 'of_node_put' call of the normal path.
 
-Kind regards
-Uffe
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/cpufreq/ti-cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+index a7b5658c0460..b29cd3398463 100644
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -245,8 +245,6 @@ static int ti_cpufreq_init(void)
+ 	if (ret)
+ 		goto fail_put_node;
+ 
+-	of_node_put(opp_data->opp_node);
+-
+ 	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(opp_data->cpu_dev,
+ 							  version, VERSION_COUNT));
+ 	if (ret) {
+@@ -255,6 +253,8 @@ static int ti_cpufreq_init(void)
+ 		goto fail_put_node;
+ 	}
+ 
++	of_node_put(opp_data->opp_node);
++
+ register_cpufreq_dt:
+ 	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+ 
+-- 
+2.11.0
+
