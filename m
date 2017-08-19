@@ -1,39 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:50 +0000
-Subject: [PATCH 11/11] serial: mux: constify uart_ops structures
-Message-Id: <1502605310-4314-12-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 16:56:50 +0000
+Subject: [PATCH 2/3] ecryptfs: Return an error code only as a constant in ecryptfs_add_global_auth_tok()
+Message-Id: <0a02a893-798a-d126-3e64-45f8f5185bc7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
+In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ecryptfs@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Aug 2017 17:51:53 +0200
 
-Done with the help of Coccinelle.
+* Return an error code without storing it in an intermediate variable.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+* Delete the jump target "out" and the local variable "rc"
+  which became unnecessary with this refactoring.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/mux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ecryptfs/keystore.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/serial/mux.c b/drivers/tty/serial/mux.c
-index 8a4be4b..940ea40 100644
---- a/drivers/tty/serial/mux.c
-+++ b/drivers/tty/serial/mux.c
-@@ -427,7 +427,7 @@ static int mux_console_setup(struct console *co, char *options)
- #define MUX_CONSOLE	NULL
- #endif
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 0131b0547699..47c1fd73638d 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -2519,14 +2519,12 @@ ecryptfs_add_global_auth_tok(struct ecryptfs_mount_crypt_stat *mount_crypt_stat,
+ 			     char *sig, u32 global_auth_tok_flags)
+ {
+ 	struct ecryptfs_global_auth_tok *new_auth_tok;
+-	int rc = 0;
  
--static struct uart_ops mux_pops = {
-+static const struct uart_ops mux_pops = {
- 	.tx_empty =		mux_tx_empty,
- 	.set_mctrl =		mux_set_mctrl,
- 	.get_mctrl =		mux_get_mctrl,
+ 	new_auth_tok = kmem_cache_zalloc(ecryptfs_global_auth_tok_cache,
+ 					GFP_KERNEL);
+-	if (!new_auth_tok) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!new_auth_tok)
++		return -ENOMEM;
++
+ 	memcpy(new_auth_tok->sig, sig, ECRYPTFS_SIG_SIZE_HEX);
+ 	new_auth_tok->flags = global_auth_tok_flags;
+ 	new_auth_tok->sig[ECRYPTFS_SIG_SIZE_HEX] = '\0';
+@@ -2534,7 +2532,6 @@ ecryptfs_add_global_auth_tok(struct ecryptfs_mount_crypt_stat *mount_crypt_stat,
+ 	list_add(&new_auth_tok->mount_crypt_stat_list,
+ 		 &mount_crypt_stat->global_auth_tok_list);
+ 	mutex_unlock(&mount_crypt_stat->global_auth_tok_list_mutex);
+-out:
+-	return rc;
++	return 0;
+ }
+ 
+-- 
+2.14.0
 
