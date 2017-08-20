@@ -1,45 +1,44 @@
-From: Dan Streetman <ddstreet@ieee.org>
-Date: Wed, 16 Aug 2017 11:19:12 +0000
-Subject: Re: [PATCH 1/2] zpool: Delete an error message for a failed memory allocation in zpool_create_pool()
-Message-Id: <CALZtONACUD_EjnBh71accGgLZ+aH44pORv7aBpVDYPgZsBgyow@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Aug 2017 15:53:28 +0000
+Subject: [PATCH 2/2] soc/fsl/qe: Slighly simplify code
+Message-Id: <20170820155328.882-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0fec59a9-ac68-33f6-533a-adfb5fa3c380@users.sourceforge.net> <81cdf225-ebaa-19dc-30d8-80ec6cfab6cd@users.sourceforge.net>
-In-Reply-To: <81cdf225-ebaa-19dc-30d8-80ec6cfab6cd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Aug 14, 2017 at 7:15 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 14 Aug 2017 12:57:16 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Return 0 instead of 'ret' (which is 0 at this point) to make the code more
+explicit.
+Also avoid a useless initialization of 'ret'.
 
-Acked-by: Dan Streetman <ddstreet@ieee.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/soc/fsl/qe/qe_tdm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  mm/zpool.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/mm/zpool.c b/mm/zpool.c
-> index fd3ff719c32c..fe1943f7d844 100644
-> --- a/mm/zpool.c
-> +++ b/mm/zpool.c
-> @@ -172,7 +172,6 @@ struct zpool *zpool_create_pool(const char *type, const char *name, gfp_t gfp,
->
->         zpool = kmalloc(sizeof(*zpool), gfp);
->         if (!zpool) {
-> -               pr_err("couldn't create zpool - out of memory\n");
->                 zpool_put_driver(driver);
->                 return NULL;
->         }
-> --
-> 2.14.0
->
+diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
+index 6b9647fee512..c90c72ca9e3e 100644
+--- a/drivers/soc/fsl/qe/qe_tdm.c
++++ b/drivers/soc/fsl/qe/qe_tdm.c
+@@ -42,7 +42,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 		     struct ucc_tdm_info *ut_info)
+ {
+ 	const char *sprop;
+-	int ret = 0;
++	int ret;
+ 	u32 val;
+ 	struct resource *res;
+ 	struct device_node *np2;
+@@ -171,7 +171,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 		siram_init_flag = 1;
+ 	}
+ 
+-	return ret;
++	return 0;
+ 
+ err_miss_siram_property:
+ 	return ret;
+-- 
+2.11.0
+
