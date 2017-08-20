@@ -1,74 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Aug 2017 19:58:59 +0000
-Subject: [PATCH 3/3] [media] mb86a20s: Delete a jump target in mb86a20s_attach()
-Message-Id: <6b7fbd7b-f25d-25c0-5473-41c11b308349@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 16:42:11 +0000
+Subject: [PATCH 8/8] CIFS: One function call less in cifs_do_create() after error detection
+Message-Id: <3b7e0d4a-6707-c44f-8775-9e10a291fcd2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
-In-Reply-To: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
+References: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
+In-Reply-To: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Aug 2017 21:34:58 +0200
+Date: Sun, 20 Aug 2017 17:47:44 +0200
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+The kfree() function was called in a few cases by the
+cifs_do_create() function during error handling even if
+the passed variable contained a null pointer.
 
-* Move a bit of exception handling code into an if branch.
-
-* Adjust a condition check.
-
-* Delete the jump target "error" which became unnecessary
-  with this refactoring.
+Add a jump target according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/mb86a20s.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ fs/cifs/dir.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/mb86a20s.c b/drivers/media/dvb-frontends/mb86a20s.c
-index ba7a433dd424..bdaf9d235fed 100644
---- a/drivers/media/dvb-frontends/mb86a20s.c
-+++ b/drivers/media/dvb-frontends/mb86a20s.c
-@@ -2073,7 +2073,7 @@ struct dvb_frontend *mb86a20s_attach(const struct mb86a20s_config *config,
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
--		goto error;
-+		return NULL;
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 69babcf4f653..73e68aa5326e 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -258,7 +258,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 				CIFSSMBClose(xid, tcon, fid->netfid);
+ 				iput(newinode);
+ 				rc = -EISDIR;
+-				goto out;
++				goto free_path;
+ 			}
  
- 	/* setup the state */
- 	state->config = config;
-@@ -2086,22 +2086,16 @@ struct dvb_frontend *mb86a20s_attach(const struct mb86a20s_config *config,
+ 			if (!S_ISREG(newinode->i_mode)) {
+@@ -301,7 +301,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 			break;
  
- 	/* Check if it is a mb86a20s frontend */
- 	rev = mb86a20s_readreg(state, 0);
--
--	if (rev = 0x13) {
--		dev_info(&i2c->dev,
--			 "Detected a Fujitsu mb86a20s frontend\n");
--	} else {
-+	if (rev != 0x13) {
-+		kfree(state);
- 		dev_dbg(&i2c->dev,
- 			"Frontend revision %d is unknown - aborting.\n",
- 		       rev);
--		goto error;
-+		return NULL;
+ 		default:
+-			goto out;
++			goto free_path;
+ 		}
+ 		/*
+ 		 * fallthrough to retry, using older open call, this is case
+@@ -334,13 +334,13 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 
+ 	if (!server->ops->open) {
+ 		rc = -ENOSYS;
+-		goto out;
++		goto free_path;
  	}
  
-+	dev_info(&i2c->dev, "Detected a Fujitsu mb86a20s frontend\n");
- 	return &state->frontend;
--
--error:
--	kfree(state);
--	return NULL;
- }
- EXPORT_SYMBOL(mb86a20s_attach);
+ 	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
+ 	if (buf = NULL) {
+ 		rc = -ENOMEM;
+-		goto out;
++		goto free_path;
+ 	}
+ 
+ 	/*
+@@ -444,6 +444,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 
+ out:
+ 	kfree(buf);
++free_path:
+ 	kfree(full_path);
+ 	return rc;
  
 -- 
-2.14.1
+2.14.0
 
