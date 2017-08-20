@@ -1,43 +1,91 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 Aug 2017 20:59:55 +0000
-Subject: Re: [PATCH 0/4] SELinux: Fine-tuning for some function implementations
-Message-Id: <CAHC9VhQOVyA8bu5qWz7=KtGQ_kEVQmso539-VHpd+gGb7L7rig@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Aug 2017 17:09:35 +0000
+Subject: [PATCH] scsi: qedf: Fix a potential NULL pointer dereference
+Message-Id: <20170820170935.14767-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
-In-Reply-To: <e9f47cc9-fda7-dc54-bca9-cae6488914e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: QLogic-Storage-Upstream@cavium.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Aug 13, 2017 at 10:43 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 13 Aug 2017 16:25:43 +0200
->
-> A few update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (4):
->   Delete eight unnecessary variable assignments
->   Adjust jump targets in ebitmap_read()
->   Delete an unnecessary return statement in ebitmap_destroy()
->   Adjust five checks for null pointers
+At the beginning of 'qedf_srr_compl()' and of 'qedf_rec_compl()', we check
+if 'orig_io_req' is NULL. If this happens, a NULL pointer dereference will
+occur in the error handling path.
 
-Hi Markus,
+Fix it by adding an additionnal label in the error handling path in order
+to avoid this NULL pointer dereference.
 
-I merged many of your patches in the past because I wanted to help
-encourage your involvement, but you will remember I mentioned at the
-time that I generally dislike merging these trivial, and often
-style-only, patches.  I believe I even pointed you in the direction of
-our SELinux kernel issue tracker for a list of areas where you could
-help contribute in a meaningful way (link below).  My earlier comments
-still apply; if you want to continue to contribute to SELinux in the
-kernel, please focus your attention on more meaningful changes.  I am
-not going to merge any of these patches.
+Fixes: 61d8658b4a43 ("scsi: qedf: Add QLogic FastLinQ offload FCoE driver framework.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/qedf/qedf_els.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-* https://github.com/SELinuxProject/selinux-kernel/issues
-
+diff --git a/drivers/scsi/qedf/qedf_els.c b/drivers/scsi/qedf/qedf_els.c
+index eb07f1de8afa..59c18ca4cda9 100644
+--- a/drivers/scsi/qedf/qedf_els.c
++++ b/drivers/scsi/qedf/qedf_els.c
+@@ -489,7 +489,7 @@ static void qedf_srr_compl(struct qedf_els_cb_arg *cb_arg)
+ 
+ 	/* If a SRR times out, simply free resources */
+ 	if (srr_req->event = QEDF_IOREQ_EV_ELS_TMO)
+-		goto out_free;
++		goto out_put;
+ 
+ 	/* Normalize response data into struct fc_frame */
+ 	mp_req = &(srr_req->mp_req);
+@@ -501,7 +501,7 @@ static void qedf_srr_compl(struct qedf_els_cb_arg *cb_arg)
+ 	if (!fp) {
+ 		QEDF_ERR(&(qedf->dbg_ctx),
+ 		    "fc_frame_alloc failure.\n");
+-		goto out_free;
++		goto out_put;
+ 	}
+ 
+ 	/* Copy frame header from firmware into fp */
+@@ -526,9 +526,10 @@ static void qedf_srr_compl(struct qedf_els_cb_arg *cb_arg)
+ 	}
+ 
+ 	fc_frame_free(fp);
+-out_free:
++out_put:
+ 	/* Put reference for original command since SRR completed */
+ 	kref_put(&orig_io_req->refcount, qedf_release_cmd);
++out_free:
+ 	kfree(cb_arg);
+ }
+ 
+@@ -780,7 +781,7 @@ static void qedf_rec_compl(struct qedf_els_cb_arg *cb_arg)
+ 
+ 	/* If a REC times out, free resources */
+ 	if (rec_req->event = QEDF_IOREQ_EV_ELS_TMO)
+-		goto out_free;
++		goto out_put;
+ 
+ 	/* Normalize response data into struct fc_frame */
+ 	mp_req = &(rec_req->mp_req);
+@@ -792,7 +793,7 @@ static void qedf_rec_compl(struct qedf_els_cb_arg *cb_arg)
+ 	if (!fp) {
+ 		QEDF_ERR(&(qedf->dbg_ctx),
+ 		    "fc_frame_alloc failure.\n");
+-		goto out_free;
++		goto out_put;
+ 	}
+ 
+ 	/* Copy frame header from firmware into fp */
+@@ -884,9 +885,10 @@ static void qedf_rec_compl(struct qedf_els_cb_arg *cb_arg)
+ 
+ out_free_frame:
+ 	fc_frame_free(fp);
+-out_free:
++out_put:
+ 	/* Put reference for original command since REC completed */
+ 	kref_put(&orig_io_req->refcount, qedf_release_cmd);
++out_free:
+ 	kfree(cb_arg);
+ }
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
