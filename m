@@ -1,30 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 19:15:28 +0000
-Subject: [PATCH 0/5] mtip32xx: Adjustments for some function implementations
-Message-Id: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 18:39:44 +0000
+Subject: [PATCH 2/3] ceph: Delete an unnecessary return statement in update_dentry_lease()
+Message-Id: <8a9a3d91-91b2-81ed-eafc-66fc637de539@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
+In-Reply-To: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
+To: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 21:02:34 +0200
+Date: Sun, 20 Aug 2017 20:08:25 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+The script "checkpatch.pl" pointed information out like the following.
 
-Markus Elfring (5):
-  Delete an error message for a failed memory allocation in five functions
-  Improve a size determination in two functions
-  Delete an unnecessary variable initialisation in mtip_pci_probe()
-  Fix a typo in a comment line in mtip_hw_get_identify()
-  Adjust an input validation check in mtip_hw_debugfs_exit()
+WARNING: void function return statements are not generally useful
 
- drivers/block/mtip32xx/mtip32xx.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+Thus remove such a statement in the affected function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ceph/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 010e7be768e6..8eae56b2d1d6 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1067,7 +1067,6 @@ static void update_dentry_lease(struct dentry *dentry,
+ 	spin_unlock(&dentry->d_lock);
+ 	if (old_lease_session)
+ 		ceph_put_mds_session(old_lease_session);
+-	return;
+ }
+ 
+ /*
 -- 
-2.13.4
+2.14.0
 
