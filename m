@@ -1,47 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 14 Aug 2017 17:15:12 +0000
-Subject: [PATCH v2] media: ddbridge: constify stv0910_p and lnbh25_cfg
-Message-Id: <1502730912-11681-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 20:16:27 +0000
+Subject: [PATCH 0/4] BTRFS: Adjustments for several function implementations
+Message-Id: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only copied into other structures, so
-they can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 22:11:33 +0200
 
-Done with the help of Coccinelle.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in btrfsic_process_superblock()
+  Adjust 32 checks for null pointers
+  Improve eight size determinations
+  Delete an unnecessary variable initialisation in tree_mod_log_eb_copy()
 
----
+ fs/btrfs/check-integrity.c |  4 +---
+ fs/btrfs/ctree.c           | 16 +++++++---------
+ fs/btrfs/delayed-inode.c   |  4 ++--
+ fs/btrfs/extent-tree.c     |  2 +-
+ fs/btrfs/extent_io.c       |  2 +-
+ fs/btrfs/inode.c           |  4 ++--
+ fs/btrfs/lzo.c             |  4 ++--
+ fs/btrfs/qgroup.c          |  6 +++---
+ fs/btrfs/raid56.c          |  2 +-
+ fs/btrfs/reada.c           |  4 ++--
+ fs/btrfs/scrub.c           | 12 ++++++------
+ fs/btrfs/super.c           |  2 +-
+ fs/btrfs/transaction.c     |  2 +-
+ fs/btrfs/tree-log.c        |  4 ++--
+ fs/btrfs/volumes.c         | 14 +++++++-------
+ fs/btrfs/xattr.c           |  2 +-
+ fs/btrfs/zlib.c            |  4 ++--
+ 17 files changed, 42 insertions(+), 46 deletions(-)
 
-v2: fix typo in the commit message
-
- drivers/media/pci/ddbridge/ddbridge-core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
-index 7e164a37..7ff570b 100644
---- a/drivers/media/pci/ddbridge/ddbridge-core.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-core.c
-@@ -800,14 +800,14 @@ static int tuner_attach_stv6110(struct ddb_input *input, int type)
- 	return 0;
- }
- 
--static struct stv0910_cfg stv0910_p = {
-+static const struct stv0910_cfg stv0910_p = {
- 	.adr      = 0x68,
- 	.parallel = 1,
- 	.rptlvl   = 4,
- 	.clk      = 30000000,
- };
- 
--static struct lnbh25_config lnbh25_cfg = {
-+static const struct lnbh25_config lnbh25_cfg = {
- 	.i2c_address = 0x0c << 1,
- 	.data2_config = LNBH25_TEN
- };
+-- 
+2.14.0
 
