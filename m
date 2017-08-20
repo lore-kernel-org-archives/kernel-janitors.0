@@ -1,37 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 14 Aug 2017 05:25:56 +0000
-Subject: [PATCH] misc: mic: constify virtio_config_ops structure
-Message-Id: <1502688356-23041-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 20 Aug 2017 21:34:38 +0000
+Subject: [PATCH] crypto: aesni: make arrays aesni_simd_skciphers and aesni_simd_skciphers2 static
+Message-Id: <20170820213438.14686-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Ashutosh Dixit <ashutosh.dixit@intel.com>, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This virtio_config_ops structure is only stored in the config field
-of a virtio_device structure and this field is const, so the
-virtio_config_ops structure can also be const.
+From: Colin Ian King <colin.king@canonical.com>
 
-Done with the help of Coccinelle.
+Arrays aesni_simd_skciphers and aesni_simd_skciphers2 are local to the
+source and do not need to be in global scope, so make them static.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Cleans up sparse warnings:
+symbol 'aesni_simd_skciphers' was not declared. Should it be static?
+symbol 'aesni_simd_skciphers2' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/mic/vop/vop_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/crypto/aesni-intel_glue.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-index a341938..c05caa8 100644
---- a/drivers/misc/mic/vop/vop_main.c
-+++ b/drivers/misc/mic/vop/vop_main.c
-@@ -425,7 +425,7 @@ static int vop_find_vqs(struct virtio_device *dev, unsigned nvqs,
- /*
-  * The config ops structure as defined by virtio config
-  */
--static struct virtio_config_ops vop_vq_config_ops = {
-+static const struct virtio_config_ops vop_vq_config_ops = {
- 	.get_features = vop_get_features,
- 	.finalize_features = vop_finalize_features,
- 	.get = vop_get,
+diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
+index 5c15d6b57329..c4c20286f27e 100644
+--- a/arch/x86/crypto/aesni-intel_glue.c
++++ b/arch/x86/crypto/aesni-intel_glue.c
+@@ -1067,9 +1067,10 @@ static struct skcipher_alg aesni_skciphers[] = {
+ 	}
+ };
+ 
++static
+ struct simd_skcipher_alg *aesni_simd_skciphers[ARRAY_SIZE(aesni_skciphers)];
+ 
+-struct {
++static struct {
+ 	const char *algname;
+ 	const char *drvname;
+ 	const char *basename;
+-- 
+2.11.0
 
