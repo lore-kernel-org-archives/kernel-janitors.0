@@ -1,39 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:46 +0000
-Subject: [PATCH 07/11] serial: apbuart: constify uart_ops structures
-Message-Id: <1502605310-4314-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Aug 2017 15:53:12 +0000
+Subject: [PATCH 1/2] soc/fsl/qe: Fix a potential NULL pointer dereference in an error handling path
+Message-Id: <20170820155312.831-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+If 'of_find_device_by_node()' fails at line 153, a NULL pointer
+dereference (pdev) will occur in the error handling path.
 
-Done with the help of Coccinelle.
+Just remove the 'devm_iounmap()' call from the error handling path. The
+corresponding is managed, there is no need to release explicitly here.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: 35ef1c20fdb2 ("fsl/qe: Add QE TDM lib")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/tty/serial/apbuart.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch is only a guess that sounds logical to me.
 
-diff --git a/drivers/tty/serial/apbuart.c b/drivers/tty/serial/apbuart.c
-index 75eb083..dd60ed9 100644
---- a/drivers/tty/serial/apbuart.c
-+++ b/drivers/tty/serial/apbuart.c
-@@ -325,7 +325,7 @@ static int apbuart_verify_port(struct uart_port *port,
+I propose to remove this 'devm_iounmap' mainly because of its name (if it
+is managed, why should be manually handle it here ?)
+---
+ drivers/soc/fsl/qe/qe_tdm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
+index f744c214f680..6b9647fee512 100644
+--- a/drivers/soc/fsl/qe/qe_tdm.c
++++ b/drivers/soc/fsl/qe/qe_tdm.c
+@@ -174,7 +174,6 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
+ 	return ret;
+ 
+ err_miss_siram_property:
+-	devm_iounmap(&pdev->dev, utdm->si_regs);
  	return ret;
  }
- 
--static struct uart_ops grlib_apbuart_ops = {
-+static const struct uart_ops grlib_apbuart_ops = {
- 	.tx_empty = apbuart_tx_empty,
- 	.set_mctrl = apbuart_set_mctrl,
- 	.get_mctrl = apbuart_get_mctrl,
+ EXPORT_SYMBOL(ucc_of_parse_tdm);
+-- 
+2.11.0
 
