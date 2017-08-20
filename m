@@ -1,28 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 11:46:23 +0000
-Subject: [PATCH 0/2] fs-ext4: Adjustments for two function implementations
-Message-Id: <ca49a6dc-f2ee-d427-5f16-052706277b38@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 20 Aug 2017 16:49:01 +0000
+Subject: [PATCH] Staging: media: Release the correct resource in an error handling path
+Message-Id: <20170820164901.9810-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org, gregkh@linuxfoundation.org, arvind.yadav.cs@gmail.com
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 13:35:43 +0200
+'res' is reassigned several times in the function and if we 'goto
+error_unmap', its value is not the returned value of 'request_mem_region()'
+anymore.
 
-Two update suggestions were taken into account
-from static source code analysis.
+Introduce a new 'struct resource *' variable (i.e. res2) to keep a pointer
+to the right resource, if needed in the error handling path.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in ext4_multi_mount_protect()
-  Improve a size determination in two functions
+Fixes: 4b4eda001704 ("Staging: media: Unmap and release region obtained by ioremap_nocache")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- fs/ext4/dir.c | 2 +-
- fs/ext4/mmp.c | 7 +++----
- 2 files changed, 4 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 6a3434cebd79..8d2d3f8edc07 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1791,7 +1791,7 @@ vpfe_ipipe_init(struct vpfe_ipipe_device *ipipe, struct platform_device *pdev)
+ 	struct v4l2_subdev *sd = &ipipe->subdev;
+ 	struct media_entity *me = &sd->entity;
+ 	static resource_size_t  res_len;
+-	struct resource *res;
++	struct resource *res, *res2;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+ 	if (!res)
+@@ -1805,10 +1805,10 @@ vpfe_ipipe_init(struct vpfe_ipipe_device *ipipe, struct platform_device *pdev)
+ 	if (!ipipe->base_addr)
+ 		goto error_release;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 6);
+-	if (!res)
++	res2 = platform_get_resource(pdev, IORESOURCE_MEM, 6);
++	if (!res2)
+ 		goto error_unmap;
+-	ipipe->isp5_base_addr = ioremap_nocache(res->start, res_len);
++	ipipe->isp5_base_addr = ioremap_nocache(res2->start, res_len);
+ 	if (!ipipe->isp5_base_addr)
+ 		goto error_unmap;
+ 
 -- 
-2.14.0
+2.11.0
 
