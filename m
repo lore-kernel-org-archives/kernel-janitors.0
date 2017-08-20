@@ -1,52 +1,121 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Tue, 08 Aug 2017 08:15:01 +0000
-Subject: Re: [PATCH] i2c: imx: Remove a useless test in 'i2c_imx_init_recovery_info()'
-Message-Id: <20170808081501.jxhid5rgfeqpshfw@pengutronix.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 20:19:49 +0000
+Subject: [PATCH 3/4] btrfs: Improve eight size determinations
+Message-Id: <eea2ad68-7f8d-bbe4-1cdf-6439a46fb04e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170806234953.30682-1-christophe.jaillet@wanadoo.fr>
- <20170807063617.5wr4i7b7k72uyrit@pengutronix.de>
- <9279b880-558a-17fb-404c-98012bb0f9f1@wanadoo.fr>
-In-Reply-To: <9279b880-558a-17fb-404c-98012bb0f9f1@wanadoo.fr>
+References: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
+In-Reply-To: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 08, 2017 at 09:40:59AM +0200, Christophe JAILLET wrote:
-> Le 07/08/2017 =E0 08:36, Uwe Kleine-K=F6nig a =E9crit :
-> > On Mon, Aug 07, 2017 at 01:49:53AM +0200, Christophe JAILLET wrote:
-> > > 'devm_pinctrl_get()' never returns NULL, so this test can be simplifi=
-ed.
-> > That's wrong. If CONFIG_PINCTRL is disabled devm_pinctrl_get returns
-> > NULL. But I think this shouldn't be considered an error, so your change
-> > is right, just the commit log is not.
-> With that said, in fact, I think that the test is correct as is.
-> If CONFIG_PINCTRL is disabled, we will display an info about a missing
-> functionality, but would still continue normally without it (i.e. return
-> PTR_ERR(NULL) =3D 0 =3D success), as stated in the comment in front of
-> 'i2c_imx_init_recovery_info':
->     "These alternative pinmux settings can be described in the device tree
-> by
->      a separate pinctrl state "gpio". If this is missing this is not a big
->      problem, the only implication is that we can't do bus recovery."
->=20
-> So, I won't propose any v2 patch with an updated commit log.
-> Feel free to update it yourself and apply it if you don't share my analys=
-is
-> above.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 21:55:56 +0200
 
-Then the only issue (maybe?) is that the driver makes use of
-PTR_ERR(NULL) =3D 0 which I'm not sure is explicitly allowed.
+Replace the specification of data types by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Best regards
-Uwe
+This issue was detected by using the Coccinelle software.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/ctree.c         | 10 ++++------
+ fs/btrfs/delayed-inode.c |  4 ++--
+ fs/btrfs/raid56.c        |  2 +-
+ fs/btrfs/super.c         |  2 +-
+ 4 files changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+index b89c101ef45e..3b49f39eaaf6 100644
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -578,7 +578,7 @@ tree_mod_log_insert_move(struct btrfs_fs_info *fs_info,
+ 	if (!tree_mod_need_log(fs_info, eb))
+ 		return 0;
+ 
+-	tm_list = kcalloc(nr_items, sizeof(struct tree_mod_elem *), GFP_NOFS);
++	tm_list = kcalloc(nr_items, sizeof(*tm_list), GFP_NOFS);
+ 	if (!tm_list)
+ 		return -ENOMEM;
+ 
+@@ -677,8 +677,7 @@ tree_mod_log_insert_root(struct btrfs_fs_info *fs_info,
+ 
+ 	if (log_removal && btrfs_header_level(old_root) > 0) {
+ 		nritems = btrfs_header_nritems(old_root);
+-		tm_list = kcalloc(nritems, sizeof(struct tree_mod_elem *),
+-				  GFP_NOFS);
++		tm_list = kcalloc(nritems, sizeof(*tm_list), GFP_NOFS);
+ 		if (!tm_list) {
+ 			ret = -ENOMEM;
+ 			goto free_tms;
+@@ -813,8 +812,7 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
+ 	if (btrfs_header_level(dst) = 0 && btrfs_header_level(src) = 0)
+ 		return 0;
+ 
+-	tm_list = kcalloc(nr_items * 2, sizeof(struct tree_mod_elem *),
+-			  GFP_NOFS);
++	tm_list = kcalloc(nr_items * 2, sizeof(*tm_list), GFP_NOFS);
+ 	if (!tm_list)
+ 		return -ENOMEM;
+ 
+@@ -904,7 +902,7 @@ tree_mod_log_free_eb(struct btrfs_fs_info *fs_info, struct extent_buffer *eb)
+ 		return 0;
+ 
+ 	nritems = btrfs_header_nritems(eb);
+-	tm_list = kcalloc(nritems, sizeof(struct tree_mod_elem *), GFP_NOFS);
++	tm_list = kcalloc(nritems, sizeof(*tm_list), GFP_NOFS);
+ 	if (!tm_list)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index 19e4ad2f3f2e..865aaca445b9 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -750,13 +750,13 @@ static int btrfs_batch_insert_items(struct btrfs_root *root,
+ 	 */
+ 	btrfs_set_path_blocking(path);
+ 
+-	keys = kmalloc_array(nitems, sizeof(struct btrfs_key), GFP_NOFS);
++	keys = kmalloc_array(nitems, sizeof(*keys), GFP_NOFS);
+ 	if (!keys) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	data_size = kmalloc_array(nitems, sizeof(u32), GFP_NOFS);
++	data_size = kmalloc_array(nitems, sizeof(*data_size), GFP_NOFS);
+ 	if (!data_size) {
+ 		ret = -ENOMEM;
+ 		goto error;
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index 208638384cd2..c85f0f534532 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1798,7 +1798,7 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ 	int err;
+ 	int i;
+ 
+-	pointers = kcalloc(rbio->real_stripes, sizeof(void *), GFP_NOFS);
++	pointers = kcalloc(rbio->real_stripes, sizeof(*pointers), GFP_NOFS);
+ 	if (!pointers) {
+ 		err = -ENOMEM;
+ 		goto cleanup_io;
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 0b7a1d8cd08b..cd2ba5e3b2d0 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1571,7 +1571,7 @@ static struct dentry *btrfs_mount(struct file_system_type *fs_type, int flags,
+ 	 * it for searching for existing supers, so this lets us do that and
+ 	 * then open_ctree will properly initialize everything later.
+ 	 */
+-	fs_info = kzalloc(sizeof(struct btrfs_fs_info), GFP_KERNEL);
++	fs_info = kzalloc(sizeof(*fs_info), GFP_KERNEL);
+ 	if (!fs_info) {
+ 		error = -ENOMEM;
+ 		goto error_sec_opts;
+-- 
+2.14.0
+
