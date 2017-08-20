@@ -1,80 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 16:06:43 +0000
-Subject: [PATCH 09/14] vme: ca91cx42: Delete eight error messages for a failed memory allocation
-Message-Id: <e463aed0-6627-0bdd-2608-7e34a8866a95@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 16:41:12 +0000
+Subject: [PATCH 7/8] CIFS: Delete an unnecessary variable initialisation in cifs_do_create()
+Message-Id: <fd13371d-c582-39b0-9ec7-dddf8cccf5ff@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
-In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+References: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
+In-Reply-To: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 10:20:03 +0200
+Date: Sun, 20 Aug 2017 17:20:36 +0200
 
-Omit extra messages for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
+The local variable "full_path" will be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/vme/bridges/vme_ca91cx42.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+ fs/cifs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vme/bridges/vme_ca91cx42.c b/drivers/vme/bridges/vme_ca91cx42.c
-index 7cc51223db1c..d25f997e8aeb 100644
---- a/drivers/vme/bridges/vme_ca91cx42.c
-+++ b/drivers/vme/bridges/vme_ca91cx42.c
-@@ -538,5 +538,3 @@ static int ca91cx42_alloc_resource(struct vme_master_resource *image,
--			dev_err(ca91cx42_bridge->parent, "Unable to allocate "
--				"memory for resource name\n");
- 			retval = -ENOMEM;
- 			goto err_name;
- 		}
-@@ -1041,5 +1039,3 @@ static int ca91cx42_dma_list_add(struct vme_dma_list *list,
--		dev_err(dev, "Failed to allocate memory for dma resource "
--			"structure\n");
- 		retval = -ENOMEM;
- 		goto err_mem;
- 	}
-@@ -1624,5 +1620,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--		dev_err(&pdev->dev, "Failed to allocate memory for device "
--			"structure\n");
- 		retval = -ENOMEM;
- 		goto err_struct;
- 	}
-@@ -1634,5 +1628,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--		dev_err(&pdev->dev, "Failed to allocate memory for device "
--			"structure\n");
- 		retval = -ENOMEM;
- 		goto err_driver;
- 	}
-@@ -1694,5 +1686,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--			dev_err(&pdev->dev, "Failed to allocate memory for "
--			"master resource structure\n");
- 			retval = -ENOMEM;
- 			goto err_master;
- 		}
-@@ -1720,5 +1710,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--			dev_err(&pdev->dev, "Failed to allocate memory for "
--			"slave resource structure\n");
- 			retval = -ENOMEM;
- 			goto err_slave;
- 		}
-@@ -1747,5 +1735,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--			dev_err(&pdev->dev, "Failed to allocate memory for "
--			"dma resource structure\n");
- 			retval = -ENOMEM;
- 			goto err_dma;
- 		}
-@@ -1767,5 +1753,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
--		dev_err(&pdev->dev, "Failed to allocate memory for "
--		"location monitor resource structure\n");
- 		retval = -ENOMEM;
- 		goto err_lm;
- 	}
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 248aead1f3f4..69babcf4f653 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -227,7 +227,7 @@ cifs_do_create(struct inode *inode, struct dentry *direntry, unsigned int xid,
+ 	int desired_access;
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+ 	struct cifs_tcon *tcon = tlink_tcon(tlink);
+-	char *full_path = NULL;
++	char *full_path;
+ 	FILE_ALL_INFO *buf = NULL;
+ 	struct inode *newinode = NULL;
+ 	int disposition;
 -- 
 2.14.0
 
