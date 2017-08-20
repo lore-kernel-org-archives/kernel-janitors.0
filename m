@@ -1,26 +1,37 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Tue, 15 Aug 2017 14:21:53 +0000
-Subject: Re: [PATCH 2/5] net/9p: Improve 19 size determinations
-Message-Id: <20170815142152.GA5426@ZenIV.linux.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 18:37:49 +0000
+Subject: [PATCH 0/3] Ceph: Adjustments for some function implementations
+Message-Id: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
- <f9eeedc4-5d3d-6622-79f0-11174ea81c49@users.sourceforge.net>
-In-Reply-To: <f9eeedc4-5d3d-6622-79f0-11174ea81c49@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 15, 2017 at 02:00:06PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 15 Aug 2017 09:36:20 +0200
-> 
-> Replace the specification of data structures by variable references
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 20:32:10 +0200
 
-Garbage.  This makes it so much harder to find where the objects of given
-type are created.  It's _not_ safer and any patches of that sort around
-VFS will be shitcanned.  What to do with net/9p patches is up to net/9p
-maintainers, but I would strongly recommend the same treatment.
+Three update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in __get_or_create_frag()
+  Delete an unnecessary return statement in update_dentry_lease()
+  Adjust 36 checks for null pointers
+
+ fs/ceph/addr.c       |  2 +-
+ fs/ceph/cache.c      |  2 +-
+ fs/ceph/caps.c       |  4 ++--
+ fs/ceph/debugfs.c    |  2 +-
+ fs/ceph/file.c       |  2 +-
+ fs/ceph/inode.c      | 14 +++++---------
+ fs/ceph/mds_client.c | 22 +++++++++++-----------
+ fs/ceph/mdsmap.c     |  6 +++---
+ fs/ceph/super.c      | 18 +++++++++---------
+ fs/ceph/xattr.c      |  8 ++++----
+ 10 files changed, 38 insertions(+), 42 deletions(-)
+
+-- 
+2.14.0
+
