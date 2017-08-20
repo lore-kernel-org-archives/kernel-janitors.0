@@ -1,39 +1,106 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:45 +0000
-Subject: [PATCH 06/11] serial: 21285: constify uart_ops structures
-Message-Id: <1502605310-4314-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 16:39:11 +0000
+Subject: [PATCH 5/8] CIFS: Less function calls in cifs_mknod() after error detection
+Message-Id: <ad73c46d-a1a3-3ae3-7263-1e8812303809@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
+In-Reply-To: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Aug 2017 16:56:18 +0200
 
-Done with the help of Coccinelle.
+The kfree() function was called in a few cases by the
+cifs_mknod() function during error handling even if
+the passed variable contained a null pointer.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+* Adjust jump targets according to the Linux coding style convention.
 
+* Delete an initialisation for the variables "buf" and "full_path"
+  which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/21285.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/dir.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/tty/serial/21285.c b/drivers/tty/serial/21285.c
-index 9b208bd..804632b 100644
---- a/drivers/tty/serial/21285.c
-+++ b/drivers/tty/serial/21285.c
-@@ -334,7 +334,7 @@ static int serial21285_verify_port(struct uart_port *port, struct serial_struct
- 	return ret;
- }
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 41039ab12643..2c9cbd8393d6 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -620,12 +620,12 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+ 	struct tcon_link *tlink;
+ 	struct cifs_tcon *tcon;
+ 	struct cifs_io_parms io_parms;
+-	char *full_path = NULL;
++	char *full_path;
+ 	struct inode *newinode = NULL;
+ 	__u32 oplock = 0;
+ 	struct cifs_fid fid;
+ 	struct cifs_open_parms oparms;
+-	FILE_ALL_INFO *buf = NULL;
++	FILE_ALL_INFO *buf;
+ 	unsigned int bytes_written;
+ 	struct win_dev *pdev;
+ 	struct kvec iov[2];
+@@ -645,7 +645,7 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+ 	full_path = build_path_from_dentry(direntry);
+ 	if (full_path = NULL) {
+ 		rc = -ENOMEM;
+-		goto mknod_out;
++		goto put_link;
+ 	}
  
--static struct uart_ops serial21285_ops = {
-+static const struct uart_ops serial21285_ops = {
- 	.tx_empty	= serial21285_tx_empty,
- 	.get_mctrl	= serial21285_get_mctrl,
- 	.set_mctrl	= serial21285_set_mctrl,
+ 	if (tcon->unix_ext) {
+@@ -667,18 +667,18 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+ 					    cifs_sb->local_nls,
+ 					    cifs_remap(cifs_sb));
+ 		if (rc)
+-			goto mknod_out;
++			goto free_path;
+ 
+ 		rc = cifs_get_inode_info_unix(&newinode, full_path,
+ 						inode->i_sb, xid);
+ 
+ 		if (rc = 0)
+ 			d_instantiate(direntry, newinode);
+-		goto mknod_out;
++		goto free_path;
+ 	}
+ 
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+-		goto mknod_out;
++		goto free_path;
+ 
+ 
+ 	cifs_dbg(FYI, "sfu compat create special file\n");
+@@ -708,7 +708,7 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+ 		oplock = 0;
+ 	rc = tcon->ses->server->ops->open(xid, &oparms, &oplock, buf);
+ 	if (rc)
+-		goto mknod_out;
++		goto free_buffer;
+ 
+ 	/*
+ 	 * BB Do not bother to decode buf since no local inode yet to put
+@@ -740,9 +740,11 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+ 
+ 	/* FIXME: add code here to set EAs */
+ 
+-mknod_out:
+-	kfree(full_path);
++free_buffer:
+ 	kfree(buf);
++free_path:
++	kfree(full_path);
++put_link:
+ 	cifs_put_tlink(tlink);
+ free_id:
+ 	free_xid(xid);
+-- 
+2.14.0
 
