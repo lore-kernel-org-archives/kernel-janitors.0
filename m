@@ -1,32 +1,39 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 31 Aug 2017 19:56:40 +0000
-Subject: Re: [PATCH] kernfs: checking for IS_ERR() instead of NULL
-Message-Id: <26406dc8-2bdc-7bd3-7cd9-7e63986a8769@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Aug 2017 09:46:02 +0000
+Subject: [PATCH] lib/cmdline.c: add to the get_options() documentation
+Message-Id: <20170821094602.baz6tv2v23sem3kw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170830140456.7n6sfogqb7mvjmrm@mwanda>
- <20170831165247.GA26219@kroah.com>
-In-Reply-To: <20170831165247.GA26219@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Shaohua Li <shli@fb.com>, linux-block@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/31/2017 10:52 AM, Greg Kroah-Hartman wrote:
-> On Wed, Aug 30, 2017 at 05:04:56PM +0300, Dan Carpenter wrote:
->> The kernfs_get_inode() returns NULL on error, it never returns error
->> pointers.
->>
->> Fixes: aa8188253474 ("kernfs: add exportfs operations")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> Acked-by: Tejun Heo <tj@kernel.org>
-> 
-> Hm, I don't know what tree aa8188253474 is in, but it's not mine, so I
-> can't take this patch :(
+I wasn't sure how get_options() worked, so I looked at examples.  And by
+sheer chance the first example I picked the only example which uses it
+incorrectly...  I've added some comments that hopefully help.
 
-It's in my tree, I'll take it. Can I add your
-acked/reviewed/whatever-by?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/lib/cmdline.c b/lib/cmdline.c
+index 4c0888c4a68d..0eb8d0ab60db 100644
+--- a/lib/cmdline.c
++++ b/lib/cmdline.c
+@@ -73,14 +73,15 @@ EXPORT_SYMBOL(get_option);
+ /**
+  *	get_options - Parse a string into a list of integers
+  *	@str: String to be parsed
+- *	@nints: size of integer array
++ *	@nints: size of integer array (including the extra int at the start)
+  *	@ints: integer array
+  *
+  *	This function parses a string containing a comma-separated
+  *	list of integers, a hyphen-separated range of _positive_ integers,
+  *	or a combination of both.  The parse halts when the array is
+  *	full, or when no more numbers can be retrieved from the
+- *	string.
++ *	string.  It stores the number of numbers as the first element in the
++ *	array.
+  *
+  *	Return value is the character in the string which caused
+  *	the parse to end (typically a null terminator, if @str is
