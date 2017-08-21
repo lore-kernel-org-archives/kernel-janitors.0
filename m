@@ -1,29 +1,86 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 Aug 2017 23:29:22 +0000
-Subject: Re: [PATCH] mlx5: ensure 0 is returned when vport is zero
-Message-Id: <20170818.162922.1769160270805446057.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 12:40:28 +0000
+Subject: [PATCH 3/5] btrfs: Use common error handling code in btrfs_update_root()
+Message-Id: <287b99e6-6562-ea64-e763-6a6808fee12a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170818134925.16604-1-colin.king@canonical.com>
-In-Reply-To: <20170818134925.16604-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org
-Cc: saeedm-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 18 Aug 2017 14:49:25 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 13:10:15 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, if vport is zero then then an uninialized return status
-> in err is returned.  Since the only return status at the end of the
-> function esw_add_uc_addr is zero for the current set of return paths
-> we may as well just return 0 rather than err to fix this issue.
-> 
-> Detected by CoverityScan, CID#1452698 ("Uninitialized scalar variable")
-> 
-> Fixes: eeb66cdb6826 ("net/mlx5: Separate between E-Switch and MPFS")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied to net-next, thanks.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/root-tree.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
+
+diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+index 5b488af6f25e..bc497ba9d9d1 100644
+--- a/fs/btrfs/root-tree.c
++++ b/fs/btrfs/root-tree.c
+@@ -145,10 +145,8 @@ int btrfs_update_root(struct btrfs_trans_handle *trans, struct btrfs_root
+ 		return -ENOMEM;
+ 
+ 	ret = btrfs_search_slot(trans, root, key, path, 0, 1);
+-	if (ret < 0) {
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
+-	}
++	if (ret < 0)
++		goto abort_transaction;
+ 
+ 	if (ret != 0) {
+ 		btrfs_print_leaf(path->nodes[0]);
+@@ -171,23 +169,17 @@ int btrfs_update_root(struct btrfs_trans_handle *trans, struct btrfs_root
+ 		btrfs_release_path(path);
+ 		ret = btrfs_search_slot(trans, root, key, path,
+ 				-1, 1);
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 
+ 		ret = btrfs_del_item(trans, root, path);
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 		btrfs_release_path(path);
+ 		ret = btrfs_insert_empty_item(trans, root, path,
+ 				key, sizeof(*item));
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 		l = path->nodes[0];
+ 		slot = path->slots[0];
+ 		ptr = btrfs_item_ptr_offset(l, slot);
+@@ -204,6 +196,9 @@ int btrfs_update_root(struct btrfs_trans_handle *trans, struct btrfs_root
+ out:
+ 	btrfs_free_path(path);
+ 	return ret;
++abort_transaction:
++	btrfs_abort_transaction(trans, ret);
++	goto out;
+ }
+ 
+ int btrfs_insert_root(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+-- 
+2.14.0
+
