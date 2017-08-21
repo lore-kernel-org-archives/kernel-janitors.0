@@ -1,38 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:15 +0000
-Subject: [PATCH 03/17] pinctrl: armada-37xx: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 20:53:44 +0000
+Subject: [PATCH 1/4] w1: Delete an error message for a failed memory allocation in two functions
+Message-Id: <2caa1294-178b-b7da-8f1c-e3200a88a62f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
+In-Reply-To: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This pinconf_ops structure is only stored in the const pinconf_ops
-field of a pinctrl_desc structure. Make the pinconf_ops structure
-const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 21:05:42 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in these functions.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/w1/w1.c     | 7 +------
+ drivers/w1/w1_int.c | 6 +-----
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index f024e25..997ff05 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -243,7 +243,7 @@ static int armada_37xx_pin_config_group_set(struct pinctrl_dev *pctldev,
- 	return -ENOTSUPP;
- }
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index 74471e7aa5cc..f26c1ea280dd 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -715,10 +715,5 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
+-	if (!sl) {
+-		dev_err(&dev->dev,
+-			 "%s: failed to allocate new slave device.\n",
+-			 __func__);
++	if (!sl)
+ 		return -ENOMEM;
+-	}
+-
  
--static struct pinconf_ops armada_37xx_pinconf_ops = {
-+static const struct pinconf_ops armada_37xx_pinconf_ops = {
- 	.is_generic = true,
- 	.pin_config_group_get = armada_37xx_pin_config_group_get,
- 	.pin_config_group_set = armada_37xx_pin_config_group_set,
+ 	sl->owner = THIS_MODULE;
+ 	sl->master = dev;
+diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
+index 1c776178f598..9e37463960ed 100644
+--- a/drivers/w1/w1_int.c
++++ b/drivers/w1/w1_int.c
+@@ -44,9 +44,5 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
+-	if (!dev) {
+-		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+-			sizeof(struct w1_master));
++	if (!dev)
+ 		return NULL;
+-	}
+-
+ 
+ 	dev->bus_master = (struct w1_bus_master *)(dev + 1);
+ 
+-- 
+2.14.0
 
