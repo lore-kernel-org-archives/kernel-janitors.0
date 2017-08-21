@@ -1,59 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 10:05:15 +0000
-Subject: Re: [PATCH 00/30] ACPI-processor: Fine-tuning for several function implementations
-Message-Id: <cec1be25-0853-8a16-e13d-90a2541969e3@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 12:41:43 +0000
+Subject: [PATCH 4/5] btrfs: Use common error handling code in update_ref_path()
+Message-Id: <7083c299-4803-68c8-ae57-c0e74f5d9229@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Date: Tue, 9 Sep 2016 20:15:05 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (30):
->   Use kmalloc_array() in acpi_processor_get_performance_states()
->   Improve two size determinations in acpi_processor_get_performance_states()
->   Rename jump labels in acpi_processor_get_performance_states()
->   Delete two unnecessary initialisations in acpi_processor_get_performance_states()
->   Rename jump labels in acpi_processor_preregister_performance()
->   Move a success indication in acpi_processor_preregister_performance()
->   Rename jump labels in acpi_processor_get_psd()
->   Delete two unnecessary initialisations in acpi_processor_get_psd()
->   Improve a size determination in acpi_processor_get_psd()
->   Rename jump labels in acpi_processor_get_performance_control()
->   Delete two unnecessary initialisations in acpi_processor_get_performance_control()
->   Rename jump labels in acpi_processor_ppc_notifier()
->   Delete an unnecessary initialisation in acpi_processor_ppc_notifier()
->   Delete an unnecessary initialisation in acpi_processor_get_performance_info()
->   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
->   Use kmalloc_array() in acpi_processor_get_throttling_states()
->   Improve another size determination in acpi_processor_get_throttling_states()
->   Rename jump labels in acpi_processor_get_throttling_states()
->   Delete two unnecessary initialisations in acpi_processor_get_throttling_states()
->   Fix jump targets in acpi_processor_get_throttling_info()
->   Rename jump labels in acpi_processor_get_tsd()
->   Delete two unnecessary initialisations in acpi_processor_get_tsd()
->   Improve a size determination in acpi_processor_get_tsd()
->   Rename jump labels in acpi_processor_get_throttling_control()
->   Delete two unnecessary initialisations in acpi_processor_get_throttling_control()
->   Fix jump targets in acpi_processor_reevaluate_tstate()
->   Delete an unnecessary initialisation in acpi_processor_reevaluate_tstate()
->   Rename a jump label in acpi_processor_get_platform_limit()
->   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
->   Improve jump targets in acpi_processor_update_tsd_coord()
-> 
->  drivers/acpi/processor_perflib.c    |  87 +++++++++++++--------------
->  drivers/acpi/processor_throttling.c | 116 ++++++++++++++++--------------------
->  2 files changed, 93 insertions(+), 110 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 13:34:29 +0200
 
-How do you think about to take another look at change possibilities
-for these source files?
+Add a jump target so that a bit of exception handling can be better reused
+in this function.
 
-Regards,
-Markus
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/send.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 59fb1ed6ca20..a96edc91a101 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3697,12 +3697,12 @@ static int update_ref_path(struct send_ctx *sctx, struct recorded_ref *ref)
+ 		return -ENOMEM;
+ 
+ 	ret = get_cur_path(sctx, ref->dir, ref->dir_gen, new_path);
+-	if (ret < 0) {
+-		fs_path_free(new_path);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto free_path;
++
+ 	ret = fs_path_add(new_path, ref->name, ref->name_len);
+ 	if (ret < 0) {
++free_path:
+ 		fs_path_free(new_path);
+ 		return ret;
+ 	}
+-- 
+2.14.0
+
