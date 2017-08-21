@@ -1,26 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 13:27:13 +0000
+From: Timofey Titovets <nefelim4ag@gmail.com>
+Date: Mon, 21 Aug 2017 14:23:30 +0000
 Subject: Re: btrfs: Adjust 32 checks for null pointers
-Message-Id: <0e547ca8-2318-a63f-8b43-d7717a0a227b@users.sourceforge.net>
+Message-Id: <CAGqmi74KXiq1KQHqsFu5BFSb6k-OoowYTiRqnFU=SJHT-UUBTQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
  <933141a6-96cd-cef3-bbd3-e3b3d8def177@users.sourceforge.net>
- <CAGqmi7560BKUagZPPEEsmZYZnf_rhSTxg18-XGiOgDcATCexFg@mail.gmail.com>
-In-Reply-To: <CAGqmi7560BKUagZPPEEsmZYZnf_rhSTxg18-XGiOgDcATCexFg@mail.gmail.com>
+ <CAGqmi7560BKUagZPPEEsmZYZnf_rhSTxg18-XGiOgDcATCexFg@mail.gmail.com> <0e547ca8-2318-a63f-8b43-d7717a0a227b@users.sourceforge.net>
+In-Reply-To: <0e547ca8-2318-a63f-8b43-d7717a0a227b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timofey Titovets <nefelim4ag@gmail.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-btrfs <linux-btrfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> That's will work,
+Sorry Markus, but main problem with your patches described at that page:
+https://btrfs.wiki.kernel.org/index.php/Developer%27s_FAQ#How_not_to_start
 
-Thanks for your acknowledgement.
+I.e. it's cool that you try to help as you can, but not that way, thanks.
+
+2017-08-21 16:27 GMT+03:00 SF Markus Elfring <elfring@users.sourceforge.net>:
+>> That's will work,
+>
+> Thanks for your acknowledgement.
+>
+>
+>> but that's don't improve anything.
+>
+> Do you like a small source code reduction here?
+>
+> Regards,
+> Markus
 
 
-> but that's don't improve anything.
 
-Do you like a small source code reduction here?
-
-Regards,
-Markus
+-- 
+Have a nice day,
+Timofey.
