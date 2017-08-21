@@ -1,67 +1,174 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Aug 2017 14:45:40 +0000
-Subject: Re: [PATCH 1/2] kmemleak: Delete an error message for a failed memory allocation in two functions
-Message-Id: <20170814144540.q2ib32ge2ekm7irl@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 12:38:58 +0000
+Subject: [PATCH 2/5] btrfs: Use common error handling code in __btrfs_free_extent()
+Message-Id: <5c87a777-0772-456c-d094-9ca3f819a182@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <301bc8c9-d9f6-87be-ce1d-dc614e82b45b@users.sourceforge.net>
- <986426ab-4ca9-ee56-9712-d06c25a2ed1a@users.sourceforge.net>
- <20170814111430.lskrrg3fygpnyx6v@armageddon.cambridge.arm.com>
- <20170814130220.q5w4fsbngphniqzc@mwanda>
- <20170814143804.d66iibto5dacvifk@armageddon.cambridge.arm.com>
-In-Reply-To: <20170814143804.d66iibto5dacvifk@armageddon.cambridge.arm.com>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Aug 14, 2017 at 03:38:04PM +0100, Catalin Marinas wrote:
-> On Mon, Aug 14, 2017 at 04:02:21PM +0300, Dan Carpenter wrote:
-> > On Mon, Aug 14, 2017 at 12:14:32PM +0100, Catalin Marinas wrote:
-> > > On Mon, Aug 14, 2017 at 11:35:02AM +0200, SF Markus Elfring wrote:
-> > > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > > Date: Mon, 14 Aug 2017 10:50:22 +0200
-> > > > 
-> > > > Omit an extra message for a memory allocation failure in these functions.
-> > > > 
-> > > > This issue was detected by using the Coccinelle software.
-> > > > 
-> > > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > > ---
-> > > >  mm/kmemleak.c | 5 +----
-> > > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> > > > index 7780cd83a495..c6c798d90b2e 100644
-> > > > --- a/mm/kmemleak.c
-> > > > +++ b/mm/kmemleak.c
-> > > > @@ -555,7 +555,6 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
-> > > >  
-> > > >  	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
-> > > >  	if (!object) {
-> > > > -		pr_warn("Cannot allocate a kmemleak_object structure\n");
-> > > >  		kmemleak_disable();
-> > > 
-> > > I don't really get what this patch is trying to achieve. Given that
-> > > kmemleak will be disabled after this, I'd rather know why it happened.
-> > 
-> > kmem_cache_alloc() will generate a stack trace and a bunch of more
-> > useful information if it fails.  The allocation isn't likely to fail,
-> > but if it does you will know.  The extra message is just wasting RAM.
-> 
-> Currently kmemleak uses __GFP_NOWARN for its own metadata allocation, so
-> we wouldn't see the sl*b warnings. I don't fully remember why I went for
-> this gfp flag, probably not to interfere with other messages printed by
-> the allocator (kmemleak_alloc is called from within sl*b).
-> 
-> I'm fine to drop __GFP_NOWARN and remove those extra messages.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 10:03:00 +0200
 
-Ah.  I considered that, but didn't see a NOWARN in the diff and was too
-lazy to check the code.  Probably I would just leave it as-is.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/extent-tree.c | 69 ++++++++++++++++++++------------------------------
+ 1 file changed, 27 insertions(+), 42 deletions(-)
 
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index 116c5615d6c2..c6b7aca88491 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -6913,10 +6913,9 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 			ret = remove_extent_backref(trans, info, path, NULL,
+ 						    refs_to_drop,
+ 						    is_data, &last_ref);
+-			if (ret) {
+-				btrfs_abort_transaction(trans, ret);
+-				goto out;
+-			}
++			if (ret)
++				goto abort_transaction;
++
+ 			btrfs_release_path(path);
+ 			path->leave_spinning = 1;
+ 
+@@ -6962,10 +6961,9 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 				if (ret > 0)
+ 					btrfs_print_leaf(path->nodes[0]);
+ 			}
+-			if (ret < 0) {
+-				btrfs_abort_transaction(trans, ret);
+-				goto out;
+-			}
++			if (ret < 0)
++				goto abort_transaction;
++
+ 			extent_slot = path->slots[0];
+ 		}
+ 	} else if (WARN_ON(ret = -ENOENT)) {
+@@ -6974,11 +6972,9 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 			"unable to find ref byte nr %llu parent %llu root %llu  owner %llu offset %llu",
+ 			bytenr, parent, root_objectid, owner_objectid,
+ 			owner_offset);
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
++		goto abort_transaction;
+ 	} else {
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
++		goto abort_transaction;
+ 	}
+ 
+ 	leaf = path->nodes[0];
+@@ -6988,10 +6984,8 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 		BUG_ON(found_extent || extent_slot != path->slots[0]);
+ 		ret = convert_extent_item_v0(trans, info, path, owner_objectid,
+ 					     0);
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 
+ 		btrfs_release_path(path);
+ 		path->leave_spinning = 1;
+@@ -7008,10 +7002,8 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 				ret, bytenr);
+ 			btrfs_print_leaf(path->nodes[0]);
+ 		}
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 
+ 		extent_slot = path->slots[0];
+ 		leaf = path->nodes[0];
+@@ -7035,8 +7027,7 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 			  "trying to drop %d refs but we only have %Lu for bytenr %Lu",
+ 			  refs_to_drop, refs, bytenr);
+ 		ret = -EINVAL;
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
++		goto abort_transaction;
+ 	}
+ 	refs -= refs_to_drop;
+ 
+@@ -7057,10 +7048,8 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 			ret = remove_extent_backref(trans, info, path,
+ 						    iref, refs_to_drop,
+ 						    is_data, &last_ref);
+-			if (ret) {
+-				btrfs_abort_transaction(trans, ret);
+-				goto out;
+-			}
++			if (ret)
++				goto abort_transaction;
+ 		}
+ 	} else {
+ 		if (found_extent) {
+@@ -7078,37 +7067,33 @@ static int __btrfs_free_extent(struct btrfs_trans_handle *trans,
+ 		last_ref = 1;
+ 		ret = btrfs_del_items(trans, extent_root, path, path->slots[0],
+ 				      num_to_del);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
++
+ 		btrfs_release_path(path);
+ 
+ 		if (is_data) {
+ 			ret = btrfs_del_csums(trans, info, bytenr, num_bytes);
+-			if (ret) {
+-				btrfs_abort_transaction(trans, ret);
+-				goto out;
+-			}
++			if (ret)
++				goto abort_transaction;
+ 		}
+ 
+ 		ret = add_to_free_space_tree(trans, info, bytenr, num_bytes);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
+ 
+ 		ret = update_block_group(trans, info, bytenr, num_bytes, 0);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
+ 	}
+ 	btrfs_release_path(path);
+ 
+ out:
+ 	btrfs_free_path(path);
+ 	return ret;
++abort_transaction:
++	btrfs_abort_transaction(trans, ret);
++	goto out;
+ }
+ 
+ /*
+-- 
+2.14.0
 
