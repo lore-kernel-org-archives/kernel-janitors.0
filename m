@@ -1,51 +1,150 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Date: Tue, 08 Aug 2017 19:58:07 +0000
-Subject: Re: [PATCH 7/9 v2] thermal: bcm2835: constify thermal_zone_of_device_ops structures
-Message-Id: <1239025469.165778.1502222287761@email.1und1.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 12:42:40 +0000
+Subject: [PATCH 5/5] btrfs: Use common error handling code in btrfs_mark_extent_written()
+Message-Id: <93116379-7a82-733a-6957-4e01b3572d8f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502204943-20075-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 14:15:23 +0200
 
-> Julia Lawall <Julia.Lawall@lip6.fr> hat am 8. August 2017 um 17:09 geschrieben:
-> 
-> 
-> The thermal_zone_of_device_ops structure is only passed as the fourth
-> argument to thermal_zone_of_sensor_register, which is declared as const.
-> Thus the thermal_zone_of_device_ops structure itself can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
 
-Still
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/file.c | 62 ++++++++++++++++++++++-----------------------------------
+ 1 file changed, 24 insertions(+), 38 deletions(-)
 
-> 
-> ---
-> 
-> v2: This patch was present in the original series
-> 
->  drivers/thermal/broadcom/bcm2835_thermal.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-> index e6863c8..a4d6a0e 100644
-> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
-> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-> @@ -145,7 +145,7 @@ static void bcm2835_thermal_debugfs(struct platform_device *pdev)
->  	debugfs_create_regset32("regset", 0444, data->debugfsdir, regset);
->  }
->  
-> -static struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
-> +static const struct thermal_zone_of_device_ops bcm2835_thermal_ops = {
->  	.get_temp = bcm2835_thermal_get_temp,
->  };
->  
->
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 74fd7756cff3..675683051cbc 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1122,25 +1122,17 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 
+ 	leaf = path->nodes[0];
+ 	btrfs_item_key_to_cpu(leaf, &key, path->slots[0]);
+-	if (key.objectid != ino ||
+-	    key.type != BTRFS_EXTENT_DATA_KEY) {
+-		ret = -EINVAL;
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
+-	}
++	if (key.objectid != ino || key.type != BTRFS_EXTENT_DATA_KEY)
++		goto e_inval;
++
+ 	fi = btrfs_item_ptr(leaf, path->slots[0],
+ 			    struct btrfs_file_extent_item);
+-	if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_PREALLOC) {
+-		ret = -EINVAL;
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
+-	}
++	if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_PREALLOC)
++		goto e_inval;
++
+ 	extent_end = key.offset + btrfs_file_extent_num_bytes(leaf, fi);
+-	if (key.offset > start || extent_end < end) {
+-		ret = -EINVAL;
+-		btrfs_abort_transaction(trans, ret);
+-		goto out;
+-	}
++	if (key.offset > start || extent_end < end)
++		goto e_inval;
+ 
+ 	bytenr = btrfs_file_extent_disk_bytenr(leaf, fi);
+ 	num_bytes = btrfs_file_extent_disk_num_bytes(leaf, fi);
+@@ -1213,10 +1205,8 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 			btrfs_release_path(path);
+ 			goto again;
+ 		}
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 
+ 		leaf = path->nodes[0];
+ 		fi = btrfs_item_ptr(leaf, path->slots[0] - 1,
+@@ -1237,18 +1227,15 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 		ret = btrfs_inc_extent_ref(trans, fs_info, bytenr, num_bytes,
+ 					   0, root->root_key.objectid,
+ 					   ino, orig_offset);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
+ 
+ 		if (split = start) {
+ 			key.offset = start;
+ 		} else {
+ 			if (start != key.offset) {
+ 				ret = -EINVAL;
+-				btrfs_abort_transaction(trans, ret);
+-				goto out;
++				goto abort_transaction;
+ 			}
+ 			path->slots[0]--;
+ 			extent_end = end;
+@@ -1271,10 +1258,8 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 		ret = btrfs_free_extent(trans, fs_info, bytenr, num_bytes,
+ 					0, root->root_key.objectid,
+ 					ino, orig_offset);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
+ 	}
+ 	other_start = 0;
+ 	other_end = start;
+@@ -1291,10 +1276,8 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 		ret = btrfs_free_extent(trans, fs_info, bytenr, num_bytes,
+ 					0, root->root_key.objectid,
+ 					ino, orig_offset);
+-		if (ret) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret)
++			goto abort_transaction;
+ 	}
+ 	if (del_nr = 0) {
+ 		fi = btrfs_item_ptr(leaf, path->slots[0],
+@@ -1314,14 +1297,17 @@ int btrfs_mark_extent_written(struct btrfs_trans_handle *trans,
+ 		btrfs_mark_buffer_dirty(leaf);
+ 
+ 		ret = btrfs_del_items(trans, root, path, del_slot, del_nr);
+-		if (ret < 0) {
+-			btrfs_abort_transaction(trans, ret);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto abort_transaction;
+ 	}
+ out:
+ 	btrfs_free_path(path);
+ 	return 0;
++e_inval:
++	ret = -EINVAL;
++abort_transaction:
++	btrfs_abort_transaction(trans, ret);
++	goto out;
+ }
+ 
+ /*
+-- 
+2.14.0
+
