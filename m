@@ -1,34 +1,22 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 12:35:56 +0000
-Subject: [PATCH 0/5] BTRFS: Fine-tuning for five function implementations
-Message-Id: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+From: David Sterba <dsterba@suse.cz>
+Date: Mon, 21 Aug 2017 13:24:28 +0000
+Subject: Re: [PATCH 0/5] BTRFS: Fine-tuning for five function implementations
+Message-Id: <20170821132428.GC2866@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 14:30:12 +0200
+On Mon, Aug 21, 2017 at 02:35:56PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 21 Aug 2017 14:30:12 +0200
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (5):
-  Use common error handling code in tree_mod_log_eb_copy()
-  Use common error handling code in __btrfs_free_extent()
-  Use common error handling code in btrfs_update_root()
-  Use common error handling code in update_ref_path()
-  Use common error handling code in btrfs_mark_extent_written()
-
- fs/btrfs/ctree.c       | 14 +++++-----
- fs/btrfs/extent-tree.c | 69 ++++++++++++++++++++------------------------------
- fs/btrfs/file.c        | 62 ++++++++++++++++++---------------------------
- fs/btrfs/root-tree.c   | 27 ++++++++------------
- fs/btrfs/send.c        |  8 +++---
- 5 files changed, 72 insertions(+), 108 deletions(-)
-
--- 
-2.14.0
-
+All patches make a nice gallery of anti-patterns.  None of them will get
+applied.
