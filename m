@@ -1,40 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 08 Aug 2017 10:45:09 +0000
-Subject: [PATCH][next] x86/intel_rdt: remove redundant assignment to files
-Message-Id: <20170808104509.14198-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Aug 2017 09:47:30 +0000
+Subject: [PATCH net] ethernet: xircom: small clean up in setup_xirc2ps_cs()
+Message-Id: <20170821094730.ydm2xwsqbkyadybi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170808092859.13021-1-colin.king@canonical.com>
-In-Reply-To: <20170808092859.13021-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jarod Wilson <jarod@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Ilya Matveychikov <matvejchikov@gmail.com>, Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The get_options() function takes the whole ARRAY_SIZE().  It doesn't
+matter here because we don't use more than 7 elements.
 
-The variable files is assigned twice, the first assignment
-is redundant and can be removed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by CoverityScan, CID#1452634 ("Unused value")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 39006f36e695..0d3b14444483 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1560,7 +1560,6 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 	if (ret)
- 		goto out_destroy;
+diff --git a/drivers/net/ethernet/xircom/xirc2ps_cs.c b/drivers/net/ethernet/xircom/xirc2ps_cs.c
+index f71883264cc0..fd5288ff53b5 100644
+--- a/drivers/net/ethernet/xircom/xirc2ps_cs.c
++++ b/drivers/net/ethernet/xircom/xirc2ps_cs.c
+@@ -1781,7 +1781,7 @@ static int __init setup_xirc2ps_cs(char *str)
+ 	 */
+ 	int ints[10] = { -1 };
  
--	files = RFTYPE_BASE | RFTYPE_CTRL;
- 	files = RFTYPE_BASE | BIT(RF_CTRLSHIFT + rtype);
- 	ret = rdtgroup_add_files(kn, files);
- 	if (ret)
--- 
-2.11.0
-
+-	str = get_options(str, 9, ints);
++	str = get_options(str, ARRAY_SIZE(ints), ints);
+ 
+ #define MAYBE_SET(X,Y) if (ints[0] >= Y && ints[Y] != -1) { X = ints[Y]; }
+ 	MAYBE_SET(if_port, 3);
