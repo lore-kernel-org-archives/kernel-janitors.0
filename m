@@ -1,43 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 20:22:17 +0000
-Subject: [PATCH 2/4] [media] ds3000: Improve a size determination in ds3000_attach()
-Message-Id: <01634417-dd3f-acc0-f550-11a33e5c2a59@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 12:37:40 +0000
+Subject: [PATCH 1/5] btrfs: Use common error handling code in tree_mod_log_eb_copy()
+Message-Id: <2aa6dff0-92e4-d5da-30fe-69f6c81fc6d7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
-In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
+References: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
+In-Reply-To: <1e8e1da2-a9e3-9dc7-6ffe-6c32f8464337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 21:49:22 +0200
+Date: Mon, 21 Aug 2017 09:36:48 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
+Add a jump target so that a bit of exception handling can be better reused
+in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/ds3000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/ctree.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
-index c2959a9695a7..988a464de3e9 100644
---- a/drivers/media/dvb-frontends/ds3000.c
-+++ b/drivers/media/dvb-frontends/ds3000.c
-@@ -839,7 +839,7 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
- 	dprintk("%s\n", __func__);
+diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+index 6d49db7d86be..d29cf946ebf9 100644
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -823,17 +823,13 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
+ 	for (i = 0; i < nr_items; i++) {
+ 		tm_list_rem[i] = alloc_tree_mod_elem(src, i + src_offset,
+ 		    MOD_LOG_KEY_REMOVE, GFP_NOFS);
+-		if (!tm_list_rem[i]) {
+-			ret = -ENOMEM;
+-			goto free_tms;
+-		}
++		if (!tm_list_rem[i])
++			goto e_nomem;
  
- 	/* allocate memory for the internal state */
--	state = kzalloc(sizeof(struct ds3000_state), GFP_KERNEL);
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		goto error2;
+ 		tm_list_add[i] = alloc_tree_mod_elem(dst, i + dst_offset,
+ 		    MOD_LOG_KEY_ADD, GFP_NOFS);
+-		if (!tm_list_add[i]) {
+-			ret = -ENOMEM;
+-			goto free_tms;
+-		}
++		if (!tm_list_add[i])
++			goto e_nomem;
+ 	}
  
+ 	if (tree_mod_dont_log(fs_info, NULL))
+@@ -854,6 +850,8 @@ tree_mod_log_eb_copy(struct btrfs_fs_info *fs_info, struct extent_buffer *dst,
+ 
+ 	return 0;
+ 
++e_nomem:
++	ret = -ENOMEM;
+ free_tms:
+ 	for (i = 0; i < nr_items * 2; i++) {
+ 		if (tm_list[i] && !RB_EMPTY_NODE(&tm_list[i]->node))
 -- 
-2.14.1
+2.14.0
 
