@@ -1,34 +1,21 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 21 Aug 2017 20:59:56 +0000
-Subject: [PATCH] mt7601u: check memory allocation failure
-Message-Id: <20170821205956.20859-1-christophe.jaillet@wanadoo.fr>
+From: Jakub Kicinski <kubakici@wp.pl>
+Date: Mon, 21 Aug 2017 21:34:30 +0000
+Subject: Re: [PATCH] mt7601u: check memory allocation failure
+Message-Id: <20170821143430.635e4b92@cakuba.netronome.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170821205956.20859-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170821205956.20859-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Check memory allocation failure and return -ENOMEM in such a case, as
-already done a few lines below
+On Mon, 21 Aug 2017 22:59:56 +0200, Christophe JAILLET wrote:
+> Check memory allocation failure and return -ENOMEM in such a case, as
+> already done a few lines below
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/mediatek/mt7601u/dma.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Jakub Kicinski <kubakici@wp.pl>
 
-diff --git a/drivers/net/wireless/mediatek/mt7601u/dma.c b/drivers/net/wireless/mediatek/mt7601u/dma.c
-index 660267b359e4..fa0173579d32 100644
---- a/drivers/net/wireless/mediatek/mt7601u/dma.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/dma.c
-@@ -484,6 +484,8 @@ static int mt7601u_alloc_tx(struct mt7601u_dev *dev)
- 
- 	dev->tx_q = devm_kcalloc(dev->dev, __MT_EP_OUT_MAX,
- 				 sizeof(*dev->tx_q), GFP_KERNEL);
-+	if (!dev->tx_q)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < __MT_EP_OUT_MAX; i++)
- 		if (mt7601u_alloc_tx_queue(dev, &dev->tx_q[i]))
--- 
-2.11.0
-
+Thanks!
