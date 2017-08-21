@@ -1,28 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 20:40:27 +0000
-Subject: [PATCH 0/3] ASoC-Blackfin: Adjustments for some function implementations
-Message-Id: <e1ef440e-ed53-92f8-c30c-37c0b42cb351@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 20:54:52 +0000
+Subject: [PATCH 2/4] w1: Improve a size determination in two functions
+Message-Id: <4a01f6e8-6054-db98-a738-e42dd23a76b9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
+In-Reply-To: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Aug 2017 22:34:56 +0200
+Date: Mon, 21 Aug 2017 21:17:01 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in sport_create()
-  Use common error handling code in sport_create()
-  Add some spaces for better code readability
+This issue was detected by using the Coccinelle software.
 
- sound/soc/blackfin/bf6xx-sport.c | 38 +++++++++++++++++---------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/w1/slaves/w1_ds28e04.c | 2 +-
+ drivers/w1/w1.c                | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/w1/slaves/w1_ds28e04.c b/drivers/w1/slaves/w1_ds28e04.c
+index ec234b846eb3..794db5e8f46f 100644
+--- a/drivers/w1/slaves/w1_ds28e04.c
++++ b/drivers/w1/slaves/w1_ds28e04.c
+@@ -397,5 +397,5 @@ static int w1_f1C_add_slave(struct w1_slave *sl)
+ 	struct w1_f1C_data *data = NULL;
+ 
+ 	if (w1_enable_crccheck) {
+-		data = kzalloc(sizeof(struct w1_f1C_data), GFP_KERNEL);
++		data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 		if (!data)
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index f26c1ea280dd..9f71dc7aca3a 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -711,5 +711,5 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
+ 	int err;
+ 	struct w1_netlink_msg msg;
+ 
+-	sl = kzalloc(sizeof(struct w1_slave), GFP_KERNEL);
++	sl = kzalloc(sizeof(*sl), GFP_KERNEL);
+ 	if (!sl)
 -- 
 2.14.0
 
