@@ -1,67 +1,22 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:19 +0000
-Subject: [PATCH 10/12] [media] vim2m: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-11-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Aug 2017 13:30:39 +0000
+Subject: Re: btrfs: Delete an unnecessary variable initialisation in tree_mod_log_eb_copy()
+Message-Id: <b487a820-20e4-8346-9196-654682c63b4e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <360126ba-e45b-0a8d-57b6-83764c4c2bce@users.sourceforge.net>
+ <31e6e888-586c-3480-7d57-dbf96989a26c@users.sourceforge.net>
+ <CAGqmi75EiV4nX+QCv0GR9wRbjNS5d7UernMSBdHEVsA+ubGBaQ@mail.gmail.com>
+In-Reply-To: <CAGqmi75EiV4nX+QCv0GR9wRbjNS5d7UernMSBdHEVsA+ubGBaQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Timofey Titovets <nefelim4ag@gmail.com>
+Cc: linux-btrfs <linux-btrfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+> Don't needed, and you did miss several similar places (L573 & L895) in
+> that file with explicit initialisation.
 
-Done with the help of Coccinelle.
+Would you like to adjust any remaining places in such source files?
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/platform/vim2m.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index 970b9b6..afbaa35 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -983,7 +983,7 @@ static int vim2m_release(struct file *file)
- 	.release	= video_device_release_empty,
- };
- 
--static struct v4l2_m2m_ops m2m_ops = {
-+static const struct v4l2_m2m_ops m2m_ops = {
- 	.device_run	= device_run,
- 	.job_ready	= job_ready,
- 	.job_abort	= job_abort,
-
+Regards,
+Markus
