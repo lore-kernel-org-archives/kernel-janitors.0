@@ -1,40 +1,69 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 10 Jul 2017 15:20:45 +0000
-Subject: [PATCH][-next] ASoC: rt5663: add in missing loop counter to avoid infinite loop
-Message-Id: <20170710152045.28898-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 12:10:30 +0000
+Subject: [PATCH] ALSA: pcsp: Use common error handling code in snd_card_pcsp_probe()
+Message-Id: <08ee0d6b-788b-2845-6964-e1e55c2d2292@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 14:00:21 +0200
 
-The loop counter 'count' is missing an increment, so we could end up
-with an infinite loop.  Add in a pre-increment to count to fix this.
+Add a jump target so that a bit of exception handling can be better reused
+in this function.
 
-Detected by CoverityScan, CID#1450120 ("Logically Dead Code")
-
-Fixes: 1a425dbf1a10 ("ASoC: rt5663: Update the calibration funciton")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rt5663.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/drivers/pcsp/pcsp.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 82edbcf39caa..5b3c50c641d8 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -3044,7 +3044,7 @@ static void rt5663_calibrate(struct rt5663_priv *rt5663)
- 		else
- 			break;
+diff --git a/sound/drivers/pcsp/pcsp.c b/sound/drivers/pcsp/pcsp.c
+index 72e2d0012084..c8ea4fed3905 100644
+--- a/sound/drivers/pcsp/pcsp.c
++++ b/sound/drivers/pcsp/pcsp.c
+@@ -108,22 +108,17 @@ static int snd_card_pcsp_probe(int devnum, struct device *dev)
+ 		return err;
  
--		if (count > 200)
-+		if (++count > 200)
- 			break;
+ 	err = snd_pcsp_create(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err)
++		goto free_card;
++
+ 	if (!nopcm) {
+ 		err = snd_pcsp_new_pcm(&pcsp_chip);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err)
++			goto free_card;
  	}
+ 	err = snd_pcsp_new_mixer(&pcsp_chip, nopcm);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err)
++		goto free_card;
  
+ 	strcpy(card->driver, "PC-Speaker");
+ 	strcpy(card->shortname, "pcsp");
+@@ -131,7 +126,8 @@ static int snd_card_pcsp_probe(int devnum, struct device *dev)
+ 		pcsp_chip.port);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
++	if (err) {
++free_card:
+ 		snd_card_free(card);
+ 		return err;
+ 	}
 -- 
-2.11.0
+2.14.0
 
