@@ -1,40 +1,25 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 15 Aug 2017 19:33:24 +0000
-Subject: [PATCH] crypto: inside-secure - fix an error handling path in safexcel_probe()
-Message-Id: <20170815193324.8193-1-christophe.jaillet@wanadoo.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 22 Aug 2017 07:58:51 +0000
+Subject: Re: [PATCH] crypto: inside-secure - fix an error handling path in safexcel_probe()
+Message-Id: <20170822075851.GJ6269@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170815193324.8193-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170815193324.8193-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: antoine.tenart@free-electrons.com, herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: antoine.tenart@free-electrons.com, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'ret' is known to be 0 at this point.
-If 'safexcel_request_ring_irq()' fails, it returns an error code.
-Return this value instead of 0 which means success.
+On Tue, Aug 15, 2017 at 09:33:24PM +0200, Christophe JAILLET wrote:
+> 'ret' is known to be 0 at this point.
+> If 'safexcel_request_ring_irq()' fails, it returns an error code.
+> Return this value instead of 0 which means success.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/crypto/inside-secure/safexcel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 1fabd4aee81b..89ba9e85c0f3 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -839,9 +839,10 @@ static int safexcel_probe(struct platform_device *pdev)
- 		snprintf(irq_name, 6, "ring%d", i);
- 		irq = safexcel_request_ring_irq(pdev, irq_name, safexcel_irq_ring,
- 						ring_irq);
--
--		if (irq < 0)
-+		if (irq < 0) {
-+			ret = irq;
- 			goto err_clk;
-+		}
- 
- 		priv->ring[i].work_data.priv = priv;
- 		priv->ring[i].work_data.ring = i;
+Patch applied.  Thanks.
 -- 
-2.11.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
