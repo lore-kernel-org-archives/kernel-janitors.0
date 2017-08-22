@@ -1,40 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 09:20:11 +0000
-Subject: [PATCH] ATM-ENI: Delete an error message for a failed memory allocation in eni_start()
-Message-Id: <da947bfe-8bef-18c4-609c-e859412dd2f3@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 Aug 2017 14:21:20 +0000
+Subject: [PATCH] [media] em28xx: calculate left volume level correctly
+Message-Id: <20170822142120.14348-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 11:15:17 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The calculation of the left volume looks suspect, the value of
+0x1f - ((val << 8) & 0x1f) is always 0x1f. The debug prior to the
+assignemnt of value[1] prints the left volume setting using the
+calculation 0x1f - (val >> 8) & 0x1f which looks correct to me.
+Fix the left volume by using the correct expression as used in
+the debug.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#146140 ("Wrong operator used")
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 850d24a5a861 ("[media] em28xx-alsa: add mixer support for AC97 volume controls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/atm/eni.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/usb/em28xx/em28xx-audio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/eni.c b/drivers/atm/eni.c
-index ce47eb17901d..d4b11ef940ee 100644
---- a/drivers/atm/eni.c
-+++ b/drivers/atm/eni.c
-@@ -1849,8 +1849,6 @@ static int eni_start(struct atm_dev *dev)
- 					   sizeof(*eni_dev->free_list),
- 					   GFP_KERNEL);
- 	if (!eni_dev->free_list) {
--		printk(KERN_ERR DEV_LABEL "(itf %d): couldn't get free page\n",
--		    dev->number);
- 		error = -ENOMEM;
- 		goto free_irq;
- 	}
+diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
+index 261620a57420..4628d73f46f2 100644
+--- a/drivers/media/usb/em28xx/em28xx-audio.c
++++ b/drivers/media/usb/em28xx/em28xx-audio.c
+@@ -564,7 +564,7 @@ static int em28xx_vol_get(struct snd_kcontrol *kcontrol,
+ 		val, (int)kcontrol->private_value);
+ 
+ 	value->value.integer.value[0] = 0x1f - (val & 0x1f);
+-	value->value.integer.value[1] = 0x1f - ((val << 8) & 0x1f);
++	value->value.integer.value[1] = 0x1f - ((val >> 8) & 0x1f);
+ 
+ 	return 0;
+ }
 -- 
-2.13.4
+2.14.1
 
