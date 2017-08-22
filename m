@@ -1,72 +1,97 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 20 Aug 2017 21:23:43 +0000
-Subject: Re: [PATCH 2/2] soc/fsl/qe: Slighly simplify code
-Message-Id: <8e0fba46-d969-a53d-12d1-3f2ae85a8464@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 17:43:08 +0000
+Subject: [PATCH] ALSA: via82xx: Use common error handling code in snd_via82xx_create()
+Message-Id: <2332472c-61d2-8c21-bf46-5c80745d6380@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170820155328.882-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170820155328.882-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 19:37:26 +0200
 
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
 
-Le 20/08/2017 à 21:11, walter harms a écrit :
->
-> Am 20.08.2017 17:53, schrieb Christophe JAILLET:
->> Return 0 instead of 'ret' (which is 0 at this point) to make the code more
->> explicit.
->> Also avoid a useless initialization of 'ret'.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/soc/fsl/qe/qe_tdm.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
->> index 6b9647fee512..c90c72ca9e3e 100644
->> --- a/drivers/soc/fsl/qe/qe_tdm.c
->> +++ b/drivers/soc/fsl/qe/qe_tdm.c
->> @@ -42,7 +42,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
->>   		     struct ucc_tdm_info *ut_info)
->>   {
->>   	const char *sprop;
->> -	int ret = 0;
->> +	int ret;
->>   	u32 val;
->>   	struct resource *res;
->>   	struct device_node *np2;
->> @@ -171,7 +171,7 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
->>   		siram_init_flag = 1;
->>   	}
->>   
->> -	return ret;
->> +	return 0;
->>   
->>   err_miss_siram_property:
->>   	return ret;
-> This lonely return ret looks like a left over from some cleanup opperation.
-> Is there any reason why to use goto instead of a plain return ?
->
-> re,
->   wh
->
-I don't see any.
+This issue was detected by using the Coccinelle software.
 
-If agreed that the patch 1/2 which remove a devm_ function in the error 
-handling path is correct, additional clean-ups could be performed as well.
-    - direct return instead of branching to the err_miss_siram_property 
-label
-    - removing the err_miss_siram_property label
-    - turning the:
-         ret = -EINVAL;
-         pr_err(<somtehing>);
-         return ret;
-      statements into:
-         pr_err(<somtehing>);
-         return -EINVAL;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/via82xx_modem.c | 33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
-Will propose it when/if 1/2 is confirmed.
+diff --git a/sound/pci/via82xx_modem.c b/sound/pci/via82xx_modem.c
+index 55f79b2599e7..8659776887b2 100644
+--- a/sound/pci/via82xx_modem.c
++++ b/sound/pci/via82xx_modem.c
+@@ -1110,8 +1110,8 @@ static int snd_via82xx_create(struct snd_card *card,
+ 		return err;
+ 
+ 	if ((chip = kzalloc(sizeof(*chip), GFP_KERNEL)) = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
+ 	}
+ 
+ 	spin_lock_init(&chip->reg_lock);
+@@ -1121,30 +1121,27 @@ static int snd_via82xx_create(struct snd_card *card,
+ 
+ 	if ((err = pci_request_regions(pci, card->driver)) < 0) {
+ 		kfree(chip);
+-		pci_disable_device(pci);
+-		return err;
++		goto disable_device;
+ 	}
+ 	chip->port = pci_resource_start(pci, 0);
+ 	if (request_irq(pci->irq, snd_via82xx_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_via82xx_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_chip;
+ 	}
+ 	chip->irq = pci->irq;
+ 	if (ac97_clock >= 8000 && ac97_clock <= 48000)
+ 		chip->ac97_clock = ac97_clock;
+ 	synchronize_irq(chip->irq);
+ 
+-	if ((err = snd_via82xx_chip_init(chip)) < 0) {
+-		snd_via82xx_free(chip);
+-		return err;
+-	}
++	err = snd_via82xx_chip_init(chip);
++	if (err < 0)
++		goto free_chip;
+ 
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
+-		snd_via82xx_free(chip);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0)
++		goto free_chip;
+ 
+ 	/* The 8233 ac97 controller does not implement the master bit
+ 	 * in the pci command register. IMHO this is a violation of the PCI spec.
+@@ -1153,6 +1150,14 @@ static int snd_via82xx_create(struct snd_card *card,
+ 
+ 	*r_via = chip;
+ 	return 0;
++
++disable_device:
++	pci_disable_device(pci);
++	goto exit;
++free_chip:
++	snd_via82xx_free(chip);
++exit:
++	return err;
+ }
+ 
+ 
+-- 
+2.14.0
 
-Christophe
