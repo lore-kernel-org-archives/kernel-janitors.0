@@ -1,47 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 18:38:46 +0000
-Subject: [PATCH 1/3] ceph: Delete an error message for a failed memory allocation in __get_or_create_frag()
-Message-Id: <1c62414e-f9c9-3c3b-a6d3-cd1ea582939a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Aug 2017 20:36:52 +0000
+Subject: [PATCH 2/2] drm/amdgpu/ci: tidy up some limit checks
+Message-Id: <20170822203652.oofm6lcyht7naiv5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
-In-Reply-To: <b05df66b-b8a7-ac63-989d-091efecf2ab8@users.sourceforge.net>
+References: <20170822203033.u7ltp2xjaqmoqrl4@mwanda>
+In-Reply-To: <20170822203033.u7ltp2xjaqmoqrl4@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, Eric Huang <JinHuiEric.Huang@amd.com>, Ken Wang <Qingqing.Wang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 20:00:09 +0200
+This is partly to silence a static checker warning:
 
-Omit an extra message for a memory allocation failure in this function.
+    drivers/gpu/drm/amd/amdgpu/ci_dpm.c:4553 ci_set_mc_special_registers()
+    error: buffer overflow 'table->mc_reg_address' 16 <= 16
 
-This issue was detected by using the Coccinelle software.
+The story is that it's valid to exit the loop with "j" less than or equal
+to SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE".  That value for "j" gets saved
+as table->last.  We're not allow to access "table->mc_reg_address[j]"
+when j = SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE because that's one past
+the end of the array.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The tests for "if (j > SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)" in
+ci_set_mc_special_registers() are always false because we start with
+j less than the array size and we increment it once so at most it can be
+equal.
+
+Then there is a bogus check in ci_register_patching_mc_seq() where
+it complains if "table->last >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE".
+The "table->last" value can't possibly be greater than the array size
+and it is allowed to be equal to it.  So let's just remove that test
+entirely.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ceph/inode.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Not tested.  Please review this one carefully.
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 220dfd87cbfa..010e7be768e6 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -133,12 +133,9 @@ static struct ceph_inode_frag *__get_or_create_frag(struct ceph_inode_info *ci,
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
+index cb508a211b2f..c885388bdc3c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
+@@ -4546,10 +4546,10 @@ static int ci_set_mc_special_registers(struct amdgpu_device *adev,
+ 					table->mc_reg_table_entry[k].mc_data[j] |= 0x100;
+ 			}
+ 			j++;
+-			if (j > SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
+-				return -EINVAL;
  
- 	frag = kmalloc(sizeof(*frag), GFP_NOFS);
--	if (!frag) {
--		pr_err("__get_or_create_frag ENOMEM on %p %llx.%llx "
--		       "frag %x\n", &ci->vfs_inode,
--		       ceph_vinop(&ci->vfs_inode), f);
-+	if (!frag)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	frag->frag = f;
- 	frag->split_by = 0;
- 	frag->mds = -1;
--- 
-2.14.0
-
+ 			if (adev->mc.vram_type != AMDGPU_VRAM_TYPE_GDDR5) {
++				if (j >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
++					return -EINVAL;
+ 				table->mc_reg_address[j].s1 = mmMC_PMG_AUTO_CMD;
+ 				table->mc_reg_address[j].s0 = mmMC_PMG_AUTO_CMD;
+ 				for (k = 0; k < table->num_entries; k++) {
+@@ -4725,8 +4725,6 @@ static int ci_register_patching_mc_seq(struct amdgpu_device *adev,
+ 	    ((adev->pdev->device = 0x67B0) ||
+ 	     (adev->pdev->device = 0x67B1))) {
+ 		for (i = 0; i < table->last; i++) {
+-			if (table->last >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
+-				return -EINVAL;
+ 			switch (table->mc_reg_address[i].s1) {
+ 			case mmMC_SEQ_MISC1:
+ 				for (k = 0; k < table->num_entries; k++) {
