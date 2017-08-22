@@ -1,39 +1,63 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 29 Aug 2017 09:09:46 +0000
-Subject: Re: [PATCH 4/4] [media] zr364xx: Fix a typo in a comment line of the file header
-Message-Id: <1503997786.2040.23.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 19:51:26 +0000
+Subject: [PATCH] ALSA: Fireface: Use common error handling code in pcm_open()
+Message-Id: <05f76303-7370-ea37-20c2-116c04b850db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
-         <bea45b65-dd34-73a6-cfd7-2ce22aa749fe@users.sourceforge.net>
-In-Reply-To: <bea45b65-dd34-73a6-cfd7-2ce22aa749fe@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, linux-usb@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2017-08-29 at 07:35 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 28 Aug 2017 22:46:30 +0200
-> 
-> Fix a word in this description.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/usb/zr364xx/zr364xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
-> index 4cc6d2a9d91f..4ccf71d8b608 100644
-> --- a/drivers/media/usb/zr364xx/zr364xx.c
-> +++ b/drivers/media/usb/zr364xx/zr364xx.c
-> @@ -2,7 +2,7 @@
->   * Zoran 364xx based USB webcam module version 0.73
->   *
->   * Allows you to use your USB webcam with V4L2 applications
-> - * This is still in heavy developpement !
-> + * This is still in heavy development!
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 21:45:42 +0200
 
-There is almost no development being done here.
-Just delete the line.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/firewire/fireface/ff-pcm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/sound/firewire/fireface/ff-pcm.c b/sound/firewire/fireface/ff-pcm.c
+index d12a0e3a4219..40975395a64a 100644
+--- a/sound/firewire/fireface/ff-pcm.c
++++ b/sound/firewire/fireface/ff-pcm.c
+@@ -138,16 +138,12 @@ static int pcm_open(struct snd_pcm_substream *substream)
+ 		return err;
+ 
+ 	err = pcm_init_hw_params(ff, substream);
+-	if (err < 0) {
+-		snd_ff_stream_lock_release(ff);
+-		return err;
+-	}
++	if (err < 0)
++		goto release_lock;
+ 
+ 	err = ff->spec->protocol->get_clock(ff, &rate, &src);
+-	if (err < 0) {
+-		snd_ff_stream_lock_release(ff);
+-		return err;
+-	}
++	if (err < 0)
++		goto release_lock;
+ 
+ 	if (src != SND_FF_CLOCK_SRC_INTERNAL) {
+ 		for (i = 0; i < CIP_SFC_COUNT; ++i) {
+@@ -177,6 +173,10 @@ static int pcm_open(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_sync(substream);
+ 
+ 	return 0;
++
++release_lock:
++	snd_ff_stream_lock_release(ff);
++	return err;
+ }
+ 
+ static int pcm_close(struct snd_pcm_substream *substream)
+-- 
+2.14.0
 
