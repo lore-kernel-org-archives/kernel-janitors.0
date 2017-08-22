@@ -1,39 +1,43 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 06 Aug 2017 22:37:56 +0000
-Subject: [PATCH 2/3] power: supply: charger-manager: Fix a comment
-Message-Id: <f7c303456f991c6bfcafb56045bb1b5698cc0315.1502058761.git.christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Aug 2017 20:41:28 +0000
+Subject: [PATCH] eCryptfs: use after free in ecryptfs_release_messaging()
+Message-Id: <20170822204128.7xhtrlpvueucbisl@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sre@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-Update a comment which is no more up to date since commit
-2ed9e9b653095.
+We're freeing the list iterator so we should be using the _safe()
+version of hlist_for_each_entry().
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 88b4a07e6610 ("[PATCH] eCryptfs: Public key transport mechanism")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/power/supply/charger-manager.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's also possible that I misunderstood this code.  Please review with
+caution.
 
-diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
-index 52a49857e20f..83c08c8e2c32 100644
---- a/drivers/power/supply/charger-manager.c
-+++ b/drivers/power/supply/charger-manager.c
-@@ -1651,8 +1651,8 @@ static int charger_manager_probe(struct platform_device *pdev)
+diff --git a/fs/ecryptfs/messaging.c b/fs/ecryptfs/messaging.c
+index 286f10b0363b..4f457d5c4933 100644
+--- a/fs/ecryptfs/messaging.c
++++ b/fs/ecryptfs/messaging.c
+@@ -442,15 +442,16 @@ void ecryptfs_release_messaging(void)
  	}
+ 	if (ecryptfs_daemon_hash) {
+ 		struct ecryptfs_daemon *daemon;
++		struct hlist_node *n;
+ 		int i;
  
- 	/*
--	 * The following two do not need to be errors.
--	 * Users may intentionally ignore those two features.
-+	 * Some of the following do not need to be errors.
-+	 * Users may intentionally ignore those features.
- 	 */
- 	if (desc->fullbatt_uV = 0) {
- 		dev_info(&pdev->dev, "Ignoring full-battery voltage threshold as it is not supplied\n");
--- 
-2.11.0
-
+ 		mutex_lock(&ecryptfs_daemon_hash_mux);
+ 		for (i = 0; i < (1 << ecryptfs_hash_bits); i++) {
+ 			int rc;
+ 
+-			hlist_for_each_entry(daemon,
+-					     &ecryptfs_daemon_hash[i],
+-					     euid_chain) {
++			hlist_for_each_entry_safe(daemon, n,
++						  &ecryptfs_daemon_hash[i],
++						  euid_chain) {
+ 				rc = ecryptfs_exorcise_daemon(daemon);
+ 				if (rc)
+ 					printk(KERN_ERR "%s: Error whilst "
