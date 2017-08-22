@@ -1,33 +1,42 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 25 Aug 2017 11:41:05 +0000
-Subject: Re: [PATCH] x86/microcode/intel: Improve microcode patches saving flow
-Message-Id: <20170825114105.5bnxbd6tvucrlnwx@pd.tnic>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 22 Aug 2017 22:03:49 +0000
+Subject: [PATCH][next] MIPS,bpf: fix missing break in switch statement
+Message-Id: <20170822220349.5648-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170824204714.jedeaphwmou5qafd@pd.tnic>
- <20170824205510.zy574qloxb4tsokq@mwanda>
- <20170824205844.3wkrq6vb7kv45vnv@pd.tnic>
- <20170824210847.hypvvpzf5pjhppyt@mwanda>
- <20170824211205.jpvmzzrm72vcb4xf@pd.tnic>
- <20170825090626.okc6reqltb5k4hip@pd.tnic>
- <20170825091228.acxl2pizbqe7ijnf@mwanda>
- <20170825091406.zytkd2pb5v6zxzrz@pd.tnic>
- <20170825100456.n236w3jebteokfd6@pd.tnic>
- <599FFEB6.4070707@bfs.de>
-In-Reply-To: <599FFEB6.4070707@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: x86-ml <x86@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, David Daney <david.daney@cavium.com>, "David S . Miller" <davem@davemloft.net>, Daniel Borkmann <daniel@iogearbox.net>, linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 25, 2017 at 12:40:54PM +0200, walter harms wrote:
-> just a bit nitpicking,
->  i would expect something like that:
+From: Colin Ian King <colin.king@canonical.com>
 
-Apply the patch and look at the whole function. Then you'll see why.
+There is a missing break causing a fall-through and setting
+ctx.use_bbit_insns to the wrong value. Fix this by adding the
+missing break.
 
+Detected with cppcheck:
+"Variable 'ctx.use_bbit_insns' is reassigned a value before the old
+one has been used. 'break;' missing?"
+
+Fixes: 8d8d18c3283f ("MIPS,bpf: Fix using smp_processor_id() in preemptible splat.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/net/ebpf_jit.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/mips/net/ebpf_jit.c b/arch/mips/net/ebpf_jit.c
+index 44ddc12cbb0e..7646891c4e9b 100644
+--- a/arch/mips/net/ebpf_jit.c
++++ b/arch/mips/net/ebpf_jit.c
+@@ -1892,6 +1892,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	case CPU_CAVIUM_OCTEON2:
+ 	case CPU_CAVIUM_OCTEON3:
+ 		ctx.use_bbit_insns = 1;
++		break;
+ 	default:
+ 		ctx.use_bbit_insns = 0;
+ 	}
 -- 
-Regards/Gruss,
-    Boris.
+2.14.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
