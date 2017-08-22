@@ -1,68 +1,86 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 04 Aug 2017 12:09:48 +0000
-Subject: [PATCH 5/5] [media] zr364xx: constify videobuf_queue_ops structures
-Message-Id: <1501848588-22628-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 14:00:26 +0000
+Subject: [PATCH v2] ALSA: pcsp: Use common error handling code in snd_card_pcsp_probe()
+Message-Id: <1b3cea97-e99e-ec7e-9b5c-0de728f8f383@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <08ee0d6b-788b-2845-6964-e1e55c2d2292@users.sourceforge.net>
+ <20170822121625.syvr64kwyh5xjexg@mwanda> <s5hziar9483.wl-tiwai@suse.de>
+In-Reply-To: <s5hziar9483.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antoine Jacquet <royale@zerezo.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-These videobuf_queue_ops structures are only passed as the second
-argument to videobuf_queue_vmalloc_init, which is declared as const.
-Thus the videobuf_queue_ops structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 15:50:53 +0200
 
-Done with the help of Coccinelle.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct videobuf_queue_ops i@p = { ... };
+This issue was detected by using the Coccinelle software.
 
-@ok1@
-identifier r.i;
-expression e1;
-position p;
-@@
-videobuf_queue_vmalloc_init(e1,&i@p,...)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct videobuf_queue_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct videobuf_queue_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/zr364xx/zr364xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
-index efdcd5b..24d5860 100644
---- a/drivers/media/usb/zr364xx/zr364xx.c
-+++ b/drivers/media/usb/zr364xx/zr364xx.c
-@@ -439,7 +439,7 @@ static void buffer_release(struct videobuf_queue *vq,
- 	free_buffer(vq, buf);
+v2:
+Do you find this refactoring acceptable instead?
+
+ sound/drivers/pcsp/pcsp.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
+
+diff --git a/sound/drivers/pcsp/pcsp.c b/sound/drivers/pcsp/pcsp.c
+index 72e2d0012084..fc83139fcfa2 100644
+--- a/sound/drivers/pcsp/pcsp.c
++++ b/sound/drivers/pcsp/pcsp.c
+@@ -108,22 +108,17 @@ static int snd_card_pcsp_probe(int devnum, struct device *dev)
+ 		return err;
+ 
+ 	err = snd_pcsp_create(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err)
++		goto free_card;
++
+ 	if (!nopcm) {
+ 		err = snd_pcsp_new_pcm(&pcsp_chip);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err)
++			goto free_card;
+ 	}
+ 	err = snd_pcsp_new_mixer(&pcsp_chip, nopcm);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err)
++		goto free_card;
+ 
+ 	strcpy(card->driver, "PC-Speaker");
+ 	strcpy(card->shortname, "pcsp");
+@@ -131,12 +126,13 @@ static int snd_card_pcsp_probe(int devnum, struct device *dev)
+ 		pcsp_chip.port);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err)
++		goto free_card;
+ 
+ 	return 0;
++free_card:
++	snd_card_free(card);
++	return err;
  }
  
--static struct videobuf_queue_ops zr364xx_video_qops = {
-+static const struct videobuf_queue_ops zr364xx_video_qops = {
- 	.buf_setup = buffer_setup,
- 	.buf_prepare = buffer_prepare,
- 	.buf_queue = buffer_queue,
+ static int alsa_card_pcsp_init(struct device *dev)
+-- 
+2.14.0
 
