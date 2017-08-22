@@ -1,45 +1,104 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 24 Aug 2017 18:51:56 +0000
-Subject: Re: [PATCH] staging: rtlwifi: check for array overflow
-Message-Id: <1d7fce37-9f91-4346-4816-a12a2159fcc5@lwfinger.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 19:12:02 +0000
+Subject: [PATCH] ALSA: core: Use common error handling code in two functions
+Message-Id: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
-In-Reply-To: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 08/24/2017 05:08 AM, Dan Carpenter wrote:
-> Smatch is distrustful of the "capab" value and marks it as user
-> controlled.  I think it actually comes from the firmware?  Anyway, I
-> looked at other drivers and they added a bounds check and it seems like
-> a harmless thing to have so I have added it here as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Aug 2017 21:01:01 +0200
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-Larry
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/core/pcm.c   | 30 ++++++++++++++++++------------
+ sound/core/timer.c | 10 ++++++----
+ 2 files changed, 24 insertions(+), 16 deletions(-)
 
-> 
-> diff --git a/drivers/staging/rtlwifi/base.c b/drivers/staging/rtlwifi/base.c
-> index f7f207cbaee3..a30b928d5ee1 100644
-> --- a/drivers/staging/rtlwifi/base.c
-> +++ b/drivers/staging/rtlwifi/base.c
-> @@ -1414,6 +1414,10 @@ bool rtl_action_proc(struct ieee80211_hw *hw, struct sk_buff *skb, u8 is_tx)
->   				  le16_to_cpu(mgmt->u.action.u.addba_req.capab);
->   				tid = (capab &
->   				       IEEE80211_ADDBA_PARAM_TID_MASK) >> 2;
-> +				if (tid >= MAX_TID_COUNT) {
-> +					rcu_read_unlock();
-> +					return true;
-> +				}
->   				tid_data = &sta_entry->tids[tid];
->   				if (tid_data->agg.rx_agg_state =
->   				    RTL_RX_AGG_START)
-> 
+diff --git a/sound/core/pcm.c b/sound/core/pcm.c
+index 89c7485519cb..048df9658f50 100644
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -783,21 +783,27 @@ static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
+ 	INIT_LIST_HEAD(&pcm->list);
+ 	if (id)
+ 		strlcpy(pcm->id, id, sizeof(pcm->id));
+-	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK, playback_count)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
+-	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
+-	if ((err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
++
++	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK,
++				 playback_count);
++	if (err < 0)
++		goto free_pcm;
++
++	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count);
++	if (err < 0)
++		goto free_pcm;
++
++	err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops);
++	if (err < 0)
++		goto free_pcm;
++
+ 	if (rpcm)
+ 		*rpcm = pcm;
+ 	return 0;
++
++free_pcm:
++	snd_pcm_free(pcm);
++	return err;
+ }
+ 
+ /**
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index a9b9a277e00c..6d73a63f6e2b 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -2096,8 +2096,7 @@ static int __init alsa_timer_init(void)
+ 	err = snd_timer_register_system();
+ 	if (err < 0) {
+ 		pr_err("ALSA: unable to register system timer (%i)\n", err);
+-		put_device(&timer_dev);
+-		return err;
++		goto put_timer;
+ 	}
+ 
+ 	err = snd_register_device(SNDRV_DEVICE_TYPE_TIMER, NULL, 0,
+@@ -2105,12 +2104,15 @@ static int __init alsa_timer_init(void)
+ 	if (err < 0) {
+ 		pr_err("ALSA: unable to register timer device (%i)\n", err);
+ 		snd_timer_free_all();
+-		put_device(&timer_dev);
+-		return err;
++		goto put_timer;
+ 	}
+ 
+ 	snd_timer_proc_init();
+ 	return 0;
++
++put_timer:
++	put_device(&timer_dev);
++	return err;
+ }
+ 
+ static void __exit alsa_timer_exit(void)
+-- 
+2.14.0
 
