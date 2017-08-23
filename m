@@ -1,46 +1,44 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Tue, 29 Aug 2017 12:29:26 +0000
-Subject: Re: [PATCH] net/mlx5: add a missing tab
-Message-Id: <1504009766.52034.26.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:28:41 +0000
+Subject: [PATCH 5/6] ALSA: timer: Adjust a condition check in snd_timer_resolution()
+Message-Id: <4d1a6d05-6574-b1f4-80ee-59cb5238a74e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170801110101.mf2i5e2mes4ftmkj@mwanda>
-         <1503961787.52034.6.camel@redhat.com>
-         <20170829083741.7txp3kvb6se5ek5u@mwanda>
-In-Reply-To: <20170829083741.7txp3kvb6se5ek5u@mwanda>
+References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
+ <s5h378isw2d.wl-tiwai@suse.de>
+ <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
+In-Reply-To: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Saeed Mahameed <saeedm-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2017-08-29 at 12:14 +0300, Dan Carpenter wrote:
-> On Mon, Aug 28, 2017 at 07:09:47PM -0400, Doug Ledford wrote:
-> > On Tue, 2017-08-01 at 14:01 +0300, Dan Carpenter wrote:
-> > > The code works as intended, but the indenting is confusing.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > You didn't include netdev on this patch, and I haven't seen a note
-> > from
-> > janitors that they took it, so I decided to send it on
-> > through.  It's
-> > minor enough it shouldn't be an issue conflicting with Dave's tree
-> > I
-> > would think.  I'll know I was wrong if I get yelled at.
-> > 
-> 
-> Ooo...  Wow.  Don't do that.  You're going to get me yelled at too.
-> 
-> I guess I thought this went through the RDMA tree but looking at it
-> now
-> it's obvioulsy net.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 09:45:06 +0200
 
-Fortunately for us, I only pushed this to github last night, so I can
-still drop this out of my branch before pushing to k.o.  I'll let you
-submit it to the proper place :-)
+The script "checkpatch.pl" pointed information out like the following.
 
---- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/core/timer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 6d73a63f6e2b..6cdd04a45962 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -395,5 +395,6 @@ unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
+ 		return 0;
+-	if ((timer = timeri->timer) != NULL) {
++	timer = timeri->timer;
++	if (timer) {
+ 		if (timer->hw.c_resolution)
+ 			return timer->hw.c_resolution(timer);
+ 		return timer->hw.resolution;
+-- 
+2.14.0
 
