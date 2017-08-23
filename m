@@ -1,75 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Aug 2017 08:23:23 +0000
-Subject: [PATCH 1/6] ALSA: pcm: Use common error handling code in _snd_pcm_new()
-Message-Id: <60478d72-9d5a-9eff-9372-0fb4dbb2dbc4@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 23 Aug 2017 08:36:44 +0000
+Subject: Re: [PATCH 1/6] ALSA: pcm: Use common error handling code in _snd_pcm_new()
+Message-Id: <s5hefs2r883.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
  <s5h378isw2d.wl-tiwai@suse.de>
  <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
-In-Reply-To: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
+ <60478d72-9d5a-9eff-9372-0fb4dbb2dbc4@users.sourceforge.net>
+In-Reply-To: <60478d72-9d5a-9eff-9372-0fb4dbb2dbc4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, Vegard Nossum <vegard.nossum@oracle.com>, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Ingo Molnar <mingo@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Aug 2017 08:40:37 +0200
+On Wed, 23 Aug 2017 10:23:23 +0200,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 23 Aug 2017 08:40:37 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Applied, thanks.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/core/pcm.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
-
-diff --git a/sound/core/pcm.c b/sound/core/pcm.c
-index 89c7485519cb..048df9658f50 100644
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -783,21 +783,27 @@ static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
- 	INIT_LIST_HEAD(&pcm->list);
- 	if (id)
- 		strlcpy(pcm->id, id, sizeof(pcm->id));
--	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK, playback_count)) < 0) {
--		snd_pcm_free(pcm);
--		return err;
--	}
--	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count)) < 0) {
--		snd_pcm_free(pcm);
--		return err;
--	}
--	if ((err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops)) < 0) {
--		snd_pcm_free(pcm);
--		return err;
--	}
-+
-+	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-+				 playback_count);
-+	if (err < 0)
-+		goto free_pcm;
-+
-+	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count);
-+	if (err < 0)
-+		goto free_pcm;
-+
-+	err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops);
-+	if (err < 0)
-+		goto free_pcm;
-+
- 	if (rpcm)
- 		*rpcm = pcm;
- 	return 0;
-+
-+free_pcm:
-+	snd_pcm_free(pcm);
-+	return err;
- }
- 
- /**
--- 
-2.14.0
-
+Takashi
