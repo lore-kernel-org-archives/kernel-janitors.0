@@ -1,30 +1,39 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Mon, 21 Aug 2017 14:48:21 +0000
-Subject: Re: [PATCH] omapfb: constify omap_video_timings structures
-Message-Id: <3428710.6cjvJVMMQN@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 23 Aug 2017 15:39:36 +0000
+Subject: [PATCH][next] net: hinic: fix comparison of a uint16_t type with -1
+Message-Id: <20170823153936.22857-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170812064614epcas2p2dee0d2e45189a2bb6753b40ca99321a1@epcas2p2.samsung.com>
-        <1502518836-27189-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502518836-27189-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: Aviad Krawczyk <aviad.krawczyk@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Saturday, August 12, 2017 08:20:36 AM Julia Lawall wrote:
-> These omap_video_timings structures are only copied into other
-> structures, so they can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.14, thanks.
+The comparison of hw_ioctxt.rx_buf_sz_idx = -1 is always false because
+rx_buf_sz_idx is a uint16_t. Fix this by explicitly casting -1 to uint16_t.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Detected by CoverityScan, CID#1454559 ("Operands don't affect result")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
+index 09dec6de8dd5..71e26070fb7f 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
+@@ -352,7 +352,7 @@ static int set_hw_ioctxt(struct hinic_hwdev *hwdev, unsigned int rq_depth,
+ 		}
+ 	}
+ 
+-	if (hw_ioctxt.rx_buf_sz_idx = -1)
++	if (hw_ioctxt.rx_buf_sz_idx = (uint16_t)-1)
+ 		return -EINVAL;
+ 
+ 	hw_ioctxt.sq_depth  = ilog2(sq_depth);
+-- 
+2.14.1
 
