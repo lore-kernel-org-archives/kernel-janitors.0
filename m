@@ -1,60 +1,35 @@
-From: "Aviad Krawczyk (A)" <aviad.krawczyk@huawei.com>
-Date: Wed, 23 Aug 2017 10:08:58 +0000
-Subject: RE: [PATCH][net-next] net: hinic: make functions set_ctrl0 and set_ctrl1 static
-Message-Id: <1C47E215DC9A8B4DBCB6C24F1DE66D8E0294323E@FRAEML521-MBX.china.huawei.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 23 Aug 2017 18:42:59 +0000
+Subject: Re: [PATCH][net-next] net: hinic: make functions set_ctrl0 and set_ctrl1 static
+Message-Id: <20170823.114259.1662799896187832867.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170823095940.27225-1-colin.king@canonical.com>
-In-Reply-To: <20170823095940.27225-1-colin.king@canonical.com>
+        <1C47E215DC9A8B4DBCB6C24F1DE66D8E0294323E@FRAEML521-MBX.china.huawei.com>
+In-Reply-To: <1C47E215DC9A8B4DBCB6C24F1DE66D8E0294323E@FRAEML521-MBX.china.huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: aviad.krawczyk@huawei.com
+Cc: colin.king@canonical.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks
+From: "Aviad Krawczyk (A)" <aviad.krawczyk@huawei.com>
+Date: Wed, 23 Aug 2017 10:08:58 +0000
 
------Original Message-----
-From: Colin King [mailto:colin.king@canonical.com] 
-Sent: Wednesday, August 23, 2017 1:00 PM
-To: Aviad Krawczyk (A); netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-Subject: [PATCH][net-next] net: hinic: make functions set_ctrl0 and set_ctrl1 static
+> Thanks
 
-From: Colin Ian King <colin.king@canonical.com>
+Please do not top-post.
 
-The functions set_ctrl0 and set_ctrl1 are local to the source and do not need to be in global scope, so make them static.
+Especially quoting the original message in the way that you did.
 
-Cleans up sparse warnings:
-symbol 'set_ctrl0' was not declared. Should it be static?
-symbol 'set_ctrl1' was not declared. Should it be static?
+As a result of how you replied to this, this patch will show up
+twice in my patchwork queue making more administrative work
+for me.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please learn how to properly reply in ASCII text using proper
+traditional email quoting mechanisms just like other developers
+do on this mailing list.
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c
-index cd09e6ef3aea..7cb8b9b94726 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c
-@@ -423,7 +423,7 @@ static irqreturn_t ceq_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--void set_ctrl0(struct hinic_eq *eq)
-+static void set_ctrl0(struct hinic_eq *eq)
- {
- 	struct msix_entry *msix_entry = &eq->msix_entry;
- 	enum hinic_eq_type type = eq->type;
-@@ -474,7 +474,7 @@ void set_ctrl0(struct hinic_eq *eq)
- 	}
- }
- 
--void set_ctrl1(struct hinic_eq *eq)
-+static void set_ctrl1(struct hinic_eq *eq)
- {
- 	enum hinic_eq_type type = eq->type;
- 	u32 page_size_val, elem_size;
---
-2.14.1
+Every time you do this improperly, you make more work for everyone
+on this mailing list.
 
+Thank you.
