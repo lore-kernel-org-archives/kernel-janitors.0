@@ -1,53 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 24 Aug 2017 21:32:30 +0000
-Subject: Re: [PATCH][next] net: hinic: fix comparison of a uint16_t type with -1
-Message-Id: <20170824.143230.1441873385968459116.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Aug 2017 11:20:57 +0000
+Subject: [PATCH] skd: error pointer dereference in skd_cons_disk()
+Message-Id: <20170823065122.pqju3ks5rxpymllz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823153936.22857-1-colin.king@canonical.com>
-In-Reply-To: <20170823153936.22857-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: aviad.krawczyk@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Aug 2017 16:39:36 +0100
+My initial impulse was to check for IS_ERR_OR_NULL() but when I looked
+at this code a bit more closely, we should only need to check for
+IS_ERR().
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The comparison of hw_ioctxt.rx_buf_sz_idx = -1 is always false because
-> rx_buf_sz_idx is a uint16_t. Fix this by explicitly casting -1 to uint16_t.
-> 
-> Detected by CoverityScan, CID#1454559 ("Operands don't affect result")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-> index 09dec6de8dd5..71e26070fb7f 100644
-> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c
-> @@ -352,7 +352,7 @@ static int set_hw_ioctxt(struct hinic_hwdev *hwdev, unsigned int rq_depth,
->  		}
->  	}
->  
-> -	if (hw_ioctxt.rx_buf_sz_idx = -1)
-> +	if (hw_ioctxt.rx_buf_sz_idx = (uint16_t)-1)
->  		return -EINVAL;
->  
->  	hw_ioctxt.sq_depth  = ilog2(sq_depth);
+The blk_mq_alloc_tag_set() returns negative error codes and zero on
+success so we can just do an "if (rc) goto err_out;".  It's better to
+preserve the error code anyhow.  The blk_mq_init_queue() returns error
+pointers on failure, it never returns NULL.  We can also remove the
+"q = NULL;" at the start because that's no longer needed.
 
-This is really silly.
+Fixes: ca33dd92968b ("skd: Convert to blk-mq")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The code in question is trying to convert a size (HINIC_RX_BUF_SZ)
-into a table index, using a loop.
-
-It should just compute this at compile time and do away with this
-overly confusing code.
-
-Even a switch statement would be much better and the compiler
-would optimize the whole away into a single assignment in
-the generated code.
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index 9b99081a623c..8579eef80ef1 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -2862,7 +2862,6 @@ static int skd_cons_disk(struct skd_device *skdev)
+ 	disk->fops = &skd_blockdev_ops;
+ 	disk->private_data = skdev;
+ 
+-	q = NULL;
+ 	memset(&skdev->tag_set, 0, sizeof(skdev->tag_set));
+ 	skdev->tag_set.ops = &skd_mq_ops;
+ 	skdev->tag_set.nr_hw_queues = 1;
+@@ -2874,13 +2873,13 @@ static int skd_cons_disk(struct skd_device *skdev)
+ 		BLK_MQ_F_SG_MERGE |
+ 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
+ 	skdev->tag_set.driver_data = skdev;
+-	if (blk_mq_alloc_tag_set(&skdev->tag_set) >= 0) {
+-		q = blk_mq_init_queue(&skdev->tag_set);
+-		if (!q)
+-			blk_mq_free_tag_set(&skdev->tag_set);
+-	}
+-	if (!q) {
+-		rc = -ENOMEM;
++	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
++	if (rc)
++		goto err_out;
++	q = blk_mq_init_queue(&skdev->tag_set);
++	if (IS_ERR(q)) {
++		blk_mq_free_tag_set(&skdev->tag_set);
++		rc = PTR_ERR(q);
+ 		goto err_out;
+ 	}
+ 	blk_queue_bounce_limit(q, BLK_BOUNCE_HIGH);
