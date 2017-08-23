@@ -1,21 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 01 Aug 2017 17:04:17 +0000
-Subject: Re: [PATCH 0/2] Revert "ipv6: constify inet6_protocol structures"
-Message-Id: <20170801.100417.1363745993686752810.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Aug 2017 10:44:20 +0000
+Subject: [PATCH] skd: Uninitialized variable in skd_isr_completion_posted()
+Message-Id: <20170823104048.w4vdvlp72ug5ackq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue,  1 Aug 2017 18:27:27 +0200
+Someone got too agressive about removing initializations and
+accidentally removed the "rc = 0;" which is required.
 
-> inet6_add_protocol and inet6_del_protocol include casts that remove the
-> effect of the const annotation on their parameter, leading to possible
-> runtime crashes.
+Fixes: c830da8cbc7b ("skd: Remove superfluous initializations from skd_isr_completion_posted()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Series applied, thanks for following up on this.
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index 9b99081a623c..35938ee0651a 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -1499,7 +1499,7 @@ static int skd_isr_completion_posted(struct skd_device *skdev,
+ 	u8 cmp_status;
+ 	u8 cmp_cycle;
+ 	u32 cmp_bytes;
+-	int rc;
++	int rc = 0;
+ 	int processed = 0;
+ 
+ 	lockdep_assert_held(&skdev->lock);
