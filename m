@@ -1,56 +1,35 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 15:38:55 +0000
-Subject: [PATCH 3/3] fs-udf: Adjust two checks for null pointers
-Message-Id: <1e627b28-e9e6-44a1-e43c-4c32b106e11e@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:21:39 +0000
+Subject: [PATCH 0/6] ALSA: core: Fine-tuning for some function implementations
+Message-Id: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6eedcf1a-57f0-2ba4-d1b8-47a8da945d87@users.sourceforge.net>
-In-Reply-To: <6eedcf1a-57f0-2ba4-d1b8-47a8da945d87@users.sourceforge.net>
+References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
+ <s5h378isw2d.wl-tiwai@suse.de>
+In-Reply-To: <s5h378isw2d.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 17:03:06 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 23 Aug 2017 10:05:43 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Comparison to NULL could be written !…
+Markus Elfring (6):
+  pcm: Use common error handling code in _snd_pcm_new()
+  pcm: Adjust nine function calls together with a variable assignment
+  pcm: Adjust 11 checks for null pointers
+  timer: Use common error handling code in alsa_timer_init()
+  timer: Adjust a condition check in snd_timer_resolution()
+  timer: Adjust 13 checks for null pointers
 
-Thus fix affected source code places.
+ sound/core/pcm.c   | 90 +++++++++++++++++++++++++++++++-----------------------
+ sound/core/timer.c | 39 ++++++++++++-----------
+ 2 files changed, 73 insertions(+), 56 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/udf/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 0dc7c2d9f0fa..93c59630512b 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -321,7 +321,8 @@ static void udf_sb_free_partitions(struct super_block *sb)
- {
- 	struct udf_sb_info *sbi = UDF_SB(sb);
- 	int i;
--	if (sbi->s_partmaps = NULL)
-+
-+	if (!sbi->s_partmaps)
- 		return;
- 	for (i = 0; i < sbi->s_partitions; i++)
- 		udf_free_partition(&sbi->s_partmaps[i]);
-@@ -1068,7 +1069,7 @@ static struct udf_bitmap *udf_sb_alloc_bitmap(struct super_block *sb, u32 index)
- 	else
- 		bitmap = vzalloc(size); /* TODO: get rid of vzalloc */
- 
--	if (bitmap = NULL)
-+	if (!bitmap)
- 		return NULL;
- 
- 	bitmap->s_nr_groups = nr_groups;
 -- 
 2.14.0
 
