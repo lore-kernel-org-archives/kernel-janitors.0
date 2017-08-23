@@ -1,40 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 Aug 2017 07:20:22 +0000
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Aug 2017 07:35:42 +0000
 Subject: Re: [PATCH] pinctrl: rza1: off by one in rza1_parse_gpiochip()
-Message-Id: <CACRpkda45xYjEmOK9n1XSROTTWga28QHQBZ98qFXd-QvpG7ZNA@mail.gmail.com>
+Message-Id: <CAMuHMdWu3rpXMwKe3KLPHo+Cmg25uCOFJjd_zdQCoLT3qi-f9A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170818103248.ddguatdt5jhm5zx7@mwanda>
 In-Reply-To: <20170818103248.ddguatdt5jhm5zx7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Geert Uytterhoeven <geert+renesas@glider.be>, jacopo <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
 On Fri, Aug 18, 2017 at 12:32 PM, Dan Carpenter
 <dan.carpenter@oracle.com> wrote:
-
 > The rza1_pctl->ports[] array has RZA1_NPORTS (12) elements.  The > here
 > should be >= to prevent an out of bounds access.
 >
 > Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-> index 7e30134b3d18..464dbf2f0816 100644
-> --- a/drivers/pinctrl/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/pinctrl-rza1.c
-> @@ -1088,7 +1088,7 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
->          */
->         pinctrl_base = of_args.args[1];
->         gpioport = RZA1_PIN_ID_TO_PORT(pinctrl_base);
-> -       if (gpioport > RZA1_NPORTS) {
-> +       if (gpioport >= RZA1_NPORTS) {
->                 dev_err(rza1_pctl->dev,
->                         "Invalid values in property %s\n", list_name);
->                 return -EINVAL;
 
-Geert/Jacopo, can any of you ACK this?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
