@@ -1,47 +1,63 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 21 Aug 2017 14:06:15 +0000
-Subject: Re: [PATCH 1/4] isofs: Delete an error message for a failed memory allocation in isofs_read_inode()
-Message-Id: <20170821140615.GB31870@quack2.suse.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:27:14 +0000
+Subject: [PATCH 4/6] ALSA: timer: Use common error handling code in alsa_timer_init()
+Message-Id: <f390776b-343f-3787-8520-0754ddfe8154@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
- <40baa0f0-b3a2-6ff3-4e8e-f172e0f74f76@users.sourceforge.net>
-In-Reply-To: <40baa0f0-b3a2-6ff3-4e8e-f172e0f74f76@users.sourceforge.net>
+References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
+ <s5h378isw2d.wl-tiwai@suse.de>
+ <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
+In-Reply-To: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat 19-08-17 09:15:57, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 18 Aug 2017 21:41:24 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 09:30:41 +0200
 
-Thanks. Applied to my tree.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-								Honza
+This issue was detected by using the Coccinelle software.
 
-> ---
->  fs/isofs/inode.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 217a5e7815da..2d3f090944df 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -1324,4 +1324,3 @@ static int isofs_read_inode(struct inode *inode, int relocated)
-> -			printk(KERN_INFO "%s: out of memory\n", __func__);
->  			ret = -ENOMEM;
->  			goto fail;
->  		}
-> -- 
-> 2.14.0
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/core/timer.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index a9b9a277e00c..6d73a63f6e2b 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -2096,8 +2096,7 @@ static int __init alsa_timer_init(void)
+ 	err = snd_timer_register_system();
+ 	if (err < 0) {
+ 		pr_err("ALSA: unable to register system timer (%i)\n", err);
+-		put_device(&timer_dev);
+-		return err;
++		goto put_timer;
+ 	}
+ 
+ 	err = snd_register_device(SNDRV_DEVICE_TYPE_TIMER, NULL, 0,
+@@ -2105,12 +2104,15 @@ static int __init alsa_timer_init(void)
+ 	if (err < 0) {
+ 		pr_err("ALSA: unable to register timer device (%i)\n", err);
+ 		snd_timer_free_all();
+-		put_device(&timer_dev);
+-		return err;
++		goto put_timer;
+ 	}
+ 
+ 	snd_timer_proc_init();
+ 	return 0;
++
++put_timer:
++	put_device(&timer_dev);
++	return err;
+ }
+ 
+ static void __exit alsa_timer_exit(void)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.14.0
+
