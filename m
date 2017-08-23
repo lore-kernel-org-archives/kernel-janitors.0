@@ -1,35 +1,54 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 22 Aug 2017 18:08:46 +0000
-Subject: Re: [PATCH] ALSA: cmipci: Use common error handling code in snd_cmipci_probe()
-Message-Id: <s5hinhfscep.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 Aug 2017 13:11:13 +0000
+Subject: [PATCH] Coccinelle: setup_timer: improve messages from setup_timer
+Message-Id: <1503493873-673-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d40ad45-3841-d25b-064a-011c6de5287e@users.sourceforge.net>
-In-Reply-To: <1d40ad45-3841-d25b-064a-011c6de5287e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Jaroslav Kysela <perex@perex.cz>, David Howells <dhowells@redhat.com>, Fabian Frederick <fabf@skynet.be>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-On Tue, 22 Aug 2017 20:03:50 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 22 Aug 2017 19:58:30 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Allow messages about multiple timers.
 
-Thanks, applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-But, if you'll be working further on the similar changes, please
-gather them and post once as a patch series, instead of posting
-spontaneously one by one after each half an hour.  This is quite
-annoying for maintainers.
+---
+ scripts/coccinelle/api/setup_timer.cocci |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/scripts/coccinelle/api/setup_timer.cocci b/scripts/coccinelle/api/setup_timer.cocci
+index eb6bd9e..b5ab031 100644
+--- a/scripts/coccinelle/api/setup_timer.cocci
++++ b/scripts/coccinelle/api/setup_timer.cocci
+@@ -104,11 +104,9 @@ position j0, j1, j2;
+ )
+ 
+ @match_function_and_data_after_init_timer_context
+-depends on !patch &&
+-!match_immediate_function_data_after_init_timer_context &&
+- (context || org || report)@
++depends on !patch && (context || org || report)@
+ expression a, b, e1, e2, e3, e4, e5;
+-position j0, j1, j2;
++position j0 != match_immediate_function_data_after_init_timer_context.j0,j1,j2;
+ @@
+ 
+ * init_timer@j0 (&e1);
+@@ -124,13 +122,12 @@ position j0, j1, j2;
+ * e1@j2.function = a;
+ )
+ 
+-@r3_context depends on !patch &&
+-!match_immediate_function_data_after_init_timer_context &&
+-!match_function_and_data_after_init_timer_context &&
+- (context || org || report)@
++@r3_context depends on !patch && (context || org || report)@
+ expression c, e6, e7;
+ position r1.p;
+-position j0, j1;
++position j0 !+  {match_immediate_function_data_after_init_timer_context.j0,
++   match_function_and_data_after_init_timer_context.j0}, j1;
+ @@
+ 
+ * init_timer@j0@p (&e6);
 
-Takashi
