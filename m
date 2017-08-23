@@ -1,91 +1,75 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Tue, 15 Aug 2017 06:26:43 +0000
-Subject: Re: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
-Message-Id: <1502778403.2591.3.camel@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:23:23 +0000
+Subject: [PATCH 1/6] ALSA: pcm: Use common error handling code in _snd_pcm_new()
+Message-Id: <60478d72-9d5a-9eff-9372-0fb4dbb2dbc4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170710072422.rs25i5oawmiaofrp@mwanda>
-         <1502416833.2598.3.camel@intel.com>
-         <20170811075510.cnaisfliycev43w4@mwanda>
-In-Reply-To: <20170811075510.cnaisfliycev43w4@mwanda>
+References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
+ <s5h378isw2d.wl-tiwai@suse.de>
+ <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
+In-Reply-To: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2017-08-11 at 10:55 +0300, Dan Carpenter wrote:
-> On Fri, Aug 11, 2017 at 10:00:33AM +0800, Zhang Rui wrote:
-> > 
-> > On Mon, 2017-07-10 at 10:24 +0300, Dan Carpenter wrote:
-> > > 
-> > > ti_bandgap_get_sensor_data() can return error pointers so we
-> > > should
-> > > check for that.  There is no need to check "data->ti_thermal" for
-> > > NULL
-> > > and we removed that from the other cleanup function so we may as
-> > > well
-> > > from it in ti_thermal_remove_sensor() to be consistent.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > 
-> > > diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> > > b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> > > index c211a8e4a210..9fea354ca90c 100644
-> > > --- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> > > +++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> > > @@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct
-> > > ti_bandgap
-> > > *bgp, int id)
-> > >  
-> > >  	data = ti_bandgap_get_sensor_data(bgp, id);
-> > >  
-> > > -	if (data && data->ti_thermal) {
-> > > +	if (data && !IS_ERR(data)) {
-> > what about
-> > 	if (!IS_ERR_OR_NULL(data))
-> > 
-> Duh.  Of course, let me resend.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:40:37 +0200
 
-that's okay, patch has been updated and applied.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-From 474b6dbed714ff5786a0d4ae084717bb75bc7169 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Jul 2017 10:24:23 +0300
-Subject: [PATCH] thermal: ti-soc-thermal: Potential error pointer dereferences
+This issue was detected by using the Coccinelle software.
 
-ti_bandgap_get_sensor_data() can return error pointers so we should
-check for that.  There is no need to check "data->ti_thermal" for NULL
-and we removed that from the other cleanup function so we may as well
-from it in ti_thermal_remove_sensor() to be consistent.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/core/pcm.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-index c211a8e..92b3207 100644
---- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-@@ -210,7 +210,7 @@ int ti_thermal_remove_sensor(struct ti_bandgap *bgp, int id)
- 
- 	data = ti_bandgap_get_sensor_data(bgp, id);
- 
--	if (data && data->ti_thermal) {
-+	if (!IS_ERR_OR_NULL(data)) {
- 		if (data->our_zone)
- 			thermal_zone_device_unregister(data->ti_thermal);
- 	}
-@@ -276,7 +276,7 @@ int ti_thermal_unregister_cpu_cooling(struct ti_bandgap *bgp, int id)
- 
- 	data = ti_bandgap_get_sensor_data(bgp, id);
- 
--	if (data) {
-+	if (!IS_ERR_OR_NULL(data)) {
- 		cpufreq_cooling_unregister(data->cool_dev);
- 		cpufreq_cpu_put(data->policy);
- 	}
--- 
-2.7.4
+diff --git a/sound/core/pcm.c b/sound/core/pcm.c
+index 89c7485519cb..048df9658f50 100644
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -783,21 +783,27 @@ static int _snd_pcm_new(struct snd_card *card, const char *id, int device,
+ 	INIT_LIST_HEAD(&pcm->list);
+ 	if (id)
+ 		strlcpy(pcm->id, id, sizeof(pcm->id));
+-	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK, playback_count)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
+-	if ((err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
+-	if ((err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops)) < 0) {
+-		snd_pcm_free(pcm);
+-		return err;
+-	}
++
++	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_PLAYBACK,
++				 playback_count);
++	if (err < 0)
++		goto free_pcm;
++
++	err = snd_pcm_new_stream(pcm, SNDRV_PCM_STREAM_CAPTURE, capture_count);
++	if (err < 0)
++		goto free_pcm;
++
++	err = snd_device_new(card, SNDRV_DEV_PCM, pcm, &ops);
++	if (err < 0)
++		goto free_pcm;
++
+ 	if (rpcm)
+ 		*rpcm = pcm;
+ 	return 0;
++
++free_pcm:
++	snd_pcm_free(pcm);
++	return err;
+ }
+ 
+ /**
+-- 
+2.14.0
 
