@@ -1,50 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Aug 2017 05:31:58 +0000
-Subject: [PATCH 1/4] [media] zr364xx: Delete an error message for a failed memory allocation in two functions
-Message-Id: <f2637234-7746-cb9d-6cf5-97d519090e84@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 23 Aug 2017 14:34:33 +0000
+Subject: [PATCH][next] staging: r8822be: fix memory leak of eeprom_map on error exit return
+Message-Id: <20170823143433.21811-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
-In-Reply-To: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, linux-usb@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 22:23:56 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in these functions.
+A memory leak of eeprom_map occurs if the call to halmac_eeprom_parser_88xx
+fails. Fix this by kfree'ing it before returning.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1454569 ("Resource leak")
+Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-driver")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/zr364xx/zr364xx.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
-index efdcd5bd6a4c..97af697dcc81 100644
---- a/drivers/media/usb/zr364xx/zr364xx.c
-+++ b/drivers/media/usb/zr364xx/zr364xx.c
-@@ -212,7 +212,5 @@ static int send_control_msg(struct usb_device *udev, u8 request, u16 value,
--	if (!transfer_buffer) {
--		dev_err(&udev->dev, "kmalloc(%d) failed\n", size);
-+	if (!transfer_buffer)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
+index fadb35f3ba88..a6c8a87f755f 100644
+--- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
++++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
+@@ -1950,8 +1950,10 @@ halmac_dump_logical_efuse_map_88xx(struct halmac_adapter *halmac_adapter,
  
- 	memcpy(transfer_buffer, cp, size);
+ 		if (halmac_eeprom_parser_88xx(halmac_adapter,
+ 					      halmac_adapter->hal_efuse_map,
+-					      eeprom_map) != HALMAC_RET_SUCCESS)
++					      eeprom_map) != HALMAC_RET_SUCCESS) {
++			kfree(eeprom_map);
+ 			return HALMAC_RET_EEPROM_PARSING_FAIL;
++		}
  
-@@ -1427,7 +1425,5 @@ static int zr364xx_probe(struct usb_interface *intf,
--	if (cam = NULL) {
--		dev_err(&udev->dev, "cam: out of memory !\n");
-+	if (!cam)
- 		return -ENOMEM;
--	}
- 
- 	cam->v4l2_dev.release = zr364xx_release;
- 	err = v4l2_device_register(&intf->dev, &cam->v4l2_dev);
+ 		PLATFORM_EVENT_INDICATION(
+ 			driver_adapter, HALMAC_FEATURE_DUMP_LOGICAL_EFUSE,
 -- 
 2.14.1
 
