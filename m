@@ -1,76 +1,137 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 07 Aug 2017 08:45:35 +0000
-Subject: Re: [PATCH] scsi: mpt3sas: Fix memory allocation failure test in 'mpt3sas_base_attach()'
-Message-Id: <625e7538-3834-0c9b-55bf-9aa460ded9bb@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 08:24:34 +0000
+Subject: [PATCH 2/6] ALSA: pcm: Adjust nine function calls together with a variable assignment
+Message-Id: <9fcdbe5a-b17a-dfb8-f4af-a1261da93a38@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1502058761.git.christophe.jaillet@wanadoo.fr>
- <20170806225134.27079-1-christophe.jaillet@wanadoo.fr>
- <5988240C.1050702@bfs.de>
-In-Reply-To: <5988240C.1050702@bfs.de>
+References: <b8c9e41b-a47e-1d99-3d1a-5d39772e4b54@users.sourceforge.net>
+ <s5h378isw2d.wl-tiwai@suse.de>
+ <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
+In-Reply-To: <800d7aa6-d8f2-cbf5-caaa-7e4006976e68@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: wharms@bfs.de
-Cc: sathya.prakash@broadcom.com, chaitra.basappa@broadcom.com, suganath-prabu.subramani@broadcom.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Le 07/08/2017 à 10:25, walter harms a écrit :
->
-> Am 07.08.2017 00:51, schrieb Christophe JAILLET:
->> In the lines above this test, 8 'kzalloc' are performed, but only 7 results
->> are tested.
->>
->> Add the missing one (i.e. '!ioc->port_enable_cmds.reply').
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/scsi/mpt3sas/mpt3sas_base.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
->> index 1a5b6e40fb5c..8a44636ab0b5 100644
->> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
->> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
->> @@ -5494,10 +5494,10 @@ mpt3sas_base_attach(struct MPT3SAS_ADAPTER *ioc)
->>   	ioc->ctl_cmds.status = MPT3_CMD_NOT_USED;
->>   	mutex_init(&ioc->ctl_cmds.mutex);
->>   
->> -	if (!ioc->base_cmds.reply || !ioc->transport_cmds.reply ||
->> -	    !ioc->scsih_cmds.reply || !ioc->tm_cmds.reply ||
->> -	    !ioc->config_cmds.reply || !ioc->ctl_cmds.reply ||
->> -	    !ioc->ctl_cmds.sense) {
->> +	if (!ioc->base_cmds.reply || !ioc->port_enable_cmds.reply ||
->> +	    !ioc->transport_cmds.reply || !ioc->scsih_cmds.reply ||
->> +	    !ioc->tm_cmds.reply || !ioc->config_cmds.reply ||
->> +	    !ioc->ctl_cmds.reply || !ioc->ctl_cmds.sense) {
->>   		r = -ENOMEM;
->>   		goto out_free_resources;
->>   	}
->
-> obviously it is better to follow the pattern "malloc() , check".
-Agreed, but it is also more verbose. Leavig it as-is, is IMHO, good enough.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Aug 2017 09:20:29 +0200
 
-> Even the programmer lost track.
->
-> Bonus points if you malloc the buffers in one step.
-Most of the allocation are 'kzalloc(ioc->reply_sz, GFP_KERNEL);', so a 
-kcalloc could be used instead.
-However, the 'kzalloc(SCSI_SENSE_BUFFERSIZE, GFP_KERNEL);' breaks this 
-logic and allocating all at once would lead to spaghetti code for no reason.
+The script "checkpatch.pl" pointed information out like the following.
 
-Moreover, I don't have any idea how big can be 'ioc->reply_sz', even if 
-I guess it should be small.
-So allocating all at once, could fail where several steps would work.
+ERROR: do not use assignment in if condition
 
-So I won't play for the bonus points :).
+Thus fix the affected source code places.
 
-Best regards.
-CJ
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/core/pcm.c | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
-> just my 2 cents,
->
-> re,
->   wh
->
->
->
+diff --git a/sound/core/pcm.c b/sound/core/pcm.c
+index 048df9658f50..c790f79e45ae 100644
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -523,7 +523,9 @@ static int snd_pcm_stream_proc_init(struct snd_pcm_str *pstr)
+ 
+ 	sprintf(name, "pcm%i%c", pcm->device, 
+ 		pstr->stream = SNDRV_PCM_STREAM_PLAYBACK ? 'p' : 'c');
+-	if ((entry = snd_info_create_card_entry(pcm->card, name, pcm->card->proc_root)) = NULL)
++	entry = snd_info_create_card_entry(pcm->card, name,
++					   pcm->card->proc_root);
++	if (!entry)
+ 		return -ENOMEM;
+ 	entry->mode = S_IFDIR | S_IRUGO | S_IXUGO;
+ 	if (snd_info_register(entry) < 0) {
+@@ -531,8 +533,8 @@ static int snd_pcm_stream_proc_init(struct snd_pcm_str *pstr)
+ 		return -ENOMEM;
+ 	}
+ 	pstr->proc_root = entry;
+-
+-	if ((entry = snd_info_create_card_entry(pcm->card, "info", pstr->proc_root)) != NULL) {
++	entry = snd_info_create_card_entry(pcm->card, "info", pstr->proc_root);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, pstr, snd_pcm_stream_proc_info_read);
+ 		if (snd_info_register(entry) < 0) {
+ 			snd_info_free_entry(entry);
+@@ -542,8 +544,9 @@ static int snd_pcm_stream_proc_init(struct snd_pcm_str *pstr)
+ 	pstr->proc_info_entry = entry;
+ 
+ #ifdef CONFIG_SND_PCM_XRUN_DEBUG
+-	if ((entry = snd_info_create_card_entry(pcm->card, "xrun_debug",
+-						pstr->proc_root)) != NULL) {
++	entry = snd_info_create_card_entry(pcm->card, "xrun_debug",
++					   pstr->proc_root);
++	if (entry) {
+ 		entry->c.text.read = snd_pcm_xrun_debug_read;
+ 		entry->c.text.write = snd_pcm_xrun_debug_write;
+ 		entry->mode |= S_IWUSR;
+@@ -580,7 +583,9 @@ static int snd_pcm_substream_proc_init(struct snd_pcm_substream *substream)
+ 	card = substream->pcm->card;
+ 
+ 	sprintf(name, "sub%i", substream->number);
+-	if ((entry = snd_info_create_card_entry(card, name, substream->pstr->proc_root)) = NULL)
++	entry = snd_info_create_card_entry(card, name,
++					   substream->pstr->proc_root);
++	if (!entry)
+ 		return -ENOMEM;
+ 	entry->mode = S_IFDIR | S_IRUGO | S_IXUGO;
+ 	if (snd_info_register(entry) < 0) {
+@@ -588,8 +593,8 @@ static int snd_pcm_substream_proc_init(struct snd_pcm_substream *substream)
+ 		return -ENOMEM;
+ 	}
+ 	substream->proc_root = entry;
+-
+-	if ((entry = snd_info_create_card_entry(card, "info", substream->proc_root)) != NULL) {
++	entry = snd_info_create_card_entry(card, "info", substream->proc_root);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, substream,
+ 				      snd_pcm_substream_proc_info_read);
+ 		if (snd_info_register(entry) < 0) {
+@@ -598,8 +603,9 @@ static int snd_pcm_substream_proc_init(struct snd_pcm_substream *substream)
+ 		}
+ 	}
+ 	substream->proc_info_entry = entry;
+-
+-	if ((entry = snd_info_create_card_entry(card, "hw_params", substream->proc_root)) != NULL) {
++	entry = snd_info_create_card_entry(card, "hw_params",
++					   substream->proc_root);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, substream,
+ 				      snd_pcm_substream_proc_hw_params_read);
+ 		if (snd_info_register(entry) < 0) {
+@@ -608,8 +614,9 @@ static int snd_pcm_substream_proc_init(struct snd_pcm_substream *substream)
+ 		}
+ 	}
+ 	substream->proc_hw_params_entry = entry;
+-
+-	if ((entry = snd_info_create_card_entry(card, "sw_params", substream->proc_root)) != NULL) {
++	entry = snd_info_create_card_entry(card, "sw_params",
++					   substream->proc_root);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, substream,
+ 				      snd_pcm_substream_proc_sw_params_read);
+ 		if (snd_info_register(entry) < 0) {
+@@ -618,8 +625,8 @@ static int snd_pcm_substream_proc_init(struct snd_pcm_substream *substream)
+ 		}
+ 	}
+ 	substream->proc_sw_params_entry = entry;
+-
+-	if ((entry = snd_info_create_card_entry(card, "status", substream->proc_root)) != NULL) {
++	entry = snd_info_create_module_entry(THIS_MODULE, "pcm", NULL);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, substream,
+ 				      snd_pcm_substream_proc_status_read);
+ 		if (snd_info_register(entry) < 0) {
+@@ -1230,7 +1237,8 @@ static void snd_pcm_proc_init(void)
+ {
+ 	struct snd_info_entry *entry;
+ 
+-	if ((entry = snd_info_create_module_entry(THIS_MODULE, "pcm", NULL)) != NULL) {
++	entry = snd_info_create_module_entry(THIS_MODULE, "pcm", NULL);
++	if (entry) {
+ 		snd_info_set_text_ops(entry, NULL, snd_pcm_proc_read);
+ 		if (snd_info_register(entry) < 0) {
+ 			snd_info_free_entry(entry);
+-- 
+2.14.0
 
