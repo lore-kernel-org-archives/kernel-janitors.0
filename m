@@ -1,30 +1,40 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Mon, 28 Aug 2017 13:08:32 +0000
-Subject: Re: [PATCH] mcb: Fix an error handling path in 'chameleon_parse_cells()'
-Message-Id: <20170828130832.GN4038@linux-x5ow.site>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 23 Aug 2017 09:37:41 +0000
+Subject: [PATCH][next] ASoC: tegra: remove unused variable machine, fixes build warning
+Message-Id: <20170823093741.26739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170817051405.24946-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170817051405.24946-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Codrut Grosu <codrut.cristian.grosu@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Donglin Peng <dolinux.peng@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied to mcb-for-4.14 branch.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks,
+Remove unused variable 'machine', fixes build warning:
+sound/soc/tegra/tegra_wm8903.c: In function 'tegra_wm8903_remove':
+sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable
+  'machine' [-Wunused-variable]
+  struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+                       ^~~~~~~
+Fixes: 2a8bd83af30e ("ASoC: tegra: Remove superfluous snd_soc_jack_free_gpios() call")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/tegra/tegra_wm8903.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-	Johannes
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 2384cb9cb95c..18bdae59a4df 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -203,7 +203,6 @@ static int tegra_wm8903_remove(struct snd_soc_card *card)
+ 		snd_soc_get_pcm_runtime(card, card->dai_link[0].name);
+ 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+ 	struct snd_soc_codec *codec = codec_dai->codec;
+-	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	wm8903_mic_detect(codec, NULL, 0, 0);
+ 
+-- 
+2.14.1
+
