@@ -1,44 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 20 Aug 2017 21:34:38 +0000
-Subject: [PATCH] crypto: aesni: make arrays aesni_simd_skciphers and aesni_simd_skciphers2 static
-Message-Id: <20170820213438.14686-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Aug 2017 11:34:22 +0000
+Subject: [bug report] net: mvpp2: set maximum packet size for 10G ports
+Message-Id: <20170824113422.fm6schupqmb6limc@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello Stefan Chulski,
 
-Arrays aesni_simd_skciphers and aesni_simd_skciphers2 are local to the
-source and do not need to be in global scope, so make them static.
+The patch 76eb1b1de5b6: "net: mvpp2: set maximum packet size for 10G
+ports" from Aug 22, 2017, leads to the following static checker
+warning:
 
-Cleans up sparse warnings:
-symbol 'aesni_simd_skciphers' was not declared. Should it be static?
-symbol 'aesni_simd_skciphers2' was not declared. Should it be static?
+	drivers/net/ethernet/marvell/mvpp2.c:4666 mvpp2_xlg_max_rx_size_set()
+	warn: double left shift '((port->pkt_size - 2) / 2) << (1 << (0))'
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/crypto/aesni-intel_glue.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+drivers/net/ethernet/marvell/mvpp2.c
+  4659  /* Change maximum receive size of the port */
+  4660  static inline void mvpp2_xlg_max_rx_size_set(struct mvpp2_port *port)
+  4661  {
+  4662          u32 val;
+  4663  
+  4664          val =  readl(port->base + MVPP22_XLG_CTRL1_REG);
+  4665          val &= ~MVPP22_XLG_CTRL1_FRAMESIZELIMIT_MASK;
+  4666          val |= ((port->pkt_size - MVPP2_MH_SIZE) / 2) <<
+  4667                 MVPP22_XLG_CTRL1_FRAMESIZELIMIT;
 
-diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-index 5c15d6b57329..c4c20286f27e 100644
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -1067,9 +1067,10 @@ static struct skcipher_alg aesni_skciphers[] = {
- 	}
- };
- 
-+static
- struct simd_skcipher_alg *aesni_simd_skciphers[ARRAY_SIZE(aesni_skciphers)];
- 
--struct {
-+static struct {
- 	const char *algname;
- 	const char *drvname;
- 	const char *basename;
--- 
-2.11.0
+MVPP22_XLG_CTRL1_FRAMESIZELIMIT is BIT(0).  It doesn't make sense that
+the max size is BIT(0) and it doesn't make sense to shift by the max
+size.  I'm not sure what was intended.
 
+  4668          writel(val, port->base + MVPP22_XLG_CTRL1_REG);
+  4669  }
+
+regards,
+dan carpenter
