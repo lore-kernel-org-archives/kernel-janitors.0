@@ -1,88 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 19:06:34 +0000
-Subject: [PATCH 1/3] jffs2: Delete an error message for a failed memory allocation in four functions
-Message-Id: <1ebc1611-6181-f7ab-f8e9-747944f5f819@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 24 Aug 2017 10:50:10 +0000
+Subject: Applied "ASoC: codecs: msm8916-wcd-analog: always true condition" to the asoc tree
+Message-Id: <E1dkpiE-0000tb-Ii@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
-In-Reply-To: <ec91fdb9-9107-f1a3-3530-b3272ca51da7@users.sourceforge.net>
+References: <20170824100741.s4v24owbvocshr5n@mwanda>
+In-Reply-To: <20170824100741.s4v24owbvocshr5n@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org, Axel Lin <axel.lin@ingics.com>, Damien Riegel <damien.riegel@savoirfairelinux.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, Bhumika Goyal <bhumirks@gmail.com>alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 20:06:44 +0200
+The patch
 
-Omit an extra message for a memory allocation failure in these functions.
+   ASoC: codecs: msm8916-wcd-analog: always true condition
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 56026714bd45fccda710114982789c5145285560 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Aug 2017 13:07:41 +0300
+Subject: [PATCH] ASoC: codecs: msm8916-wcd-analog: always true condition
+
+Static checkers complain that unsigned int val is always >= 0.  The
+context is that snd_soc_read() returns -1U on error.  This is harmless
+because we're checking that CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK is not
+set, and it will always be set for -1U.  I could have just removed the
+check against -1 but I preserved it because I thought it helped with
+readability.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/jffs2/compr.c | 5 ++---
- fs/jffs2/dir.c   | 1 -
- fs/jffs2/erase.c | 5 +----
- fs/jffs2/gc.c    | 5 ++---
- 4 files changed, 5 insertions(+), 11 deletions(-)
+ sound/soc/codecs/msm8916-wcd-analog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jffs2/compr.c b/fs/jffs2/compr.c
-index 4849a4c9a0e2..96d19ef95b11 100644
---- a/fs/jffs2/compr.c
-+++ b/fs/jffs2/compr.c
-@@ -80,10 +80,9 @@ static int jffs2_selected_compress(u8 compr, unsigned char *data_in,
- 	char *output_buf;
+diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
+index f834a639b350..cd4d60ef4c77 100644
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -949,7 +949,7 @@ static irqreturn_t mbhc_btn_release_irq_handler(int irq, void *arg)
+ 		u32 val = snd_soc_read(codec, CDC_A_MBHC_RESULT_1);
  
- 	output_buf = kmalloc(*cdatalen, GFP_KERNEL);
--	if (!output_buf) {
--		pr_warn("No memory for compressor allocation. Compression failed.\n");
-+	if (!output_buf)
- 		return ret;
--	}
-+
- 	orig_slen = *datalen;
- 	orig_dlen = *cdatalen;
- 	spin_lock(&jffs2_compressor_list_lock);
-diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-index 0a754f38462e..0b126df5ecc6 100644
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -350,7 +350,6 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
- 	/* We use f->target field to store the target path. */
- 	f->target = kmemdup(target, targetlen + 1, GFP_KERNEL);
- 	if (!f->target) {
--		pr_warn("Can't allocate %d bytes of memory\n", targetlen + 1);
- 		mutex_unlock(&f->sem);
- 		jffs2_complete_reservation(c);
- 		ret = -ENOMEM;
-diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
-index 4a6cf289be24..d944748524ad 100644
---- a/fs/jffs2/erase.c
-+++ b/fs/jffs2/erase.c
-@@ -380,8 +380,5 @@ static int jffs2_block_check_erase(struct jffs2_sb_info *c, struct jffs2_erasebl
--	if (!ebuf) {
--		pr_warn("Failed to allocate page buffer for verifying erase at 0x%08x. Refiling\n",
--			jeb->offset);
-+	if (!ebuf)
- 		return -EAGAIN;
--	}
+ 		/* check if its BTN0 thats released */
+-		if ((val >= 0) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
++		if ((val != -1) && !(val & CDC_A_MBHC_RESULT_1_BTN_RESULT_MASK))
+ 			priv->mbhc_btn0_pressed = false;
  
- 	jffs2_dbg(1, "Verifying erase at 0x%08x\n", jeb->offset);
- 
-diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
-index 9ed0f26cf023..9e49392458e3 100644
---- a/fs/jffs2/gc.c
-+++ b/fs/jffs2/gc.c
-@@ -780,7 +780,6 @@ static int jffs2_garbage_collect_metadata(struct jffs2_sb_info *c, struct jffs2_
--		if (!mdata) {
--			pr_warn("kmalloc of mdata failed in jffs2_garbage_collect_metadata()\n");
-+		if (!mdata)
- 			return -ENOMEM;
--		}
-+
- 		ret = jffs2_read_dnode(c, f, fn, mdata, 0, mdatalen);
- 		if (ret) {
- 			pr_warn("read of old metadata failed in jffs2_garbage_collect_metadata(): %d\n",
+ 	} else {
 -- 
-2.14.0
+2.14.1
 
