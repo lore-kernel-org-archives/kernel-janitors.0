@@ -1,41 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 20:25:17 +0000
-Subject: [PATCH 2/3] SCSI-sg: Improve a size determination in sg_alloc()
-Message-Id: <e2406fbf-3a35-316a-4d38-b474c13d9120@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 24 Aug 2017 09:54:10 +0000
+Subject: Re: rtlwifi: make a couple arrays larger
+Message-Id: <20170824095410.1E2B9606B7@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
-In-Reply-To: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
+References: <20170818080519.mvjls5pgnxeknzpk@mwanda>
+In-Reply-To: <20170818080519.mvjls5pgnxeknzpk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Ping-Ke Shih <pkshih@realtek.com>, Maxim Samoylov <max7255@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 21:55:14 +0200
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Replace the specification of a data type by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> This is a static checker fix.  "cal_num" is 10.  We're declaring the
+> tx_dt[] and rx_td[] arrays as 3 element arrays.  The static checker
+> complains that we do:
+> 
+> 	tx_dt[cal] = (vdf_y[1]>>20)-(vdf_y[0]>>20);
+> 
+> "cal" is the iterator and it is in the 0-9 range so it looks like
+> we could corrupt memory.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/sg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 8ca10a2fc1a0..4a2db7ff14cc 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -1403,7 +1403,7 @@ sg_alloc(struct gendisk *disk, struct scsi_device *scsidp)
- 	int error;
- 	u32 k;
- 
--	sdp = kzalloc(sizeof(Sg_device), GFP_KERNEL);
-+	sdp = kzalloc(sizeof(*sdp), GFP_KERNEL);
- 	if (!sdp)
- 		return ERR_PTR(-ENOMEM);
- 
+d9ee6015e573 rtlwifi: make a couple arrays larger
+
 -- 
-2.14.0
+https://patchwork.kernel.org/patch/9907821/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
