@@ -1,27 +1,80 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 16:13:18 +0000
-Subject: [PATCH 0/2] fs-qnx6: Adjustments for qnx6_mmi_fill_super()
-Message-Id: <55b824fd-3f8a-4ca6-583f-27f584cd237a@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 16:06:43 +0000
+Subject: [PATCH 09/14] vme: ca91cx42: Delete eight error messages for a failed memory allocation
+Message-Id: <e463aed0-6627-0bdd-2608-7e34a8866a95@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabian Frederick <fabf@skynet.be>, Kai Bankett <chaosman@ontika.net>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Aug 2017 18:08:02 +0200
+Date: Fri, 25 Aug 2017 10:20:03 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit extra messages for a memory allocation failure in these functions.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Less checks in qnx6_mmi_fill_super() after error detection
+This issue was detected by using the Coccinelle software.
 
- fs/qnx6/super_mmi.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/vme/bridges/vme_ca91cx42.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
+diff --git a/drivers/vme/bridges/vme_ca91cx42.c b/drivers/vme/bridges/vme_ca91cx42.c
+index 7cc51223db1c..d25f997e8aeb 100644
+--- a/drivers/vme/bridges/vme_ca91cx42.c
++++ b/drivers/vme/bridges/vme_ca91cx42.c
+@@ -538,5 +538,3 @@ static int ca91cx42_alloc_resource(struct vme_master_resource *image,
+-			dev_err(ca91cx42_bridge->parent, "Unable to allocate "
+-				"memory for resource name\n");
+ 			retval = -ENOMEM;
+ 			goto err_name;
+ 		}
+@@ -1041,5 +1039,3 @@ static int ca91cx42_dma_list_add(struct vme_dma_list *list,
+-		dev_err(dev, "Failed to allocate memory for dma resource "
+-			"structure\n");
+ 		retval = -ENOMEM;
+ 		goto err_mem;
+ 	}
+@@ -1624,5 +1620,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-		dev_err(&pdev->dev, "Failed to allocate memory for device "
+-			"structure\n");
+ 		retval = -ENOMEM;
+ 		goto err_struct;
+ 	}
+@@ -1634,5 +1628,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-		dev_err(&pdev->dev, "Failed to allocate memory for device "
+-			"structure\n");
+ 		retval = -ENOMEM;
+ 		goto err_driver;
+ 	}
+@@ -1694,5 +1686,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-			dev_err(&pdev->dev, "Failed to allocate memory for "
+-			"master resource structure\n");
+ 			retval = -ENOMEM;
+ 			goto err_master;
+ 		}
+@@ -1720,5 +1710,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-			dev_err(&pdev->dev, "Failed to allocate memory for "
+-			"slave resource structure\n");
+ 			retval = -ENOMEM;
+ 			goto err_slave;
+ 		}
+@@ -1747,5 +1735,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-			dev_err(&pdev->dev, "Failed to allocate memory for "
+-			"dma resource structure\n");
+ 			retval = -ENOMEM;
+ 			goto err_dma;
+ 		}
+@@ -1767,5 +1753,3 @@ static int ca91cx42_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+-		dev_err(&pdev->dev, "Failed to allocate memory for "
+-		"location monitor resource structure\n");
+ 		retval = -ENOMEM;
+ 		goto err_lm;
+ 	}
 -- 
 2.14.0
 
