@@ -1,45 +1,52 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 Aug 2017 11:40:15 +0000
-Subject: [PATCH] staging: rts5208: rename mmc_ddr_tunning_rx_cmd to mmc_ddr_tuning_rx_cmd
-Message-Id: <20170831114015.26330-1-colin.king@canonical.com>
+Date: Fri, 25 Aug 2017 16:12:57 +0000
+Subject: [PATCH][net-next] net: hns3: fix typo in function name qcn_fb_invaild_cnt
+Message-Id: <20170825161257.22789-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wayne Porter <wporter82@gmail.com>, Jia-Ju Bai <baijiaju1990@163.com>, Rehas Sachdeva <aquannie@gmail.com>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Gaurav Pathak <gauravpathak129@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trival fix to spelling mistake in function name
+The function name qcn_fb_invaild_cnt has as typo, it should
+be qcn_fb_invalid_cnt. Fix this
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rts5208/sd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-index b1fd0a10d065..4033a2cf7ac9 100644
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -1654,7 +1654,7 @@ static int sd_ddr_tuning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
- 	return STATUS_SUCCESS;
- }
- 
--static int mmc_ddr_tunning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
-+static int mmc_ddr_tuning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
- {
- 	struct sd_info *sd_card = &chip->sd_card;
- 	int retval;
-@@ -1933,7 +1933,7 @@ static int sd_tuning_rx(struct rtsx_chip *chip)
- 
- 	} else {
- 		if (CHK_MMC_DDR52(sd_card)) {
--			tuning_cmd = mmc_ddr_tunning_rx_cmd;
-+			tuning_cmd = mmc_ddr_tuning_rx_cmd;
- 		} else {
- 			rtsx_trace(chip);
- 			return STATUS_FAIL;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index bb45365fb817..4ec122a442ce 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -130,8 +130,8 @@ static const struct hclge_comm_stats_str g_all_32bit_stats_string[] = {
+ 		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_rcv_cnt)},
+ 	{"qcn_fb_drop_cnt",
+ 		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_drop_cnt)},
+-	{"qcn_fb_invaild_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_invaild_cnt)},
++	{"qcn_fb_invalid_cnt",
++		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_invalid_cnt)},
+ 	{"rx_packet_tc0_in_cnt",
+ 		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc0_in_cnt)},
+ 	{"rx_packet_tc1_in_cnt",
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index edb10ad075eb..744df4b6d2b8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -254,7 +254,7 @@ struct hclge_32_bit_stats {
+ 	u64 pkt_curr_buf_cnt;
+ 	u64 qcn_fb_rcv_cnt;
+ 	u64 qcn_fb_drop_cnt;
+-	u64 qcn_fb_invaild_cnt;
++	u64 qcn_fb_invalid_cnt;
+ 	u64 rsv0;
+ 	u64 rx_packet_tc0_in_cnt;
+ 	u64 rx_packet_tc1_in_cnt;
 -- 
 2.14.1
 
