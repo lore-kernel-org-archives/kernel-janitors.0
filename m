@@ -1,40 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 13:30:52 +0000
-Subject: [PATCH 0/3] JFS: Adjustments for several function implementations
-Message-Id: <3ce43084-11c3-6fc0-821b-7fa6e67c3e30@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Aug 2017 17:12:50 +0000
+Subject: [PATCH] HID: hid-lg: make array cbuf static const to shink object code size
+Message-Id: <20170825171250.23988-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jfs-discussion@lists.sourceforge.net, Dave Kleikamp <shaggy@kernel.org>, Fabian Frederick <fabf@skynet.be>, Jan Kara <jack@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 18 Aug 2017 15:22:11 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Don't populate array cbuf on the stack, instead make it static.
+Makes the object code smaller by over 110 bytes:
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in diMount()
-  Improve size determinations in five functions
-  Adjust 67 checks for null pointers
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  15096	   3504	    128	  18728	   4928	drivers/hid/hid-lg.o
 
- fs/jfs/jfs_dmap.c     | 44 ++++++++++++++++++++++----------------------
- fs/jfs/jfs_dtree.c    |  6 +++---
- fs/jfs/jfs_imap.c     | 31 ++++++++++++++-----------------
- fs/jfs/jfs_logmgr.c   | 26 ++++++++++++++------------
- fs/jfs/jfs_metapage.c |  7 +++----
- fs/jfs/jfs_mount.c    |  6 +++---
- fs/jfs/jfs_txnmgr.c   |  6 +++---
- fs/jfs/jfs_unicode.c  |  3 +--
- fs/jfs/jfs_xtree.c    |  6 +++---
- fs/jfs/namei.c        |  3 +--
- fs/jfs/resize.c       |  2 +-
- fs/jfs/super.c        |  6 +++---
- fs/jfs/xattr.c        | 10 +++++-----
- 13 files changed, 76 insertions(+), 80 deletions(-)
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14884	   3600	    128	  18612	   48b4	drivers/hid/hid-lg.o
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-lg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-lg.c b/drivers/hid/hid-lg.c
+index 52026dc94d5c..596227ddb6e0 100644
+--- a/drivers/hid/hid-lg.c
++++ b/drivers/hid/hid-lg.c
+@@ -756,7 +756,9 @@ static int lg_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 
+ 	/* Setup wireless link with Logitech Wii wheel */
+ 	if (hdev->product = USB_DEVICE_ID_LOGITECH_WII_WHEEL) {
+-		const unsigned char cbuf[] = { 0x00, 0xAF,  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
++		static const unsigned char cbuf[] = {
++			0x00, 0xAF,  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
++		};
+ 		u8 *buf = kmemdup(cbuf, sizeof(cbuf), GFP_KERNEL);
+ 
+ 		if (!buf) {
 -- 
-2.14.0
+2.14.1
 
