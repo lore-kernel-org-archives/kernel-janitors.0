@@ -1,78 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 16:57:50 +0000
-Subject: [PATCH 3/3] ecryptfs: Adjust four checks for null pointers
-Message-Id: <b6809bfc-991b-881a-90ac-eb08d4bfef4c@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 10:19:58 +0000
+Subject: [PATCH] um: return negative in tuntap_open_tramp()
+Message-Id: <20170825092416.p53hs2f4gcwataen@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
-In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: ecryptfs@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Aug 2017 18:00:22 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+The intention is to return negative error codes.  "pid" is already
+negative but we accidentally negate it again back to positive.
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ecryptfs/crypto.c   | 6 +++---
- fs/ecryptfs/keystore.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Not tested!  Please review carefully.
 
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 4a7ef33d4d79..1cd0902bc936 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1649,7 +1649,7 @@ ecryptfs_add_new_key_tfm(struct ecryptfs_key_tfm **key_tfm, char *cipher_name,
- 	BUG_ON(!mutex_is_locked(&key_tfm_list_mutex));
+diff --git a/arch/um/os-Linux/drivers/tuntap_user.c b/arch/um/os-Linux/drivers/tuntap_user.c
+index c2e6e1dad876..db24ce0d09a6 100644
+--- a/arch/um/os-Linux/drivers/tuntap_user.c
++++ b/arch/um/os-Linux/drivers/tuntap_user.c
+@@ -80,7 +80,7 @@ static int tuntap_open_tramp(char *gate, int *fd_out, int me, int remote,
+ 	pid = run_helper(tuntap_pre_exec, &data, argv);
  
- 	tmp_tfm = kmem_cache_alloc(ecryptfs_key_tfm_cache, GFP_KERNEL);
--	if (key_tfm != NULL)
-+	if (key_tfm)
- 		(*key_tfm) = tmp_tfm;
- 	if (!tmp_tfm) {
- 		rc = -ENOMEM;
-@@ -1668,7 +1668,7 @@ ecryptfs_add_new_key_tfm(struct ecryptfs_key_tfm **key_tfm, char *cipher_name,
- 		       "cipher with name = [%s]; rc = [%d]\n",
- 		       tmp_tfm->cipher_name, rc);
- 		kmem_cache_free(ecryptfs_key_tfm_cache, tmp_tfm);
--		if (key_tfm != NULL)
-+		if (key_tfm)
- 			(*key_tfm) = NULL;
- 		goto out;
- 	}
-@@ -1859,7 +1859,7 @@ ecryptfs_decode_from_filename(unsigned char *dst, size_t *dst_size,
- 	size_t src_byte_offset = 0;
- 	size_t dst_byte_offset = 0;
+ 	if (pid < 0)
+-		return -pid;
++		return pid;
  
--	if (dst = NULL) {
-+	if (!dst) {
- 		(*dst_size) = ecryptfs_max_decoded_size(src_size);
- 		goto out;
- 	}
-diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-index 47c1fd73638d..5c961e76b211 100644
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@ -678,7 +678,7 @@ ecryptfs_write_tag_70_packet(char *dest, size_t *remaining_bytes,
- 	 *    separator, and then the filename */
- 	s->max_packet_size = (ECRYPTFS_TAG_70_MAX_METADATA_SIZE
- 			      + s->block_aligned_filename_size);
--	if (dest = NULL) {
-+	if (!dest) {
- 		(*packet_size) = s->max_packet_size;
- 		goto out_unlock;
- 	}
--- 
-2.14.0
-
+ 	close(remote);
+ 
