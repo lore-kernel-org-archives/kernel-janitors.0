@@ -1,47 +1,30 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 15 Aug 2017 09:03:12 +0000
-Subject: Re: [PATCH 2/3] HID: prodikeys: constify snd_rawmidi_ops structures
-Message-Id: <alpine.LSU.2.20.1708151103020.30597@cbobk.fhfr.pm>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 08:43:59 +0000
+Subject: [PATCH] IB/usnic: check for allocation failure
+Message-Id: <20170825083030.rga3kllp55xnr3jf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502784594-14670-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502784594-14670-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Benvenuti <benve-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Upinder Malhi <umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Cc: Dave Goodell <dgoodell-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, 15 Aug 2017, Julia Lawall wrote:
+usnic_uiom_get_dev_list() can return ERR_PTR(-ENOMEM) so we should check
+for that.
 
-> This snd_rawmidi_ops structure is only passed as the third
-> argument of snd_rawmidi_set_ops.  This argument is const, so the
-> snd_rawmidi_ops structure can be const too.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/hid/hid-prodikeys.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-> index f095bf8..49c4bd3 100644
-> --- a/drivers/hid/hid-prodikeys.c
-> +++ b/drivers/hid/hid-prodikeys.c
-> @@ -593,7 +593,7 @@ static void pcmidi_in_trigger(struct snd_rawmidi_substream *substream, int up)
->  	pm->in_triggered = up;
->  }
->  
-> -static struct snd_rawmidi_ops pcmidi_in_ops = {
-> +static const struct snd_rawmidi_ops pcmidi_in_ops = {
->  	.open = pcmidi_in_open,
->  	.close = pcmidi_in_close,
->  	.trigger = pcmidi_in_trigger
+Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to for-4.14/upstream, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+index e5f57dd49980..e8523882e33b 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+@@ -164,6 +164,8 @@ find_free_vf_and_create_qp_grp(struct usnic_ib_dev *us_ibdev,
+ 	if (usnic_ib_share_vf) {
+ 		/* Try to find resouces on a used vf which is in pd */
+ 		dev_list = usnic_uiom_get_dev_list(pd->umem_pd);
++		if (IS_ERR(dev_list))
++			return ERR_CAST(dev_list);
+ 		for (i = 0; dev_list[i]; i++) {
+ 			dev = dev_list[i];
+ 			vf = pci_get_drvdata(to_pci_dev(dev));
