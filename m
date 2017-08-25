@@ -1,43 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Aug 2017 15:09:03 +0000
-Subject: [PATCH 9/9 v2] hwmon: (scpi) constify thermal_zone_of_device_ops structures
-Message-Id: <1502204943-20075-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 25 Aug 2017 05:22:53 +0000
+Subject: [PATCH] usb: chipidea: usb2: check memory allocation failure
+Message-Id: <20170825052253.28472-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502204943-20075-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter.Chen@nxp.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The thermal_zone_of_device_ops structure is only passed as the fourth
-argument to devm_thermal_zone_of_sensor_register, which is declared
-as const.  Thus the thermal_zone_of_device_ops structure itself can
-be const.
+Check memory allocation failure and return -ENOMEM in such a case, as
+already done few lines below for another memory allocation.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+ drivers/usb/chipidea/ci_hdrc_usb2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v2: New patch
-
- drivers/hwmon/scpi-hwmon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwmon/scpi-hwmon.c b/drivers/hwmon/scpi-hwmon.c
-index a586480..7e49da5 100644
---- a/drivers/hwmon/scpi-hwmon.c
-+++ b/drivers/hwmon/scpi-hwmon.c
-@@ -120,7 +120,7 @@ static int scpi_read_temp(void *dev, int *temp)
- 	return sprintf(buf, "%s\n", sensor->info.name);
- }
+diff --git a/drivers/usb/chipidea/ci_hdrc_usb2.c b/drivers/usb/chipidea/ci_hdrc_usb2.c
+index d162cc0bb8ce..99425db9ba62 100644
+--- a/drivers/usb/chipidea/ci_hdrc_usb2.c
++++ b/drivers/usb/chipidea/ci_hdrc_usb2.c
+@@ -52,6 +52,8 @@ static int ci_hdrc_usb2_probe(struct platform_device *pdev)
  
--static struct thermal_zone_of_device_ops scpi_sensor_ops = {
-+static const struct thermal_zone_of_device_ops scpi_sensor_ops = {
- 	.get_temp = scpi_read_temp,
- };
+ 	if (!ci_pdata) {
+ 		ci_pdata = devm_kmalloc(dev, sizeof(*ci_pdata), GFP_KERNEL);
++		if (!ci_pdata)
++			return -ENOMEM;
+ 		*ci_pdata = ci_default_pdata;	/* struct copy */
+ 	}
  
+-- 
+2.11.0
 
