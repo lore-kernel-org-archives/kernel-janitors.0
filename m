@@ -1,68 +1,57 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 10:47:11 +0000
-Subject: [PATCH 4/6] [media] media: blackfin: bfin_capture: constify vb2_ops structures
-Message-Id: <1501930033-18249-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 15:57:19 +0000
+Subject: [PATCH 03/14] vme: Move an assignment in vme_new_dma_list()
+Message-Id: <296b53ad-dd93-255d-a69a-f48ced245af9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Scott Jiang <scott.jiang.linux@gmail.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These vb2_ops structures are only stored in the ops field of a
-vb2_queue structure, which is declared as const.  Thus the vb2_ops
-structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Aug 2017 22:04:45 +0200
 
-Done with the help of Coccinelle.
+Assign a pointer to a data structure member without using an intermediate
+local variable.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct vb2_ops i@p = { ... };
-
-@ok@
-identifier r.i;
-struct vb2_queue e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct vb2_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct vb2_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/blackfin/bfin_capture.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vme/vme.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
-index 294d696..41f1791 100644
---- a/drivers/media/platform/blackfin/bfin_capture.c
-+++ b/drivers/media/platform/blackfin/bfin_capture.c
-@@ -375,7 +375,7 @@ static void bcap_stop_streaming(struct vb2_queue *vq)
- 	}
- }
+diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
+index 1afddf5eafd4..d890410e472d 100644
+--- a/drivers/vme/vme.c
++++ b/drivers/vme/vme.c
+@@ -948,7 +948,6 @@ EXPORT_SYMBOL(vme_dma_request);
+  */
+ struct vme_dma_list *vme_new_dma_list(struct vme_resource *resource)
+ {
+-	struct vme_dma_resource *ctrlr;
+ 	struct vme_dma_list *dma_list;
  
--static struct vb2_ops bcap_video_qops = {
-+static const struct vb2_ops bcap_video_qops = {
- 	.queue_setup            = bcap_queue_setup,
- 	.buf_prepare            = bcap_buffer_prepare,
- 	.buf_cleanup            = bcap_buffer_cleanup,
+ 	if (resource->type != VME_DMA) {
+@@ -956,14 +955,14 @@ struct vme_dma_list *vme_new_dma_list(struct vme_resource *resource)
+ 		return NULL;
+ 	}
+ 
+-	ctrlr = list_entry(resource->entry, struct vme_dma_resource, list);
+-
+ 	dma_list = kmalloc(sizeof(*dma_list), GFP_KERNEL);
+ 	if (!dma_list)
+ 		return NULL;
+ 
+ 	INIT_LIST_HEAD(&dma_list->entries);
+-	dma_list->parent = ctrlr;
++	dma_list->parent = list_entry(resource->entry,
++				      struct vme_dma_resource,
++				      list);
+ 	mutex_init(&dma_list->mtx);
+ 
+ 	return dma_list;
+-- 
+2.14.0
 
