@@ -1,68 +1,71 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 10:47:10 +0000
-Subject: [PATCH 3/6] [media] staging: media: davinci_vpfe: constify vb2_ops structures
-Message-Id: <1501930033-18249-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 16:03:37 +0000
+Subject: [PATCH 07/14] vme: fake: Improve five size determinations in fake_init()
+Message-Id: <833ed88a-d969-3745-b61a-7274c87394b9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These vb2_ops structures are only stored in the ops field of a
-vb2_queue structure, which is declared as const.  Thus the vb2_ops
-structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 09:46:13 +0200
 
-Done with the help of Coccinelle.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct vb2_ops i@p = { ... };
+This issue was detected by using the Coccinelle software.
 
-@ok@
-identifier r.i;
-struct vb2_queue e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct vb2_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct vb2_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/media/davinci_vpfe/vpfe_video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vme/bridges/vme_fake.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 8b2117e..155e8c7 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -1304,7 +1304,7 @@ static void vpfe_buf_cleanup(struct vb2_buffer *vb)
- 		list_del_init(&buf->list);
- }
+diff --git a/drivers/vme/bridges/vme_fake.c b/drivers/vme/bridges/vme_fake.c
+index 6ceea5e9fd8b..39f84df44557 100644
+--- a/drivers/vme/bridges/vme_fake.c
++++ b/drivers/vme/bridges/vme_fake.c
+@@ -1075,11 +1075,11 @@ static int __init fake_init(void)
+ 	/* If we want to support more than one bridge at some point, we need to
+ 	 * dynamically allocate this so we get one per device.
+ 	 */
+-	fake_bridge = kzalloc(sizeof(struct vme_bridge), GFP_KERNEL);
++	fake_bridge = kzalloc(sizeof(*fake_bridge), GFP_KERNEL);
+ 	if (fake_bridge = NULL) {
+ 		retval = -ENOMEM;
+ 		goto err_struct;
+ 	}
  
--static struct vb2_ops video_qops = {
-+static const struct vb2_ops video_qops = {
- 	.queue_setup		= vpfe_buffer_queue_setup,
- 	.buf_init		= vpfe_buffer_init,
- 	.buf_prepare		= vpfe_buffer_prepare,
+-	fake_device = kzalloc(sizeof(struct fake_driver), GFP_KERNEL);
++	fake_device = kzalloc(sizeof(*fake_device), GFP_KERNEL);
+ 	if (fake_device = NULL) {
+@@ -1104,6 +1104,5 @@ static int __init fake_init(void)
+ 	/* Add master windows to list */
+ 	INIT_LIST_HEAD(&fake_bridge->master_resources);
+ 	for (i = 0; i < FAKE_MAX_MASTER; i++) {
+-		master_image = kmalloc(sizeof(struct vme_master_resource),
+-				GFP_KERNEL);
++		master_image = kmalloc(sizeof(*master_image), GFP_KERNEL);
+ 		if (master_image = NULL) {
+@@ -1131,6 +1130,5 @@ static int __init fake_init(void)
+ 	/* Add slave windows to list */
+ 	INIT_LIST_HEAD(&fake_bridge->slave_resources);
+ 	for (i = 0; i < FAKE_MAX_SLAVE; i++) {
+-		slave_image = kmalloc(sizeof(struct vme_slave_resource),
+-				GFP_KERNEL);
++		slave_image = kmalloc(sizeof(*slave_image), GFP_KERNEL);
+ 		if (slave_image = NULL) {
+@@ -1154,5 +1152,5 @@ static int __init fake_init(void)
+ 
+ 	/* Add location monitor to list */
+ 	INIT_LIST_HEAD(&fake_bridge->lm_resources);
+-	lm = kmalloc(sizeof(struct vme_lm_resource), GFP_KERNEL);
++	lm = kmalloc(sizeof(*lm), GFP_KERNEL);
+ 	if (lm = NULL) {
+-- 
+2.14.0
 
