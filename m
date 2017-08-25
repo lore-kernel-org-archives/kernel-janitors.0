@@ -1,65 +1,155 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:44:07 +0000
-Subject: [PATCH v2 7/9] ACPI-video: Delete an unnecessary initialisation in three functions
-Message-Id: <7a5b6015-2b04-ef31-1765-b00386238aa9@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 16:17:07 +0000
+Subject: [PATCH 14/14] vme: tsi148: Adjust 14 checks for null pointers
+Message-Id: <cd35605c-e52d-ef65-e105-5e0bc24f4ce4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
- <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
-In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
+References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 15:55:35 +0200
+Date: Fri, 25 Aug 2017 12:00:17 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Three local variables will be set to appropriate values a bit later.
-Thus omit the explicit initialisation at the beginning of these functions.
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/vme/bridges/vme_tsi148.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index e279ed221961..a899faf6ff84 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -803,7 +803,7 @@ int acpi_video_get_levels(struct acpi_device *device,
- 	union acpi_object *obj = NULL;
- 	int i, max_level = 0, count = 0, level_ac_battery = 0;
- 	union acpi_object *o;
--	struct acpi_video_device_brightness *br = NULL;
-+	struct acpi_video_device_brightness *br;
- 	int result = 0;
- 	u32 value;
+diff --git a/drivers/vme/bridges/vme_tsi148.c b/drivers/vme/bridges/vme_tsi148.c
+index 61946f5d356f..cba9514605b7 100644
+--- a/drivers/vme/bridges/vme_tsi148.c
++++ b/drivers/vme/bridges/vme_tsi148.c
+@@ -748,9 +748,9 @@ static int tsi148_alloc_resource(struct vme_master_resource *image,
+ 	if (size = 0)
+ 		return 0;
  
-@@ -921,7 +921,7 @@ acpi_video_init_brightness(struct acpi_video_device *device)
- 	int i, max_level = 0;
- 	unsigned long long level, level_old;
- 	struct acpi_video_device_brightness *br = NULL;
--	int result = -EINVAL;
-+	int result;
+-	if (image->bus_resource.name = NULL) {
++	if (!image->bus_resource.name) {
+ 		image->bus_resource.name = kmalloc(VMENAMSIZ+3, GFP_ATOMIC);
+-		if (image->bus_resource.name = NULL) {
++		if (!image->bus_resource.name) {
+ 			retval = -ENOMEM;
+ 			goto err_name;
+ 		}
+@@ -776,7 +776,7 @@ static int tsi148_alloc_resource(struct vme_master_resource *image,
  
- 	result = acpi_video_get_levels(device->dev, &br, &max_level);
- 	if (result)
-@@ -1295,7 +1295,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
- 	int i;
- 	struct acpi_video_enumerated_device *active_list;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	union acpi_object *dod = NULL;
-+	union acpi_object *dod;
- 	union acpi_object *obj;
+ 	image->kern_base = ioremap_nocache(
+ 		image->bus_resource.start, size);
+-	if (image->kern_base = NULL) {
++	if (!image->kern_base) {
+ 		dev_err(tsi148_bridge->parent, "Failed to remap resource\n");
+ 		retval = -ENOMEM;
+ 		goto err_remap;
+@@ -1640,7 +1640,7 @@ static int tsi148_dma_list_add(struct vme_dma_list *list,
  
- 	if (!video->cap._DOD)
+ 	/* Descriptor must be aligned on 64-bit boundaries */
+ 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+-	if (entry = NULL) {
++	if (!entry) {
+ 		retval = -ENOMEM;
+ 		goto err_mem;
+ 	}
+@@ -1943,7 +1943,7 @@ static int tsi148_lm_set(struct vme_lm_resource *lm, unsigned long long lm_base,
+ 
+ 	/* If we already have a callback attached, we can't move it! */
+ 	for (i = 0; i < lm->monitors; i++) {
+-		if (bridge->lm_callback[i] != NULL) {
++		if (bridge->lm_callback[i]) {
+ 			mutex_unlock(&lm->mtx);
+ 			dev_err(tsi148_bridge->parent, "Location monitor "
+ 				"callback attached, can't reset\n");
+@@ -2068,7 +2068,7 @@ static int tsi148_lm_attach(struct vme_lm_resource *lm, int monitor,
+ 	}
+ 
+ 	/* Check that a callback isn't already attached */
+-	if (bridge->lm_callback[monitor] != NULL) {
++	if (bridge->lm_callback[monitor]) {
+ 		mutex_unlock(&lm->mtx);
+ 		dev_err(tsi148_bridge->parent, "Existing callback attached\n");
+ 		return -EBUSY;
+@@ -2205,7 +2205,7 @@ static int tsi148_crcsr_init(struct vme_bridge *tsi148_bridge,
+ 	/* Allocate mem for CR/CSR image */
+ 	bridge->crcsr_kernel = pci_zalloc_consistent(pdev, VME_CRCSR_BUF_SIZE,
+ 						     &bridge->crcsr_bus);
+-	if (bridge->crcsr_kernel = NULL) {
++	if (!bridge->crcsr_kernel) {
+ 		dev_err(tsi148_bridge->parent, "Failed to allocate memory for "
+ 			"CR/CSR image\n");
+ 		return -ENOMEM;
+@@ -2292,14 +2292,14 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	 * dynamically generate this so we get one per device
+ 	 */
+ 	tsi148_bridge = kzalloc(sizeof(*tsi148_bridge), GFP_KERNEL);
+-	if (tsi148_bridge = NULL) {
++	if (!tsi148_bridge) {
+ 		retval = -ENOMEM;
+ 		goto err_struct;
+ 	}
+ 	vme_init_bridge(tsi148_bridge);
+ 
+ 	tsi148_device = kzalloc(sizeof(*tsi148_device), GFP_KERNEL);
+-	if (tsi148_device = NULL) {
++	if (!tsi148_device) {
+ 		retval = -ENOMEM;
+ 		goto err_driver;
+ 	}
+@@ -2365,7 +2365,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 		tsi148_device->flush_image  			kmalloc(sizeof(*tsi148_device->flush_image), GFP_KERNEL);
+-		if (tsi148_device->flush_image = NULL) {
++		if (!tsi148_device->flush_image) {
+ 			retval = -ENOMEM;
+ 			goto err_master;
+ 		}
+@@ -2381,7 +2381,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* Add master windows to list */
+ 	for (i = 0; i < master_num; i++) {
+ 		master_image = kmalloc(sizeof(*master_image), GFP_KERNEL);
+-		if (master_image = NULL) {
++		if (!master_image) {
+ 			retval = -ENOMEM;
+ 			goto err_master;
+ 		}
+@@ -2407,7 +2407,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* Add slave windows to list */
+ 	for (i = 0; i < TSI148_MAX_SLAVE; i++) {
+ 		slave_image = kmalloc(sizeof(*slave_image), GFP_KERNEL);
+-		if (slave_image = NULL) {
++		if (!slave_image) {
+ 			retval = -ENOMEM;
+ 			goto err_slave;
+ 		}
+@@ -2428,7 +2428,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/* Add dma engines to list */
+ 	for (i = 0; i < TSI148_MAX_DMA; i++) {
+ 		dma_ctrlr = kmalloc(sizeof(*dma_ctrlr), GFP_KERNEL);
+-		if (dma_ctrlr = NULL) {
++		if (!dma_ctrlr) {
+ 			retval = -ENOMEM;
+ 			goto err_dma;
+ 		}
+@@ -2448,7 +2448,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	/* Add location monitor to list */
+ 	lm = kmalloc(sizeof(*lm), GFP_KERNEL);
+-	if (lm = NULL) {
++	if (!lm) {
+ 		retval = -ENOMEM;
+ 		goto err_lm;
+ 	}
 -- 
-2.13.4
+2.14.0
 
