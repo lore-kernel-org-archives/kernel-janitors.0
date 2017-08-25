@@ -1,82 +1,33 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 21 Aug 2017 14:06:31 +0000
-Subject: Re: [PATCH 2/4] isofs: Adjust four checks for null pointers
-Message-Id: <20170821140631.GC31870@quack2.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 08:18:39 +0000
+Subject: [PATCH] RDMA/qedr: Missing error code in qedr_init_user_queue()
+Message-Id: <20170825081839.5ahvp6pehrhyyf2z@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ed931e75-f443-6e19-ca56-4c1ad027dc25@users.sourceforge.net>
- <b2d3ec4f-065a-84b8-c85d-8d7f9741d458@users.sourceforge.net>
-In-Reply-To: <b2d3ec4f-065a-84b8-c85d-8d7f9741d458@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ram Amrani <Ram.Amrani-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Kalderon@mwanda, Michal <Michal.Kalderon-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Cc: Ariel Elior <Ariel.Elior-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat 19-08-17 09:17:28, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 18 Aug 2017 21:47:14 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written !…
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We should return -ENOMEM if the kzalloc() fails.  We currently return
+success.
 
-Thanks. Applied to my tree.
+Fixes: 69ad0e7fe845 ("RDMA/qedr: Add support for iWARP in user space")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-								Honza
-
-
-> ---
->  fs/isofs/inode.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 2d3f090944df..db43f52f2268 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -96,7 +96,7 @@ static int __init init_inodecache(void)
->  					0, (SLAB_RECLAIM_ACCOUNT|
->  					SLAB_MEM_SPREAD|SLAB_ACCOUNT),
->  					init_once);
-> -	if (isofs_inode_cachep = NULL)
-> +	if (!isofs_inode_cachep)
->  		return -ENOMEM;
->  	return 0;
->  }
-> @@ -678,7 +678,7 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
->  			if (isonum_711(vdp->type) = ISO_VD_END)
->  				break;
->  			if (isonum_711(vdp->type) = ISO_VD_PRIMARY) {
-> -				if (pri = NULL) {
-> +				if (!pri) {
->  					pri = (struct iso_primary_descriptor *)vdp;
->  					/* Save the buffer in case we need it ... */
->  					pri_bh = bh;
-> @@ -742,7 +742,7 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
->  		goto out_freebh;
->  	}
->  
-> -	if (joliet_level && (pri = NULL || !opt.rock)) {
-> +	if (joliet_level && (!pri || !opt.rock)) {
->  		/* This is the case of Joliet with the norock mount flag.
->  		 * A disc with both Joliet and Rock Ridge is handled later
->  		 */
-> @@ -1320,5 +1320,5 @@ static int isofs_read_inode(struct inode *inode, int relocated)
->  		int frag1 = bufsize - offset;
->  
->  		tmpde = kmalloc(de_len, GFP_KERNEL);
-> -		if (tmpde = NULL) {
-> +		if (!tmpde) {
->  			ret = -ENOMEM;
-> -- 
-> 2.14.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index 4e14a558734b..bce4f79370e6 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -821,8 +821,10 @@ static inline int qedr_init_user_queue(struct ib_ucontext *ib_ctx,
+ 				   FW_PAGE_SHIFT);
+ 	} else {
+ 		q->pbl_tbl = kzalloc(sizeof(*q->pbl_tbl), GFP_KERNEL);
+-		if (!q->pbl_tbl)
++		if (!q->pbl_tbl) {
++			rc = -ENOMEM;
+ 			goto err0;
++		}
+ 	}
+ 
+ 	return 0;
