@@ -1,26 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 14 Aug 2017 03:12:43 +0000
-Subject: Re: [PATCH 03/11] serial: sunsab: constify uart_ops structures
-Message-Id: <20170813.201243.113370942135429593.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 12:14:09 +0000
+Subject: [PATCH v3] irqdomain: Prevent Oops in irq_domain_push_irq()
+Message-Id: <20170825121409.6rfv4vt6ztz2oqkt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1502605310-4314-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com, sparclinux@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, David Daney <david.daney@cavium.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 08:21:42 +0200
+This code generates a Smatch warning:
 
-> These uart_ops structures are only stored in the ops field of a
-> uart_port structure and this fields is const, so the uart_ops
-> structures can also be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+	kernel/irq/irqdomain.c:1511 irq_domain_push_irq()
+	warn: variable dereferenced before check 'root_irq_data' (see line 1508)
 
-Acked-by: David S. Miller <davem@davemloft.net>
+irq_get_irq_data() does sometimes return NULL pointers so this seems
+like a real bug.  Let's fix this bug by moving the check for NULL
+earlier.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Redo changelog.
+v3: Redo changelog again.  Make it imperative.
+
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index b9c688944429..e84b7056bb08 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1505,10 +1505,10 @@ int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg)
+ 	if (WARN_ON(!irq_domain_is_hierarchy(domain)))
+ 		return -EINVAL;
+ 
+-	if (domain->parent != root_irq_data->domain)
++	if (!root_irq_data)
+ 		return -EINVAL;
+ 
+-	if (!root_irq_data)
++	if (domain->parent != root_irq_data->domain)
+ 		return -EINVAL;
+ 
+ 	child_irq_data = kzalloc_node(sizeof(*child_irq_data), GFP_KERNEL,
