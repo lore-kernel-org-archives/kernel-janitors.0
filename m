@@ -1,32 +1,42 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 25 Aug 2017 09:14:06 +0000
-Subject: Re: [PATCH v2] x86/microcode: Silence a static checker warning
-Message-Id: <20170825091406.zytkd2pb5v6zxzrz@pd.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 09:10:00 +0000
+Subject: [PATCH v2] irqdomain: potential Oops in irq_domain_push_irq()
+Message-Id: <20170825091000.z5taav6xj2yds6ch@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170822211335.r7wcfcisdlq2xwgz@pd.tnic>
- <20170824201557.ev4ebslf6sg6xmne@mwanda>
- <20170824204714.jedeaphwmou5qafd@pd.tnic>
- <20170824205510.zy574qloxb4tsokq@mwanda>
- <20170824205844.3wkrq6vb7kv45vnv@pd.tnic>
- <20170824210847.hypvvpzf5pjhppyt@mwanda>
- <20170824211205.jpvmzzrm72vcb4xf@pd.tnic>
- <20170825090626.okc6reqltb5k4hip@pd.tnic>
- <20170825091228.acxl2pizbqe7ijnf@mwanda>
-In-Reply-To: <20170825091228.acxl2pizbqe7ijnf@mwanda>
+In-Reply-To: <alpine.DEB.2.20.1708251042500.1883@nanos>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, David Daney <david.daney@cavium.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 25, 2017 at 12:12:28PM +0300, Dan Carpenter wrote:
-> That patch looks good to me.  Could you just add a changelog and give
-> me a Reported-by: credit?
+This code generates a Smatch warning:
 
-Of course.
+    kernel/irq/irqdomain.c:1511 irq_domain_push_irq()
+    warn: variable dereferenced before check 'root_irq_data' (see line 1508)
 
--- 
-Regards/Gruss,
-    Boris.
+irq_get_irq_data() does sometimes return NULL pointers so it does look
+like this code could Oops.  I've moved the check for NULL earlier to
+fix this bug.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: redo the commit message
+
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index b9c688944429..e84b7056bb08 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1505,10 +1505,10 @@ int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg)
+ 	if (WARN_ON(!irq_domain_is_hierarchy(domain)))
+ 		return -EINVAL;
+ 
+-	if (domain->parent != root_irq_data->domain)
++	if (!root_irq_data)
+ 		return -EINVAL;
+ 
+-	if (!root_irq_data)
++	if (domain->parent != root_irq_data->domain)
+ 		return -EINVAL;
+ 
+ 	child_irq_data = kzalloc_node(sizeof(*child_irq_data), GFP_KERNEL,
