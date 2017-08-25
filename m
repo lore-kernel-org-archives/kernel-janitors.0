@@ -1,70 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Fri, 25 Aug 2017 16:53:35 +0000
+From: Lukas Wunner <lukas@wunner.de>
+Date: Fri, 25 Aug 2017 17:51:04 +0000
 Subject: Re: [PATCH] x86/platform/intel-mid: make several arrays static, makes code smaller
-Message-Id: <1503680015.25945.113.camel@linux.intel.com>
+Message-Id: <20170825175104.GA19150@wunner.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170825163206.23250-1-colin.king@canonical.com>
 In-Reply-To: <20170825163206.23250-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org
 
-On Fri, 2017-08-25 at 17:32 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate arrays on the stack, instead make them static .
-> Makes the object code smaller by 76 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	
-> filename
->    4217	   1540	    128	   5885	   16fd	
-> arch/x86/platform/intel-mid/pwr.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	
-> filename
->    3981	   1700	    128	   5809	   16b1	
-> arch/x86/platform/intel-mid/pwr.o
-
-Fine by me.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/platform/intel-mid/pwr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/platform/intel-mid/pwr.c
-> b/arch/x86/platform/intel-mid/pwr.c
-> index ef03852ea6e8..49ec5b94c71f 100644
+On Fri, Aug 25, 2017 at 05:32:06PM +0100, Colin King wrote:
 > --- a/arch/x86/platform/intel-mid/pwr.c
 > +++ b/arch/x86/platform/intel-mid/pwr.c
-> @@ -444,7 +444,7 @@ static int mid_set_initial_state(struct mid_pwr
-> *pwr, const u32 *states)
->  static int pnw_set_initial_state(struct mid_pwr *pwr)
->  {
->  	/* On Penwell SRAM must stay powered on */
+> @@ -444,7 +444,7 @@ static int mid_set_initial_state(struct mid_pwr *pwr, const u32 *states)
+>  static int pnw_set_initial_state(struct mid_pwr *pwr)
+>  {
+>  	/* On Penwell SRAM must stay powered on */
 > -	const u32 states[] = {
 > +	static const u32 states[] = {
->  		0xf00fffff,		/* PM_SSC(0) */
->  		0xffffffff,		/* PM_SSC(1) */
->  		0xffffffff,		/* PM_SSC(2) */
-> @@ -455,7 +455,7 @@ static int pnw_set_initial_state(struct mid_pwr
-> *pwr)
->  
->  static int tng_set_initial_state(struct mid_pwr *pwr)
->  {
-> -	const u32 states[] = {
-> +	static const u32 states[] = {
->  		0xffffffff,		/* PM_SSC(0) */
->  		0xffffffff,		/* PM_SSC(1) */
->  		0xffffffff,		/* PM_SSC(2) */
+>  		0xf00fffff,		/* PM_SSC(0) */
+>  		0xffffffff,		/* PM_SSC(1) */
+>  		0xffffffff,		/* PM_SSC(2) */
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+That's a known gcc bug:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?idh725
+
+There are hundreds of constant compound literals that are generated
+on the stack rather than stored in rodata, do you intend to file
+patches for all of them?  Adding static everywhere is just a
+workaround that bloats the code.  Fixing the root cause in gcc would
+make more sense.
+
+Just my 2 cents worth of course.
+
+Thanks,
+
+Lukas
