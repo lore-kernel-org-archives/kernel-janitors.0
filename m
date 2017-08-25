@@ -1,46 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 20:14:39 +0000
-Subject: [PATCH 2/3] orangefs: Use kcalloc() in orangefs_prepare_cdm_array()
-Message-Id: <705dd4fa-3daf-08fb-23c8-1888b67bc1ce@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 10:36:15 +0000
+Subject: [PATCH] um: remove a stray tab
+Message-Id: <20170825103615.spltju4nkooc3acf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
-In-Reply-To: <6802994a-a537-2e00-e7d8-c1b822879f76@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Brandenburg <martin@omnibond.com>, Mike Marshall <hubcap@omnibond.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 21:18:01 +0200
+Static checkers would urge us to add curly braces to this code, but
+actually the code works correctly.  It just isn't indented right.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/orangefs/orangefs-debugfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index 93fe8f8e60f1..5f59917fd631 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -571,7 +571,5 @@ static int orangefs_prepare_cdm_array(char *debug_array_string)
- 		goto out;
+diff --git a/arch/x86/um/os-Linux/tls.c b/arch/x86/um/os-Linux/tls.c
+index 9d94b3b76c74..ed8ea90967dc 100644
+--- a/arch/x86/um/os-Linux/tls.c
++++ b/arch/x86/um/os-Linux/tls.c
+@@ -37,7 +37,7 @@ void check_host_supports_tls(int *supports_tls, int *tls_min)
+ 				continue;
+ 			else if (errno = ENOSYS)
+ 				*supports_tls = 0;
+-				return;
++			return;
+ 		}
  	}
  
--	cdm_array -		kzalloc(cdm_element_count * sizeof(struct client_debug_mask),
--			GFP_KERNEL);
-+	cdm_array = kcalloc(cdm_element_count, sizeof(*cdm_array), GFP_KERNEL);
- 	if (!cdm_array) {
--- 
-2.14.0
-
