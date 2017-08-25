@@ -1,63 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 Aug 2017 20:30:34 +0000
-Subject: [PATCH 1/2] drm/radeon/ci: tidy up some limit checks
-Message-Id: <20170822203033.u7ltp2xjaqmoqrl4@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 20:26:48 +0000
+Subject: [PATCH 3/3] SCSI-sg: Fix a typo in a comment line in sg_ioctl()
+Message-Id: <51971166-583b-071f-a9cb-1f00cc852756@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
+In-Reply-To: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-This is partly to silence a static checker warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 22:06:59 +0200
 
-    drivers/gpu/drm/amd/amdgpu/ci_dpm.c:4553 ci_set_mc_special_registers()
-    error: buffer overflow 'table->mc_reg_address' 16 <= 16
+Fix a word in this description.
 
-The story is that it's valid to exit the loop with "j" less than or equal
-to SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE".  That value for "j" gets saved
-as table->last.  We're not allow to access "table->mc_reg_address[j]"
-when j = SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE because that's one past
-the end of the array.
-
-The tests for "if (j > SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)" in
-ci_set_mc_special_registers() are always false because we start with
-j less than the array size and we increment it once so at most it can be
-equal.
-
-Then there is a bogus check in ci_register_patching_mc_seq() where
-it complains if "table->last >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE".
-The "table->last" value can't possibly be greater than the array size
-and it is allowed to be equal to it.  So let's just remove that test
-entirely.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not tested.  Please review this one carefully.
+ drivers/scsi/sg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
-index c97fbb2ab48b..d3136e020d5a 100644
---- a/drivers/gpu/drm/radeon/ci_dpm.c
-+++ b/drivers/gpu/drm/radeon/ci_dpm.c
-@@ -4342,10 +4342,10 @@ static int ci_set_mc_special_registers(struct radeon_device *rdev,
- 					table->mc_reg_table_entry[k].mc_data[j] |= 0x100;
- 			}
- 			j++;
--			if (j > SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
--				return -EINVAL;
- 
- 			if (!pi->mem_gddr5) {
-+				if (j >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
-+					return -EINVAL;
- 				table->mc_reg_address[j].s1 = MC_PMG_AUTO_CMD >> 2;
- 				table->mc_reg_address[j].s0 = MC_PMG_AUTO_CMD >> 2;
- 				for (k = 0; k < table->num_entries; k++) {
-@@ -4521,8 +4521,6 @@ static int ci_register_patching_mc_seq(struct radeon_device *rdev,
- 	    ((rdev->pdev->device = 0x67B0) ||
- 	     (rdev->pdev->device = 0x67B1))) {
- 		for (i = 0; i < table->last; i++) {
--			if (table->last >= SMU7_DISCRETE_MC_REGISTER_ARRAY_SIZE)
--				return -EINVAL;
- 			switch(table->mc_reg_address[i].s1 >> 2) {
- 			case MC_SEQ_MISC1:
- 				for (k = 0; k < table->num_entries; k++) {
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 4a2db7ff14cc..c80899d249c6 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -891,7 +891,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 	case SG_SET_FORCE_LOW_DMA:
+ 		/*
+ 		 * N.B. This ioctl never worked properly, but failed to
+-		 * return an error value. So returning '0' to keep compability
++		 * return an error value. So returning '0' to keep compatibility
+ 		 * with legacy applications.
+ 		 */
+ 		return 0;
+-- 
+2.14.0
+
