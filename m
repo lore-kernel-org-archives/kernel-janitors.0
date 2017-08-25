@@ -1,57 +1,54 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>
-Date: Thu, 10 Aug 2017 09:19:50 +0000
-Subject: Re: [PATCH] drm/amdgpu: Uninitialized variable in amdgpu_ttm_backend_bind()
-Message-Id: <78b974b6-199a-cbf7-b1a5-74e7799be9cc@vodafone.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 25 Aug 2017 16:32:06 +0000
+Subject: [PATCH] x86/platform/intel-mid: make several arrays static, makes code smaller
+Message-Id: <20170825163206.23250-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170809103046.mhj7mhe3qwy5ozvy@mwanda>
- <406505cd-fd17-b87a-0d3f-9adf5376880a@daenzer.net>
- <CADnq5_O_Hpk4X4wR5Be==C9AytXTX9OzB-fLJ_By4M1QLGS9hA@mail.gmail.com>
-In-Reply-To: <CADnq5_O_Hpk4X4wR5Be==C9AytXTX9OzB-fLJ_By4M1QLGS9hA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Alex Deucher <alexdeucher@gmail.com>, =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Cc: Felix Kuehling <Felix.Kuehling@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Flora Cui <Flora.Cui@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org
 
-Am 10.08.2017 um 07:34 schrieb Alex Deucher:
-> On Wed, Aug 9, 2017 at 10:16 PM, Michel Dänzer <michel@daenzer.net> wrote:
->> On 09/08/17 07:30 PM, Dan Carpenter wrote:
->>> My static checker complains that it's possible for "r" to be
->>> uninitialized.  It used to be set to zero so this returns it to the old
->>> behavior.
->>>
->>> Fixes: 98a7f88ce9a9 ("drm/amdgpu: bind BOs with GTT space allocated directly v2")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>> index e6f9a54c959d..b5f2a08757d6 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>> @@ -753,7 +753,7 @@ static int amdgpu_ttm_backend_bind(struct ttm_tt *ttm,
->>>                                   struct ttm_mem_reg *bo_mem)
->>>   {
->>>        struct amdgpu_ttm_tt *gtt = (void*)ttm;
->>> -     int r;
->>> +     int r = 0;
->>>
->>>        if (gtt->userptr) {
->>>                r = amdgpu_ttm_tt_pin_userptr(ttm);
->> Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-> Applied.  thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
-For what's worth Reviewed-by: Christian König <christian.koenig@amd.com> 
-as well.
+Don't populate arrays on the stack, instead make them static .
+Makes the object code smaller by 76 bytes:
 
-Might as well explain some fallout people reported about this patch, 
-going to ping them for testing.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   4217	   1540	    128	   5885	   16fd	arch/x86/platform/intel-mid/pwr.o
 
-Christian.
+After:
+   text	   data	    bss	    dec	    hex	filename
+   3981	   1700	    128	   5809	   16b1	arch/x86/platform/intel-mid/pwr.o
 
->
-> Alex
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/platform/intel-mid/pwr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/platform/intel-mid/pwr.c b/arch/x86/platform/intel-mid/pwr.c
+index ef03852ea6e8..49ec5b94c71f 100644
+--- a/arch/x86/platform/intel-mid/pwr.c
++++ b/arch/x86/platform/intel-mid/pwr.c
+@@ -444,7 +444,7 @@ static int mid_set_initial_state(struct mid_pwr *pwr, const u32 *states)
+ static int pnw_set_initial_state(struct mid_pwr *pwr)
+ {
+ 	/* On Penwell SRAM must stay powered on */
+-	const u32 states[] = {
++	static const u32 states[] = {
+ 		0xf00fffff,		/* PM_SSC(0) */
+ 		0xffffffff,		/* PM_SSC(1) */
+ 		0xffffffff,		/* PM_SSC(2) */
+@@ -455,7 +455,7 @@ static int pnw_set_initial_state(struct mid_pwr *pwr)
+ 
+ static int tng_set_initial_state(struct mid_pwr *pwr)
+ {
+-	const u32 states[] = {
++	static const u32 states[] = {
+ 		0xffffffff,		/* PM_SSC(0) */
+ 		0xffffffff,		/* PM_SSC(1) */
+ 		0xffffffff,		/* PM_SSC(2) */
+-- 
+2.14.1
 
