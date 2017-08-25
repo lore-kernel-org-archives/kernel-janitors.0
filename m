@@ -1,70 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 07 Aug 2017 11:52:07 +0000
-Subject: Applied "ASoC: mediatek: Fix an error checking code" to the asoc tree
-Message-Id: <E1degZr-0006pT-7Y@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 19:00:43 +0000
+Subject: [PATCH] SCSI-devinfo: Delete an error message for a failed memory allocation in scsi_dev_info_list_a
+Message-Id: <5496530a-d25e-37be-04be-8c1419cf48f6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170807002315.3512-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170807002315.3512-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orgChristopheJAILLETchristophe.jaillet@wanadoo.fr, linux-mediatek@lists.infradead.org@alsa-project.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 20:54:16 +0200
 
-   ASoC: mediatek: Fix an error checking code
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8d7313bfb1bb7d71a6ebc503215e4fb4a8964741 Mon Sep 17 00:00:00 2001
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Mon, 7 Aug 2017 02:23:15 +0200
-Subject: [PATCH] ASoC: mediatek: Fix an error checking code
-
-Check the value returned by 'devm_clk_get()' instead of the clock
-identifier which can never be an ERR code.
-
-Fixes: d6f3710a56e1 ("ASoC: mediatek: add structure define and clock control for 2701")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_devinfo.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
-index b815ecc6bbf6..affa7fb25dd9 100644
---- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
-+++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
-@@ -75,7 +75,7 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
+diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
+index 28fea83ae2fe..3009934b95a7 100644
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -369,10 +369,8 @@ int scsi_dev_info_list_add_keyed(int compatible, char *vendor, char *model,
+ 		return PTR_ERR(devinfo_table);
  
- 	for (i = 0; i < MT2701_CLOCK_NUM; i++) {
- 		afe_priv->clocks[i] = devm_clk_get(afe->dev, aud_clks[i]);
--		if (IS_ERR(aud_clks[i])) {
-+		if (IS_ERR(afe_priv->clocks[i])) {
- 			dev_warn(afe->dev, "%s devm_clk_get %s fail\n",
- 				 __func__, aud_clks[i]);
- 			return PTR_ERR(aud_clks[i]);
+ 	devinfo = kmalloc(sizeof(*devinfo), GFP_KERNEL);
+-	if (!devinfo) {
+-		printk(KERN_ERR "%s: no memory\n", __func__);
++	if (!devinfo)
+ 		return -ENOMEM;
+-	}
+ 
+ 	scsi_strcpy_devinfo("vendor", devinfo->vendor, sizeof(devinfo->vendor),
+ 			    vendor, compatible);
 -- 
-2.13.3
+2.14.0
 
