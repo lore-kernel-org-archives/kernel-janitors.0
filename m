@@ -1,38 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Aug 2017 06:21:40 +0000
-Subject: [PATCH 01/11] serial: meson: constify uart_ops structures
-Message-Id: <1502605310-4314-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 20:25:17 +0000
+Subject: [PATCH 2/3] SCSI-sg: Improve a size determination in sg_alloc()
+Message-Id: <e2406fbf-3a35-316a-4d38-b474c13d9120@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502605310-4314-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
+In-Reply-To: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus-amlogic@lists.infradead.org
+To: linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These uart_ops structures are only stored in the ops field of a
-uart_port structure and this fields is const, so the uart_ops
-structures can also be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 21:55:14 +0200
 
-Done with the help of Coccinelle.
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/meson_uart.c |    2 +-
+ drivers/scsi/sg.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
-index 42e4a4c..07c0f98 100644
---- a/drivers/tty/serial/meson_uart.c
-+++ b/drivers/tty/serial/meson_uart.c
-@@ -424,7 +424,7 @@ static void meson_uart_config_port(struct uart_port *port, int flags)
- 	}
- }
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 8ca10a2fc1a0..4a2db7ff14cc 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1403,7 +1403,7 @@ sg_alloc(struct gendisk *disk, struct scsi_device *scsidp)
+ 	int error;
+ 	u32 k;
  
--static struct uart_ops meson_uart_ops = {
-+static const struct uart_ops meson_uart_ops = {
- 	.set_mctrl      = meson_uart_set_mctrl,
- 	.get_mctrl      = meson_uart_get_mctrl,
- 	.tx_empty	= meson_uart_tx_empty,
+-	sdp = kzalloc(sizeof(Sg_device), GFP_KERNEL);
++	sdp = kzalloc(sizeof(*sdp), GFP_KERNEL);
+ 	if (!sdp)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.14.0
 
