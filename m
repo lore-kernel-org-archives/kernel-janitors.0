@@ -1,26 +1,43 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Date: Tue, 01 Aug 2017 23:19:18 +0000
-Subject: Re: [PATCH 3/3] lib/test_kmod: fix fs module tests
-Message-Id: <20170801231918.GA18884@wotan.suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 19:37:26 +0000
+Subject: [PATCH] SCSI-sd: Delete an error message for a failed memory allocation in sd_revalidate_disk()
+Message-Id: <68431300-6ceb-0c61-a0cf-e6b7b20f6a45@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170707083933.2mgnpqafhspbwu7h@mwanda>
- <20170707084117.jbi3g364jz75liay@mwanda>
-In-Reply-To: <20170707084117.jbi3g364jz75liay@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 07, 2017 at 11:41:17AM +0300, Dan Carpenter wrote:
-> The break was in the wrong place so file system tests don't work as
-> intended.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 21:34:44 +0200
 
-More importantly it leaked memory per test switch as well.
-> 
-> Fixes: 39258f448d71 ("kmod: add test driver to stress test the module loader")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks, queued!
+This issue was detected by using the Coccinelle software.
 
-  Luis
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/sd.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index bea36adeee17..1f15c31e5a8a 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3067,11 +3067,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		goto out;
+ 
+ 	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+-	if (!buffer) {
+-		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
+-			  "allocation failure.\n");
++	if (!buffer)
+ 		goto out;
+-	}
+ 
+ 	sd_spinup_disk(sdkp);
+ 
+-- 
+2.14.0
+
