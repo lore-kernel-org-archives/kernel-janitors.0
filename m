@@ -1,27 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 10:08:49 +0000
-Subject: [PATCH 0/2] [media] Cypress: Adjustments for cypress_load_firmware()
-Message-Id: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 19:21:08 +0000
+Subject: [PATCH] SCSI-scan: Delete an error message for a failed memory allocation in two functions
+Message-Id: <b19a3383-c1f5-64b6-2f4b-9754e0a1c312@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 12:00:21 +0200
+Date: Fri, 25 Aug 2017 21:17:02 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/media/common/cypress_firmware.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/scsi_scan.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+index fd88dabd599d..280ac20a644b 100644
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -427,10 +427,9 @@ static struct scsi_target *scsi_alloc_target(struct device *parent,
+ 	int error, ref_got;
+ 
+ 	starget = kzalloc(size, GFP_KERNEL);
+-	if (!starget) {
+-		printk(KERN_ERR "%s: allocation failure\n", __func__);
++	if (!starget)
+ 		return NULL;
+-	}
++
+ 	dev = &starget->dev;
+ 	device_initialize(dev);
+ 	kref_init(&starget->reap_ref);
+@@ -1340,10 +1339,8 @@ static int scsi_report_lun_scan(struct scsi_target *starget, int bflags,
+ retry:
+ 	lun_data = kmalloc(length, GFP_KERNEL |
+ 			   (sdev->host->unchecked_isa_dma ? __GFP_DMA : 0));
+-	if (!lun_data) {
+-		printk(ALLOC_FAILURE_MSG, __func__);
++	if (!lun_data)
+ 		goto out;
+-	}
+ 
+ 	scsi_cmd[0] = REPORT_LUNS;
+ 
 -- 
-2.14.1
+2.14.0
 
