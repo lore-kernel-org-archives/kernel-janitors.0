@@ -1,29 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 01 Aug 2017 11:02:01 +0000
-Subject: [PATCH] tracing: missing error code in tracer_alloc_buffers()
-Message-Id: <20170801110201.ajdkct7vwzixahvx@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 20:23:56 +0000
+Subject: [PATCH 1/3] SCSI-sg: Delete an error message for a failed memory allocation in sg_alloc()
+Message-Id: <a5815434-a4b8-66bf-f5ff-264b8310ac9d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
+In-Reply-To: <0fffccee-7cc1-1321-2c6b-00ac06b304b8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If ring_buffer_alloc() or one of the next couple function calls fail
-then we should return -ENOMEM but the current code returns success.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Aug 2017 21:48:11 +0200
 
-Fixes: b32614c03413 ('tracing/rb: Convert to hotplug state machine')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 42b9355033d4..625c00aab800 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8293,6 +8293,7 @@ __init static int tracer_alloc_buffers(void)
- 	if (ret < 0)
- 		goto out_free_cpumask;
- 	/* Used for event triggers */
-+	ret = -ENOMEM;
- 	temp_buffer = ring_buffer_alloc(PAGE_SIZE, RB_FL_OVERWRITE);
- 	if (!temp_buffer)
- 		goto out_rm_hp_state;
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/sg.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index d7ff71e0c85c..8ca10a2fc1a0 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1404,11 +1404,8 @@ sg_alloc(struct gendisk *disk, struct scsi_device *scsidp)
+ 	u32 k;
+ 
+ 	sdp = kzalloc(sizeof(Sg_device), GFP_KERNEL);
+-	if (!sdp) {
+-		sdev_printk(KERN_WARNING, scsidp, "%s: kmalloc Sg_device "
+-			    "failure\n", __func__);
++	if (!sdp)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	idr_preload(GFP_KERNEL);
+ 	write_lock_irqsave(&sg_index_lock, iflags);
+-- 
+2.14.0
+
