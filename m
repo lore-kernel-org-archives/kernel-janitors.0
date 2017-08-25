@@ -1,54 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 23 Aug 2017 13:11:13 +0000
-Subject: [PATCH] Coccinelle: setup_timer: improve messages from setup_timer
-Message-Id: <1503493873-673-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 10:36:57 +0000
+Subject: [PATCH] scsi: qedi: off by one in qedi_get_cmd_from_tid()
+Message-Id: <20170825103657.6kwprvwfks7szn3b@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: QLogic-Storage-Upstream@cavium.com, Manish Rangankar <manish.rangankar@cavium.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Allow messages about multiple timers.
+The > here should be >= or we end up reading one element beyond the end
+of the qedi->itt_map[] array.  The qedi->itt_map[] array is allocated in
+qedi_alloc_itt().
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
- scripts/coccinelle/api/setup_timer.cocci |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/scripts/coccinelle/api/setup_timer.cocci b/scripts/coccinelle/api/setup_timer.cocci
-index eb6bd9e..b5ab031 100644
---- a/scripts/coccinelle/api/setup_timer.cocci
-+++ b/scripts/coccinelle/api/setup_timer.cocci
-@@ -104,11 +104,9 @@ position j0, j1, j2;
- )
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index c4a470bab4dd..cccc34adc0e0 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -1576,7 +1576,7 @@ struct qedi_cmd *qedi_get_cmd_from_tid(struct qedi_ctx *qedi, u32 tid)
+ {
+ 	struct qedi_cmd *cmd = NULL;
  
- @match_function_and_data_after_init_timer_context
--depends on !patch &&
--!match_immediate_function_data_after_init_timer_context &&
-- (context || org || report)@
-+depends on !patch && (context || org || report)@
- expression a, b, e1, e2, e3, e4, e5;
--position j0, j1, j2;
-+position j0 != match_immediate_function_data_after_init_timer_context.j0,j1,j2;
- @@
+-	if (tid > MAX_ISCSI_TASK_ENTRIES)
++	if (tid >= MAX_ISCSI_TASK_ENTRIES)
+ 		return NULL;
  
- * init_timer@j0 (&e1);
-@@ -124,13 +122,12 @@ position j0, j1, j2;
- * e1@j2.function = a;
- )
- 
--@r3_context depends on !patch &&
--!match_immediate_function_data_after_init_timer_context &&
--!match_function_and_data_after_init_timer_context &&
-- (context || org || report)@
-+@r3_context depends on !patch && (context || org || report)@
- expression c, e6, e7;
- position r1.p;
--position j0, j1;
-+position j0 !+  {match_immediate_function_data_after_init_timer_context.j0,
-+   match_function_and_data_after_init_timer_context.j0}, j1;
- @@
- 
- * init_timer@j0@p (&e6);
-
+ 	cmd = qedi->itt_map[tid].p_cmd;
