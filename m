@@ -1,7 +1,7 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Fri, 25 Aug 2017 09:06:26 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 09:12:28 +0000
 Subject: Re: [PATCH v2] x86/microcode: Silence a static checker warning
-Message-Id: <20170825090626.okc6reqltb5k4hip@pd.tnic>
+Message-Id: <20170825091228.acxl2pizbqe7ijnf@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170822211335.r7wcfcisdlq2xwgz@pd.tnic>
  <20170824201557.ev4ebslf6sg6xmne@mwanda>
@@ -10,93 +10,17 @@ References: <20170822211335.r7wcfcisdlq2xwgz@pd.tnic>
  <20170824205844.3wkrq6vb7kv45vnv@pd.tnic>
  <20170824210847.hypvvpzf5pjhppyt@mwanda>
  <20170824211205.jpvmzzrm72vcb4xf@pd.tnic>
-In-Reply-To: <20170824211205.jpvmzzrm72vcb4xf@pd.tnic>
+ <20170825090626.okc6reqltb5k4hip@pd.tnic>
+In-Reply-To: <20170825090626.okc6reqltb5k4hip@pd.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Borislav Petkov <bp@alien8.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Ok,
+That patch looks good to me.  Could you just add a changelog and give
+me a Reported-by: credit?
 
-your initial patch was on the right track but let's simplify the whole
-flow. That should not trigger your checker warning anymore:
+regards,
+dan carpenter
 
----
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 59edbe9d4ccb..8f7a9bbad514 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -146,18 +146,18 @@ static bool microcode_matches(struct microcode_header_intel *mc_header,
- 	return false;
- }
- 
--static struct ucode_patch *__alloc_microcode_buf(void *data, unsigned int size)
-+static struct ucode_patch *memdup_patch(void *data, unsigned int size)
- {
- 	struct ucode_patch *p;
- 
- 	p = kzalloc(sizeof(struct ucode_patch), GFP_KERNEL);
- 	if (!p)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	p->data = kmemdup(data, size, GFP_KERNEL);
- 	if (!p->data) {
- 		kfree(p);
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 	}
- 
- 	return p;
-@@ -183,8 +183,8 @@ static void save_microcode_patch(void *data, unsigned int size)
- 			if (mc_hdr->rev <= mc_saved_hdr->rev)
- 				continue;
- 
--			p = __alloc_microcode_buf(data, size);
--			if (IS_ERR(p))
-+			p = memdup_patch(data, size);
-+			if (!p)
- 				pr_err("Error allocating buffer %p\n", data);
- 			else
- 				list_replace(&iter->plist, &p->plist);
-@@ -196,24 +196,25 @@ static void save_microcode_patch(void *data, unsigned int size)
- 	 * newly found.
- 	 */
- 	if (!prev_found) {
--		p = __alloc_microcode_buf(data, size);
--		if (IS_ERR(p))
-+		p = memdup_patch(data, size);
-+		if (!p)
- 			pr_err("Error allocating buffer for %p\n", data);
- 		else
- 			list_add_tail(&p->plist, &microcode_cache);
- 	}
- 
-+	if (!p)
-+		return;
-+
- 	/*
- 	 * Save for early loading. On 32-bit, that needs to be a physical
- 	 * address as the APs are running from physical addresses, before
- 	 * paging has been enabled.
- 	 */
--	if (p) {
--		if (IS_ENABLED(CONFIG_X86_32))
--			intel_ucode_patch = (struct microcode_intel *)__pa_nodebug(p->data);
--		else
--			intel_ucode_patch = p->data;
--	}
-+	if (IS_ENABLED(CONFIG_X86_32))
-+		intel_ucode_patch = (struct microcode_intel *)__pa_nodebug(p->data);
-+	else
-+		intel_ucode_patch = p->data;
- }
- 
- static int microcode_sanity_check(void *mc, int print_err)
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
