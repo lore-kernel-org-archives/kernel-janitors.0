@@ -1,31 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 11:17:00 +0000
-Subject: Re: scsi: ufs: Delete an error message for a failed memory allocation in ufshcd_memory_alloc()
-Message-Id: <b218274a-da50-4f0c-2e55-cc6d708cef92@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Aug 2017 08:43:51 +0000
+Subject: [PATCH 1/2] rsi: missing unlocks on error paths
+Message-Id: <20170825082645.z2hiotefhzizb7sr@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75622f45-f46c-e52f-2b9e-6ff5ce32184a@users.sourceforge.net>
- <3d355c13-159a-2570-9ead-af93ad95c210@users.sourceforge.net>
- <019b6365c15b0764c156d6453648f7a2@codeaurora.org>
- <1493231242.18659.28.camel@perches.com>
-In-Reply-To: <1493231242.18659.28.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Subhash Jadavani <subhashj@codeaurora.org>, linux-scsi@vger.kernel.org, linux-scsi-owner@vger.kernel.org
-Cc: "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Vinayak Holikatti <vinholikatti@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Karun Eagalapati <karun256@gmail.com>, Andrew Zaborowski <andrew.zaborowski@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> PS: ufshcd_memory_alloc() also does some DMA coherent memory allocation 
->> (via dmam_alloc_coherent() APIs) and tries to print out the message on 
->> allocation failure. Although i don't know "out of memory" messages will 
->> be printed out by dmam_alloc_coherent() APIs or not. If it does print it 
->> out then we might want to remove our local memory allocation failure log 
->> messages.
-> 
-> Basically most everything that has a gfp_t argument does a
-> dump_stack() on OOM unless __GFP_NOWARN is specified by that gfp_t.
+There is a missing unlock if rsi_find_sta() fails in
+rsi_mac80211_ampdu_action() or if we hit the -EINVAL path in
+rsi_mac80211_sta_add().
 
-How do you think about to continue the clarification for this aspect
-of the involved programming interfaces?
+Fixes: 3528608f3a79 ("rsi: handle station connection in AP mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 8b983d03f2da..25331aa16e8e 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -906,7 +906,8 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
+ 		rsta = rsi_find_sta(common, sta->addr);
+ 		if (!rsta) {
+ 			rsi_dbg(ERR_ZONE, "No station mapped\n");
+-			return 0;
++			status = 0;
++			goto unlock;
+ 		}
+ 		sta_id = rsta->sta_id;
+ 	}
+@@ -974,6 +975,7 @@ static int rsi_mac80211_ampdu_action(struct ieee80211_hw *hw,
+ 		break;
+ 	}
+ 
++unlock:
+ 	mutex_unlock(&common->mutex);
+ 	return status;
+ }
+@@ -1202,6 +1204,7 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
+ 	struct rsi_common *common = adapter->priv;
+ 	bool sta_exist = false;
+ 	struct rsi_sta *rsta;
++	int status = 0;
+ 
+ 	rsi_dbg(INFO_ZONE, "Station Add: %pM\n", sta->addr);
+ 
+@@ -1215,8 +1218,8 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
+ 		/* Check if max stations reached */
+ 		if (common->num_stations >= common->max_stations) {
+ 			rsi_dbg(ERR_ZONE, "Reject: Max Stations exists\n");
+-			mutex_unlock(&common->mutex);
+-			return -EOPNOTSUPP;
++			status = -EOPNOTSUPP;
++			goto unlock;
+ 		}
+ 		for (cnt = 0; cnt < common->max_stations; cnt++) {
+ 			rsta = &common->stations[cnt];
+@@ -1241,7 +1244,8 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Some problem reaching here...\n",
+ 				__func__);
+-			return -EINVAL;
++			status = -EINVAL;
++			goto unlock;
+ 		}
+ 		rsta = &common->stations[sta_idx];
+ 		rsta->sta = sta;
+@@ -1289,9 +1293,10 @@ static int rsi_mac80211_sta_add(struct ieee80211_hw *hw,
+ 		}
+ 	}
+ 
++unlock:
+ 	mutex_unlock(&common->mutex);
+ 
+-	return 0;
++	return status;
+ }
+ 
+ /**
