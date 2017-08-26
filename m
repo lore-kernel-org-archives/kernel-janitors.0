@@ -1,82 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 20:57:38 +0000
-Subject: [PATCH 4/4] w1-masters: Improve a size determination in four functions
-Message-Id: <1ed286dc-aa2f-8b84-e0d5-ed2f43faaa27@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 19:26:44 +0000
+Subject: [PATCH] sbus: Delete an error message for a failed memory allocation in uctrl_probe()
+Message-Id: <f53e3426-14b4-dceb-6599-1d15f3eeee84@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
-In-Reply-To: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 21:53:21 +0200
+Date: Sat, 26 Aug 2017 21:21:33 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/w1/masters/ds2482.c  | 3 ++-
- drivers/w1/masters/ds2490.c  | 2 +-
- drivers/w1/masters/mxc_w1.c  | 3 +--
- drivers/w1/masters/w1-gpio.c | 3 +--
- 4 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/sbus/char/uctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/w1/masters/ds2482.c b/drivers/w1/masters/ds2482.c
-index d49681cd29af..7c3e25108285 100644
---- a/drivers/w1/masters/ds2482.c
-+++ b/drivers/w1/masters/ds2482.c
-@@ -451,7 +451,8 @@ static int ds2482_probe(struct i2c_client *client,
- 				     I2C_FUNC_SMBUS_BYTE))
- 		return -ENODEV;
+diff --git a/drivers/sbus/char/uctrl.c b/drivers/sbus/char/uctrl.c
+index 0a5013350acd..f3b9f7e87ffa 100644
+--- a/drivers/sbus/char/uctrl.c
++++ b/drivers/sbus/char/uctrl.c
+@@ -352,10 +352,8 @@ static int uctrl_probe(struct platform_device *op)
+ 	int err = -ENOMEM;
  
--	if (!(data = kzalloc(sizeof(struct ds2482_data), GFP_KERNEL))) {
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data) {
- 		err = -ENOMEM;
- 		goto exit;
- 	}
-diff --git a/drivers/w1/masters/ds2490.c b/drivers/w1/masters/ds2490.c
-index c0ee6ca9ce93..1e5b81490ffe 100644
---- a/drivers/w1/masters/ds2490.c
-+++ b/drivers/w1/masters/ds2490.c
-@@ -994,5 +994,5 @@ static int ds_probe(struct usb_interface *intf,
- 	struct ds_device *dev;
- 	int i, err, alt;
+ 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+-	if (!p) {
+-		printk(KERN_ERR "uctrl: Unable to allocate device struct.\n");
++	if (!p)
+ 		goto out;
+-	}
  
--	dev = kzalloc(sizeof(struct ds_device), GFP_KERNEL);
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
-diff --git a/drivers/w1/masters/mxc_w1.c b/drivers/w1/masters/mxc_w1.c
-index 74f2e6e6202a..40a34942d07f 100644
---- a/drivers/w1/masters/mxc_w1.c
-+++ b/drivers/w1/masters/mxc_w1.c
-@@ -103,6 +103,5 @@ static int mxc_w1_probe(struct platform_device *pdev)
- 	unsigned int clkdiv;
- 	int err;
- 
--	mdev = devm_kzalloc(&pdev->dev, sizeof(struct mxc_w1_device),
--			    GFP_KERNEL);
-+	mdev = devm_kzalloc(&pdev->dev, sizeof(*mdev), GFP_KERNEL);
- 	if (!mdev)
-diff --git a/drivers/w1/masters/w1-gpio.c b/drivers/w1/masters/w1-gpio.c
-index 6e8b18bf9fb1..a92eb1407f0f 100644
---- a/drivers/w1/masters/w1-gpio.c
-+++ b/drivers/w1/masters/w1-gpio.c
-@@ -128,6 +128,5 @@ static int w1_gpio_probe(struct platform_device *pdev)
- 		return -ENXIO;
- 	}
- 
--	master = devm_kzalloc(&pdev->dev, sizeof(struct w1_bus_master),
--			GFP_KERNEL);
-+	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
- 	if (!master)
+ 	p->regs = of_ioremap(&op->resource[0], 0,
+ 			     resource_size(&op->resource[0]),
 -- 
 2.14.0
 
