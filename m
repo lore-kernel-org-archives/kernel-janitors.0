@@ -1,60 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 11:14:30 +0000
-Subject: [PATCH 1/3] [media] Siano: Delete an error message for a failed memory allocation in three functions
-Message-Id: <11f54f52-6ba0-3432-0544-b71cd3d36b74@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 16:30:22 +0000
+Subject: [PATCH] staging: fsl-mc: Delete an error message for a failed memory allocation in fsl_mc_resource_p
+Message-Id: <58deeae8-09e7-d5d6-63c7-65c6aee6850c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
-In-Reply-To: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Stuart Yoder <stuyoder@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 12:30:11 +0200
+Date: Sat, 26 Aug 2017 18:23:52 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/common/siano/smscoreapi.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/staging/fsl-mc/bus/fsl-mc-allocator.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index e7a0d7798d5b..889b486fbc72 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -1304,7 +1304,5 @@ static int smscore_init_device(struct smscore_device_t *coredev, int mode)
--	if (!buffer) {
--		pr_err("Could not allocate buffer for init device message.\n");
-+	if (!buffer)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
+index b37a6f48225f..53312e32d94a 100644
+--- a/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
++++ b/drivers/staging/fsl-mc/bus/fsl-mc-allocator.c
+@@ -66,8 +66,6 @@ static int __must_check fsl_mc_resource_pool_add_device(struct fsl_mc_bus
+ 				GFP_KERNEL);
+ 	if (!resource) {
+ 		error = -ENOMEM;
+-		dev_err(&mc_bus_dev->dev,
+-			"Failed to allocate memory for fsl_mc_resource\n");
+ 		goto out_unlock;
+ 	}
  
- 	msg = (struct sms_msg_data *)SMS_ALIGN_ADDRESS(buffer);
- 	SMS_INIT_MSG(&msg->x_msg_header, MSG_SMS_INIT_DEVICE_REQ,
-@@ -1690,7 +1688,6 @@ static int smscore_validate_client(struct smscore_device_t *coredev,
--	if (!listentry) {
--		pr_err("Can't allocate memory for client id.\n");
-+	if (!listentry)
- 		return -ENOMEM;
--	}
-+
- 	listentry->id = id;
- 	listentry->data_type = data_type;
- 	list_add_locked(&listentry->entry, &client->idlist,
-@@ -1728,7 +1725,5 @@ int smscore_register_client(struct smscore_device_t *coredev,
--	if (!newclient) {
--		pr_err("Failed to allocate memory for client.\n");
-+	if (!newclient)
- 		return -ENOMEM;
--	}
- 
- 	INIT_LIST_HEAD(&newclient->idlist);
- 	newclient->coredev = coredev;
 -- 
-2.14.1
+2.14.0
 
