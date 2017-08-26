@@ -1,49 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 14:26:23 +0000
-Subject: [PATCH] ASoC: compress: Delete error messages for a failed memory allocation in snd_soc_new_compress
-Message-Id: <f9abf5ea-0284-ba87-9f22-2111d8631dfa@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 26 Aug 2017 06:02:55 +0000
+Subject: [PATCH 1/3] staging: lustre: obdclass: return -EFAULT if copy_to_user() fails
+Message-Id: <20170826060255.tf4vnkfd4e2rey45@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: lustre-devel@lists.lustre.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 16:21:34 +0200
+We recently changed from using obd_ioctl_popdata() to calling
+copy_to_user() directly.  This if statement was supposed to be deleted
+but it was over looked.  "err" is zero at this point so it means we
+return success.
 
-Omit extra messages for a memory allocation failure in this function.
+Fixes: b03679f6a41a ("staging: lustre: uapi: remove obd_ioctl_popdata() wrapper")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/soc-compress.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
-index 206f36bf43e8..6c867d50e036 100644
---- a/sound/soc/soc-compress.c
-+++ b/sound/soc/soc-compress.c
-@@ -764,15 +764,12 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
- 		direction = SND_COMPRESS_CAPTURE;
+diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers/staging/lustre/lustre/obdclass/class_obd.c
+index 57c84e8e1d8e..8ad3adb2ceb1 100644
+--- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
++++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
+@@ -262,7 +262,6 @@ int class_handle_ioctl(unsigned int cmd, unsigned long arg)
+ 		       dev);
  
- 	compr = kzalloc(sizeof(*compr), GFP_KERNEL);
--	if (compr = NULL) {
--		snd_printk(KERN_ERR "Cannot allocate compr\n");
-+	if (!compr)
- 		return -ENOMEM;
--	}
- 
- 	compr->ops = devm_kzalloc(rtd->card->dev, sizeof(soc_compr_ops),
- 				  GFP_KERNEL);
--	if (compr->ops = NULL) {
--		dev_err(rtd->card->dev, "Cannot allocate compressed ops\n");
-+	if (!compr->ops) {
- 		ret = -ENOMEM;
- 		goto compr_err;
+ 		if (copy_to_user((void __user *)arg, data, sizeof(*data)))
+-		if (err)
+ 			err = -EFAULT;
+ 		goto out;
  	}
--- 
-2.14.0
-
