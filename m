@@ -1,56 +1,50 @@
-From: Rick Chang <rick.chang@mediatek.com>
-Date: Mon, 07 Aug 2017 02:42:05 +0000
-Subject: Re: [PATCH 05/12] [media] vcodec: mediatek: constify v4l2_m2m_ops structures
-Message-Id: <1502073725.2886.2.camel@mtksdaap41>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 18:33:11 +0000
+Subject: [PATCH] pinctrl: Delete an error message for a failed memory allocation in two functions
+Message-Id: <eb8e1ba3-f9f3-a780-73cc-4be7eb7145e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502007921-22968-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 2017-08-06 at 10:25 +0200, Julia Lawall wrote:
-> The v4l2_m2m_ops structures are only passed as the only
-> argument to v4l2_m2m_init, which is declared as const.
-> Thus the v4l2_m2m_ops structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct v4l2_m2m_ops i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> position p;
-> @@
-> v4l2_m2m_init(&i@p)
-> 
-> @bad@
-> position p != {r.p,ok1.p};
-> identifier r.i;
-> struct v4l2_m2m_ops e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct v4l2_m2m_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 20:30:04 +0200
+
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
->  drivers/media/platform/mtk-jpeg/mtk_jpeg_core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/devicetree.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Acked-by: Rick Chang <rick.chang@mediatek.com>
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 0e5c9f14a706..8ca8925b685d 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -83,7 +83,6 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 	/* Remember the converted mapping table entries */
+ 	dt_map = kzalloc(sizeof(*dt_map), GFP_KERNEL);
+ 	if (!dt_map) {
+-		dev_err(p->dev, "failed to alloc struct pinctrl_dt_map\n");
+ 		dt_free_map(pctldev, map, num_maps);
+ 		return -ENOMEM;
+ 	}
+@@ -158,10 +157,8 @@ static int dt_remember_dummy_state(struct pinctrl *p, const char *statename)
+ 	struct pinctrl_map *map;
+ 
+ 	map = kzalloc(sizeof(*map), GFP_KERNEL);
+-	if (!map) {
+-		dev_err(p->dev, "failed to alloc struct pinctrl_map\n");
++	if (!map)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* There is no pctldev for PIN_MAP_TYPE_DUMMY_STATE */
+ 	map->type = PIN_MAP_TYPE_DUMMY_STATE;
+-- 
+2.14.0
 
