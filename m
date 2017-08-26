@@ -1,24 +1,48 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 07 Aug 2017 10:23:36 +0000
-Subject: Re: [PATCH 03/12] [media] s5p-g2d: constify v4l2_m2m_ops structures
-Message-Id: <bc93fea6-89fb-25c3-ce97-9e8c17d13ac8@samsung.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 26 Aug 2017 05:49:52 +0000
+Subject: [PATCH] iio: multiplexer: check memory allocation failure
+Message-Id: <20170826054952.1449-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502007921-22968-4-git-send-email-Julia.Lawall@lip6.fr>
- <CGME20170807102341epcas2p2da8478bd73ca0678071912323830e456@epcas2p2.samsung.com>
-In-Reply-To: <1502007921-22968-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: peda@axentia.se, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 08/06/2017 10:25 AM, Julia Lawall wrote:
-> The v4l2_m2m_ops structures are only passed as the only
-> argument to v4l2_m2m_init, which is declared as const.
-> Thus the v4l2_m2m_ops structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
+Check memory allocation failures and return -ENOMEM in such cases, as
+already done few lines above for another memory allocation.
 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This avoids NULL pointers dereference.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/multiplexer/iio-mux.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
+index 37ba007f8dca..74831fcd0313 100644
+--- a/drivers/iio/multiplexer/iio-mux.c
++++ b/drivers/iio/multiplexer/iio-mux.c
+@@ -285,6 +285,9 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
+ 	child->ext_info_cache = devm_kzalloc(dev,
+ 					     sizeof(*child->ext_info_cache) *
+ 					     num_ext_info, GFP_KERNEL);
++	if (!child->ext_info_cache)
++		return -ENOMEM;
++
+ 	for (i = 0; i < num_ext_info; ++i) {
+ 		child->ext_info_cache[i].size = -1;
+ 
+@@ -309,6 +312,9 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
+ 
+ 		child->ext_info_cache[i].data = devm_kmemdup(dev, page, ret + 1,
+ 							     GFP_KERNEL);
++		if (!child->ext_info_cache[i].data)
++			return -ENOMEM;
++
+ 		child->ext_info_cache[i].data[ret] = 0;
+ 		child->ext_info_cache[i].size = ret;
+ 	}
+-- 
+2.11.0
+
