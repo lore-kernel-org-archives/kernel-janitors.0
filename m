@@ -1,39 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 15:10:10 +0000
-Subject: [PATCH 3/5] ASoC: codecs: es8316: constify snd_soc_dai_ops structures
-Message-Id: <1502809812-13891-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 16:54:04 +0000
+Subject: [PATCH] staging: netlogic: Delete an error message for a failed memory allocation in xlr_config_spil
+Message-Id: <7e6515bc-09ba-6b2a-ea64-433cc3befe6c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, bhumirks@gmail.com
+To: devel@driverdev.osuosl.org, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Mihaela Muraru <mihaela.muraru21@gmail.com>, Mike Kofron <mpkofron@gmail.com>, Philippe Reynes <tremyfr@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Tobias Klauser <tklauser@distanz.ch>, Yuval Shaia <yuval.shaia@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 18:44:12 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/es8316.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/netlogic/xlr_net.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index 4f35af6..da2d353 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -502,7 +502,7 @@ static int es8316_mute(struct snd_soc_dai *dai, int mute)
- #define ES8316_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | \
- 			SNDRV_PCM_FMTBIT_S24_LE)
+diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
+index e05ae4645d91..04cdcf3f329f 100644
+--- a/drivers/staging/netlogic/xlr_net.c
++++ b/drivers/staging/netlogic/xlr_net.c
+@@ -423,10 +423,8 @@ static void *xlr_config_spill(struct xlr_net_priv *priv, int reg_start_0,
+ 	base = priv->base_addr;
+ 	spill_size = size;
+ 	spill = kmalloc(spill_size + SMP_CACHE_BYTES, GFP_ATOMIC);
+-	if (!spill) {
+-		pr_err("Unable to allocate memory for spill area!\n");
++	if (!spill)
+ 		return ZERO_SIZE_PTR;
+-	}
  
--static struct snd_soc_dai_ops es8316_ops = {
-+static const struct snd_soc_dai_ops es8316_ops = {
- 	.startup = es8316_pcm_startup,
- 	.hw_params = es8316_pcm_hw_params,
- 	.set_fmt = es8316_set_dai_fmt,
+ 	spill = PTR_ALIGN(spill, SMP_CACHE_BYTES);
+ 	phys_addr = virt_to_phys(spill);
+-- 
+2.14.0
 
