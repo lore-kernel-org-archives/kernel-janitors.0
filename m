@@ -1,67 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:17 +0000
-Subject: [PATCH 08/12] [media] m2m-deinterlace: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 26 Aug 2017 06:04:18 +0000
+Subject: [PATCH 2/3] staging: lustre: obdclass: return -EFAULT if copy_from_user() fails
+Message-Id: <20170826060418.quvhtwbayenb7a5j@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lustre-devel@lists.lustre.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+The copy_from_user() function returns the number of bytes which we
+weren't able to copy.  We don't want to return that to the user but
+instead we want to return -EFAULT.
 
-Done with the help of Coccinelle.
+Fixes: d7e09d0397e8 ("staging: add Lustre file system client support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
-
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/platform/m2m-deinterlace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platform/m2m-deinterlace.c
-index 980066b..98f6db2 100644
---- a/drivers/media/platform/m2m-deinterlace.c
-+++ b/drivers/media/platform/m2m-deinterlace.c
-@@ -988,7 +988,7 @@ static int deinterlace_mmap(struct file *file, struct vm_area_struct *vma)
- 	.vfl_dir	= VFL_DIR_M2M,
- };
- 
--static struct v4l2_m2m_ops m2m_ops = {
-+static const struct v4l2_m2m_ops m2m_ops = {
- 	.device_run	= deinterlace_device_run,
- 	.job_ready	= deinterlace_job_ready,
- 	.job_abort	= deinterlace_job_abort,
-
+diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers/staging/lustre/lustre/obdclass/class_obd.c
+index 57c84e8e1d8e..545358923271 100644
+--- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
++++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
+@@ -180,7 +180,8 @@ int class_handle_ioctl(unsigned int cmd, unsigned long arg)
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+-		err = copy_from_user(lcfg, data->ioc_pbuf1, data->ioc_plen1);
++		if (copy_from_user(lcfg, data->ioc_pbuf1, data->ioc_plen1))
++			err = -EFAULT;
+ 		if (!err)
+ 			err = lustre_cfg_sanity_check(lcfg, data->ioc_plen1);
+ 		if (!err)
