@@ -1,81 +1,38 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Thu, 17 Aug 2017 12:58:57 +0000
-Subject: Re: [PATCH 03/11] mtd: physmap_of: Drop unnecessary static
-Message-Id: <20170817145857.27c27585@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 18:20:16 +0000
+Subject: [PATCH] pinctrl: core: Delete an error message for a failed memory allocation in pinctrl_register_ma
+Message-Id: <31e88aa1-83b1-586b-447b-94ffc122567f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
- <1500149266-32357-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: David Woodhouse <dwmw2@infradead.org>, keescook@chromium.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Le Sat, 15 Jul 2017 22:07:38 +0200,
-Julia Lawall <Julia.Lawall@lip6.fr> a =C3=A9crit :
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 20:15:21 +0200
 
-> Drop static on a local variable, when the variable is initialized before
-> any possible use.  Thus, the static has no benefit.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> static T x@p;
-> ...
-> x =3D <+...x...+>
->=20
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p !=3D bad.p;
-> @@
-> -static
->  T x@p;
->  ... when !=3D x
->      when strict
-> ?x =3D e;
-> // </smpl>
->=20
+Omit an extra message for a memory allocation failure in this function.
 
-Applied to l2-mtd/master.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Boris
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index c5e2c5705058..350f8962831e 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1380,7 +1380,6 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
+ 		maps_node->maps = kmemdup(maps, sizeof(*maps) * num_maps,
+ 					  GFP_KERNEL);
+ 		if (!maps_node->maps) {
+-			pr_err("failed to duplicate mapping table\n");
+ 			kfree(maps_node);
+ 			return -ENOMEM;
+ 		}
+-- 
+2.14.0
 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
-> These patches are all independent of each other.
->=20
->  drivers/mtd/maps/physmap_of_versatile.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff -u -p a/drivers/mtd/maps/physmap_of_versatile.c b/drivers/mtd/maps/p=
-hysmap_of_versatile.c
-> --- a/drivers/mtd/maps/physmap_of_versatile.c
-> +++ b/drivers/mtd/maps/physmap_of_versatile.c
-> @@ -97,7 +97,7 @@ static const struct of_device_id ebi_mat
->  static int ap_flash_init(struct platform_device *pdev)
->  {
->  	struct device_node *ebi;
-> -	static void __iomem *ebi_base;
-> +	void __iomem *ebi_base;
->  	u32 val;
->  	int ret;
-> =20
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
