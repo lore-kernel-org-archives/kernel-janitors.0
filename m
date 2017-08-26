@@ -1,61 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 10 Aug 2017 10:06:27 +0000
-Subject: [PATCH 15/17] pinctrl: tz1090: constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
-Message-Id: <1502359589-15970-16-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 20:44:43 +0000
+Subject: [PATCH 1/3] [media] usbvision: Delete an error message for a failed memory allocation in usbvision_p
+Message-Id: <edf82b37-bbc4-5a8d-ae51-6c13902dbf4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
+In-Reply-To: <f72f836e-6cab-8b79-9d87-a79bd62be174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These structures are only stored in fields of a pinctrl_desc
-structure (confops, pctlops, and pmxops) that are const. Make the
-structures const as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Aug 2017 22:06:05 +0200
 
-Done with the help of Coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/media/usb/usbvision/usbvision-video.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-This seems to target the metag architecture for which I don't know how to
-compile.
-
- drivers/pinctrl/pinctrl-tz1090.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
-index 04cbe53..74d1ffc 100644
---- a/drivers/pinctrl/pinctrl-tz1090.c
-+++ b/drivers/pinctrl/pinctrl-tz1090.c
-@@ -1201,7 +1201,7 @@ static int tz1090_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinctrl_ops tz1090_pinctrl_ops = {
-+static const struct pinctrl_ops tz1090_pinctrl_ops = {
- 	.get_groups_count	= tz1090_pinctrl_get_groups_count,
- 	.get_group_name		= tz1090_pinctrl_get_group_name,
- 	.get_group_pins		= tz1090_pinctrl_get_group_pins,
-@@ -1513,7 +1513,7 @@ static void tz1090_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
- 	tz1090_pinctrl_gpio_select(pmx, pin, false);
- }
- 
--static struct pinmux_ops tz1090_pinmux_ops = {
-+static const struct pinmux_ops tz1090_pinmux_ops = {
- 	.get_functions_count	= tz1090_pinctrl_get_funcs_count,
- 	.get_function_name	= tz1090_pinctrl_get_func_name,
- 	.get_function_groups	= tz1090_pinctrl_get_func_groups,
-@@ -1920,7 +1920,7 @@ static int tz1090_pinconf_group_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static struct pinconf_ops tz1090_pinconf_ops = {
-+static const struct pinconf_ops tz1090_pinconf_ops = {
- 	.is_generic			= true,
- 	.pin_config_get			= tz1090_pinconf_get,
- 	.pin_config_set			= tz1090_pinconf_set,
+diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
+index 756322c4ac05..b74fb2dcb6f5 100644
+--- a/drivers/media/usb/usbvision/usbvision-video.c
++++ b/drivers/media/usb/usbvision/usbvision-video.c
+@@ -1498,4 +1498,3 @@ static int usbvision_probe(struct usb_interface *intf,
+-		dev_err(&intf->dev, "usbvision: out of memory!\n");
+ 		ret = -ENOMEM;
+ 		goto err_pkt;
+ 	}
+-- 
+2.14.0
 
