@@ -1,37 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 16:02:11 +0000
-Subject: [PATCH 06/14] vme: fake: Delete an error message for a failed memory allocation in fake_init()
-Message-Id: <a91df26c-5147-0177-2275-aea18f95cd5b@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 27 Aug 2017 13:37:32 +0000
+Subject: Applied "ASoC: davinci-mcasp: check memory allocation failure" to the asoc tree
+Message-Id: <20170827133732.BF3E34400E7@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
-In-Reply-To: <7ab4be89-4aa6-5537-9839-da090635f249@users.sourceforge.net>
+References: <20170827064650.7562-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170827064650.7562-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Aaron Sierra <asierra@xes-inc.com>, Alessio Igor Bogani <alessio.bogani@elettra.eu>, Arnd Bergmann <arnd@arndb.de>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Baoyou Xie <baoyou.xie@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, Martyn Welch <martyn@welchs.me.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, tiwai@suse.com, lgirdwood@gmail.com, peter.ujfalusi@ti.com, broonie@kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Aug 2017 09:31:46 +0200
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: davinci-mcasp: check memory allocation failure
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 4243e0457c9b1fe5e96fba19296469466eb24b1d Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Sun, 27 Aug 2017 08:46:50 +0200
+Subject: [PATCH] ASoC: davinci-mcasp: check memory allocation failure
+
+Check memory allocation failures and return -ENOMEM in such cases, as
+already done above for another memory allocation.
+
+This avoids NULL pointers dereference.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/vme/bridges/vme_fake.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/davinci/davinci-mcasp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/vme/bridges/vme_fake.c b/drivers/vme/bridges/vme_fake.c
-index 30b3acc93833..6ceea5e9fd8b 100644
---- a/drivers/vme/bridges/vme_fake.c
-+++ b/drivers/vme/bridges/vme_fake.c
-@@ -1159,4 +1159,3 @@ static int __init fake_init(void)
--		pr_err("Failed to allocate memory for location monitor resource structure\n");
- 		retval = -ENOMEM;
- 		goto err_lm;
- 	}
+diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
+index d486908d4e0e..f395bbc7c354 100644
+--- a/sound/soc/davinci/davinci-mcasp.c
++++ b/sound/soc/davinci/davinci-mcasp.c
+@@ -1851,6 +1851,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 	mcasp->context.xrsr_regs = devm_kzalloc(&pdev->dev,
+ 					sizeof(u32) * mcasp->num_serializer,
+ 					GFP_KERNEL);
++	if (!mcasp->context.xrsr_regs) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ #endif
+ 	mcasp->serial_dir = pdata->serial_dir;
+ 	mcasp->version = pdata->version;
 -- 
-2.14.0
+2.13.2
 
