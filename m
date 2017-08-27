@@ -1,43 +1,44 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 04 Aug 2017 19:11:15 +0000
-Subject: Re: [PATCH] IB/hns: checking for IS_ERR() instead of NULL
-Message-Id: <1501873875.79618.11.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Aug 2017 20:10:08 +0000
+Subject: [PATCH] leds-PowerNV: Delete an error message for a failed memory allocation in powernv_led_create()
+Message-Id: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170804081208.qkkj3yons7ljccjp@mwanda>
-In-Reply-To: <20170804081208.qkkj3yons7ljccjp@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Shaobo Xu <xushaobo2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: "Wei Hu(Xavier)" <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 2017-08-04 at 11:12 +0300, Dan Carpenter wrote:
-> The hns_roce_v1_create_lp_qp() returns NULL on error, not error
-> pointers.
-> 
-> Fixes: bfcc681bd09d ("IB/hns: Fix the bug when free mr")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-> b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-> index 38f5c77baabf..747efd1ae5a6 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-> @@ -733,7 +733,7 @@ static int hns_roce_v1_rsv_lp_qp(struct
-> hns_roce_dev *hr_dev)
->  			continue;
->  
->  		free_mr->mr_free_qp[i] > hns_roce_v1_create_lp_qp(hr_dev, pd);
-> -		if (IS_ERR(free_mr->mr_free_qp[i])) {
-> +		if (!free_mr->mr_free_qp[i]) {
->  			dev_err(dev, "Create loop qp failed!\n");
->  			goto create_lp_qp_failed;
->  		}
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Aug 2017 22:00:22 +0200
 
-Thanks, applied.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/leds/leds-powernv.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index b2a98c7b521b..b1adbd70ce2e 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -224,12 +224,8 @@ static int powernv_led_create(struct device *dev,
+ 	powernv_led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
+ 						powernv_led->loc_code,
+ 						led_type_desc);
+-	if (!powernv_led->cdev.name) {
+-		dev_err(dev,
+-			"%s: Memory allocation failed for classdev name\n",
+-			__func__);
++	if (!powernv_led->cdev.name)
+ 		return -ENOMEM;
+-	}
+ 
+ 	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
+ 	powernv_led->cdev.brightness_get = powernv_brightness_get;
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.14.1
 
