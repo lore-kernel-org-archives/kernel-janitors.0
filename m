@@ -1,22 +1,37 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 23 Aug 2017 14:36:14 +0000
-Subject: Re: [PATCH] skd: Uninitialized variable in skd_isr_completion_posted()
-Message-Id: <ed05cb0e-4dd8-fdbe-3a9c-6edcb5e5f9d2@kernel.dk>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 27 Aug 2017 06:39:51 +0000
+Subject: [PATCH] igb: check memory allocation failure
+Message-Id: <20170827063951.5975-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170823104048.w4vdvlp72ug5ackq@mwanda>
-In-Reply-To: <20170823104048.w4vdvlp72ug5ackq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bart Van Assche <bart.vanassche@wdc.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jeffrey.t.kirsher@intel.com
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 08/23/2017 04:44 AM, Dan Carpenter wrote:
-> Someone got too agressive about removing initializations and
-> accidentally removed the "rc = 0;" which is required.
+Check memory allocation failures and return -ENOMEM in such cases, as
+already done for other memory allocations in this function.
 
-Thanks Dan, applied.
+This avoids NULL pointers dereference.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index fd4a46b03cc8..837d9b46a390 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -3162,6 +3162,8 @@ static int igb_sw_init(struct igb_adapter *adapter)
+ 	/* Setup and initialize a copy of the hw vlan table array */
+ 	adapter->shadow_vfta = kcalloc(E1000_VLAN_FILTER_TBL_SIZE, sizeof(u32),
+ 				       GFP_ATOMIC);
++	if (!adapter->shadow_vfta)
++		return -ENOMEM;
+ 
+ 	/* This call may decrease the number of queues */
+ 	if (igb_init_interrupt_scheme(adapter, true)) {
 -- 
-Jens Axboe
+2.11.0
 
