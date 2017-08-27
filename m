@@ -1,55 +1,42 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Date: Mon, 28 Aug 2017 20:23:38 +0000
-Subject: Re: [PATCH] leds-PowerNV: Delete an error message for a failed memory allocation in powernv_led_crea
-Message-Id: <d45c4034-1bb9-e812-8853-e56cf6f128de@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Aug 2017 19:25:35 +0000
+Subject: [PATCH] connector: Delete an error message for a failed memory allocation in cn_queue_alloc_callback
+Message-Id: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
-In-Reply-To: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
+To: netdev@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Aug 2017 21:18:37 +0200
 
-Thanks for the patch.
+Omit an extra message for a memory allocation failure in this function.
 
-On 08/27/2017 10:10 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 27 Aug 2017 22:00:22 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/leds/leds-powernv.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
-> index b2a98c7b521b..b1adbd70ce2e 100644
-> --- a/drivers/leds/leds-powernv.c
-> +++ b/drivers/leds/leds-powernv.c
-> @@ -224,12 +224,8 @@ static int powernv_led_create(struct device *dev,
->  	powernv_led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
->  						powernv_led->loc_code,
->  						led_type_desc);
-> -	if (!powernv_led->cdev.name) {
-> -		dev_err(dev,
-> -			"%s: Memory allocation failed for classdev name\n",
-> -			__func__);
-> +	if (!powernv_led->cdev.name)
->  		return -ENOMEM;
-> -	}
->  
->  	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
->  	powernv_led->cdev.brightness_get = powernv_brightness_get;
-> 
+This issue was detected by using the Coccinelle software.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/connector/cn_queue.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/connector/cn_queue.c b/drivers/connector/cn_queue.c
+index 1f8bf054d11c..e4f31d679f02 100644
+--- a/drivers/connector/cn_queue.c
++++ b/drivers/connector/cn_queue.c
+@@ -40,10 +40,8 @@ cn_queue_alloc_callback_entry(struct cn_queue_dev *dev, const char *name,
+ 	struct cn_callback_entry *cbq;
+ 
+ 	cbq = kzalloc(sizeof(*cbq), GFP_KERNEL);
+-	if (!cbq) {
+-		pr_err("Failed to create new callback queue.\n");
++	if (!cbq)
+ 		return NULL;
+-	}
+ 
+ 	atomic_set(&cbq->refcnt, 1);
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.14.1
+
