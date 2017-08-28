@@ -1,35 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 11:56:37 +0000
-Subject: [PATCH 0/5] net/9p: Fine-tuning for some function implementations
-Message-Id: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 11:14:30 +0000
+Subject: [PATCH 1/3] [media] Siano: Delete an error message for a failed memory allocation in three functions
+Message-Id: <11f54f52-6ba0-3432-0544-b71cd3d36b74@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
+In-Reply-To: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 13:43:21 +0200
+Date: Mon, 28 Aug 2017 12:30:11 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (5):
-  Delete an error message for a failed memory allocation in five functions
-  Improve 19 size determinations
-  Add a jump target in p9_client_walk()
-  Adjust a jump target in p9_client_attach()
-  Delete an unnecessary variable initialisation in p9_client_attach()
+This issue was detected by using the Coccinelle software.
 
- net/9p/client.c       | 51 +++++++++++++++++++++------------------------------
- net/9p/protocol.c     |  6 +++---
- net/9p/trans_fd.c     | 16 +++++++---------
- net/9p/trans_rdma.c   |  8 +++-----
- net/9p/trans_virtio.c |  6 ++----
- net/9p/util.c         |  2 +-
- 6 files changed, 37 insertions(+), 52 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/common/siano/smscoreapi.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
+index e7a0d7798d5b..889b486fbc72 100644
+--- a/drivers/media/common/siano/smscoreapi.c
++++ b/drivers/media/common/siano/smscoreapi.c
+@@ -1304,7 +1304,5 @@ static int smscore_init_device(struct smscore_device_t *coredev, int mode)
+-	if (!buffer) {
+-		pr_err("Could not allocate buffer for init device message.\n");
++	if (!buffer)
+ 		return -ENOMEM;
+-	}
+ 
+ 	msg = (struct sms_msg_data *)SMS_ALIGN_ADDRESS(buffer);
+ 	SMS_INIT_MSG(&msg->x_msg_header, MSG_SMS_INIT_DEVICE_REQ,
+@@ -1690,7 +1688,6 @@ static int smscore_validate_client(struct smscore_device_t *coredev,
+-	if (!listentry) {
+-		pr_err("Can't allocate memory for client id.\n");
++	if (!listentry)
+ 		return -ENOMEM;
+-	}
++
+ 	listentry->id = id;
+ 	listentry->data_type = data_type;
+ 	list_add_locked(&listentry->entry, &client->idlist,
+@@ -1728,7 +1725,5 @@ int smscore_register_client(struct smscore_device_t *coredev,
+-	if (!newclient) {
+-		pr_err("Failed to allocate memory for client.\n");
++	if (!newclient)
+ 		return -ENOMEM;
+-	}
+ 
+ 	INIT_LIST_HEAD(&newclient->idlist);
+ 	newclient->coredev = coredev;
 -- 
-2.14.0
+2.14.1
 
