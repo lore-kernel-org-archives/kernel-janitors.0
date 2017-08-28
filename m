@@ -1,39 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 15 Aug 2017 15:10:08 +0000
-Subject: [PATCH 1/5] ASoC: blackfin: constify snd_soc_dai_ops structures
-Message-Id: <1502809812-13891-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 11:13:21 +0000
+Subject: [PATCH 0/3] [media] Siano: Adjustments for some function implementations
+Message-Id: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502809812-13891-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, adi-buildroot-devel@lists.sourceforge.net, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These snd_soc_dai_ops structures are only stored in the ops field of
-a snd_soc_dai_driver structure, which is const.  Thus, the
-snd_soc_dai_ops structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 12:55:43 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in six functions
+  Adjust five checks for null pointers
 
----
- sound/soc/blackfin/bf6xx-i2s.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/common/siano/smscoreapi.c | 39 ++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
 
-diff --git a/sound/soc/blackfin/bf6xx-i2s.c b/sound/soc/blackfin/bf6xx-i2s.c
-index bd3b4d4..819cff1 100644
---- a/sound/soc/blackfin/bf6xx-i2s.c
-+++ b/sound/soc/blackfin/bf6xx-i2s.c
-@@ -164,7 +164,7 @@ static int bfin_i2s_resume(struct snd_soc_dai *dai)
- #define BFIN_I2S_FORMATS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
- 		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
- 
--static struct snd_soc_dai_ops bfin_i2s_dai_ops = {
-+static const struct snd_soc_dai_ops bfin_i2s_dai_ops = {
- 	.hw_params	= bfin_i2s_hw_params,
- 	.set_fmt	= bfin_i2s_set_dai_fmt,
- };
+-- 
+2.14.1
 
