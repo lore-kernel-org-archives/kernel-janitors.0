@@ -1,52 +1,41 @@
-From: James Simmons <jsimmons@infradead.org>
-Date: Mon, 14 Aug 2017 14:58:57 +0000
-Subject: Re: [PATCH] staging: lustre: lnet: fix incorrect arguments order calling lstcon_session_new
-Message-Id: <alpine.LFD.2.20.1708141556560.14369@casper.infradead.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 10:09:57 +0000
+Subject: [PATCH 1/2] [media] Cypress: Delete an error message for a failed memory allocation in cypress_load_
+Message-Id: <4c7cfbac-b9e5-4ab2-d569-d44cae90678e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170719162036.21621-1-colin.king@canonical.com>
-In-Reply-To: <20170719162036.21621-1-colin.king@canonical.com>
+References: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
+In-Reply-To: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Doug Oucharek <doug.s.oucharek@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 11:46:57 +0200
 
+Omit an extra message for a memory allocation failure in this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The arguments args->lstio_ses_force and args->lstio_ses_timeout are
-> in the incorrect order. Fix this by swapping them around.
-> 
-> Detected by CoverityScan, CID#1226833 ("Arguments in wrong order")
+This issue was detected by using the Coccinelle software.
 
-This patch is being tracked under 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/common/cypress_firmware.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-https://jira.hpdd.intel.com/browse/LU-9869
-
-I pushed the patch into our main test framework which passed testing.
-Just waiting for reviews. Thank you.
+diff --git a/drivers/media/common/cypress_firmware.c b/drivers/media/common/cypress_firmware.c
+index 50e3f76d4847..bfe47bc5f716 100644
+--- a/drivers/media/common/cypress_firmware.c
++++ b/drivers/media/common/cypress_firmware.c
+@@ -78,7 +78,5 @@ int cypress_load_firmware(struct usb_device *udev,
+-	if (!hx) {
+-		dev_err(&udev->dev, "%s: kmalloc() failed\n", KBUILD_MODNAME);
++	if (!hx)
+ 		return -ENOMEM;
+-	}
  
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/lustre/lnet/selftest/conctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
-> index 6ca7192b03b7..043eafb5ea40 100644
-> --- a/drivers/staging/lustre/lnet/selftest/conctl.c
-> +++ b/drivers/staging/lustre/lnet/selftest/conctl.c
-> @@ -69,8 +69,8 @@ lst_session_new_ioctl(struct lstio_session_new_args *args)
->  	rc = lstcon_session_new(name,
->  				args->lstio_ses_key,
->  				args->lstio_ses_feats,
-> -				args->lstio_ses_force,
->  				args->lstio_ses_timeout,
-> +				args->lstio_ses_force,
->  				args->lstio_ses_idp);
->  
->  	LIBCFS_FREE(name, args->lstio_ses_nmlen + 1);
-> -- 
-> 2.11.0
-> 
-> 
+ 	/* stop the CPU */
+ 	hx->data[0] = 1;
+-- 
+2.14.1
+
