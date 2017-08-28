@@ -1,40 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 01 Aug 2017 16:27:29 +0000
-Subject: [PATCH 2/2] Revert "l2tp: constify inet6_protocol structures"
-Message-Id: <1501604849-19443-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 10:12:08 +0000
+Subject: [PATCH 2/2] [media] Cypress: Improve a size determination in cypress_load_firmware()
+Message-Id: <f67848f4-268c-9764-65f5-200a1f569724@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1501604849-19443-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
+In-Reply-To: <f95552e6-edf1-ceed-0c16-c8d23b8309ea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, David Ahern <dsahern@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, bhumirks@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This reverts commit d04916a48ad4a3db892b664fa9c3a2a693c378ad.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 11:55:16 +0200
 
-inet6_add_protocol and inet6_del_protocol include casts that remove the
-effect of the const annotation on their parameter, leading to possible
-runtime crashes.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/media/common/cypress_firmware.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- net/l2tp/l2tp_ip6.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+diff --git a/drivers/media/common/cypress_firmware.c b/drivers/media/common/cypress_firmware.c
+index bfe47bc5f716..8895158c1962 100644
+--- a/drivers/media/common/cypress_firmware.c
++++ b/drivers/media/common/cypress_firmware.c
+@@ -74,7 +74,7 @@ int cypress_load_firmware(struct usb_device *udev,
+ 	struct hexline *hx;
+ 	int ret, pos = 0;
+ 
+-	hx = kmalloc(sizeof(struct hexline), GFP_KERNEL);
++	hx = kmalloc(sizeof(*hx), GFP_KERNEL);
+ 	if (!hx)
+ 		return -ENOMEM;
+ 
+-- 
+2.14.1
 
-diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
-index d2efcd9..88b397c 100644
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -788,7 +788,7 @@ static int l2tp_ip6_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
- 	.ops		= &l2tp_ip6_ops,
- };
- 
--static const struct inet6_protocol l2tp_ip6_protocol = {
-+static struct inet6_protocol l2tp_ip6_protocol __read_mostly = {
- 	.handler	= l2tp_ip6_recv,
- };
- 
