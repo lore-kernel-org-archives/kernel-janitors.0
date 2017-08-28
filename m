@@ -1,48 +1,55 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Mon, 28 Aug 2017 10:18:40 +0000
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Date: Mon, 28 Aug 2017 20:23:38 +0000
 Subject: Re: [PATCH] leds-PowerNV: Delete an error message for a failed memory allocation in powernv_led_crea
-Message-Id: <20170828101840.GD18012@amd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="DrWhICOqskFTAXiy"
+Message-Id: <d45c4034-1bb9-e812-8853-e56cf6f128de@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
 In-Reply-To: <019499e0-68d8-b89d-f5d6-6aefd9cbaf04@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Richard Purdie <rpurdie@rpsys.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+Hi Markus,
 
---DrWhICOqskFTAXiy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch.
 
-On Sun 2017-08-27 22:10:08, SF Markus Elfring wrote:
+On 08/27/2017 10:10 PM, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sun, 27 Aug 2017 22:00:22 +0200
->=20
+> 
 > Omit an extra message for a memory allocation failure in this function.
->=20
+> 
 > This issue was detected by using the Coccinelle software.
->=20
+> 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/leds/leds-powernv.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+> index b2a98c7b521b..b1adbd70ce2e 100644
+> --- a/drivers/leds/leds-powernv.c
+> +++ b/drivers/leds/leds-powernv.c
+> @@ -224,12 +224,8 @@ static int powernv_led_create(struct device *dev,
+>  	powernv_led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
+>  						powernv_led->loc_code,
+>  						led_type_desc);
+> -	if (!powernv_led->cdev.name) {
+> -		dev_err(dev,
+> -			"%s: Memory allocation failed for classdev name\n",
+> -			__func__);
+> +	if (!powernv_led->cdev.name)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
+>  	powernv_led->cdev.brightness_get = powernv_brightness_get;
+> 
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Applied.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---DrWhICOqskFTAXiy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlmj7gAACgkQMOfwapXb+vIpqwCgmGVD09OHXJj/l/3GSX771ol5
-8jAAnAydJgZfNq8MiQ24WhPQXbUaAJIs
-=pfpz
------END PGP SIGNATURE-----
-
---DrWhICOqskFTAXiy--
+-- 
+Best regards,
+Jacek Anaszewski
