@@ -1,43 +1,78 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 23 Aug 2017 14:34:33 +0000
-Subject: [PATCH][next] staging: r8822be: fix memory leak of eeprom_map on error exit return
-Message-Id: <20170823143433.21811-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 11:15:27 +0000
+Subject: [PATCH 2/3] [media] Siano: Improve a size determination in six functions
+Message-Id: <444ee06a-458c-675f-f8ae-a551b32d5d83@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
+In-Reply-To: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 12:38:39 +0200
 
-A memory leak of eeprom_map occurs if the call to halmac_eeprom_parser_88xx
-fails. Fix this by kfree'ing it before returning.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected by CoverityScan, CID#1454569 ("Resource leak")
-Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-driver")
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/common/siano/smscoreapi.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-index fadb35f3ba88..a6c8a87f755f 100644
---- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-+++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
-@@ -1950,8 +1950,10 @@ halmac_dump_logical_efuse_map_88xx(struct halmac_adapter *halmac_adapter,
+diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
+index 889b486fbc72..ad1c41f727b1 100644
+--- a/drivers/media/common/siano/smscoreapi.c
++++ b/drivers/media/common/siano/smscoreapi.c
+@@ -447,5 +447,5 @@ static struct smscore_registry_entry_t *smscore_find_registry(char *devpath)
+ 			return entry;
+ 		}
+ 	}
+-	entry = kmalloc(sizeof(struct smscore_registry_entry_t), GFP_KERNEL);
++	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (entry) {
+@@ -536,7 +536,5 @@ int smscore_register_hotplug(hotplug_t hotplug)
+ 	int rc = 0;
  
- 		if (halmac_eeprom_parser_88xx(halmac_adapter,
- 					      halmac_adapter->hal_efuse_map,
--					      eeprom_map) != HALMAC_RET_SUCCESS)
-+					      eeprom_map) != HALMAC_RET_SUCCESS) {
-+			kfree(eeprom_map);
- 			return HALMAC_RET_EEPROM_PARSING_FAIL;
-+		}
+ 	kmutex_lock(&g_smscore_deviceslock);
+-
+-	notifyee = kmalloc(sizeof(struct smscore_device_notifyee_t),
+-			   GFP_KERNEL);
++	notifyee = kmalloc(sizeof(*notifyee), GFP_KERNEL);
+ 	if (notifyee) {
+@@ -627,5 +625,5 @@ smscore_buffer_t *smscore_createbuffer(u8 *buffer, void *common_buffer,
+ {
+ 	struct smscore_buffer_t *cb;
  
- 		PLATFORM_EVENT_INDICATION(
- 			driver_adapter, HALMAC_FEATURE_DUMP_LOGICAL_EFUSE,
+-	cb = kzalloc(sizeof(struct smscore_buffer_t), GFP_KERNEL);
++	cb = kzalloc(sizeof(*cb), GFP_KERNEL);
+ 	if (!cb)
+@@ -655,5 +653,5 @@ int smscore_register_device(struct smsdevice_params_t *params,
+ 	struct smscore_device_t *dev;
+ 	u8 *buffer;
+ 
+-	dev = kzalloc(sizeof(struct smscore_device_t), GFP_KERNEL);
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+@@ -1684,5 +1682,5 @@ static int smscore_validate_client(struct smscore_device_t *coredev,
+ 		pr_err("The msg ID already registered to another client.\n");
+ 		return -EEXIST;
+ 	}
+-	listentry = kzalloc(sizeof(struct smscore_idlist_t), GFP_KERNEL);
++	listentry = kzalloc(sizeof(*listentry), GFP_KERNEL);
+ 	if (!listentry)
+@@ -1721,5 +1719,5 @@ int smscore_register_client(struct smscore_device_t *coredev,
+ 		return -EEXIST;
+ 	}
+ 
+-	newclient = kzalloc(sizeof(struct smscore_client_t), GFP_KERNEL);
++	newclient = kzalloc(sizeof(*newclient), GFP_KERNEL);
+ 	if (!newclient)
 -- 
 2.14.1
 
