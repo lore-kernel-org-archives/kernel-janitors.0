@@ -1,27 +1,48 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Sat, 05 Aug 2017 23:01:18 +0000
-Subject: Re: [PATCH] ext4: silence array overflow warning
-Message-Id: <20170805230118.5olcshags2qerb6y@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Aug 2017 19:28:35 +0000
+Subject: [bug report] net: hns3: Add MDIO support to HNS3 Ethernet driver for hip08 SoC
+Message-Id: <20170829192449.ndgst5b2anah33vj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170718092702.bpk2k5qjg4cz2mqk@mwanda>
-In-Reply-To: <20170718092702.bpk2k5qjg4cz2mqk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 12:27:02PM +0300, Dan Carpenter wrote:
-> I get a static checker warning:
-> 
->     fs/ext4/ext4.h:3091 ext4_set_de_type()
->     error: buffer overflow 'ext4_type_by_mode' 15 <= 15
-> 
-> It seems unlikely that we would hit this read overflow in real life, but
-> it's also simple enough to make the array 16 bytes instead of 15.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello Salil,
 
-Thanks, applied.
+The patch 256727da7395: "net: hns3: Add MDIO support to HNS3 Ethernet
+driver for hip08 SoC" from Aug 2, 2017, leads to the following static
+checker warning:
 
-					- Ted
+	drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c:153 hclge_mac_mdio_config()
+	warn: 'phydev' isn't an ERR_PTR
+
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
+   142          mdio_bus->parent = &hdev->pdev->dev;
+   143          mdio_bus->priv = hdev;
+   144          mdio_bus->phy_mask = ~(1 << mac->phy_addr);
+   145          ret = mdiobus_register(mdio_bus);
+   146          if (ret) {
+   147                  dev_err(mdio_bus->parent,
+   148                          "Failed to register MDIO bus ret = %#x\n", ret);
+   149                  return ret;
+   150          }
+   151  
+   152          phydev = mdiobus_get_phy(mdio_bus, mac->phy_addr);
+   153          if (!phydev || IS_ERR(phydev)) {
+                               ^^^^^^^^^^^^^^
+mdiobus_get_phy() never returns error pointers.
+
+   154                  dev_err(mdio_bus->parent, "Failed to get phy device\n");
+   155                  mdiobus_unregister(mdio_bus);
+   156                  return -EIO;
+   157          }
+   158  
+   159          mac->phydev = phydev;
+   160          mac->mdio_bus = mdio_bus;
+   161  
+   162          return 0;
+
+
+regards,
+dan carpenter
