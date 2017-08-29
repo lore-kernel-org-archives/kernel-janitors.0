@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 11:15:27 +0000
-Subject: [PATCH 2/3] [media] Siano: Improve a size determination in six functions
-Message-Id: <444ee06a-458c-675f-f8ae-a551b32d5d83@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 11:05:51 +0000
+Subject: [PATCH 2/2] [media] imon: Improve a size determination in two functions
+Message-Id: <8a174347-580c-520c-436b-7d9406fe94cd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
-In-Reply-To: <386b5a60-548e-1896-5271-4875fa2aea94@users.sourceforge.net>
+References: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
+In-Reply-To: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Aug 2017 12:38:39 +0200
+Date: Tue, 29 Aug 2017 12:45:59 +0200
 
 Replace the specification of data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
@@ -22,57 +22,32 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/common/siano/smscoreapi.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/media/rc/imon.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index 889b486fbc72..ad1c41f727b1 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -447,5 +447,5 @@ static struct smscore_registry_entry_t *smscore_find_registry(char *devpath)
- 			return entry;
- 		}
- 	}
--	entry = kmalloc(sizeof(struct smscore_registry_entry_t), GFP_KERNEL);
-+	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
- 	if (entry) {
-@@ -536,7 +536,5 @@ int smscore_register_hotplug(hotplug_t hotplug)
- 	int rc = 0;
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index e6978f1b7f2c..27aab02b75b5 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -602,8 +602,7 @@ static int send_packet(struct imon_context *ictx)
+ 		ictx->tx_urb->actual_length = 0;
+ 	} else {
+ 		/* fill request into kmalloc'ed space: */
+-		control_req = kmalloc(sizeof(struct usb_ctrlrequest),
+-				      GFP_KERNEL);
++		control_req = kmalloc(sizeof(*control_req), GFP_KERNEL);
+ 		if (control_req = NULL)
+ 			return -ENOMEM;
  
- 	kmutex_lock(&g_smscore_deviceslock);
--
--	notifyee = kmalloc(sizeof(struct smscore_device_notifyee_t),
--			   GFP_KERNEL);
-+	notifyee = kmalloc(sizeof(*notifyee), GFP_KERNEL);
- 	if (notifyee) {
-@@ -627,5 +625,5 @@ smscore_buffer_t *smscore_createbuffer(u8 *buffer, void *common_buffer,
- {
- 	struct smscore_buffer_t *cb;
+@@ -2309,7 +2308,7 @@ static struct imon_context *imon_init_intf0(struct usb_interface *intf,
+ 	struct usb_host_interface *iface_desc;
+ 	int ret = -ENOMEM;
  
--	cb = kzalloc(sizeof(struct smscore_buffer_t), GFP_KERNEL);
-+	cb = kzalloc(sizeof(*cb), GFP_KERNEL);
- 	if (!cb)
-@@ -655,5 +653,5 @@ int smscore_register_device(struct smsdevice_params_t *params,
- 	struct smscore_device_t *dev;
- 	u8 *buffer;
+-	ictx = kzalloc(sizeof(struct imon_context), GFP_KERNEL);
++	ictx = kzalloc(sizeof(*ictx), GFP_KERNEL);
+ 	if (!ictx)
+ 		goto exit;
  
--	dev = kzalloc(sizeof(struct smscore_device_t), GFP_KERNEL);
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
-@@ -1684,5 +1682,5 @@ static int smscore_validate_client(struct smscore_device_t *coredev,
- 		pr_err("The msg ID already registered to another client.\n");
- 		return -EEXIST;
- 	}
--	listentry = kzalloc(sizeof(struct smscore_idlist_t), GFP_KERNEL);
-+	listentry = kzalloc(sizeof(*listentry), GFP_KERNEL);
- 	if (!listentry)
-@@ -1721,5 +1719,5 @@ int smscore_register_client(struct smscore_device_t *coredev,
- 		return -EEXIST;
- 	}
- 
--	newclient = kzalloc(sizeof(struct smscore_client_t), GFP_KERNEL);
-+	newclient = kzalloc(sizeof(*newclient), GFP_KERNEL);
- 	if (!newclient)
 -- 
 2.14.1
 
