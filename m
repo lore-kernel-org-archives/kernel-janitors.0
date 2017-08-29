@@ -1,25 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 05 Aug 2017 10:47:07 +0000
-Subject: [PATCH 0/6] constify vb2_ops structures
-Message-Id: <1501930033-18249-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 20:30:17 +0000
+Subject: [PATCH 0/3] [media] cx24113: Adjustments for cx24113_attach()
+Message-Id: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These vb2_ops structures are only stored in the ops field of a
-vb2_queue structure, which is declared as const.  Thus the vb2_ops
-structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 22:23:45 +0200
 
-Done with the help of Coccinelle.
+Three update suggestions were taken into account
+from static source code analysis.
 
----
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Return directly after a failed kzalloc()
+  Improve a size determination
 
- drivers/media/platform/blackfin/bfin_capture.c                |    2 +-
- drivers/media/platform/davinci/vpbe_display.c                 |    2 +-
- drivers/staging/media/davinci_vpfe/vpfe_video.c               |    2 +-
- drivers/staging/media/imx/imx-media-capture.c                 |    4 ++--
- drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c |    2 +-
- samples/v4l/v4l2-pci-skeleton.c                               |    2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/dvb-frontends/cx24113.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+-- 
+2.14.1
+
