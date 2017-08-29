@@ -1,7 +1,7 @@
-From: Scott Branden <scott.branden@broadcom.com>
-Date: Mon, 28 Aug 2017 20:57:10 +0000
+From: Pawel Moll <pawel.moll@arm.com>
+Date: Tue, 29 Aug 2017 08:49:03 +0000
 Subject: Re: [PATCH 1/2] bus: arm-ccn: Check memory allocation failure
-Message-Id: <ee038213-734d-0159-2854-a61cc428762d@broadcom.com>
+Message-Id: <1503996543.3460.4.camel@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170827100650.13236-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20170827100650.13236-1-christophe.jaillet@wanadoo.fr>
@@ -10,41 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Change looks good.
-
-
-On 17-08-27 03:06 AM, Christophe JAILLET wrote:
+On Sun, 2017-08-27 at 12:06 +0200, Christophe JAILLET wrote:
 > Check memory allocation failures and return -ENOMEM in such cases
->
+> 
 > This avoids a potential NULL pointer dereference.
->
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->   drivers/bus/arm-ccn.c | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
-> index e8c6946fed9d..c0e851a0a3d7 100644
-> --- a/drivers/bus/arm-ccn.c
-> +++ b/drivers/bus/arm-ccn.c
-> @@ -1271,6 +1271,10 @@ static int arm_ccn_pmu_init(struct arm_ccn *ccn)
->   		int len = snprintf(NULL, 0, "ccn_%d", ccn->dt.id);
->   
->   		name = devm_kzalloc(ccn->dev, len + 1, GFP_KERNEL);
-> +		if (!name) {
-> +			err = -ENOMEM;
-> +			goto error_choose_name;
-> +		}
->   		snprintf(name, len + 1, "ccn_%d", ccn->dt.id);
->   	}
->   
-> @@ -1318,6 +1322,7 @@ static int arm_ccn_pmu_init(struct arm_ccn *ccn)
->   
->   error_pmu_register:
->   error_set_affinity:
-> +error_choose_name:
->   	ida_simple_remove(&arm_ccn_pmu_ida, ccn->dt.id);
->   	for (i = 0; i < ccn->num_xps; i++)
->   		writel(0, ccn->xp[i].base + CCN_XP_DT_CONTROL);
 
+This is an obvious bug, thanks for spotting and fixing it! I'll include
+this patch next time I send a pull request for CCN fixes.
+
+May I also ask how have you noticed it? Some automated tool or just
+manual code inspection?
+
+Regards
+
+Pawel
