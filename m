@@ -1,17 +1,17 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Date: Thu, 17 Aug 2017 16:29:57 +0000
+Date: Tue, 29 Aug 2017 10:09:41 +0000
 Subject: Re: [PATCH][i2c-next] i2c-cht-wc: make cht_wc_i2c_adap_driver static
-Message-Id: <20170817162957.fes3tu64onuiqspe@ninjato>
+Message-Id: <20170829100941.ipn2zt4or7znee37@ninjato>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pahcufooeqkrvjxi"
+Content-Type: multipart/mixed; boundary="piib7iadrgtwifmq"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170816091659.10738-1-colin.king@canonical.com>
 In-Reply-To: <20170816091659.10738-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Hans de Goede <hdegoede@redhat.com>
+To: Colin King <colin.king@canonical.com>
 Cc: linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---pahcufooeqkrvjxi
+--piib7iadrgtwifmq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -27,50 +27,27 @@ On Wed, Aug 16, 2017 at 10:16:59AM +0100, Colin King wrote:
 >=20
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-CCing Hans to ask him if he maybe wants to create a MAINTAINERS entry
-for this driver, so he'll get CCed for such patches? :)
+Applied to for-next, thanks!
 
-> ---
->  drivers/i2c/busses/i2c-cht-wc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-cht-wc.c b/drivers/i2c/busses/i2c-cht=
--wc.c
-> index fe5caf70c7fe..01c94c918d4c 100644
-> --- a/drivers/i2c/busses/i2c-cht-wc.c
-> +++ b/drivers/i2c/busses/i2c-cht-wc.c
-> @@ -322,7 +322,7 @@ static struct platform_device_id cht_wc_i2c_adap_id_t=
-able[] =3D {
->  };
->  MODULE_DEVICE_TABLE(platform, cht_wc_i2c_adap_id_table);
-> =20
-> -struct platform_driver cht_wc_i2c_adap_driver =3D {
-> +static struct platform_driver cht_wc_i2c_adap_driver =3D {
->  	.probe =3D cht_wc_i2c_adap_i2c_probe,
->  	.remove =3D cht_wc_i2c_adap_i2c_remove,
->  	.driver =3D {
-> --=20
-> 2.11.0
->=20
 
---pahcufooeqkrvjxi
+--piib7iadrgtwifmq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmVxIUACgkQFA3kzBSg
-KbY2ahAAnRbIYHsFufpguu1jtjmEKE8pn/OOXrkULzEy9LrTkDdlZ6FAi39eBJ1S
-/iM6ayIYGMnvjJ3mekXxkqsmaF/UNKmwTfDsF7dLN90bt8vocwQKfJrF43lSjIPs
-jYkC0ABFDn+MNqFVfy5tbKp/Il9v6QQp+2X4IXgqh1GiR5uuWCrfLmACMVWjrsBd
-X0X0G4xBX1aW7NzofWn4nnlK/ZceFT/I1LShHFOaF0cD5KfRcGNi9uausqHZ7yGr
-W/doMzEWOyIahh6+2Fgz6NgUF8hSBCETkO6z4axpcMwcHQUAhSxZ+s4p7PXO6gi2
-TQ0Bf1VyrzgnSyzqZ1A+V2GOX0+9qmYtGdtbkXuzXm/sRHgjASU2B392GZeDC4bz
-qqhDISywiinYW4N0Rqi2MILdsO30S02kpdkYNCARUPsRhDxxr82RMyxIEUbfnVHD
-s2Smkv0Pp3zupffbp5kba8sPNwm16clo3kbNlzyKyTgy8C75grw0+JpO+Z8mCfCS
-dNut53e+hviBe7ath7uOE73Vkbdu6tNZ7IZQW5Vlb8AQZ8JJGDpS17wMacNq7cfW
-iS+S6DsPT8skjuKxtDiav1vs7ZVHWBTVwFS3IQ3iCP9Jt+CqUXZNjECzjM9NeRs0
-qQFB9WAbgjtA1ozPtxGM8AcLaEzyluRyaPQD5Q9HxODXECiVZJ8=
-=ZdsX
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmlPWQACgkQFA3kzBSg
+Kbal1xAAlTydYraexrPmfeFbK/vNn2KQdr7epogoEAuGncU9Wrm0Xb3kCRv0fk/f
+oMJHtFAjjnOSkwNuWfcaPcMa4lMSbAExGmiiPTJF0GKSZXBO2Aeb0EnzGmv+BSfB
+F8ruJXqhzodzhIL/uGht5kP+kQWGy1jj+nDHwkGBquv2PxqT3/kKP/suG0wL3AA6
+jorbWeorWdMasIBxlYp3qfM/0evRejLQUtQ9FBYUyhwjpaNePezA12gf4/5YWA/r
+hErTEhGP/rQHw9BqWYOQ1KkKywc+9FBEQlVDqSeWodFIu841ewV5WXktk9hZkniA
+OxD8lQUfU0fGowEqq58WQCCKBaey/O/QUdH0onPQJu0t6bN9dDoXkBVDeCqFM0D/
+8my2JOn3EgAQ73hmT9GUKXUPV3Zx0oH57yIAHEXZXAZ5r7BmZGNo5Sn9pWVDNlMJ
+n36RReruIbiJPlbW7w7jj4zcn7CggPcD5UEoTS972uj1/6q9KokcX6yZTW12qVj1
+LzFp80zdXZbDaG/89hzUtKn2cegroXelKp7OezTBdlHEmg6ELNibeRfwwNSfv4gq
+Dva27NMsz3BWzaH/AgrjYTdz63QU7xvomWm9Yx8jaH1qw78WtsC5h/P958M/e5Un
+Yj5fg0dg6l5iOVftB6D1MSMfOWqcHthGkAI/d1ydMTAB/1HTCH0=
+=Tkvv
 -----END PGP SIGNATURE-----
 
---pahcufooeqkrvjxi--
+--piib7iadrgtwifmq--
