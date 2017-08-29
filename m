@@ -1,40 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 10 Aug 2017 16:04:10 +0000
-Subject: [PATCH] perf/x86/intel/p4: make array p4_event_aliases static
-Message-Id: <20170810160410.7291-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 19:44:40 +0000
+Subject: [PATCH 1/2] [media] as102_fe: Delete an error message for a failed memory allocation in as102_attach
+Message-Id: <9c0645bc-181a-4f34-49b7-8de4150b1555@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
+In-Reply-To: <e27c8402-59fc-7e89-d461-d4c7c387d8bd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 21:26:12 +0200
 
-The array p4_event_aliases is local to the source and do not need to be in
-global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
-warning: symbol 'p4_event_aliases' was not declared. Should it be static?
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/events/intel/p4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/dvb-frontends/as102_fe.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
-index eb0533558c2b..d32c0eed38ca 100644
---- a/arch/x86/events/intel/p4.c
-+++ b/arch/x86/events/intel/p4.c
-@@ -587,7 +587,7 @@ static __initconst const u64 p4_hw_cache_event_ids
-  * P4_CONFIG_ALIASABLE or bits for P4_PEBS_METRIC, they are
-  * either up to date automatically or not applicable at all.
-  */
--struct p4_event_alias {
-+static struct p4_event_alias {
- 	u64 original;
- 	u64 alternative;
- } p4_event_aliases[] = {
+diff --git a/drivers/media/dvb-frontends/as102_fe.c b/drivers/media/dvb-frontends/as102_fe.c
+index 98d575f2744c..1fb4ab21d786 100644
+--- a/drivers/media/dvb-frontends/as102_fe.c
++++ b/drivers/media/dvb-frontends/as102_fe.c
+@@ -459,7 +459,6 @@ struct dvb_frontend *as102_attach(const char *name,
+-	if (state = NULL) {
+-		pr_err("%s: unable to allocate memory for state\n", __func__);
++	if (!state)
+ 		return NULL;
+-	}
++
+ 	fe = &state->frontend;
+ 	fe->demodulator_priv = state;
+ 	state->ops = ops;
 -- 
-2.11.0
+2.14.1
 
