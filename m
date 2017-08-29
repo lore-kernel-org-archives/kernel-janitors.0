@@ -1,43 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 07 Aug 2017 13:02:09 +0000
-Subject: [PATCH 3/5] block-skd: Delete an unnecessary return statement in skd_pci_remove()
-Message-Id: <838a198d-fcbf-ecc1-622d-fc67d1ab8e1a@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 19:09:16 +0000
+Subject: [PATCH] [media] img-ir: Delete an error message for a failed memory allocation in img_ir_probe()
+Message-Id: <74e8f4f2-9086-2edb-c64b-e88918b9f742@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
-In-Reply-To: <56b55301-2db3-9c0b-297f-c2115fd92c6c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 7 Aug 2017 14:10:35 +0200
+Date: Tue, 29 Aug 2017 21:04:20 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/skd_main.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/rc/img-ir/img-ir-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index fa8569d4543b..8e2c89069927 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -4831,8 +4831,6 @@ static void skd_pci_remove(struct pci_dev *pdev)
- 	pci_release_regions(pdev);
- 	pci_disable_device(pdev);
- 	pci_set_drvdata(pdev, NULL);
--
--	return;
- }
+diff --git a/drivers/media/rc/img-ir/img-ir-core.c b/drivers/media/rc/img-ir/img-ir-core.c
+index 03fe080278df..bcbabeeab12a 100644
+--- a/drivers/media/rc/img-ir/img-ir-core.c
++++ b/drivers/media/rc/img-ir/img-ir-core.c
+@@ -92,10 +92,9 @@ static int img_ir_probe(struct platform_device *pdev)
  
- static int skd_pci_suspend(struct pci_dev *pdev, pm_message_t state)
+ 	/* Private driver data */
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "cannot allocate device data\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
++
+ 	platform_set_drvdata(pdev, priv);
+ 	priv->dev = &pdev->dev;
+ 	spin_lock_init(&priv->lock);
 -- 
-2.13.4
+2.14.1
 
