@@ -1,53 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 09 Aug 2017 15:33:41 +0000
-Subject: [PATCH v2 1/9] ACPI-video: Use kmalloc_array() in acpi_video_get_levels()
-Message-Id: <c6ae871a-5dc5-c295-ecf7-5d5350e87f24@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 11:03:46 +0000
+Subject: [PATCH 0/2] [media] imon: Adjustments for two function implementations
+Message-Id: <09417655-9241-72f4-6484-a3c8b3eae87a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
- <CAJZ5v0hug9QfZHQosCFFXEcFMsDd=YvXkqMmQya3RSqmOnY4dg@mail.gmail.com>
- <3e0cdc5b-fd15-515a-82f2-2f44792664ed@users.sourceforge.net>
- <CAJZ5v0gWgxbtJ4m0eDkdOaR_usjTqmcWBWds5qprr+ydHhEjnA@mail.gmail.com>
- <6882cbb1-3f61-fb64-2972-30c277f28580@users.sourceforge.net>
- <CAJZ5v0hyhdUknW8RqpT6f4zAuPuMN1EN=P7C54Aa+VqEK2pcGw@mail.gmail.com>
- <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
-In-Reply-To: <d8cc6f88-9261-55d9-a736-a14b853a2570@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 9 Aug 2017 14:52:25 +0200
+Date: Tue, 29 Aug 2017 12:56:54 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in imon_init_intf0()
+  Improve a size determination in two functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/acpi_video.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/rc/imon.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 0972ec0e2eb8..1aaf2b591ca8 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -832,8 +832,9 @@ int acpi_video_get_levels(struct acpi_device *device,
- 	 * in order to account for buggy BIOS which don't export the first two
- 	 * special levels (see below)
- 	 */
--	br->levels = kmalloc((obj->package.count + ACPI_VIDEO_FIRST_LEVEL) *
--	                     sizeof(*br->levels), GFP_KERNEL);
-+	br->levels = kmalloc_array(obj->package.count + ACPI_VIDEO_FIRST_LEVEL,
-+				   sizeof(*br->levels),
-+				   GFP_KERNEL);
- 	if (!br->levels) {
- 		result = -ENOMEM;
- 		goto out_free;
 -- 
-2.13.4
+2.14.1
 
