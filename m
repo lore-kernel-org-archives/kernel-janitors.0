@@ -1,24 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 07 Aug 2017 10:19:36 +0000
-Subject: Re: [PATCH 11/12] [media] exynos4-is: constify v4l2_m2m_ops structures
-Message-Id: <dc25a655-df4a-3301-384a-00c85f0ee6d8@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 29 Aug 2017 10:21:10 +0000
+Subject: [PATCH][media-next] media: qcom: camss: Make function vfe_set_selection static
+Message-Id: <20170829102110.25657-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502007921-22968-12-git-send-email-Julia.Lawall@lip6.fr>
- <CGME20170807101941epcas2p446c04b9a0813cb56f33202e6b4fdc49b@epcas2p4.samsung.com>
-In-Reply-To: <1502007921-22968-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Todor Tomov <todor.tomov@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/06/2017 10:25 AM, Julia Lawall wrote:
-> The v4l2_m2m_ops structures are only passed as the only
-> argument to v4l2_m2m_init, which is declared as const.
-> Thus the v4l2_m2m_ops structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
+From: Colin Ian King <colin.king@canonical.com>
 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The function vfe_set_selection is local to the source and does
+not need to be in global scope, so make it static.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cleans up sparse warning:
+warning: symbol 'vfe_set_selection' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/qcom/camss-8x16/camss-vfe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/qcom/camss-8x16/camss-vfe.c b/drivers/media/platform/qcom/camss-8x16/camss-vfe.c
+index b21b3c2dc77f..b22d2dfcd3c2 100644
+--- a/drivers/media/platform/qcom/camss-8x16/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss-8x16/camss-vfe.c
+@@ -2660,7 +2660,7 @@ static int vfe_get_selection(struct v4l2_subdev *sd,
+  *
+  * Return -EINVAL or zero on success
+  */
+-int vfe_set_selection(struct v4l2_subdev *sd,
++static int vfe_set_selection(struct v4l2_subdev *sd,
+ 			     struct v4l2_subdev_pad_config *cfg,
+ 			     struct v4l2_subdev_selection *sel)
+ {
+-- 
+2.14.1
+
