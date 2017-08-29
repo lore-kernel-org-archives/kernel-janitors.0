@@ -1,110 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 10 Aug 2017 15:41:57 +0000
-Subject: Applied "ASoC: rsnd: Delete an error message for a failed memory allocation in three functions" to t
-Message-Id: <E1dfpav-0001fF-Kv@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 05:31:58 +0000
+Subject: [PATCH 1/4] [media] zr364xx: Delete an error message for a failed memory allocation in two functions
+Message-Id: <f2637234-7746-cb9d-6cf5-97d519090e84@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <181b6355-b6b6-eeae-d85b-9fb465d96b85@users.sourceforge.net>
-In-Reply-To: <181b6355-b6b6-eeae-d85b-9fb465d96b85@users.sourceforge.net>
+References: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
+In-Reply-To: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Fengguang Wu <fengguang.wu@intel.com>, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Marek Vasut <marek.vasut+renesas@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: linux-media@vger.kernel.org, linux-usb@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   ASoC: rsnd: Delete an error message for a failed memory allocation in three functions
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0d7820d0918efa6c2a53acdfc47cbfc3b48df727 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 17:13:19 +0200
-Subject: [PATCH] ASoC: rsnd: Delete an error message for a failed memory
- allocation in three functions
+Date: Mon, 28 Aug 2017 22:23:56 +0200
 
 Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/rcar/adg.c  | 4 +---
- sound/soc/sh/rcar/core.c | 4 +---
- sound/soc/sh/rcar/gen.c  | 4 +---
- 3 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/media/usb/zr364xx/zr364xx.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 5b5389e5b92b..938baff86ef2 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -586,10 +586,8 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 	int ret;
- 
- 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
--	if (!adg) {
--		dev_err(dev, "ADG allocate failed\n");
-+	if (!adg)
+diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
+index efdcd5bd6a4c..97af697dcc81 100644
+--- a/drivers/media/usb/zr364xx/zr364xx.c
++++ b/drivers/media/usb/zr364xx/zr364xx.c
+@@ -212,7 +212,5 @@ static int send_control_msg(struct usb_device *udev, u8 request, u16 value,
+-	if (!transfer_buffer) {
+-		dev_err(&udev->dev, "kmalloc(%d) failed\n", size);
++	if (!transfer_buffer)
  		return -ENOMEM;
 -	}
  
- 	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
- 		      NULL, NULL, 0, 0);
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 2c12ad2b2b34..650cc28b0fb6 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1401,10 +1401,8 @@ static int rsnd_probe(struct platform_device *pdev)
- 	 *	init priv data
- 	 */
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(dev, "priv allocate failed\n");
-+	if (!priv)
- 		return -ENODEV;
--	}
+ 	memcpy(transfer_buffer, cp, size);
  
- 	priv->pdev	= pdev;
- 	priv->flags	= (unsigned long)of_device_get_match_data(dev);
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index ee00e3516911..f04c4100043a 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -406,10 +406,8 @@ int rsnd_gen_probe(struct rsnd_priv *priv)
- 	int ret;
- 
- 	gen = devm_kzalloc(dev, sizeof(*gen), GFP_KERNEL);
--	if (!gen) {
--		dev_err(dev, "GEN allocate failed\n");
-+	if (!gen)
+@@ -1427,7 +1425,5 @@ static int zr364xx_probe(struct usb_interface *intf,
+-	if (cam = NULL) {
+-		dev_err(&udev->dev, "cam: out of memory !\n");
++	if (!cam)
  		return -ENOMEM;
 -	}
  
- 	priv->gen = gen;
- 
+ 	cam->v4l2_dev.release = zr364xx_release;
+ 	err = v4l2_device_register(&intf->dev, &cam->v4l2_dev);
 -- 
-2.13.2
+2.14.1
 
