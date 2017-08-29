@@ -1,37 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Aug 2017 19:46:34 +0000
-Subject: [PATCH] clocksource: Delete an error message for a failed memory allocation in bcm2835_timer_init()
-Message-Id: <1907fa5f-e1c3-a2dd-99e0-f06150086351@users.sourceforge.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Date: Tue, 29 Aug 2017 09:14:11 +0000
+Subject: Re: [PATCH] clocksource: Delete an error message for a failed memory allocation in bcm2835_timer_ini
+Message-Id: <a292aac5-b98e-6f84-8ef4-e9a00c582ba8@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1907fa5f-e1c3-a2dd-99e0-f06150086351@users.sourceforge.net>
+In-Reply-To: <1907fa5f-e1c3-a2dd-99e0-f06150086351@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Aug 2017 21:38:13 +0200
+On 27/08/2017 21:46, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 27 Aug 2017 21:38:13 +0200
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Omit an extra message for a memory allocation failure in this function.
+I have applied it.
 
-This issue was detected by using the Coccinelle software.
+Thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clocksource/bcm2835_timer.c | 1 -
- 1 file changed, 1 deletion(-)
+  -- Daniel
 
-diff --git a/drivers/clocksource/bcm2835_timer.c b/drivers/clocksource/bcm2835_timer.c
-index 82828d3a4739..39e489a96ad7 100644
---- a/drivers/clocksource/bcm2835_timer.c
-+++ b/drivers/clocksource/bcm2835_timer.c
-@@ -114,7 +114,6 @@ static int __init bcm2835_timer_init(struct device_node *node)
- 
- 	timer = kzalloc(sizeof(*timer), GFP_KERNEL);
- 	if (!timer) {
--		pr_err("Can't allocate timer struct\n");
- 		ret = -ENOMEM;
- 		goto err_iounmap;
- 	}
--- 
-2.14.1
 
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
+ SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
