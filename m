@@ -1,23 +1,43 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Wed, 16 Aug 2017 12:29:54 +0000
-Subject: Re: powerpc/perf: double unlock bug in imc_common_cpuhp_mem_free()
-Message-Id: <3xXTFG6ryjz9t42@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 05:33:02 +0000
+Subject: [PATCH 2/4] [media] zr364xx: Improve a size determination in zr364xx_probe()
+Message-Id: <19adacd0-3862-188f-9128-5d09fd13ebae@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170811200541.qlxcpp3og33sdki3@mwanda>
+References: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
+In-Reply-To: <d632eadf-98a3-7e05-4d9d-96d04b3619ff@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, Hemant Kumar <hemant@linux.vnet.ibm.com>
+To: linux-media@vger.kernel.org, linux-usb@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 2017-08-11 at 20:05:41 UTC, Dan Carpenter wrote:
-> There is a typo so we call unlock instead of lock.
-> 
-> Fixes: 885dcd709ba9 ("powerpc/perf: Add nest IMC PMU support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Aug 2017 22:28:02 +0200
 
-Applied to powerpc next, thanks.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-https://git.kernel.org/powerpc/c/b3376dcc6c62452fe24e76d8fc35bb
+This issue was detected by using the Coccinelle software.
 
-cheers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/zr364xx/zr364xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/zr364xx/zr364xx.c b/drivers/media/usb/zr364xx/zr364xx.c
+index 97af697dcc81..37cd6e20e68a 100644
+--- a/drivers/media/usb/zr364xx/zr364xx.c
++++ b/drivers/media/usb/zr364xx/zr364xx.c
+@@ -1421,7 +1421,7 @@ static int zr364xx_probe(struct usb_interface *intf,
+ 		 le16_to_cpu(udev->descriptor.idVendor),
+ 		 le16_to_cpu(udev->descriptor.idProduct));
+ 
+-	cam = kzalloc(sizeof(struct zr364xx_camera), GFP_KERNEL);
++	cam = kzalloc(sizeof(*cam), GFP_KERNEL);
+ 	if (!cam)
+ 		return -ENOMEM;
+ 
+-- 
+2.14.1
+
