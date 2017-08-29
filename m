@@ -1,40 +1,42 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 11 Aug 2017 14:44:31 +0000
-Subject: Re: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functio
-Message-Id: <1502462671.3099.13.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 29 Aug 2017 19:23:49 +0000
+Subject: [PATCH] driver core: bus: Fix a potential double free
+Message-Id: <20170829192349.15666-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <671f4a88-bee9-85b4-ea9b-68abcdb40443@users.sourceforge.net>
-In-Reply-To: <671f4a88-bee9-85b4-ea9b-68abcdb40443@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, Fabio Estevam <fabio.estevam@nxp.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 2017-08-11 at 15:32 +0200, SF Markus Elfring wrote:
-> From 885ccd6c63291dcd4854a0cbaab5188cdc3db805 Mon Sep 17 00:00:00 2001
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 11 Aug 2017 15:10:43 +0200
-> Subject: [PATCH] ASoC: Freescale: Delete an error message for a failed memory allocation in three functions
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+The .release function of driver_ktype is 'driver_release()'.
+This function frees the container_of this kobject.
 
-This doesn't have anything to do with refactoring strings.
+So, this memory must not be freed explicitly in the error handling path of
+'bus_add_driver()'. Otherwise a double free will occur.
 
-Just note that allocations without GFP_NOWARN do a dump_stack()
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I have left the 'drv->p = NULL' even if it looks useless to me. It does not
+hurt. I have also left a comment to explain why we do not free 'drv->p'
+explicitly before zeroing this pointer.
+---
+ drivers/base/bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-[]
-> @@ -282,7 +282,5 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
-> -	if (!pair) {
-> -		dev_err(dev, "failed to allocate pair\n");
-> +	if (!pair)
->  		return -ENOMEM;
-> -	}
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index e162c9a789ba..22a64fd3309b 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -698,7 +698,7 @@ int bus_add_driver(struct device_driver *drv)
+ 
+ out_unregister:
+ 	kobject_put(&priv->kobj);
+-	kfree(drv->p);
++	/* drv->p is freed in driver_release()  */
+ 	drv->p = NULL;
+ out_put_bus:
+ 	bus_put(bus);
+-- 
+2.11.0
 
-Use normal diff output that shows 3 lines of context
-above and below the patched lines.
