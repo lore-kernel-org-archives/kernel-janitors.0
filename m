@@ -1,19 +1,17 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Tue, 29 Aug 2017 06:43:22 +0000
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Tue, 29 Aug 2017 21:04:00 +0000
 Subject: Re: [PATCH] misc: pci_endpoint_test: make boolean no_msi static
-Message-Id: <e2f73846-7955-2e99-5fa6-463f96447da8@ti.com>
+Message-Id: <20170829210400.GR8154@bhelgaas-glaptop.roam.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170823094752.26962-1-colin.king@canonical.com>
 In-Reply-To: <20170823094752.26962-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-On Wednesday 23 August 2017 03:17 PM, Colin King wrote:
+On Wed, Aug 23, 2017 at 10:47:52AM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The boolean no_msi is local to the source and does not need to be in
@@ -24,12 +22,8 @@ On Wednesday 23 August 2017 03:17 PM, Colin King wrote:
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Can you pick this one also?
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Folded into the original patch, thanks!
 
-
-Thanks
-Kishon
 > ---
 >  drivers/misc/pci_endpoint_test.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -47,4 +41,6 @@ Kishon
 >  module_param(no_msi, bool, 0444);
 >  MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
 >  
+> -- 
+> 2.14.1
 > 
