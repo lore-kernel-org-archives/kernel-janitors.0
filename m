@@ -1,56 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 07 Aug 2017 09:23:53 +0000
-Subject: [PATCH] paride: Delete an error message for a failed memory allocation in two functions
-Message-Id: <46377d4f-aaab-a91f-9f39-f67ea98ba8ed@users.sourceforge.net>
+Date: Tue, 29 Aug 2017 20:32:30 +0000
+Subject: [PATCH 2/3] [media] cx24113: Return directly after a failed kzalloc() in cx24113_attach()
+Message-Id: <935e3259-e764-8395-84c8-def879f0bbbc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
+In-Reply-To: <36a5402f-c7a2-edf0-1af8-b98b0684d8e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tim Waugh <tim@cyberelk.net>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 7 Aug 2017 11:11:34 +0200
+Date: Tue, 29 Aug 2017 22:10:49 +0200
 
-Omit an extra message for a memory allocation failure in these functions.
+Return directly after a call of the function "kzalloc" failed
+at the beginning.
 
-This issue was detected by using the Coccinelle software.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/paride/pg.c | 1 -
- drivers/block/paride/pt.c | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/dvb-frontends/cx24113.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
-index 3b5882bfb736..9b036c79c49e 100644
---- a/drivers/block/paride/pg.c
-+++ b/drivers/block/paride/pg.c
-@@ -550,7 +550,6 @@ static int pg_open(struct inode *inode, struct file *file)
- 	dev->bufptr = kmalloc(PG_MAX_DATA, GFP_KERNEL);
- 	if (dev->bufptr = NULL) {
- 		clear_bit(0, &dev->access);
--		printk("%s: buffer allocation failed\n", dev->name);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
-diff --git a/drivers/block/paride/pt.c b/drivers/block/paride/pt.c
-index e815312a00ad..33347853b7d4 100644
---- a/drivers/block/paride/pt.c
-+++ b/drivers/block/paride/pt.c
-@@ -687,10 +687,8 @@ static int pt_open(struct inode *inode, struct file *file)
+diff --git a/drivers/media/dvb-frontends/cx24113.c b/drivers/media/dvb-frontends/cx24113.c
+index 8fc7333c76b7..09c3fd1840f2 100644
+--- a/drivers/media/dvb-frontends/cx24113.c
++++ b/drivers/media/dvb-frontends/cx24113.c
+@@ -557,7 +557,7 @@ struct dvb_frontend *cx24113_attach(struct dvb_frontend *fe,
+ 	int rc;
  
- 	err = -ENOMEM;
- 	tape->bufptr = kmalloc(PT_BUFSIZE, GFP_KERNEL);
--	if (tape->bufptr = NULL) {
--		printk("%s: buffer allocation failed\n", tape->name);
-+	if (!tape->bufptr)
- 		goto out;
--	}
+ 	if (!state)
+-		goto error;
++		return NULL;
  
- 	file->private_data = tape;
- 	mutex_unlock(&pt_mutex);
+ 	/* setup the state */
+ 	state->config = config;
 -- 
-2.13.4
+2.14.1
 
