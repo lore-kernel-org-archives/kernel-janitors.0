@@ -1,64 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 07:24:10 +0000
-Subject: [PATCH 6/6] [media] cx24116: Delete jump targets in cx24116_attach()
-Message-Id: <5f395fa8-c931-b074-090a-9c97526834ad@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 Aug 2017 11:16:16 +0000
+Subject: [PATCH] iio: imu: inv_mpu6050: make arrays hz and d static
+Message-Id: <20170830111616.27559-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
-In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Baptiste Maneyrol <JManeyrol@invensense.com>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 08:44:29 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+Don't populate the arrays on the stack, instead make them static.
+Makes the object code smaller by 135 bytes:
 
-* Move a bit of exception handling code into an if branch.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  15135	   4240	    128	  19503	   4c2f	inv_mpu_core.o
 
-* Delete two jump targets which became unnecessary with this refactoring.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14840	   4400	    128	  19368	   4ba8	inv_mpu_core.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/dvb-frontends/cx24116.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
-index 902a60d2e1b5..8fb3f095e21c 100644
---- a/drivers/media/dvb-frontends/cx24116.c
-+++ b/drivers/media/dvb-frontends/cx24116.c
-@@ -1125,7 +1125,7 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
- 	/* allocate memory for the internal state */
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (state = NULL)
--		goto error1;
-+		return NULL;
- 
- 	state->config = config;
- 	state->i2c = i2c;
-@@ -1134,8 +1134,9 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
- 	ret = (cx24116_readreg(state, 0xFF) << 8) |
- 		cx24116_readreg(state, 0xFE);
- 	if (ret != 0x0501) {
-+		kfree(state);
- 		printk(KERN_INFO "Invalid probe, probably not a CX24116 device\n");
--		goto error2;
-+		return NULL;
- 	}
- 
- 	/* create dvb_frontend */
-@@ -1143,9 +1144,6 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
- 		sizeof(struct dvb_frontend_ops));
- 	state->frontend.demodulator_priv = state;
- 	return &state->frontend;
--
--error2: kfree(state);
--error1: return NULL;
- }
- EXPORT_SYMBOL(cx24116_attach);
+diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+index 44830bce13df..6692f5e08dc8 100644
+--- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
++++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+@@ -570,10 +570,12 @@ static int inv_mpu6050_write_raw(struct iio_dev *indio_dev,
+  */
+ static int inv_mpu6050_set_lpf(struct inv_mpu6050_state *st, int rate)
+ {
+-	const int hz[] = {188, 98, 42, 20, 10, 5};
+-	const int d[] = {INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
+-			INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
+-			INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ};
++	static const int hz[] = {188, 98, 42, 20, 10, 5};
++	static const int d[] = {
++		INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
++		INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
++		INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ
++	};
+ 	int i, h, result;
+ 	u8 data;
  
 -- 
 2.14.1
