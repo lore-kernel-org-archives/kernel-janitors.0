@@ -1,67 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Aug 2017 08:25:10 +0000
-Subject: [PATCH 01/12] [media] st-delta: constify v4l2_m2m_ops structures
-Message-Id: <1502007921-22968-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 20:20:13 +0000
+Subject: [PATCH 0/4] [media] ds3000: Adjustments for two function implementations
+Message-Id: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502007921-22968-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hugues Fruchet <hugues.fruchet@st.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The v4l2_m2m_ops structures are only passed as the only
-argument to v4l2_m2m_init, which is declared as const.
-Thus the v4l2_m2m_ops structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 22:11:33 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct v4l2_m2m_ops i@p = { ... };
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in ds3000_attach()
+  Delete an unnecessary variable initialisation in ds3000_attach()
+  Delete jump targets in ds3000_attach()
 
-@ok1@
-identifier r.i;
-position p;
-@@
-v4l2_m2m_init(&i@p)
+ drivers/media/dvb-frontends/ds3000.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-@bad@
-position p != {r.p,ok1.p};
-identifier r.i;
-struct v4l2_m2m_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct v4l2_m2m_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/platform/sti/delta/delta-v4l2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/sti/delta/delta-v4l2.c b/drivers/media/platform/sti/delta/delta-v4l2.c
-index ff9850e..b2dc3d2 100644
---- a/drivers/media/platform/sti/delta/delta-v4l2.c
-+++ b/drivers/media/platform/sti/delta/delta-v4l2.c
-@@ -1095,7 +1095,7 @@ static int delta_job_ready(void *priv)
- }
- 
- /* mem-to-mem ops */
--static struct v4l2_m2m_ops delta_m2m_ops = {
-+static const struct v4l2_m2m_ops delta_m2m_ops = {
- 	.device_run     = delta_device_run,
- 	.job_ready	= delta_job_ready,
- 	.job_abort      = delta_job_abort,
+-- 
+2.14.1
 
