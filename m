@@ -1,38 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 14:32:10 +0000
-Subject: [PATCH 0/2] lockd: Adjustments for some function implementations
-Message-Id: <e53b2d3a-239a-268c-5674-3c50b02c966f@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 19:17:13 +0000
+Subject: [PATCH 2/2] [media] drxd: Adjust a null pointer check in three functions
+Message-Id: <7c1d8396-bd00-8656-c105-596bb47405ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
+In-Reply-To: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Benjamin Coddington <bcodding@redhat.com>, Christoph Hellwig <hch@lst.de>, Colin Ian King <colin.king@canonical.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 17 Aug 2017 16:17:18 +0200
+Date: Wed, 30 Aug 2017 20:55:17 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Two update suggestions were taken into account
-from static source code analysis.
+The script “checkpatch.pl” pointed information out like the following.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in reclaimer()
-  Adjust 61 checks for null pointers
+Comparison to NULL could be written …
 
- fs/lockd/clnt4xdr.c | 12 ++++++------
- fs/lockd/clntlock.c | 16 ++++++----------
- fs/lockd/clntproc.c | 12 ++++++------
- fs/lockd/clntxdr.c  | 12 ++++++------
- fs/lockd/host.c     | 22 +++++++++++-----------
- fs/lockd/mon.c      | 16 ++++++++--------
- fs/lockd/svc.c      |  4 ++--
- fs/lockd/svc4proc.c |  6 +++---
- fs/lockd/svclock.c  | 14 +++++++-------
- fs/lockd/svcproc.c  |  6 +++---
- fs/lockd/svcshare.c |  2 +-
- fs/lockd/svcsubs.c  |  3 +--
- 12 files changed, 60 insertions(+), 65 deletions(-)
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/dvb-frontends/drxd_hard.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
+index 47b0d37e70ba..3bdf9b1f4e7c 100644
+--- a/drivers/media/dvb-frontends/drxd_hard.c
++++ b/drivers/media/dvb-frontends/drxd_hard.c
+@@ -328,7 +328,7 @@ static int WriteTable(struct drxd_state *state, u8 * pTable)
+ {
+ 	int status = 0;
+ 
+-	if (pTable = NULL)
++	if (!pTable)
+ 		return 0;
+ 
+ 	while (!status) {
+@@ -909,7 +909,7 @@ static int load_firmware(struct drxd_state *state, const char *fw_name)
+ 	}
+ 
+ 	state->microcode = kmemdup(fw->data, fw->size, GFP_KERNEL);
+-	if (state->microcode = NULL) {
++	if (!state->microcode) {
+ 		release_firmware(fw);
+ 		return -ENOMEM;
+ 	}
+@@ -2629,7 +2629,7 @@ static int DRXD_init(struct drxd_state *state, const u8 *fw, u32 fw_size)
+ 			break;
+ 
+ 		/* Apply I2c address patch to B1 */
+-		if (!state->type_A && state->m_HiI2cPatch != NULL) {
++		if (!state->type_A && state->m_HiI2cPatch) {
+ 			status = WriteTable(state, state->m_HiI2cPatch);
+ 			if (status < 0)
+ 				break;
 -- 
-2.14.0
+2.14.1
 
