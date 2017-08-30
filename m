@@ -1,39 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 12 Aug 2017 05:44:29 +0000
-Subject: [PATCH 1/6] scsi: mpt3sas: constify pci_error_handlers structures
-Message-Id: <1502516674-8918-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 20:24:26 +0000
+Subject: [PATCH 4/4] [media] ds3000: Delete jump targets in ds3000_attach()
+Message-Id: <6845c215-eeb8-5286-6049-ea4befb645ae@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
+In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These pci_error_handlers structures are only stored in the err_handler
-field of a pci_driver structure, and this field is declared as const.  Thus
-the pci_error_handlers structures can be const too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 22:02:54 +0200
 
-Done with the help of Coccinelle.
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+* Move a bit of exception handling code into an if branch.
 
+* Delete two jump targets which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/dvb-frontends/ds3000.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 22998cb..52c163f 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -9277,7 +9277,7 @@ bool scsih_ncq_prio_supp(struct scsi_device *sdev)
- };
- MODULE_DEVICE_TABLE(pci, mpt3sas_pci_table);
+diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
+index 3e347d03acb3..bd4f8278c906 100644
+--- a/drivers/media/dvb-frontends/ds3000.c
++++ b/drivers/media/dvb-frontends/ds3000.c
+@@ -841,7 +841,7 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+-		goto error2;
++		return NULL;
  
--static struct pci_error_handlers _mpt3sas_err_handler = {
-+static const struct pci_error_handlers _mpt3sas_err_handler = {
- 	.error_detected	= scsih_pci_error_detected,
- 	.mmio_enabled	= scsih_pci_mmio_enabled,
- 	.slot_reset	= scsih_pci_slot_reset,
+ 	state->config = config;
+ 	state->i2c = i2c;
+@@ -850,8 +850,9 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
+ 	/* check if the demod is present */
+ 	ret = ds3000_readreg(state, 0x00) & 0xfe;
+ 	if (ret != 0xe0) {
++		kfree(state);
+ 		printk(KERN_ERR "Invalid probe, probably not a DS3000\n");
+-		goto error3;
++		return NULL;
+ 	}
+ 
+ 	printk(KERN_INFO "DS3000 chip version: %d.%d attached.\n",
+@@ -869,11 +870,6 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
+ 	 */
+ 	ds3000_set_voltage(&state->frontend, SEC_VOLTAGE_OFF);
+ 	return &state->frontend;
+-
+-error3:
+-	kfree(state);
+-error2:
+-	return NULL;
+ }
+ EXPORT_SYMBOL(ds3000_attach);
+ 
+-- 
+2.14.1
 
