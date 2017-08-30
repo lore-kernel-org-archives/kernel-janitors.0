@@ -1,31 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 07:18:08 +0000
-Subject: [PATCH 0/6] [media] cx24116: Adjustments for two function implementations
-Message-Id: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Aug 2017 14:03:58 +0000
+Subject: [PATCH] regulator: da9063: Return an error code on probe failure
+Message-Id: <20170830140358.k3i3rehnrtdrys4t@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Support Opensource <support.opensource@diasemi.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 30 Aug 2017 09:05:04 +0200
+If "regl_pdata->n_regulators = 0" is true then we accidentally return
+PTR_ERR(<some_valid_pointer>) instead of an error code.  I've changed it
+to return -ENODEV instead.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Fixes: 69ca3e58d178 ("regulator: da9063: Add Dialog DA9063 voltage regulators support.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (6):
-  Delete an error message for a failed memory allocation in cx24116_writeregN()
-  Return directly after a failed kmalloc() in cx24116_writeregN()
-  Delete an unnecessary variable initialisation in cx24116_writeregN()
-  Improve a size determination in cx24116_attach()
-  Delete an unnecessary variable initialisation in cx24116_attach()
-  Delete jump targets in cx24116_attach()
-
- drivers/media/dvb-frontends/cx24116.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
-
--- 
-2.14.1
-
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index c6af343f54ea..6a8f9cd69f52 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -736,7 +736,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regl_pdata) || regl_pdata->n_regulators = 0) {
+ 		dev_err(&pdev->dev,
+ 			"No regulators defined for the platform\n");
+-		return PTR_ERR(regl_pdata);
++		return -ENODEV;
+ 	}
+ 
+ 	/* Find regulators set for particular device model */
