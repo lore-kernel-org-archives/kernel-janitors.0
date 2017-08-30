@@ -1,32 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 24 Aug 2017 09:55:46 +0000
-Subject: Re: [v2] mt7601u: check memory allocation failure
-Message-Id: <20170824095546.CBCFC606DD@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 07:21:07 +0000
+Subject: [PATCH 3/6] [media] cx24116: Delete an unnecessary variable initialisation in cx24116_writeregN()
+Message-Id: <7af2ff80-ee62-d2d1-77af-35f34976780b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170821220617.21513-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170821220617.21513-1-christophe.jaillet@wanadoo.fr>
+References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: kubakici@wp.pl, matthias.bgg@gmail.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 08:10:38 +0200
 
-> Check memory allocation failure and return -ENOMEM in such a case, as
-> already done a few lines below.
-> 
-> As 'dev->tx_q' can be NULL, we also need to check for that in
-> 'mt7601u_free_tx()', and return early.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Jakub Kicinski <kubakici@wp.pl>
+The variable "ret" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/dvb-frontends/cx24116.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-b3b2f62c6238 mt7601u: check memory allocation failure
-
+diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
+index 69c156443b50..54f09a5a5075 100644
+--- a/drivers/media/dvb-frontends/cx24116.c
++++ b/drivers/media/dvb-frontends/cx24116.c
+@@ -221,7 +221,7 @@ static int cx24116_writereg(struct cx24116_state *state, int reg, int data)
+ static int cx24116_writeregN(struct cx24116_state *state, int reg,
+ 			     const u8 *data, u16 len)
+ {
+-	int ret = -EREMOTEIO;
++	int ret;
+ 	struct i2c_msg msg;
+ 	u8 *buf;
+ 
 -- 
-https://patchwork.kernel.org/patch/9913855/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
