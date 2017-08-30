@@ -1,53 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 20:54:52 +0000
-Subject: [PATCH 2/4] w1: Improve a size determination in two functions
-Message-Id: <4a01f6e8-6054-db98-a738-e42dd23a76b9@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 07:19:18 +0000
+Subject: [PATCH 1/6] [media] cx24116: Delete an error message for a failed memory allocation in cx24116_write
+Message-Id: <c91b8364-f54f-294a-cf89-1fe09c0a4ea6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
-In-Reply-To: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
+References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 21:17:01 +0200
+Date: Tue, 29 Aug 2017 22:56:29 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/w1/slaves/w1_ds28e04.c | 2 +-
- drivers/w1/w1.c                | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-frontends/cx24116.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/w1/slaves/w1_ds28e04.c b/drivers/w1/slaves/w1_ds28e04.c
-index ec234b846eb3..794db5e8f46f 100644
---- a/drivers/w1/slaves/w1_ds28e04.c
-+++ b/drivers/w1/slaves/w1_ds28e04.c
-@@ -397,5 +397,5 @@ static int w1_f1C_add_slave(struct w1_slave *sl)
- 	struct w1_f1C_data *data = NULL;
+diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
+index e105532bfba8..96af4ffba0f9 100644
+--- a/drivers/media/dvb-frontends/cx24116.c
++++ b/drivers/media/dvb-frontends/cx24116.c
+@@ -227,7 +227,6 @@ static int cx24116_writeregN(struct cx24116_state *state, int reg,
  
- 	if (w1_enable_crccheck) {
--		data = kzalloc(sizeof(struct w1_f1C_data), GFP_KERNEL);
-+		data = kzalloc(sizeof(*data), GFP_KERNEL);
- 		if (!data)
-diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index f26c1ea280dd..9f71dc7aca3a 100644
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -711,5 +711,5 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
- 	int err;
- 	struct w1_netlink_msg msg;
- 
--	sl = kzalloc(sizeof(struct w1_slave), GFP_KERNEL);
-+	sl = kzalloc(sizeof(*sl), GFP_KERNEL);
- 	if (!sl)
+ 	buf = kmalloc(len + 1, GFP_KERNEL);
+ 	if (buf = NULL) {
+-		printk("Unable to kmalloc\n");
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
 -- 
-2.14.0
+2.14.1
 
