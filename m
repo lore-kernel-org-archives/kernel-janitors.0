@@ -1,43 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 06 Aug 2017 19:24:55 +0000
-Subject: [PATCH 5/5] mtip32xx: Adjust an input validation check in mtip_hw_debugfs_exit()
-Message-Id: <40d24351-3d62-e4f7-751a-637c0c3b7977@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 19:14:29 +0000
+Subject: [PATCH 0/2] [media] DRXD: Adjustments for three function implementations
+Message-Id: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
-In-Reply-To: <524db5d1-1411-a839-6461-7c33403c1843@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <Bart.VanAssche@sandisk.com>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn <jthumshirn@suse.de>, Ming Lei <ming.lei@redhat.com>, Sagi Grimberg <sagi@grimberg.me>
+To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 6 Aug 2017 20:52:26 +0200
+Date: Wed, 30 Aug 2017 21:10:12 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Two update suggestions were taken into account
+from static source code analysis.
 
-WARNING: debugfs_remove_recursive(NULL) is safe and this check is probably not required
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in load_firmware()
+  Adjust a null pointer check in three functions
 
-Thus adjust this source code place.
+ drivers/media/dvb-frontends/drxd_hard.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/mtip32xx/mtip32xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 18e634efed95..db37ff872d56 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -2572,7 +2572,7 @@ static int mtip_hw_debugfs_init(struct driver_data *dd)
- 
- static void mtip_hw_debugfs_exit(struct driver_data *dd)
- {
--	if (dd->dfs_node)
-+	if (dd)
- 		debugfs_remove_recursive(dd->dfs_node);
- }
- 
 -- 
-2.13.4
+2.14.1
 
