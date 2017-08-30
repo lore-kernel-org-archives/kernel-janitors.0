@@ -1,97 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 13:05:07 +0000
-Subject: [PATCH 5/5] ASoC: dapm: Adjust seven checks for null pointers
-Message-Id: <32343b0d-447a-6b1a-ff11-506d14a82d15@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 20:21:13 +0000
+Subject: [PATCH 1/4] [media] ds3000: Delete an error message for a failed memory allocation in two functions
+Message-Id: <3f061ac7-4738-ec12-3f4b-dca8c2b6eba5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
-In-Reply-To: <e8013ddb-687d-ee56-8153-2791bb9f46fe@users.sourceforge.net>
+References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
+In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 10 Aug 2017 14:41:30 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 30 Aug 2017 21:41:28 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in these functions.
 
-Comparison to NULL could be written !…
-
-Thus fix affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/soc-dapm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/dvb-frontends/ds3000.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 4eea84d821c4..5a85b8773289 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -146,7 +146,7 @@ static void pop_dbg(struct device *dev, u32 pop_time, const char *fmt, ...)
- 		return;
- 
- 	buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
--	if (buf = NULL)
+diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
+index 0b17a45c5640..c2959a9695a7 100644
+--- a/drivers/media/dvb-frontends/ds3000.c
++++ b/drivers/media/dvb-frontends/ds3000.c
+@@ -280,7 +280,5 @@ static int ds3000_writeFW(struct ds3000_state *state, int reg,
+-	if (buf = NULL) {
+-		printk(KERN_ERR "Unable to kmalloc\n");
 +	if (!buf)
- 		return;
- 
- 	va_start(args, fmt);
-@@ -883,7 +883,7 @@ static int dapm_create_or_share_kcontrol(struct snd_soc_dapm_widget *w,
- 			long_name = kasprintf(GFP_KERNEL, "%s %s",
- 				 w->name + prefix_len,
- 				 w->kcontrol_news[kci].name);
--			if (long_name = NULL)
-+			if (!long_name)
- 				return -ENOMEM;
- 
- 			name = long_name;
-@@ -1086,7 +1086,7 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
- 		size++;
- 
- 	*list = kzalloc(sizeof(**list) + size * sizeof(*w), GFP_KERNEL);
--	if (*list = NULL)
-+	if (!*list)
  		return -ENOMEM;
+-	}
  
- 	list_for_each_entry(w, widgets, work_list)
-@@ -2668,7 +2668,7 @@ static int snd_soc_dapm_add_path(struct snd_soc_dapm_context *dapm,
- 		path->is_supply = 1;
+ 	*(buf) = reg;
  
- 	/* connect static paths */
--	if (control = NULL) {
-+	if (!control) {
- 		path->connect = 1;
- 	} else {
- 		switch (wsource->id) {
-@@ -2777,12 +2777,12 @@ static int snd_soc_dapm_add_route(struct snd_soc_dapm_context *dapm,
- 	if (!wsource)
- 		wsource = wtsource;
+@@ -845,7 +843,5 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
+-	if (state = NULL) {
+-		printk(KERN_ERR "Unable to kmalloc\n");
++	if (!state)
+ 		goto error2;
+-	}
  
--	if (wsource = NULL) {
-+	if (!wsource) {
- 		dev_err(dapm->dev, "ASoC: no source widget found for %s\n",
- 			route->source);
- 		return -ENODEV;
- 	}
--	if (wsink = NULL) {
-+	if (!wsink) {
- 		dev_err(dapm->dev, "ASoC: no sink widget found for %s\n",
- 			route->sink);
- 		return -ENODEV;
-@@ -3489,7 +3489,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
- 		w->name = kasprintf(GFP_KERNEL, "%s %s", prefix, widget->name);
- 	else
- 		w->name = kstrdup_const(widget->name, GFP_KERNEL);
--	if (w->name = NULL) {
-+	if (!w->name) {
- 		kfree(w);
- 		return NULL;
- 	}
+ 	state->config = config;
+ 	state->i2c = i2c;
 -- 
-2.14.0
+2.14.1
 
