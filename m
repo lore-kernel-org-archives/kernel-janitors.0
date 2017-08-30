@@ -1,106 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 16:39:11 +0000
-Subject: [PATCH 5/8] CIFS: Less function calls in cifs_mknod() after error detection
-Message-Id: <ad73c46d-a1a3-3ae3-7263-1e8812303809@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 07:24:10 +0000
+Subject: [PATCH 6/6] [media] cx24116: Delete jump targets in cx24116_attach()
+Message-Id: <5f395fa8-c931-b074-090a-9c97526834ad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
-In-Reply-To: <826310e5-e01c-38af-90df-c5630f761a4d@users.sourceforge.net>
+References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, Steve French <sfrench@samba.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Aug 2017 16:56:18 +0200
+Date: Wed, 30 Aug 2017 08:44:29 +0200
 
-The kfree() function was called in a few cases by the
-cifs_mknod() function during error handling even if
-the passed variable contained a null pointer.
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-* Adjust jump targets according to the Linux coding style convention.
+* Move a bit of exception handling code into an if branch.
 
-* Delete an initialisation for the variables "buf" and "full_path"
-  which became unnecessary with this refactoring.
+* Delete two jump targets which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/cifs/dir.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/media/dvb-frontends/cx24116.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index 41039ab12643..2c9cbd8393d6 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -620,12 +620,12 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 	struct tcon_link *tlink;
- 	struct cifs_tcon *tcon;
- 	struct cifs_io_parms io_parms;
--	char *full_path = NULL;
-+	char *full_path;
- 	struct inode *newinode = NULL;
- 	__u32 oplock = 0;
- 	struct cifs_fid fid;
- 	struct cifs_open_parms oparms;
--	FILE_ALL_INFO *buf = NULL;
-+	FILE_ALL_INFO *buf;
- 	unsigned int bytes_written;
- 	struct win_dev *pdev;
- 	struct kvec iov[2];
-@@ -645,7 +645,7 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 	full_path = build_path_from_dentry(direntry);
- 	if (full_path = NULL) {
- 		rc = -ENOMEM;
--		goto mknod_out;
-+		goto put_link;
+diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
+index 902a60d2e1b5..8fb3f095e21c 100644
+--- a/drivers/media/dvb-frontends/cx24116.c
++++ b/drivers/media/dvb-frontends/cx24116.c
+@@ -1125,7 +1125,7 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (state = NULL)
+-		goto error1;
++		return NULL;
+ 
+ 	state->config = config;
+ 	state->i2c = i2c;
+@@ -1134,8 +1134,9 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
+ 	ret = (cx24116_readreg(state, 0xFF) << 8) |
+ 		cx24116_readreg(state, 0xFE);
+ 	if (ret != 0x0501) {
++		kfree(state);
+ 		printk(KERN_INFO "Invalid probe, probably not a CX24116 device\n");
+-		goto error2;
++		return NULL;
  	}
  
- 	if (tcon->unix_ext) {
-@@ -667,18 +667,18 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 					    cifs_sb->local_nls,
- 					    cifs_remap(cifs_sb));
- 		if (rc)
--			goto mknod_out;
-+			goto free_path;
+ 	/* create dvb_frontend */
+@@ -1143,9 +1144,6 @@ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
+ 		sizeof(struct dvb_frontend_ops));
+ 	state->frontend.demodulator_priv = state;
+ 	return &state->frontend;
+-
+-error2: kfree(state);
+-error1: return NULL;
+ }
+ EXPORT_SYMBOL(cx24116_attach);
  
- 		rc = cifs_get_inode_info_unix(&newinode, full_path,
- 						inode->i_sb, xid);
- 
- 		if (rc = 0)
- 			d_instantiate(direntry, newinode);
--		goto mknod_out;
-+		goto free_path;
- 	}
- 
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
--		goto mknod_out;
-+		goto free_path;
- 
- 
- 	cifs_dbg(FYI, "sfu compat create special file\n");
-@@ -708,7 +708,7 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		oplock = 0;
- 	rc = tcon->ses->server->ops->open(xid, &oparms, &oplock, buf);
- 	if (rc)
--		goto mknod_out;
-+		goto free_buffer;
- 
- 	/*
- 	 * BB Do not bother to decode buf since no local inode yet to put
-@@ -740,9 +740,11 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 
- 	/* FIXME: add code here to set EAs */
- 
--mknod_out:
--	kfree(full_path);
-+free_buffer:
- 	kfree(buf);
-+free_path:
-+	kfree(full_path);
-+put_link:
- 	cifs_put_tlink(tlink);
- free_id:
- 	free_xid(xid);
 -- 
-2.14.0
+2.14.1
 
