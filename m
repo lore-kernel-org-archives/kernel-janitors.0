@@ -1,73 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 19:13:49 +0000
-Subject: [PATCH 3/3] ALSA: mpu401: Adjust four checks for null pointers
-Message-Id: <c64cc0e7-2c9b-c4b7-77bd-daae455852ba@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 07:20:12 +0000
+Subject: [PATCH 2/6] [media] cx24116: Return directly after a failed kmalloc() in cx24116_writeregN()
+Message-Id: <cf4109fe-9994-470a-88a1-c7a7a030f1e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
-In-Reply-To: <47947226-bd09-5d15-c0d2-a9f4a659e1b4@users.sourceforge.net>
+References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 20:50:16 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 30 Aug 2017 07:55:49 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+* Return directly after a call of the function "kmalloc" failed
+  at the beginning.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+* Delete the jump target "error" which became unnecessary
+  with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/drivers/mpu401/mpu401_uart.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/dvb-frontends/cx24116.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/sound/drivers/mpu401/mpu401_uart.c b/sound/drivers/mpu401/mpu401_uart.c
-index e8bdea193eab..b997222274bd 100644
---- a/sound/drivers/mpu401/mpu401_uart.c
-+++ b/sound/drivers/mpu401/mpu401_uart.c
-@@ -136,7 +136,7 @@ irqreturn_t snd_mpu401_uart_interrupt(int irq, void *dev_id)
- {
- 	struct snd_mpu401 *mpu = dev_id;
- 	
--	if (mpu = NULL)
-+	if (!mpu)
- 		return IRQ_NONE;
- 	_snd_mpu401_uart_interrupt(mpu);
- 	return IRQ_HANDLED;
-@@ -157,7 +157,7 @@ irqreturn_t snd_mpu401_uart_interrupt_tx(int irq, void *dev_id)
- {
- 	struct snd_mpu401 *mpu = dev_id;
- 	
--	if (mpu = NULL)
-+	if (!mpu)
- 		return IRQ_NONE;
- 	uart_interrupt_tx(mpu);
- 	return IRQ_HANDLED;
-@@ -544,7 +544,7 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
- 				   out_enable, in_enable, &rmidi)) < 0)
- 		return err;
- 	mpu = kzalloc(sizeof(*mpu), GFP_KERNEL);
--	if (mpu = NULL) {
-+	if (!mpu) {
- 		err = -ENOMEM;
- 		goto free_device;
+diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
+index 96af4ffba0f9..69c156443b50 100644
+--- a/drivers/media/dvb-frontends/cx24116.c
++++ b/drivers/media/dvb-frontends/cx24116.c
+@@ -226,10 +226,8 @@ static int cx24116_writeregN(struct cx24116_state *state, int reg,
+ 	u8 *buf;
+ 
+ 	buf = kmalloc(len + 1, GFP_KERNEL);
+-	if (buf = NULL) {
+-		ret = -ENOMEM;
+-		goto error;
+-	}
++	if (!buf)
++		return -ENOMEM;
+ 
+ 	*(buf) = reg;
+ 	memcpy(buf + 1, data, len);
+@@ -250,7 +248,6 @@ static int cx24116_writeregN(struct cx24116_state *state, int reg,
+ 		ret = -EREMOTEIO;
  	}
-@@ -558,7 +558,7 @@ int snd_mpu401_uart_new(struct snd_card *card, int device,
- 	if (! (info_flags & MPU401_INFO_INTEGRATED)) {
- 		int res_size = hardware = MPU401_HW_PC98II ? 4 : 2;
- 		mpu->res = request_region(port, res_size, "MPU401 UART");
--		if (mpu->res = NULL) {
-+		if (!mpu->res) {
- 			snd_printk(KERN_ERR "mpu401_uart: "
- 				   "unable to grab port 0x%lx size %d\n",
- 				   port, res_size);
+ 
+-error:
+ 	kfree(buf);
+ 
+ 	return ret;
 -- 
-2.14.0
+2.14.1
 
