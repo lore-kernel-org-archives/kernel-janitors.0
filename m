@@ -1,45 +1,54 @@
-From: Vishal Verma <vishal.l.verma@intel.com>
-Date: Tue, 29 Aug 2017 22:50:06 +0000
-Subject: Re: [PATCH] libnvdimm, btt: check memory allocation failure
-Message-Id: <20170829225006.GB16374@omniknight.lm.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 30 Aug 2017 08:32:25 +0000
+Subject: [PATCH] hwmon: (asc7621): make several arrays static const
+Message-Id: <20170830083225.21390-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170827063034.4802-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170827063034.4802-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+To: George Joseph <george.joseph@fairview5.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/27, Christophe JAILLET wrote:
-> Check memory allocation failures and return -ENOMEM in such cases, as
-> already done few lines below for another memory allocation.
-> 
-> This avoids NULL pointers dereference.
-> 
-> Fixes: 14e494542636 ("libnvdimm, btt: BTT updates for UEFI 2.7 format")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/nvdimm/btt.c | 2 ++
->  1 file changed, 2 insertions(+)
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good, thank you.
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Don't populate the arrays on the stack, instead make them static.
+Makes the object code smaller by over 950 bytes:
 
-> 
-> diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-> index 60491641a8d6..607184ebcfbf 100644
-> --- a/drivers/nvdimm/btt.c
-> +++ b/drivers/nvdimm/btt.c
-> @@ -1431,6 +1431,8 @@ int nvdimm_namespace_attach_btt(struct nd_namespace_common *ndns)
->  	}
->  
->  	btt_sb = devm_kzalloc(&nd_btt->dev, sizeof(*btt_sb), GFP_KERNEL);
-> +	if (!btt_sb)
-> +		return -ENOMEM;
->  
->  	/*
->  	 * If this returns < 0, that is ok as it just means there wasn't
-> -- 
-> 2.11.0
-> 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  26144	  18768	    352	  45264	   b0d0	drivers/hwmon/asc7621.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  25029	  18928	    352	  44309	   ad15	drivers/hwmon/asc7621.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwmon/asc7621.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/asc7621.c b/drivers/hwmon/asc7621.c
+index c77644d45a02..4875e99b59c9 100644
+--- a/drivers/hwmon/asc7621.c
++++ b/drivers/hwmon/asc7621.c
+@@ -512,7 +512,7 @@ static ssize_t show_pwm_ac(struct device *dev,
+ {
+ 	SETUP_SHOW_DATA_PARAM(dev, attr);
+ 	u8 config, altbit, regval;
+-	const u8 map[] = {
++	static const u8 map[] = {
+ 		0x01, 0x02, 0x04, 0x1f, 0x00, 0x06, 0x07, 0x10,
+ 		0x08, 0x0f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f
+ 	};
+@@ -533,7 +533,7 @@ static ssize_t store_pwm_ac(struct device *dev,
+ 	SETUP_STORE_DATA_PARAM(dev, attr);
+ 	unsigned long reqval;
+ 	u8 currval, config, altbit, newval;
+-	const u16 map[] = {
++	static const u16 map[] = {
+ 		0x04, 0x00, 0x01, 0xff, 0x02, 0xff, 0x05, 0x06,
+ 		0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0f,
+ 		0x07, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+-- 
+2.14.1
+
