@@ -1,36 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 15 Aug 2017 14:08:28 +0000
-Subject: [PATCH] scsi: add missing indent on a for loop statement
-Message-Id: <20170815140828.26133-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 07:23:13 +0000
+Subject: [PATCH 5/6] [media] cx24116: Delete an unnecessary variable initialisation in cx24116_attach()
+Message-Id: <86ad8f11-90b6-4930-8243-ab2e0e0c7650@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
+In-Reply-To: <d01b4a11-6e93-bc40-72de-dab9ce7b997a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willem Riede <osst@riede.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 08:30:12 +0200
 
-The for loop is statement is missing an indent, add it.
+The variable "state" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/osst.c | 2 +-
+ drivers/media/dvb-frontends/cx24116.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 97ab5f160bc6..241908aca468 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -5434,7 +5434,7 @@ static int append_to_buffer(const char __user *ubp, struct osst_buffer *st_bp, i
+diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
+index 74d610207bf2..902a60d2e1b5 100644
+--- a/drivers/media/dvb-frontends/cx24116.c
++++ b/drivers/media/dvb-frontends/cx24116.c
+@@ -1117,7 +1117,7 @@ static const struct dvb_frontend_ops cx24116_ops;
+ struct dvb_frontend *cx24116_attach(const struct cx24116_config *config,
+ 	struct i2c_adapter *i2c)
+ {
+-	struct cx24116_state *state = NULL;
++	struct cx24116_state *state;
+ 	int ret;
  
- 	for (i=0, offset=st_bp->buffer_bytes;
- 	     i < st_bp->sg_segs && offset >= st_bp->sg[i].length; i++)
--	offset -= st_bp->sg[i].length;
-+		offset -= st_bp->sg[i].length;
- 	if (i = st_bp->sg_segs) {  /* Should never happen */
- 		printk(KERN_WARNING "osst :A: Append_to_buffer offset overflow.\n");
- 		return (-EIO);
+ 	dprintk("%s\n", __func__);
 -- 
-2.11.0
+2.14.1
 
