@@ -1,47 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 06:54:05 +0000
-Subject: [PATCH] binfmt_flat: Delete two error messages for a failed memory allocation in decompress_exec()
-Message-Id: <f92aac79-b05e-321a-1a19-d38c7159ee9c@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 19:15:58 +0000
+Subject: [PATCH 1/2] [media] drxd: Delete an error message for a failed memory allocation in load_firmware()
+Message-Id: <190c120b-6974-e232-a171-e0e103a3e9a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
+In-Reply-To: <62e6221c-226c-3b25-08bb-4baff9b23cbb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 08:43:50 +0200
+Date: Wed, 30 Aug 2017 20:47:12 +0200
 
-Omit extra messages for a memory allocation failure in this function.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/binfmt_flat.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/media/dvb-frontends/drxd_hard.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index 604a176df0c2..ce6537c50ec1 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -192,13 +192,11 @@ static int decompress_exec(
- 
- 	memset(&strm, 0, sizeof(strm));
- 	strm.workspace = kmalloc(zlib_inflate_workspacesize(), GFP_KERNEL);
--	if (strm.workspace = NULL) {
--		pr_debug("no memory for decompress workspace\n");
-+	if (!strm.workspace)
+diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
+index 7d04400b18dd..47b0d37e70ba 100644
+--- a/drivers/media/dvb-frontends/drxd_hard.c
++++ b/drivers/media/dvb-frontends/drxd_hard.c
+@@ -911,7 +911,6 @@ static int load_firmware(struct drxd_state *state, const char *fw_name)
+ 	state->microcode = kmemdup(fw->data, fw->size, GFP_KERNEL);
+ 	if (state->microcode = NULL) {
+ 		release_firmware(fw);
+-		printk(KERN_ERR "drxd: firmware load failure: no memory\n");
  		return -ENOMEM;
--	}
-+
- 	buf = kmalloc(LBUFSIZE, GFP_KERNEL);
--	if (buf = NULL) {
--		pr_debug("no memory for read buffer\n");
-+	if (!buf) {
- 		retval = -ENOMEM;
- 		goto out_free;
  	}
+ 
 -- 
-2.14.0
+2.14.1
 
