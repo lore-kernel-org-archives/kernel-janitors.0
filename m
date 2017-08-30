@@ -1,104 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 15:35:41 +0000
-Subject: [PATCH 3/3] ALSA: rme9652: Adjust seven checks for null pointers
-Message-Id: <10358741-a748-1e48-7508-2aff911bbee5@users.sourceforge.net>
+Date: Wed, 30 Aug 2017 20:22:17 +0000
+Subject: [PATCH 2/4] [media] ds3000: Improve a size determination in ds3000_attach()
+Message-Id: <01634417-dd3f-acc0-f550-11a33e5c2a59@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
-In-Reply-To: <a3223028-5b12-0efd-ffe0-aa7300334081@users.sourceforge.net>
+References: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
+In-Reply-To: <c854b845-3b79-ca7a-a597-4abc5f32ec54@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 17:07:09 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 30 Aug 2017 21:49:22 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/rme9652/hdspm.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/media/dvb-frontends/ds3000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
-index 8d339fb7c24b..25284d8d9758 100644
---- a/sound/pci/rme9652/hdspm.c
-+++ b/sound/pci/rme9652/hdspm.c
-@@ -1521,7 +1521,7 @@ static void hdspm_silence_playback(struct hdspm *hdspm)
- 	int n = hdspm->period_bytes;
- 	void *buf = hdspm->playback_buffer;
+diff --git a/drivers/media/dvb-frontends/ds3000.c b/drivers/media/dvb-frontends/ds3000.c
+index c2959a9695a7..988a464de3e9 100644
+--- a/drivers/media/dvb-frontends/ds3000.c
++++ b/drivers/media/dvb-frontends/ds3000.c
+@@ -839,7 +839,7 @@ struct dvb_frontend *ds3000_attach(const struct ds3000_config *config,
+ 	dprintk("%s\n", __func__);
  
--	if (buf = NULL)
-+	if (!buf)
- 		return;
+ 	/* allocate memory for the internal state */
+-	state = kzalloc(sizeof(struct ds3000_state), GFP_KERNEL);
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+ 		goto error2;
  
- 	for (i = 0; i < HDSPM_MAX_CHANNELS; i++) {
-@@ -4706,7 +4706,7 @@ static int snd_hdspm_create_controls(struct snd_card *card,
- 		break;
- 	}
- 
--	if (NULL != list) {
-+	if (list) {
- 		for (idx = 0; idx < limit; idx++) {
- 			err = snd_ctl_add(card,
- 					snd_ctl_new1(&list[idx], hdspm));
-@@ -6069,13 +6069,13 @@ static int snd_hdspm_open(struct snd_pcm_substream *substream)
- 		snd_hdspm_capture_subinfo;
- 
- 	if (playback) {
--		if (hdspm->capture_substream = NULL)
-+		if (!hdspm->capture_substream)
- 			hdspm_stop_audio(hdspm);
- 
- 		hdspm->playback_pid = current->pid;
- 		hdspm->playback_substream = substream;
- 	} else {
--		if (hdspm->playback_substream = NULL)
-+		if (!hdspm->playback_substream)
- 			hdspm_stop_audio(hdspm);
- 
- 		hdspm->capture_pid = current->pid;
-@@ -6775,9 +6775,9 @@ static int snd_hdspm_create(struct snd_card *card,
- 				HDSPM_s2_tco_detect) {
- 			hdspm->midiPorts++;
- 			hdspm->tco = kzalloc(sizeof(*hdspm->tco), GFP_KERNEL);
--			if (NULL != hdspm->tco) {
-+			if (hdspm->tco)
- 				hdspm_tco_write(hdspm);
--			}
-+
- 			dev_info(card->dev, "AIO/RayDAT TCO module found\n");
- 		} else {
- 			hdspm->tco = NULL;
-@@ -6789,9 +6789,9 @@ static int snd_hdspm_create(struct snd_card *card,
- 		if (hdspm_read(hdspm, HDSPM_statusRegister) & HDSPM_tco_detect) {
- 			hdspm->midiPorts++;
- 			hdspm->tco = kzalloc(sizeof(*hdspm->tco), GFP_KERNEL);
--			if (NULL != hdspm->tco) {
-+			if (hdspm->tco)
- 				hdspm_tco_write(hdspm);
--			}
-+
- 			dev_info(card->dev, "MADI/AES TCO module found\n");
- 		} else {
- 			hdspm->tco = NULL;
-@@ -6868,7 +6868,7 @@ static int snd_hdspm_create(struct snd_card *card,
- 		 * this case, we don't set card->id to avoid collisions
- 		 * when running with multiple cards.
- 		 */
--		if (NULL = id[hdspm->dev] && hdspm->serial != 0xFFFFFF) {
-+		if (!id[hdspm->dev] && hdspm->serial != 0xFFFFFF) {
- 			snprintf(card->id, sizeof(card->id),
- 				 "HDSPMx%06x", hdspm->serial);
- 			snd_card_set_id(card, card->id);
 -- 
-2.14.0
+2.14.1
 
