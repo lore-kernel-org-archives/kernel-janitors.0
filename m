@@ -1,42 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 16:54:04 +0000
-Subject: [PATCH] staging: netlogic: Delete an error message for a failed memory allocation in xlr_config_spil
-Message-Id: <7e6515bc-09ba-6b2a-ea64-433cc3befe6c@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 Aug 2017 13:57:15 +0000
+Subject: [PATCH] net: phy: bcm7xxx: make array bcm7xxx_suspend_cfg static, reduces object code size
+Message-Id: <20170831135715.27978-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Mihaela Muraru <mihaela.muraru21@gmail.com>, Mike Kofron <mpkofron@gmail.com>, Philippe Reynes <tremyfr@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Tobias Klauser <tklauser@distanz.ch>, Yuval Shaia <yuval.shaia@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Aug 2017 18:44:12 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Don't populate the array bcm7xxx_suspend_cfg A on the stack, instead
+make it static.  Makes the object code smaller by over 300 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6351	   8146	      0	  14497	   38a1	drivers/net/phy/bcm7xxx.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5986	   8210	      0	  14196	   3774	drivers/net/phy/bcm7xxx.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/netlogic/xlr_net.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/phy/bcm7xxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
-index e05ae4645d91..04cdcf3f329f 100644
---- a/drivers/staging/netlogic/xlr_net.c
-+++ b/drivers/staging/netlogic/xlr_net.c
-@@ -423,10 +423,8 @@ static void *xlr_config_spill(struct xlr_net_priv *priv, int reg_start_0,
- 	base = priv->base_addr;
- 	spill_size = size;
- 	spill = kmalloc(spill_size + SMP_CACHE_BYTES, GFP_ATOMIC);
--	if (!spill) {
--		pr_err("Unable to allocate memory for spill area!\n");
-+	if (!spill)
- 		return ZERO_SIZE_PTR;
--	}
- 
- 	spill = PTR_ALIGN(spill, SMP_CACHE_BYTES);
- 	phys_addr = virt_to_phys(spill);
+diff --git a/drivers/net/phy/bcm7xxx.c b/drivers/net/phy/bcm7xxx.c
+index caa9f6e17f34..8b33f688ac8a 100644
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -511,7 +511,7 @@ static int bcm7xxx_config_init(struct phy_device *phydev)
+ static int bcm7xxx_suspend(struct phy_device *phydev)
+ {
+ 	int ret;
+-	const struct bcm7xxx_regs {
++	static const struct bcm7xxx_regs {
+ 		int reg;
+ 		u16 value;
+ 	} bcm7xxx_suspend_cfg[] = {
 -- 
-2.14.0
+2.14.1
 
