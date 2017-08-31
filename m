@@ -1,82 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 13:41:23 +0000
-Subject: [PATCH 2/3] ALSA: rme96: Use common error handling code in snd_rme96_probe()
-Message-Id: <2b3be152-3594-cab8-1949-99754e593e18@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 31 Aug 2017 11:55:00 +0000
+Subject: Applied "ALSA: ac97c: Fix an error handling path in 'atmel_ac97c_probe()'" to the asoc tree
+Message-Id: <E1dnO3o-0000oV-Qv@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
-In-Reply-To: <b38ee17e-f2ed-2bd7-6bc1-524ab4b3eb02@users.sourceforge.net>
+References: <20170831044042.23306-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170831044042.23306-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <Julia.Lawall@lip6.fr>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com, arvind.yadav.cs@gmail.com@kernel.org, garsilva@embeddedor.com, andriy.shevchenko@linux.intel.com, bhumirks@gmail.comChristopheJAILLETchristophe.jaillet@wanadoo.fr, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Aug 2017 14:50:33 +0200
+The patch
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+   ALSA: ac97c: Fix an error handling path in 'atmel_ac97c_probe()'
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0515760fa1159ffa863c7b2b73466aaff7d11a80 Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Thu, 31 Aug 2017 06:40:42 +0200
+Subject: [PATCH] ALSA: ac97c: Fix an error handling path in
+ 'atmel_ac97c_probe()'
+
+If 'clk_prepare_enable()' fails, we must release some resources before
+returning. Add a new label in the existing error handling path and 'goto'
+there.
+
+Fixes: 260ea95cc027 ("ASoC: atmel: ac97c: Handle return value of clk_prepare_enable.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/pci/rme96.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ sound/atmel/ac97c.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/pci/rme96.c b/sound/pci/rme96.c
-index 82e8c78e48ca..0cdfd53b7796 100644
---- a/sound/pci/rme96.c
-+++ b/sound/pci/rme96.c
-@@ -2481,21 +2481,20 @@ snd_rme96_probe(struct pci_dev *pci,
- 	rme96 = card->private_data;
- 	rme96->card = card;
- 	rme96->pci = pci;
--	if ((err = snd_rme96_create(rme96)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_rme96_create(rme96);
-+	if (err)
-+		goto free_card;
- 	
- #ifdef CONFIG_PM_SLEEP
- 	rme96->playback_suspend_buffer = vmalloc(RME96_BUFFER_SIZE);
- 	if (!rme96->playback_suspend_buffer) {
--		snd_card_free(card);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto free_card;
+diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
+index 52b0522fda20..d78405329ceb 100644
+--- a/sound/atmel/ac97c.c
++++ b/sound/atmel/ac97c.c
+@@ -785,7 +785,7 @@ static int atmel_ac97c_probe(struct platform_device *pdev)
  	}
- 	rme96->capture_suspend_buffer = vmalloc(RME96_BUFFER_SIZE);
- 	if (!rme96->capture_suspend_buffer) {
--		snd_card_free(card);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto free_card;
- 	}
- #endif
+ 	retval = clk_prepare_enable(pclk);
+ 	if (retval)
+-		return retval;
++		goto err_prepare_enable;
  
-@@ -2521,14 +2520,16 @@ snd_rme96_probe(struct pci_dev *pci,
- 	}
- 	sprintf(card->longname, "%s at 0x%lx, irq %d", card->shortname,
- 		rme96->port, rme96->irq);
--	
--	if ((err = snd_card_register(card)) < 0) {
--		snd_card_free(card);
--		return err;	
--	}
-+	err = snd_card_register(card);
-+	if (err)
-+		goto free_card;
-+
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+free_card:
-+	snd_card_free(card);
-+	return err;
+ 	retval = snd_card_new(&pdev->dev, SNDRV_DEFAULT_IDX1,
+ 			      SNDRV_DEFAULT_STR1, THIS_MODULE,
+@@ -881,6 +881,7 @@ static int atmel_ac97c_probe(struct platform_device *pdev)
+ 	snd_card_free(card);
+ err_snd_card_new:
+ 	clk_disable_unprepare(pclk);
++err_prepare_enable:
+ 	clk_put(pclk);
+ 	return retval;
  }
- 
- static void snd_rme96_remove(struct pci_dev *pci)
 -- 
-2.14.0
+2.14.1
 
