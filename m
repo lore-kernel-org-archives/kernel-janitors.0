@@ -1,37 +1,74 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 20:52:16 +0000
-Subject: [PATCH 0/4] w1: Adjustments for some function implementations
-Message-Id: <cb845ee0-0826-6a68-1246-0beab38129c1@users.sourceforge.net>
+Date: Thu, 31 Aug 2017 19:58:59 +0000
+Subject: [PATCH 3/3] [media] mb86a20s: Delete a jump target in mb86a20s_attach()
+Message-Id: <6b7fbd7b-f25d-25c0-5473-41c11b308349@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
+In-Reply-To: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Andrew F. Davis" <afd@ti.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Evgeniy Polyakov <zbr@ioremap.net>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Sebastian Reichel <sre@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Aug 2017 22:04:56 +0200
+Date: Thu, 31 Aug 2017 21:34:58 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in two functions
-  masters: Delete an error message for a failed memory allocation in four functions
-  masters: Improve a size determination in four functions
+* Move a bit of exception handling code into an if branch.
 
- drivers/w1/masters/ds2482.c    | 3 ++-
- drivers/w1/masters/ds2490.c    | 7 +++----
- drivers/w1/masters/matrox_w1.c | 7 +------
- drivers/w1/masters/mxc_w1.c    | 3 +--
- drivers/w1/masters/omap_hdq.c  | 4 +---
- drivers/w1/masters/w1-gpio.c   | 7 ++-----
- drivers/w1/slaves/w1_ds28e04.c | 2 +-
- drivers/w1/w1.c                | 9 ++-------
- drivers/w1/w1_int.c            | 6 +-----
- 9 files changed, 14 insertions(+), 34 deletions(-)
+* Adjust a condition check.
 
+* Delete the jump target "error" which became unnecessary
+  with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/dvb-frontends/mb86a20s.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/mb86a20s.c b/drivers/media/dvb-frontends/mb86a20s.c
+index ba7a433dd424..bdaf9d235fed 100644
+--- a/drivers/media/dvb-frontends/mb86a20s.c
++++ b/drivers/media/dvb-frontends/mb86a20s.c
+@@ -2073,7 +2073,7 @@ struct dvb_frontend *mb86a20s_attach(const struct mb86a20s_config *config,
+ 	/* allocate memory for the internal state */
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+-		goto error;
++		return NULL;
+ 
+ 	/* setup the state */
+ 	state->config = config;
+@@ -2086,22 +2086,16 @@ struct dvb_frontend *mb86a20s_attach(const struct mb86a20s_config *config,
+ 
+ 	/* Check if it is a mb86a20s frontend */
+ 	rev = mb86a20s_readreg(state, 0);
+-
+-	if (rev = 0x13) {
+-		dev_info(&i2c->dev,
+-			 "Detected a Fujitsu mb86a20s frontend\n");
+-	} else {
++	if (rev != 0x13) {
++		kfree(state);
+ 		dev_dbg(&i2c->dev,
+ 			"Frontend revision %d is unknown - aborting.\n",
+ 		       rev);
+-		goto error;
++		return NULL;
+ 	}
+ 
++	dev_info(&i2c->dev, "Detected a Fujitsu mb86a20s frontend\n");
+ 	return &state->frontend;
+-
+-error:
+-	kfree(state);
+-	return NULL;
+ }
+ EXPORT_SYMBOL(mb86a20s_attach);
+ 
 -- 
-2.14.0
+2.14.1
 
