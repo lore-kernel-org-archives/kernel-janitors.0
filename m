@@ -1,27 +1,45 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Sun, 13 Aug 2017 14:37:50 +0000
-Subject: Re: [PATCH 0/6] constify pci_error_handlers structures
-Message-Id: <20170813143750.GB407@infradead.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 31 Aug 2017 04:40:42 +0000
+Subject: [PATCH] ALSA: ac97c: Fix an error handling path in 'atmel_ac97c_probe()'
+Message-Id: <20170831044042.23306-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1502516674-8918-1-git-send-email-Julia.Lawall@lip6.fr>
- <20170812074451.GA3589@infradead.org>
- <alpine.DEB.2.20.1708120946590.2001@hadrien>
- <20170812075616.GA14976@infradead.org>
- <alpine.DEB.2.20.1708121349080.2001@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1708121349080.2001@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-scsi@vger.kernel.org, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.com, arvind.yadav.cs@gmail.com, nicolas.ferre@microchip.com, broonie@kernel.org, garsilva@embeddedor.com, andriy.shevchenko@linux.intel.com, bhumirks@gmail.com
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 12, 2017 at 01:51:21PM +0200, Julia Lawall wrote:
-> Another issue arises in the files drivers/infiniband/hw/hfi1/pcie.c and
-> drivers/infiniband/hw/qib/qib_pcie.c, where the pci_error_handlers
-> structure is defined in one file and used in another file.  The structure
-> definition references various functions that are static in the same file.
-> Should I try to move those functions to the file containing the pci_driver
-> structure?  Or leave the functions where they are and remove the static
-> annotation?
+If 'clk_prepare_enable()' fails, we must release some resources before
+returning. Add a new label in the existing error handling path and 'goto'
+there.
 
-I'd just leave them as-is and remove the static for now.
+Fixes: 260ea95cc027 ("ASoC: atmel: ac97c: Handle return value of clk_prepare_enable.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/atmel/ac97c.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
+index 30c64ab210d9..5ffefac2fa8f 100644
+--- a/sound/atmel/ac97c.c
++++ b/sound/atmel/ac97c.c
+@@ -785,7 +785,7 @@ static int atmel_ac97c_probe(struct platform_device *pdev)
+ 	}
+ 	retval = clk_prepare_enable(pclk);
+ 	if (retval)
+-		return retval;
++		goto err_prepare_enable;
+ 
+ 	retval = snd_card_new(&pdev->dev, SNDRV_DEFAULT_IDX1,
+ 			      SNDRV_DEFAULT_STR1, THIS_MODULE,
+@@ -881,6 +881,7 @@ static int atmel_ac97c_probe(struct platform_device *pdev)
+ 	snd_card_free(card);
+ err_snd_card_new:
+ 	clk_disable_unprepare(pclk);
++err_prepare_enable:
+ 	clk_put(pclk);
+ 	return retval;
+ }
+-- 
+2.11.0
+
