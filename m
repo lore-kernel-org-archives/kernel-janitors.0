@@ -1,42 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 29 Aug 2017 19:23:49 +0000
-Subject: [PATCH] driver core: bus: Fix a potential double free
-Message-Id: <20170829192349.15666-1-christophe.jaillet@wanadoo.fr>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Thu, 31 Aug 2017 16:57:08 +0000
+Subject: Re: [PATCH] driver core: bus: Fix a potential double free
+Message-Id: <20170831165708.GA26329@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170829192349.15666-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170829192349.15666-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The .release function of driver_ktype is 'driver_release()'.
-This function frees the container_of this kobject.
+On Tue, Aug 29, 2017 at 09:23:49PM +0200, Christophe JAILLET wrote:
+> The .release function of driver_ktype is 'driver_release()'.
+> This function frees the container_of this kobject.
+> 
+> So, this memory must not be freed explicitly in the error handling path of
+> 'bus_add_driver()'. Otherwise a double free will occur.
 
-So, this memory must not be freed explicitly in the error handling path of
-'bus_add_driver()'. Otherwise a double free will occur.
+Oh, nice catch!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I have left the 'drv->p = NULL' even if it looks useless to me. It does not
-hurt. I have also left a comment to explain why we do not free 'drv->p'
-explicitly before zeroing this pointer.
----
- drivers/base/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I have left the 'drv->p = NULL' even if it looks useless to me. It does not
+> hurt. I have also left a comment to explain why we do not free 'drv->p'
+> explicitly before zeroing this pointer.
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index e162c9a789ba..22a64fd3309b 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -698,7 +698,7 @@ int bus_add_driver(struct device_driver *drv)
- 
- out_unregister:
- 	kobject_put(&priv->kobj);
--	kfree(drv->p);
-+	/* drv->p is freed in driver_release()  */
- 	drv->p = NULL;
- out_put_bus:
- 	bus_put(bus);
--- 
-2.11.0
+We need that for when people do static structures.  Like as is done for
+drivers.  Well, I think that's why we need it, can't really remember,
+might as well be safe, the error handling paths here are crazy at
+times...
 
+thnaks,
+
+greg k-h
