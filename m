@@ -1,44 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 16 Aug 2017 12:01:05 +0000
-Subject: [PATCH][leds-next] leds: pca955x: remove redundant null check on array name
-Message-Id: <20170816120105.1963-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 31 Aug 2017 19:56:44 +0000
+Subject: [PATCH 1/3] [media] mb86a20s: Delete an error message for a failed memory allocation in mb86a20s_att
+Message-Id: <b977ca6f-5839-380c-e4b1-0b6108fb4274@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
+In-Reply-To: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 31 Aug 2017 21:10:25 +0200
 
-The check to see if pdata-leds[i].name is redundant as name is
-a 32 byte char array and hence can never be null.  Remove the
-redundant check.
+Omit an extra message for a memory allocation failure in this function.
 
-Detected by CoverityScan, CID#1454218 ("Array compared against 0")
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/leds/leds-pca955x.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/media/dvb-frontends/mb86a20s.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index f062d1e7640f..b12b7ea51867 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -473,10 +473,9 @@ static int pca955x_probe(struct i2c_client *client,
- 			 * Platform data can specify LED names and
- 			 * default triggers
- 			 */
--			if (pdata->leds[i].name)
--				snprintf(pca955x_led->name,
--					sizeof(pca955x_led->name), "pca955x:%s",
--					pdata->leds[i].name);
-+			snprintf(pca955x_led->name,
-+				sizeof(pca955x_led->name), "pca955x:%s",
-+				pdata->leds[i].name);
- 			if (pdata->leds[i].default_trigger)
- 				pca955x_led->led_cdev.default_trigger  					pdata->leds[i].default_trigger;
+diff --git a/drivers/media/dvb-frontends/mb86a20s.c b/drivers/media/dvb-frontends/mb86a20s.c
+index e8ac8c3e2ec0..340984100aec 100644
+--- a/drivers/media/dvb-frontends/mb86a20s.c
++++ b/drivers/media/dvb-frontends/mb86a20s.c
+@@ -2075,8 +2075,5 @@ struct dvb_frontend *mb86a20s_attach(const struct mb86a20s_config *config,
+-	if (state = NULL) {
+-		dev_err(&i2c->dev,
+-			"%s: unable to allocate memory for state\n", __func__);
++	if (!state)
+ 		goto error;
+-	}
+ 
+ 	/* setup the state */
+ 	state->config = config;
 -- 
-2.11.0
+2.14.1
 
