@@ -1,40 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 12:03:19 +0000
-Subject: [PATCH 5/5] net/9p: Delete an unnecessary variable initialisation in p9_client_attach()
-Message-Id: <ec7726a4-ef2e-4f26-a218-2889617124d1@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 Aug 2017 16:43:49 +0000
+Subject: [PATCH][next] phy: mvebu-cp110-comphy: fix -ve error return against a u32
+Message-Id: <20170831164349.2826-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
-In-Reply-To: <22a44d7c-cdb9-e206-4b2c-56e38cbf0de1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, "David S . Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Aug 2017 11:25:31 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The local variable "err" will eventually be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+The check to see if the call to mvebu_comphy_get_mux failed is always
+false because mux is a u32 and can never be less than zero. Fix this
+by making mux an int and casting to u32 on shift later on.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Detected by CoverityScan, CID#1455220 ("Unsigned compared against 0")
+
+Fixes: d0438bd6aa09 ("phy: add the mvebu cp110 comphy driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/9p/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 38c08171acc6..1d59db9aafb3 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -1124,7 +1124,7 @@ EXPORT_SYMBOL(p9_client_begin_disconnect);
- struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
- 	const char *uname, kuid_t n_uname, const char *aname)
+diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+index 73ebad6634a7..7e21b2a977b9 100644
+--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
++++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+@@ -468,8 +468,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
  {
--	int err = 0;
-+	int err;
- 	struct p9_req_t *req;
- 	struct p9_fid *fid;
- 	struct p9_qid qid;
+ 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
+ 	struct mvebu_comphy_priv *priv = lane->priv;
+-	int ret;
+-	u32 mux, val;
++	int ret, mux;
++	u32 val;
+ 
+ 	mux = mvebu_comphy_get_mux(lane->id, lane->port, lane->mode);
+ 	if (mux < 0)
+@@ -477,7 +477,7 @@ static int mvebu_comphy_power_on(struct phy *phy)
+ 
+ 	regmap_read(priv->regmap, MVEBU_COMPHY_SELECTOR, &val);
+ 	val &= ~(0xf << MVEBU_COMPHY_SELECTOR_PHY(lane->id));
+-	val |= mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
++	val |= (u32)mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
+ 	regmap_write(priv->regmap, MVEBU_COMPHY_SELECTOR, val);
+ 
+ 	switch (lane->mode) {
 -- 
-2.14.0
+2.14.1
 
