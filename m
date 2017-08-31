@@ -1,26 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 04 Aug 2017 12:09:43 +0000
-Subject: [PATCH 0/5] constify videobuf_queue_ops structures
-Message-Id: <1501848588-22628-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 31 Aug 2017 19:55:37 +0000
+Subject: [PATCH 0/3] [media] mb86a20s: Adjustments for mb86a20s_attach()
+Message-Id: <9571ee6c-5137-15f4-4cdb-9f03b5cb9268@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-usb@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-These videobuf_queue_ops structures are only passed as the second
-argument to videobuf_queue_vmalloc_init, which is declared as const.
-Thus the videobuf_queue_ops structures themselves can be const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 31 Aug 2017 21:46:12 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
----
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+  Delete a jump target
 
- drivers/media/pci/cx18/cx18-streams.c                     |    2 +-
- drivers/media/usb/cx231xx/cx231xx-417.c                   |    2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c                 |    2 +-
- drivers/media/usb/tm6000/tm6000-video.c                   |    2 +-
- drivers/media/usb/zr364xx/zr364xx.c                       |    2 +-
- drivers/staging/media/atomisp/pci/atomisp2/atomisp_fops.c |    4 ++--
- 6 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/dvb-frontends/mb86a20s.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
+
+-- 
+2.14.1
+
