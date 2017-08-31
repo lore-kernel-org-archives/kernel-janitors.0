@@ -1,44 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 31 Aug 2017 10:38:25 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 31 Aug 2017 10:49:17 +0000
 Subject: Re: [alsa-devel] [PATCH] ALSA: ac97c: Fix an error handling path in 'atmel_ac97c_probe()'
-Message-Id: <20170831103825.77shnqzi7ykpm7ah@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="sj65f6ptnm2w3c2q"
+Message-Id: <s5htw0ohv0y.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170831044042.23306-1-christophe.jaillet@wanadoo.fr>
- <20170831081021.g4luo557ggtnyfyg@piout.net>
- <20170831101903.avhj5tqywpvfsj4u@sirena.org.uk>
- <s5h1snsjaey.wl-tiwai@suse.de>
-In-Reply-To: <s5h1snsjaey.wl-tiwai@suse.de>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, nicolas.ferre@microchip.com, garsilva@embeddedor.com, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, arvind.yadav.cs@gmail.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, andriy.shevchenko@linux.intel.com, bhumirks@gmail.com
+        <20170831081021.g4luo557ggtnyfyg@piout.net>
+        <alpine.DEB.2.20.1708311020340.3243@hadrien>
+        <20170831095615.lpon4a36vil6avma@piout.net>
+        <s5h7exkjb9v.wl-tiwai@suse.de>
+        <s5h4lsojast.wl-tiwai@suse.de>
+        <20170831103716.n5f7mpzr2gatulmw@sirena.org.uk>
+In-Reply-To: <20170831103716.n5f7mpzr2gatulmw@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org, garsilva@embeddedor.com, arvind.yadav.cs@gmail.com, bhumirks@gmail.com, andriy.shevchenko@linux.intel.com, nicolas.ferre@microchip.com, perex@perex.cz, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+On Thu, 31 Aug 2017 12:37:16 +0200,
+Mark Brown wrote:
+> 
+> On Thu, Aug 31, 2017 at 12:23:14PM +0200, Takashi Iwai wrote:
+> 
+> > Ah, wait, now I see your point.  It was introduced by the very recent
+> > patch through Mark's asoc tree (since it was wrongly labeled as "ASoC"
+> > while it isn't).  That patch looks indeed fishy.  The change in
+> > atmel_ac97c_resume() is also bad.
+> 
+> The resume check looks fine?  The function appears to do nothing other
+> than the clk_prepare_enable().
+
+Well, the patch behaves correctly but the code is ugly:
+	
+        int ret = clk_prepare_enable(chip->pclk);
+
+        return ret;
 
 
---sj65f6ptnm2w3c2q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > So, I'd prefer reverting the wrong commit instead, and leave some
+> > comment about the uselessness of clk_prepare_enable() return value
+> > check.
+> 
+> I'd rather keep the error checking there, it means that people don't
+> need to open the code and verify it when they go scanning for potential
+> problems.
 
-On Thu, Aug 31, 2017 at 12:31:33PM +0200, Takashi Iwai wrote:
+OK.
 
-> This is again a typical problem by such a trivial fix patch: the code
-> looks as if it were trivial and correct, buried in a patch series that
-> easily leads to the oversight by the maintainer's review.
 
-Right, plus the amount of context that diff shows you.
-
---sj65f6ptnm2w3c2q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlmn5yAACgkQJNaLcl1U
-h9DpcQf+NRJiJpVSJaKTc1vePwbgOCafygwxhOHTrnSlNLRQjxakDkUcdvw8htuf
-TgR4iBV59vMh8y91FBnV36NMqYKgJmX3PZy46S18Szm6jUYoV2INaiQJUeddmWNa
-KUq4EqZEvf0XjnV/c5f2geN+JPOM36mYh/Ndkp5v98opU2/UTQ/rHtGJeHdjHgYQ
-rGFJweRJlAaofY5oQXkvzOyaF2z06bheBq4hpL5aQFhNUSopbqv1dEHzVjxC+ZNL
-gov/C6udBftxCxRS+tLAknx3txBTn077OTGEQb4xp+Bh82Lap9DNFLTaS3dqcLGG
-5NA+DtMlKTH5oIReI0cp2x4msP10CQ==
-=l4TI
------END PGP SIGNATURE-----
-
---sj65f6ptnm2w3c2q--
+Takashi
