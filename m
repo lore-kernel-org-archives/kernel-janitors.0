@@ -1,56 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 22 Aug 2017 15:07:54 +0000
-Subject: Re: [alsa-devel] ALSA: pcsp: Use common error handling code in snd_card_pcsp_probe()
-Message-Id: <s5hwp5v7i9h.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 Aug 2017 16:30:53 +0000
+Subject: [PATCH][next] net/mlx4_core: fix memory leaks on error exit path
+Message-Id: <20170831163053.2349-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <08ee0d6b-788b-2845-6964-e1e55c2d2292@users.sourceforge.net>
- <20170822121625.syvr64kwyh5xjexg@mwanda>
- <s5hziar9483.wl-tiwai@suse.de>
- <f138ba40-a61f-cdab-3d9b-699dbcacad9d@users.sourceforge.net>
- <s5ho9r792yl.wl-tiwai@suse.de>
- <fc4d8c96-7de2-e8f0-4cb4-5dda795d298a@users.sourceforge.net>
- <s5hbmn78zmg.wl-tiwai@suse.de>
- <139363f6-e059-defb-357e-f18645ba9768@users.sourceforge.net>
- <s5h378j8xos.wl-tiwai@suse.de>
- <b434f976-33a1-7ced-55b5-b55487f2fb14@users.sourceforge.net>
-In-Reply-To: <b434f976-33a1-7ced-55b5-b55487f2fb14@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tariq Toukan <tariqt-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, 22 Aug 2017 17:03:00 +0200,
-SF Markus Elfring wrote:
-> 
-> >> * I find it a bit safer when the error predicate is “return value != 0”.
-> > 
-> > Can't agree.
-> 
-> How do you think about to reduce the probability that positive return values
-> will accidentally be interpreted as a successful function execution.
+From: Colin Ian King <colin.king@canonical.com>
 
-It's not zero.
+The structures hca_param and func_cap are not being kfree'd on an error
+exit path causing two memory leaks. Fix this by jumping to the existing
+free memory error exit path.
 
-> > And I have no interest to continue bike-shedding, sorry.
-> 
-> I do not like that you prefer to put this technical detail into such
-> a communication category.
-> 
-> 
-> > You can't convince me regarding this.
-> 
-> Would you still like to integrate the proposed refactoring with the use
-> of previous failure predicates then?
+Detected by CoverityScan, CID#1455219, CID#1455224 ("Resource Leak")
 
-That's fine.
+Fixes: c73c8b1e47ca ("net/mlx4_core: Dynamically allocate structs at mlx4_slave_cap")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-But, please don't forget what others already mentioned.
-For example, Joe Perches suggested to put a blank line before the
-label for your patches.  But you completely ignored it and did the
-same again.
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 1c92101b3ec2..d46f3283ec36 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -977,7 +977,8 @@ static int mlx4_slave_cap(struct mlx4_dev *dev)
+ 	if (dev->caps.num_ports > MLX4_MAX_PORTS) {
+ 		mlx4_err(dev, "HCA has %d ports, but we only support %d, aborting\n",
+ 			 dev->caps.num_ports, MLX4_MAX_PORTS);
+-		return -ENODEV;
++		err = -ENODEV;
++		goto free_mem;
+ 	}
+ 
+ 	mlx4_replace_zero_macs(dev);
+-- 
+2.14.1
 
-
-thanks,
-
-Takashi
