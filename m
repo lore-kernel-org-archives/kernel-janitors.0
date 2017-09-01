@@ -1,52 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 20:12:26 +0000
-Subject: [PATCH 2/2] [media] vicam: Return directly after a failed kmalloc() in vicam_dostream()
-Message-Id: <a03c7497-3c98-7ba9-368e-7e1f5296144b@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 01 Sep 2017 13:29:50 +0000
+Subject: Re: powerpc/macintosh: constify wf_sensor_ops structures
+Message-Id: <3xkKq244Czz9t3F@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
-In-Reply-To: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
+In-Reply-To: <1501707705-32425-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 21:56:55 +0200
+On Wed, 2017-08-02 at 21:01:45 UTC, Julia Lawall wrote:
+> The wf_sensor_ops structures are only stored in the ops field of a
+> wf_sensor structure, which is declared as const.  Thus the
+> wf_sensor_ops structures themselves can be const.
+> 
+> Done with the help of Coccinelle.
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct wf_sensor_ops i@p = { ... };
+> 
+> @ok1@
+> identifier r.i;
+> struct wf_sensor s;
+> position p;
+> @@
+> s.ops = &i@p
+> 
+> @ok2@
+> identifier r.i;
+> struct wf_sat_sensor s;
+> position p;
+> @@
+> s.sens.ops = &i@p
+> 
+> @bad@
+> position p != {r.p,ok1.p,ok2.p};
+> identifier r.i;
+> struct wf_sensor_ops e;
+> @@
+> e@i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct wf_sensor_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-* Return directly after a call of the function "kmalloc" failed
-  at the beginning.
+Applied to powerpc next, thanks.
 
-* Delete the jump target "exit" which became unnecessary
-  with this refactoring.
+https://git.kernel.org/powerpc/c/de854e54d79bc0ad5c45c5be50821b
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/gspca/vicam.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/vicam.c b/drivers/media/usb/gspca/vicam.c
-index 15b6887a8e97..11508ab283cd 100644
---- a/drivers/media/usb/gspca/vicam.c
-+++ b/drivers/media/usb/gspca/vicam.c
-@@ -184,7 +184,7 @@ static void vicam_dostream(struct work_struct *work)
- 		   HEADER_SIZE;
- 	buffer = kmalloc(frame_sz, GFP_KERNEL | GFP_DMA);
- 	if (!buffer)
--		goto exit;
-+		return;
- 
- 	while (gspca_dev->present && gspca_dev->streaming) {
- #ifdef CONFIG_PM
-@@ -205,7 +205,7 @@ static void vicam_dostream(struct work_struct *work)
- 				frame_sz - HEADER_SIZE);
- 		gspca_frame_add(gspca_dev, LAST_PACKET, NULL, 0);
- 	}
--exit:
-+
- 	kfree(buffer);
- }
- 
--- 
-2.14.1
-
+cheers
