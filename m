@@ -1,34 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 11:23:24 +0000
-Subject: Re: [media] s2255drv: Adjust 13 checks for null pointers
-Message-Id: <ea01c235-f570-a286-b549-d8df9844b526@users.sourceforge.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 01 Sep 2017 05:07:30 +0000
+Subject: Re: [PATCH] kernfs: checking for IS_ERR() instead of NULL
+Message-Id: <20170901050730.GA2584@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
- <66f0b95e-e717-7a50-39d2-05fcbf7b77bd@users.sourceforge.net>
- <20170920230729.b2jujsdcjtvjrjun@mwanda>
- <f5fde857-e0d2-1189-7764-dd82ca5df84a@users.sourceforge.net>
- <20170921092235.s4w56ohow2qmeyus@mwanda>
-In-Reply-To: <20170921092235.s4w56ohow2qmeyus@mwanda>
+References: <20170830140456.7n6sfogqb7mvjmrm@mwanda>
+ <20170831165247.GA26219@kroah.com>
+ <26406dc8-2bdc-7bd3-7cd9-7e63986a8769@kernel.dk>
+In-Reply-To: <26406dc8-2bdc-7bd3-7cd9-7e63986a8769@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Shaohua Li <shli@fb.com>, linux-block@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Would you like to clarify corresponding concerns any more?
->>
+On Thu, Aug 31, 2017 at 01:56:40PM -0600, Jens Axboe wrote:
+> On 08/31/2017 10:52 AM, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 30, 2017 at 05:04:56PM +0300, Dan Carpenter wrote:
+> >> The kernfs_get_inode() returns NULL on error, it never returns error
+> >> pointers.
+> >>
+> >> Fixes: aa8188253474 ("kernfs: add exportfs operations")
+> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >> Acked-by: Tejun Heo <tj@kernel.org>
+> > 
+> > Hm, I don't know what tree aa8188253474 is in, but it's not mine, so I
+> > can't take this patch :(
 > 
-> Look at the `git log`
+> It's in my tree, I'll take it. Can I add your
+> acked/reviewed/whatever-by?
 
-I did this also for a moment.
+Yes:
 
-
-> and it just copies those lines:
-
-The Git software preserves these three message fields
-(when special characters were used in the commit message).
-
-Can you accept such software functionality?
-
-Regards,
-Markus
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
