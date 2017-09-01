@@ -1,38 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Sep 2017 22:33:05 +0000
-Subject: [PATCH 1/2] rapidio: Fix resources leak in error handling path in 'rio_dma_transfer()'
-Message-Id: <61292a4f369229eee03394247385e955027283f8.1505687047.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Sep 2017 19:43:42 +0000
+Subject: [PATCH 2/4] [media] sp2: Improve a size determination in sp2_probe()
+Message-Id: <f07cbc6e-9179-6270-31a6-0fa55cb57f02@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
+References: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
+In-Reply-To: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mporter@kernel.crashing.org, alexandre.bounine@idt.com, lstoakes@gmail.com, akpm@linux-foundation.org, jesper.nilsson@axis.com, christian.koenig@amd.com, logang@deltatee.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Olli Salonen <olli.salonen@iki.fi>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If 'dma_map_sg()', we should branch to the existing error handling path to
-free some resources before returning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Sep 2017 20:46:18 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rapidio/devices/rio_mport_cdev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/sp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-index 5beb0c361076..76afe1449cab 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -963,7 +963,8 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
- 			   req->sgt.sgl, req->sgt.nents, dir);
- 	if (nents = -EFAULT) {
- 		rmcd_error("Failed to map SG list");
--		return -EFAULT;
-+		ret = -EFAULT;
-+		goto err_pg;
- 	}
+diff --git a/drivers/media/dvb-frontends/sp2.c b/drivers/media/dvb-frontends/sp2.c
+index d3b4f8822096..dd556012ceb6 100644
+--- a/drivers/media/dvb-frontends/sp2.c
++++ b/drivers/media/dvb-frontends/sp2.c
+@@ -381,6 +381,6 @@ static int sp2_probe(struct i2c_client *client,
  
- 	ret = do_dma_request(req, xfer, sync, nents);
+ 	dev_dbg(&client->dev, "\n");
+ 
+-	s = kzalloc(sizeof(struct sp2), GFP_KERNEL);
++	s = kzalloc(sizeof(*s), GFP_KERNEL);
+ 	if (!s) {
+ 		ret = -ENOMEM;
 -- 
-2.11.0
+2.14.1
 
