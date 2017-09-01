@@ -1,76 +1,199 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Fri, 01 Sep 2017 10:33:04 +0000
-Subject: Re: [PATCH][staging-next] staging: unisys: visorbus: make two functions static
-Message-Id: <1504261984.25945.180.camel@linux.intel.com>
+From: "Kershner, David A" <David.Kershner@unisys.com>
+Date: Fri, 01 Sep 2017 21:56:05 +0000
+Subject: RE: [PATCH][staging-next] staging: unisys: visorbus: make two functions static
+Message-Id: <CY4PR07MB317638D4EC3F5D8FB97765FCF0920@CY4PR07MB3176.namprd07.prod.outlook.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0025_01D3234B.9269E850"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170901100810.17172-1-colin.king@canonical.com>
 In-Reply-To: <20170901100810.17172-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Sell <timothy.sell@unisys.com>, David Binder <david.binder@unisys.com>, Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>, Charles Daniels <cdaniels@fastmail.com>, sparmaintainer@unisys.com, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Sell, Timothy C" <Timothy.Sell@unisys.com>, "Binder, David Anthony" <David.Binder@unisys.com>, "Wadgaonkar, Sameer Laxmikant" <Sameer.Wadgaonkar@unisys.com>, *S-Par-Maintainer <SParMaintainer@unisys.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 2017-09-01 at 11:08 +0100, Colin King wrote:
+------=_NextPart_000_0025_01D3234B.9269E850
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+> -----Original Message-----
+> From: Colin King [mailto:colin.king@canonical.com]
+> Sent: Friday, September 1, 2017 6:08 AM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Sell, Timothy C
+> <Timothy.Sell@unisys.com>; Binder, David Anthony
+> <David.Binder@unisys.com>; Wadgaonkar, Sameer Laxmikant
+> <Sameer.Wadgaonkar@unisys.com>; Charles Daniels
+> <cdaniels@fastmail.com>; Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com>; *S-Par-Maintainer
+> <SParMaintainer@unisys.com>; devel@driverdev.osuosl.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH][staging-next] staging: unisys: visorbus: make two functions
+> static
+>
 > From: Colin Ian King <colin.king@canonical.com>
-> 
+>
 > The functions sig_queue_offset and sig_data_offset are local to
 > the source and do not need to be in global scope, so make them
 > static.
-> 
+>
 > Cleans up sparse warnings:
 > symbol 'sig_queue_offset' was not declared. Should it be static?
 > symbol 'sig_data_offset' was not declared. Should it be static?
-
-
-While patch below seems okay to me, I would recommend you to add
-something like
-
---git-min-percentg
-
-to get_maintainer.pl command when you generate a list of people to whom
-you Cc to.
-
-Thanks for understanding.
-
-> 
+>
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/unisys/visorbus/visorchannel.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/unisys/visorbus/visorchannel.c
-> b/drivers/staging/unisys/visorbus/visorchannel.c
-> index 49d1f5f9ef1d..2a000fee3119 100644
-> --- a/drivers/staging/unisys/visorbus/visorchannel.c
-> +++ b/drivers/staging/unisys/visorbus/visorchannel.c
-> @@ -155,7 +155,7 @@ void *visorchannel_get_header(struct visorchannel
-> *channel)
->   * Return offset of a specific SIGNAL_QUEUE_HEADER from the beginning
-> of a
->   * channel header
->   */
-> -int sig_queue_offset(struct channel_header *chan_hdr, int q)
-> +static int sig_queue_offset(struct channel_header *chan_hdr, int q)
->  {
->  	return ((chan_hdr)->ch_space_offset +
->  	       ((q) * sizeof(struct signal_queue_header)));
-> @@ -165,8 +165,8 @@ int sig_queue_offset(struct channel_header
-> *chan_hdr, int q)
->   * Return offset of a specific queue entry (data) from the beginning
-> of a
->   * channel header
->   */
-> -int sig_data_offset(struct channel_header *chan_hdr, int q,
-> -		    struct signal_queue_header *sig_hdr, int slot)
-> +static int sig_data_offset(struct channel_header *chan_hdr, int q,
-> +			   struct signal_queue_header *sig_hdr, int
-> slot)
->  {
->  	return (sig_queue_offset(chan_hdr, q) + sig_hdr-
-> >sig_base_offset +
->  	       (slot * sig_hdr->signal_size));
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Acked-by: David Kershner <david.kershner@unisys.com>
+
+> ---
+>  drivers/staging/unisys/visorbus/visorchannel.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+
+
+------=_NextPart_000_0025_01D3234B.9269E850
+Content-Type: application/pkcs7-signature;
+	name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="smime.p7s"
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIa7zCCBJEw
+ggN5oAMCAQICBEVrUFQwDQYJKoZIhvcNAQEFBQAwgbAxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1F
+bnRydXN0LCBJbmMuMTkwNwYDVQQLEzB3d3cuZW50cnVzdC5uZXQvQ1BTIGlzIGluY29ycG9yYXRl
+ZCBieSByZWZlcmVuY2UxHzAdBgNVBAsTFihjKSAyMDA2IEVudHJ1c3QsIEluYy4xLTArBgNVBAMT
+JEVudHJ1c3QgUm9vdCBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0wNjExMjcyMDIzNDJaFw0y
+NjExMjcyMDUzNDJaMIGwMQswCQYDVQQGEwJVUzEWMBQGA1UEChMNRW50cnVzdCwgSW5jLjE5MDcG
+A1UECxMwd3d3LmVudHJ1c3QubmV0L0NQUyBpcyBpbmNvcnBvcmF0ZWQgYnkgcmVmZXJlbmNlMR8w
+HQYDVQQLExYoYykgMjAwNiBFbnRydXN0LCBJbmMuMS0wKwYDVQQDEyRFbnRydXN0IFJvb3QgQ2Vy
+dGlmaWNhdGlvbiBBdXRob3JpdHkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2lbZD
+QvrGbSpvSN+UTDlXBe7DeRFBaDbt7P6aAY+hOCj89xBGZi5NHhqxGk7G0cCViLDJ/zGLMwPbt4N7
+PiCEXu2yViin+OC5QHE3xctHDpcqaMAilWIV20fZ9dAr/4JLya0+3kzbkIBQPwmKhADsMAo9GM37
+/SpZmiOVFyxFnh9uQ3ltDFyY/kinxSNHXF79bucetPZoRdGGg1uiio2x4ymA/iVxiK2+vI+sUpZL
+qlGN5BMxGehOTZ/brLNq1bw5VHHKenp/kN19HYDZgbtZJsIR/uaT4veA5GX7NDcOKYBwTa84hi6e
+f1evnheu6xzLKCFfthzY56IEIvnT2tjLAgMBAAGjgbAwga0wDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+EwEB/wQFMAMBAf8wKwYDVR0QBCQwIoAPMjAwNjExMjcyMDIzNDJagQ8yMDI2MTEyNzIwNTM0Mlow
+HwYDVR0jBBgwFoAUaJDkZ6SmU4DHhmak8fdLQ/uEvW0wHQYDVR0OBBYEFGiQ5GekplOAx4ZmpPH3
+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
+tqN087MK7PM2NCiG3l2Fy4HcrU1jfCyzMoBhVRGUDYwIJwQpvD+bGbOUSuI+BYkxXPwA6uB5VPTc
+cSUUBVFm1y+PvCb6tztFluA+DROCxCJ5sjeKEMcuP3oMHFyKMJs3UkS5lLTYzpXfH9QtiNUJOLIs
+YFRcVdU2T/xRBla53jZsYakG2Wroy4utmIUp0GvDKpXx+8JGO3jbp6FkG0mL3sn4eJy9Q1joNos2
+1WtIQtRhOQ5bsnupKQY4wJXU8Ful9sLjKHzWg9Hze7u3jQ9lnvGbZ+/daEAWPlcOInRN4mWHmEoX
+klhhM3xapNv1XV4p4sa7a0u4t/F6nQ8aBwIDAQABo4IB7jCCAeowPgYJKwYBBAGCNxUHBDEwLwYn
+KwYBBAGCNxUIh4TCFoO2tSmDmZkIhI2WLoGroiUxu97dEoSOvJATAgFkAgEUMBMGA1UdJQQMMAoG
+CCsGAQUFBwMEMA4GA1UdDwEB/wQEAwIGwDBEBgNVHSAEPTA7MDkGCmCGSAGG/TABAQIwKzApBggr
+BgEFBQcCARYdaHR0cDovL3Vpc3BraS51bmlzeXMuY29tL3JlcC8wGwYJKwYBBAGCNxUKBA4wDDAK
+BggrBgEFBQcDBDAdBgNVHQ4EFgQUYVANS4rnOYagh2dMzAXGAxtjmqIwHwYDVR0jBBgwFoAUXkfI
+MPFDvwHPOiMDwJ4BAgNYfmEwQQYDVR0fBDowODA2oDSgMoYwaHR0cDovL3Vpc3BraS51bmlzeXMu
+Y29tL3JlcC9VSVMtSXN1QjEtQ0EoNikuY3JsMHcGCCsGAQUFBwEBBGswaTA8BggrBgEFBQcwAoYw
+aHR0cDovL3Vpc3BraS51bmlzeXMuY29tL3JlcC9VSVMtSXN1QjEtQ0EoNikuY3J0MCkGCCsGAQUF
+BzABhh1odHRwOi8vcGVjczEudW5pc3lzLmNvbS9vY3NwLzAkBgNVHREEHTAbgRlEYXZpZC5LZXJz
+aG5lckB1bmlzeXMuY29tMA0GCSqGSIb3DQEBCwUAA4IBAQDJmiagPLMC2zf1KyBG7PQ+E0x8Pw05
+/ZvhPQTBOGgjiS9oIV41gXpV7tUcsvCpklnrChxJXwpvLDrfHp3BMYWlOW0ZvD/fYD9onacRtDGG
+A5pibJQUeEw2OXoLJIsiUHmfQ1YeMCxv4MtyPD8E9bnNRjmrUxzkXhW2BEXGwh2zWJz6exiFyi6n
+Vkcy9ZmXAdoOz1QKw4SNzRTnZgpHRoiE2u6TtCzi4l19alIsdIUhkvOEEGIChMcKw7dn7gQCxrEI
+tE4eSk0umnY8YCtQok5gyIZQ9zQAVgpDRaqlKCMZeLCphCT1Dbo11wJUnr+fu8XtTToaehcyQ7pk
+5rURbnrxMIIFYzCCBEugAwIBAgITOQABOLc33fk32UYgrAAGAAE4tzANBgkqhkiG9w0BAQsFADBZ
+MRMwEQYKCZImiZPyLGQBGRYDY29tMRYwFAYKCZImiZPyLGQBGRYGdW5pc3lzMRMwEQYKCZImiZPy
+LGQBGRYDdWlzMRUwEwYDVQQDEwxVSVMtSXN1QjEtQ0EwHhcNMTcwMzIzMTc0OTM5WhcNMTkwMzIz
+MTc0OTM5WjBGMRowGAYDVQQDExFLZXJzaG5lciwgRGF2aWQgQTEoMCYGCSqGSIb3DQEJARYZRGF2
+aWQuS2Vyc2huZXJAdW5pc3lzLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIxv
+lBQuy0IPzpGBaZhF0nXOBC/02H5wb4sPKetK15WMoUN531RdZABU22aE7JjDHe6nget+Rg7pxlUA
+RxC8ziP9d2rOJSkwKY7iI68WoFrX0ySMGKtjBOsLzNYf2NwOd9gwm0dRvTWo0TJLll27LdhqnEm7
+6h7btwQl4x1ec8LKYHMtG2X3HEaxVhuZ9+AhwL8edhXitY3US0Ofvofy8n5NlM2q0oQjJX1s6gd4
+NTykhUQNBokRryDEfHweN12BduTnbL3Aogniwv0maiPG3swzIOplyTtrEXi009PK60sf2UMm3zyV
+CTIHVlq0oLni5guwPuvFOf+SH24CN46U2X0CAwEAAaOCAjUwggIxMD8GCSsGAQQBgjcVBwQyMDAG
+KCsGAQQBgjcVCIeEwhaDtrUpg5mZCISNli6Bq6IlMYyQ8cgJjJGyw1ECAWQCAQ0wEwYDVR0lBAww
+CgYIKwYBBQUHAwQwDgYDVR0PAQH/BAQDAgQwMEQGA1UdIAQ9MDswOQYKYIZIAYb9MAEBAzArMCkG
+CCsGAQUFBwIBFh1odHRwOi8vdWlzcGtpLnVuaXN5cy5jb20vcmVwLzAbBgkrBgEEAYI3FQoEDjAM
+MAoGCCsGAQUFBwMEMEQGCSqGSIb3DQEJDwQ3MDUwDgYIKoZIhvcNAwICAgCAMA4GCCqGSIb3DQME
+AgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzAdBgNVHQ4EFgQUmfhTyO4NNFCGHP2xZwjBwSYgbv4w
+HwYDVR0jBBgwFoAUXkfIMPFDvwHPOiMDwJ4BAgNYfmEwQQYDVR0fBDowODA2oDSgMoYwaHR0cDov
+L3Vpc3BraS51bmlzeXMuY29tL3JlcC9VSVMtSXN1QjEtQ0EoNikuY3JsMHcGCCsGAQUFBwEBBGsw
+aTA8BggrBgEFBQcwAoYwaHR0cDovL3Vpc3BraS51bmlzeXMuY29tL3JlcC9VSVMtSXN1QjEtQ0Eo
+NikuY3J0MCkGCCsGAQUFBzABhh1odHRwOi8vcGVjczEudW5pc3lzLmNvbS9vY3NwLzAkBgNVHREE
+HTAbgRlEYXZpZC5LZXJzaG5lckB1bmlzeXMuY29tMA0GCSqGSIb3DQEBCwUAA4IBAQC/M1ljfSdR
+cYmq8i5Ch3wahRgGKHrUAnUR/JyqIDHwoyDlQu7eUMwhAgwmbDK0J4M12Og57tffiBe4Xxt7jNoY
+gxOgBL5YGjC5j5cgqS2svQyMEqQdOEbEF2K4ZLPD8Olkrm1SS/qt1wMG9NEAoeVhFlUk7bjnhjHr
+zDs1GpiMOBlc7jiYlFMxgn9156LpCHmQePMWi6UiKIDiN9JIx2ddAseBoPFL3X3doq9ml3wmHsrO
+7xD4B/BKKqk2v6LksLLJqdO5qyCGzqNXi7wWLLSlJ0zJGDDddOyREUudMAonQnDRkhWyx6T8Cq6Q
+g47ZAFPNcqFLagZmrPKKwi6EAg9dMIIHADCCBeigAwIBAgIKEEhhpAAGAAAAGDANBgkqhkiG9w0B
+AQsFADAWMRQwEgYDVQQDEwtVSVMtSW50Qi1DQTAeFw0xNTEwMTkxNzU1MzJaFw0yMTEwMTkxODA1
+MzJaMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZ1bmlzeXMxEzARBgoJ
+kiaJk/IsZAEZFgN1aXMxFTATBgNVBAMTDFVJUy1Jc3VCMS1DQTCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAM8WQpllmT2Z5AUjCtgC8Ppnud9mMzYwGifCZftAtTD/F6YqpkmLu181xtIa
+CaUp0E37R7c/xI/U+u8jJfyhYBrQ/tHyYHXYG/plDzgeKNhNJhQtMTEeZptt6ZQhj1X3R9a/lhBW
+LgGaXB4epHucvL8vU8woXpov2AykRMPu8/tke6E8ENv0vHg1kcbr6wDfuKqqAHIAzL+DdhLx15Hr
+ldT+Q/R+mhIS4E5ML0Qktkkn7Vy0GDLL4qNceQi22oOHyByergUfdw0VAY/cHEzntTzog7/r+lJK
+mlJ2e0hvepZ46WQbqeLK8HRCRRcqg+ZKvVMfiDz30U0eIaRNJHr6C4cCAwEAAaOCBAswggQHMA4G
+A1UdDwEB/wQEAwIBhjASBgkrBgEEAYI3FQEEBQIDBgAGMCMGCSsGAQQBgjcVAgQWBBSsCFs+Ml/o
+qs2jSbeYbPesmJxDezAdBgNVHQ4EFgQUXkfIMPFDvwHPOiMDwJ4BAgNYfmEwggIgBgNVHSAEggIX
+MIICEzA5BgpghkgBhv0wAQEHMCswKQYIKwYBBQUHAgEWHWh0dHA6Ly91aXNwa2kudW5pc3lzLmNv
+bS9yZXAvMDkGCmCGSAGG/TABAT0wKzApBggrBgEFBQcCARYdaHR0cDovL3Vpc3BraS51bmlzeXMu
+Y29tL3JlcC8wOQYKYIZIAYb9MAEBAzArMCkGCCsGAQUFBwIBFh1odHRwOi8vdWlzcGtpLnVuaXN5
+cy5jb20vcmVwLzA5BgpghkgBhv0wAQECMCswKQYIKwYBBQUHAgEWHWh0dHA6Ly91aXNwa2kudW5p
+c3lzLmNvbS9yZXAvMDkGCmCGSAGG/TABAQQwKzApBggrBgEFBQcCARYdaHR0cDovL3Vpc3BraS51
+bmlzeXMuY29tL3JlcC8wOQYKYIZIAYb9MAEBBTArMCkGCCsGAQUFBwIBFh1odHRwOi8vdWlzcGtp
+LnVuaXN5cy5jb20vcmVwLzA5BgpghkgBhv0wAQEOMCswKQYIKwYBBQUHAgEWHWh0dHA6Ly91aXNw
+a2kudW5pc3lzLmNvbS9yZXAvMDkGCmCGSAGG/TABAQEwKzApBggrBgEFBQcCARYdaHR0cDovL3Vp
+c3BraS51bmlzeXMuY29tL3JlcC8wOQYKYIZIAYb9MAEBBjArMCkGCCsGAQUFBwIBFh1odHRwOi8v
+dWlzcGtpLnVuaXN5cy5jb20vcmVwLzAZBgkrBgEEAYI3FAIEDB4KAFMAdQBiAEMAQTASBgNVHRMB
+Af8ECDAGAQH/AgEAMB8GA1UdIwQYMBaAFHI3ATY9+GbWA5hO9fgALqQkqnYgMHEGA1UdHwRqMGgw
+ZqBkoGKGL2h0dHA6Ly91aXNwa2kudW5pc3lzLmNvbS9yZXAvVUlTLUludEItQ0EoNikuY3Jshi9o
+dHRwOi8vcGtpcmVwLnVuaXN5cy5jb20vcmVwL1VJUy1JbnRCLUNBKDYpLmNybDCBtQYIKwYBBQUH
+AQEEgagwgaUwOwYIKwYBBQUHMAKGL2h0dHA6Ly91aXNwa2kudW5pc3lzLmNvbS9yZXAvVUlTLUlu
+dEItQ0EoNikuY3J0MDsGCCsGAQUFBzAChi9odHRwOi8vcGtpcmVwLnVuaXN5cy5jb20vcmVwL1VJ
+Uy1JbnRCLUNBKDYpLmNydDApBggrBgEFBQcwAYYdaHR0cDovL3BlY3MxLnVuaXN5cy5jb20vb2Nz
+cC8wDQYJKoZIhvcNAQELBQADggEBAFZ2CLasCSx9FYOGkGVsQjUjarDs9sHdLCG0/v+TSKHjPqMF
+hWlXTVP2jWWco7UUnybfoSRC3d2WG/bB1EJ8mQn7zWmgdsFQz50zlJpL1laIohsfLGx6bhE4iJCK
+hgd8RRjrQd13TrdNC9fLAhhqbjBrjRWA1uxgD3sXru7lDrluwZI7wXCZ4dcSI0ve0eoBu2r+IZKC
+t/WFEMGb1NxwIKH+yQn/ceMzm8pc2P/vqI0oLfEevy+pIQA8S94bgdhfnqe0MY9vbORoclcE/eqB
+9/Qj5OiTXl66ZyKVA91qtQibY+DTpvRoPV/5K4vEbwwaktZfnTgUm6MZafRjGMaPPdUxggOTMIID
+jwIBATBwMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZ1bmlzeXMxEzAR
+BgoJkiaJk/IsZAEZFgN1aXMxFTATBgNVBAMTDFVJUy1Jc3VCMS1DQQITOQABSNGXNyyaTb3DvAAG
+AAFI0TAJBgUrDgMCGgUAoIIB+DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0xNzA5MDEyMTU2MDBaMCMGCSqGSIb3DQEJBDEWBBSUv1esKhAefLOY09msgy6y5h+NMjB/
+BgkrBgEEAYI3EAQxcjBwMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZ1
+bmlzeXMxEzARBgoJkiaJk/IsZAEZFgN1aXMxFTATBgNVBAMTDFVJUy1Jc3VCMS1DQQITOQABOLc3
+3fk32UYgrAAGAAE4tzCBgQYLKoZIhvcNAQkQAgsxcqBwMFkxEzARBgoJkiaJk/IsZAEZFgNjb20x
+FjAUBgoJkiaJk/IsZAEZFgZ1bmlzeXMxEzARBgoJkiaJk/IsZAEZFgN1aXMxFTATBgNVBAMTDFVJ
+Uy1Jc3VCMS1DQQITOQABOLc33fk32UYgrAAGAAE4tzCBkwYJKoZIhvcNAQkPMYGFMIGCMAsGCWCG
+SAFlAwQBKjALBglghkgBZQMEARYwCgYIKoZIhvcNAwcwCwYJYIZIAWUDBAECMA4GCCqGSIb3DQMC
+AgIAgDANBggqhkiG9w0DAgIBQDAHBgUrDgMCGjALBglghkgBZQMEAgMwCwYJYIZIAWUDBAICMAsG
+CWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAR0jPFgruNURa0WelURWL/BV7b+NmW8j5UahGN
+x3sZIn5q5qTqnzRBV+EsQp6k5xhIS1Z8ofT1JxZ7ikItN8KbbNx2n+f81bAsrXw3gOZovyBRyDU9
+5oFVAFBreIJCdPzQRA1sqtu1PNr9hwBP88skZM3r7OpeD1xLYtuidBvB41IavOXNjlzIfwmUVQQR
+nApZEUSRgV/2PUPhJE7ZLkvvqoyHBK9H8xvKH/S+jcSRgCVti2D3AooNW+v1sKU+a2GuZ55IkU15
+tuRE6AgkO2ypgDyz03glU2HXd0XebUgPotE+/cuUUcEyg+ES7Qo6nX0XFg7e/VfkT2d7Zkiwq09p
+AAAAAAAA
+
+------=_NextPart_000_0025_01D3234B.9269E850--
