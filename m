@@ -1,57 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 16 Sep 2017 16:46:28 +0000
-Subject: [PATCH] staging: fbtft: remove redundant initialization of txbuf16
-Message-Id: <20170916164628.30034-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Sep 2017 19:45:49 +0000
+Subject: [PATCH 4/4] [media] sp2: Adjust three null pointer checks in sp2_exit()
+Message-Id: <2d2b6ac7-eb35-a439-3dab-ed4e01e3a9f8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
+In-Reply-To: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Olli Salonen <olli.salonen@iki.fi>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Sep 2017 21:16:06 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-txbuf16 is being initialized at declaration time and then later
-set to another value without it being read inbetween, hence making
-the initialization redundant.  Fix this by setting txbuf16 just
-the once. Also clean up some incorrect indentations. Cleans up
-clang build warning:
+The script “checkpatch.pl” pointed information out like the following.
 
-warning: Value stored to 'txbuf16' during its initialization is never read
+Comparison to NULL could be written !…
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/fbtft/fb_ra8875.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/media/dvb-frontends/sp2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
-index a899614ce829..6d1cad85957b 100644
---- a/drivers/staging/fbtft/fb_ra8875.c
-+++ b/drivers/staging/fbtft/fb_ra8875.c
-@@ -253,7 +253,7 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
- static int write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
- {
- 	u16 *vmem16;
--	__be16 *txbuf16 = par->txbuf.buf;
-+	__be16 *txbuf16;
- 	size_t remain;
- 	size_t to_copy;
- 	size_t tx_array_size;
-@@ -267,10 +267,10 @@ static int write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
- 	remain = len / 2;
- 	vmem16 = (u16 *)(par->info->screen_buffer + offset);
- 	tx_array_size = par->txbuf.len / 2;
--		txbuf16 = par->txbuf.buf + 1;
--		tx_array_size -= 2;
--		*(u8 *)(par->txbuf.buf) = 0x00;
--		startbyte_size = 1;
-+	txbuf16 = par->txbuf.buf + 1;
-+	tx_array_size -= 2;
-+	*(u8 *)(par->txbuf.buf) = 0x00;
-+	startbyte_size = 1;
+diff --git a/drivers/media/dvb-frontends/sp2.c b/drivers/media/dvb-frontends/sp2.c
+index b2a7a54174ae..9bd71ba36d86 100644
+--- a/drivers/media/dvb-frontends/sp2.c
++++ b/drivers/media/dvb-frontends/sp2.c
+@@ -357,14 +357,14 @@ static int sp2_exit(struct i2c_client *client)
  
- 	while (remain) {
- 		to_copy = min(tx_array_size, remain);
+ 	dev_dbg(&client->dev, "\n");
+ 
+-	if (client = NULL)
++	if (!client)
+ 		return 0;
+ 
+ 	s = i2c_get_clientdata(client);
+-	if (s = NULL)
++	if (!s)
+ 		return 0;
+ 
+-	if (s->ca.data = NULL)
++	if (!s->ca.data)
+ 		return 0;
+ 
+ 	dvb_ca_en50221_release(&s->ca);
 -- 
 2.14.1
 
