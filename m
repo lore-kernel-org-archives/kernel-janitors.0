@@ -1,34 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 25 Sep 2017 15:44:34 +0000
-Subject: Re: [PATCH][drm-next] drm/tve200: make two functions static
-Message-Id: <CACRpkdaL=FuB5boVgM5ZiLB2w29+ufaOxU_W5-=v6KSPx1=XfA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Sep 2017 08:52:25 +0000
+Subject: [PATCH] apparmor: Fix harmless off by one in map_signal_num()
+Message-Id: <20170901085225.dpuirzpj7aq3yyim@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922160516.16283-1-colin.king@canonical.com>
-In-Reply-To: <20170922160516.16283-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
-On Fri, Sep 22, 2017 at 6:05 PM, Colin King <colin.king@canonical.com> wrote:
+This patch has no effect on runtime.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The functions tve200_display_disable and tve200_display_funcs are
-> local to the source and do not need to be in global scope, so make
-> them static.
->
-> Cleans up sparse warnings:
-> symbol 'tve200_display_disable' was not declared. Should it be static?
-> symbol 'tve200_display_funcs' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The sig_map[] array has MAXMAPPED_SIG (35) members so my static checker
+complains that the <= should be <.  But in this case it's not possible
+for "sig" to be more than 31 because of the "else if (sig >= SIGRTMIN)"
+condition since SIGRTMIN is 32.  The last three elements, 32-34, of
+sig_map[] are empty so this code works as designed.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I am travelling right now but will apply the patch on monday in
-one week from now.
-
-Yours,
-Linus Walleij
+diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+index 66fb9ede9447..5091c78062e4 100644
+--- a/security/apparmor/ipc.c
++++ b/security/apparmor/ipc.c
+@@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
+ 		return SIGUNKNOWN;
+ 	else if (sig >= SIGRTMIN)
+ 		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
+-	else if (sig <= MAXMAPPED_SIG)
++	else if (sig < MAXMAPPED_SIG)
+ 		return sig_map[sig];
+ 	return SIGUNKNOWN;
+ }
