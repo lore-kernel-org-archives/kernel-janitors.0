@@ -1,40 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 04 Sep 2017 20:07:24 +0000
-Subject: [PATCH 2/6] [media] atmel-isc: Improve a size determination in isc_formats_init()
-Message-Id: <2b909a2d-0986-fb5e-f2d9-5d9c0fd71a06@users.sourceforge.net>
+Date: Fri, 01 Sep 2017 15:13:58 +0000
+Subject: Re: axonram: Delete an error message for a failed memory allocation in axon_ram_probe()
+Message-Id: <15496bcd-1ad5-137c-5bb4-222b873a5992@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
-In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+References: <3xkKq351vNz9t3P@ozlabs.org>
+In-Reply-To: <3xkKq351vNz9t3P@ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Michael Ellerman <patch-notifications@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 4 Sep 2017 20:50:22 +0200
+> Series applied to powerpc next, thanks.
 
-Replace the specification of a data type by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Thanks for another positive feedback.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/atmel/atmel-isc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But I wonder how you can refer to the “series” when the forth update step
+“Delete an unnecessary variable initialisation” contained a broken suggestion.
 
-diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
-index f1e635edef72..f16bab0105c2 100644
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -1505,6 +1505,6 @@ static int isc_formats_init(struct isc_device *isc)
- 
- 	isc->num_user_formats = num_fmts;
- 	isc->user_formats = devm_kcalloc(isc->dev,
--					 num_fmts, sizeof(struct isc_format *),
-+					 num_fmts, sizeof(*isc->user_formats),
- 					 GFP_KERNEL);
- 	if (!isc->user_formats)
--- 
-2.14.1
 
+> https://git.kernel.org/powerpc/c/a1bddf3991573f3dff2762bfca5e11
+
+This link seems to refer (only?) to the update step “Improve a size determination”.
+How is the status for the other two change possibilities of this software module?
+
+Regards,
+Markus
