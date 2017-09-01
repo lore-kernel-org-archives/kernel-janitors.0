@@ -1,40 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 16:01:13 +0000
-Subject: [PATCH 1/2] [media] c8sectpfe: Delete an error message for a failed memory allocation in c8sectpfe_f
-Message-Id: <04a4e480-c7a2-fe8c-ca38-8d0b32b42307@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Sep 2017 15:35:08 +0000
+Subject: [PATCH] [media] rtl28xxu: make array rc_nec_tab static const
+Message-Id: <20170901153508.24738-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
-In-Reply-To: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 17:20:48 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Don't populate the array rc_nec_tab on the stack, instead make it
+static const. Makes the object code smaller by over 620 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  49511	  17040	     64	  66615	  10437	rtl28xxu.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  48825	  17104	     64	  65993	  101c9	rtl28xxu.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/usb/dvb-usb-v2/rtl28xxu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-index 2c0015b1264d..1b23b188cd65 100644
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-@@ -166,7 +166,4 @@ int c8sectpfe_frontend_attach(struct dvb_frontend **fe,
- 					GFP_KERNEL);
--		if (!tda18212) {
--			dev_err(c8sectpfe->device,
--				"%s: devm_kzalloc failed\n", __func__);
-+		if (!tda18212)
- 			return -ENOMEM;
--		}
- 
+diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+index 95a7b9123f8e..c76e78f9638a 100644
+--- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
++++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+@@ -1598,7 +1598,7 @@ static int rtl2831u_rc_query(struct dvb_usb_device *d)
+ 	struct rtl28xxu_dev *dev = d->priv;
+ 	u8 buf[5];
+ 	u32 rc_code;
+-	struct rtl28xxu_reg_val rc_nec_tab[] = {
++	static const struct rtl28xxu_reg_val rc_nec_tab[] = {
+ 		{ 0x3033, 0x80 },
+ 		{ 0x3020, 0x43 },
+ 		{ 0x3021, 0x16 },
 -- 
 2.14.1
 
