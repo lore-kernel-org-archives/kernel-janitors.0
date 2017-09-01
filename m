@@ -1,44 +1,28 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 18 Sep 2017 16:04:34 +0000
-Subject: Re: [PATCH 0/2] rapidio: Two fixes for 'rio_dma_transfer()'
-Message-Id: <37c07c2e-e6ed-96fa-8cdd-68bfe598eda3@deltatee.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 01 Sep 2017 13:29:52 +0000
+Subject: Re: powerpc/eeh: Delete an error message for a failed memory allocation in two functions
+Message-Id: <3xkKq44VX5z9t3x@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0a35cb55-9f6b-21ca-565f-cab26237c962@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mporter@kernel.crashing.org, alexandre.bounine@idt.com, lstoakes@gmail.com, akpm@linux-foundation.org, jesper.nilsson@axis.com, christian.koenig@amd.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Russell Currey <ruscur@russell.cc>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hey,
-
-I don't have any relation to the rapidio code short of making a small 
-change to an API it used. But I reviewed both patches and they look 
-correct to me.
-
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-
-Logan
-
-On 17/09/17 04:33 PM, Christophe JAILLET wrote:
-> These 2 patches are really close and are both related to error handling
-> in 'rio_dma_transfer()'.
-> The first one fixes some resources leak in case of error.
-> The 2nd one fixes a test so that the corresponding error can be handled
-> correctly.
+On Fri, 2017-08-04 at 14:46:51 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 4 Aug 2017 16:37:56 +0200
 > 
-> I've splitted this into 2 paches because the first one looks trivial to me.
-> But the 2nd one should require more attention, IMO. The existing error
-> handling was dead code because 'dma_map_sg()' can not return -EFAULT. So
-> this error handling code has never been executed/tested and I can't test it
-> myself.
+> Omit an extra message for a memory allocation failure in these functions.
 > 
-> Christophe JAILLET (2):
->    rapidio: Fix resources leak in error handling path in
->      'rio_dma_transfer()'
->    rapidio: Fix an error handling in 'rio_dma_transfer()'
+> This issue was detected by using the Coccinelle software.
 > 
->   drivers/rapidio/devices/rio_mport_cdev.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Applied to powerpc next, thanks.
+
+https://git.kernel.org/powerpc/c/6ab41161b44a3b4d504ac29c9dd997
+
+cheers
