@@ -1,47 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 07 Sep 2017 08:42:45 +0000
-Subject: [PATCH] tpm_tis: unconstify array cmd_getticks
-Message-Id: <20170907084245.19513-1-colin.king@canonical.com>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Fri, 01 Sep 2017 13:29:45 +0000
+Subject: Re: [08/15] powerpc/iommu: use permission-specific DEVICE_ATTR variants
+Message-Id: <3xkKpy0Lxrz9t2d@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <1477769829-22230-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, 2016-10-29 at 19:37:02 UTC, Julia Lawall wrote:
+> Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
+> source code, improves readbility, and reduces the chance of
+> inconsistencies.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @rw@
+> declarer name DEVICE_ATTR;
+> identifier x,x_show,x_store;
+> @@
+> 
+> DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+> 
+> @script:ocaml@
+> x << rw.x;
+> x_show << rw.x_show;
+> x_store << rw.x_store;
+> @@
+> 
+> if not (x^"_show" = x_show && x^"_store" = x_store)
+> then Coccilib.include_match false
+> 
+> @@
+> declarer name DEVICE_ATTR_RW;
+> identifier rw.x,rw.x_show,rw.x_store;
+> @@
+> 
+> - DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+> + DEVICE_ATTR_RW(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Remove const from cmd_getticks, fixes build warnings:
+Applied to powerpc next, thanks.
 
-drivers/char/tpm/tpm_tis_core.c:469:31: warning: passing argument 2 of
-'tpm_tis_send_data' discards 'const' qualifier from pointer target
-type [-Wdiscarded-qualifiers]
-  rc = tpm_tis_send_data(chip, cmd_getticks, len);
-                               ^
-drivers/char/tpm/tpm_tis_core.c:477:31: warning: passing argument 2 of
-'tpm_tis_send_data' discards 'const' qualifier from pointer target
-type [-Wdiscarded-qualifiers]
-  rc = tpm_tis_send_data(chip, cmd_getticks, len);
-                               ^
-Fixes: 5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/char/tpm/tpm_tis_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://git.kernel.org/powerpc/c/8a7aef2cb3dafd2e8560750f4e5ad2
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 1e957e923d21..91cf38be314f 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -445,7 +445,7 @@ static int probe_itpm(struct tpm_chip *chip)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc = 0;
--	static const u8 cmd_getticks[] = {
-+	static u8 cmd_getticks[] = {
- 		0x00, 0xc1, 0x00, 0x00, 0x00, 0x0a,
- 		0x00, 0x00, 0x00, 0xf1
- 	};
--- 
-2.14.1
-
+cheers
