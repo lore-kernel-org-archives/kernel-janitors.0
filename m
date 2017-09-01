@@ -1,38 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Sep 2017 14:50:07 +0000
-Subject: Re: [PATCH 2/4] [media] usbvision-core: Use common error handling code in usbvision_set_compress_par
-Message-Id: <d4ab8049-0be4-6183-3cbd-5bc03968c2a4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Sep 2017 10:20:57 +0000
+Subject: [PATCH][staging-next] staging: typec: fusb302: make structure fusb302_psy_desc static
+Message-Id: <20170901102057.17637-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
- <52c09836-83d7-c509-6e85-c7af16160302@users.sourceforge.net>
- <20170922114432.x4e2ao22spbyek7n@mwanda>
-In-Reply-To: <20170922114432.x4e2ao22spbyek7n@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Hans de Goede <hdegoede@redhat.com>, Yueyao Zhu <yueyao.zhu@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, Guru Das Srinagesh <gurooodas@gmail.com>, Frans Klaver <fransklaver@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -1913,11 +1908,12 @@ static int usbvision_set_compress_params(struct usb_usbvision *usbvision)
->>  			     USB_DIR_OUT | USB_TYPE_VENDOR |
->>  			     USB_RECIP_ENDPOINT, 0,
->>  			     (__u16) USBVISION_PCM_THR1, value, 6, HZ);
->> +	if (rc < 0)
->> +report_failure:
->> +		dev_err(&usbvision->dev->dev,
->> +			"%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
->> +			__func__, rc);
-> 
-> You've been asked several times not to write code like this.
+From: Colin Ian King <colin.king@canonical.com>
 
-This suggestion occurred a few times.
+The const structure fusb302_psy_desc is local to the source and
+does not need to be in global scope, so make it static.
 
-Do you prefer to move this place to the end together with a duplicated statement “return rc;”?
+Cleans up sparse warnings
+symbol 'fusb302_psy_desc' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/typec/fusb302/fusb302.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> You do it later in the patch series as well.
+diff --git a/drivers/staging/typec/fusb302/fusb302.c b/drivers/staging/typec/fusb302/fusb302.c
+index cf6355f59cd9..fc6a3cf74eb3 100644
+--- a/drivers/staging/typec/fusb302/fusb302.c
++++ b/drivers/staging/typec/fusb302/fusb302.c
+@@ -1723,7 +1723,7 @@ static enum power_supply_property fusb302_psy_properties[] = {
+ 	POWER_SUPPLY_PROP_CURRENT_MAX,
+ };
+ 
+-const struct power_supply_desc fusb302_psy_desc = {
++static const struct power_supply_desc fusb302_psy_desc = {
+ 	.name		= "fusb302-typec-source",
+ 	.type		= POWER_SUPPLY_TYPE_USB_TYPE_C,
+ 	.properties	= fusb302_psy_properties,
+-- 
+2.14.1
 
-To which update step do you refer here?
-
-Regards,
-Markus
