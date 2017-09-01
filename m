@@ -1,61 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Sep 2017 20:33:16 +0000
-Subject: Re: [media] s5p-mfc: Adjust a null pointer check in four functions
-Message-Id: <ecb9823b-007c-f2c2-29bb-fbd08429385c@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 01 Sep 2017 13:44:31 +0000
+Subject: [PATCH] qlcnic: remove redundant zero check on retries counter
+Message-Id: <20170901134431.23179-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
- <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
- <CGME20170911092134epcas2p1a1b11c056b52d68c3b0e4ea2e1e8f758@epcas2p1.samsung.com>
- <6c2d20b3-4437-0473-73d4-73c049ba52a9@samsung.com>
- <a68020cc-2477-5d6c-bc61-d753253b755a@users.sourceforge.net>
- <0fa9a180-be67-3a33-682c-bff819c36c6a@samsung.com>
- <5b8eb902-d97c-3308-5ba9-64469320e0e2@users.sourceforge.net>
- <ee8ba7fd-1de4-b1b9-8aa0-130c86c38f30@samsung.com>
-In-Reply-To: <ee8ba7fd-1de4-b1b9-8aa0-130c86c38f30@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Harish Patil <harish.patil@cavium.com>, Manish Chopra <manish.chopra@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Generating patch is only part of the story,
+From: Colin Ian King <colin.king@canonical.com>
 
-I can follow this view in principle.
+At the end of the do while loop the integer counter retries will
+always be zero and so the subsequent check to see if it is zero
+is always true and therefore redundant.  Remove the redundant check
+and always return -EIO on this return path.  Also unbreak the literal
+string in dev_err message to clean up a checkpatch warning.
 
+Detected by CoverityScan, CID#744279 ("Logically dead code")
 
-> it seems the patch is not sent properly
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_init.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-I got an other impression.
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_init.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_init.c
+index be41e4c77b65..c48a0e2d4d7e 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_init.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_init.c
+@@ -592,13 +592,9 @@ qlcnic_receive_peg_ready(struct qlcnic_adapter *adapter)
+ 
+ 	} while (--retries);
+ 
+-	if (!retries) {
+-		dev_err(&adapter->pdev->dev, "Receive Peg initialization not "
+-			      "complete, state: 0x%x.\n", val);
+-		return -EIO;
+-	}
+-
+-	return 0;
++	dev_err(&adapter->pdev->dev, "Receive Peg initialization not complete, state: 0x%x.\n",
++		val);
++	return -EIO;
+ }
+ 
+ int
+-- 
+2.14.1
 
-
-> and tags which should be in SMTP header end up in the message body.
-
-I agree that extra message fields were presented by the git software for
-a reason.
-You might have got other opinions about the original reason (than me).
-
-
-> I think there would not be such issues if you have used git
-> format-patch + git send-email.
-
-I have got also doubts about your corresponding expectations when you
-would find
-the proposed commit message itself acceptable (besides the small source
-code changes).
-
-
-> I normally do amend things like this while applying,
-
-That is interesting.
-
-
-> I will do that this time as well.
-
-Such an action can also be nice.
-
-
-> It's already too much time wasted for such a dubious patch.
-
-A bit of time is needed to resolve a temporary disagreement.
-
-Regards,
-Markus
