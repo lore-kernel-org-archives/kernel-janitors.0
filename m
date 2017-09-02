@@ -1,32 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Sep 2017 08:17:32 +0000
-Subject: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
-Message-Id: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 20:43:10 +0000
+Subject: [PATCH 3/7] [media] Hopper: Adjust a null pointer check in two functions
+Message-Id: <56d490a2-4159-204f-cd69-16fd9b268f29@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
+In-Reply-To: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ivan Hu <ivan.hu-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
-will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
-try to dereference it inside the loop and crash.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 21:25:50 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The script “checkpatch.pl” pointed information out like the following.
 
-diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
-index 08129b7b80ab..41c48a1e8baa 100644
---- a/drivers/firmware/efi/test/efi_test.c
-+++ b/drivers/firmware/efi/test/efi_test.c
-@@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
- 	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
- 		return -EFAULT;
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/pci/mantis/hopper_cards.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/mantis/hopper_cards.c b/drivers/media/pci/mantis/hopper_cards.c
+index fe7b40c306f7..88e5b2a97005 100644
+--- a/drivers/media/pci/mantis/hopper_cards.c
++++ b/drivers/media/pci/mantis/hopper_cards.c
+@@ -72,7 +72,7 @@ static irqreturn_t hopper_irq_handler(int irq, void *dev_id)
+ 	struct mantis_ca *ca;
  
-+	if (qcaps.capsule_count = ULONG_MAX)
-+		return -EINVAL;
-+
- 	capsules = kcalloc(qcaps.capsule_count + 1,
- 			   sizeof(efi_capsule_header_t), GFP_KERNEL);
- 	if (!capsules)
+ 	mantis = (struct mantis_pci *) dev_id;
+-	if (unlikely(mantis = NULL)) {
++	if (unlikely(!mantis)) {
+ 		dprintk(MANTIS_ERROR, 1, "Mantis = NULL");
+ 		return IRQ_NONE;
+ 	}
+@@ -164,7 +164,7 @@ static int hopper_pci_probe(struct pci_dev *pdev,
+ 	int err = 0;
+ 
+ 	mantis = kzalloc(sizeof(*mantis), GFP_KERNEL);
+-	if (mantis = NULL) {
++	if (!mantis) {
+ 		err = -ENOMEM;
+ 		goto fail0;
+ 	}
+-- 
+2.14.1
+
