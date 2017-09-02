@@ -1,35 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Sep 2017 08:14:13 +0000
-Subject: [PATCH 2/2] drm/amdgpu: Potential uninitialized variable in amdgpu_vm_update_directories()
-Message-Id: <20170930081413.t6ohq5vrj7pmpthz@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 20:41:08 +0000
+Subject: [PATCH 1/7] [media] Hopper: Delete an error message for a failed memory allocation in hopper_pci_pro
+Message-Id: <e664da42-bfb2-17da-38c9-9086ada8f542@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081328.kher7yumqzi2vsrg@mwanda>
-In-Reply-To: <20170930081328.kher7yumqzi2vsrg@mwanda>
+References: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
+In-Reply-To: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: kernel-janitors@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>, Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, "Zhang,
- Jerry" <Jerry.Zhang@amd.com>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-After commit ea09729c9302 ("drm/amdgpu: rework page directory filling
-v2") then it becomes a lot harder to verify that "r" is initialized.  My
-static checker complains and so I've reviewed the code.  It does look
-like it might be buggy... Anyway, it doesn't hurt to set "r" to zero
-at the start.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 21:19:05 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Omit an extra message for a memory allocation failure in this function.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-index bbcc67038203..fb3afab55907 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -1243,7 +1243,7 @@ static void amdgpu_vm_invalidate_level(struct amdgpu_vm *vm,
- int amdgpu_vm_update_directories(struct amdgpu_device *adev,
- 				 struct amdgpu_vm *vm)
- {
--	int r;
-+	int r = 0;
- 
- 	spin_lock(&vm->status_lock);
- 	while (!list_empty(&vm->relocated)) {
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/pci/mantis/hopper_cards.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/pci/mantis/hopper_cards.c b/drivers/media/pci/mantis/hopper_cards.c
+index 68b5800030b7..cc1bb04d8cb4 100644
+--- a/drivers/media/pci/mantis/hopper_cards.c
++++ b/drivers/media/pci/mantis/hopper_cards.c
+@@ -168,4 +168,3 @@ static int hopper_pci_probe(struct pci_dev *pdev,
+-		printk(KERN_ERR "%s ERROR: Out of memory\n", __func__);
+ 		err = -ENOMEM;
+ 		goto fail0;
+ 	}
+-- 
+2.14.1
+
