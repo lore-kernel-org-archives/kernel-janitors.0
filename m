@@ -1,41 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:35:20 +0000
-Subject: [PATCH 4/4] [media] cpia2: Delete an unnecessary return statement in process_frame()
-Message-Id: <af26d762-74a2-e827-59cc-eae1b9d1aeee@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 15:52:05 +0000
+Subject: [PATCH 5/7] [media] ov9640: Improve a size determination in ov9640_probe()
+Message-Id: <5d342b6f-8283-c1ce-5469-fefeffcc05d4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
-In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:32:45 +0200
+Date: Sat, 2 Sep 2017 16:37:03 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cpia2/cpia2_usb.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/i2c/soc_camera/ov9640.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
-index d1750fa48aa8..f224992590b8 100644
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -154,6 +154,5 @@ static void process_frame(struct camera_data *cam)
+diff --git a/drivers/media/i2c/soc_camera/ov9640.c b/drivers/media/i2c/soc_camera/ov9640.c
+index 0f02f022f3e9..67578f194928 100644
+--- a/drivers/media/i2c/soc_camera/ov9640.c
++++ b/drivers/media/i2c/soc_camera/ov9640.c
+@@ -675,5 +675,5 @@ static int ov9640_probe(struct i2c_client *client,
+ 		return -EINVAL;
  	}
  
- 	cam->workbuff->status = FRAME_ERROR;
--	return;
- }
- 
+-	priv = devm_kzalloc(&client->dev, sizeof(struct ov9640_priv), GFP_KERNEL);
++	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
 -- 
 2.14.1
 
