@@ -1,26 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Sep 2017 19:12:31 +0000
-Subject: [PATCH 0/2] [media] xc4000: Adjustments for xc4000_fwupload()
-Message-Id: <61016489-eb01-2977-b094-343aa70686b0@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 18:40:13 +0000
+Subject: [PATCH 0/3] [media] cx18: Adjustments for seven function implementations
+Message-Id: <016d4c9c-1d8e-e277-5d7c-f433553cf0fa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Sep 2017 21:00:12 +0200
+Date: Sat, 2 Sep 2017 20:03:45 +0200
 
-Two update suggestions were taken into account
+Three update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (2):
-  Delete two error messages for a failed memory allocation
-  Adjust two null pointer checks
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
+  Adjust ten checks for null pointers
 
- drivers/media/tuners/xc4000.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/pci/cx18/cx18-driver.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
 -- 
 2.14.1
