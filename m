@@ -1,63 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 13:07:51 +0000
-Subject: [PATCH 2/4] [media] adv7604: Adjust a null pointer check in three functions
-Message-Id: <b0d8f437-f0ea-154a-c68a-71ee73aa6587@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 13:08:49 +0000
+Subject: [PATCH 3/4] [media] adv7842: Delete an error message for a failed memory allocation in adv7842_probe
+Message-Id: <399f1b38-8e53-a52b-8386-4d067444eda9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 In-Reply-To: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 11:43:00 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sat, 2 Sep 2017 12:50:19 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/i2c/adv7604.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/i2c/adv7842.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index cc693ef71f33..0a774d025858 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -1948,7 +1948,7 @@ static int adv76xx_set_format(struct v4l2_subdev *sd,
- 		return -EINVAL;
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 303effda1a2e..366a294edd7b 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -3471,7 +3471,5 @@ static int adv7842_probe(struct i2c_client *client,
+-	if (!state) {
+-		v4l_err(client, "Could not allocate adv7842_state memory!\n");
++	if (!state)
+ 		return -ENOMEM;
+-	}
  
- 	info = adv76xx_format_info(state, format->format.code);
--	if (info = NULL)
-+	if (!info)
- 		info = adv76xx_format_info(state, MEDIA_BUS_FMT_YUYV8_2X8);
- 
- 	adv76xx_fill_format(state, &format->format);
-@@ -2256,7 +2256,7 @@ static int adv76xx_get_edid(struct v4l2_subdev *sd, struct v4l2_edid *edid)
- 		return 0;
- 	}
- 
--	if (data = NULL)
-+	if (!data)
- 		return -ENODATA;
- 
- 	if (edid->start_block >= state->edid.blocks)
-@@ -3480,7 +3480,7 @@ static int adv76xx_probe(struct i2c_client *client,
- 		state->i2c_clients[i]  			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
- 					     0xf2 + i);
--		if (state->i2c_clients[i] = NULL) {
-+		if (!state->i2c_clients[i]) {
- 			err = -ENOMEM;
- 			v4l2_err(sd, "failed to create i2c client %u\n", i);
- 			goto err_i2c;
+ 	/* platform data */
+ 	state->pdata = *pdata;
 -- 
 2.14.1
 
