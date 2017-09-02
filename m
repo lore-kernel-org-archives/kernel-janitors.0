@@ -1,28 +1,41 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 01 Sep 2017 13:29:51 +0000
-Subject: Re: [1/4] axonram: Delete an error message for a failed memory allocation in axon_ram_probe()
-Message-Id: <3xkKq351vNz9t3P@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 13:10:13 +0000
+Subject: [PATCH 4/4] [media] adv7842: Improve a size determination in adv7842_probe()
+Message-Id: <0ffbe17f-7de1-a456-a066-227f25642fa1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <31790d2a-26b4-54f5-e52d-5637be0b676f@users.sourceforge.net>
+References: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
+In-Reply-To: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Paul Mackerras <paulus@samba.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 2017-08-03 at 19:12:50 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 3 Aug 2017 19:49:18 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 12:53:15 +0200
 
-Series applied to powerpc next, thanks.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-https://git.kernel.org/powerpc/c/a1bddf3991573f3dff2762bfca5e11
+This issue was detected by using the Coccinelle software.
 
-cheers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/i2c/adv7842.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 366a294edd7b..aa8b3bcdd750 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -3467,5 +3467,5 @@ static int adv7842_probe(struct i2c_client *client,
+ 		return -ENODEV;
+ 	}
+ 
+-	state = devm_kzalloc(&client->dev, sizeof(struct adv7842_state), GFP_KERNEL);
++	state = devm_kzalloc(&client->dev, sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+-- 
+2.14.1
+
