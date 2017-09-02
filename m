@@ -1,45 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 16 Sep 2017 16:14:11 +0000
-Subject: [PATCH] ufs: make const array setup_attrs static to shink object code size
-Message-Id: <20170916161411.29464-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 20:42:07 +0000
+Subject: [PATCH 2/7] [media] Hopper: Improve a size determination in hopper_pci_probe()
+Message-Id: <e008a449-14a8-b754-a353-25a8d463a2d2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
+In-Reply-To: <9ba22d42-0ec0-b865-dec5-4ce67ad443fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joao Pinto <jpinto@synopsys.com>, Vinayak Holikatti <vinholikatti@gmail.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 21:21:22 +0200
 
-Don't populate const array setup_attrs on the stack, instead make it
-static.  Makes the object code smaller by over 120 bytes:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   1588	    208	      0	   1796	    704	drivers/scsi/ufs/ufshcd-dwc.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   1371	    304	      0	   1675	    68b	drivers/scsi/ufs/ufshcd-dwc.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/ufs/ufshcd-dwc.c | 2 +-
+ drivers/media/pci/mantis/hopper_cards.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd-dwc.c b/drivers/scsi/ufs/ufshcd-dwc.c
-index 5fd16c72207f..f061609c424d 100644
---- a/drivers/scsi/ufs/ufshcd-dwc.c
-+++ b/drivers/scsi/ufs/ufshcd-dwc.c
-@@ -83,7 +83,7 @@ static int ufshcd_dwc_link_is_up(struct ufs_hba *hba)
-  */
- static int ufshcd_dwc_connection_setup(struct ufs_hba *hba)
- {
--	const struct ufshcd_dme_attr_val setup_attrs[] = {
-+	static const struct ufshcd_dme_attr_val setup_attrs[] = {
- 		{ UIC_ARG_MIB(T_CONNECTIONSTATE), 0, DME_LOCAL },
- 		{ UIC_ARG_MIB(N_DEVICEID), 0, DME_LOCAL },
- 		{ UIC_ARG_MIB(N_DEVICEID_VALID), 0, DME_LOCAL },
+diff --git a/drivers/media/pci/mantis/hopper_cards.c b/drivers/media/pci/mantis/hopper_cards.c
+index cc1bb04d8cb4..fe7b40c306f7 100644
+--- a/drivers/media/pci/mantis/hopper_cards.c
++++ b/drivers/media/pci/mantis/hopper_cards.c
+@@ -163,7 +163,7 @@ static int hopper_pci_probe(struct pci_dev *pdev,
+ 	struct mantis_hwconfig *config;
+ 	int err = 0;
+ 
+-	mantis = kzalloc(sizeof(struct mantis_pci), GFP_KERNEL);
++	mantis = kzalloc(sizeof(*mantis), GFP_KERNEL);
+ 	if (mantis = NULL) {
+ 		err = -ENOMEM;
+ 		goto fail0;
 -- 
 2.14.1
 
