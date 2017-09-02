@@ -1,37 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:46:31 +0000
-Subject: [PATCH 0/9] [media] TM6000: Adjustments for some function implementations
-Message-Id: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 15:50:16 +0000
+Subject: [PATCH 3/7] [media] ov6650: Delete an error message for a failed memory allocation in ov6650_probe()
+Message-Id: <32edb708-92f9-c51b-d424-aa975ca49b92@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 08:24:56 +0200
+Date: Sat, 2 Sep 2017 16:16:39 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (9):
-  Delete seven error messages for a failed memory allocation
-  Adjust seven checks for null pointers
-  Use common error handling code in tm6000_usb_probe()
-  One function call less in tm6000_usb_probe() after error detection
-  Delete an unnecessary variable initialisation in tm6000_usb_probe()
-  Use common error handling code in tm6000_cards_setup()
-  Improve a size determination in dvb_init()
-  Use common error handling code in tm6000_start_stream()
-  Use common error handling code in tm6000_prepare_isoc()
+This issue was detected by using the Coccinelle software.
 
- drivers/media/usb/tm6000/tm6000-cards.c | 36 ++++++++++++++++-----------------
- drivers/media/usb/tm6000/tm6000-dvb.c   | 24 +++++++++++-----------
- drivers/media/usb/tm6000/tm6000-input.c |  2 +-
- drivers/media/usb/tm6000/tm6000-video.c | 30 +++++++++++----------------
- 4 files changed, 42 insertions(+), 50 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/i2c/ov6650.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
+index 768f2950ea36..8975d16b2b24 100644
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -954,8 +954,5 @@ static int ov6650_probe(struct i2c_client *client,
+-	if (!priv) {
+-		dev_err(&client->dev,
+-			"Failed to allocate memory for private data!\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov6650_subdev_ops);
+ 	v4l2_ctrl_handler_init(&priv->hdl, 13);
 -- 
 2.14.1
 
