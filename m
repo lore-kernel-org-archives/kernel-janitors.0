@@ -1,52 +1,63 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 09:26:03 +0000
-Subject: [PATCH] ASoC: qcom: remove duplicate initializations of dma_ch and v
-Message-Id: <20170918092603.27613-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 13:07:51 +0000
+Subject: [PATCH 2/4] [media] adv7604: Adjust a null pointer check in three functions
+Message-Id: <b0d8f437-f0ea-154a-c68a-71ee73aa6587@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
+In-Reply-To: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 11:43:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-dma_ch is being initialized to zero and then immediately afterwards
-being updated again, so the first initialization is redundant and
-can be remove.
+The script “checkpatch.pl” pointed information out like the following.
 
-Likewise, the pointer v is being initialized twice, so remove the second
-duplicate initialization.
+Comparison to NULL could be written !…
 
-Cleans up two clang build warnings:
-warning: Value stored to 'dma_ch' is never read
-warning: Value stored to 'v' during its initialization is never read
+Thus fix the affected source code places.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/qcom/lpass-platform.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/i2c/adv7604.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
-index e1945e1772cd..caf71aab8196 100644
---- a/sound/soc/qcom/lpass-platform.c
-+++ b/sound/soc/qcom/lpass-platform.c
-@@ -74,7 +74,6 @@ static int lpass_platform_pcmops_open(struct snd_pcm_substream *substream)
- 	data->i2s_port = cpu_dai->driver->id;
- 	runtime->private_data = data;
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index cc693ef71f33..0a774d025858 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -1948,7 +1948,7 @@ static int adv76xx_set_format(struct v4l2_subdev *sd,
+ 		return -EINVAL;
  
--	dma_ch = 0;
- 	if (v->alloc_dma_channel)
- 		dma_ch = v->alloc_dma_channel(drvdata, dir);
- 	else
-@@ -122,7 +121,6 @@ static int lpass_platform_pcmops_close(struct snd_pcm_substream *substream)
- 	struct lpass_pcm_data *data;
+ 	info = adv76xx_format_info(state, format->format.code);
+-	if (info = NULL)
++	if (!info)
+ 		info = adv76xx_format_info(state, MEDIA_BUS_FMT_YUYV8_2X8);
  
- 	data = runtime->private_data;
--	v = drvdata->variant;
- 	drvdata->substream[data->dma_ch] = NULL;
- 	if (v->free_dma_channel)
- 		v->free_dma_channel(drvdata, data->dma_ch);
+ 	adv76xx_fill_format(state, &format->format);
+@@ -2256,7 +2256,7 @@ static int adv76xx_get_edid(struct v4l2_subdev *sd, struct v4l2_edid *edid)
+ 		return 0;
+ 	}
+ 
+-	if (data = NULL)
++	if (!data)
+ 		return -ENODATA;
+ 
+ 	if (edid->start_block >= state->edid.blocks)
+@@ -3480,7 +3480,7 @@ static int adv76xx_probe(struct i2c_client *client,
+ 		state->i2c_clients[i]  			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
+ 					     0xf2 + i);
+-		if (state->i2c_clients[i] = NULL) {
++		if (!state->i2c_clients[i]) {
+ 			err = -ENOMEM;
+ 			v4l2_err(sd, "failed to create i2c client %u\n", i);
+ 			goto err_i2c;
 -- 
 2.14.1
 
