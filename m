@@ -1,39 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 11:21:14 +0000
-Subject: [PATCH] sunrpc: remove redundant initialization of sock
-Message-Id: <20170918112114.29429-1-colin.king@canonical.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 02 Sep 2017 01:31:07 +0000
+Subject: Re: [PATCH] net: phy: bcm7xxx: make array bcm7xxx_suspend_cfg static, reduces object code size
+Message-Id: <20170901.183107.1909375784040394690.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170831135715.27978-1-colin.king@canonical.com>
+In-Reply-To: <20170831135715.27978-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J . Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: colin.king@canonical.com
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 Aug 2017 14:57:15 +0100
 
-sock is being initialized and then being almost immediately updated
-hence the initialized value is not being used and is redundant. Remove
-the initialization. Cleans up clang warning:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array bcm7xxx_suspend_cfg A on the stack, instead
+> make it static.  Makes the object code smaller by over 300 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    6351	   8146	      0	  14497	   38a1	drivers/net/phy/bcm7xxx.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    5986	   8210	      0	  14196	   3774	drivers/net/phy/bcm7xxx.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-warning: Value stored to 'sock' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/sunrpc/xprtsock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index 9b5de31aa429..c1841f234a71 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2203,7 +2203,7 @@ static void xs_udp_setup_socket(struct work_struct *work)
- 	struct sock_xprt *transport  		container_of(work, struct sock_xprt, connect_worker.work);
- 	struct rpc_xprt *xprt = &transport->xprt;
--	struct socket *sock = transport->sock;
-+	struct socket *sock;
- 	int status = -EIO;
- 
- 	sock = xs_create_sock(xprt, transport,
--- 
-2.14.1
-
+Applied.
