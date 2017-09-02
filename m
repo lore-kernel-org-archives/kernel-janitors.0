@@ -1,55 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Sep 2017 21:50:00 +0000
-Subject: [PATCH] ASoC: rl6231: make arrays div and pd static const, reduces object code size
-Message-Id: <20170919215000.32040-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 15:49:28 +0000
+Subject: [PATCH 2/7] [media] ov2640: Improve a size determination in ov2640_probe()
+Message-Id: <457f2678-da7f-cb67-8893-5cdb7ce804dd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 16:09:35 +0200
 
-Don't populate the read-only arrays div and pd on the stack,
-instead make them static const. Makes the object code smaller by 210 bytes:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   2869	    720	      0	   3589	    e05	sound/soc/codecs/rl6231.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   2495	    880	      0	   3375	    d2f	sound/soc/codecs/rl6231.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rl6231.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov2640.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rl6231.c b/sound/soc/codecs/rl6231.c
-index 7b447d0b173a..974a9040651d 100644
---- a/sound/soc/codecs/rl6231.c
-+++ b/sound/soc/codecs/rl6231.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL_GPL(rl6231_get_pre_div);
-  */
- int rl6231_calc_dmic_clk(int rate)
- {
--	int div[] = {2, 3, 4, 6, 8, 12};
-+	static const int div[] = {2, 3, 4, 6, 8, 12};
- 	int i;
+diff --git a/drivers/media/i2c/ov2640.c b/drivers/media/i2c/ov2640.c
+index e4ae53410097..456aa977bce8 100644
+--- a/drivers/media/i2c/ov2640.c
++++ b/drivers/media/i2c/ov2640.c
+@@ -1097,5 +1097,5 @@ static int ov2640_probe(struct i2c_client *client,
+ 		return -EIO;
+ 	}
  
- 	if (rate < 1000000 * div[0]) {
-@@ -189,7 +189,8 @@ EXPORT_SYMBOL_GPL(rl6231_pll_calc);
- 
- int rl6231_get_clk_info(int sclk, int rate)
- {
--	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
-+	int i;
-+	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
- 
- 	if (sclk <= 0 || rate <= 0)
- 		return -EINVAL;
+-	priv = devm_kzalloc(&client->dev, sizeof(struct ov2640_priv), GFP_KERNEL);
++	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
 -- 
 2.14.1
 
