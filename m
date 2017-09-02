@@ -1,75 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 04 Sep 2017 12:46:38 +0000
-Subject: Applied "ASoC: samsung: i2s: Fix error handling path in i2s_set_sysclk()" to the asoc tree
-Message-Id: <20170904124638.DB4C44400FC@finisterre.ee.mobilebroadband>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 18:41:03 +0000
+Subject: [PATCH 1/3] [media] cx18: Delete an error message for a failed memory allocation in cx18_probe()
+Message-Id: <a47013ab-7738-b07b-5e01-1f3435d45a43@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170903122902.3591-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170903122902.3591-1-christophe.jaillet@wanadoo.fr>
+References: <016d4c9c-1d8e-e277-5d7c-f433553cf0fa@users.sourceforge.net>
+In-Reply-To: <016d4c9c-1d8e-e277-5d7c-f433553cf0fa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, linux-kernel@vger.kernel.org, tiwai@suse.com, kernel-janitors@vger.kernel.org, lgirdwood@gmail.com, krzk@kernel.org, broonie@kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, s.nawrocki@samsung.com
+To: linux-media@vger.kernel.org, Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Sep 2017 19:39:56 +0200
 
-   ASoC: samsung: i2s: Fix error handling path in i2s_set_sysclk()
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6431a7e36652517df82855ee79c8240001812a55 Mon Sep 17 00:00:00 2001
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Sun, 3 Sep 2017 14:29:02 +0200
-Subject: [PATCH] ASoC: samsung: i2s: Fix error handling path in
- i2s_set_sysclk()
-
-If 'clk_prepare_enable()' fails, we must 'put' the corresponding clock.
-Othewise, there is a resource leak.
-
-Fixes: f5c97c7b0438 ("ASoC: samsung: i2s: Handle return value of clk_prepare_enable.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/samsung/i2s.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/pci/cx18/cx18-driver.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 10a4da06c0a1..d7e7f4244d38 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -552,8 +552,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 			}
+diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+index 8bce49cdad46..b267590e0877 100644
+--- a/drivers/media/pci/cx18/cx18-driver.c
++++ b/drivers/media/pci/cx18/cx18-driver.c
+@@ -913,8 +913,6 @@ static int cx18_probe(struct pci_dev *pci_dev,
+-	if (cx = NULL) {
+-		printk(KERN_ERR "cx18: cannot manage card %d, out of memory\n",
+-		       i);
++	if (!cx)
+ 		return -ENOMEM;
+-	}
++
+ 	cx->pci_dev = pci_dev;
+ 	cx->instance = i;
  
- 			ret = clk_prepare_enable(i2s->op_clk);
--			if (ret)
-+			if (ret) {
-+				clk_put(i2s->op_clk);
-+				i2s->op_clk = NULL;
- 				goto err;
-+			}
- 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
- 
- 			/* Over-ride the other's */
 -- 
-2.13.2
+2.14.1
 
