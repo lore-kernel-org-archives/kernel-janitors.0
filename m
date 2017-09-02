@@ -1,40 +1,27 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 12 Sep 2017 05:39:30 +0000
-Subject: [PATCH] video: fbdev: Fix an errro handling path in 'au1200fb_drv_probe()'
-Message-Id: <20170912053930.18931-1-christophe.jaillet@wanadoo.fr>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 02 Sep 2017 01:34:52 +0000
+Subject: Re: [PATCH][net-next] net: qualcomm: rmnet: remove unused variable priv
+Message-Id: <20170901.183452.1095616327099284759.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170831140727.28170-1-colin.king@canonical.com>
+In-Reply-To: <20170831140727.28170-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, tj@kernel.org, viro@zeniv.linux.org.uk
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: colin.king@canonical.com
+Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If 'dmam_alloc_attrs()' fails, we must go through the error handling code,
-as done elsewhere in this function. Otherwise, there is a resource leak.
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 31 Aug 2017 15:07:27 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I'm also puzzled by the 'framebuffer_alloc()' call a few lines above.
-'ret' is known to be 0 at this point. I guess that -ENOMEM should also be
-returned.
----
- drivers/video/fbdev/au1200fb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> priv is being assigned but is never used, so remove it.
+> 
+> Cleans up clang build warning:
+> "warning: Value stored to 'priv' is never read"
+> 
+> Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
-index 5f04b4096c42..99d6cfb168b5 100644
---- a/drivers/video/fbdev/au1200fb.c
-+++ b/drivers/video/fbdev/au1200fb.c
-@@ -1701,7 +1701,8 @@ static int au1200fb_drv_probe(struct platform_device *dev)
- 		if (!fbdev->fb_mem) {
- 			print_err("fail to allocate frambuffer (size: %dK))",
- 				  fbdev->fb_len / 1024);
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto failed;
- 		}
- 
- 		/*
--- 
-2.11.0
-
+Applied.
