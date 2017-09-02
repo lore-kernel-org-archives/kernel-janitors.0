@@ -1,41 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Sep 2017 20:35:06 +0000
-Subject: [PATCH 5/7] [media] Hexium Orion: Delete an error message for a failed memory allocation in hexium_p
-Message-Id: <80c8a86a-5b26-0c40-5d71-730870958556@users.sourceforge.net>
+Date: Sat, 02 Sep 2017 15:54:06 +0000
+Subject: [PATCH 7/7] [media] ov9740: Improve a size determination in ov9740_probe()
+Message-Id: <45f7c20f-054d-4542-88cf-44981ba61ee4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
-In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Sep 2017 19:55:25 +0200
+Date: Sat, 2 Sep 2017 16:46:03 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/saa7146/hexium_orion.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/i2c/soc_camera/ov9740.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
-index c306a92e8909..72fac6a8494a 100644
---- a/drivers/media/pci/saa7146/hexium_orion.c
-+++ b/drivers/media/pci/saa7146/hexium_orion.c
-@@ -223,7 +223,5 @@ static int hexium_probe(struct saa7146_dev *dev)
--	if (NULL = hexium) {
--		pr_err("hexium_probe: not enough kernel memory\n");
-+	if (!hexium)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/media/i2c/soc_camera/ov9740.c b/drivers/media/i2c/soc_camera/ov9740.c
+index f44f5da795f9..755de2289c39 100644
+--- a/drivers/media/i2c/soc_camera/ov9740.c
++++ b/drivers/media/i2c/soc_camera/ov9740.c
+@@ -935,5 +935,5 @@ static int ov9740_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
  
- 	/* enable i2c-port pins */
- 	saa7146_write(dev, MC1, (MASK_08 | MASK_24 | MASK_10 | MASK_26));
+-	priv = devm_kzalloc(&client->dev, sizeof(struct ov9740_priv), GFP_KERNEL);
++	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
 -- 
 2.14.1
 
