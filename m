@@ -1,63 +1,54 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 29 Sep 2017 20:13:49 +0000
-Subject: Re: [PATCH][drm-next] drm/radeon: make functions alloc_pasid and free_pasid static
-Message-Id: <CADnq5_OGJ-_59XJ_aQ8C6VR3TRbDAhMYqc=nkv2CncBZnunrBQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Sep 2017 13:06:01 +0000
+Subject: [PATCH] rpmsg: glink: initialize ret to zero to ensure error status check is correct
+Message-Id: <20170903130601.6533-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170928134617.8168-1-colin.king@canonical.com>
-In-Reply-To: <20170928134617.8168-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 28, 2017 at 9:46 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The functions alloc_pasid  and free_pasid are local to the
-> source and do not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> warning: symbol 'alloc_pasid' was not declared. Should it be static?
-> warning: symbol 'free_pasid' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+The new switch cases for RPM_CMD_RX_DONE, RPM_CMD_RX_DONE_W_REUSE,
+RPM_CMD_RX_INTENT_REQ_ACK, RPM_CMD_INTENT and RPM_CMD_RX_INTENT_REQ from
+4 recent commits are not setting ret and so a later non-zero check on ret
+is testing on a garbage value in ret. Fix this by initializing ret to zero.
 
-Alex
+Detected by CoverityScan CID#1455249 ("Uninitialized scalar variable")
 
+Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents)
+Fixes: dacbb35e930f ("glink: Receive and store the remote intent buffers")
+Fixes: 27b9c5b66b23 ("rpmsg: glink: Request for intents when unavailable")
+Fixes: 88c6060f5a7f ("rpmsg: glink: Handle remote rx done command")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->  drivers/gpu/drm/radeon/radeon_kfd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/radeon/radeon_kfd.c b/drivers/gpu/drm/radeon/radeon_kfd.c
-> index a2ac8ac0930d..385b4d76956d 100644
-> --- a/drivers/gpu/drm/radeon/radeon_kfd.c
-> +++ b/drivers/gpu/drm/radeon/radeon_kfd.c
-> @@ -352,7 +352,7 @@ static uint32_t get_max_engine_clock_in_mhz(struct kgd_dev *kgd)
->   */
->  static DEFINE_IDA(pasid_ida);
->
-> -int alloc_pasid(unsigned int bits)
-> +static int alloc_pasid(unsigned int bits)
->  {
->         int pasid = -EINVAL;
->
-> @@ -367,7 +367,7 @@ int alloc_pasid(unsigned int bits)
->         return pasid;
->  }
->
-> -void free_pasid(unsigned int pasid)
-> +static void free_pasid(unsigned int pasid)
->  {
->         ida_simple_remove(&pasid_ida, pasid);
->  }
-> --
-> 2.14.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 8bc0d0456a40..5a5e927ea50f 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -957,7 +957,7 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 	unsigned int param2;
+ 	unsigned int avail;
+ 	unsigned int cmd;
+-	int ret;
++	int ret = 0;
+ 
+ 	for (;;) {
+ 		avail = qcom_glink_rx_avail(glink);
+@@ -994,8 +994,6 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 
+ 			mbox_send_message(glink->mbox_chan, NULL);
+ 			mbox_client_txdone(glink->mbox_chan, 0);
+-
+-			ret = 0;
+ 			break;
+ 		case RPM_CMD_INTENT:
+ 			qcom_glink_handle_intent(glink, param1, param2, avail);
+-- 
+2.14.1
+
