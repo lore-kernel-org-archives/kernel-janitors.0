@@ -1,66 +1,54 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Sep 2017 13:41:31 +0000
-Subject: [PATCH][V2] e1000: avoid null pointer dereference on invalid stat type
-Message-Id: <20170922134131.12283-1-colin.king@canonical.com>
+Date: Sun, 03 Sep 2017 13:54:08 +0000
+Subject: [PATCH] ASoC: fsl_spdif: make const arrays rate static
+Message-Id: <20170903135408.7602-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+To: Timur Tabi <timur@tabi.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently if the stat type is invalid then data[i] is being set
-either by dereferencing a null pointer p, or it is reading from
-an incorrect previous location if we had a valid stat type
-previously.  Fix this by nullify pointer p if a stat type is
-invalid and only setting data if p is not null.
+Don't populate the const arrays rate on the stack, instead make them
+static. Makes the object code smaller by 220 bytes:
 
-Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  24385	   9776	    128	  34289	   85f1	sound/soc/fsl/fsl_spdif.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  24005	   9936	    128	  34069	   8515	sound/soc/fsl/fsl_spdif.o
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/fsl/fsl_spdif.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-index ec8aa4562cc9..724c93a6ea92 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -1824,7 +1824,7 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index 7e6cc4da0088..4f7469c1864c 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -1110,7 +1110,7 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_priv *spdif_priv,
+ 				struct clk *clk, u64 savesub,
+ 				enum spdif_txrate index, bool round)
  {
- 	struct e1000_adapter *adapter = netdev_priv(netdev);
- 	int i;
--	char *p = NULL;
-+	char *p;
- 	const struct e1000_stats *stat = e1000_gstrings_stats;
- 
- 	e1000_update_stats(adapter);
-@@ -1837,16 +1837,18 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
- 			p = (char *)adapter + stat->stat_offset;
- 			break;
- 		default:
-+			p = NULL;
- 			WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
- 				  stat->type, i);
- 			break;
- 		}
- 
--		if (stat->sizeof_stat = sizeof(u64))
--			data[i] = *(u64 *)p;
--		else
--			data[i] = *(u32 *)p;
--
-+		if (p) {
-+			if (stat->sizeof_stat = sizeof(u64))
-+				data[i] = *(u64 *)p;
-+			else
-+				data[i] = *(u32 *)p;
-+		}
- 		stat++;
- 	}
- /* BUG_ON(i != E1000_STATS_LEN); */
+-	const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
++	static const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
+ 	bool is_sysclk = clk_is_match(clk, spdif_priv->sysclk);
+ 	u64 rate_ideal, rate_actual, sub;
+ 	u32 sysclk_dfmin, sysclk_dfmax;
+@@ -1169,7 +1169,7 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_priv *spdif_priv,
+ static int fsl_spdif_probe_txclk(struct fsl_spdif_priv *spdif_priv,
+ 				enum spdif_txrate index)
+ {
+-	const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
++	static const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
+ 	struct platform_device *pdev = spdif_priv->pdev;
+ 	struct device *dev = &pdev->dev;
+ 	u64 savesub = 100000, ret;
 -- 
 2.14.1
 
