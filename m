@@ -1,143 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 20:24:16 +0000
-Subject: [PATCH 8/8] [media] cx231xx: Use common error handling code in cx231xx_load_firmware()
-Message-Id: <57f0d209-1b87-690c-589a-bff8e0ffe24f@users.sourceforge.net>
+Date: Sun, 03 Sep 2017 20:33:02 +0000
+Subject: [PATCH 3/7] [media] Hexium Gemini: Delete an error message for a failed memory allocation in hexium_
+Message-Id: <1c4c1193-be5a-1fc8-718e-373a45b66e2a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
-In-Reply-To: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 21:07:39 +0200
+Date: Sun, 3 Sep 2017 19:23:37 +0200
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cx231xx/cx231xx-417.c | 61 ++++++++++++++++-----------------
- 1 file changed, 29 insertions(+), 32 deletions(-)
+ drivers/media/pci/saa7146/hexium_gemini.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index d43345593172..88aac129b678 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -954,16 +954,13 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
- 
- 	p_current_fw = vmalloc(1884180 * 4);
- 	p_fw = p_current_fw;
--	if (!p_current_fw) {
--		dprintk(2, "FAIL!!!\n");
--		return -ENOMEM;
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index c889ec9f8a5a..694b70fa3baf 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -264,7 +264,6 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+-	if (NULL = hexium) {
+-		pr_err("not enough kernel memory in hexium_attach()\n");
++	if (!hexium)
+ 		return -ENOMEM;
 -	}
-+	if (!p_current_fw)
-+		goto e_nomem;
- 
- 	p_buffer = vmalloc(4096);
- 	if (!p_buffer) {
--		dprintk(2, "FAIL!!!\n");
- 		vfree(p_current_fw);
--		return -ENOMEM;
-+		goto e_nomem;
- 	}
- 
- 	dprintk(2, "%s()\n", __func__);
-@@ -986,9 +983,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
- 	if (retval != 0) {
- 		dev_err(dev->dev,
- 			"%s: Error with mc417_register_write\n", __func__);
--		vfree(p_current_fw);
--		vfree(p_buffer);
--		return retval;
-+		goto free_fw;
- 	}
- 
- 	retval = request_firmware(&firmware, CX231xx_FIRM_IMAGE_NAME,
-@@ -1000,28 +995,20 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
- 			CX231xx_FIRM_IMAGE_NAME);
- 		dev_err(dev->dev,
- 			"Please fix your hotplug setup, the board will not work without firmware loaded!\n");
--		vfree(p_current_fw);
--		vfree(p_buffer);
--		return retval;
-+		goto free_fw;
- 	}
- 
- 	if (firmware->size != CX231xx_FIRM_IMAGE_SIZE) {
- 		dev_err(dev->dev,
- 			"ERROR: Firmware size mismatch (have %zd, expected %d)\n",
- 			firmware->size, CX231xx_FIRM_IMAGE_SIZE);
--		release_firmware(firmware);
--		vfree(p_current_fw);
--		vfree(p_buffer);
--		return -EINVAL;
-+		goto e_inval;
- 	}
- 
- 	if (0 != memcmp(firmware->data, magic, 8)) {
- 		dev_err(dev->dev,
- 			"ERROR: Firmware magic mismatch, wrong file?\n");
--		release_firmware(firmware);
--		vfree(p_current_fw);
--		vfree(p_buffer);
--		return -EINVAL;
-+		goto e_inval;
- 	}
- 
- 	initGPIO(dev);
-@@ -1065,26 +1052,36 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
- 
- 	retval |= mc417_register_write(dev, IVTV_REG_HW_BLOCKS,
- 		IVTV_CMD_HW_BLOCKS_RST);
--	if (retval < 0) {
--		dev_err(dev->dev,
--			"%s: Error with mc417_register_write\n",
--			__func__);
--		return retval;
--	}
-+	if (retval < 0)
-+		goto report_write_failure;
 +
- 	/* F/W power up disturbs the GPIOs, restore state */
- 	retval |= mc417_register_write(dev, 0x9020, gpio_output);
- 	retval |= mc417_register_write(dev, 0x900C, value);
+ 	dev->ext_priv = hexium;
  
- 	retval |= mc417_register_read(dev, IVTV_REG_VPU, &value);
- 	retval |= mc417_register_write(dev, IVTV_REG_VPU, value & 0xFFFFFFE8);
-+	if (retval < 0)
-+		goto report_write_failure;
- 
--	if (retval < 0) {
--		dev_err(dev->dev,
--			"%s: Error with mc417_register_write\n",
--			__func__);
--		return retval;
--	}
- 	return 0;
-+
-+e_nomem:
-+	dprintk(2, "FAIL!!!\n");
-+	return -ENOMEM;
-+
-+e_inval:
-+	retval = -EINVAL;
-+	release_firmware(firmware);
-+
-+free_fw:
-+	vfree(p_current_fw);
-+	vfree(p_buffer);
-+	return retval;
-+
-+report_write_failure:
-+	dev_err(dev->dev, "%s: Error with mc417_register_write\n", __func__);
-+	return retval;
- }
- 
- static void cx231xx_417_check_encoder(struct cx231xx *dev)
+ 	/* enable i2c-port pins */
 -- 
 2.14.1
 
