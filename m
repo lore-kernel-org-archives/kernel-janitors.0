@@ -1,47 +1,52 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 22 Sep 2017 17:16:30 +0000
-Subject: Re: [PATCH] IB/core: fix incorrect fall-through on switch statement
-Message-Id: <1506100590.5172.6.camel@redhat.com>
+From: Tariq Toukan <tariqt@mellanox.com>
+Date: Sun, 03 Sep 2017 07:28:04 +0000
+Subject: Re: [PATCH][next] net/mlx4_core: fix incorrect size allocation for dev->caps.spec_qps
+Message-Id: <feef1bb3-8c86-0a05-05f5-f49d86dcf9e7@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170911160313.28240-1-colin.king@canonical.com>
-         <20170913164917.GU3405@mtr-leonro.local>
-In-Reply-To: <20170913164917.GU3405-U/DQcQFIOTAAJjI8aNfphQ@public.gmane.org>
+References: <20170831170724.3747-1-colin.king@canonical.com>
+In-Reply-To: <20170831170724.3747-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Tariq Toukan <tariqt-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, 2017-09-13 at 19:49 +0300, Leon Romanovsky wrote:
-> On Mon, Sep 11, 2017 at 05:03:13PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > In the case where mbox_status is OCRDMA_MBX_STATUS_FAILED and
-> > add_status is OCRDMA_MBX_STATUS_FAILED err_num is assigned -EAGAIN
-> > however the case OCRDMA_MBX_STATUS_FAILED is missing a break and
-> > falls through to the default case which then re-assigns err_num
-> > to -EFAULT.   Fix this so that err_num is assigned to -EAGAIN
-> > for the add_status OCRDMA_MBX_STATUS_FAILED case and -EFAULT
-> > otherwise.
-> > 
-> > Detected by CoverityScan CID#703125 ("Missing break in switch")
-> > 
-> > Fixes: fe2caefcdf58 ("RDMA/ocrdma: Add driver for Emulex OneConnect
-> > IBoE RDMA adapter")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
+
+
+On 31/08/2017 8:07 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Except the wrong title: IB/core -> IB/ocrdma
+> The current allocation for dev->caps.spec_qps is for the size of the
+> pointer and not the size of the actual  mlx4_spec_qps structure.  Fix
+> this by using the correct size.   Also splint allocation over a few
+> lines to make it cppcheck clean on overly wide lines.
 > 
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> Detected by CoverityScan, CID#1455222 ("Wrong sizeof argument")
+> 
+> Fixes: c73c8b1e47ca ("net/mlx4_core: Dynamically allocate structs at mlx4_slave_cap")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/net/ethernet/mellanox/mlx4/qp.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx4/qp.c b/drivers/net/ethernet/mellanox/mlx4/qp.c
+> index b16fc441609e..728a2fb1f5c0 100644
+> --- a/drivers/net/ethernet/mellanox/mlx4/qp.c
+> +++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+> @@ -845,8 +845,9 @@ int mlx4_init_qp_table(struct mlx4_dev *dev)
+>   
+>   		/* In mfunc, calculate proxy and tunnel qp offsets for the PF here,
+>   		 * since the PF does not call mlx4_slave_caps */
+> -		dev->caps.spec_qps = kcalloc(dev->caps.num_ports, sizeof(dev->caps.spec_qps), GFP_KERNEL);
+> -
+> +		dev->caps.spec_qps = kcalloc(dev->caps.num_ports,
+> +					     sizeof(*dev->caps.spec_qps),
+> +					     GFP_KERNEL);
+>   		if (!dev->caps.spec_qps) {
+>   			err = -ENOMEM;
+>   			goto err_mem;
+> 
 
-Thanks, patch (with fixed subject) applied.
+Acked-by: Tariq Toukan <tariqt@mellanox.com>
 
--- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
+Thanks!
