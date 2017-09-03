@@ -1,49 +1,50 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Date: Wed, 06 Sep 2017 05:59:06 +0000
-Subject: Re: [PATCH 0/6] [media] Atmel: Adjustments for seven function implementations
-Message-Id: <20170906055906.pzhqxor7goybrdif@rfolt0960.corp.atmel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Sep 2017 13:16:19 +0000
+Subject: [PATCH][thermal-next] thermal: brcmstb: remove two redundant integer range checks
+Message-Id: <20170903131619.6857-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
- <30c46f61-5c4f-9f75-e8b5-fab77fe1e11f@Microchip.com>
-In-Reply-To: <30c46f61-5c4f-9f75-e8b5-fab77fe1e11f@Microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Yang, Wenyou" <Wenyou.Yang@Microchip.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 06, 2017 at 08:58:26AM +0800, Yang, Wenyou wrote:
-> Hi,
-> 
-> 
-> On 2017/9/5 4:04, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 4 Sep 2017 21:44:55 +0200
-> > 
-> > A few update suggestions were taken into account
-> > from static source code analysis.
-> Thank you for your patches.
-> 
-> You can add my Acked-by for the patch series.
-> 
-> Acked-by: Wenyou Yang <wenyou.yang@microchip.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+The comparisons for integer low on low > INT_MAX and also
+integer high > INT_MAX are never going to be true since an
+int type cannot be greater than INT_MAX.  Remove these redundant
+checks.
 
-> 
-> > 
-> > Markus Elfring (6):
-> >    Delete an error message for a failed memory allocation in isc_formats_init()
-> >    Improve a size determination in isc_formats_init()
-> >    Adjust three checks for null pointers
-> >    Delete an error message for a failed memory allocation in two functions
-> >    Improve three size determinations
-> >    Adjust a null pointer check in three functions
-> > 
-> >   drivers/media/platform/atmel/atmel-isc.c | 12 +++++-------
-> >   drivers/media/platform/atmel/atmel-isi.c | 20 ++++++++------------
-> >   2 files changed, 13 insertions(+), 19 deletions(-)
-> > 
-> 
-> Best Regards,
-> Wenyou Yang
+Detected by: CoverityScan CID#1455245, 1455248 ("Operands don't affect
+  result (CONSTANT_EXPRESSION_RESULT)")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/broadcom/brcmstb_thermal.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
+index 87b8e7a86ee3..bcb3945feea6 100644
+--- a/drivers/thermal/broadcom/brcmstb_thermal.c
++++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+@@ -278,8 +278,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
+ 	dev_dbg(priv->dev, "set trips %d <--> %d\n", low, high);
+ 
+ 	if (low) {
+-		if (low > INT_MAX)
+-			low = INT_MAX;
+ 		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_LOW, low);
+ 		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_LOW, 1);
+ 	} else {
+@@ -287,8 +285,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
+ 	}
+ 
+ 	if (high < ULONG_MAX) {
+-		if (high > INT_MAX)
+-			high = INT_MAX;
+ 		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_HIGH, high);
+ 		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_HIGH, 1);
+ 	} else {
+-- 
+2.14.1
+
