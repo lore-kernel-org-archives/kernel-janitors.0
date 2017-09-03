@@ -1,84 +1,43 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Fri, 22 Sep 2017 14:47:04 +0000
-Subject: Re: [Intel-wired-lan] [PATCH][V2] e1000: avoid null pointer dereference on invalid stat type
-Message-Id: <CAKgT0UdigPw=rpUoJSMDA98iLewQnn__P-wdn8A1Ltm0HU2jtA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 03 Sep 2017 12:29:02 +0000
+Subject: [PATCH] ASoC: samsung: i2s: Fix error handling path in i2s_set_sysclk()
+Message-Id: <20170903122902.3591-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922134131.12283-1-colin.king@canonical.com>
-In-Reply-To: <20170922134131.12283-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: krzk@kernel.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Sep 22, 2017 at 6:41 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently if the stat type is invalid then data[i] is being set
-> either by dereferencing a null pointer p, or it is reading from
-> an incorrect previous location if we had a valid stat type
-> previously.  Fix this by nullify pointer p if a stat type is
-> invalid and only setting data if p is not null.
->
-> Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> index ec8aa4562cc9..724c93a6ea92 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> @@ -1824,7 +1824,7 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
->  {
->         struct e1000_adapter *adapter = netdev_priv(netdev);
->         int i;
-> -       char *p = NULL;
-> +       char *p;
->         const struct e1000_stats *stat = e1000_gstrings_stats;
->
->         e1000_update_stats(adapter);
+If 'clk_prepare_enable()' fails, we must 'put' the corresponding clock.
+Othewise, there is a resource leak.
 
-I was honestly happier with the portion of the first patch that moved
-this into the loop.
+Fixes: f5c97c7b0438 ("ASoC: samsung: i2s: Handle return value of clk_prepare_enable.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm not 100% confident in this patch.
+It is mostly inspired by surrounding error handling. (L533 and L550)
+---
+ sound/soc/samsung/i2s.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> @@ -1837,16 +1837,18 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
->                         p = (char *)adapter + stat->stat_offset;
->                         break;
->                 default:
-> +                       p = NULL;
->                         WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
->                                   stat->type, i);
->                         break;
->                 }
->
-> -               if (stat->sizeof_stat = sizeof(u64))
-> -                       data[i] = *(u64 *)p;
-> -               else
-> -                       data[i] = *(u32 *)p;
-> -
-> +               if (p) {
-> +                       if (stat->sizeof_stat = sizeof(u64))
-> +                               data[i] = *(u64 *)p;
-> +                       else
-> +                               data[i] = *(u32 *)p;
-> +               }
->                 stat++;
->         }
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 10a4da06c0a1..d7e7f4244d38 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -552,8 +552,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 			}
+ 
+ 			ret = clk_prepare_enable(i2s->op_clk);
+-			if (ret)
++			if (ret) {
++				clk_put(i2s->op_clk);
++				i2s->op_clk = NULL;
+ 				goto err;
++			}
+ 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
+ 
+ 			/* Over-ride the other's */
+-- 
+2.11.0
 
-Instead of doing all this why not just call out a "continue;" instead
-of a "break" if the type isn't recognized, and move the stat++ into
-the loop declaration and process it at the same time as i++? That
-would clean most of this up and we don't have to worry about any loop
-carried variables and the like.
-
->  /* BUG_ON(i != E1000_STATS_LEN); */
-> --
-> 2.14.1
->
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
