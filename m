@@ -1,56 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 14:24:44 +0000
-Subject: [PATCH] [media] cxusb: pass buf as a const u8 * pointer and make buf static const
-Message-Id: <20170918142444.31914-1-colin.king@canonical.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 03 Sep 2017 16:41:35 +0000
+Subject: Re: [PATCH] iio: imu: inv_mpu6050: make arrays hz and d static
+Message-Id: <20170903174135.2ad75bf8@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170830111616.27559-1-colin.king@canonical.com>
+In-Reply-To: <20170830111616.27559-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Krufky <mkrufky@linuxtv.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Baptiste Maneyrol <JManeyrol@invensense.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 30 Aug 2017 12:16:16 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Don't populate the read-only u8 array buf on the stack at run time but
-instead make it static const; makes object code smaller saving over 480
-bytes:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the arrays on the stack, instead make them static.
+> Makes the object code smaller by 135 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   15135	   4240	    128	  19503	   4c2f	inv_mpu_core.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   14840	   4400	    128	  19368	   4ba8	inv_mpu_core.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Applied to the togreg branch of iio.git and pushed out as
+testing or the autobuilders to play with it.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  33030	  65936	    192	  99158	  18356	drivers/media/usb/dvb-usb/cxusb.o
+Thanks,
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  32446	  66032	    192	  98670	  1816e	drivers/media/usb/dvb-usb/cxusb.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/dvb-usb/cxusb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
-index 37dea0adc695..b5cc1b990065 100644
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -56,7 +56,7 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
- #define deb_i2c(args...)    dprintk(dvb_usb_cxusb_debug, 0x02, args)
- 
- static int cxusb_ctrl_msg(struct dvb_usb_device *d,
--			  u8 cmd, u8 *wbuf, int wlen, u8 *rbuf, int rlen)
-+			  u8 cmd, const u8 *wbuf, int wlen, u8 *rbuf, int rlen)
- {
- 	struct cxusb_state *st = d->priv;
- 	int ret;
-@@ -290,7 +290,8 @@ static int cxusb_aver_power_ctrl(struct dvb_usb_device *d, int onoff)
- 		/* FIXME: We don't know why, but we need to configure the
- 		 * lgdt3303 with the register settings below on resume */
- 		int i;
--		u8 buf, bufs[] = {
-+		u8 buf;
-+		static const u8 bufs[] = {
- 			0x0e, 0x2, 0x00, 0x7f,
- 			0x0e, 0x2, 0x02, 0xfe,
- 			0x0e, 0x2, 0x02, 0x01,
--- 
-2.14.1
+Jonathan
+> ---
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> index 44830bce13df..6692f5e08dc8 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> @@ -570,10 +570,12 @@ static int inv_mpu6050_write_raw(struct iio_dev *indio_dev,
+>   */
+>  static int inv_mpu6050_set_lpf(struct inv_mpu6050_state *st, int rate)
+>  {
+> -	const int hz[] = {188, 98, 42, 20, 10, 5};
+> -	const int d[] = {INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
+> -			INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
+> -			INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ};
+> +	static const int hz[] = {188, 98, 42, 20, 10, 5};
+> +	static const int d[] = {
+> +		INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
+> +		INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
+> +		INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ
+> +	};
+>  	int i, h, result;
+>  	u8 data;
+>  
 
