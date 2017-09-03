@@ -1,84 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Sep 2017 19:46:08 +0000
-Subject: [PATCH 3/3] [media] fsl-viu: Adjust six checks for null pointers
-Message-Id: <ec2a2c6d-b007-bc7c-e01e-2f98024a3d97@users.sourceforge.net>
+Date: Sun, 03 Sep 2017 14:03:25 +0000
+Subject: [PATCH 2/2] [media] meye: Adjust two function calls together with a variable assignment
+Message-Id: <7f538823-de13-4246-7482-fcc889385328@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
-In-Reply-To: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
+References: <4370c644-e440-1268-089b-8a8686bbcd5c@users.sourceforge.net>
+In-Reply-To: <4370c644-e440-1268-089b-8a8686bbcd5c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Pan Bian <bianpan2016@163.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Sep 2017 21:16:50 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sun, 3 Sep 2017 15:41:53 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+The script "checkpatch.pl" pointed information out like the following.
 
-Comparison to NULL could be written !…
+ERROR: do not use assignment in if condition
 
 Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/fsl-viu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/pci/meye/meye.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index 1fe2a295db93..a133dfdd869a 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -313,7 +313,7 @@ static int restart_video_queue(struct viu_dmaqueue *vidq)
- 		if (list_empty(&vidq->queued))
- 			return 0;
- 		buf = list_entry(vidq->queued.next, struct viu_buf, vb.queue);
--		if (prev = NULL) {
-+		if (!prev) {
- 			list_move_tail(&buf->vb.queue, &vidq->active);
+diff --git a/drivers/media/pci/meye/meye.c b/drivers/media/pci/meye/meye.c
+index db36040770a6..9b69a07c1d5b 100644
+--- a/drivers/media/pci/meye/meye.c
++++ b/drivers/media/pci/meye/meye.c
+@@ -1642,14 +1642,15 @@ static int meye_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
+ 	meye.vdev = meye_template;
+ 	meye.vdev.v4l2_dev = &meye.v4l2_dev;
  
- 			dprintk(1, "Restarting video dma\n");
-@@ -450,7 +450,7 @@ static int buffer_prepare(struct videobuf_queue *vq,
- 	struct viu_buf *buf = container_of(vb, struct viu_buf, vb);
- 	int rc;
+-	ret = -EIO;
+-	if ((ret = sony_pic_camera_command(SONY_PIC_COMMAND_SETCAMERA, 1))) {
++	ret = sony_pic_camera_command(SONY_PIC_COMMAND_SETCAMERA, 1);
++	if (ret) {
+ 		v4l2_err(v4l2_dev, "meye: unable to power on the camera\n");
+ 		v4l2_err(v4l2_dev, "meye: did you enable the camera in sonypi using the module options ?\n");
+ 		goto outsonypienable;
+ 	}
  
--	BUG_ON(fh->fmt = NULL);
-+	BUG_ON(!fh->fmt);
- 
- 	if (fh->width  < 48 || fh->width  > norm_maxw() ||
- 	    fh->height < 32 || fh->height > norm_maxh())
-@@ -668,9 +668,9 @@ static int verify_preview(struct viu_dev *dev, struct v4l2_window *win)
- 	enum v4l2_field field;
- 	int maxw, maxh;
- 
--	if (dev->ovbuf.base = NULL)
-+	if (!dev->ovbuf.base)
- 		return -EINVAL;
--	if (dev->ovfmt = NULL)
-+	if (!dev->ovfmt)
- 		return -EINVAL;
- 	if (win->w.width < 48 || win->w.height < 32)
- 		return -EINVAL;
-@@ -825,7 +825,7 @@ int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *
- 
- 	/* check args */
- 	fmt = format_by_fourcc(fb->fmt.pixelformat);
--	if (fmt = NULL)
-+	if (!fmt)
- 		return -EINVAL;
- 
- 	/* ok, accept it */
-@@ -1472,7 +1472,7 @@ static int viu_of_probe(struct platform_device *op)
- 
- 	/* Allocate memory for video device */
- 	vdev = video_device_alloc();
--	if (vdev = NULL) {
-+	if (!vdev) {
- 		ret = -ENOMEM;
- 		goto err_vdev;
+-	if ((ret = pci_enable_device(meye.mchip_dev))) {
++	ret = pci_enable_device(meye.mchip_dev);
++	if (ret) {
+ 		v4l2_err(v4l2_dev, "meye: pci_enable_device failed\n");
+ 		goto outenabledev;
  	}
 -- 
 2.14.1
