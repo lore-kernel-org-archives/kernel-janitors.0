@@ -1,41 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 15:53:03 +0000
-Subject: [PATCH 6/7] [media] ov9740: Delete an error message for a failed memory allocation in ov9740_probe()
-Message-Id: <38d9cec1-44b3-b585-81fd-1b53d279d406@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 03 Sep 2017 13:39:50 +0000
+Subject: [PATCH] mmc: dw_mmc: make const arrays mszs static
+Message-Id: <20170903133950.7348-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
-In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 16:44:36 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Don't populate the const arrays mszs on the stack, instead make them
+static. Makes the object code smaller by over 310 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  47527	   8528	    320	  56375	   dc37	drivers/mmc/host/dw_mmc.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  47055	   8688	    320	  56063	   daff	drivers/mmc/host/dw_mmc.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/soc_camera/ov9740.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mmc/host/dw_mmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/soc_camera/ov9740.c b/drivers/media/i2c/soc_camera/ov9740.c
-index cc07b7ae5407..f44f5da795f9 100644
---- a/drivers/media/i2c/soc_camera/ov9740.c
-+++ b/drivers/media/i2c/soc_camera/ov9740.c
-@@ -939,7 +939,5 @@ static int ov9740_probe(struct i2c_client *client,
--	if (!priv) {
--		dev_err(&client->dev, "Failed to allocate private data!\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
- 
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov9740_subdev_ops);
- 	v4l2_ctrl_handler_init(&priv->hdl, 13);
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 860313bd952a..45289c5e0295 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -796,7 +796,7 @@ static int dw_mci_edmac_start_dma(struct dw_mci *host,
+ 	struct dma_slave_config cfg;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+ 	struct scatterlist *sgl = host->data->sg;
+-	const u32 mszs[] = {1, 4, 8, 16, 32, 64, 128, 256};
++	static const u32 mszs[] = {1, 4, 8, 16, 32, 64, 128, 256};
+ 	u32 sg_elems = host->data->sg_len;
+ 	u32 fifoth_val;
+ 	u32 fifo_offset = host->fifo_reg - host->regs;
+@@ -1003,7 +1003,7 @@ static int dw_mci_get_cd(struct mmc_host *mmc)
+ static void dw_mci_adjust_fifoth(struct dw_mci *host, struct mmc_data *data)
+ {
+ 	unsigned int blksz = data->blksz;
+-	const u32 mszs[] = {1, 4, 8, 16, 32, 64, 128, 256};
++	static const u32 mszs[] = {1, 4, 8, 16, 32, 64, 128, 256};
+ 	u32 fifo_width = 1 << host->data_shift;
+ 	u32 blksz_depth = blksz / fifo_width, fifoth_val;
+ 	u32 msize = 0, rx_wmark = 1, tx_wmark, tx_wmark_invers;
 -- 
 2.14.1
 
