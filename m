@@ -1,27 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 18:30:46 +0000
-Subject: [PATCH 0/2] [media] IT913X: Adjustments for two function implementations
-Message-Id: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
+Date: Sun, 03 Sep 2017 20:35:06 +0000
+Subject: [PATCH 5/7] [media] Hexium Orion: Delete an error message for a failed memory allocation in hexium_p
+Message-Id: <80c8a86a-5b26-0c40-5d71-730870958556@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 20:12:34 +0200
+Date: Sun, 3 Sep 2017 19:55:25 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete two error messages for a failed memory allocation
-  Improve three size determinations
+This issue was detected by using the Coccinelle software.
 
- drivers/media/tuners/it913x.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/pci/saa7146/hexium_orion.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
+index c306a92e8909..72fac6a8494a 100644
+--- a/drivers/media/pci/saa7146/hexium_orion.c
++++ b/drivers/media/pci/saa7146/hexium_orion.c
+@@ -223,7 +223,5 @@ static int hexium_probe(struct saa7146_dev *dev)
+-	if (NULL = hexium) {
+-		pr_err("hexium_probe: not enough kernel memory\n");
++	if (!hexium)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* enable i2c-port pins */
+ 	saa7146_write(dev, MC1, (MASK_08 | MASK_24 | MASK_10 | MASK_26));
 -- 
 2.14.1
 
