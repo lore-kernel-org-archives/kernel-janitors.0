@@ -1,49 +1,86 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Mon, 11 Sep 2017 00:43:05 +0000
-Subject: Re: [PATCH] extcon: make extcon_info static const, fixes warning
-Message-Id: <59B5DC19.4020805@samsung.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 03 Sep 2017 11:35:05 +0000
+Subject: Re: [PATCH] iio staging: tsl2x7x: clean up limit checks
+Message-Id: <20170903123505.13ee5a25@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170909165107epcas3p169935c5e37c5b21a9ffecf4cf01d5256@epcas3p1.samsung.com>
-        <20170909165100.30701-1-colin.king@canonical.com>
-In-Reply-To: <20170909165100.30701-1-colin.king@canonical.com>
+References: <20170821101103.sysrgce7qgzn2ltx@mwanda>
+In-Reply-To: <20170821101103.sysrgce7qgzn2ltx@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Brian Masney <masneyb@onstation.org>
 
-On 2017년 09월 10일 01:51, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, 21 Aug 2017 13:11:03 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> The second part of this patch is probably the most interesting.  We
+> use "TSL2X7X_MAX_LUX_TABLE_SIZE * 3" as the limit instead of just
+> "TSL2X7X_MAX_LUX_TABLE_SIZE".  It creates a static checker warning that
+> we are going of of bounds, but in real life we always hit the break
+> statement on the last element so it's fine.
 > 
-> The array extcon_info is read only, local to the source and does not
-> need to be in global scope, so make it static const.
+> The situation is that we normally have arrays with 3 elements of struct
+> tsl2x7x_lux which has 3 unsigned integers.  If we load the table with
+> sysfs then we're allow to have 9 elements instead.
 > 
-> Cleans up sparse warning:
-> symbol 'extcon_info' was not declared. Should it be static?
+> So the size of the default table in bytes is sizeof(int) times 3 struct
+> members times 3 elements.  The original code wrote it as sizeof(int)
+> times the number of elements in the bigger table (9).  It happens that
+> 9 is the same thing as 3 * 3 but expressing it that way is misleading.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/extcon/extcon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> For the second part of the patch, the original code just had an extra
+> "multiply by three" and now that is removed.  The last element in the
+> array is always zeroed memory whether this uses the default tables or it
+> gets loaded with sysfs so we always hit the break statement anyway.
 > 
-> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-> index 35e9fb885486..cb38c2747684 100644
-> --- a/drivers/extcon/extcon.c
-> +++ b/drivers/extcon/extcon.c
-> @@ -36,7 +36,7 @@
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Looks sensible to me.
+
+Cc'd Brian who has been working extensively on this driver recently as I'd
+like his input.
+
+Jonathan
+> 
+> diff --git a/drivers/staging/iio/light/tsl2x7x.h b/drivers/staging/iio/light/tsl2x7x.h
+> index ecae92211216..1beb8d2eb848 100644
+> --- a/drivers/staging/iio/light/tsl2x7x.h
+> +++ b/drivers/staging/iio/light/tsl2x7x.h
+> @@ -23,10 +23,6 @@
+>  #define __TSL2X7X_H
+>  #include <linux/pm.h>
 >  
->  #define SUPPORTED_CABLE_MAX	32
+> -/* Max number of segments allowable in LUX table */
+> -#define TSL2X7X_MAX_LUX_TABLE_SIZE		9
+> -#define MAX_DEFAULT_TABLE_BYTES (sizeof(int) * TSL2X7X_MAX_LUX_TABLE_SIZE)
+> -
+>  struct iio_dev;
 >  
-> -struct __extcon_info {
-> +static const struct __extcon_info {
->  	unsigned int type;
->  	unsigned int id;
->  	const char *name;
-> 
+>  struct tsl2x7x_lux {
+> @@ -35,6 +31,11 @@ struct tsl2x7x_lux {
+>  	unsigned int ch1;
+>  };
+>  
+> +/* Max number of segments allowable in LUX table */
+> +#define TSL2X7X_MAX_LUX_TABLE_SIZE		9
+> +/* The default tables are all 3 elements */
+> +#define MAX_DEFAULT_TABLE_BYTES (sizeof(struct tsl2x7x_lux) * 3)
+> +
+>  /**
+>   * struct tsl2x7x_default_settings - power on defaults unless
+>   *                                   overridden by platform data.
+> diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
+> index 786e93f16ce9..2db1715ff659 100644
+> --- a/drivers/staging/iio/light/tsl2x7x.c
+> +++ b/drivers/staging/iio/light/tsl2x7x.c
+> @@ -1113,7 +1113,7 @@ static ssize_t in_illuminance0_lux_table_show(struct device *dev,
+>  	int i = 0;
+>  	int offset = 0;
+>  
+> -	while (i < (TSL2X7X_MAX_LUX_TABLE_SIZE * 3)) {
+> +	while (i < TSL2X7X_MAX_LUX_TABLE_SIZE) {
+>  		offset += snprintf(buf + offset, PAGE_SIZE, "%u,%u,%u,",
+>  			chip->tsl2x7x_device_lux[i].ratio,
+>  			chip->tsl2x7x_device_lux[i].ch0,
 
-Applied it for v4.15. Thanks.
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
