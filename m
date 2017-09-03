@@ -1,47 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 16 Sep 2017 06:25:37 +0000
-Subject: [PATCH] perf script: Fix error handling path
-Message-Id: <20170916062537.28921-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Sep 2017 20:37:21 +0000
+Subject: [PATCH 7/7] [media] Hexium Orion: Adjust one function call together with a variable assignment
+Message-Id: <fa33d58b-56c4-38aa-8346-6f6e9f3d5296@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If the string passed in '--time' is invalid, or if failed to set
-libtraceevent function resolver, we must do some cleanup before leaving.
-As in the other error handling paths of this function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Sep 2017 20:12:36 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The script "checkpatch.pl" pointed information out like the following.
+
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/perf/builtin-script.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/pci/saa7146/hexium_orion.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 378f76cdf923..78ffdb4cbdea 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3004,7 +3004,8 @@ int cmd_script(int argc, const char **argv)
- 					 machine__resolve_kernel_addr,
- 					 &session->machines.host) < 0) {
- 		pr_err("%s: failed to set libtraceevent function resolver\n", __func__);
--		return -1;
-+		err = -1;
-+		goto out_delete;
- 	}
+diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
+index 187e072a3697..691472763696 100644
+--- a/drivers/media/pci/saa7146/hexium_orion.c
++++ b/drivers/media/pci/saa7146/hexium_orion.c
+@@ -266,7 +266,9 @@ static int hexium_probe(struct saa7146_dev *dev)
  
- 	if (generate_script_lang) {
-@@ -3064,7 +3065,8 @@ int cmd_script(int argc, const char **argv)
- 	/* needs to be parsed after looking up reference time */
- 	if (perf_time__parse_str(&script.ptime, script.time_str) != 0) {
- 		pr_err("Invalid time string\n");
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto out_delete;
- 	}
- 
- 	err = __cmd_script(&script);
+ 	/* check if this is an old hexium Orion card by looking at
+ 	   a saa7110 at address 0x4e */
+-	if (0 = (err = i2c_smbus_xfer(&hexium->i2c_adapter, 0x4e, 0, I2C_SMBUS_READ, 0x00, I2C_SMBUS_BYTE_DATA, &data))) {
++	err = i2c_smbus_xfer(&hexium->i2c_adapter, 0x4e, 0, I2C_SMBUS_READ,
++			     0x00, I2C_SMBUS_BYTE_DATA, &data);
++	if (err = 0) {
+ 		pr_info("device is a Hexium HV-PCI6/Orion (old)\n");
+ 		/* we store the pointer in our private data field */
+ 		dev->ext_priv = hexium;
 -- 
-2.11.0
+2.14.1
 
