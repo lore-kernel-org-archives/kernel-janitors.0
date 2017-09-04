@@ -1,69 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 16:45:23 +0000
-Subject: [PATCH] [media] gspca: Use common error handling code in gspca_init_transfer()
-Message-Id: <a5c4b993-1c06-3ccf-89b7-4ea74d23f580@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:11:22 +0000
+Subject: [PATCH 5/6] [media] atmel-isi: Improve three size determinations
+Message-Id: <2a5b21a7-91af-238a-0064-e382fb85afe3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 18:40:05 +0200
+Date: Mon, 4 Sep 2017 21:27:45 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of data types by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/gspca/gspca.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/media/platform/atmel/atmel-isi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
-index 0f141762abf1..22cdefe38e07 100644
---- a/drivers/media/usb/gspca/gspca.c
-+++ b/drivers/media/usb/gspca/gspca.c
-@@ -904,10 +904,8 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
- 			ret = create_urbs(gspca_dev,
- 				alt_xfer(&intf->altsetting[alt], xfer,
- 					 gspca_dev->xfer_ep));
--			if (ret < 0) {
--				destroy_urbs(gspca_dev);
--				goto out;
--			}
-+			if (ret < 0)
-+				goto destroy_urbs;
- 		}
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index 154e9c39b64f..ac40defce1e7 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -1036,13 +1036,13 @@ static int isi_formats_init(struct atmel_isi *isi)
  
- 		/* clear the bulk endpoint */
-@@ -917,10 +915,9 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
+ 	isi->num_user_formats = num_fmts;
+ 	isi->user_formats = devm_kcalloc(isi->dev,
+-					 num_fmts, sizeof(struct isi_format *),
++					 num_fmts, sizeof(*isi->user_formats),
+ 					 GFP_KERNEL);
+ 	if (!isi->user_formats)
+ 		return -ENOMEM;
  
- 		/* start the cam */
- 		ret = gspca_dev->sd_desc->start(gspca_dev);
--		if (ret < 0) {
--			destroy_urbs(gspca_dev);
--			goto out;
--		}
-+		if (ret < 0)
-+			goto destroy_urbs;
-+
- 		gspca_dev->streaming = 1;
- 		v4l2_ctrl_handler_setup(gspca_dev->vdev.ctrl_handler);
+ 	memcpy(isi->user_formats, isi_fmts,
+-	       num_fmts * sizeof(struct isi_format *));
++	       num_fmts * sizeof(*isi->user_formats));
+ 	isi->current_fmt = isi->user_formats[0];
  
-@@ -970,6 +967,10 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
- out:
- 	gspca_input_create_urb(gspca_dev);
- 	return ret;
-+
-+destroy_urbs:
-+	destroy_urbs(gspca_dev);
-+	goto out;
- }
+ 	return 0;
+@@ -1173,5 +1173,5 @@ static int atmel_isi_probe(struct platform_device *pdev)
+ 	struct resource *regs;
+ 	int ret, i;
  
- static void gspca_set_default_mode(struct gspca_dev *gspca_dev)
+-	isi = devm_kzalloc(&pdev->dev, sizeof(struct atmel_isi), GFP_KERNEL);
++	isi = devm_kzalloc(&pdev->dev, sizeof(*isi), GFP_KERNEL);
+ 	if (!isi)
 -- 
 2.14.1
 
