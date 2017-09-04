@@ -1,46 +1,49 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 29 Sep 2017 15:27:15 +0000
-Subject: Re: [PATCH][rdma-next] RDMA/hns: make various function static, fixes warnings
-Message-Id: <1506698835.2919.20.camel@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Sep 2017 17:50:05 +0000
+Subject: [PATCH][capabilities-next] commoncap: move assignment of fs_ns to avoid null pointer dereference
+Message-Id: <20170904175005.29871-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929131601.7111-1-colin.king@canonical.com>
-In-Reply-To: <20170929131601.7111-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-security-module@vger.kernel.org
 
-On Fri, 2017-09-29 at 14:16 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions hns_roce_table_mhop_get, hns_roce_table_mhop_put,
-> hns_roce_cleanup_mhop_hem_table,  hns_roce_v1_post_mbox,
-> hns_roce_cmq_setup_basic_desc, hns_roce_cmq_send,
-> hns_roce_cmq_query_hw_info are all local to the source and do
-> not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'hns_roce_table_mhop_get' was not declared. Should it be
-> static?
-> symbol 'hns_roce_table_mhop_put' was not declared. Should it be
-> static?
-> symbol 'hns_roce_cleanup_mhop_hem_table' was not declared. Should it
-> be
-> static?
-> symbol 'hns_roce_v1_post_mbox' was not declared. Should it be static?
-> symbol 'hns_roce_cmq_setup_basic_desc' was not declared. Should it be
-> static?
-> symbol 'hns_roce_cmq_send' was not declared. Should it be static?
-> symbol 'hns_roce_cmq_query_hw_info' was not declared. Should it be
-> static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The pointer fs_ns is assigned from inode->i_ib->s_user_ns before
+a null pointer check on inode, hence if inode is actually null we
+will get a null pointer dereference on this assignment. Fix this
+by only dereferencing inode after the null pointer check on
+inode.
 
+Detected by CoverityScan CID#1455328 ("Dereference before null check")
+
+Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/commoncap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index c25e0d27537f..fc46f5b85251 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -585,13 +585,14 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data
+ 	struct vfs_ns_cap_data data, *nscaps = &data;
+ 	struct vfs_cap_data *caps = (struct vfs_cap_data *) &data;
+ 	kuid_t rootkuid;
+-	struct user_namespace *fs_ns = inode->i_sb->s_user_ns;
++	struct user_namespace *fs_ns;
+ 
+ 	memset(cpu_caps, 0, sizeof(struct cpu_vfs_cap_data));
+ 
+ 	if (!inode)
+ 		return -ENODATA;
+ 
++	fs_ns = inode->i_sb->s_user_ns;
+ 	size = __vfs_getxattr((struct dentry *)dentry, inode,
+ 			      XATTR_NAME_CAPS, &data, XATTR_CAPS_SZ);
+ 	if (size = -ENODATA || size = -EOPNOTSUPP)
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.14.1
 
