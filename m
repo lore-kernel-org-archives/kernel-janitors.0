@@ -1,28 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Sep 2017 23:07:30 +0000
-Subject: Re: [PATCH 2/5] [media] s2255drv: Adjust 13 checks for null pointers
-Message-Id: <20170920230729.b2jujsdcjtvjrjun@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:04:08 +0000
+Subject: [PATCH 0/6] [media] Atmel: Adjustments for seven function implementations
+Message-Id: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
- <66f0b95e-e717-7a50-39d2-05fcbf7b77bd@users.sourceforge.net>
-In-Reply-To: <66f0b95e-e717-7a50-39d2-05fcbf7b77bd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 20, 2017 at 06:58:56PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 20 Sep 2017 16:46:19 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 4 Sep 2017 21:44:55 +0200
 
-You've been told several times that this stuff doesn't work.  Try
-applying this patch with `git am` and you'll see why.
+A few update suggestions were taken into account
+from static source code analysis.
 
-regards,
-dan carpenter
+Markus Elfring (6):
+  Delete an error message for a failed memory allocation in isc_formats_init()
+  Improve a size determination in isc_formats_init()
+  Adjust three checks for null pointers
+  Delete an error message for a failed memory allocation in two functions
+  Improve three size determinations
+  Adjust a null pointer check in three functions
+
+ drivers/media/platform/atmel/atmel-isc.c | 12 +++++-------
+ drivers/media/platform/atmel/atmel-isi.c | 20 ++++++++------------
+ 2 files changed, 13 insertions(+), 19 deletions(-)
+
+-- 
+2.14.1
 
