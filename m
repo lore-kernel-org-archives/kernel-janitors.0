@@ -1,65 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Sep 2017 09:58:29 +0000
-Subject: Re: [PATCH] [media] bt8xx: Use common error handling code in two functions
-Message-Id: <20170927095829.gsmjep4frlq4tnzd@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Sep 2017 11:23:16 +0000
+Subject: [PATCH] RDMA/nes: do not leak uninitialized resp.reserved to userspace
+Message-Id: <20170904112316.23832-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ad78087-fdd4-b76b-d770-81b9a55aaabd@users.sourceforge.net>
-In-Reply-To: <7ad78087-fdd4-b76b-d770-81b9a55aaabd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Daniele Nicolodi <daniele@grinta.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Sep 25, 2017 at 10:18:29PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 25 Sep 2017 22:10:17 +0200
-> 
-> Adjust jump targets so that a bit of exception handling can be better
-> reused at the end of these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/pci/bt8xx/dst.c    | 19 +++++++++++--------
->  drivers/media/pci/bt8xx/dst_ca.c | 30 +++++++++++++++---------------
->  2 files changed, 26 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/media/pci/bt8xx/dst.c b/drivers/media/pci/bt8xx/dst.c
-> index 7166d2279465..1290419aca0b 100644
-> --- a/drivers/media/pci/bt8xx/dst.c
-> +++ b/drivers/media/pci/bt8xx/dst.c
-> @@ -134,17 +134,20 @@ EXPORT_SYMBOL(rdc_reset_state);
->  static int rdc_8820_reset(struct dst_state *state)
->  {
->  	dprintk(3, "Resetting DST\n");
-> -	if (dst_gpio_outb(state, RDC_8820_RESET, RDC_8820_RESET, 0, NO_DELAY) < 0) {
-> -		pr_err("dst_gpio_outb ERROR !\n");
-> -		return -1;
-> -	}
-> +	if (dst_gpio_outb(state, RDC_8820_RESET, RDC_8820_RESET, 0, NO_DELAY)
-> +	    < 0)
-> +		goto report_failure;
-> +
->  	udelay(1000);
-> -	if (dst_gpio_outb(state, RDC_8820_RESET, RDC_8820_RESET, RDC_8820_RESET, DELAY) < 0) {
-> -		pr_err("dst_gpio_outb ERROR !\n");
-> -		return -1;
-> -	}
-> +	if (dst_gpio_outb(state, RDC_8820_RESET, RDC_8820_RESET,
-> +			  RDC_8820_RESET, DELAY) < 0)
-> +		goto report_failure;
->  
->  	return 0;
-> +
-> +report_failure:
-> +	pr_err("dst_gpio_outb ERROR !\n");
-> +	return -1;
+From: Colin Ian King <colin.king@canonical.com>
 
-This code is ugly and this patch doesn't improve it; it just shuffles
-it around.
+resp.reserved has not been initialized and so the copy_to_user (via
+ib_copy_to_udata) is copying uninitialized data from the stack back
+to user space which is a potential information leak. Fix this by
+setting resp.reserved to zero.
 
-regards,
-dan carpenter
+Fixes: 3c2d774cad5b ("RDMA/nes: Add a driver for NetEffect RNICs")
+Cc: <stable@vger.kernel.org> [2.6.24+]
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/nes/nes_verbs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+index f0dc5f4aa177..052c3822dfed 100644
+--- a/drivers/infiniband/hw/nes/nes_verbs.c
++++ b/drivers/infiniband/hw/nes/nes_verbs.c
+@@ -1666,6 +1666,7 @@ static struct ib_cq *nes_create_cq(struct ib_device *ibdev,
+ 		resp.cq_id = nescq->hw_cq.cq_number;
+ 		resp.cq_size = nescq->hw_cq.cq_size;
+ 		resp.mmap_db_index = 0;
++		resp.reserved = 0;
+ 		if (ib_copy_to_udata(udata, &resp, sizeof resp - sizeof resp.reserved)) {
+ 			nes_free_resource(nesadapter, nesadapter->allocated_cqs, cq_num);
+ 			kfree(nescq);
+-- 
+2.14.1
 
