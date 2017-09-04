@@ -1,59 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 17:22:47 +0000
-Subject: [PATCH] clk/ti: Delete an error message for a failed memory allocation in two functions
-Message-Id: <120d01e4-5e58-e740-f6c7-c6835752aed3@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:12:38 +0000
+Subject: [PATCH 6/6] [media] atmel-isi: Adjust a null pointer check in three functions
+Message-Id: <c539c64a-c6f7-cb03-0dec-1eb4b74de71f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 19:14:01 +0200
+Date: Mon, 4 Sep 2017 21:30:48 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit extra messages for a memory allocation failure in these functions.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/ti/divider.c | 4 +---
- drivers/clk/ti/mux.c     | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/media/platform/atmel/atmel-isi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 88f04a4cb890..77f93f6d2806 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -292,10 +292,8 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index ac40defce1e7..f2e13dfb19a1 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -411,7 +411,7 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 	spin_lock_irqsave(&isi->irqlock, flags);
+ 	list_add_tail(&buf->list, &isi->video_buffer_list);
  
- 	/* allocate the divider */
- 	div = kzalloc(sizeof(*div), GFP_KERNEL);
--	if (!div) {
--		pr_err("%s: could not allocate divider clk\n", __func__);
-+	if (!div)
- 		return ERR_PTR(-ENOMEM);
--	}
+-	if (isi->active = NULL) {
++	if (!isi->active) {
+ 		isi->active = buf;
+ 		if (vb2_is_streaming(vb->vb2_queue))
+ 			start_dma(isi, buf);
+@@ -1141,7 +1141,7 @@ static int isi_graph_init(struct atmel_isi *isi)
  
- 	init.name = name;
- 	init.ops = &ti_clk_divider_ops;
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 18c267b38461..d4705803f3d3 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -108,10 +108,8 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 	/* Register the subdevices notifier. */
+ 	subdevs = devm_kzalloc(isi->dev, sizeof(*subdevs), GFP_KERNEL);
+-	if (subdevs = NULL) {
++	if (!subdevs) {
+ 		of_node_put(isi->entity.node);
+ 		return -ENOMEM;
+ 	}
+@@ -1200,7 +1200,7 @@ static int atmel_isi_probe(struct platform_device *pdev)
+ 		return ret;
  
- 	/* allocate the mux */
- 	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
--	if (!mux) {
--		pr_err("%s: could not allocate mux clk\n", __func__);
-+	if (!mux)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &ti_clk_mux_ops;
+ 	isi->vdev = video_device_alloc();
+-	if (isi->vdev = NULL) {
++	if (!isi->vdev) {
+ 		ret = -ENOMEM;
+ 		goto err_vdev_alloc;
+ 	}
 -- 
-2.14.2
+2.14.1
 
