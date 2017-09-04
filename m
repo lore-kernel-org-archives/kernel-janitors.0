@@ -1,48 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 17:28:45 +0000
-Subject: [PATCH 1/2] [media] stm32-dcmi: Delete an error message for a failed memory allocation in two functi
-Message-Id: <3aef408b-3e36-a777-cf78-76c98b93b63b@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:08:38 +0000
+Subject: [PATCH 3/6] [media] atmel-isc: Adjust three checks for null pointers
+Message-Id: <fe343b19-3c18-16d0-8019-7999bf25f049@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
-In-Reply-To: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
+References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 18:38:25 +0200
+Date: Mon, 4 Sep 2017 20:54:20 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in these functions.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/media/platform/atmel/atmel-isc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 35ba6f211b79..df12d10bd230 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1374,6 +1374,4 @@ static int dcmi_formats_init(struct stm32_dcmi *dcmi)
- 					GFP_KERNEL);
--	if (!dcmi->sd_formats) {
--		dev_err(dcmi->dev, "Could not allocate memory\n");
-+	if (!dcmi->sd_formats)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
+index f16bab0105c2..b6048cedb6cc 100644
+--- a/drivers/media/platform/atmel/atmel-isc.c
++++ b/drivers/media/platform/atmel/atmel-isc.c
+@@ -1590,7 +1590,7 @@ static int isc_async_complete(struct v4l2_async_notifier *notifier)
+ 	spin_lock_init(&isc->dma_queue_lock);
  
-@@ -1410,7 +1408,5 @@ static int dcmi_framesizes_init(struct stm32_dcmi *dcmi)
- 					   GFP_KERNEL);
--	if (!dcmi->sd_framesizes) {
--		dev_err(dcmi->dev, "Could not allocate memory\n");
-+	if (!dcmi->sd_framesizes)
+ 	sd_entity->config = v4l2_subdev_alloc_pad_config(sd_entity->sd);
+-	if (sd_entity->config = NULL)
++	if (!sd_entity->config)
  		return -ENOMEM;
--	}
  
- 	/* Fill array with sensor supported framesizes */
+ 	ret = isc_formats_init(isc);
+@@ -1714,7 +1714,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
+ 
+ 		subdev_entity = devm_kzalloc(dev,
+ 					  sizeof(*subdev_entity), GFP_KERNEL);
+-		if (subdev_entity = NULL) {
++		if (!subdev_entity) {
+ 			of_node_put(rem);
+ 			ret = -ENOMEM;
+ 			break;
+@@ -1722,7 +1722,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
+ 
+ 		subdev_entity->asd = devm_kzalloc(dev,
+ 				     sizeof(*subdev_entity->asd), GFP_KERNEL);
+-		if (subdev_entity->asd = NULL) {
++		if (!subdev_entity->asd) {
+ 			of_node_put(rem);
+ 			ret = -ENOMEM;
+ 			break;
 -- 
 2.14.1
 
