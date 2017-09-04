@@ -1,45 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Sep 2017 14:25:15 +0000
-Subject: [PATCH] nfc: s3fwrn5: make array match static const, reduces object code size
-Message-Id: <20170919142515.23196-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:05:54 +0000
+Subject: [PATCH 1/6] [media] atmel-isc: Delete an error message for a failed memory allocation in isc_formats
+Message-Id: <d79fe512-cd52-698f-e212-d987ba2cd533@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Opasiak <k.opasiak@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 4 Sep 2017 20:33:58 +0200
 
-Don't populate the read-only array match on the stack, instead make
-it static const.  Makes the object code smaller by over 310 bytes:
+Omit an extra message for a memory allocation failure in this function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   8304	   1084	    128	   9516	   252c	drivers/nfc/s3fwrn5/firmware.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   7894	   1180	    128	   9202	   23f2	drivers/nfc/s3fwrn5/firmware.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/nfc/s3fwrn5/firmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/atmel/atmel-isc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/nfc/s3fwrn5/firmware.c b/drivers/nfc/s3fwrn5/firmware.c
-index 38548bd970cd..b7828fb252f2 100644
---- a/drivers/nfc/s3fwrn5/firmware.c
-+++ b/drivers/nfc/s3fwrn5/firmware.c
-@@ -336,7 +336,7 @@ static int s3fwrn5_fw_get_base_addr(
- 	struct s3fwrn5_fw_cmd_get_bootinfo_rsp *bootinfo, u32 *base_addr)
- {
- 	int i;
--	struct {
-+	static const struct {
- 		u8 version[4];
- 		u32 base_addr;
- 	} match[] = {
+diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
+index d4df3d4ccd85..f1e635edef72 100644
+--- a/drivers/media/platform/atmel/atmel-isc.c
++++ b/drivers/media/platform/atmel/atmel-isc.c
+@@ -1510,7 +1510,5 @@ static int isc_formats_init(struct isc_device *isc)
+-	if (!isc->user_formats) {
+-		v4l2_err(&isc->v4l2_dev, "could not allocate memory\n");
++	if (!isc->user_formats)
+ 		return -ENOMEM;
+-	}
+ 
+ 	fmt = &isc_formats[0];
+ 	for (i = 0, j = 0; i < ARRAY_SIZE(isc_formats); i++) {
 -- 
 2.14.1
 
