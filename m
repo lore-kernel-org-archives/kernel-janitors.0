@@ -1,77 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 19 Sep 2017 13:47:18 +0000
-Subject: Applied "ASoC: zte: spdif: remove duplicate initialization of dma_data" to the asoc tree
-Message-Id: <E1duIru-0008PT-QD@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 04 Sep 2017 20:10:01 +0000
+Subject: [PATCH 4/6] [media] atmel-isi: Delete an error message for a failed memory allocation in two functio
+Message-Id: <7eb22d47-956e-5712-33a5-d50aaf8684ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918085638.27110-1-colin.king@canonical.com>
-In-Reply-To: <20170918085638.27110-1-colin.king@canonical.com>
+References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 4 Sep 2017 21:21:25 +0200
 
-   ASoC: zte: spdif: remove duplicate initialization of dma_data
+Omit an extra message for a memory allocation failure in these functions.
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b6145837218cb984245aea5ccd9201aeb5eb0501 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 09:56:38 +0100
-Subject: [PATCH] ASoC: zte: spdif: remove duplicate initialization of dma_data
-
-dma_data is being initialized twice, remove the unused first
-initialization and use the latter one instead.  Fixed clang warning:
-
-"warning: Value stored to 'dma_data' during its initialization is
-never read"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/zte/zx-spdif.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/atmel/atmel-isi.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/zte/zx-spdif.c b/sound/soc/zte/zx-spdif.c
-index b143f9f682d2..17b6ce35037a 100644
---- a/sound/soc/zte/zx-spdif.c
-+++ b/sound/soc/zte/zx-spdif.c
-@@ -139,11 +139,11 @@ static int zx_spdif_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct zx_spdif_info *zx_spdif = dev_get_drvdata(socdai->dev);
- 	struct zx_spdif_info *spdif = snd_soc_dai_get_drvdata(socdai);
--	struct snd_dmaengine_dai_dma_data *dma_data = &zx_spdif->dma_data;
-+	struct snd_dmaengine_dai_dma_data *dma_data +		snd_soc_dai_get_dma_data(socdai, substream);
- 	u32 val, ch_num, rate;
- 	int ret;
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index 891fa2505efa..154e9c39b64f 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -1041,7 +1041,5 @@ static int isi_formats_init(struct atmel_isi *isi)
+-	if (!isi->user_formats) {
+-		dev_err(isi->dev, "could not allocate memory\n");
++	if (!isi->user_formats)
+ 		return -ENOMEM;
+-	}
  
--	dma_data = snd_soc_dai_get_dma_data(socdai, substream);
- 	dma_data->addr_width = params_width(params) >> 3;
+ 	memcpy(isi->user_formats, isi_fmts,
+ 	       num_fmts * sizeof(struct isi_format *));
+@@ -1179,7 +1177,5 @@ static int atmel_isi_probe(struct platform_device *pdev)
+-	if (!isi) {
+-		dev_err(&pdev->dev, "Can't allocate interface!\n");
++	if (!isi)
+ 		return -ENOMEM;
+-	}
  
- 	val = readl_relaxed(zx_spdif->reg_base + ZX_CTRL);
+ 	isi->pclk = devm_clk_get(&pdev->dev, "isi_clk");
+ 	if (IS_ERR(isi->pclk))
 -- 
 2.14.1
 
