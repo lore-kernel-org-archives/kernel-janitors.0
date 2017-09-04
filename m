@@ -1,44 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 22 Sep 2017 10:32:35 +0000
-Subject: Re: [PATCH] wireless: iwlegacy:  make const array static to shink object code size Content-Type: tex
-Message-Id: <87efqz81mk.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Sep 2017 13:37:05 +0000
+Subject: [PATCH][V2] RDMA/nes: do not leak uninitialized resp.reserved to userspace Content-Type: text/plain;
+Message-Id: <20170904133705.3980-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170921225630.21916-1-colin.king@canonical.com>
-        <20170922095609.GA27551@redhat.com>
-In-Reply-To: <20170922095609.GA27551@redhat.com> (Stanislaw Gruszka's message
-        of "Fri, 22 Sep 2017 11:56:10 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: Colin King <colin.king@canonical.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stanislaw Gruszka <sgruszka@redhat.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Thu, Sep 21, 2017 at 11:56:30PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->> 
->> Don't populate const array ac_to_fifo on the stack in an inlined
->> function, instead make it static.  Makes the object code smaller
->> by over 800 bytes:
->> 
->>    text	   data	    bss	    dec	    hex	filename
->>  159029	  33154	   1216	 193399	  2f377	4965-mac.o
->> 
->>    text	   data	    bss	    dec	    hex	filename
->>  158122	  33250	   1216	 192588	  2f04c	4965-mac.o
->> 
->> (gcc version 7.2.0 x86_64)
->> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Content type information was added at the end of the topic, but
-> I think Kalle can fix that when he will be committing the patch.
+resp.reserved has not been initialized and so the copy_to_user (via
+ib_copy_to_udata) is copying uninitialized data from the stack back
+to user space which is a potential information leak. Fix this by
+initializing all of resp to zero.
 
-Yeah, I'll fix that when I commit this. But very good that you pointed
-it out, I might miss stuff like this.
+V2: Initialize all of the struct rather than just resp.reserved as
+suggested by Leon Romanovsky.
 
-I'll also remove the "wireless:" prefix from the title.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/nes/nes_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+index f0dc5f4aa177..8998d11449c0 100644
+--- a/drivers/infiniband/hw/nes/nes_verbs.c
++++ b/drivers/infiniband/hw/nes/nes_verbs.c
+@@ -1437,7 +1437,7 @@ static struct ib_cq *nes_create_cq(struct ib_device *ibdev,
+ 	struct nes_hw_cqp_wqe *cqp_wqe;
+ 	struct nes_pbl *nespbl = NULL;
+ 	struct nes_create_cq_req req;
+-	struct nes_create_cq_resp resp;
++	struct nes_create_cq_resp resp = { 0 };
+ 	u32 cq_num = 0;
+ 	u32 opcode = 0;
+ 	u32 pbl_entries = 1;
 -- 
-Kalle Valo
+2.14.1
+
