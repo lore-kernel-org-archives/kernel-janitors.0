@@ -1,75 +1,69 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 26 Sep 2017 17:40:06 +0000
-Subject: Re: [PATCH] [media] clk-kona-setup: Delete two error messages for a failed memory allocation in pare
-Message-Id: <d2a61d77-6bb0-b3ac-747f-1ca1a196d7b3@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Sep 2017 10:53:22 +0000
+Subject: [PATCH][pinctrl-next] pinctrl: sprd: make three local functions static
+Message-Id: <20170904105322.23228-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
-In-Reply-To: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, Alex Elder <elder@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/26/2017 08:05 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 16:54:20 +0200
-> 
-> Omit extra messages for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Can you use subjects that match previous submissions done to the driver:
+The functions sprd_pmx_get_function_count, sprd_pmx_get_function_name
+and sprd_pmx_get_function_groups are local to the source and do not
+need to be in global scope, so make them static.
 
-6e2e7c9fdae3 clk-kona-setup: Use kmalloc_array() in parent_process()
-f37fccce4cc1 clk: bcm: kona: Migrate to clk_hw based registration and OF
-APIs
-4087a5f2e5e7 clk: bcm/kona: Do not use sizeof on pointer type
-7926b3f8c626 clk: bcm/kona: Remove ccu_list
-dc613840a625 clk: bcm281xx: add clock hysteresis support
-a597faccc7ee clk: bcm281xx: add clock policy support
-03548ec06ad3 clk: bcm281xx: define CCU clock data statically
-b12151ca5cd7 clk: bcm281xx: initialize CCU structures statically
-e756325206eb clk: bcm281xx: use init_data.name for clock name
-e813d49d2a47 clk: bcm281xx: don't use unnamed structs or unions
-1a5823c9209f clk: bcm281xx: don't disable unused peripheral clocks
-1f27f15258bf clk: bcm281xx: add initial clock framework support
+Cleans up sparse warnings:
+"symbol 'sprd_pmx_get_function_count' was not declared. Should it be 
+static?"
+"symbol 'sprd_pmx_get_function_name' was not declared. Should it be
+static?"
+"symbol 'sprd_pmx_get_function_groups' was not declared. Should it be 
+static?"
 
-[media] is not appropriate here, other than that, the changes look good,
-thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/sprd/pinctrl-sprd.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> ---
->  drivers/clk/bcm/clk-kona-setup.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
-> index c37a7f0e83aa..281f4322355c 100644
-> --- a/drivers/clk/bcm/clk-kona-setup.c
-> +++ b/drivers/clk/bcm/clk-kona-setup.c
-> @@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
->  	 */
->  	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
->  			       GFP_KERNEL);
-> -	if (!parent_names) {
-> -		pr_err("%s: error allocating %u parent names\n", __func__,
-> -				parent_count);
-> +	if (!parent_names)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	/* There is at least one parent, so allocate a selector array */
->  	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
->  				   GFP_KERNEL);
->  	if (!parent_sel) {
-> -		pr_err("%s: error allocating %u parent selectors\n", __func__,
-> -				parent_count);
->  		kfree(parent_names);
->  
->  		return ERR_PTR(-ENOMEM);
-> 
-
-
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 7e7b9ac7e836..c178b4a6d7f5 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -353,13 +353,13 @@ static const struct pinctrl_ops sprd_pctrl_ops = {
+ 	.dt_free_map = pinctrl_utils_free_map,
+ };
+ 
+-int sprd_pmx_get_function_count(struct pinctrl_dev *pctldev)
++static int sprd_pmx_get_function_count(struct pinctrl_dev *pctldev)
+ {
+ 	return PIN_FUNC_MAX;
+ }
+ 
+-const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
+-				       unsigned int selector)
++static const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
++					      unsigned int selector)
+ {
+ 	switch (selector) {
+ 	case PIN_FUNC_1:
+@@ -375,10 +375,10 @@ const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
+ 	}
+ }
+ 
+-int sprd_pmx_get_function_groups(struct pinctrl_dev *pctldev,
+-				 unsigned int selector,
+-				 const char * const **groups,
+-				 unsigned int * const num_groups)
++static int sprd_pmx_get_function_groups(struct pinctrl_dev *pctldev,
++					unsigned int selector,
++					const char * const **groups,
++					unsigned int * const num_groups)
+ {
+ 	struct sprd_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct sprd_pinctrl_soc_info *info = pctl->info;
 -- 
-Florian
+2.14.1
+
