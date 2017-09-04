@@ -1,27 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 08:18:52 +0000
-Subject: [PATCH 0/2] [media] TDA18212HN: Adjustments for two function implementations
-Message-Id: <eb35c033-46b3-4fd6-8398-f1e3869a67a8@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 04 Sep 2017 09:04:18 +0000
+Subject: [PATCH] input: adi: make array seq static, reduces object code size
+Message-Id: <20170904090418.12110-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 10:03:45 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Don't populate the array seq on the stack, instead make it static.
+Makes the object code smaller by over 170 bytes:
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve three size determinations
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  13227	   3232	      0	  16459	   404b	drivers/input/joystick/adi.o
 
- drivers/media/tuners/tda18212.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+After:
+   text	   data	    bss	    dec	    hex	filename
+  12957	   3328	      0	  16285	   3f9d	drivers/input/joystick/adi.o
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/joystick/adi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/joystick/adi.c b/drivers/input/joystick/adi.c
+index d09cefa37931..15a71acb6997 100644
+--- a/drivers/input/joystick/adi.c
++++ b/drivers/input/joystick/adi.c
+@@ -313,7 +313,7 @@ static void adi_close(struct input_dev *dev)
+ 
+ static void adi_init_digital(struct gameport *gameport)
+ {
+-	int seq[] = { 4, -2, -3, 10, -6, -11, -7, -9, 11, 0 };
++	static const int seq[] = { 4, -2, -3, 10, -6, -11, -7, -9, 11, 0 };
+ 	int i;
+ 
+ 	for (i = 0; seq[i]; i++) {
 -- 
 2.14.1
 
