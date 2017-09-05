@@ -1,32 +1,44 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 19 Sep 2017 03:24:52 +0000
-Subject: Re: [PATCH] ata: pata_artop: remove redundant initialization of pio
-Message-Id: <20170919032452.GN378890@devbig577.frc2.facebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Sep 2017 16:51:23 +0000
+Subject: [PATCH][ext4-next] ext4: fix null pointer dereference on sbi
+Message-Id: <20170905165123.22245-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170914185418.13790-1-colin.king@canonical.com>
-In-Reply-To: <20170914185418.13790-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
 
-On Thu, Sep 14, 2017 at 07:54:18PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> pio is initialized and the data is never read, instead it is almost
-> immediately being updated to a new value. Fix this by removing the
-> initialization.
-> 
-> Detected by scan-build:
-> "warning: Value stored to 'pio' during its initialization is never read"
-> 
-> Fixes: 669a5db411d8 ("[libata] Add a bunch of PATA drivers")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to libata/for-4.15.
+In the case of a kzalloc failure when allocating sbi we end up
+with a null pointer dereference on sbi when assigning sbi->s_daxdev.
+Fix this by moving the assignment of sbi->s_daxdev to after the
+null pointer check of sbi.
 
-Thanks.
+Detected by CoverityScan CID#1455379 ("Dereference before null check")
 
+Fixes: 5e405595e5bf ("ext4: perform dax_device lookup at mount")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ext4/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 0e63fcd12c5b..71b9a667e1bc 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3422,10 +3422,10 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 	unsigned int journal_ioprio = DEFAULT_JOURNAL_IOPRIO;
+ 	ext4_group_t first_not_zeroed;
+ 
+-	sbi->s_daxdev = dax_dev;
+ 	if ((data && !orig_data) || !sbi)
+ 		goto out_free_base;
+ 
++	sbi->s_daxdev = dax_dev;
+ 	sbi->s_blockgroup_lock  		kzalloc(sizeof(struct blockgroup_lock), GFP_KERNEL);
+ 	if (!sbi->s_blockgroup_lock)
 -- 
-tejun
+2.14.1
+
