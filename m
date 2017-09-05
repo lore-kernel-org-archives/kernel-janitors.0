@@ -1,44 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 15 Sep 2017 19:56:08 +0000
-Subject: [PATCH] scsi: fdomain: Fix a resource leak in an error handling path in '__fdomain_16x0_detect()'
-Message-Id: <20170915195608.26865-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Sep 2017 17:11:31 +0000
+Subject: [PATCH v2] axonram: Delete an unnecessary variable initialisation in axon_ram_probe()
+Message-Id: <96042828-9707-8af9-664a-5c71818dd817@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201708042137.1QRfZLa9%fengguang.wu@intel.com>
+In-Reply-To: <201708042137.1QRfZLa9%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: faith@cs.unc.edu, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kbuild test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-All error handling paths 'goto fail' in this function.
-If 'scsi_register()' fails, we should also go there, otherwise a
-'pci_dev_put(pdev)' will be missing.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Sep 2017 18:47:02 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The local variable "rc" will eventually be set only to an error code.
+Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-In order to keep consistance with the rest of the file, I've ignored
-checkpatch warnings about spaces vs tabs and indent.
----
- drivers/scsi/fdomain.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/fdomain.c b/drivers/scsi/fdomain.c
-index ebbe5a3e665d..0dac03a9c6ed 100644
---- a/drivers/scsi/fdomain.c
-+++ b/drivers/scsi/fdomain.c
-@@ -960,10 +960,9 @@ struct Scsi_Host *__fdomain_16x0_detect(struct scsi_host_template *tpnt )
-    get resources.  */
+v2:
+Three update steps were integrated for this software module on 2017-09-01.
+Thus improve another source code place.
+
+ arch/powerpc/sysdev/axonram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/sysdev/axonram.c b/arch/powerpc/sysdev/axonram.c
+index c60e84e4558d..1b307c80b401 100644
+--- a/arch/powerpc/sysdev/axonram.c
++++ b/arch/powerpc/sysdev/axonram.c
+@@ -184,7 +184,7 @@ static int axon_ram_probe(struct platform_device *device)
+ 	static int axon_ram_bank_id = -1;
+ 	struct axon_ram_bank *bank;
+ 	struct resource resource;
+-	int rc = 0;
++	int rc;
  
-    shpnt = scsi_register( tpnt, 0 );
--   if(shpnt = NULL) {
--	release_region(port_base, 0x10);
--   	return NULL;
--   }
-+   if (shpnt = NULL)
-+      goto fail;
-+
-    shpnt->irq = interrupt_level;
-    shpnt->io_port = port_base;
-    shpnt->n_io_port = 0x10;
+ 	axon_ram_bank_id++;
+ 
 -- 
-2.11.0
+2.14.1
 
