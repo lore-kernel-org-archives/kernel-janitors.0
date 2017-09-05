@@ -1,48 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Sep 2017 10:40:12 +0000
-Subject: [PATCH] mpt3sas: Fix a double unlock in _transport_smp_handler()
-Message-Id: <20170907143006.f3aeniflflmj7j7q@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Sep 2017 20:34:46 +0000
+Subject: [PATCH 0/2] ALSA: rme9652: Adjustments for two function implementations
+Message-Id: <9832906e-3b04-b708-2c26-4755e0beb811@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sathya Prakash <sathya.prakash@broadcom.com>, Christoph Hellwig <hch@lst.de>
-Cc: Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-We can't "goto out;" if we're not holding "ioc->transport_cmds.mutex".
-It leads to a double unlock bug, and I don't think we should set
-"ioc->transport_cmds.status" if we don't have the lock.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Sep 2017 22:30:22 +0200
 
-Fixes: 651a01364994 ("scsi: scsi_transport_sas: switch to bsg-lib for SMP passthrough")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I'm not totally sure about the .status thing.  This is a static checker
-fix.
+Two update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-index d3940c5d079d..c9cd9ed90002 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-@@ -1936,12 +1936,12 @@ _transport_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
- 		pr_info(MPT3SAS_FMT "%s: host reset in progress!\n",
- 		    __func__, ioc->name);
- 		rc = -EFAULT;
--		goto out;
-+		goto job_done;
- 	}
- 
- 	rc = mutex_lock_interruptible(&ioc->transport_cmds.mutex);
- 	if (rc)
--		goto out;
-+		goto job_done;
- 
- 	if (ioc->transport_cmds.status != MPT3_CMD_NOT_USED) {
- 		pr_err(MPT3SAS_FMT "%s: transport_cmds in use\n", ioc->name,
-@@ -2066,6 +2066,7 @@ _transport_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
-  out:
- 	ioc->transport_cmds.status = MPT3_CMD_NOT_USED;
- 	mutex_unlock(&ioc->transport_cmds.mutex);
-+ job_done:
- 	bsg_job_done(job, rc, reslen);
- }
- 
+Markus Elfring (2):
+  Use common code in hdsp_get_iobox_version()
+  Use common error handling code in snd_hdspm_probe()
+
+ sound/pci/rme9652/hdsp.c  | 26 +++++++++++---------------
+ sound/pci/rme9652/hdspm.c | 16 ++++++++--------
+ 2 files changed, 19 insertions(+), 23 deletions(-)
+
+-- 
+2.14.1
+
