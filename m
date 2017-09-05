@@ -1,47 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 06 Sep 2017 13:30:16 +0000
-Subject: [PATCH] [media] ov9640: make const arrays res_x/y static const, reduces object code size
-Message-Id: <20170906133016.17950-1-colin.king@canonical.com>
+Date: Tue, 05 Sep 2017 15:03:48 +0000
+Subject: [PATCH] clk: cdce925: remove redundant check for non-null parent_name
+Message-Id: <20170905150348.20041-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the arrays res_x and resy_y on the stack, instead make them
-static const.  Makes the object code smaller by over 160 bytes:
+The check for a non-null parent_name is always true as there is an
+earlier check for a null parent_name that returns -ENODEV. Remove this
+redundant check and always set init.num_parents to 1.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  10509	   2800	     64	  13373	   343d	ov9640.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  10184	   2960	     64	  13208	   3398	ov9640.o
+Detected by CoverityScan CID#1309477 ("Logically dead code")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/soc_camera/ov9640.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/soc_camera/ov9640.c b/drivers/media/i2c/soc_camera/ov9640.c
-index 0146d1f7aacb..dafea6d90ad9 100644
---- a/drivers/media/i2c/soc_camera/ov9640.c
-+++ b/drivers/media/i2c/soc_camera/ov9640.c
-@@ -335,8 +335,8 @@ static void ov9640_res_roundup(u32 *width, u32 *height)
- {
- 	int i;
- 	enum { QQCIF, QQVGA, QCIF, QVGA, CIF, VGA, SXGA };
--	int res_x[] = { 88, 160, 176, 320, 352, 640, 1280 };
--	int res_y[] = { 72, 120, 144, 240, 288, 480, 960 };
-+	static const int res_x[] = { 88, 160, 176, 320, 352, 640, 1280 };
-+	static const int res_y[] = { 72, 120, 144, 240, 288, 480, 960 };
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index c933be01c7db..0a7e7d5a7506 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -665,7 +665,7 @@ static int cdce925_probe(struct i2c_client *client,
+ 	init.ops = &cdce925_pll_ops;
+ 	init.flags = 0;
+ 	init.parent_names = &parent_name;
+-	init.num_parents = parent_name ? 1 : 0;
++	init.num_parents = 1;
  
- 	for (i = 0; i < ARRAY_SIZE(res_x); i++) {
- 		if (res_x[i] >= *width && res_y[i] >= *height) {
+ 	/* Register PLL clocks */
+ 	for (i = 0; i < data->chip_info->num_plls; ++i) {
 -- 
 2.14.1
 
