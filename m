@@ -1,27 +1,68 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Sat, 30 Sep 2017 10:43:09 +0000
-Subject: Re: [PATCH] clk: rockchip: Delete an error message for a failed memory allocation in rockchip_clk_re
-Message-Id: <3649654.h95jfH98gt@phil>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Sep 2017 20:38:16 +0000
+Subject: [PATCH 2/2] ALSA: rme9652: Use common error handling code in snd_hdspm_probe()
+Message-Id: <684da935-9423-70bd-2dca-32bea89cae92@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
-In-Reply-To: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
+References: <9832906e-3b04-b708-2c26-4755e0beb811@users.sourceforge.net>
+In-Reply-To: <9832906e-3b04-b708-2c26-4755e0beb811@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Am Mittwoch, 27. September 2017, 11:44:30 CEST schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 11:38:17 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Sep 2017 22:22:21 +0200
 
-applied for 4.15 after shortening the patch subject a bit
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-Thanks
-Heiko
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/rme9652/hdspm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
+index 25284d8d9758..f20d42714e4d 100644
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -6949,10 +6949,8 @@ static int snd_hdspm_probe(struct pci_dev *pci,
+ 	hdspm->pci = pci;
+ 
+ 	err = snd_hdspm_create(card, hdspm);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	if (hdspm->io_type != MADIface) {
+ 		snprintf(card->shortname, sizeof(card->shortname), "%s_%x",
+@@ -6970,15 +6968,17 @@ static int snd_hdspm_probe(struct pci_dev *pci,
+ 	}
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	pci_set_drvdata(pci, card);
+ 
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_hdspm_remove(struct pci_dev *pci)
+-- 
+2.14.1
+
