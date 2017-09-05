@@ -1,51 +1,55 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 24 Sep 2017 11:58:42 +0000
-Subject: Re: [PATCH 1/3] iio: adc: twl4030: Fix an error handling path in 'twl4030_madc_probe()'
-Message-Id: <20170924125842.455f2579@archlinux>
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Date: Tue, 05 Sep 2017 13:10:58 +0000
+Subject: Re: [PATCH] connector: Delete an error message for a failed memory allocation in cn_queue_alloc_call
+Message-Id: <109501504617058@web52g.yandex.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1506146101.git.christophe.jaillet@wanadoo.fr>
-        <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
+References: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
+In-Reply-To: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Sat, 23 Sep 2017 08:06:18 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Hi everyone
 
-> If 'devm_regulator_get()' fails, we should go through the existing error
-> handling path instead of returning directly, as done is all the other
-> error handling paths in this function.
-> 
-> Fixes: 7cc97d77ee8a ("iio: adc: twl4030: Fix ADC[3:6] readings")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the fixes-togreg-post-rc1 branch of iio.git and marked
-for stable. 
+27.08.2017, 22:25, "SF Markus Elfring" <elfring@users.sourceforge.net>:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 27 Aug 2017 21:18:37 +0200
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thanks,
+Looks good to me, thanks Markus.
+There is virtually zero useful information in this print if we are in the situation, when kernel can not allocate
+a few bytes to run connector queue.
 
-Jonathan
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+
+kernel-janitors@ please queue this patch up
+
 > ---
->  drivers/iio/adc/twl4030-madc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
-> index 1edd99f0c5e5..80ab2ed70b85 100644
-> --- a/drivers/iio/adc/twl4030-madc.c
-> +++ b/drivers/iio/adc/twl4030-madc.c
-> @@ -887,8 +887,10 @@ static int twl4030_madc_probe(struct platform_device *pdev)
->  
->  	/* Enable 3v1 bias regulator for MADC[3:6] */
->  	madc->usb3v1 = devm_regulator_get(madc->dev, "vusb3v1");
-> -	if (IS_ERR(madc->usb3v1))
-> -		return -ENODEV;
-> +	if (IS_ERR(madc->usb3v1)) {
-> +		ret = -ENODEV;
-> +		goto err_i2c;
-> +	}
->  
->  	ret = regulator_enable(madc->usb3v1);
->  	if (ret)
-
+>  drivers/connector/cn_queue.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/connector/cn_queue.c b/drivers/connector/cn_queue.c
+> index 1f8bf054d11c..e4f31d679f02 100644
+> --- a/drivers/connector/cn_queue.c
+> +++ b/drivers/connector/cn_queue.c
+> @@ -40,10 +40,8 @@ cn_queue_alloc_callback_entry(struct cn_queue_dev *dev, const char *name,
+>          struct cn_callback_entry *cbq;
+>
+>          cbq = kzalloc(sizeof(*cbq), GFP_KERNEL);
+> - if (!cbq) {
+> - pr_err("Failed to create new callback queue.\n");
+> + if (!cbq)
+>                  return NULL;
+> - }
+>
+>          atomic_set(&cbq->refcnt, 1);
+>
+> --
+> 2.14.1
