@@ -1,55 +1,42 @@
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Tue, 05 Sep 2017 13:10:58 +0000
-Subject: Re: [PATCH] connector: Delete an error message for a failed memory allocation in cn_queue_alloc_call
-Message-Id: <109501504617058@web52g.yandex.ru>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 05 Sep 2017 18:15:50 +0000
+Subject: [PATCH 1/2] b43: fix unitialized reads of ret by initializing the array to zero
+Message-Id: <20170905181550.23839-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
-In-Reply-To: <7b206228-b3e9-5cb9-873c-75b5d8aae23b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi everyone
+From: Colin Ian King <colin.king@canonical.com>
 
-27.08.2017, 22:25, "SF Markus Elfring" <elfring@users.sourceforge.net>:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 27 Aug 2017 21:18:37 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The u8 char array ret is not being initialized and elements outside
+the range start to end contain just garbage values from the stack.
+This results in a later scan of the array to read potentially
+uninitialized values.  Fix this by initializing the array to zero.
+This seems to have been an issue since the very first commit.
 
-Looks good to me, thanks Markus.
-There is virtually zero useful information in this print if we are in the situation, when kernel can not allocate
-a few bytes to run connector queue.
+Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
 
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_g.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-kernel-janitors@ please queue this patch up
+diff --git a/drivers/net/wireless/broadcom/b43/phy_g.c b/drivers/net/wireless/broadcom/b43/phy_g.c
+index 822dcaa8ace6..f59c02166462 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_g.c
++++ b/drivers/net/wireless/broadcom/b43/phy_g.c
+@@ -2297,7 +2297,7 @@ static u8 b43_gphy_aci_detect(struct b43_wldev *dev, u8 channel)
+ static u8 b43_gphy_aci_scan(struct b43_wldev *dev)
+ {
+ 	struct b43_phy *phy = &dev->phy;
+-	u8 ret[13];
++	u8 ret[13] = { 0 };
+ 	unsigned int channel = phy->channel;
+ 	unsigned int i, j, start, end;
+ 
+-- 
+2.14.1
 
-> ---
->  drivers/connector/cn_queue.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/connector/cn_queue.c b/drivers/connector/cn_queue.c
-> index 1f8bf054d11c..e4f31d679f02 100644
-> --- a/drivers/connector/cn_queue.c
-> +++ b/drivers/connector/cn_queue.c
-> @@ -40,10 +40,8 @@ cn_queue_alloc_callback_entry(struct cn_queue_dev *dev, const char *name,
->          struct cn_callback_entry *cbq;
->
->          cbq = kzalloc(sizeof(*cbq), GFP_KERNEL);
-> - if (!cbq) {
-> - pr_err("Failed to create new callback queue.\n");
-> + if (!cbq)
->                  return NULL;
-> - }
->
->          atomic_set(&cbq->refcnt, 1);
->
-> --
-> 2.14.1
