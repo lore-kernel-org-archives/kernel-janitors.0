@@ -1,27 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 16:16:45 +0000
-Subject: [PATCH 0/2] [media] FC0012: Adjustments for fc0012_attach()
-Message-Id: <8f64b84d-cca0-d618-eb62-ec12f42b8c06@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Sep 2017 08:38:04 +0000
+Subject: [bug report] drivers: w1: refactor w1_slave_show to make the temp reading functionality separate
+Message-Id: <20170906083804.ftrbpqjfe72h2b2w@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 18:03:21 +0200
+Hello Jaghathiswari Rankappagounder Natarajan,
 
-Two update suggestions were taken into account
-from static source code analysis.
+The patch b78165f02871: "drivers: w1: refactor w1_slave_show to make
+the temp reading functionality separate" from Aug 30, 2017, leads to
+the following static checker warning:
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+	drivers/w1/slaves/w1_therm.c:573 read_therm()
+	error: double unlock 'mutex:&dev->bus_mutex'
 
- drivers/media/tuners/fc0012.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+drivers/w1/slaves/w1_therm.c
+   527                          w1_write_8(dev, W1_CONVERT_TEMP);
+   528  
+   529                          if (external_power) {
+   530                                  mutex_unlock(&dev->bus_mutex);
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   531  
+   532                                  sleep_rem = msleep_interruptible(tm);
+   533                                  if (sleep_rem != 0) {
+   534                                          ret = -EINTR;
+   535                                          goto dec_refcnt;
+                                                ^^^^^^^^^^^^^^^
+We're unlocked here.
 
--- 
-2.14.1
+   536                                  }
+   537  
+   538                                  ret = mutex_lock_interruptible(&dev->bus_mutex);
+   539                                  if (ret != 0)
+   540                                          goto dec_refcnt;
+   541                          } else if (!w1_strong_pullup) {
+   542                                  sleep_rem = msleep_interruptible(tm);
+   543                                  if (sleep_rem != 0) {
+   544                                          ret = -EINTR;
+   545                                          goto dec_refcnt;
+   546                                  }
+   547                          }
 
+   569  
+   570  dec_refcnt:
+   571          atomic_dec(THERM_REFCNT(family_data));
+   572  mt_unlock:
+   573          mutex_unlock(&dev->bus_mutex);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Double unlock.  It used to unlock first then do the atomic_dec().  I
+didn't read the commit carefully enough to understand why this changed.
+
+   574  error:
+   575          return ret;
+   576  }
+
+
+regards,
+dan carpenter
