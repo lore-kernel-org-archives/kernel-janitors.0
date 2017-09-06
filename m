@@ -1,82 +1,120 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Tue, 05 Sep 2017 20:18:22 +0000
-Subject: Re: [PATCH 1/2] b43: fix unitialized reads of ret by initializing the array to zero
-Message-Id: <20170905221654.64f2aae5@wiggum>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/80wMKUt39IjFt4bU2T+R9fe"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 19:48:11 +0000
+Subject: [PATCH 2/3] ALSA: ymfpci: Use common error handling code in snd_ymfpci_create()
+Message-Id: <f2b7317e-b45d-a817-a307-d0208af65f56@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170905181550.23839-1-colin.king@canonical.com>
-In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
+In-Reply-To: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Sig_/80wMKUt39IjFt4bU2T+R9fe
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 21:12:51 +0200
 
-On Tue,  5 Sep 2017 19:15:50 +0100
-Colin King <colin.king@canonical.com> wrote:
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The u8 char array ret is not being initialized and elements outside
-> the range start to end contain just garbage values from the stack.
-> This results in a later scan of the array to read potentially
-> uninitialized values.  Fix this by initializing the array to zero.
-> This seems to have been an issue since the very first commit.
->=20
-> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_g.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_g.c b/drivers/net/wire=
-less/broadcom/b43/phy_g.c
-> index 822dcaa8ace6..f59c02166462 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_g.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_g.c
-> @@ -2297,7 +2297,7 @@ static u8 b43_gphy_aci_detect(struct b43_wldev *dev=
-, u8 channel)
->  static u8 b43_gphy_aci_scan(struct b43_wldev *dev)
->  {
->  	struct b43_phy *phy =3D &dev->phy;
-> -	u8 ret[13];
-> +	u8 ret[13] =3D { 0 };
->  	unsigned int channel =3D phy->channel;
->  	unsigned int i, j, start, end;
-> =20
+  This issue was detected by using the Coccinelle software.
 
+* The script "checkpatch.pl" pointed information out like the following.
 
-This fix seems to be correct.
-Thanks for finding and fixing the issue.
+  ERROR: do not use assignment in if condition
 
-Reviewed-by: Michael Buesch <m@bues.ch>
+  Thus fix a few source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/ymfpci/ymfpci_main.c | 41 +++++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
---=20
-Michael
+diff --git a/sound/pci/ymfpci/ymfpci_main.c b/sound/pci/ymfpci/ymfpci_main.c
+index edfd58248082..8ca2e41e5827 100644
+--- a/sound/pci/ymfpci/ymfpci_main.c
++++ b/sound/pci/ymfpci/ymfpci_main.c
+@@ -2399,59 +2399,60 @@ int snd_ymfpci_create(struct snd_card *card,
+ 		dev_err(chip->card->dev,
+ 			"unable to grab memory region 0x%lx-0x%lx\n",
+ 			chip->reg_area_phys, chip->reg_area_phys + 0x8000 - 1);
+-		snd_ymfpci_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_chip;
+ 	}
+ 	if (request_irq(pci->irq, snd_ymfpci_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+ 		dev_err(chip->card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_ymfpci_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_chip;
+ 	}
+ 	chip->irq = pci->irq;
+ 
+ 	snd_ymfpci_aclink_reset(pci);
+ 	if (snd_ymfpci_codec_ready(chip, 0) < 0) {
+-		snd_ymfpci_free(chip);
+-		return -EIO;
++		err = -EIO;
++		goto free_chip;
+ 	}
+ 
+ 	err = snd_ymfpci_request_firmware(chip);
+ 	if (err < 0) {
+ 		dev_err(chip->card->dev, "firmware request failed: %d\n", err);
+-		snd_ymfpci_free(chip);
+-		return err;
++		goto free_chip;
+ 	}
+ 	snd_ymfpci_download_image(chip);
+ 
+ 	udelay(100); /* seems we need a delay after downloading image.. */
+ 
+ 	if (snd_ymfpci_memalloc(chip) < 0) {
+-		snd_ymfpci_free(chip);
+-		return -EIO;
++		err = -EIO;
++		goto free_chip;
+ 	}
+ 
+-	if ((err = snd_ymfpci_ac3_init(chip)) < 0) {
+-		snd_ymfpci_free(chip);
+-		return err;
+-	}
++	err = snd_ymfpci_ac3_init(chip);
++	if (err < 0)
++		goto free_chip;
+ 
+ #ifdef CONFIG_PM_SLEEP
+ 	chip->saved_regs = kmalloc(YDSXGR_NUM_SAVED_REGS * sizeof(u32),
+ 				   GFP_KERNEL);
+ 	if (chip->saved_regs = NULL) {
+-		snd_ymfpci_free(chip);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto free_chip;
+ 	}
+ #endif
+ 
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
+-		snd_ymfpci_free(chip);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0)
++		goto free_chip;
+ 
+ 	snd_ymfpci_proc_init(card, chip);
+ 
+ 	*rchip = chip;
+ 	return 0;
++
++free_chip:
++	snd_ymfpci_free(chip);
++	return err;
+ }
+-- 
+2.14.1
 
---Sig_/80wMKUt39IjFt4bU2T+R9fe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlmvBo4ACgkQ9TK+HZCN
-iw7zaxAAs7Uqd0BT1c8Z3sXa1HPcjbQzxm5mtMoVjGrByYHr1WXGseE7xvYAvrX0
-PUZrPxcmZKM8BiCx81ohzxTJ+GiyBVt57HQLlMOKwK+hLtQLUM0XWCuPYgMK/4FQ
-5XhHy9300lVnR/DvOxNMP7UIdDNru2oYQttUuuPI81G2Pm3JLr71YOXuofgGHpyB
-rL60jSAKm0QipEf+NopH3WRNwG5HPTEhA9D+kE6n44Juiri12/SJHUNtUKxSauSt
-iAyLm8WuSxxtd3zTw1prgYHaa2hdtNbIf+V8Bkch9oAJabeBVYXXqZBjaLN259m1
-Y5aRY1Um0xPmwm4Cmf3cE8WGdQ1mf0KCRJp/WSpbF0TVBs/o7D5cFxUtzeu6SOEr
-vTDtcM0qfaUpThuikWBrYLHDvWsBThRrt+LymxehQiI/rU8XYKtfcX0X9adK5ULU
-1rvjKI9Dio6E7jMQqWgF4Rbde2w5OSYCvrdK+n+NVkN+S+LjQhJk1eG1ikpAkLAf
-MWac/guu6NpsHttk+gu5BV1S7Lglw3Z/ryTeg9RkQrn7GAQV2wp8uEMrR2CyDQyj
-WJ4P0FzBS3P4Q1dIxop+M9NZ28WDo4NzRjuBqVsJJm2MQH9EnSIminJkPqyY4oL+
-PzUgjn0d1x7ZfslfB6IGNv0UZ39w3c5+dA0CuF/0ez4d/TZBieM=
-=bh3L
------END PGP SIGNATURE-----
-
---Sig_/80wMKUt39IjFt4bU2T+R9fe--
