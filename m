@@ -1,52 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:32:56 +0000
-Subject: [PATCH 2/4] [media] cpia2: Adjust two function calls together with a variable assignment
-Message-Id: <b7bd5189-926c-b48c-37af-5d764c0674ec@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Sep 2017 13:30:16 +0000
+Subject: [PATCH] [media] ov9640: make const arrays res_x/y static const, reduces object code size
+Message-Id: <20170906133016.17950-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
-In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 12:56:50 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Don't populate the arrays res_x and resy_y on the stack, instead make them
+static const.  Makes the object code smaller by over 160 bytes:
 
-ERROR: do not use assignment in if condition
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  10509	   2800	     64	  13373	   343d	ov9640.o
 
-Thus fix the affected source code places.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  10184	   2960	     64	  13208	   3398	ov9640.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/cpia2/cpia2_usb.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/media/i2c/soc_camera/ov9640.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
-index c6be2786a66f..161c9b827f8e 100644
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -367,7 +367,8 @@ static void cpia2_usb_complete(struct urb *urb)
- 	if(cam->streaming) {
- 		/* resubmit */
- 		urb->dev = cam->dev;
--		if ((i = usb_submit_urb(urb, GFP_ATOMIC)) != 0)
-+		i = usb_submit_urb(urb, GFP_ATOMIC);
-+		if (i != 0)
- 			ERR("%s: usb_submit_urb ret %d!\n", __func__, i);
- 	}
- }
-@@ -852,5 +853,5 @@ static int cpia2_usb_probe(struct usb_interface *intf,
- 	}
+diff --git a/drivers/media/i2c/soc_camera/ov9640.c b/drivers/media/i2c/soc_camera/ov9640.c
+index 0146d1f7aacb..dafea6d90ad9 100644
+--- a/drivers/media/i2c/soc_camera/ov9640.c
++++ b/drivers/media/i2c/soc_camera/ov9640.c
+@@ -335,8 +335,8 @@ static void ov9640_res_roundup(u32 *width, u32 *height)
+ {
+ 	int i;
+ 	enum { QQCIF, QQVGA, QCIF, QVGA, CIF, VGA, SXGA };
+-	int res_x[] = { 88, 160, 176, 320, 352, 640, 1280 };
+-	int res_y[] = { 72, 120, 144, 240, 288, 480, 960 };
++	static const int res_x[] = { 88, 160, 176, 320, 352, 640, 1280 };
++	static const int res_y[] = { 72, 120, 144, 240, 288, 480, 960 };
  
--
--	if((ret = cpia2_init_camera(cam)) < 0) {
-+	ret = cpia2_init_camera(cam);
-+	if (ret < 0) {
- 		ERR("%s: failed to initialize cpia2 camera (ret = %d)\n", __func__, ret);
+ 	for (i = 0; i < ARRAY_SIZE(res_x); i++) {
+ 		if (res_x[i] >= *width && res_y[i] >= *height) {
 -- 
 2.14.1
 
