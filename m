@@ -1,30 +1,54 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 12 Sep 2017 07:23:54 +0000
-Subject: Re: [PATCH] ALSA: FireWire-MOTU: Use common error handling code in snd_motu_stream_start_duplex()
-Message-Id: <s5hwp54nzw5.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Sep 2017 08:56:29 +0000
+Subject: [PATCH] libata: zpodd: make arrays cdb static, reduces object code size
+Message-Id: <20170906085629.23938-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
-In-Reply-To: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 06 Sep 2017 13:35:51 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 13:30:14 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Don't populate the arrays cdb on the stack, instead make them static.
+Makes the object code smaller by 230 bytes:
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
 
-Takashi
+After:
+   text	   data	    bss	    dec	    hex	filename
+   3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/ata/libata-zpodd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index 8a01d09ac4db..23a62e4015d0 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -34,7 +34,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
+@@ -55,7 +55,7 @@ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
+ 	unsigned int ret;
+ 	struct rm_feature_desc *desc = (void *)(buf + 8);
+ 	struct ata_taskfile tf;
+-	char cdb[] = {  GPCMD_GET_CONFIGURATION,
++	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
+-- 
+2.14.1
+
