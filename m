@@ -1,10 +1,8 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 10:24:22 +0000
-Subject: [PATCH 3/3] ALSA: bebob: Improve a size determination in parse_stream_formation()
-Message-Id: <3092a93b-9991-eca8-bc77-5c973355477e@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 10:21:14 +0000
+Subject: [PATCH 0/3] ALSA: BeBoB: Fine-tuning for six function implementations
+Message-Id: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
-In-Reply-To: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,30 +10,19 @@ To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav 
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 11:55:45 +0200
+Date: Wed, 6 Sep 2017 12:16:54 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/firewire/bebob/bebob_stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Markus Elfring (3):
+  Use common error handling code in snd_bebob_stream_start_duplex()
+  Adjust six checks for null pointers
+  Improve a size determination in parse_stream_formation()
 
-diff --git a/sound/firewire/bebob/bebob_stream.c b/sound/firewire/bebob/bebob_stream.c
-index 211ff43207d6..a26863b82330 100644
---- a/sound/firewire/bebob/bebob_stream.c
-+++ b/sound/firewire/bebob/bebob_stream.c
-@@ -736,7 +736,7 @@ parse_stream_formation(u8 *buf, unsigned int len,
- 		return -ENOSYS;
- 
- 	/* Avoid double count by different entries for the same rate. */
--	memset(&formation[i], 0, sizeof(struct snd_bebob_stream_formation));
-+	memset(&formation[i], 0, sizeof(*formation));
- 
- 	for (e = 0; e < buf[4]; e++) {
- 		channels = buf[5 + e * 2];
+ sound/firewire/bebob/bebob_stream.c | 35 +++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 18 deletions(-)
+
 -- 
 2.14.1
 
