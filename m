@@ -1,54 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 06 Sep 2017 08:56:29 +0000
-Subject: [PATCH] libata: zpodd: make arrays cdb static, reduces object code size
-Message-Id: <20170906085629.23938-1-colin.king@canonical.com>
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 06 Sep 2017 14:40:54 +0000
+Subject: Re: [PATCH] libata: zpodd: make arrays cdb static, reduces object code size
+Message-Id: <20170906144054.GM1774378@devbig577.frc2.facebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170906085629.23938-1-colin.king@canonical.com>
+In-Reply-To: <20170906085629.23938-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Sep 06, 2017 at 09:56:29AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the arrays cdb on the stack, instead make them static.
+> Makes the object code smaller by 230 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the arrays cdb on the stack, instead make them static.
-Makes the object code smaller by 230 bytes:
+Applied to libata/for-4.14.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
+Thanks.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/ata/libata-zpodd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
-index 8a01d09ac4db..23a62e4015d0 100644
---- a/drivers/ata/libata-zpodd.c
-+++ b/drivers/ata/libata-zpodd.c
-@@ -34,7 +34,7 @@ struct zpodd {
- static int eject_tray(struct ata_device *dev)
- {
- 	struct ata_taskfile tf;
--	const char cdb[] = {  GPCMD_START_STOP_UNIT,
-+	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
- 		0, 0, 0,
- 		0x02,     /* LoEj */
- 		0, 0, 0, 0, 0, 0, 0,
-@@ -55,7 +55,7 @@ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
- 	unsigned int ret;
- 	struct rm_feature_desc *desc = (void *)(buf + 8);
- 	struct ata_taskfile tf;
--	char cdb[] = {  GPCMD_GET_CONFIGURATION,
-+	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
- 			2,      /* only 1 feature descriptor requested */
- 			0, 3,   /* 3, removable medium feature */
- 			0, 0, 0,/* reserved */
 -- 
-2.14.1
-
+tejun
