@@ -1,40 +1,97 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Sep 2017 15:03:48 +0000
-Subject: [PATCH] clk: cdce925: remove redundant check for non-null parent_name
-Message-Id: <20170905150348.20041-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 17:34:50 +0000
+Subject: [PATCH] ASoC: cs4270: Use common error handling code in two functions
+Message-Id: <e7525d1e-0a92-92c5-b779-e2f356b45e45@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 19:09:31 +0200
 
-The check for a non-null parent_name is always true as there is an
-earlier check for a null parent_name that returns -ENODEV. Remove this
-redundant check and always set init.num_parents to 1.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-Detected by CoverityScan CID#1309477 ("Logically dead code")
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/clk-cdce925.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/cs4270.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index c933be01c7db..0a7e7d5a7506 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -665,7 +665,7 @@ static int cdce925_probe(struct i2c_client *client,
- 	init.ops = &cdce925_pll_ops;
- 	init.flags = 0;
- 	init.parent_names = &parent_name;
--	init.num_parents = parent_name ? 1 : 0;
-+	init.num_parents = 1;
+diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
+index 84f86745c30e..aa70d471cc57 100644
+--- a/sound/soc/codecs/cs4270.c
++++ b/sound/soc/codecs/cs4270.c
+@@ -362,10 +362,8 @@ static int cs4270_hw_params(struct snd_pcm_substream *substream,
+ 		reg |= cs4270_mode_ratios[i].speed_mode;
  
- 	/* Register PLL clocks */
- 	for (i = 0; i < data->chip_info->num_plls; ++i) {
+ 	ret = snd_soc_write(codec, CS4270_MODE, reg);
+-	if (ret < 0) {
+-		dev_err(codec->dev, "i2c write failed\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	/* Set the DAI format */
+ 
+@@ -385,11 +383,13 @@ static int cs4270_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	ret = snd_soc_write(codec, CS4270_FORMAT, reg);
+-	if (ret < 0) {
+-		dev_err(codec->dev, "i2c write failed\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
++
++	return ret;
+ 
++report_failure:
++	dev_err(codec->dev, "i2c write failed\n");
+ 	return ret;
+ }
+ 
+@@ -512,10 +512,8 @@ static int cs4270_probe(struct snd_soc_codec *codec)
+ 	 * re-enabled it by using the controls.
+ 	 */
+ 	ret = snd_soc_update_bits(codec, CS4270_MUTE, CS4270_MUTE_AUTO, 0);
+-	if (ret < 0) {
+-		dev_err(codec->dev, "i2c write failed\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	/* Disable automatic volume control.  The hardware enables, and it
+ 	 * causes volume change commands to be delayed, sometimes until after
+@@ -524,15 +522,17 @@ static int cs4270_probe(struct snd_soc_codec *codec)
+ 	 */
+ 	ret = snd_soc_update_bits(codec, CS4270_TRANS,
+ 		CS4270_TRANS_SOFT | CS4270_TRANS_ZERO, 0);
+-	if (ret < 0) {
+-		dev_err(codec->dev, "i2c write failed\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(cs4270->supplies),
+ 				    cs4270->supplies);
+ 
+ 	return ret;
++
++report_failure:
++	dev_err(codec->dev, "i2c write failed\n");
++	return ret;
+ }
+ 
+ /**
 -- 
 2.14.1
 
