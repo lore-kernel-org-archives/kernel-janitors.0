@@ -1,30 +1,45 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 15 Sep 2017 18:16:28 +0000
-Subject: Re: [PATCH 2/2] [media] stm32-dcmi: Improve four size determinations
-Message-Id: <1505499388.27581.13.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 06 Sep 2017 09:51:37 +0000
+Subject: [PATCH] input: surface3_spi: make const array header static, reduces object code size
+Message-Id: <20170906095137.21980-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
- <f4e400ea-9660-05cd-3194-cdf2495a2376@users.sourceforge.net>
-In-Reply-To: <f4e400ea-9660-05cd-3194-cdf2495a2376@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2017-09-15 at 19:29 +0200, SF Markus Elfring wrote:
-> diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-[]
-> @@ -1372,9 +1372,8 @@ static int dcmi_formats_init(struct stm32_dcmi *dcmi)
->  	dcmi->sd_formats = devm_kcalloc(dcmi->dev,
-> -					num_fmts, sizeof(struct dcmi_format *),
-> +					num_fmts, sizeof(*dcmi->sd_formats),
->  					GFP_KERNEL);
->  	if (!dcmi->sd_formats)
->  		return -ENOMEM;
->  
-> -	memcpy(dcmi->sd_formats, sd_fmts,
-> -	       num_fmts * sizeof(struct dcmi_format *));
-> +	memcpy(dcmi->sd_formats, sd_fmts, num_fmts * sizeof(*dcmi->sd_formats));
+From: Colin Ian King <colin.king@canonical.com>
 
-devm_kmemdup
+Don't populate the const array header on the stack, instead make it
+static.  Makes the object code smaller by over 180 bytes:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6003	   1536	      0	   7539	   1d73	surface3_spi.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5726	   1632	      0	   7358	   1cbe	surface3_spi.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/touchscreen/surface3_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/surface3_spi.c b/drivers/input/touchscreen/surface3_spi.c
+index e12fb9b63f31..ecba847889b5 100644
+--- a/drivers/input/touchscreen/surface3_spi.c
++++ b/drivers/input/touchscreen/surface3_spi.c
+@@ -173,7 +173,7 @@ static void surface3_spi_process_pen(struct surface3_ts_data *ts_data, u8 *data)
+ 
+ static void surface3_spi_process(struct surface3_ts_data *ts_data)
+ {
+-	const char header[] = {
++	static const char header[] = {
+ 		0xff, 0xff, 0xff, 0xff, 0xa5, 0x5a, 0xe7, 0x7e, 0x01
+ 	};
+ 	u8 *data = ts_data->rd_buf;
+-- 
+2.14.1
 
