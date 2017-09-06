@@ -1,60 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 18:21:24 +0000
-Subject: [PATCH 1/4] clk-u300: Delete an error message for a failed memory allocation in two functions
-Message-Id: <786e8b0c-a208-8ced-a566-905bae6ca394@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 10:24:22 +0000
+Subject: [PATCH 3/3] ALSA: bebob: Improve a size determination in parse_stream_formation()
+Message-Id: <3092a93b-9991-eca8-bc77-5c973355477e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
-In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+References: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
+In-Reply-To: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 19:30:46 +0200
+Date: Wed, 6 Sep 2017 11:55:45 +0200
 
-Omit extra messages for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/clk-u300.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ sound/firewire/bebob/bebob_stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
-index ec8aafda6e24..e524c3775264 100644
---- a/drivers/clk/clk-u300.c
-+++ b/drivers/clk/clk-u300.c
-@@ -703,11 +703,9 @@ syscon_clk_register(struct device *dev, const char *name,
- 	int ret;
+diff --git a/sound/firewire/bebob/bebob_stream.c b/sound/firewire/bebob/bebob_stream.c
+index 211ff43207d6..a26863b82330 100644
+--- a/sound/firewire/bebob/bebob_stream.c
++++ b/sound/firewire/bebob/bebob_stream.c
+@@ -736,7 +736,7 @@ parse_stream_formation(u8 *buf, unsigned int len,
+ 		return -ENOSYS;
  
- 	sclk = kzalloc(sizeof(struct clk_syscon), GFP_KERNEL);
--	if (!sclk) {
--		pr_err("could not allocate syscon clock %s\n",
--			name);
-+	if (!sclk)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	init.name = name;
- 	init.ops = &syscon_clk_ops;
- 	init.flags = flags;
-@@ -1124,11 +1122,9 @@ mclk_clk_register(struct device *dev, const char *name,
- 	int ret;
+ 	/* Avoid double count by different entries for the same rate. */
+-	memset(&formation[i], 0, sizeof(struct snd_bebob_stream_formation));
++	memset(&formation[i], 0, sizeof(*formation));
  
- 	mclk = kzalloc(sizeof(struct clk_mclk), GFP_KERNEL);
--	if (!mclk) {
--		pr_err("could not allocate MMC/SD clock %s\n",
--		       name);
-+	if (!mclk)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	init.name = "mclk";
- 	init.ops = &mclk_ops;
- 	init.flags = 0;
+ 	for (e = 0; e < buf[4]; e++) {
+ 		channels = buf[5 + e * 2];
 -- 
 2.14.1
 
