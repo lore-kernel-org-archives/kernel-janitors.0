@@ -1,43 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 03 Sep 2017 12:46:14 +0000
-Subject: [PATCH][rpmsg-next] rpmsg: glink: fix null pointer dereference on a null intent
-Message-Id: <20170903124614.6248-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 13:15:13 +0000
+Subject: [PATCH 0/2] ALSA: usx2y: Fine-tuning for two function implementations
+Message-Id: <6743b977-4293-42d2-6c1b-cb83b687bd66@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dave Jiang <dave.jiang@intel.com>, Jaroslav Kysela <perex@perex.cz>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 15:10:12 +0200
 
-In the case where glink->intentless is true and the call
-to qcom_glink_tx fails then we have a condition where ret is
-non-zero and intent is null, causing a null pointer deference
-when setting intent->in_use to false.  Add an extra check to
-only dereference intent if intent is non-null.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Detected by: CoverityScan CID#1455247 ("Explicit null dereferenced")
+Markus Elfring (2):
+  Use common error handling code in us122l_create_card()
+  Use common error handling code in submit_urbs()
 
-Fixes: 88c6060f5a7f ("rpmsg: glink: Handle remote rx done command")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/usx2y/us122l.c     | 10 ++++++----
+ sound/usb/usx2y/usb_stream.c | 18 ++++++++++--------
+ 2 files changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 666068202597..8bc0d0456a40 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1264,7 +1264,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	ret = qcom_glink_tx(glink, &req, sizeof(req), data, len, wait);
- 
- 	/* Mark intent available if we failed */
--	if (ret)
-+	if (ret && intent)
- 		intent->in_use = false;
- 
- 	return ret;
 -- 
 2.14.1
 
