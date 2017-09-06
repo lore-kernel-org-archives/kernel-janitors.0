@@ -1,28 +1,82 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 09 Sep 2017 21:34:17 +0000
-Subject: Re: [PATCH v2 net] net: qualcomm: rmnet: Fix a double free
-Message-Id: <20170909.143417.548324364987922693.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 14:38:25 +0000
+Subject: [PATCH] ALSA: 6Fire: Use common error handling code in usb6fire_chip_probe()
+Message-Id: <6b3e5ec7-557c-4330-4fa4-221530d6c811@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2ddbb6da514108b4e70ccd8362292134@codeaurora.org>
-        <20170909085803.zgfqhp23yt4ol3ka@mwanda>
-In-Reply-To: <20170909085803.zgfqhp23yt4ol3ka@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: subashab@codeaurora.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Torsten Schenk <torsten.schenk@zoho.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 9 Sep 2017 11:58:03 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 16:26:29 +0200
 
-> There is a typo here so we accidentally free "skb" instead of "skbn".
-> It leads to a double free and a leak.  After discussing with Subash,
-> it's better to just move the check before the allocation and avoid the
-> need to free.
-> 
-> Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Fix the leak as well.  Thanks Subash!
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied, thanks Dan.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/usb/6fire/chip.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+diff --git a/sound/usb/6fire/chip.c b/sound/usb/6fire/chip.c
+index bc2a24f7a791..c7641cb50616 100644
+--- a/sound/usb/6fire/chip.c
++++ b/sound/usb/6fire/chip.c
+@@ -143,37 +143,32 @@ static int usb6fire_chip_probe(struct usb_interface *intf,
+ 	chip->card = card;
+ 
+ 	ret = usb6fire_comm_init(chip);
+-	if (ret < 0) {
+-		usb6fire_chip_destroy(chip);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto destroy_chip;
+ 
+ 	ret = usb6fire_midi_init(chip);
+-	if (ret < 0) {
+-		usb6fire_chip_destroy(chip);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto destroy_chip;
+ 
+ 	ret = usb6fire_pcm_init(chip);
+-	if (ret < 0) {
+-		usb6fire_chip_destroy(chip);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto destroy_chip;
+ 
+ 	ret = usb6fire_control_init(chip);
+-	if (ret < 0) {
+-		usb6fire_chip_destroy(chip);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto destroy_chip;
+ 
+ 	ret = snd_card_register(card);
+ 	if (ret < 0) {
+ 		dev_err(&intf->dev, "cannot register card.");
+-		usb6fire_chip_destroy(chip);
+-		return ret;
++		goto destroy_chip;
+ 	}
+ 	usb_set_intfdata(intf, chip);
+ 	return 0;
++
++destroy_chip:
++	usb6fire_chip_destroy(chip);
++	return ret;
+ }
+ 
+ static void usb6fire_chip_disconnect(struct usb_interface *intf)
+-- 
+2.14.1
+
