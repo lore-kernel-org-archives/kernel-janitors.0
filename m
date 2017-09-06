@@ -1,35 +1,77 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 19 Sep 2017 18:54:04 +0000
-Subject: Re: [PATCH][V3] libata: make static arrays const, reduces object code size
-Message-Id: <20170919185404.GA828415@devbig577.frc2.facebook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 11:35:51 +0000
+Subject: [PATCH] ALSA: FireWire-MOTU: Use common error handling code in snd_motu_stream_start_duplex()
+Message-Id: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170919083952.5648-1-colin.king@canonical.com>
-In-Reply-To: <20170919083952.5648-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 19, 2017 at 09:39:52AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrayis on the stack, instead make them static.
-> Makes the object code smaller by over 260 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   64864	   5948	   4128	  74940	  124bc	drivers/ata/libata-scsi.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   64183	   6364	   4128	  74675	  123b3	drivers/ata/libata-scsi.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 13:30:14 +0200
 
-Applied to libata/for-4.15.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Thanks.
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/firewire/motu/motu-stream.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/sound/firewire/motu/motu-stream.c b/sound/firewire/motu/motu-stream.c
+index dc5541c8b359..73e7a5e527fc 100644
+--- a/sound/firewire/motu/motu-stream.c
++++ b/sound/firewire/motu/motu-stream.c
+@@ -253,24 +253,21 @@ int snd_motu_stream_start_duplex(struct snd_motu *motu, unsigned int rate)
+ 		if (err < 0) {
+ 			dev_err(&motu->unit->device,
+ 				"fail to start isochronous comm: %d\n", err);
+-			stop_both_streams(motu);
+-			return err;
++			goto stop_streams;
+ 		}
+ 
+ 		err = start_isoc_ctx(motu, &motu->rx_stream);
+ 		if (err < 0) {
+ 			dev_err(&motu->unit->device,
+ 				"fail to start IT context: %d\n", err);
+-			stop_both_streams(motu);
+-			return err;
++			goto stop_streams;
+ 		}
+ 
+ 		err = protocol->switch_fetching_mode(motu, true);
+ 		if (err < 0) {
+ 			dev_err(&motu->unit->device,
+ 				"fail to enable frame fetching: %d\n", err);
+-			stop_both_streams(motu);
+-			return err;
++			goto stop_streams;
+ 		}
+ 	}
+ 
+@@ -281,12 +278,15 @@ int snd_motu_stream_start_duplex(struct snd_motu *motu, unsigned int rate)
+ 			dev_err(&motu->unit->device,
+ 				"fail to start IR context: %d", err);
+ 			amdtp_stream_stop(&motu->rx_stream);
+-			stop_both_streams(motu);
+-			return err;
++			goto stop_streams;
+ 		}
+ 	}
+ 
+ 	return 0;
++
++stop_streams:
++	stop_both_streams(motu);
++	return err;
+ }
+ 
+ void snd_motu_stream_stop_duplex(struct snd_motu *motu)
 -- 
-tejun
+2.14.1
+
