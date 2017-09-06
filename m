@@ -1,27 +1,138 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Fri, 15 Sep 2017 08:48:48 +0000
-Subject: Re: [PATCH] dma-buf: remove redundant initialization of sg_table
-Message-Id: <150546532831.19729.6169136066415731528@mail.alporthouse.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 Sep 2017 19:46:52 +0000
+Subject: [PATCH 1/3] ALSA: ymfpci: Use common error handling code in snd_card_ymfpci_probe()
+Message-Id: <c3b3d66c-1fb1-8bb9-cf00-674fd4e20afb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170914230516.6056-1-colin.king@canonical.com>
-In-Reply-To: <20170914230516.6056-1-colin.king@canonical.com>
+References: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
+In-Reply-To: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Quoting Colin King (2017-09-15 00:05:16)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> sg_table is being initialized and is never read before it is updated
-> again later on, hence making the initialization redundant. Remove
-> the initialization.
-> 
-> Detected by clang scan-build:
-> "warning: Value stored to 'sg_table' during its initialization is
-> never read"
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 6 Sep 2017 20:45:11 +0200
+
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
+
+  This issue was detected by using the Coccinelle software.
+
+* The script "checkpatch.pl" pointed information out like the following.
+
+  ERROR: do not use assignment in if condition
+
+  Thus fix a few source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/ymfpci/ymfpci.c | 62 +++++++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 32 deletions(-)
+
+diff --git a/sound/pci/ymfpci/ymfpci.c b/sound/pci/ymfpci/ymfpci.c
+index 4faf3e1ed06a..eafdee384059 100644
+--- a/sound/pci/ymfpci/ymfpci.c
++++ b/sound/pci/ymfpci/ymfpci.c
+@@ -268,10 +268,9 @@ static int snd_card_ymfpci_probe(struct pci_dev *pci,
+ 	if ((err = snd_ymfpci_create(card, pci,
+ 				     old_legacy_ctrl,
+ 			 	     &chip)) < 0) {
+-		snd_card_free(card);
+ 		release_and_free_resource(mpu_res);
+ 		release_and_free_resource(fm_res);
+-		return err;
++		goto free_card;
+ 	}
+ 	chip->fm_res = fm_res;
+ 	chip->mpu_res = mpu_res;
+@@ -283,35 +282,31 @@ static int snd_card_ymfpci_probe(struct pci_dev *pci,
+ 		card->shortname,
+ 		chip->reg_area_phys,
+ 		chip->irq);
+-	if ((err = snd_ymfpci_pcm(chip, 0)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
+-	if ((err = snd_ymfpci_pcm_spdif(chip, 1)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	err = snd_ymfpci_pcm(chip, 0);
++	if (err < 0)
++		goto free_card;
++
++	err = snd_ymfpci_pcm_spdif(chip, 1);
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_ymfpci_mixer(chip, rear_switch[dev]);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	if (chip->ac97->ext_id & AC97_EI_SDAC) {
+ 		err = snd_ymfpci_pcm_4ch(chip, 2);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
++
+ 		err = snd_ymfpci_pcm2(chip, 3);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
+-	}
+-	if ((err = snd_ymfpci_timer(chip, 0)) < 0) {
+-		snd_card_free(card);
+-		return err;
++		if (err < 0)
++			goto free_card;
+ 	}
++	err = snd_ymfpci_timer(chip, 0);
++	if (err < 0)
++		goto free_card;
++
+ 	if (chip->mpu_res) {
+ 		if ((err = snd_mpu401_uart_new(card, 0, MPU401_HW_YMFPCI,
+ 					       mpu_port[dev],
+@@ -336,21 +331,24 @@ static int snd_card_ymfpci_probe(struct pci_dev *pci,
+ 			legacy_ctrl &= ~YMFPCI_LEGACY_FMEN;
+ 			pci_write_config_word(pci, PCIR_DSXG_LEGACY, legacy_ctrl);
+ 		} else if ((err = snd_opl3_hwdep_new(opl3, 0, 1, NULL)) < 0) {
+-			snd_card_free(card);
+ 			dev_err(card->dev, "cannot create opl3 hwdep\n");
+-			return err;
++			goto free_card;
+ 		}
+ 	}
+ 
+ 	snd_ymfpci_create_gameport(chip, dev, legacy_ctrl, legacy_ctrl2);
+ 
+-	if ((err = snd_card_register(card)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	err = snd_card_register(card);
++	if (err < 0)
++		goto free_card;
++
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_card_ymfpci_remove(struct pci_dev *pci)
+-- 
+2.14.1
+
