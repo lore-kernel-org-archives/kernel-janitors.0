@@ -1,49 +1,40 @@
-From: Hans Verkuil <hansverk@cisco.com>
-Date: Mon, 11 Sep 2017 07:21:25 +0000
-Subject: Re: [PATCH] media: v4l2-pci-skeleton: Fix error handling path in 'skeleton_probe()'
-Message-Id: <9b00047e-ce61-bd72-9bf2-c248a87eb013@cisco.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Sep 2017 13:51:33 +0000
+Subject: [PATCH] csi: libcxgbi: remove redundant check and close on csk
+Message-Id: <20170907135133.16636-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170910115322.15482-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170910115322.15482-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mchehab@kernel.org, hans.verkuil@cisco.com, Julia.Lawall@lip6.fr
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/10/2017 01:53 PM, Christophe JAILLET wrote:
-> If this memory allocation fails, we must release some resources, as
-> already done in the code below and above.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Please repost and add the linux-media mailinglist to the CC list. That way it ends up
-in our patchwork system and it won't be forgotten.
+csk is always null on the error return path and so the non-null
+check and call to cxgbi_sock_closed on csk is redundant and
+can be removed.
 
-Regards,
+Detected by: CoverityScan CID#114329 ("Logically dead code")
 
-	Hans
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/cxgbi/libcxgbi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> ---
->  samples/v4l/v4l2-pci-skeleton.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/samples/v4l/v4l2-pci-skeleton.c b/samples/v4l/v4l2-pci-skeleton.c
-> index 483e9bca9444..f520e3aef9c6 100644
-> --- a/samples/v4l/v4l2-pci-skeleton.c
-> +++ b/samples/v4l/v4l2-pci-skeleton.c
-> @@ -772,8 +772,10 @@ static int skeleton_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  
->  	/* Allocate a new instance */
->  	skel = devm_kzalloc(&pdev->dev, sizeof(struct skeleton), GFP_KERNEL);
-> -	if (!skel)
-> -		return -ENOMEM;
-> +	if (!skel) {
-> +		ret = -ENOMEM;
-> +		goto disable_pci;
-> +	}
->  
->  	/* Allocate the interrupt */
->  	ret = devm_request_irq(&pdev->dev, pdev->irq,
-> 
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index 512c8f1ea5b0..da36c2de069e 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -688,8 +688,6 @@ cxgbi_check_route(struct sockaddr *dst_addr, int ifindex)
+ 
+ rel_rt:
+ 	ip_rt_put(rt);
+-	if (csk)
+-		cxgbi_sock_closed(csk);
+ err_out:
+ 	return ERR_PTR(err);
+ }
+-- 
+2.14.1
 
