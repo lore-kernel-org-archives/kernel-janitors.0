@@ -1,50 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 04 Sep 2017 20:10:01 +0000
-Subject: [PATCH 4/6] [media] atmel-isi: Delete an error message for a failed memory allocation in two functio
-Message-Id: <7eb22d47-956e-5712-33a5-d50aaf8684ec@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Sep 2017 09:50:23 +0000
+Subject: [PATCH] media: cx23885: make const array buf static, reduces object code size
+Message-Id: <20170907095023.26948-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
-In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Matthias Schwarzott <zzam@gentoo.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 4 Sep 2017 21:21:25 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in these functions.
+Don't populate the array buf on the stack, instead make it static.
+Makes the object code smaller by over 240 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21689	  22992	    416	  45097	   b029	cx23885-cards.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  21348	  23088	    416	  44852	   af34	cx23885-cards.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/atmel/atmel-isi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/media/pci/cx23885/cx23885-cards.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
-index 891fa2505efa..154e9c39b64f 100644
---- a/drivers/media/platform/atmel/atmel-isi.c
-+++ b/drivers/media/platform/atmel/atmel-isi.c
-@@ -1041,7 +1041,5 @@ static int isi_formats_init(struct atmel_isi *isi)
--	if (!isi->user_formats) {
--		dev_err(isi->dev, "could not allocate memory\n");
-+	if (!isi->user_formats)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/media/pci/cx23885/cx23885-cards.c b/drivers/media/pci/cx23885/cx23885-cards.c
+index 78a8836d03e4..28eab9c518c5 100644
+--- a/drivers/media/pci/cx23885/cx23885-cards.c
++++ b/drivers/media/pci/cx23885/cx23885-cards.c
+@@ -1323,7 +1323,7 @@ static void hauppauge_eeprom(struct cx23885_dev *dev, u8 *eeprom_data)
+ static void tbs_card_init(struct cx23885_dev *dev)
+ {
+ 	int i;
+-	const u8 buf[] = {
++	static const u8 buf[] = {
+ 		0xe0, 0x06, 0x66, 0x33, 0x65,
+ 		0x01, 0x17, 0x06, 0xde};
  
- 	memcpy(isi->user_formats, isi_fmts,
- 	       num_fmts * sizeof(struct isi_format *));
-@@ -1179,7 +1177,5 @@ static int atmel_isi_probe(struct platform_device *pdev)
--	if (!isi) {
--		dev_err(&pdev->dev, "Can't allocate interface!\n");
-+	if (!isi)
- 		return -ENOMEM;
--	}
- 
- 	isi->pclk = devm_clk_get(&pdev->dev, "isi_clk");
- 	if (IS_ERR(isi->pclk))
 -- 
 2.14.1
 
