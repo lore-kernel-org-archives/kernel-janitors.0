@@ -1,46 +1,59 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Wed, 27 Sep 2017 14:59:13 +0000
-Subject: Re: [PATCH] clk: samsung: Delete an error message for a failed memory allocation in exynos_register_
-Message-Id: <cffa4c0c-8b69-bac7-7845-a7a7fee6d898@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Sep 2017 11:12:05 +0000
+Subject: [PATCH 2/2] pinctrl: sprd: fix off by one bugs
+Message-Id: <20170907073211.zgcgmdfrphtqy3d7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170927135526epcas1p37af4b72a90b97a4b88f9995a26bd0a32@epcas1p3.samsung.com>
-	<19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
-In-Reply-To: <19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
+References: <20170907072926.56oqezwk4r72yjgt@mwanda>
+In-Reply-To: <20170907072926.56oqezwk4r72yjgt@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 09/27/2017 03:55 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 15:46:53 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+info->groups[] has info->ngroups elements so these comparisons should be
+>= instead of >.
 
-Applied with summary line shortened to 
-"clk: samsung: Delete a memory allocation error message in clk-cpu.c",
-thanks.
+Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/clk/samsung/clk-cpu.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 6686e8ba61f9..d2c99d8916b8 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -457,8 +457,6 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  
->  	cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
->  	if (!cpuclk->cfg) {
-> -		pr_err("%s: could not allocate memory for cpuclk data\n",
-> -				__func__);
->  		ret = -ENOMEM;
->  		goto unregister_clk_nb;
->  	}
-
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 673b77bbbc8c..939e1bbf6253 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -400,7 +400,7 @@ static int sprd_pmx_set_mux(struct pinctrl_dev *pctldev,
+ 	unsigned long reg;
+ 	unsigned int val = 0;
+ 
+-	if (group_selector > info->ngroups)
++	if (group_selector >= info->ngroups)
+ 		return -EINVAL;
+ 
+ 	switch (func_selector) {
+@@ -734,7 +734,7 @@ static int sprd_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 	struct sprd_pin_group *grp;
+ 	unsigned int pin_id;
+ 
+-	if (selector > info->ngroups)
++	if (selector >= info->ngroups)
+ 		return -EINVAL;
+ 
+ 	grp = &info->groups[selector];
+@@ -753,7 +753,7 @@ static int sprd_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 	struct sprd_pin_group *grp;
+ 	int ret, i;
+ 
+-	if (selector > info->ngroups)
++	if (selector >= info->ngroups)
+ 		return -EINVAL;
+ 
+ 	grp = &info->groups[selector];
+@@ -813,7 +813,7 @@ static void sprd_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	const char *name;
+ 	int i, ret;
+ 
+-	if (selector > info->ngroups)
++	if (selector >= info->ngroups)
+ 		return;
+ 
+ 	grp = &info->groups[selector];
