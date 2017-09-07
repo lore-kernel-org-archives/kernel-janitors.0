@@ -1,50 +1,43 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Mon, 18 Sep 2017 20:38:30 +0000
-Subject: Re: [PATCH] xfs: remove redundant re-initialization of total_nr_pages
-Message-Id: <20170918203830.GV6540@magnolia>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Sep 2017 07:29:26 +0000
+Subject: [PATCH 1/2] pinctrl: sprd: check for allocation failure
+Message-Id: <20170907072926.56oqezwk4r72yjgt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918120157.30134-1-colin.king@canonical.com>
-In-Reply-To: <20170918120157.30134-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 18, 2017 at 01:01:57PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable total_nr_pages is being initialized and then updated with
-> the same value, this latter assignment is redundant and can be
-> removed.  Cleans up clang build warning:
-> 
-> Value stored to 'total_nr_pages' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+devm_pinctrl_get() could fail with ERR_PTR(-ENOMEM) so I have added a
+check for that.  I also reversed the other IS_ERR() test because it was
+a little confusing to test one way and then the opposite a couple lines
+later.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  fs/xfs/xfs_buf.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index da14658da310..2f97c12ca75e 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1258,8 +1258,6 @@ xfs_buf_ioapply_map(
->  	int		size;
->  	int		offset;
->  
-> -	total_nr_pages = bp->b_page_count;
-> -
->  	/* skip the pages in the buffer before the start offset */
->  	page_index = 0;
->  	offset = *buf_offset;
-> -- 
-> 2.14.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 7e7b9ac7e836..673b77bbbc8c 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -1100,12 +1100,16 @@ int sprd_pinctrl_remove(struct platform_device *pdev)
+ 
+ void sprd_pinctrl_shutdown(struct platform_device *pdev)
+ {
+-	struct pinctrl *pinctl = devm_pinctrl_get(&pdev->dev);
++	struct pinctrl *pinctl;
+ 	struct pinctrl_state *state;
+ 
++	pinctl = devm_pinctrl_get(&pdev->dev);
++	if (IS_ERR(pinctl))
++		return;
+ 	state = pinctrl_lookup_state(pinctl, "shutdown");
+-	if (!IS_ERR(state))
+-		pinctrl_select_state(pinctl, state);
++	if (IS_ERR(state))
++		return;
++	pinctrl_select_state(pinctl, state);
+ }
+ 
+ MODULE_DESCRIPTION("SPREADTRUM Pin Controller Driver");
