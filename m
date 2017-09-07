@@ -1,28 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 06:33:26 +0000
-Subject: [PATCH 0/3] [media] pvrusb2-ioread: Fine-tuning for eight function implementations
-Message-Id: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 07 Sep 2017 08:42:45 +0000
+Subject: [PATCH] tpm_tis: unconstify array cmd_getticks
+Message-Id: <20170907084245.19513-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 08:28:48 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Remove const from cmd_getticks, fixes build warnings:
 
-Markus Elfring (3):
-  Use common error handling code in pvr2_ioread_get_buffer()
-  Delete an unnecessary check before kfree() in two functions
-  Delete unnecessary braces in six functions
+drivers/char/tpm/tpm_tis_core.c:469:31: warning: passing argument 2 of
+'tpm_tis_send_data' discards 'const' qualifier from pointer target
+type [-Wdiscarded-qualifiers]
+  rc = tpm_tis_send_data(chip, cmd_getticks, len);
+                               ^
+drivers/char/tpm/tpm_tis_core.c:477:31: warning: passing argument 2 of
+'tpm_tis_send_data' discards 'const' qualifier from pointer target
+type [-Wdiscarded-qualifiers]
+  rc = tpm_tis_send_data(chip, cmd_getticks, len);
+                               ^
+Fixes: 5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/media/usb/pvrusb2/pvrusb2-ioread.c | 60 +++++++++++++-----------------
- 1 file changed, 25 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 1e957e923d21..91cf38be314f 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -445,7 +445,7 @@ static int probe_itpm(struct tpm_chip *chip)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int rc = 0;
+-	static const u8 cmd_getticks[] = {
++	static u8 cmd_getticks[] = {
+ 		0x00, 0xc1, 0x00, 0x00, 0x00, 0x0a,
+ 		0x00, 0x00, 0x00, 0xf1
+ 	};
 -- 
 2.14.1
 
