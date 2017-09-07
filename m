@@ -1,26 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 Sep 2017 16:25:22 +0000
-Subject: Re: [PATCH net] sctp: potential read out of bounds in sctp_ulpevent_type_enabled()
-Message-Id: <20170913.092522.934509429497822082.davem@davemloft.net>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 07 Sep 2017 14:02:32 +0000
+Subject: NACK: [PATCH] tpm_tis: unconstify array cmd_getticks
+Message-Id: <4c4d2976-3c24-528b-605d-a8dfcdd8439f@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170913092028.idzvduj7ran4li6b@mwanda>
-In-Reply-To: <20170913092028.idzvduj7ran4li6b@mwanda>
+References: <20170907084245.19513-1-colin.king@canonical.com>
+In-Reply-To: <20170907084245.19513-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Sep 2017 12:20:28 +0300
-
-> @@ -154,7 +154,11 @@ static inline int sctp_ulpevent_type_enabled(__u16 sn_type,
->  					     struct sctp_event_subscribe *mask)
+On 07/09/17 09:42, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Remove const from cmd_getticks, fixes build warnings:
+> 
+> drivers/char/tpm/tpm_tis_core.c:469:31: warning: passing argument 2 of
+> 'tpm_tis_send_data' discards 'const' qualifier from pointer target
+> type [-Wdiscarded-qualifiers]
+>   rc = tpm_tis_send_data(chip, cmd_getticks, len);
+>                                ^
+> drivers/char/tpm/tpm_tis_core.c:477:31: warning: passing argument 2 of
+> 'tpm_tis_send_data' discards 'const' qualifier from pointer target
+> type [-Wdiscarded-qualifiers]
+>   rc = tpm_tis_send_data(chip, cmd_getticks, len);
+>                                ^
+> Fixes: 5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 1e957e923d21..91cf38be314f 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -445,7 +445,7 @@ static int probe_itpm(struct tpm_chip *chip)
 >  {
->  	char *amask = (char *) mask;
-> -	return amask[sn_type - SCTP_SN_TYPE_BASE];
-> +	int offset = sn_type - SCTP_SN_TYPE_BASE;
-
-Please use reverse-christmas-tree local variable ordering.
-
-Thank you.
+>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>  	int rc = 0;
+> -	static const u8 cmd_getticks[] = {
+> +	static u8 cmd_getticks[] = {
+>  		0x00, 0xc1, 0x00, 0x00, 0x00, 0x0a,
+>  		0x00, 0x00, 0x00, 0xf1
+>  	};
+> 
+Ignore this, seems like Arnd Bergmann has fixed this properly.
