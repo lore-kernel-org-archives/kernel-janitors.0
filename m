@@ -1,40 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 18:08:30 +0000
-Subject: [PATCH 4/4] [media] omap3isp: Delete an unnecessary variable initialisation in isp_video_open()
-Message-Id: <76ade6b8-0da7-8fa7-d123-434e4da2db54@users.sourceforge.net>
+Date: Thu, 07 Sep 2017 20:22:07 +0000
+Subject: [PATCH] [media] blackfin: Delete an error message for a failed memory allocation in ppi_create_insta
+Message-Id: <3f472947-091e-3e96-b278-093ca287b5a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
-In-Reply-To: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 19:43:06 +0200
+Date: Thu, 7 Sep 2017 22:14:43 +0200
 
-The variable "ret" will eventually be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/omap3isp/ispvideo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/blackfin/ppi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index d4118466fc8a..a9c0b2d3624d 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -1303,7 +1303,7 @@ static int isp_video_open(struct file *file)
- 	struct isp_video *video = video_drvdata(file);
- 	struct isp_video_fh *handle;
- 	struct vb2_queue *queue;
--	int ret = 0;
-+	int ret;
- 
- 	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
- 	if (!handle)
+diff --git a/drivers/media/platform/blackfin/ppi.c b/drivers/media/platform/blackfin/ppi.c
+index 37169054b828..478eb2f7d723 100644
+--- a/drivers/media/platform/blackfin/ppi.c
++++ b/drivers/media/platform/blackfin/ppi.c
+@@ -338,7 +338,6 @@ struct ppi_if *ppi_create_instance(struct platform_device *pdev,
+ 	ppi = kzalloc(sizeof(*ppi), GFP_KERNEL);
+ 	if (!ppi) {
+ 		peripheral_free_list(info->pin_req);
+-		dev_err(&pdev->dev, "unable to allocate memory for ppi handle\n");
+ 		return NULL;
+ 	}
+ 	ppi->ops = &ppi_ops;
 -- 
 2.14.1
 
