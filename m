@@ -1,45 +1,26 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Sep 2017 09:11:15 +0000
-Subject: [PATCH] [media] ov2640: make array reset_seq static, reduces object code size
-Message-Id: <20170912091115.29043-1-colin.king@canonical.com>
+From: Madalin-cristian Bucur <madalin.bucur@nxp.com>
+Date: Thu, 07 Sep 2017 07:14:12 +0000
+Subject: RE: [PATCH] fsl/fman: make arrays port_ids static, reduces object code size
+Message-Id: <AM5PR0402MB269115B69D04CEF3EC125855EC940@AM5PR0402MB2691.eurprd04.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170831132449.27600-1-colin.king@canonical.com>
+In-Reply-To: <20170831132449.27600-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Frank Schaefer <fschaefer.oss@googlemail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate the array reset_seq on the stack, instead make it
-static.  Makes the object code smaller by over 50 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  11737	   6000	     64	  17801	   4589	drivers/media/i2c/ov2640.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  11582	   6096	     64	  17742	   454e	drivers/media/i2c/ov2640.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/i2c/ov2640.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/ov2640.c b/drivers/media/i2c/ov2640.c
-index e6d0c1f64f0b..c290fbdc2336 100644
---- a/drivers/media/i2c/ov2640.c
-+++ b/drivers/media/i2c/ov2640.c
-@@ -685,7 +685,7 @@ static int ov2640_mask_set(struct i2c_client *client,
- static int ov2640_reset(struct i2c_client *client)
- {
- 	int ret;
--	const struct regval_list reset_seq[] = {
-+	static const struct regval_list reset_seq[] = {
- 		{BANK_SEL, BANK_SEL_SENS},
- 		{COM7, COM7_SRST},
- 		ENDMARKER,
--- 
-2.14.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
+Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgQXVndXN0IDMxLCAy
+MDE3IDQ6MjUgUE0NCj4gU3ViamVjdDogW1BBVENIXSBmc2wvZm1hbjogbWFrZSBhcnJheXMgcG9y
+dF9pZHMgc3RhdGljLCByZWR1Y2VzIG9iamVjdA0KPiBjb2RlIHNpemUNCj4gDQo+IEZyb206IENv
+bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBEb24ndCBwb3B1
+bGF0ZSB0aGUgYXJyYXlzIHBvcnRfaWRzIG9uIHRoZSBzdGFjaywgaW5zdGVhZCBtYWtlIHRoZW0g
+c3RhdGljLg0KPiBNYWtlcyB0aGUgb2JqZWN0IGNvZGUgc21hbGxlciBieSBvdmVyIDcwMCBieXRl
+czoNCj4gDQo+IEJlZm9yZToNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAg
+aGV4CWZpbGVuYW1lDQo+ICAgMjg3ODUJICAgNTgzMgkgICAgMTkyCSAgMzQ4MDkJICAgODdmOQlm
+bWFuLm8NCj4gDQo+IEFmdGVyOg0KPiAgICB0ZXh0CSAgIGRhdGEJICAgIGJzcwkgICAgZGVjCSAg
+ICBoZXgJZmlsZW5hbWUNCj4gICAyNzkyMQkgICA1OTkyCSAgICAxOTIJICAzNDEwNQkgICA4NTM5
+CWZtYW4ubw0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCg0KVGhhbmtzLA0KTWFkYWxpbg0K
