@@ -1,59 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 13:16:29 +0000
-Subject: [PATCH 1/2] ALSA: us122l: Use common error handling code in us122l_create_card()
-Message-Id: <cc84d72e-1474-2eb9-30cf-28034155bcc3@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 07 Sep 2017 08:28:04 +0000
+Subject: Re: [PATCH 1/2] ALSA: us122l: Use common error handling code in us122l_create_card()
+Message-Id: <s5hd172kj57.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6743b977-4293-42d2-6c1b-cb83b687bd66@users.sourceforge.net>
-In-Reply-To: <6743b977-4293-42d2-6c1b-cb83b687bd66@users.sourceforge.net>
+ <cc84d72e-1474-2eb9-30cf-28034155bcc3@users.sourceforge.net>
+In-Reply-To: <cc84d72e-1474-2eb9-30cf-28034155bcc3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Dave Jiang <dave.jiang@intel.com>, Jaroslav Kysela <perex@perex.cz>, Johan Hovold <johan@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Johan Hovold <johan@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 14:45:09 +0200
+On Wed, 06 Sep 2017 15:16:29 +0200,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 6 Sep 2017 14:45:09 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Applied, thanks.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/usb/usx2y/us122l.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
-index b49d6e953d52..159da1f3924e 100644
---- a/sound/usb/usx2y/us122l.c
-+++ b/sound/usb/usx2y/us122l.c
-@@ -508,8 +508,7 @@ static bool us122l_create_card(struct snd_card *card)
- 		err = us122l_create_usbmidi(card);
- 	if (err < 0) {
- 		snd_printk(KERN_ERR "us122l_create_usbmidi error %i \n", err);
--		us122l_stop(us122l);
--		return false;
-+		goto stop;
- 	}
- 	err = usb_stream_hwdep_new(card);
- 	if (err < 0) {
-@@ -518,10 +517,13 @@ static bool us122l_create_card(struct snd_card *card)
- 		list_for_each(p, &us122l->midi_list)
- 			snd_usbmidi_disconnect(p);
- 
--		us122l_stop(us122l);
--		return false;
-+		goto stop;
- 	}
- 	return true;
-+
-+stop:
-+	us122l_stop(us122l);
-+	return false;
- }
- 
- static void snd_us122l_free(struct snd_card *card)
--- 
-2.14.1
-
+Takashi
