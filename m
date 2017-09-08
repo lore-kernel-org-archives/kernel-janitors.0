@@ -1,46 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Sep 2017 19:46:43 +0000
-Subject: [PATCH 3/3] [media] camss-csid: Adjust a null pointer check in two functions
-Message-Id: <c9925c93-f3b3-6def-3fe0-83f1531387ad@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 15:24:52 +0000
+Subject: [PATCH] rsi: fix a dereference on adapter before it has been null checked
+Message-Id: <20170908152452.3594-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
-In-Reply-To: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.tomov@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Sep 2017 21:10:02 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The assignment of dev is dereferencing adapter before adapter has
+been null checked, potentially leading to a null pointer dereference.
+Fix this by simply moving the assignment of dev to a later point
+after the sanity null check of adapter.
 
-Comparison to NULL could be written "!format"
+Detected by CoverityScan CID#1398383 ("Dereference before null check")
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/qcom/camss-8x16/camss-csid.c | 4 ++--
+ drivers/net/wireless/rsi/rsi_91x_usb.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss-8x16/camss-csid.c b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-index ffda0fbfe4d8..e546f97fa68c 100644
---- a/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-@@ -653,4 +653,4 @@ static int csid_get_format(struct v4l2_subdev *sd,
--	if (format = NULL)
-+	if (!format)
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
+index 81df09dd2636..08730227cd18 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -73,8 +73,7 @@ static int rsi_write_multiple(struct rsi_hw *adapter,
+ 			      u8 *data,
+ 			      u32 count)
+ {
+-	struct rsi_91x_usbdev *dev -		(struct rsi_91x_usbdev *)adapter->rsi_dev;
++	struct rsi_91x_usbdev *dev;
+ 
+ 	if (!adapter)
+ 		return -ENODEV;
+@@ -82,6 +81,7 @@ static int rsi_write_multiple(struct rsi_hw *adapter,
+ 	if (endpoint = 0)
  		return -EINVAL;
  
- 	fmt->format = *format;
-@@ -677,4 +677,4 @@ static int csid_set_format(struct v4l2_subdev *sd,
--	if (format = NULL)
-+	if (!format)
- 		return -EINVAL;
++	dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
+ 	if (dev->write_fail)
+ 		return -ENETDOWN;
  
- 	csid_try_format(csid, cfg, fmt->pad, &fmt->format, fmt->which);
 -- 
 2.14.1
 
