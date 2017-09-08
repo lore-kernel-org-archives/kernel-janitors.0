@@ -1,40 +1,72 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 29 Sep 2017 15:38:53 +0000
-Subject: Re: [PATCH 1/2] staging: rtlwifi: silence underflow warning
-Message-Id: <97448784-949c-2c45-60ee-ca35182677ba@lwfinger.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 20:53:34 +0000
+Subject: [PATCH 3/3] [media] s5p-mfc: Adjust a null pointer check in four functions
+Message-Id: <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929075117.cno3vnrebea32upt@mwanda>
-In-Reply-To: <20170929075117.cno3vnrebea32upt@mwanda>
+References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+In-Reply-To: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-On 09/29/2017 02:51 AM, Dan Carpenter wrote:
-> I'm not totally certain that it's necessary to put an upper limit here.
-> I think it happens at lower levels.  But if we are going to do that then
-> we should have a lower bound as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
-> index 43b8b9efe25f..b55e18304a60 100644
-> --- a/drivers/staging/rtlwifi/core.c
-> +++ b/drivers/staging/rtlwifi/core.c
-> @@ -412,7 +412,8 @@ static void _rtl_add_wowlan_patterns(struct ieee80211_hw *hw,
->   	for (i = 0; i < wow->n_patterns; i++) {
->   		memset(&rtl_pattern, 0, sizeof(struct rtl_wow_pattern));
->   		memset(mask, 0, MAX_WOL_BIT_MASK_SIZE);
-> -		if (patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
-> +		if (patterns[i].pattern_len < 0 ||
-> +		    patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
->   			RT_TRACE(rtlpriv, COMP_POWER, DBG_WARNING,
->   				 "Pattern[%d] is too long\n", i);
->   			continue;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 22:37:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-In principle, both patches are correct, but perhaps the debug message should be 
-something like
-'"Pattern[%d] has bad length of %d\n", i, patterns[i].pattern_len'
+The script “checkpatch.pl” pointed information out like the following.
 
-Larry
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index abfb70b07032..cf68aed59e0d 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -470,7 +470,7 @@ static void s5p_mfc_handle_error(struct s5p_mfc_dev *dev,
+ {
+ 	mfc_err("Interrupt Error: %08x\n", err);
+ 
+-	if (ctx != NULL) {
++	if (ctx) {
+ 		/* Error recovery is dependent on the state of context */
+ 		switch (ctx->state) {
+ 		case MFCINST_RES_CHANGE_INIT:
+@@ -508,7 +508,7 @@ static void s5p_mfc_handle_seq_done(struct s5p_mfc_ctx *ctx,
+ {
+ 	struct s5p_mfc_dev *dev;
+ 
+-	if (ctx = NULL)
++	if (!ctx)
+ 		return;
+ 	dev = ctx->dev;
+ 	if (ctx->c_ops->post_seq_start) {
+@@ -562,7 +562,7 @@ static void s5p_mfc_handle_init_buffers(struct s5p_mfc_ctx *ctx,
+ 	struct s5p_mfc_buf *src_buf;
+ 	struct s5p_mfc_dev *dev;
+ 
+-	if (ctx = NULL)
++	if (!ctx)
+ 		return;
+ 	dev = ctx->dev;
+ 	s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
+@@ -1289,7 +1289,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dev->regs_base);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (res = NULL) {
++	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get irq resource\n");
+ 		return -ENOENT;
+ 	}
+-- 
+2.14.1
 
