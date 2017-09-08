@@ -1,59 +1,51 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Wed, 13 Sep 2017 03:31:10 +0000
-Subject: Re: [PATCH] usb: storage: make const arrays static, reduces object code size
-Message-Id: <Pine.LNX.4.44L0.1709122330590.6689-100000@netrider.rowland.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 15:02:35 +0000
+Subject: [PATCH] can: check for null sk before deferencing it via the call to sock_net
+Message-Id: <20170908150235.2931-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170912113835.1910-1-colin.king@canonical.com>
-References: <20170912113835.1910-1-colin.king@canonical.com>
-In-Reply-To: <20170912113835.1910-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 12 Sep 2017, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrays on the stack, instead make them
-> static.  Makes the object code smaller by over 1070 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    3505	    880	      0	   4385	   1121	drivers/usb/storage/option_ms.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    2269	   1040	      0	   3309	    ced	drivers/usb/storage/option_ms.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/storage/option_ms.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/option_ms.c b/drivers/usb/storage/option_ms.c
-> index 57282f12317b..4a73cd4783ae 100644
-> --- a/drivers/usb/storage/option_ms.c
-> +++ b/drivers/usb/storage/option_ms.c
-> @@ -41,7 +41,7 @@ MODULE_PARM_DESC(option_zero_cd, "ZeroCD mode (1=Force Modem (default),"
->  
->  static int option_rezero(struct us_data *us)
->  {
-> -	const unsigned char rezero_msg[] = {
-> +	static const unsigned char rezero_msg[] = {
->  	  0x55, 0x53, 0x42, 0x43, 0x78, 0x56, 0x34, 0x12,
->  	  0x01, 0x00, 0x00, 0x00, 0x80, 0x00, 0x06, 0x01,
->  	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> @@ -87,7 +87,7 @@ static int option_rezero(struct us_data *us)
->  
->  static int option_inquiry(struct us_data *us)
->  {
-> -	const unsigned char inquiry_msg[] = {
-> +	static const unsigned char inquiry_msg[] = {
->  	  0x55, 0x53, 0x42, 0x43, 0x12, 0x34, 0x56, 0x78,
->  	  0x24, 0x00, 0x00, 0x00, 0x80, 0x00, 0x06, 0x12,
->  	  0x00, 0x00, 0x00, 0x24, 0x00, 0x00, 0x00, 0x00,
+The assignment of net via call sock_net will dereference sk. This
+is performed before a sanity null check on sk, so there could be
+a potential null dereference on the sock_net call if sk is null.
+Fix this by assigning net after the sk null check. Also replace
+the sk = NULL with the more usual !sk idiom.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Detected by CoverityScan CID#1431862 ("Dereference before null check")
+
+Fixes: 384317ef4187 ("can: network namespace support for CAN_BCM protocol")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/can/bcm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index 47a8748d953a..a3791674b8ce 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1493,13 +1493,14 @@ static int bcm_init(struct sock *sk)
+ static int bcm_release(struct socket *sock)
+ {
+ 	struct sock *sk = sock->sk;
+-	struct net *net = sock_net(sk);
++	struct net *net;
+ 	struct bcm_sock *bo;
+ 	struct bcm_op *op, *next;
+ 
+-	if (sk = NULL)
++	if (!sk)
+ 		return 0;
+ 
++	net = sock_net(sk);
+ 	bo = bcm_sk(sk);
+ 
+ 	/* remove bcm_ops, timer, rx_unregister(), etc. */
+-- 
+2.14.1
 
