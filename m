@@ -1,68 +1,78 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Wed, 06 Sep 2017 18:40:46 +0000
+From: Eduardo Valentin <edubezval@gmail.com>
+Date: Fri, 08 Sep 2017 02:59:36 +0000
 Subject: Re: [PATCH][thermal-next] thermal: brcmstb: remove two redundant integer range checks
-Message-Id: <20170906184046.GB35422@google.com>
+Message-Id: <20170908025935.GB2755@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170903131619.6857-1-colin.king@canonical.com>
-In-Reply-To: <20170903131619.6857-1-colin.king@canonical.com>
+ <20170906184046.GB35422@google.com>
+In-Reply-To: <20170906184046.GB35422@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Hi,
+Hello,
 
-On Sun, Sep 03, 2017 at 02:16:19PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Sep 06, 2017 at 11:40:46AM -0700, Brian Norris wrote:
+> Hi,
 > 
-> The comparisons for integer low on low > INT_MAX and also
-> integer high > INT_MAX are never going to be true since an
-> int type cannot be greater than INT_MAX.  Remove these redundant
-> checks.
+> On Sun, Sep 03, 2017 at 02:16:19PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The comparisons for integer low on low > INT_MAX and also
+> > integer high > INT_MAX are never going to be true since an
+> > int type cannot be greater than INT_MAX.  Remove these redundant
+> > checks.
+> > 
+> > Detected by: CoverityScan CID#1455245, 1455248 ("Operands don't affect
+> >   result (CONSTANT_EXPRESSION_RESULT)")
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/thermal/broadcom/brcmstb_thermal.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
+> > index 87b8e7a86ee3..bcb3945feea6 100644
+> > --- a/drivers/thermal/broadcom/brcmstb_thermal.c
+> > +++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+> > @@ -278,8 +278,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
+> >  	dev_dbg(priv->dev, "set trips %d <--> %d\n", low, high);
+> >  
+> >  	if (low) {
+> > -		if (low > INT_MAX)
+> > -			low = INT_MAX;
+> >  		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_LOW, low);
+> >  		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_LOW, 1);
+> >  	} else {
+> > @@ -287,8 +285,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
+> >  	}
+> >  
+> >  	if (high < ULONG_MAX) {
 > 
-> Detected by: CoverityScan CID#1455245, 1455248 ("Operands don't affect
->   result (CONSTANT_EXPRESSION_RESULT)")
+> Dan's robots noticed that the above condition is not useful either (on
+> architectures where INT_MAX < ULONG_MAX -- i.e., all?), since 'high' is
+> 'int', not 'unsigned long'.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/thermal/broadcom/brcmstb_thermal.c | 4 ----
->  1 file changed, 4 deletions(-)
+> Should probably fix that
 > 
-> diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
-> index 87b8e7a86ee3..bcb3945feea6 100644
-> --- a/drivers/thermal/broadcom/brcmstb_thermal.c
-> +++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-> @@ -278,8 +278,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
->  	dev_dbg(priv->dev, "set trips %d <--> %d\n", low, high);
->  
->  	if (low) {
-> -		if (low > INT_MAX)
-> -			low = INT_MAX;
->  		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_LOW, low);
->  		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_LOW, 1);
->  	} else {
-> @@ -287,8 +285,6 @@ static int brcmstb_set_trips(void *data, int low, int high)
->  	}
->  
->  	if (high < ULONG_MAX) {
+> s/ULONG_MAX/INT_MAX/
 
-Dan's robots noticed that the above condition is not useful either (on
-architectures where INT_MAX < ULONG_MAX -- i.e., all?), since 'high' is
-'int', not 'unsigned long'.
+Yeah, that would probably make sense. I might be also the case that the
+driver was considering long because that was the type used to represent
+temperature some time back in the thermal subsystem. So, the limits on
+the driver may be outdated.
 
-Should probably fix that
-
-s/ULONG_MAX/INT_MAX/
-
-?
-
-Brian
-
-> -		if (high > INT_MAX)
-> -			high = INT_MAX;
->  		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_HIGH, high);
->  		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_HIGH, 1);
->  	} else {
-> -- 
-> 2.14.1
 > 
+> ?
+> 
+> Brian
+> 
+> > -		if (high > INT_MAX)
+> > -			high = INT_MAX;
+> >  		avs_tmon_set_trip_temp(priv, TMON_TRIP_TYPE_HIGH, high);
+> >  		avs_tmon_trip_enable(priv, TMON_TRIP_TYPE_HIGH, 1);
+> >  	} else {
+> > -- 
+> > 2.14.1
+> > 
