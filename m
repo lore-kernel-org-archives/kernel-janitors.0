@@ -1,60 +1,36 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Mon, 18 Sep 2017 08:43:22 +0000
-Subject: Re: [PATCH] x86/xen: clean up clang build warning
-Message-Id: <681e7853-f71b-e092-e56b-1d0a2c1ddefe@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:31:37 +0000
+Subject: [PATCH net] phy: mvebu-cp110: checking for NULL instead of IS_ERR()
+Message-Id: <20170908103137.zck6bw66sge4fhua@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918083817.26870-1-colin.king@canonical.com>
-In-Reply-To: <20170918083817.26870-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On 18/09/17 10:38, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where sizeof(maddr) != sizeof(long) p is initialized and
-> never read and clang throws a warning on this.  Move declaration of
-> p to clean up the clang build warning:
-> 
-> warning: Value stored to 'p' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+devm_ioremap_resource() never returns NULL, it only returns error
+pointers so this test needs to be changed.
 
-With the code style issue pointed out below fixed:
+Fixes: d0438bd6aa09 ("phy: add the mvebu cp110 comphy driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This driver apparently is going through the net tree, but netdev isn't
+listed as handling it in MAINTAINERS.  Kishon, do you know what's up
+with that?
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-> ---
->  arch/x86/include/asm/xen/hypercall.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
-> index 9606688caa4b..5ff77cb2529e 100644
-> --- a/arch/x86/include/asm/xen/hypercall.h
-> +++ b/arch/x86/include/asm/xen/hypercall.h
-> @@ -552,13 +552,13 @@ static inline void
->  MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
->  			struct desc_struct desc)
->  {
-> -	u32 *p = (u32 *) &desc;
-> -
->  	mcl->op = __HYPERVISOR_update_descriptor;
->  	if (sizeof(maddr) = sizeof(long)) {
->  		mcl->args[0] = maddr;
->  		mcl->args[1] = *(unsigned long *)&desc;
->  	} else {
-> +		u32 *p = (u32 *) &desc;
-
-Please omit the space here      ^
-
-
-Juergen
-
-> +
->  		mcl->args[0] = maddr;
->  		mcl->args[1] = maddr >> 32;
->  		mcl->args[2] = *p++;
-> 
-
+diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+index 73ebad6634a7..24578bd68ddc 100644
+--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
++++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+@@ -576,8 +576,8 @@ static int mvebu_comphy_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->regmap);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!priv->base)
+-		return -ENOMEM;
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
+ 
+ 	for_each_available_child_of_node(pdev->dev.of_node, child) {
+ 		struct mvebu_comphy_lane *lane;
