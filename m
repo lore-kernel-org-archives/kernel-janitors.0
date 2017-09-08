@@ -1,39 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Sep 2017 08:24:03 +0000
-Subject: Re: [PATCH v2] ALSA: maestro3: Use common error handling code in two functions
-Message-Id: <s5hh8wekjbw.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 20:52:30 +0000
+Subject: [PATCH 2/3] [media] s5p-mfc: Improve a size determination in s5p_mfc_alloc_memdev()
+Message-Id: <003abb1f-4dc6-91ca-9d03-cae13dc4ff6f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e6f4f769-eef7-75e7-19b2-7052328f4b9a@users.sourceforge.net>
-        <20170822140343.yg7bh3qylthja3tn@mwanda>
-        <83b1ba49-253d-72ed-b3b0-ec7d5e72a12c@users.sourceforge.net>
-In-Reply-To: <83b1ba49-253d-72ed-b3b0-ec7d5e72a12c@users.sourceforge.net>
+References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+In-Reply-To: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 06 Sep 2017 08:32:23 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 08:18:30 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> v2:
-> * An approach to make a few checks for a failure predicate a bit safer
->   was rejected so far.
-> 
-> * Extra blank lines were added before labels.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 22:30:09 +0200
 
-Applied, thanks.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+This issue was detected by using the Coccinelle software.
 
-Takashi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 8af45d53846f..abfb70b07032 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1083,7 +1083,7 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
+ 	struct device *child;
+ 	int ret;
+ 
+-	child = devm_kzalloc(dev, sizeof(struct device), GFP_KERNEL);
++	child = devm_kzalloc(dev, sizeof(*child), GFP_KERNEL);
+ 	if (!child)
+ 		return NULL;
+ 
+-- 
+2.14.1
+
