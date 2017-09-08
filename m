@@ -1,30 +1,40 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 11 Sep 2017 20:17:09 +0000
-Subject: Re: [PATCH] mm/backing-dev.c: fix an error handling path in 'cgwb_create()'
-Message-Id: <a0163559-d867-d8e0-d84d-bc99f6f4c43d@kernel.dk>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 15:56:39 +0000
+Subject: [PATCH] signal: remove unused variable mask
+Message-Id: <20170908155639.4413-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170911194323.17833-1-christophe.jaillet@wanadoo.fr>
- <20170911201506.GA15044@quack2.suse.cz>
-In-Reply-To: <20170911201506.GA15044@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: tj@kernel.org, geliangtang@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ingo Molnar <mingo@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On 09/11/2017 02:15 PM, Jan Kara wrote:
-> On Mon 11-09-17 21:43:23, Christophe JAILLET wrote:
->> If the 'kmalloc' fails, we must go through the existing error handling
->> path.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Looks good to me. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+From: Colin Ian King <colin.king@canonical.com>
 
-I'll queue it up, with your reviewed-by added. Thanks.
+The variable mask was introduced by an earlier commit and does not seem
+to be used, so remove it.
 
+Fixes gcc warning:
+kernel/signal.c:3443:19: warning: unused variable ‘mask’ [-Wunused-variable]
+
+Fixes: fc271087ebcb ("signal: replace sigset_to_compat() with put_compat_sigset()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/signal.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 3198a7d2e5ff..36a523640894 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3440,7 +3440,6 @@ COMPAT_SYSCALL_DEFINE4(rt_sigaction, int, sig,
+ 
+ 	if (act) {
+ 		compat_uptr_t handler;
+-		compat_sigset_t mask;
+ 		ret = get_user(handler, &act->sa_handler);
+ 		new_ka.sa.sa_handler = compat_ptr(handler);
+ #ifdef __ARCH_HAS_SA_RESTORER
 -- 
-Jens Axboe
+2.14.1
 
