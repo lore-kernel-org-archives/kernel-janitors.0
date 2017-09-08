@@ -1,54 +1,41 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 07 Sep 2017 21:31:56 +0000
-Subject: Re: [PATCH] input: surface3_spi: make const array header static, reduces object code size
-Message-Id: <20170907213156.GC19320@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 14:37:45 +0000
+Subject: [PATCH] IB/rxe: check for allocation failure on elem
+Message-Id: <20170908143745.2445-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170906095137.21980-1-colin.king@canonical.com>
-In-Reply-To: <20170906095137.21980-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Moni Shoua <monis@mellanox.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 06, 2017 at 10:51:37AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array header on the stack, instead make it
-> static.  Makes the object code smaller by over 180 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    6003	   1536	      0	   7539	   1d73	surface3_spi.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    5726	   1632	      0	   7358	   1cbe	surface3_spi.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+The allocation for elem may fail (especially because we're using
+GFP_ATOMIC) so best to check for a null return.  This fixes a potential
+null pointer dereference when assigning elem->pool.
 
->  drivers/input/touchscreen/surface3_spi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/surface3_spi.c b/drivers/input/touchscreen/surface3_spi.c
-> index e12fb9b63f31..ecba847889b5 100644
-> --- a/drivers/input/touchscreen/surface3_spi.c
-> +++ b/drivers/input/touchscreen/surface3_spi.c
-> @@ -173,7 +173,7 @@ static void surface3_spi_process_pen(struct surface3_ts_data *ts_data, u8 *data)
->  
->  static void surface3_spi_process(struct surface3_ts_data *ts_data)
->  {
-> -	const char header[] = {
-> +	static const char header[] = {
->  		0xff, 0xff, 0xff, 0xff, 0xa5, 0x5a, 0xe7, 0x7e, 0x01
->  	};
->  	u8 *data = ts_data->rd_buf;
-> -- 
-> 2.14.1
-> 
+Detected by CoverityScan CID#1357507 ("Dereference null return value")
 
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/sw/rxe/rxe_pool.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_pool.c b/drivers/infiniband/sw/rxe/rxe_pool.c
+index c1b5f38f31a5..3b4916680018 100644
+--- a/drivers/infiniband/sw/rxe/rxe_pool.c
++++ b/drivers/infiniband/sw/rxe/rxe_pool.c
+@@ -404,6 +404,8 @@ void *rxe_alloc(struct rxe_pool *pool)
+ 	elem = kmem_cache_zalloc(pool_cache(pool),
+ 				 (pool->flags & RXE_POOL_ATOMIC) ?
+ 				 GFP_ATOMIC : GFP_KERNEL);
++	if (!elem)
++		return NULL;
+ 
+ 	elem->pool = pool;
+ 	kref_init(&elem->ref_cnt);
 -- 
-Dmitry
+2.14.1
+
