@@ -1,49 +1,40 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Fri, 08 Sep 2017 18:08:18 +0000
-Subject: Re: [PATCH] drm/vc4: clean up error handling on devm_kzalloc failure
-Message-Id: <87y3ppm5bh.fsf@anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 14:13:33 +0000
+Subject: [PATCH] drm/amdkfd: check for null dev to avoid a null pointer dereference
+Message-Id: <20170908141333.1563-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908131704.32517-1-colin.king@canonical.com>
-In-Reply-To: <20170908131704.32517-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin King <colin.king@canonical.com> writes:
+The call to kfd_device_by_id can potentially return null, so check that
+dev is null and return with -EINVAL to avoid a null pointer dereference.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The current error handling on devm_kzalloc failures performs a non-null
-> check on connector. Thss check is redundant because connector is null
-> at that failure point.  With this check removed, we may as well make
-> the failure path into a trivial -ENOMEM return to clean up the error
-> handling.
->
-> Detected by CoverityScan CID#1339527 ("Logically dead code")
+Detected by CoverityScan CID#1454629 ("Dereference null return value")
 
-Reviewed and applied.  Thanks!
+Fixes: 5d71dbc3a588 ("drm/amdkfd: Implement image tiling mode support v2")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+index e4a8c2e52cb2..660b3fbade41 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+@@ -892,6 +892,8 @@ static int kfd_ioctl_get_tile_config(struct file *filep,
+ 	int err = 0;
+ 
+ 	dev = kfd_device_by_id(args->gpu_id);
++	if (!dev)
++		return -EINVAL;
+ 
+ 	dev->kfd2kgd->get_tile_config(dev->kgd, &config);
+ 
+-- 
+2.14.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlmy3JIACgkQtdYpNtH8
-nug4RhAAizQsgw7dmI9OUtxZ8ZmKlh26SGuRubNqqiba6i3Pn/SBAqcEk2FBPWHX
-d3FxHWiai+EEOjOUD2Isa7WCjF3WF8RRU9tClR6WEanwde8NMDNWs3t/XYObGImS
-s5Uwm3eatVWvuh+yBrVMcna6TNl9HWtshVnTJ5g4Hk3NRqNjNtu6bFawbapo741U
-WFX/ZaLzfG60RSIL4N9Ov1ywpsd/rCDxhJeBOnCVMoKdQwj1d4NDQzCXYCE0L3P0
-aBdNFY5YuBWsPEzDquOE6Qw+aioXbQ7VHMQm57W2Tsi8R9cLKdE16gEXRI22zGX3
-AjcsKykpCo6OkViFRYjPT6W19AClzbgjV2b4Bzp0JeixrPqW50d54JStc1MvhftB
-mgv8bAhNlDehsyfXpW+1YlXRD1H61BB96yMGhgEaQ5gU+MiKVRdv+hzUySx/6QCA
-kJ7knlraRcIkCTo7iXD9ayFKoLXeygmlGe+nm2MSD7KPWImkQ0Tmppibk79CRvQ0
-GkLEyxdJawMQIqJDoOEaJHHoD6AJyDmzpzbYErKgrw3WCz8lHF1708daqdQMSkpr
-/V3PgkD9eGZ2DJixB1E2PMpXdAcEouyB3QOesqZ7GxNJdg1vgKF7gNf6/VqZVl+I
-UKN591BhB6mLRraqilknQ3MkDmXoSs2+qSpdjIcwRKQusV5b1Jg=
-=7ZiP
------END PGP SIGNATURE-----
---=-=-=--
