@@ -1,35 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 12 Sep 2017 07:38:38 +0000
-Subject: Re: [PATCH][pinctrl-next] pinctrl: sprd: make three local functions static
-Message-Id: <CACRpkdbodwJqXrFTKFBzGUw9sGRCbnbuPTMfvtDC1y9HBsKs=Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:43:51 +0000
+Subject: [PATCH] tsacct: Fix a truncation bug in taskstats
+Message-Id: <20170908104351.wjjw4mfkcvmtq5dx@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170904105322.23228-1-colin.king@canonical.com>
-In-Reply-To: <20170904105322.23228-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Baolin Wang <baolin.wang@spreadtrum.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 4, 2017 at 12:53 PM, Colin King <colin.king@canonical.com> wrote:
+The KB_MASK is used to hide the low bits which prevent an information
+leak about keyboard timing etc.  The problem is that it's a 32 bit mask
+instead of 64 bits so it zeroes out the high 32 bits as well.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The functions sprd_pmx_get_function_count, sprd_pmx_get_function_name
-> and sprd_pmx_get_function_groups are local to the source and do not
-> need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> "symbol 'sprd_pmx_get_function_count' was not declared. Should it be
-> static?"
-> "symbol 'sprd_pmx_get_function_name' was not declared. Should it be
-> static?"
-> "symbol 'sprd_pmx_get_function_groups' was not declared. Should it be
-> static?"
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 58c3c3aa01b4 ("Make taskstats round statistics down to nearest 1k bytes/events")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied for fixes.
-
-Yours,
-Linus Walleij
+diff --git a/kernel/tsacct.c b/kernel/tsacct.c
+index 370724b45391..ea9375c94126 100644
+--- a/kernel/tsacct.c
++++ b/kernel/tsacct.c
+@@ -87,7 +87,7 @@ void bacct_add_tsk(struct user_namespace *user_ns,
+ 
+ #define KB 1024
+ #define MB (1024*KB)
+-#define KB_MASK (~(KB-1))
++#define KB_MASK (~((u64)KB-1))
+ /*
+  * fill in extended accounting fields
+  */
