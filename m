@@ -1,19 +1,20 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Fri, 08 Sep 2017 13:45:40 +0000
+From: Eric Anholt <eric@anholt.net>
+Date: Fri, 08 Sep 2017 18:08:18 +0000
 Subject: Re: [PATCH] drm/vc4: clean up error handling on devm_kzalloc failure
-Message-Id: <CACvgo50Z18JtkD=F9PtxfQjjJBP9JhCOSUKkHYcLYO+NFnqU-Q@mail.gmail.com>
+Message-Id: <87y3ppm5bh.fsf@anholt.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170908131704.32517-1-colin.king@canonical.com>
 In-Reply-To: <20170908131704.32517-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>
+To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+--=-=-=
+Content-Type: text/plain
 
-On 8 September 2017 at 14:17, Colin King <colin.king@canonical.com> wrote:
+Colin King <colin.king@canonical.com> writes:
+
 > From: Colin Ian King <colin.king@canonical.com>
 >
 > The current error handling on devm_kzalloc failures performs a non-null
@@ -23,19 +24,26 @@ On 8 September 2017 at 14:17, Colin King <colin.king@canonical.com> wrote:
 > handling.
 >
 > Detected by CoverityScan CID#1339527 ("Logically dead code")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_hdmi.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> index 937da8dd65b8..a8808c1a1e03 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> @@ -311,14 +311,11 @@ static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
->  {
->         struct drm_connector *connector = NULL;
-I think you can drop the initializer now.
 
--Emil
+Reviewed and applied.  Thanks!
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlmy3JIACgkQtdYpNtH8
+nug4RhAAizQsgw7dmI9OUtxZ8ZmKlh26SGuRubNqqiba6i3Pn/SBAqcEk2FBPWHX
+d3FxHWiai+EEOjOUD2Isa7WCjF3WF8RRU9tClR6WEanwde8NMDNWs3t/XYObGImS
+s5Uwm3eatVWvuh+yBrVMcna6TNl9HWtshVnTJ5g4Hk3NRqNjNtu6bFawbapo741U
+WFX/ZaLzfG60RSIL4N9Ov1ywpsd/rCDxhJeBOnCVMoKdQwj1d4NDQzCXYCE0L3P0
+aBdNFY5YuBWsPEzDquOE6Qw+aioXbQ7VHMQm57W2Tsi8R9cLKdE16gEXRI22zGX3
+AjcsKykpCo6OkViFRYjPT6W19AClzbgjV2b4Bzp0JeixrPqW50d54JStc1MvhftB
+mgv8bAhNlDehsyfXpW+1YlXRD1H61BB96yMGhgEaQ5gU+MiKVRdv+hzUySx/6QCA
+kJ7knlraRcIkCTo7iXD9ayFKoLXeygmlGe+nm2MSD7KPWImkQ0Tmppibk79CRvQ0
+GkLEyxdJawMQIqJDoOEaJHHoD6AJyDmzpzbYErKgrw3WCz8lHF1708daqdQMSkpr
+/V3PgkD9eGZ2DJixB1E2PMpXdAcEouyB3QOesqZ7GxNJdg1vgKF7gNf6/VqZVl+I
+UKN591BhB6mLRraqilknQ3MkDmXoSs2+qSpdjIcwRKQusV5b1Jg=
+=7ZiP
+-----END PGP SIGNATURE-----
+--=-=-=--
