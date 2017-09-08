@@ -1,51 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Sep 2017 19:14:47 +0000
-Subject: [PATCH 2/2] [media] xc4000: Adjust two null pointer checks in xc4000_fwupload()
-Message-Id: <68444473-5d87-3213-4640-6069c88db1a9@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:40:12 +0000
+Subject: [PATCH] mpt3sas: Fix a double unlock in _transport_smp_handler()
+Message-Id: <20170907143006.f3aeniflflmj7j7q@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <61016489-eb01-2977-b094-343aa70686b0@users.sourceforge.net>
-In-Reply-To: <61016489-eb01-2977-b094-343aa70686b0@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Christoph Hellwig <hch@lst.de>
+Cc: Chaitra P B <chaitra.basappa@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Sep 2017 20:55:14 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+We can't "goto out;" if we're not holding "ioc->transport_cmds.mutex".
+It leads to a double unlock bug, and I don't think we should set
+"ioc->transport_cmds.status" if we don't have the lock.
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 651a01364994 ("scsi: scsi_transport_sas: switch to bsg-lib for SMP passthrough")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/tuners/xc4000.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm not totally sure about the .status thing.  This is a static checker
+fix.
 
-diff --git a/drivers/media/tuners/xc4000.c b/drivers/media/tuners/xc4000.c
-index bbf386127fc4..bd53e44b3cc8 100644
---- a/drivers/media/tuners/xc4000.c
-+++ b/drivers/media/tuners/xc4000.c
-@@ -775,5 +775,5 @@ static int xc4000_fwupload(struct dvb_frontend *fe)
- 		priv->firm_version >> 8, priv->firm_version & 0xff);
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+index d3940c5d079d..c9cd9ed90002 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+@@ -1936,12 +1936,12 @@ _transport_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
+ 		pr_info(MPT3SAS_FMT "%s: host reset in progress!\n",
+ 		    __func__, ioc->name);
+ 		rc = -EFAULT;
+-		goto out;
++		goto job_done;
+ 	}
  
- 	priv->firm = kcalloc(n_array, sizeof(*priv->firm), GFP_KERNEL);
--	if (priv->firm = NULL) {
-+	if (!priv->firm) {
- 		rc = -ENOMEM;
-@@ -821,5 +821,5 @@ static int xc4000_fwupload(struct dvb_frontend *fe)
- 		}
+ 	rc = mutex_lock_interruptible(&ioc->transport_cmds.mutex);
+ 	if (rc)
+-		goto out;
++		goto job_done;
  
- 		priv->firm[n].ptr = kzalloc(size, GFP_KERNEL);
--		if (priv->firm[n].ptr = NULL) {
-+		if (!priv->firm[n].ptr) {
- 			rc = -ENOMEM;
--- 
-2.14.1
-
+ 	if (ioc->transport_cmds.status != MPT3_CMD_NOT_USED) {
+ 		pr_err(MPT3SAS_FMT "%s: transport_cmds in use\n", ioc->name,
+@@ -2066,6 +2066,7 @@ _transport_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
+  out:
+ 	ioc->transport_cmds.status = MPT3_CMD_NOT_USED;
+ 	mutex_unlock(&ioc->transport_cmds.mutex);
++ job_done:
+ 	bsg_job_done(job, rc, reslen);
+ }
+ 
