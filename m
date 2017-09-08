@@ -1,45 +1,42 @@
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Date: Sat, 30 Sep 2017 06:10:31 +0000
-Subject: Re: [PATCH] net: hns3: Fix an error handling path in 'hclge_rss_init_hw()'
-Message-Id: <ab4512d9-ba6c-d57a-55b0-8d4a32672d6e@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 20:14:59 +0000
+Subject: [PATCH] [media] pxa_camera: Delete an error message for a failed memory allocation in pxa_camera_pro
+Message-Id: <c7f8c07d-3cbd-c705-a8e5-d0c6941cd09e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930053434.4558-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170930053434.4558-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net, lipeng321@huawei.com, colin.king@canonical.com, arnd@arndb.de
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Petr Cvek <petr.cvek@tul.cz>, Robert Jarzmik <robert.jarzmik@free.fr>, Sakari Ailus <sakari.ailus@iki.fi>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi, Christophe
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 22:05:14 +0200
 
-On 2017/9/30 13:34, Christophe JAILLET wrote:
-> If this sanity check fails, we must free 'rss_indir'. Otherwise there is a
-> memory leak.
-> 'goto err' as done in the other error handling paths to fix it.
+Omit an extra message for a memory allocation failure in this function.
 
-Thanks for fixing.
+This issue was detected by using the Coccinelle software.
 
-> 
-> Fixes: 46a3df9f9718 ("net: hns3: Fix for setting rss_size incorrectly")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> index e0685e630afe..c1cdbfd83bdb 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> @@ -2652,7 +2652,8 @@ static int hclge_rss_init_hw(struct hclge_dev *hdev)
->  		dev_err(&hdev->pdev->dev,
->  			"Configure rss tc size failed, invalid TC_SIZE = %d\n",
->  			rss_size);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err;
->  	}
->  
->  	roundup_size = roundup_pow_of_two(rss_size);
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/pxa_camera.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
+index edca993c2b1f..d2a4432a98ea 100644
+--- a/drivers/media/platform/pxa_camera.c
++++ b/drivers/media/platform/pxa_camera.c
+@@ -2362,10 +2362,8 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	pcdev = devm_kzalloc(&pdev->dev, sizeof(*pcdev), GFP_KERNEL);
+-	if (!pcdev) {
+-		dev_err(&pdev->dev, "Could not allocate pcdev\n");
++	if (!pcdev)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pcdev->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(pcdev->clk))
+-- 
+2.14.1
 
