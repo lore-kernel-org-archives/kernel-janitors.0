@@ -1,56 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Sep 2017 10:34:42 +0000
-Subject: [PATCH 2/2] rpmsg: glink: Fix memory leak in qcom_glink_alloc_intent()
-Message-Id: <20170908103440.junitv63lrzc5ih5@mwanda>
+From: Sricharan R <sricharan@codeaurora.org>
+Date: Fri, 08 Sep 2017 11:26:21 +0000
+Subject: Re: [PATCH 2/2] rpmsg: glink: Fix memory leak in qcom_glink_alloc_intent()
+Message-Id: <4f052d23-b632-2423-7201-a51d8815ea91@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170908103345.brf5wcj5yg6zpslz@mwanda>
+References: <20170908103440.junitv63lrzc5ih5@mwanda>
+In-Reply-To: <20170908103440.junitv63lrzc5ih5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Ohad Ben-Cohen <ohad@wizery.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to free "intent" and "intent->data" on a couple error paths.
+Hi,
 
-Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 9/8/2017 4:04 PM, Dan Carpenter wrote:
+> We need to free "intent" and "intent->data" on a couple error paths.
+> 
+> Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index fecb1dafa8f3..5dcc9bf1c5bc 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
+>  	unsigned long flags;
+>  
+>  	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
+> -
+>  	if (!intent)
+>  		return NULL;
+>  
+>  	intent->data = kzalloc(size, GFP_KERNEL);
+>  	if (!intent->data)
+> -		return NULL;
+> +		goto free_intent;
+>  
+>  	spin_lock_irqsave(&channel->intent_lock, flags);
+>  	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
+>  	if (ret < 0) {
+>  		spin_unlock_irqrestore(&channel->intent_lock, flags);
+> -		return NULL;
+> +		goto free_data;
+>  	}
+>  	spin_unlock_irqrestore(&channel->intent_lock, flags);
+>  
+> @@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
+>  	intent->reuse = reuseable;
+>  
+>  	return intent;
+> +
+> +free_data:
+> +	kfree(intent->data);
+> +free_intent:
+> +	kfree(intent);
+> +	return NULL;
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index fecb1dafa8f3..5dcc9bf1c5bc 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	unsigned long flags;
- 
- 	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
--
- 	if (!intent)
- 		return NULL;
- 
- 	intent->data = kzalloc(size, GFP_KERNEL);
- 	if (!intent->data)
--		return NULL;
-+		goto free_intent;
- 
- 	spin_lock_irqsave(&channel->intent_lock, flags);
- 	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
- 	if (ret < 0) {
- 		spin_unlock_irqrestore(&channel->intent_lock, flags);
--		return NULL;
-+		goto free_data;
- 	}
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
-@@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	intent->reuse = reuseable;
- 
- 	return intent;
-+
-+free_data:
-+	kfree(intent->data);
-+free_intent:
-+	kfree(intent);
-+	return NULL;
- }
- 
- static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
+Acked-by: Sricharan R <sricharan@codeaurora.org>
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
+
