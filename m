@@ -1,67 +1,50 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 07 Sep 2017 21:31:43 +0000
-Subject: Re: [PATCH] input: elantech: make arrays debounce_packet static, reduces object code size
-Message-Id: <20170907213143.GB19320@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 12:32:29 +0000
+Subject: [PATCH 2/3] [media] DaVinci-VPBE-Display: Improve a size determination in two functions
+Message-Id: <d4fc91b4-4850-b756-d297-fcebdc8d7131@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170906125944.16936-1-colin.king@canonical.com>
-In-Reply-To: <20170906125944.16936-1-colin.king@canonical.com>
+References: <e980c48c-9525-4942-a58e-20af8a96e531@users.sourceforge.net>
+In-Reply-To: <e980c48c-9525-4942-a58e-20af8a96e531@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ulrik De Bie <ulrik.debie-os@e2big.org>, KT Liao <kt.liao@emc.com.tw>, Matti Kurkela <Matti.Kurkela@iki.fi>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 06, 2017 at 01:59:44PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays debounce_packet on the stack, instead make
-> them static.  Makes the object code smaller by over 870 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   30553	   9152	      0	  39705	   9b19	drivers/input/mouse/elantech.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   29521	   9312	      0	  38833	   97b1	drivers/input/mouse/elantech.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 10:50:32 +0200
 
-Applied, thank you.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> ---
->  drivers/input/mouse/elantech.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-> index 6428d6f4d568..b84cd978fce2 100644
-> --- a/drivers/input/mouse/elantech.c
-> +++ b/drivers/input/mouse/elantech.c
-> @@ -700,7 +700,9 @@ static int elantech_debounce_check_v2(struct psmouse *psmouse)
->           * When we encounter packet that matches this exactly, it means the
->           * hardware is in debounce status. Just ignore the whole packet.
->           */
-> -        const u8 debounce_packet[] = { 0x84, 0xff, 0xff, 0x02, 0xff, 0xff };
-> +	static const u8 debounce_packet[] = {
-> +		0x84, 0xff, 0xff, 0x02, 0xff, 0xff
-> +	};
->          unsigned char *packet = psmouse->packet;
->  
->          return !memcmp(packet, debounce_packet, sizeof(debounce_packet));
-> @@ -741,7 +743,9 @@ static int elantech_packet_check_v2(struct psmouse *psmouse)
->  static int elantech_packet_check_v3(struct psmouse *psmouse)
->  {
->  	struct elantech_data *etd = psmouse->private;
-> -	const u8 debounce_packet[] = { 0xc4, 0xff, 0xff, 0x02, 0xff, 0xff };
-> +	static const u8 debounce_packet[] = {
-> +		0xc4, 0xff, 0xff, 0x02, 0xff, 0xff
-> +	};
->  	unsigned char *packet = psmouse->packet;
->  
->  	/*
-> -- 
-> 2.14.1
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/davinci/vpbe_display.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
+index 5b6fc550736b..afe31900f5de 100644
+--- a/drivers/media/platform/davinci/vpbe_display.c
++++ b/drivers/media/platform/davinci/vpbe_display.c
+@@ -1305,9 +1305,5 @@ static int init_vpbe_layer(int i, struct vpbe_display *disp_dev,
+ 	struct video_device *vbd = NULL;
+ 
+ 	/* Allocate memory for four plane display objects */
+-
+-	disp_dev->dev[i] -		kzalloc(sizeof(struct vpbe_layer), GFP_KERNEL);
+-
+-	/* If memory allocation fails, return error */
++	disp_dev->dev[i] = kzalloc(sizeof(*disp_dev->dev[i]), GFP_KERNEL);
+ 	if (!disp_dev->dev[i])
+@@ -1396,6 +1392,5 @@ static int vpbe_display_probe(struct platform_device *pdev)
+ 
+ 	printk(KERN_DEBUG "vpbe_display_probe\n");
+ 	/* Allocate memory for vpbe_display */
+-	disp_dev = devm_kzalloc(&pdev->dev, sizeof(struct vpbe_display),
+-				GFP_KERNEL);
++	disp_dev = devm_kzalloc(&pdev->dev, sizeof(*disp_dev), GFP_KERNEL);
+ 	if (!disp_dev)
 -- 
-Dmitry
+2.14.1
+
