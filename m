@@ -1,92 +1,37 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Sun, 24 Sep 2017 03:50:37 +0000
-Subject: Re: [PATCH 1/3] ALSA: bebob: Use common error handling code in snd_bebob_stream_start_duplex()
-Message-Id: <a1dee732-f5c4-5b35-9f82-553fc8ce430d@sakamocchi.jp>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:23:57 +0000
+Subject: [PATCH net] net: qualcomm: rmnet: Fix a double free
+Message-Id: <20170908102356.tzysh6qaiesd2umz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
- <541f0f9f-fc87-f65b-bbd8-fec5d45d5d2e@users.sourceforge.net>
-In-Reply-To: <541f0f9f-fc87-f65b-bbd8-fec5d45d5d2e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+This is called from rmnet_map_ingress_handler().  When the
+rmnet_map_deaggregate() returns NULL then the caller calls
+consume_skb(skb) which frees the skb.  The kfree_skb() on this error
+path leads to a double free.
 
-On Sep 6 2017 19:22, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 11:40:53 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   sound/firewire/bebob/bebob_stream.c | 21 ++++++++++-----------
->   1 file changed, 10 insertions(+), 11 deletions(-)
-> 
-> diff --git a/sound/firewire/bebob/bebob_stream.c b/sound/firewire/bebob/bebob_stream.c
-> index 4d3034a68bdf..bc9e42b6368e 100644
-> --- a/sound/firewire/bebob/bebob_stream.c
-> +++ b/sound/firewire/bebob/bebob_stream.c
-> ...
-> @@ -666,9 +661,7 @@ int snd_bebob_stream_start_duplex(struct snd_bebob *bebob, unsigned int rate)
->   		if (err < 0) {
->   			dev_err(&bebob->unit->device,
->   				"fail to run AMDTP slave stream:%d\n", err);
-> -			amdtp_stream_stop(&bebob->rx_stream);
-> -			break_both_connections(bebob);
-> -			goto end;
-> +			goto stop_rx_stream;
->   		}
->   
->   		/* wait first callback */
+Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis and not tested.
 
-After the above code block, we have below code block.
-
-658 /* start slave if needed */
-659 if (!amdtp_stream_running(&bebob->tx_stream)) {
-660     err = start_stream(bebob, &bebob->tx_stream, rate);
-661     if (err < 0) {
-662         dev_err(&bebob->unit->device,
-663                 "fail to run AMDTP slave stream:%d\n", err);
-664         goto stop_rx_stream;
-665     }
-666
-667     /* wait first callback */
-668     if (!amdtp_stream_wait_callback(&bebob->tx_stream,
-669                                     CALLBACK_TIMEOUT)) {
-670         amdtp_stream_stop(&bebob->tx_stream);
-671         amdtp_stream_stop(&bebob->rx_stream);
-672         break_both_connections(bebob);
-673         err = -ETIMEDOUT;
-674     }
-675 }
-
-I think it better to apply your solution too in the above to keep code 
-consistency.
-
-> @@ -682,6 +675,12 @@ int snd_bebob_stream_start_duplex(struct snd_bebob *bebob, unsigned int rate)
->   	}
->   end:
->   	return err;
-> +
-> +stop_rx_stream:
-> +	amdtp_stream_stop(&bebob->rx_stream);
-> +break_connections:
-> +	break_both_connections(bebob);
-> +	return err;
->   }
->   
->   void snd_bebob_stream_stop_duplex(struct snd_bebob *bebob)
-
-For the other patches, I can find no merit to apply except for reduction 
-of the number of characters included in the file.
-
-
-Thanks
-
-Takashi Sakamoto
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
+index 557c9bf1a469..0335fce54201 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
+@@ -95,10 +95,8 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff *skb)
+ 	skb_pull(skb, packet_len);
+ 
+ 	/* Some hardware can send us empty frames. Catch them */
+-	if (ntohs(maph->pkt_len) = 0) {
+-		kfree_skb(skb);
++	if (ntohs(maph->pkt_len) = 0)
+ 		return NULL;
+-	}
+ 
+ 	return skbn;
+ }
