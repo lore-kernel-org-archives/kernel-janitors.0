@@ -1,77 +1,38 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 28 Sep 2017 19:46:24 +0000
-Subject: Re: [PATCH][drm-next] drm/amd/powerplay: fix spelling mistake: "dividable" -> "divisible"
-Message-Id: <CADnq5_MpeuEOLByvVMZg8DGTBSKej7ctnf+sBcisVnaYrsPptg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:33:45 +0000
+Subject: [PATCH 1/2] rpmsg: glink: Unlock on error in qcom_glink_request_intent()
+Message-Id: <20170908103345.brf5wcj5yg6zpslz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170928103552.7755-1-colin.king@canonical.com>
-In-Reply-To: <20170928103552.7755-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Xiangliang Yu <Xiangliang.Yu@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Evan Quan <evan.quan@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Monk Liu <Monk.Liu@amd.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Sep 28, 2017 at 6:35 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistakes in pr_err error message and ASSERT
-> messages.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+If qcom_glink_tx() fails, then we need to unlock before returning the
+error code.
 
-Applied.  thanks!
+Fixes: 27b9c5b66b23 ("rpmsg: glink: Request for intents when unavailable")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c         | 2 +-
->  drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 +-
->  drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c    | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
-> index fcf88b8fc738..9d1086894d2b 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
-> @@ -2332,7 +2332,7 @@ static int ci_load_smc_ucode(struct pp_hwmgr *hwmgr)
->         PHM_WRITE_FIELD(hwmgr->device, SMC_IND_ACCESS_CNTL, AUTO_INCREMENT_IND_0, 0);
->
->         if (0 != byte_count) {
-> -               pr_err("SMC size must be dividable by 4\n");
-> +               pr_err("SMC size must be divisible by 4\n");
->                 return -EINVAL;
->         }
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> index 78aa1122eacc..a778e174ba01 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-> @@ -108,7 +108,7 @@ static int iceland_upload_smc_firmware_data(struct pp_hwmgr *hwmgr,
->
->         PHM_WRITE_FIELD(hwmgr->device, SMC_IND_ACCESS_CNTL, AUTO_INCREMENT_IND_0, 0);
->
-> -       PP_ASSERT_WITH_CODE((0 = byte_count), "SMC size must be dividable by 4.", return -EINVAL);
-> +       PP_ASSERT_WITH_CODE((0 = byte_count), "SMC size must be divisible by 4.", return -EINVAL);
->
->         return 0;
->  }
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-> index 2ae05bbdb974..c997117f2461 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c
-> @@ -513,7 +513,7 @@ static int smu7_upload_smc_firmware_data(struct pp_hwmgr *hwmgr, uint32_t length
->
->         PHM_WRITE_FIELD(hwmgr->device, SMC_IND_ACCESS_CNTL, AUTO_INCREMENT_IND_11, 0);
->
-> -       PP_ASSERT_WITH_CODE((0 = byte_count), "SMC size must be dividable by 4.", return -EINVAL);
-> +       PP_ASSERT_WITH_CODE((0 = byte_count), "SMC size must be divisible by 4.", return -EINVAL);
->
->         return 0;
->  }
-> --
-> 2.14.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 5a5e927ea50f..fecb1dafa8f3 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1197,7 +1197,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
+ 
+ 	ret = qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
+ 	if (ret)
+-		return ret;
++		goto unlock;
+ 
+ 	ret = wait_for_completion_timeout(&channel->intent_req_comp, 10 * HZ);
+ 	if (!ret) {
+@@ -1207,6 +1207,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
+ 		ret = channel->intent_req_result ? 0 : -ECANCELED;
+ 	}
+ 
++unlock:
+ 	mutex_unlock(&channel->intent_req_lock);
+ 	return ret;
+ }
