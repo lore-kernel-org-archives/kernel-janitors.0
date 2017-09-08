@@ -1,133 +1,64 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Sep 2017 11:08:13 +0000
-Subject: [PATCH] [media] gspca: make arrays static, reduces object code size
-Message-Id: <20170912110813.883-1-colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 14:05:04 +0000
+Subject: [PATCH][V2] drm/vc4: clean up error handling on devm_kzalloc failure
+Message-Id: <20170908140504.1340-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate const arrays on the stack, instead make them
-static.  Makes the object code smaller by over 5200 bytes:
+The current error handling when devm_kzalloc fails performs a
+non-null check on connector which is redundant because connector
+is null at that failure point.  Once this is removed, make the
+failure path into a trivial -ENOMEM return to clean up the
+error handling. Also remove need to initialize connector to NULL.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  58259	   8880	    128	  67267	  106c3	ov519.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  52155	   9776	    128	  62059	   f26b	ov519.o
-
+Detected by CoverityScan CID#1339527 ("Logically dead code")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/gspca/ov519.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
-index cdb79c5f0c38..f1537daf4e2e 100644
---- a/drivers/media/usb/gspca/ov519.c
-+++ b/drivers/media/usb/gspca/ov519.c
-@@ -2865,7 +2865,7 @@ static void sd_reset_snapshot(struct gspca_dev *gspca_dev)
- 
- static void ov51x_upload_quan_tables(struct sd *sd)
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index 937da8dd65b8..fa37a1c07cf6 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -309,16 +309,13 @@ static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs  static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
+ 						     struct drm_encoder *encoder)
  {
--	const unsigned char yQuanTable511[] = {
-+	static const unsigned char yQuanTable511[] = {
- 		0, 1, 1, 2, 2, 3, 3, 4,
- 		1, 1, 1, 2, 2, 3, 4, 4,
- 		1, 1, 2, 2, 3, 4, 4, 4,
-@@ -2876,7 +2876,7 @@ static void ov51x_upload_quan_tables(struct sd *sd)
- 		4, 4, 4, 4, 5, 5, 5, 5
- 	};
+-	struct drm_connector *connector = NULL;
++	struct drm_connector *connector;
+ 	struct vc4_hdmi_connector *hdmi_connector;
+-	int ret = 0;
  
--	const unsigned char uvQuanTable511[] = {
-+	static const unsigned char uvQuanTable511[] = {
- 		0, 2, 2, 3, 4, 4, 4, 4,
- 		2, 2, 2, 4, 4, 4, 4, 4,
- 		2, 2, 3, 4, 4, 4, 4, 4,
-@@ -2888,13 +2888,13 @@ static void ov51x_upload_quan_tables(struct sd *sd)
- 	};
+ 	hdmi_connector = devm_kzalloc(dev->dev, sizeof(*hdmi_connector),
+ 				      GFP_KERNEL);
+-	if (!hdmi_connector) {
+-		ret = -ENOMEM;
+-		goto fail;
+-	}
++	if (!hdmi_connector)
++		return ERR_PTR(-ENOMEM);
+ 	connector = &hdmi_connector->base;
  
- 	/* OV518 quantization tables are 8x4 (instead of 8x8) */
--	const unsigned char yQuanTable518[] = {
-+	static const unsigned char yQuanTable518[] = {
- 		5, 4, 5, 6, 6, 7, 7, 7,
- 		5, 5, 5, 5, 6, 7, 7, 7,
- 		6, 6, 6, 6, 7, 7, 7, 8,
- 		7, 7, 6, 7, 7, 7, 8, 8
- 	};
--	const unsigned char uvQuanTable518[] = {
-+	static const unsigned char uvQuanTable518[] = {
- 		6, 6, 6, 7, 7, 7, 7, 7,
- 		6, 6, 6, 7, 7, 7, 7, 7,
- 		6, 6, 6, 7, 7, 7, 7, 8,
-@@ -2943,7 +2943,7 @@ static void ov511_configure(struct gspca_dev *gspca_dev)
- 	struct sd *sd = (struct sd *) gspca_dev;
+ 	hdmi_connector->encoder = encoder;
+@@ -336,12 +333,6 @@ static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
+ 	drm_mode_connector_attach_encoder(connector, encoder);
  
- 	/* For 511 and 511+ */
--	const struct ov_regvals init_511[] = {
-+	static const struct ov_regvals init_511[] = {
- 		{ R51x_SYS_RESET,	0x7f },
- 		{ R51x_SYS_INIT,	0x01 },
- 		{ R51x_SYS_RESET,	0x7f },
-@@ -2953,7 +2953,7 @@ static void ov511_configure(struct gspca_dev *gspca_dev)
- 		{ R51x_SYS_RESET,	0x3d },
- 	};
+ 	return connector;
+-
+- fail:
+-	if (connector)
+-		vc4_hdmi_connector_destroy(connector);
+-
+-	return ERR_PTR(ret);
+ }
  
--	const struct ov_regvals norm_511[] = {
-+	static const struct ov_regvals norm_511[] = {
- 		{ R511_DRAM_FLOW_CTL,	0x01 },
- 		{ R51x_SYS_SNAP,	0x00 },
- 		{ R51x_SYS_SNAP,	0x02 },
-@@ -2963,7 +2963,7 @@ static void ov511_configure(struct gspca_dev *gspca_dev)
- 		{ R511_COMP_LUT_EN,	0x03 },
- 	};
- 
--	const struct ov_regvals norm_511_p[] = {
-+	static const struct ov_regvals norm_511_p[] = {
- 		{ R511_DRAM_FLOW_CTL,	0xff },
- 		{ R51x_SYS_SNAP,	0x00 },
- 		{ R51x_SYS_SNAP,	0x02 },
-@@ -2973,7 +2973,7 @@ static void ov511_configure(struct gspca_dev *gspca_dev)
- 		{ R511_COMP_LUT_EN,	0x03 },
- 	};
- 
--	const struct ov_regvals compress_511[] = {
-+	static const struct ov_regvals compress_511[] = {
- 		{ 0x70, 0x1f },
- 		{ 0x71, 0x05 },
- 		{ 0x72, 0x06 },
-@@ -3009,7 +3009,7 @@ static void ov518_configure(struct gspca_dev *gspca_dev)
- 	struct sd *sd = (struct sd *) gspca_dev;
- 
- 	/* For 518 and 518+ */
--	const struct ov_regvals init_518[] = {
-+	static const struct ov_regvals init_518[] = {
- 		{ R51x_SYS_RESET,	0x40 },
- 		{ R51x_SYS_INIT,	0xe1 },
- 		{ R51x_SYS_RESET,	0x3e },
-@@ -3020,7 +3020,7 @@ static void ov518_configure(struct gspca_dev *gspca_dev)
- 		{ 0x5d,			0x03 },
- 	};
- 
--	const struct ov_regvals norm_518[] = {
-+	static const struct ov_regvals norm_518[] = {
- 		{ R51x_SYS_SNAP,	0x02 }, /* Reset */
- 		{ R51x_SYS_SNAP,	0x01 }, /* Enable */
- 		{ 0x31,			0x0f },
-@@ -3033,7 +3033,7 @@ static void ov518_configure(struct gspca_dev *gspca_dev)
- 		{ 0x2f,			0x80 },
- 	};
- 
--	const struct ov_regvals norm_518_p[] = {
-+	static const struct ov_regvals norm_518_p[] = {
- 		{ R51x_SYS_SNAP,	0x02 }, /* Reset */
- 		{ R51x_SYS_SNAP,	0x01 }, /* Enable */
- 		{ 0x31,			0x0f },
+ static void vc4_hdmi_encoder_destroy(struct drm_encoder *encoder)
 -- 
 2.14.1
 
