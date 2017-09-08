@@ -1,58 +1,40 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Sat, 23 Sep 2017 17:21:24 +0000
-Subject: Re: [PATCH] net: dsa: avoid null pointer dereference on p->phy
-Message-Id: <4c92bb5f-ad5e-7f3e-cad8-b13bb69b79ff@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 08:02:01 +0000
+Subject: [PATCH] scsi: lpfc: remove redundant null check on eqe
+Message-Id: <20170908080201.9592-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170923165720.18560-1-colin.king@canonical.com>
-In-Reply-To: <20170923165720.18560-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The pointer eqe is always non-null inside the while loop, so the
+check to see if eqe is NULL is redudant and hence can be removed.
 
-On 09/23/2017 09:57 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently p->phy is being null checked in several places to avoid
-> null pointer dereferences on p->phy, however, the final call
-> to phy_attached_info on p->phy when p->phy will perform a null
-> pointer dereference. Fix this by simply moving the call into
-> the previous code block that is only executed if p->phy is
-> not null.
-> 
-> Detected by CoverityScan, CID#1457034 ("Dereference after null check")
+Detected by CoverityScan CID#1248693 ("Logically Dead Code")
 
-The code flow is not exactly easy to read, but I don't see how we can
-actually wind up in that situation because we check the return values of
-of_phy_connect() and dsa_slave_phy_connect() earlier on.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_sli.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> 
-> Fixes: 2220943a21e2 ("phy: Centralise print about attached phy")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/dsa/slave.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-> index 02ace7d462c4..29ab4e98639b 100644
-> --- a/net/dsa/slave.c
-> +++ b/net/dsa/slave.c
-> @@ -1115,10 +1115,9 @@ static int dsa_slave_phy_setup(struct net_device *slave_dev)
->  				of_phy_deregister_fixed_link(port_dn);
->  			return ret;
->  		}
-> +		phy_attached_info(p->phy);
->  	}
->  
-> -	phy_attached_info(p->phy);
-> -
->  	return 0;
->  }
->  
-> 
-
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 8b119f87b51d..80036a9fae7f 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -13760,9 +13760,6 @@ lpfc_sli4_hba_intr_handler(int irq, void *dev_id)
+ 	 * Process all the event on FCP fast-path EQ
+ 	 */
+ 	while ((eqe = lpfc_sli4_eq_get(fpeq))) {
+-		if (eqe = NULL)
+-			break;
+-
+ 		ccount += lpfc_sli4_hba_handle_eqe(phba, eqe, hba_eqidx);
+ 		if (!(++ecount % fpeq->entry_repost) ||
+ 		    ccount > LPFC_MAX_ISR_CQE)
 -- 
-Florian
+2.14.1
+
