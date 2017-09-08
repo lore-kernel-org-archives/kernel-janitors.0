@@ -1,29 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Sep 2017 17:34:08 +0000
-Subject: Re: [PATCH] qlcnic: remove redundant zero check on retries counter
-Message-Id: <20170901.103408.279665918180927406.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Sep 2017 10:34:42 +0000
+Subject: [PATCH 2/2] rpmsg: glink: Fix memory leak in qcom_glink_alloc_intent()
+Message-Id: <20170908103440.junitv63lrzc5ih5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170901134431.23179-1-colin.king@canonical.com>
-In-Reply-To: <20170901134431.23179-1-colin.king@canonical.com>
+In-Reply-To: <20170908103345.brf5wcj5yg6zpslz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: harish.patil@cavium.com, manish.chopra@cavium.com, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri,  1 Sep 2017 14:44:31 +0100
+We need to free "intent" and "intent->data" on a couple error paths.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> At the end of the do while loop the integer counter retries will
-> always be zero and so the subsequent check to see if it is zero
-> is always true and therefore redundant.  Remove the redundant check
-> and always return -EIO on this return path.  Also unbreak the literal
-> string in dev_err message to clean up a checkpatch warning.
-> 
-> Detected by CoverityScan, CID#744279 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next, thanks.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index fecb1dafa8f3..5dcc9bf1c5bc 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
+ 	unsigned long flags;
+ 
+ 	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
+-
+ 	if (!intent)
+ 		return NULL;
+ 
+ 	intent->data = kzalloc(size, GFP_KERNEL);
+ 	if (!intent->data)
+-		return NULL;
++		goto free_intent;
+ 
+ 	spin_lock_irqsave(&channel->intent_lock, flags);
+ 	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
+ 	if (ret < 0) {
+ 		spin_unlock_irqrestore(&channel->intent_lock, flags);
+-		return NULL;
++		goto free_data;
+ 	}
+ 	spin_unlock_irqrestore(&channel->intent_lock, flags);
+ 
+@@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
+ 	intent->reuse = reuseable;
+ 
+ 	return intent;
++
++free_data:
++	kfree(intent->data);
++free_intent:
++	kfree(intent);
++	return NULL;
+ }
+ 
+ static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
