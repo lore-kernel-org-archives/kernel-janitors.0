@@ -1,68 +1,43 @@
-From: Stefan Schmidt <stefan@osg.samsung.com>
-Date: Tue, 26 Sep 2017 13:45:09 +0000
-Subject: Re: [PATCH][next] ieee802154: atusb: make two structures static, fixes warnings
-Message-Id: <44e984b7-7d41-2c96-30cc-f4b84dd1aa3d@osg.samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 20:51:35 +0000
+Subject: [PATCH 1/3] [media] s5p-mfc: Delete an error message for a failed memory allocation in s5p_mfc_probe
+Message-Id: <ff8f7dcd-c3e8-2a12-c0db-997b514f5d94@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170926131836.15171-1-colin.king@canonical.com>
-In-Reply-To: <20170926131836.15171-1-colin.king@canonical.com>
+References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+In-Reply-To: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hello.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 22:25:17 +0200
 
-On 09/26/2017 03:18 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The arrays atusb_chip_data and hulusb_chip_data are local to the source
-> and do not need to be in global scope, so make them static. Also
-> remove unnecessary forward declaration of atusb_chip_data.
-> 
-> Cleans up sparse warnings:
-> symbol 'atusb_chip_data' was not declared. Should it be static?
-> symbol 'hulusb_chip_data' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ieee802154/atusb.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
-> index 115fa3f37a86..8b0718de568f 100644
-> --- a/drivers/net/ieee802154/atusb.c
-> +++ b/drivers/net/ieee802154/atusb.c
-> @@ -45,8 +45,6 @@
->  #define ATUSB_ALLOC_DELAY_MS	100	/* delay after failed allocation */
->  #define ATUSB_TX_TIMEOUT_MS	200	/* on the air timeout */
->  
-> -struct atusb_chip_data;
-> -
->  struct atusb {
->  	struct ieee802154_hw *hw;
->  	struct usb_device *usb_dev;
-> @@ -767,14 +765,14 @@ atusb_set_promiscuous_mode(struct ieee802154_hw *hw, const bool on)
->  	return 0;
->  }
->  
-> -struct atusb_chip_data atusb_chip_data = {
-> +static struct atusb_chip_data atusb_chip_data = {
->  	.t_channel_switch = 1,
->  	.rssi_base_val = -91,
->  	.set_txpower = atusb_set_txpower,
->  	.set_channel = atusb_set_channel,
->  };
->  
-> -struct atusb_chip_data hulusb_chip_data = {
-> +static struct atusb_chip_data hulusb_chip_data = {
->  	.t_channel_switch = 11,
->  	.rssi_base_val = -100,
->  	.set_txpower = hulusb_set_txpower,
-> 
+Omit an extra message for a memory allocation failure in this function.
 
-This patch has been applied to the wpan-next tree and will be
-part of the next pull request to net-next. Thanks!
+This issue was detected by using the Coccinelle software.
 
-regards
-Stefan Schmidt
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 1afde5021ca6..8af45d53846f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1270,10 +1270,8 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 
+ 	pr_debug("%s++\n", __func__);
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+-	if (!dev) {
+-		dev_err(&pdev->dev, "Not enough memory for MFC device\n");
++	if (!dev)
+ 		return -ENOMEM;
+-	}
+ 
+ 	spin_lock_init(&dev->irqlock);
+ 	spin_lock_init(&dev->condlock);
+-- 
+2.14.1
+
