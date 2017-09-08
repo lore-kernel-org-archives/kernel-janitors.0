@@ -1,31 +1,111 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 10:20:11 +0000
-Subject: [PATCH 0/6] [media] omap_vout: Adjustments for three function implementations
-Message-Id: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 08 Sep 2017 13:55:06 +0000
+Subject: [PATCH][V2] staging: r8822be: fix null pointer dereferences with a null driver_adapter
+Message-Id: <20170908135506.906-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, Vaibhav Hiremath <hvaibhav@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Himanshu Jha <himanshujha199640@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 12:06:54 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+The call to _rtl_dbg_trace via macro HALMAC_RT_TRACE will trigger a null
+pointer deference on a null driver_adapter.  Fix this by assigning
+driver_adapter earlier to halmac_adapter->driver_adapter before the tracing
+call so that a non-null driver_adapter is passed instead.
 
-Markus Elfring (6):
-  Delete an error message for a failed memory allocation in omap_vout_create_video_devices()
-  Improve a size determination in two functions
-  Adjust a null pointer check in two functions
-  Fix a possible null pointer dereference in omap_vout_open()
-  Delete an unnecessary variable initialisation in omap_vout_open()
-  Delete two unnecessary variable initialisations in omap_vout_probe()
+I should have spotted these with an earlier patch I sent, but I overlooked
+these in the rather large CoverityScan logs.
 
- drivers/media/platform/omap/omap_vout.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+Detected by CoverityScan, CID#1454550, CID#1454554, CID#1454565,
+CID#1454591, CID#1454598 ("Explicit null dereferenced")
 
+Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c    |  4 ++--
+ .../staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c   | 13 +++++++------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
+index 5f84526cb5b5..edbf6af1c8b7 100644
+--- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
++++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_api_88xx.c
+@@ -2901,11 +2901,11 @@ halmac_update_datapack_88xx(struct halmac_adapter *halmac_adapter,
+ 	if (halmac_adapter->fw_version.h2c_version < 4)
+ 		return HALMAC_RET_FW_NO_SUPPORT;
+ 
++	driver_adapter = halmac_adapter->driver_adapter;
++
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"[TRACE]%s =====>\n", __func__);
+ 
+-	driver_adapter = halmac_adapter->driver_adapter;
+-
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"[TRACE]%s <=====\n", __func__);
+ 
+diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+index f33024e4d853..544f638ed3ef 100644
+--- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
++++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+@@ -1618,10 +1618,11 @@ halmac_send_h2c_set_pwr_mode_88xx(struct halmac_adapter *halmac_adapter,
+ 	void *driver_adapter = NULL;
+ 	enum halmac_ret_status status = HALMAC_RET_SUCCESS;
+ 
++	driver_adapter = halmac_adapter->driver_adapter;
++
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"%s!!\n", __func__);
+ 
+-	driver_adapter = halmac_adapter->driver_adapter;
+ 	h2c_header = h2c_buff;
+ 	h2c_cmd = h2c_header + HALMAC_H2C_CMD_HDR_SIZE_88XX;
+ 
+@@ -1713,10 +1714,11 @@ halmac_media_status_rpt_88xx(struct halmac_adapter *halmac_adapter, u8 op_mode,
+ 	void *driver_adapter = NULL;
+ 	enum halmac_ret_status status = HALMAC_RET_SUCCESS;
+ 
++	driver_adapter = halmac_adapter->driver_adapter;
++
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"halmac_send_h2c_set_pwr_mode_88xx!!\n");
+ 
+-	driver_adapter = halmac_adapter->driver_adapter;
+ 	h2c_header = H2c_buff;
+ 	h2c_cmd = h2c_header + HALMAC_H2C_CMD_HDR_SIZE_88XX;
+ 
+@@ -2143,10 +2145,11 @@ halmac_func_ctrl_ch_switch_88xx(struct halmac_adapter *halmac_adapter,
+ 	enum halmac_cmd_process_status *process_status  		&halmac_adapter->halmac_state.scan_state_set.process_status;
+ 
++	driver_adapter = halmac_adapter->driver_adapter;
++
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"halmac_ctrl_ch_switch!!\n");
+ 
+-	driver_adapter = halmac_adapter->driver_adapter;
+ 	halmac_api = (struct halmac_api *)halmac_adapter->halmac_api;
+ 
+ 	if (halmac_transition_scan_state_88xx(
+@@ -2276,15 +2279,13 @@ enum halmac_ret_status halmac_send_h2c_update_bcn_parse_info_88xx(
+ {
+ 	u8 h2c_buff[HALMAC_H2C_CMD_SIZE_88XX] = {0};
+ 	u16 h2c_seq_mum = 0;
+-	void *driver_adapter = NULL;
++	void *driver_adapter = halmac_adapter->driver_adapter;
+ 	struct halmac_h2c_header_info h2c_header_info;
+ 	enum halmac_ret_status status = HALMAC_RET_SUCCESS;
+ 
+ 	HALMAC_RT_TRACE(driver_adapter, HALMAC_MSG_H2C, DBG_DMESG,
+ 			"%s!!\n", __func__);
+ 
+-	driver_adapter = halmac_adapter->driver_adapter;
+-
+ 	UPDATE_BEACON_PARSING_INFO_SET_FUNC_EN(h2c_buff, bcn_ie_info->func_en);
+ 	UPDATE_BEACON_PARSING_INFO_SET_SIZE_TH(h2c_buff, bcn_ie_info->size_th);
+ 	UPDATE_BEACON_PARSING_INFO_SET_TIMEOUT(h2c_buff, bcn_ie_info->timeout);
 -- 
 2.14.1
 
