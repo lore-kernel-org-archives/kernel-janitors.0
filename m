@@ -1,53 +1,85 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 10:24:45 +0000
-Subject: [PATCH 2/6] [media] omap_vout: Improve a size determination in two functions
-Message-Id: <7edbd298-6d56-3ac7-08c1-b25527181994@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 19:46:08 +0000
+Subject: [PATCH 3/3] [media] fsl-viu: Adjust six checks for null pointers
+Message-Id: <ec2a2c6d-b007-bc7c-e01e-2f98024a3d97@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
-In-Reply-To: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+References: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
+In-Reply-To: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 10:18:26 +0200
+Date: Fri, 8 Sep 2017 21:16:50 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Replace the specification of data structures by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/omap/omap_vout.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/fsl-viu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
-index aebc1e628ac5..4a4d171ca573 100644
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -1943,8 +1943,7 @@ static int __init omap_vout_create_video_devices(struct platform_device *pdev)
- 			struct omap2video_device, v4l2_dev);
+diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
+index 1fe2a295db93..a133dfdd869a 100644
+--- a/drivers/media/platform/fsl-viu.c
++++ b/drivers/media/platform/fsl-viu.c
+@@ -313,7 +313,7 @@ static int restart_video_queue(struct viu_dmaqueue *vidq)
+ 		if (list_empty(&vidq->queued))
+ 			return 0;
+ 		buf = list_entry(vidq->queued.next, struct viu_buf, vb.queue);
+-		if (prev = NULL) {
++		if (!prev) {
+ 			list_move_tail(&buf->vb.queue, &vidq->active);
  
- 	for (k = 0; k < pdev->num_resources; k++) {
--
--		vout = kzalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
-+		vout = kzalloc(sizeof(*vout), GFP_KERNEL);
- 		if (!vout)
- 			return -ENOMEM;
+ 			dprintk(1, "Restarting video dma\n");
+@@ -450,7 +450,7 @@ static int buffer_prepare(struct videobuf_queue *vq,
+ 	struct viu_buf *buf = container_of(vb, struct viu_buf, vb);
+ 	int rc;
  
-@@ -2095,7 +2094,7 @@ static int __init omap_vout_probe(struct platform_device *pdev)
- 		goto err_dss_init;
- 	}
+-	BUG_ON(fh->fmt = NULL);
++	BUG_ON(!fh->fmt);
  
--	vid_dev = kzalloc(sizeof(struct omap2video_device), GFP_KERNEL);
-+	vid_dev = kzalloc(sizeof(*vid_dev), GFP_KERNEL);
- 	if (vid_dev = NULL) {
+ 	if (fh->width  < 48 || fh->width  > norm_maxw() ||
+ 	    fh->height < 32 || fh->height > norm_maxh())
+@@ -668,9 +668,9 @@ static int verify_preview(struct viu_dev *dev, struct v4l2_window *win)
+ 	enum v4l2_field field;
+ 	int maxw, maxh;
+ 
+-	if (dev->ovbuf.base = NULL)
++	if (!dev->ovbuf.base)
+ 		return -EINVAL;
+-	if (dev->ovfmt = NULL)
++	if (!dev->ovfmt)
+ 		return -EINVAL;
+ 	if (win->w.width < 48 || win->w.height < 32)
+ 		return -EINVAL;
+@@ -825,7 +825,7 @@ int vidioc_s_fbuf(struct file *file, void *priv, const struct v4l2_framebuffer *
+ 
+ 	/* check args */
+ 	fmt = format_by_fourcc(fb->fmt.pixelformat);
+-	if (fmt = NULL)
++	if (!fmt)
+ 		return -EINVAL;
+ 
+ 	/* ok, accept it */
+@@ -1472,7 +1472,7 @@ static int viu_of_probe(struct platform_device *op)
+ 
+ 	/* Allocate memory for video device */
+ 	vdev = video_device_alloc();
+-	if (vdev = NULL) {
++	if (!vdev) {
  		ret = -ENOMEM;
- 		goto err_dss_init;
+ 		goto err_vdev;
+ 	}
 -- 
 2.14.1
 
