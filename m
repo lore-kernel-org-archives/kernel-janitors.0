@@ -1,39 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Sep 2017 19:47:16 +0000
-Subject: [PATCH] regulator: qcom_spmi: Fix an error handling path in 'qcom_spmi_regulator_probe()'
-Message-Id: <20170917194716.31980-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 08 Sep 2017 19:40:59 +0000
+Subject: [PATCH 0/3] [media] Freescale VIU: Adjustments for five function implementations
+Message-Id: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If a memory allocation fails, we should go through the error handling path,
-as done elsewhere in this 'for' loop.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 8 Sep 2017 21:28:12 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/regulator/qcom_spmi-regulator.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Three update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index 16c5f84e06a7..fbe908a37daa 100644
---- a/drivers/regulator/qcom_spmi-regulator.c
-+++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -1657,8 +1657,10 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
- 
- 	for (reg = match->data; reg->name; reg++) {
- 		vreg = devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
--		if (!vreg)
--			return -ENOMEM;
-+		if (!vreg) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 
- 		vreg->dev = dev;
- 		vreg->base = reg->base;
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in viu_of_probe()
+  Improve two size determinations in viu_of_probe()
+  Adjust six checks for null pointers
+
+ drivers/media/platform/fsl-viu.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
 -- 
-2.11.0
+2.14.1
 
