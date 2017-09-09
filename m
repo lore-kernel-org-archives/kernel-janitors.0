@@ -1,68 +1,51 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 22 Sep 2017 20:06:50 +0000
-Subject: [PATCH] staging: rtl8192u: Fix some error handling path
-Message-Id: <20170922200650.18103-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Sep 2017 20:32:11 +0000
+Subject: [PATCH 2/3] [media] xc2028: Adjust two null pointer checks in load_all_firmwares()
+Message-Id: <10e92128-444a-bec3-e021-61379c21bf4d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
+In-Reply-To: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, singhalsimran0@gmail.com, baoyou.xie@linaro.org, davem@davemloft.net, jarod@redhat.com, szekelyszilv@gmail.com, elia.f.geretto@gmail.com, gs051095@gmail.com, shreeya.patel23498@gmail.com, robsonde@gmail.com, colin.king@canonical.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If 'rtl8192_usb_initendpoints()' fails, it may have allocated some
-resources that need to be freed. The corresponding is propagated up to
-'rtl8192_usb_prob()'. So, in this function if an error
-code is returned by 'rtl8192_init()' we should call
-'rtl8192_usb_deleteendpoints()'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 9 Sep 2017 21:48:58 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Some error handling code is also duplicated in 'rtl8192_init()' and in
-'rtl8192_usb_prob()'. This looks harmless because the freed pointers are
-set to NULL but it looks confusing.
+The script “checkpatch.pl” pointed information out like the following.
 
-Fix all that by just moving the 'fail' label and removing duplicated
-error handling code from 'rtl8192_ini()'. All this resources freeing will
-be handled by 'rtl8192_usb_prob()' directly.
+Comparison to NULL could be written !…
 
-The calling graph is:
-rtl8192_usb_probe
-  --> rtl8192_init
-    --> rtl8192_usb_initendpoints
+Thus fix the affected source code places.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This patch is compile tested and the corresponding looks a bit tricky.
-So, review carefully :)
----
- drivers/staging/rtl8192u/r8192U_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/tuners/tuner-xc2028.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 48b7fd071900..8701ce25abe4 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2694,9 +2694,6 @@ static short rtl8192_init(struct net_device *dev)
- 	err = rtl8192_read_eeprom_info(dev);
- 	if (err) {
- 		DMESG("Reading EEPROM info failed");
--		kfree(priv->pFirmware);
--		priv->pFirmware = NULL;
--		free_ieee80211(dev);
- 		return err;
- 	}
- 	rtl8192_get_channel_map(dev);
-@@ -4998,11 +4995,11 @@ static int rtl8192_usb_probe(struct usb_interface *intf,
+diff --git a/drivers/media/tuners/tuner-xc2028.c b/drivers/media/tuners/tuner-xc2028.c
+index 7353f25f9e7d..90efe11aa0a8 100644
+--- a/drivers/media/tuners/tuner-xc2028.c
++++ b/drivers/media/tuners/tuner-xc2028.c
+@@ -335,5 +335,5 @@ static int load_all_firmwares(struct dvb_frontend *fe,
+ 		   priv->firm_version >> 8, priv->firm_version & 0xff);
  
- fail2:
- 	rtl8192_down(dev);
-+fail:
- 	kfree(priv->pFirmware);
- 	priv->pFirmware = NULL;
- 	rtl8192_usb_deleteendpoints(dev);
- 	mdelay(10);
--fail:
- 	free_ieee80211(dev);
+ 	priv->firm = kcalloc(n_array, sizeof(*priv->firm), GFP_KERNEL);
+-	if (priv->firm = NULL) {
++	if (!priv->firm) {
+ 		rc = -ENOMEM;
+@@ -384,5 +384,5 @@ static int load_all_firmwares(struct dvb_frontend *fe,
+ 		}
  
- 	RT_TRACE(COMP_ERR, "wlan driver load failed\n");
+ 		priv->firm[n].ptr = kzalloc(size, GFP_KERNEL);
+-		if (priv->firm[n].ptr = NULL) {
++		if (!priv->firm[n].ptr) {
+ 			rc = -ENOMEM;
 -- 
-2.11.0
+2.14.1
 
