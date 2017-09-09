@@ -1,106 +1,108 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 23 Sep 2017 06:44:15 +0000
-Subject: [PATCH] hwmon: (xgene) Fix up error handling path mixup in 'xgene_hwmon_probe()'
-Message-Id: <20170923064415.25307-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Sep 2017 20:33:08 +0000
+Subject: [PATCH 3/3] [media] xc2028: Use common error handling code in load_firmware()
+Message-Id: <bf939bbf-efb8-7e1f-9260-a2c3ac0640c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
+In-Reply-To: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jdelvare@suse.com, linux@roeck-us.net
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Commit 2ca492e22cb7 has moved the call to 'kfifo_alloc()' from after the
-main 'if' statement to before it.
-But it has not updated the error handling paths accordingly.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 9 Sep 2017 22:07:04 +0200
 
-Fix all that:
-   - if 'kfifo_alloc()' fails we can return directly
-   - direct returns after 'kfifo_alloc()' must now go to 'out_mbox_free'
-   - 'goto out_mbox_free' must be replaced by 'goto out', otherwise the
-     '[pcc_]mbox_free_channel()' call will be missed.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
 
-Fixes: 2ca492e22cb7 ("hwmon: (xgene) Fix crash when alarm occurs before driver probe")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/xgene-hwmon.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/media/tuners/tuner-xc2028.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/hwmon/xgene-hwmon.c b/drivers/hwmon/xgene-hwmon.c
-index 9c0dbb8191ad..e1be61095532 100644
---- a/drivers/hwmon/xgene-hwmon.c
-+++ b/drivers/hwmon/xgene-hwmon.c
-@@ -630,7 +630,7 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 			 sizeof(struct slimpro_resp_msg) * ASYNC_MSG_FIFO_SIZE,
- 			 GFP_KERNEL);
- 	if (rc)
--		goto out_mbox_free;
-+		return -ENOMEM;
- 
- 	INIT_WORK(&ctx->workq, xgene_hwmon_evt_work);
- 
-@@ -646,7 +646,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 		if (IS_ERR(ctx->mbox_chan)) {
- 			dev_err(&pdev->dev,
- 				"SLIMpro mailbox channel request failed\n");
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto out_mbox_free;
- 		}
- 	} else {
- 		struct acpi_pcct_hw_reduced *cppc_ss;
-@@ -654,7 +655,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 		if (device_property_read_u32(&pdev->dev, "pcc-channel",
- 					     &ctx->mbox_idx)) {
- 			dev_err(&pdev->dev, "no pcc-channel property\n");
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto out_mbox_free;
+diff --git a/drivers/media/tuners/tuner-xc2028.c b/drivers/media/tuners/tuner-xc2028.c
+index 90efe11aa0a8..4b617e09b81f 100644
+--- a/drivers/media/tuners/tuner-xc2028.c
++++ b/drivers/media/tuners/tuner-xc2028.c
+@@ -571,7 +571,7 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
+ 		/* Checks if there's enough bytes to read */
+ 		if (p + sizeof(size) > endp) {
+ 			tuner_err("Firmware chunk size is wrong\n");
+-			return -EINVAL;
++			goto e_inval;
  		}
  
- 		cl->rx_callback = xgene_hwmon_pcc_rx_cb;
-@@ -662,7 +664,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 		if (IS_ERR(ctx->mbox_chan)) {
- 			dev_err(&pdev->dev,
- 				"PPC channel request failed\n");
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto out_mbox_free;
+ 		size = le16_to_cpu(*(__le16 *) p);
+@@ -583,28 +583,23 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
+ 		if (!size) {
+ 			/* Special callback command received */
+ 			rc = do_tuner_callback(fe, XC2028_TUNER_RESET, 0);
+-			if (rc < 0) {
+-				tuner_err("Error at RESET code %d\n",
+-					   (*p) & 0x7f);
+-				return -EINVAL;
+-			}
++			if (rc < 0)
++				goto report_failure;
++
+ 			continue;
+ 		}
+ 		if (size >= 0xff00) {
+ 			switch (size) {
+ 			case 0xff00:
+ 				rc = do_tuner_callback(fe, XC2028_RESET_CLK, 0);
+-				if (rc < 0) {
+-					tuner_err("Error at RESET code %d\n",
+-						  (*p) & 0x7f);
+-					return -EINVAL;
+-				}
++				if (rc < 0)
++					goto report_failure;
++
+ 				break;
+ 			default:
+ 				tuner_info("Invalid RESET code %d\n",
+ 					   size & 0x7f);
+-				return -EINVAL;
+-
++				goto e_inval;
+ 			}
+ 			continue;
+ 		}
+@@ -618,7 +613,7 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
+ 		if ((size + p > endp)) {
+ 			tuner_err("missing bytes: need %d, have %d\n",
+ 				   size, (int)(endp - p));
+-			return -EINVAL;
++			goto e_inval;
  		}
  
- 		/*
-@@ -675,13 +678,13 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 		if (!cppc_ss) {
- 			dev_err(&pdev->dev, "PPC subspace not found\n");
- 			rc = -ENODEV;
--			goto out_mbox_free;
-+			goto out;
- 		}
+ 		buf[0] = *p;
+@@ -635,7 +630,7 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
+ 			rc = i2c_send(priv, buf, len + 1);
+ 			if (rc < 0) {
+ 				tuner_err("%d returned from send\n", rc);
+-				return -EINVAL;
++				goto e_inval;
+ 			}
  
- 		if (!ctx->mbox_chan->mbox->txdone_irq) {
- 			dev_err(&pdev->dev, "PCC IRQ not supported\n");
- 			rc = -ENODEV;
--			goto out_mbox_free;
-+			goto out;
+ 			p += len;
+@@ -650,6 +645,11 @@ static int load_firmware(struct dvb_frontend *fe, unsigned int type,
  		}
+ 	}
+ 	return 0;
++
++report_failure:
++	tuner_err("Error at RESET code %d\n", (*p) & 0x7f);
++e_inval:
++	return -EINVAL;
+ }
  
- 		/*
-@@ -696,14 +699,14 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 		} else {
- 			dev_err(&pdev->dev, "Failed to get PCC comm region\n");
- 			rc = -ENODEV;
--			goto out_mbox_free;
-+			goto out;
- 		}
- 
- 		if (!ctx->pcc_comm_addr) {
- 			dev_err(&pdev->dev,
- 				"Failed to ioremap PCC comm region\n");
- 			rc = -ENOMEM;
--			goto out_mbox_free;
-+			goto out;
- 		}
- 
- 		/*
+ static int load_scode(struct dvb_frontend *fe, unsigned int type,
 -- 
-2.11.0
+2.14.1
 
