@@ -1,43 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 20:41:48 +0000
-Subject: [PATCH 1/2] [media] ma901: Delete two error messages for a failed memory allocation in usb_ma901radi
-Message-Id: <0a794519-30e4-666d-d16b-7d3081f26a37@users.sourceforge.net>
+Date: Sat, 09 Sep 2017 19:14:47 +0000
+Subject: [PATCH 2/2] [media] xc4000: Adjust two null pointer checks in xc4000_fwupload()
+Message-Id: <68444473-5d87-3213-4640-6069c88db1a9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6d4d9e92-9ac5-1e46-99ed-2b7d93bd7121@users.sourceforge.net>
-In-Reply-To: <6d4d9e92-9ac5-1e46-99ed-2b7d93bd7121@users.sourceforge.net>
+References: <61016489-eb01-2977-b094-343aa70686b0@users.sourceforge.net>
+In-Reply-To: <61016489-eb01-2977-b094-343aa70686b0@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 22:20:04 +0200
+Date: Sat, 9 Sep 2017 20:55:14 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit extra messages for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/radio/radio-ma901.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/tuners/xc4000.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/radio/radio-ma901.c b/drivers/media/radio/radio-ma901.c
-index fdc481257efd..c386fbd63703 100644
---- a/drivers/media/radio/radio-ma901.c
-+++ b/drivers/media/radio/radio-ma901.c
-@@ -361,10 +361,8 @@ static int usb_ma901radio_probe(struct usb_interface *intf,
- 	if (!radio) {
--		dev_err(&intf->dev, "kzalloc for ma901radio_device failed\n");
- 		retval = -ENOMEM;
- 		goto err;
- 	}
+diff --git a/drivers/media/tuners/xc4000.c b/drivers/media/tuners/xc4000.c
+index bbf386127fc4..bd53e44b3cc8 100644
+--- a/drivers/media/tuners/xc4000.c
++++ b/drivers/media/tuners/xc4000.c
+@@ -775,5 +775,5 @@ static int xc4000_fwupload(struct dvb_frontend *fe)
+ 		priv->firm_version >> 8, priv->firm_version & 0xff);
  
- 	radio->buffer = kmalloc(BUFFER_LENGTH, GFP_KERNEL);
- 	if (!radio->buffer) {
--		dev_err(&intf->dev, "kmalloc for radio->buffer failed\n");
- 		retval = -ENOMEM;
+ 	priv->firm = kcalloc(n_array, sizeof(*priv->firm), GFP_KERNEL);
+-	if (priv->firm = NULL) {
++	if (!priv->firm) {
+ 		rc = -ENOMEM;
+@@ -821,5 +821,5 @@ static int xc4000_fwupload(struct dvb_frontend *fe)
+ 		}
+ 
+ 		priv->firm[n].ptr = kzalloc(size, GFP_KERNEL);
+-		if (priv->firm[n].ptr = NULL) {
++		if (!priv->firm[n].ptr) {
+ 			rc = -ENOMEM;
 -- 
 2.14.1
 
