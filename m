@@ -1,31 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Sep 2017 08:26:39 +0000
-Subject: Re: [PATCH 1/2] ALSA: rme9652: Use common code in hdsp_get_iobox_version()
-Message-Id: <s5hfubykj7k.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 09 Sep 2017 16:51:00 +0000
+Subject: [PATCH] extcon: make extcon_info static const, fixes warning
+Message-Id: <20170909165100.30701-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9832906e-3b04-b708-2c26-4755e0beb811@users.sourceforge.net>
-        <3ec86adc-18bf-b3f9-341b-9d0ae70256a8@users.sourceforge.net>
-In-Reply-To: <3ec86adc-18bf-b3f9-341b-9d0ae70256a8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 05 Sep 2017 22:36:17 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Sep 2017 22:08:30 +0200
-> 
-> Add a jump target so that a bit of common code can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+The array extcon_info is read only, local to the source and does not
+need to be in global scope, so make it static const.
 
+Cleans up sparse warning:
+symbol 'extcon_info' was not declared. Should it be static?
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/extcon/extcon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index 35e9fb885486..cb38c2747684 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -36,7 +36,7 @@
+ 
+ #define SUPPORTED_CABLE_MAX	32
+ 
+-struct __extcon_info {
++static const struct __extcon_info {
+ 	unsigned int type;
+ 	unsigned int id;
+ 	const char *name;
+-- 
+2.14.1
+
