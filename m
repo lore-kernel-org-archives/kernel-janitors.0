@@ -1,24 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 28 Sep 2017 01:50:20 +0000
-Subject: Re: [PATCH] scsi: libsas: remove unused variable sas_ha
-Message-Id: <yq1lgkz8ucj.fsf@oracle.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Sep 2017 11:19:38 +0000
+Subject: [PATCH] btrfs: tests: Fix a memory leak in error handling path in 'run_test()'
+Message-Id: <20170910111938.15201-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170926191750.25444-1-colin.king@canonical.com>
-In-Reply-To: <20170926191750.25444-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 26 Sep 2017 20:17:50 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>
-Cc: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: clm@fb.com, jbacik@fb.com, dsterba@suse.com, nborisov@suse.com, jeffm@suse.com, osandov@fb.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If 'btrfs_alloc_path()' fails, we must free the resourses already
+allocated, as done in the other error handling paths in this function.
 
-Colin,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/btrfs/tests/free-space-tree-tests.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Remove unused variable sas_ha to clean up build warning
-> "unused variable ‘sas_ha’ [-Wunused-variable]"
-
-Applied to 4.15/scsi-queue. Thanks!
-
+diff --git a/fs/btrfs/tests/free-space-tree-tests.c b/fs/btrfs/tests/free-space-tree-tests.c
+index 1458bb0ea124..8444a018cca2 100644
+--- a/fs/btrfs/tests/free-space-tree-tests.c
++++ b/fs/btrfs/tests/free-space-tree-tests.c
+@@ -500,7 +500,8 @@ static int run_test(test_func_t test_func, int bitmaps, u32 sectorsize,
+ 	path = btrfs_alloc_path();
+ 	if (!path) {
+ 		test_msg("Couldn't allocate path\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
+ 	}
+ 
+ 	ret = add_block_group_free_space(&trans, root->fs_info, cache);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.11.0
+
