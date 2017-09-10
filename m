@@ -1,20 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Sep 2017 11:05:07 +0000
-Subject: Re: [PATCH] tsacct: Fix a truncation bug in taskstats
-Message-Id: <20170908110507.r3zauka4r3bei543@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Sep 2017 11:53:22 +0000
+Subject: [PATCH] media: v4l2-pci-skeleton: Fix error handling path in 'skeleton_probe()'
+Message-Id: <20170910115322.15482-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908104351.wjjw4mfkcvmtq5dx@mwanda>
-In-Reply-To: <20170908104351.wjjw4mfkcvmtq5dx@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mchehab@kernel.org, hans.verkuil@cisco.com, Julia.Lawall@lip6.fr
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If this memory allocation fails, we must release some resources, as
+already done in the code below and above.
 
-Ah crap... Please ignore this one.  I forgot about sign extension.  The
-code works fine.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ samples/v4l/v4l2-pci-skeleton.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/samples/v4l/v4l2-pci-skeleton.c b/samples/v4l/v4l2-pci-skeleton.c
+index 483e9bca9444..f520e3aef9c6 100644
+--- a/samples/v4l/v4l2-pci-skeleton.c
++++ b/samples/v4l/v4l2-pci-skeleton.c
+@@ -772,8 +772,10 @@ static int skeleton_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	/* Allocate a new instance */
+ 	skel = devm_kzalloc(&pdev->dev, sizeof(struct skeleton), GFP_KERNEL);
+-	if (!skel)
+-		return -ENOMEM;
++	if (!skel) {
++		ret = -ENOMEM;
++		goto disable_pci;
++	}
+ 
+ 	/* Allocate the interrupt */
+ 	ret = devm_request_irq(&pdev->dev, pdev->irq,
+-- 
+2.11.0
 
