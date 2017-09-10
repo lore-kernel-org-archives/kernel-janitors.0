@@ -1,81 +1,36 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 28 Sep 2017 16:04:18 +0000
-Subject: Re: [PATCH 2/2] clk/ux500: Improve a size determination in three functions
-Message-Id: <CAPDyKFozYOX3P=pgHsWWV+2dsmwQVUc4d422Buf8+frChyPpig@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Sep 2017 08:56:42 +0000
+Subject: [PATCH] drm/i915: Fix an error handling in 'intel_framebuffer_init()'
+Message-Id: <20170910085642.13673-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
- <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
-In-Reply-To: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 27 September 2017 at 20:47, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:30:53 +0200
->
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We should go through the error handling path to decrease the
+'framebuffer_references' as done everywhere else in this function.
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 2e2adb05736c ("drm/i915: Add render decompression support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/i915/intel_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/clk/ux500/clk-prcc.c    | 2 +-
->  drivers/clk/ux500/clk-prcmu.c   | 2 +-
->  drivers/clk/ux500/clk-sysctrl.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-> index 5ca07e6d1f64..7cfb59c9136d 100644
-> --- a/drivers/clk/ux500/clk-prcc.c
-> +++ b/drivers/clk/ux500/clk-prcc.c
-> @@ -107,7 +107,7 @@ static struct clk *clk_reg_prcc(const char *name,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
-> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-> index c137934f23ab..9d1f2d4550ad 100644
-> --- a/drivers/clk/ux500/clk-prcmu.c
-> +++ b/drivers/clk/ux500/clk-prcmu.c
-> @@ -258,7 +258,7 @@ static struct clk *clk_reg_prcmu(const char *name,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
-> +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> index e0a834c08a04..7c0403b733ae 100644
-> --- a/drivers/clk/ux500/clk-sysctrl.c
-> +++ b/drivers/clk/ux500/clk-sysctrl.c
-> @@ -139,7 +139,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
-> +       clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
->         if (!clk)
->                 return ERR_PTR(-ENOMEM);
->
-> --
-> 2.14.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 7cd392f2cd94..478fa449003f 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -14077,7 +14077,7 @@ static int intel_framebuffer_init(struct intel_framebuffer *intel_fb,
+ 
+ 		if (mode_cmd->handles[i] != mode_cmd->handles[0]) {
+ 			DRM_DEBUG_KMS("bad plane %d handle\n", i);
+-			return -EINVAL;
++			goto err;
+ 		}
+ 
+ 		stride_alignment = intel_fb_stride_alignment(fb, i);
+-- 
+2.11.0
+
