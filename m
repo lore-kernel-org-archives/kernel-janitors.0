@@ -1,72 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Sep 2017 20:53:34 +0000
-Subject: [PATCH 3/3] [media] s5p-mfc: Adjust a null pointer check in four functions
-Message-Id: <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 11 Sep 2017 09:21:29 +0000
+Subject: Re: [PATCH 3/3] [media] s5p-mfc: Adjust a null pointer check in four functions
+Message-Id: <6c2d20b3-4437-0473-73d4-73c049ba52a9@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
-In-Reply-To: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+ <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
+ <CGME20170911092134epcas2p1a1b11c056b52d68c3b0e4ea2e1e8f758@epcas2p1.samsung.com>
+In-Reply-To: <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Sep 2017 22:37:00 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+On 09/08/2017 10:53 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
 
-The script “checkpatch.pl” pointed information out like the following.
+> Date: Fri, 8 Sep 2017 22:37:00 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
 
-Comparison to NULL could be written …
+Can you resend with that 4 lines removed? Are you using git send-email
+for sending patches?
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index abfb70b07032..cf68aed59e0d 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -470,7 +470,7 @@ static void s5p_mfc_handle_error(struct s5p_mfc_dev *dev,
- {
- 	mfc_err("Interrupt Error: %08x\n", err);
- 
--	if (ctx != NULL) {
-+	if (ctx) {
- 		/* Error recovery is dependent on the state of context */
- 		switch (ctx->state) {
- 		case MFCINST_RES_CHANGE_INIT:
-@@ -508,7 +508,7 @@ static void s5p_mfc_handle_seq_done(struct s5p_mfc_ctx *ctx,
- {
- 	struct s5p_mfc_dev *dev;
- 
--	if (ctx = NULL)
-+	if (!ctx)
- 		return;
- 	dev = ctx->dev;
- 	if (ctx->c_ops->post_seq_start) {
-@@ -562,7 +562,7 @@ static void s5p_mfc_handle_init_buffers(struct s5p_mfc_ctx *ctx,
- 	struct s5p_mfc_buf *src_buf;
- 	struct s5p_mfc_dev *dev;
- 
--	if (ctx = NULL)
-+	if (!ctx)
- 		return;
- 	dev = ctx->dev;
- 	s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-@@ -1289,7 +1289,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dev->regs_base);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (res = NULL) {
-+	if (!res) {
- 		dev_err(&pdev->dev, "failed to get irq resource\n");
- 		return -ENOENT;
- 	}
--- 
-2.14.1
-
+--
+Thanks,
+Sylwester
