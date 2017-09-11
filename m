@@ -1,32 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Sep 2017 08:16:51 +0000
-Subject: [PATCH 2/2] misc: pci_endpoint_test: Avoid triggering a BUG()
-Message-Id: <20170930081651.htijnjc6nyibo2uv@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Sep 2017 15:15:28 +0000
+Subject: [PATCH] btrfs: avoid null pointer dereference on fs_info when calling btrfs_crit
+Message-Id: <20170911151528.26348-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170930081552.rm4tjhxcyegpg3vn@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If you call ida_simple_remove(&pci_endpoint_test_ida, id) with a
-negative "id" then it triggers an immediate BUG_ON().  Let's not allow
-that.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 2c156ac71c6b ("misc: Add host side PCI driver for PCI test function device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There are checks on fs_info in __btrfs_panic to avoid dereferencing a
+null fs_info, however, there is a call to btrfs_crit that may also
+dereference a null fs_info. Fix this by adding a check to see if fs_info
+is null and only print the s_id if fs_info is non-null.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index c0d323077ad0..d40a34f594c7 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -597,6 +597,8 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+Detected by CoverityScan CID#401973 ("Dereference after null check")
+
+Fixes: efe120a067c8 ("Btrfs: convert printk to btrfs_ and fix BTRFS prefix")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index e56a93f3113e..c669241f936e 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -202,7 +202,6 @@ static struct ratelimit_state printk_limits[] = {
  
- 	if (sscanf(misc_device->name, DRV_MODULE_NAME ".%d", &id) != 1)
- 		return;
-+	if (id < 0)
-+		return;
+ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
+ {
+-	struct super_block *sb = fs_info->sb;
+ 	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = "\0";
+ 	struct va_format vaf;
+ 	va_list args;
+@@ -228,7 +227,8 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
+ 	vaf.va = &args;
  
- 	misc_deregister(&test->miscdev);
- 	ida_simple_remove(&pci_endpoint_test_ida, id);
+ 	if (__ratelimit(ratelimit))
+-		printk("%sBTRFS %s (device %s): %pV\n", lvl, type, sb->s_id, &vaf);
++		printk("%sBTRFS %s (device %s): %pV\n", lvl, type,
++			fs_info ? fs_info->sb->s_id : "<unknown>", &vaf);
+ 
+ 	va_end(args);
+ }
+-- 
+2.14.1
+
