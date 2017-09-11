@@ -1,28 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 18 Sep 2017 23:52:46 +0000
-Subject: Re: [PATCH] net_sched: use explicit size of struct tcmsg, remove need to declare tcm
-Message-Id: <20170918.165246.1776895667963317474.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 11 Sep 2017 16:03:13 +0000
+Subject: [PATCH] IB/core: fix incorrect fall-through on switch statement
+Message-Id: <20170911160313.28240-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918114038.29741-1-colin.king@canonical.com>
-In-Reply-To: <20170918114038.29741-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 12:40:38 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer tcm is being initialized and is never read, it is only being used
-> to determine the size of struct tcmsg.  Clean this up by removing
-> variable tcm and explicitly using the sizeof struct tcmsg rather than *tcm.
-> Cleans up clang warning:
-> 
-> warning: Value stored to 'tcm' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In the case where mbox_status is OCRDMA_MBX_STATUS_FAILED and
+add_status is OCRDMA_MBX_STATUS_FAILED err_num is assigned -EAGAIN
+however the case OCRDMA_MBX_STATUS_FAILED is missing a break and
+falls through to the default case which then re-assigns err_num
+to -EFAULT.   Fix this so that err_num is assigned to -EAGAIN
+for the add_status OCRDMA_MBX_STATUS_FAILED case and -EFAULT
+otherwise.
 
-Applied to net-next.
+Detected by CoverityScan CID#703125 ("Missing break in switch")
+
+Fixes: fe2caefcdf58 ("RDMA/ocrdma: Add driver for Emulex OneConnect IBoE RDMA adapter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index dcb5942f9fb5..65b166cc7437 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -252,7 +252,10 @@ static int ocrdma_get_mbx_errno(u32 status)
+ 		case OCRDMA_MBX_ADDI_STATUS_INSUFFICIENT_RESOURCES:
+ 			err_num = -EAGAIN;
+ 			break;
++		default:
++			err_num = -EFAULT;
+ 		}
++		break;
+ 	default:
+ 		err_num = -EFAULT;
+ 	}
+-- 
+2.14.1
+
