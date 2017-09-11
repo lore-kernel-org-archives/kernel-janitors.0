@@ -1,36 +1,52 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 11 Sep 2017 20:07:27 +0000
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 11 Sep 2017 20:15:06 +0000
 Subject: Re: [PATCH] mm/backing-dev.c: fix an error handling path in 'cgwb_create()'
-Message-Id: <e24134e3-e063-bbb9-5570-26f00e36a503@kernel.dk>
+Message-Id: <20170911201506.GA15044@quack2.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170911194323.17833-1-christophe.jaillet@wanadoo.fr>
- <512a90ae-a8bf-7ead-32ba-b4fe36866b20@kernel.dk>
- <1c50dbc9-f765-5b90-1f00-7d87205382d7@wanadoo.fr>
-In-Reply-To: <1c50dbc9-f765-5b90-1f00-7d87205382d7@wanadoo.fr>
+In-Reply-To: <20170911194323.17833-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jack@suse.cz, tj@kernel.org, geliangtang@gmail.com, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: axboe@fb.com, jack@suse.cz, tj@kernel.org, geliangtang@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 09/11/2017 02:04 PM, Christophe JAILLET wrote:
-> Le 11/09/2017 à 21:52, Jens Axboe a écrit :
->> On 09/11/2017 01:43 PM, Christophe JAILLET wrote:
->>> If the 'kmalloc' fails, we must go through the existing error handling
->>> path.
->> Looks good to me, probably wants a
->>
->> Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
->>
->> line as well.
->>
-> Hi,
+On Mon 11-09-17 21:43:23, Christophe JAILLET wrote:
+> If the 'kmalloc' fails, we must go through the existing error handling
+> path.
 > 
-> do you want me to resend with the Fixes tag? Or will it be added if merged?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Shouldn't be necessary to resend. Not sure who will queue it up, mm/ always
-ends up being somewhat of a no-mans-land :-)
+Looks good to me. You can add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  mm/backing-dev.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> index f028a9a472fd..e19606bb41a0 100644
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -569,8 +569,10 @@ static int cgwb_create(struct backing_dev_info *bdi,
+>  
+>  	/* need to create a new one */
+>  	wb = kmalloc(sizeof(*wb), gfp);
+> -	if (!wb)
+> -		return -ENOMEM;
+> +	if (!wb) {
+> +		ret = -ENOMEM;
+> +		goto out_put;
+> +	}
+>  
+>  	ret = wb_init(wb, bdi, blkcg_css->id, gfp);
+>  	if (ret)
+> -- 
+> 2.11.0
+> 
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
