@@ -1,41 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Sep 2017 20:36:15 +0000
-Subject: [PATCH 6/7] [media] Hexium Orion: Improve a size determination in hexium_probe()
-Message-Id: <f98489bb-88c0-b16d-8f0e-31212e243634@users.sourceforge.net>
+Date: Mon, 11 Sep 2017 19:34:41 +0000
+Subject: Re: [media] s5p-mfc: Delete an error message for a failed memory allocation in s5p_mfc_probe()
+Message-Id: <2c99c46b-8798-7de1-5584-e979699db747@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
-In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+ <ff8f7dcd-c3e8-2a12-c0db-997b514f5d94@users.sourceforge.net>
+ <CGME20170911091439epcas1p3f8b62f55cae4255d250b1fe990fbf1ff@epcas1p3.samsung.com>
+ <ccf6b04a-6e8a-231c-f456-0b37ba350acc@samsung.com>
+In-Reply-To: <ccf6b04a-6e8a-231c-f456-0b37ba350acc@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Sep 2017 20:00:17 +0200
+> Could you make the commit summary shorter, to keep it
+> below 70 characters [1]? With that changed feel free to add
+>=20
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+=E2=80=A6
+> [1] Documentation/process/submitting-patches.rst
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Will it be sufficient that a patch committer will adjust
+the summary phrase a bit?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/pci/saa7146/hexium_orion.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
-index 72fac6a8494a..187e072a3697 100644
---- a/drivers/media/pci/saa7146/hexium_orion.c
-+++ b/drivers/media/pci/saa7146/hexium_orion.c
-@@ -219,5 +219,5 @@ static int hexium_probe(struct saa7146_dev *dev)
- 		return -EFAULT;
- 	}
- 
--	hexium = kzalloc(sizeof(struct hexium), GFP_KERNEL);
-+	hexium = kzalloc(sizeof(*hexium), GFP_KERNEL);
- 	if (!hexium)
--- 
-2.14.1
-
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
