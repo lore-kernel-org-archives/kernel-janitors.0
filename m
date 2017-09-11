@@ -1,54 +1,54 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Thu, 28 Sep 2017 17:31:23 +0000
-Subject: Re: [PATCH][ipmi-next] ipmi: remove redundant initialization of bmc
-Message-Id: <9f2f6048-64d0-ec82-43b1-f101d5a77f8c@acm.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Sep 2017 19:56:20 +0000
+Subject: [PATCH v2] openvswitch: Fix an error handling path in 'ovs_nla_init_match_and_action()'
+Message-Id: <20170911195620.17931-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170928132254.7639-1-colin.king@canonical.com>
-In-Reply-To: <20170928132254.7639-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>, openipmi-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: pshelar@nicira.com, davem@davemloft.net, xiangxia.m.yue@gmail.com
+Cc: netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 09/28/2017 08:22 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer bmc is being initialized and this initialized value is
-> never being read, so this is assignment redundant and can be removed.
-> Cleans up clang warning:
->
-> warning: Value stored to 'bmc' during its initialization is never read
+All other error handling paths in this function go through the 'error'
+label. This one should do the same.
 
-yes, obviously unneeded.=C2=A0 Queued.
+Fixes: 9cc9a5cb176c ("datapath: Avoid using stack larger than 1024.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I think that the comment above the function could be improved. It looks
+like the commit log which has introduced this function.
 
-Thanks,
+I'm also not sure that commit 9cc9a5cb176c is of any help. It is
+supposed to remove a warning, and I guess it does. But 'ovs_nla_init_match_and_action()'
+is called unconditionnaly from 'ovs_flow_cmd_set()'. So even if the stack
+used by each function is reduced, the overall stack should be the same, if
+not larger.
 
--corey
+So this commit sounds like adding a bug where the code was fine and states
+to fix an issue but, at the best, only hides it.
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/char/ipmi/ipmi_msghandler.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi=
-_msghandler.c
-> index c29d46bef6b3..9de189db2cc3 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -2941,7 +2941,7 @@ static int __ipmi_bmc_register(ipmi_smi_t intf,
->   			       bool guid_set, guid_t *guid, int intf_num)
->   {
->   	int               rv;
-> -	struct bmc_device *bmc =3D intf->bmc;
-> +	struct bmc_device *bmc;
->   	struct bmc_device *old_bmc;
->  =20
->   	/*
+Instead of fixing the code with the proposed patch, reverting the initial
+commit could also be considered.
 
+V2: update Subject line
+---
+ net/openvswitch/datapath.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
+index 76cf273a56c7..c3aec6227c91 100644
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -1112,7 +1112,8 @@ static int ovs_nla_init_match_and_action(struct net *net,
+ 		if (!a[OVS_FLOW_ATTR_KEY]) {
+ 			OVS_NLERR(log,
+ 				  "Flow key attribute not present in set flow.");
+-			return -EINVAL;
++			error = -EINVAL;
++			goto error;
+ 		}
+ 
+ 		*acts = get_flow_actions(net, a[OVS_FLOW_ATTR_ACTIONS], key,
+-- 
+2.11.0
+
