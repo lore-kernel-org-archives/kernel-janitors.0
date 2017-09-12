@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Sep 2017 15:00:55 +0000
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Tue, 12 Sep 2017 17:41:28 +0000
 Subject: Re: [media] s5p-mfc: Adjust a null pointer check in four functions
-Message-Id: <5b8eb902-d97c-3308-5ba9-64469320e0e2@users.sourceforge.net>
+Message-Id: <ee8ba7fd-1de4-b1b9-8aa0-130c86c38f30@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
  <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
@@ -9,26 +9,33 @@ References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
  <6c2d20b3-4437-0473-73d4-73c049ba52a9@samsung.com>
  <a68020cc-2477-5d6c-bc61-d753253b755a@users.sourceforge.net>
  <0fa9a180-be67-3a33-682c-bff819c36c6a@samsung.com>
-In-Reply-To: <0fa9a180-be67-3a33-682c-bff819c36c6a@samsung.com>
+ <5b8eb902-d97c-3308-5ba9-64469320e0e2@users.sourceforge.net>
+In-Reply-To: <5b8eb902-d97c-3308-5ba9-64469320e0e2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: linux-arm-kernel@lists.infradead.org
 
+On 09/12/2017 05:00 PM, SF Markus Elfring wrote:
+>>> * Do you care to preserve an information like the author date?
+>> In this case not, but actually the Date line is not an issue.
+> Thanks for your information.
+> 
+> It seems then that you quoted a line too much.
+>  
+>> Anyway the patch is malformed, …
+ >
+> I have got doubts for this view because the file was automatically generated
+> by the command “git format-patch” also for the discussed three update steps.
 
->> * Do you care to preserve an information like the author date?
->
-> In this case not, but actually the Date line is not an issue.
+Generating patch is only part of the story, it seems the patch is not sent
+properly and tags which should be in SMTP header end up in the message
+body. I think there would not be such issues if you have used git format-patch
++ git send-email.
 
-Thanks for your information.
+I normally do amend things like this while applying, I will do that this time 
+as well. It's already too much time wasted for such a dubious patch.
 
-It seems then that you quoted a line too much.
-
-
-> Anyway the patch is malformed, …
-
-I have got doubts for this view because the file was automatically generated
-by the command “git format-patch” also for the discussed three update steps.
-
-Regards,
-Markus
+-- 
+Thanks,
+Sylwester
