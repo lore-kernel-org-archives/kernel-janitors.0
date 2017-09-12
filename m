@@ -1,7 +1,7 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 12 Sep 2017 13:33:35 +0000
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 12 Sep 2017 14:19:30 +0000
 Subject: Re: [PATCH] pinctrl: uniphier: make arrays static, reduces object code size
-Message-Id: <CAK7LNAS+gobUD_rxfSoG8v1jB564=Oa3=jVuVUV7J4odefrTRw@mail.gmail.com>
+Message-Id: <CACRpkdZXPJEjQMfCekdXOCgRKwiZ8mv9wwskfuz8EgxXJyGmAA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170912112124.1143-1-colin.king@canonical.com>
 In-Reply-To: <20170912112124.1143-1-colin.king@canonical.com>
@@ -10,7 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-2017-09-12 20:21 GMT+09:00 Colin King <colin.king@canonical.com>:
+On Tue, Sep 12, 2017 at 1:21 PM, Colin King <colin.king@canonical.com> wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 >
 > Don't populate const arrays on the stack, instead make them
@@ -27,12 +28,7 @@ To: linux-arm-kernel@lists.infradead.org
 >
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+Patch applied with Masahiro's ACK.
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-Thanks!
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
