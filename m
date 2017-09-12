@@ -1,66 +1,54 @@
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-Date: Wed, 13 Sep 2017 00:51:07 +0000
-Subject: Re: [PATCH] datapath: Fix an error handling path in 'ovs_nla_init_match_and_action()'
-Message-Id: <CAMDZJNV1=1XzGKg3nNpCkzTa1Xe5Xa-q2_R5mLdyNH8qgKhvRg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Sep 2017 09:45:48 +0000
+Subject: [PATCH] drm: qxl: ratelimit pr_info message, reduce log spamming
+Message-Id: <20170912094548.30603-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170911192015.17553-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170911192015.17553-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: pravin shelar <pshelar@nicira.com>, David Miller <davem@davemloft.net>, Linux Kernel Network Developers <netdev@vger.kernel.org>, ovs dev <dev@openvswitch.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>, virtualization@lists.linux-foundation.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 12, 2017 at 3:20 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> All other error handling paths in this function go through the 'error'
-> label. This one should do the same.
->
-> Fixes: 9cc9a5cb176c ("datapath: Avoid using stack larger than 1024.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> I think that the comment above the function could be improved. It looks
-> like the commit log which has introduced this function.
->
-> I'm also not sure that commit 9cc9a5cb176c is of any help. It is
-> supposed to remove a warning, and I guess it does. But 'ovs_nla_init_match_and_action()'
-> is called unconditionnaly from 'ovs_flow_cmd_set()'. So even if the stack
-> used by each function is reduced, the overall stack should be the same, if
-> not larger.
->
-> So this commit sounds like adding a bug where the code was fine and states
-> to fix an issue but, at the best, only hides it.
->
-> Instead of fixing the code with the proposed patch, reverting the initial
-> commit could also be considered.
-> ---
->  net/openvswitch/datapath.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
-> index 76cf273a56c7..c3aec6227c91 100644
-> --- a/net/openvswitch/datapath.c
-> +++ b/net/openvswitch/datapath.c
-> @@ -1112,7 +1112,8 @@ static int ovs_nla_init_match_and_action(struct net *net,
->                 if (!a[OVS_FLOW_ATTR_KEY]) {
->                         OVS_NLERR(log,
->                                   "Flow key attribute not present in set flow.");
-> -                       return -EINVAL;
-> +                       error = -EINVAL;
-> +                       goto error;
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank for your report. But I really don't understand.
-In the 'ovs_nla_init_match_and_action', we only init 'match' when the
-OVS_FLOW_ATTR_KEY is set.
-If the 'OVS_FLOW_ATTR_ACTIONS' is set, but not 'OVS_FLOW_ATTR_KEY', we
-can return directly because the match is not inited yet, and it is
-unnecessary to set it's mask NULL. Then ovs_flow_cmd_set can run via
-value returned.
+Simply mmap'ing /dev/dri/card0 repeatedly will spam the kernel
+log with qxl_mmap information messages. The following example code
+illustrates this:
 
+int main(void)
+{
+	int fd = open("/dev/dri/card0", O_RDONLY);
+	if (fd = -1)
+		err(1, "open failed");
 
->                 }
->
->                 *acts = get_flow_actions(net, a[OVS_FLOW_ATTR_ACTIONS], key,
-> --
-> 2.11.0
->
+	for (;;) {
+		void *m = mmap(NULL, 4096, PROT_READ,
+			MAP_SHARED, fd, 0);
+		if (m != MAP_FAILED)
+			munmap(m, 4096);
+	}
+}
+
+Reduce the spamming by ratelimiting the pr_info messages.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/qxl/qxl_ttm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
+index 7ecf8a4b9fe6..6502e699f462 100644
+--- a/drivers/gpu/drm/qxl/qxl_ttm.c
++++ b/drivers/gpu/drm/qxl/qxl_ttm.c
+@@ -124,7 +124,7 @@ int qxl_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	int r;
+ 
+ 	if (unlikely(vma->vm_pgoff < DRM_FILE_PAGE_OFFSET)) {
+-		pr_info("%s: vma->vm_pgoff (%ld) < DRM_FILE_PAGE_OFFSET\n",
++		pr_info_ratelimited("%s: vma->vm_pgoff (%ld) < DRM_FILE_PAGE_OFFSET\n",
+ 			__func__, vma->vm_pgoff);
+ 		return -EINVAL;
+ 	}
+-- 
+2.14.1
+
