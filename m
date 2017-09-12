@@ -1,68 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 19:11:33 +0000
-Subject: [PATCH 1/3] [media] dvb-ttusb-budget: Use common error handling code in ttusb_probe()
-Message-Id: <b737c705-34a3-61db-57c2-f9662cd1b434@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 12 Sep 2017 17:34:22 +0000
+Subject: [PATCH][V2] drm: qxl: remove pr_info message, stops log spamming
+Message-Id: <20170912173422.14062-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1ad3c3ce-3738-fee1-2ee5-37142fa1bc70@users.sourceforge.net>
-In-Reply-To: <1ad3c3ce-3738-fee1-2ee5-37142fa1bc70@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>, virtualization@lists.linux-foundation.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 20:25:24 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Add two jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+Simply mmap'ing /dev/dri/card0 repeatedly will spam the kernel
+log with qxl_mmap information messages. The following example code
+illustrates this:
 
-This issue was detected by using the Coccinelle software.
+int main(void)
+{
+	int fd = open("/dev/dri/card0", O_RDONLY);
+	if (fd = -1)
+		err(1, "open failed");
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+	for (;;) {
+		void *m = mmap(NULL, 4096, PROT_READ,
+			MAP_SHARED, fd, 0);
+		if (m != MAP_FAILED)
+			munmap(m, 4096);
+	}
+}
+
+Stop the spamming by removing the pr_info message. Since the mmap'ing
+returns -EINVAL there is no need for the pr_info message.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/qxl/qxl_ttm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-index b842f367249f..38394c9ecc67 100644
---- a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-+++ b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-@@ -1675,8 +1675,7 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
- 	if (result < 0) {
- 		dprintk("%s: ttusb_alloc_iso_urbs - failed\n", __func__);
- 		mutex_unlock(&ttusb->semi2c);
--		kfree(ttusb);
--		return result;
-+		goto err_free_usb;
- 	}
+diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
+index 7ecf8a4b9fe6..0f50c0b25a58 100644
+--- a/drivers/gpu/drm/qxl/qxl_ttm.c
++++ b/drivers/gpu/drm/qxl/qxl_ttm.c
+@@ -123,11 +123,8 @@ int qxl_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	struct qxl_device *qdev;
+ 	int r;
  
- 	if (ttusb_init_controller(ttusb))
-@@ -1687,11 +1686,9 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
- 	result = dvb_register_adapter(&ttusb->adapter,
- 				      "Technotrend/Hauppauge Nova-USB",
- 				      THIS_MODULE, &udev->dev, adapter_nr);
--	if (result < 0) {
--		ttusb_free_iso_urbs(ttusb);
--		kfree(ttusb);
--		return result;
+-	if (unlikely(vma->vm_pgoff < DRM_FILE_PAGE_OFFSET)) {
+-		pr_info("%s: vma->vm_pgoff (%ld) < DRM_FILE_PAGE_OFFSET\n",
+-			__func__, vma->vm_pgoff);
++	if (unlikely(vma->vm_pgoff < DRM_FILE_PAGE_OFFSET))
+ 		return -EINVAL;
 -	}
-+	if (result < 0)
-+		goto err_free_iso_urbs;
-+
- 	ttusb->adapter.priv = ttusb;
  
- 	/* i2c */
-@@ -1762,7 +1759,9 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
- 	i2c_del_adapter(&ttusb->i2c_adap);
- err_unregister_adapter:
- 	dvb_unregister_adapter (&ttusb->adapter);
-+err_free_iso_urbs:
- 	ttusb_free_iso_urbs(ttusb);
-+err_free_usb:
- 	kfree(ttusb);
- 	return result;
- }
+ 	file_priv = filp->private_data;
+ 	qdev = file_priv->minor->dev->dev_private;
 -- 
 2.14.1
 
