@@ -1,77 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 11:35:51 +0000
-Subject: [PATCH] ALSA: FireWire-MOTU: Use common error handling code in snd_motu_stream_start_duplex()
-Message-Id: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 12 Sep 2017 07:23:54 +0000
+Subject: Re: [PATCH] ALSA: FireWire-MOTU: Use common error handling code in snd_motu_stream_start_duplex()
+Message-Id: <s5hwp54nzw5.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
+In-Reply-To: <9f50358a-0357-82ec-ee38-deae60eb53e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 13:30:14 +0200
+On Wed, 06 Sep 2017 13:35:51 +0200,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 6 Sep 2017 13:30:14 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Applied, thanks.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/firewire/motu/motu-stream.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/sound/firewire/motu/motu-stream.c b/sound/firewire/motu/motu-stream.c
-index dc5541c8b359..73e7a5e527fc 100644
---- a/sound/firewire/motu/motu-stream.c
-+++ b/sound/firewire/motu/motu-stream.c
-@@ -253,24 +253,21 @@ int snd_motu_stream_start_duplex(struct snd_motu *motu, unsigned int rate)
- 		if (err < 0) {
- 			dev_err(&motu->unit->device,
- 				"fail to start isochronous comm: %d\n", err);
--			stop_both_streams(motu);
--			return err;
-+			goto stop_streams;
- 		}
- 
- 		err = start_isoc_ctx(motu, &motu->rx_stream);
- 		if (err < 0) {
- 			dev_err(&motu->unit->device,
- 				"fail to start IT context: %d\n", err);
--			stop_both_streams(motu);
--			return err;
-+			goto stop_streams;
- 		}
- 
- 		err = protocol->switch_fetching_mode(motu, true);
- 		if (err < 0) {
- 			dev_err(&motu->unit->device,
- 				"fail to enable frame fetching: %d\n", err);
--			stop_both_streams(motu);
--			return err;
-+			goto stop_streams;
- 		}
- 	}
- 
-@@ -281,12 +278,15 @@ int snd_motu_stream_start_duplex(struct snd_motu *motu, unsigned int rate)
- 			dev_err(&motu->unit->device,
- 				"fail to start IR context: %d", err);
- 			amdtp_stream_stop(&motu->rx_stream);
--			stop_both_streams(motu);
--			return err;
-+			goto stop_streams;
- 		}
- 	}
- 
- 	return 0;
-+
-+stop_streams:
-+	stop_both_streams(motu);
-+	return err;
- }
- 
- void snd_motu_stream_stop_duplex(struct snd_motu *motu)
--- 
-2.14.1
-
+Takashi
