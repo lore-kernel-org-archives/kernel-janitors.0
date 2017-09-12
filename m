@@ -1,50 +1,40 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 05 Sep 2017 17:00:49 +0000
-Subject: Re: [PATCH] staging: rtl8192u: fix incorrect mask when calculating TxPowerLevelCCK
-Message-Id: <59AED841.2010709@bfs.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 12 Sep 2017 05:39:30 +0000
+Subject: [PATCH] video: fbdev: Fix an errro handling path in 'au1200fb_drv_probe()'
+Message-Id: <20170912053930.18931-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170905163247.21875-1-colin.king@canonical.com>
-In-Reply-To: <20170905163247.21875-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, simran singhal <singhalsimran0@gmail.com>, Derek Robson <robsonde@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org, viro@zeniv.linux.org.uk
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+If 'dmam_alloc_attrs()' fails, we must go through the error handling code,
+as done elsewhere in this function. Otherwise, there is a resource leak.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm also puzzled by the 'framebuffer_alloc()' call a few lines above.
+'ret' is known to be 0 at this point. I guess that -ENOMEM should also be
+returned.
+---
+ drivers/video/fbdev/au1200fb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Am 05.09.2017 18:32, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The mask of 0xff and right shift of 8 bits on ret always results in
-> a value of 0 for TxPowerLevelCCK.  I believe this should be a mask of
-> 0xff00, however I do not have the hardware at hand to test this out,
-> so there is a distinct possibility I may be wrong on this.
-> 
-> Detected by CoverityScan CID#1357110 ("Operands don't affect result")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/rtl8192u/r8192U_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-> index 46b3f19e0878..ecc887636173 100644
-> --- a/drivers/staging/rtl8192u/r8192U_core.c
-> +++ b/drivers/staging/rtl8192u/r8192U_core.c
-> @@ -2510,7 +2510,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
->  				ret = eprom_read(dev, (EEPROM_TxPwIndex_CCK >> 1));
->  				if (ret < 0)
->  					return ret;
-> -				priv->EEPROMTxPowerLevelCCK = ((u16)ret & 0xff) >> 8;
-> +				priv->EEPROMTxPowerLevelCCK = ((u16)ret & 0xff00) >> 8;
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index 5f04b4096c42..99d6cfb168b5 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1701,7 +1701,8 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 		if (!fbdev->fb_mem) {
+ 			print_err("fail to allocate frambuffer (size: %dK))",
+ 				  fbdev->fb_len / 1024);
+-			return -ENOMEM;
++			ret = -ENOMEM;
++			goto failed;
+ 		}
+ 
+ 		/*
+-- 
+2.11.0
 
-Is there any need for the mask ?
-(u16) will already reduce ret to 16 bit, the >>8 will shift the lower bits into nirwana
-
-re,
- wh
-
->  			} else
->  				priv->EEPROMTxPowerLevelCCK = 0x10;
->  			RT_TRACE(COMP_EPROM, "CCK Tx Power Levl: 0x%02x\n", priv->EEPROMTxPowerLevelCCK);
