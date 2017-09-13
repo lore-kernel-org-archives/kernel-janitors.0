@@ -1,30 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Sep 2017 11:37:16 +0000
-Subject: Re: [PATCH][pinctrl-next] pinctrl/amd: make functions amd_gpio_suspend and amd_gpio_resume static
-Message-Id: <CACRpkdYeOgyS45V8xWFy0OTdrb-h-xfy6X=q6BPv3uqO-1KxNg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Sep 2017 09:20:28 +0000
+Subject: [PATCH net] sctp: potential read out of bounds in sctp_ulpevent_type_enabled()
+Message-Id: <20170913092028.idzvduj7ran4li6b@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170913161501.7356-1-colin.king@canonical.com>
-In-Reply-To: <20170913161501.7356-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vlad Yasevich <vyasevich@gmail.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 13, 2017 at 6:15 PM, Colin King <colin.king@canonical.com> wrote:
+This code causes a static checker warning because Smatch doesn't trust
+anything that comes from skb->data.  I've reviewed this code and I do
+think skb->data can be controlled by the user here.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The functions amd_gpio_suspend and amd_gpio_resume are local to the
-> source and do not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> symbol 'amd_gpio_suspend' was not declared. Should it be static?
-> symbol 'amd_gpio_resume' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The sctp_event_subscribe struct has 13 __u8 fields and we want to see
+if ours is non-zero.  sn_type can be any value in the 0-USHRT_MAX range.
+We're subtracting SCTP_SN_TYPE_BASE which is 1 << 15 so we could read
+either before the start of the struct or after the end.
 
-Patch applied with Daniel's review tag.
+This is a very old bug and it's surprising that it would go undetected
+for so long but my theory is that it just doesn't have a big impact so
+it would be hard to notice.
 
-Yours,
-Linus Walleij
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not terribly familiar with sctp and this is a static checker fix.
+Please review it carefully.
+
+diff --git a/include/net/sctp/ulpevent.h b/include/net/sctp/ulpevent.h
+index 1060494ac230..e6873176bea7 100644
+--- a/include/net/sctp/ulpevent.h
++++ b/include/net/sctp/ulpevent.h
+@@ -154,7 +154,11 @@ static inline int sctp_ulpevent_type_enabled(__u16 sn_type,
+ 					     struct sctp_event_subscribe *mask)
+ {
+ 	char *amask = (char *) mask;
+-	return amask[sn_type - SCTP_SN_TYPE_BASE];
++	int offset = sn_type - SCTP_SN_TYPE_BASE;
++
++	if (offset >= sizeof(struct sctp_event_subscribe))
++		return 0;
++	return amask[offset];
+ }
+ 
+ /* Given an event subscription, is this event enabled? */
