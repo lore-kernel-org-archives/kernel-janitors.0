@@ -1,39 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 16:50:29 +0000
-Subject: Re: [PATCH 1/6] [media] tda8261: Use common error handling code in tda8261_set_params()
-Message-Id: <792ce307-e8a1-8159-c601-f3188fa82226@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 13 Sep 2017 16:15:01 +0000
+Subject: [PATCH][pinctrl-next] pinctrl/amd: make functions amd_gpio_suspend and amd_gpio_resume static
+Message-Id: <20170913161501.7356-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
- <28425caf-2736-96ae-00a7-3fb273b1f9d5@users.sourceforge.net>
- <bcf8d922-fde7-59a0-f3d9-3f16a2a62d9b@boehmwalder.at>
-In-Reply-To: <bcf8d922-fde7-59a0-f3d9-3f16a2a62d9b@boehmwalder.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Daniel Drake <drake@endlessm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -129,18 +129,18 @@ static int tda8261_set_params(struct dvb_frontend *fe)
->>  
->>  	/* Set params */
->>  	err = tda8261_write(state, buf);
->> -	if (err < 0) {
->> -		pr_err("%s: I/O Error\n", __func__);
->> -		return err;
->> -	}
->> +	err = tda8261_get_status(fe, &status);
->> +	if (err < 0)
->> +		goto report_failure;
->> +
-> 
-> Is this change really correct? Doesn't it query the status once more
-> often than before?
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for your inquiry.
+The functions amd_gpio_suspend and amd_gpio_resume are local to the
+source and do not need to be in global scope, so make them static.
 
-Unfortunately, I made a copy mistake at this source code place.
-When should I send a corrected suggestion for this update step
-in the patch series?
+Cleans up sparse warnings:
+symbol 'amd_gpio_suspend' was not declared. Should it be static?
+symbol 'amd_gpio_resume' was not declared. Should it be static?
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 3f6b34febbf1..d10d280ab1c9 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -745,7 +745,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+ 	return false;
+ }
+ 
+-int amd_gpio_suspend(struct device *dev)
++static int amd_gpio_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
+@@ -764,7 +764,7 @@ int amd_gpio_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-int amd_gpio_resume(struct device *dev)
++static int amd_gpio_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
+-- 
+2.14.1
+
