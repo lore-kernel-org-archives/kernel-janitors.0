@@ -1,88 +1,48 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Date: Fri, 29 Sep 2017 09:19:16 +0000
-Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory allocation in three functions
-Message-Id: <20170929091915.GL6290@tbergstrom-lnx.Nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Sep 2017 23:00:54 +0000
+Subject: [PATCH v2 net] sctp: potential read out of bounds in sctp_ulpevent_type_enabled()
+Message-Id: <20170913230054.fmtidvfi2swvy2mm@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
-In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+References: <20170913.092522.934509429497822082.davem@davemloft.net>
+In-Reply-To: <20170913.092522.934509429497822082.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan
- Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Vlad Yasevich <vyasevich@gmail.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+This code causes a static checker warning because Smatch doesn't trust
+anything that comes from skb->data.  I've reviewed this code and I do
+think skb->data can be controlled by the user here.
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+The sctp_event_subscribe struct has 13 __u8 fields and we want to see
+if ours is non-zero.  sn_type can be any value in the 0-USHRT_MAX range.
+We're subtracting SCTP_SN_TYPE_BASE which is 1 << 15 so we could read
+either before the start of the struct or after the end.
 
-On Wed, Sep 27, 2017 at 06:53:10PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 18:40:34 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/clk/tegra/clk-audio-sync.c  | 4 +---
->  drivers/clk/tegra/clk-divider.c     | 5 +----
->  drivers/clk/tegra/clk-periph-gate.c | 4 +---
->  3 files changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-> index 92d04ce2dee6..62a84c883dd4 100644
-> --- a/drivers/clk/tegra/clk-audio-sync.c
-> +++ b/drivers/clk/tegra/clk-audio-sync.c
-> @@ -62,10 +62,8 @@ struct clk *tegra_clk_register_sync_source(const char *name,
->  	struct clk *clk;
->  
->  	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
-> -	if (!sync) {
-> -		pr_err("%s: could not allocate sync source clk\n", __func__);
-> +	if (!sync)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	sync->rate = rate;
->  	sync->max_rate = max_rate;
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index 16e0aee14773..5ee9423ccac2 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -156,11 +156,8 @@ struct clk *tegra_clk_register_divider(const char *name,
->  	struct clk_init_data init;
->  
->  	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
-> -	if (!divider) {
-> -		pr_err("%s: could not allocate fractional divider clk\n",
-> -		       __func__);
-> +	if (!divider)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	init.name = name;
->  	init.ops = &tegra_clk_frac_div_ops;
-> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-> index 303ef32ee3f1..276cc4c59204 100644
-> --- a/drivers/clk/tegra/clk-periph-gate.c
-> +++ b/drivers/clk/tegra/clk-periph-gate.c
-> @@ -141,10 +141,8 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
->  		return ERR_PTR(-EINVAL);
->  
->  	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> -	if (!gate) {
-> -		pr_err("%s: could not allocate periph gate clk\n", __func__);
-> +	if (!gate)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	init.name = name;
->  	init.flags = flags;
-> -- 
-> 2.14.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is a very old bug and it's surprising that it would go undetected
+for so long but my theory is that it just doesn't have a big impact so
+it would be hard to notice.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  Use reverse-christmas-tree local variable ordering.
+
+diff --git a/include/net/sctp/ulpevent.h b/include/net/sctp/ulpevent.h
+index 1060494ac230..b8c86ec1a8f5 100644
+--- a/include/net/sctp/ulpevent.h
++++ b/include/net/sctp/ulpevent.h
+@@ -153,8 +153,12 @@ __u16 sctp_ulpevent_get_notification_type(const struct sctp_ulpevent *event);
+ static inline int sctp_ulpevent_type_enabled(__u16 sn_type,
+ 					     struct sctp_event_subscribe *mask)
+ {
++	int offset = sn_type - SCTP_SN_TYPE_BASE;
+ 	char *amask = (char *) mask;
+-	return amask[sn_type - SCTP_SN_TYPE_BASE];
++
++	if (offset >= sizeof(struct sctp_event_subscribe))
++		return 0;
++	return amask[offset];
+ }
+ 
+ /* Given an event subscription, is this event enabled? */
