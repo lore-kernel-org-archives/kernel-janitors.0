@@ -1,24 +1,30 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Sat, 16 Sep 2017 01:45:15 +0000
-Subject: Re: [PATCH] csi: libcxgbi: remove redundant check and close on csk
-Message-Id: <yq1vakjs9g4.fsf@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Sep 2017 23:01:16 +0000
+Subject: [PATCH] ALSA: hwdep: prevent a harmless shift wrapping bug
+Message-Id: <20170913230116.yspku7ov2hgqtigh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170907135133.16636-1-colin.king@canonical.com>
-In-Reply-To: <20170907135133.16636-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 7 Sep 2017 14:51:33 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Varun Prakash <varun@chelsio.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
+The "info.index" variable represents a bit in hw->dsp_loaded which is
+an unsigned int.  If it's higher than 31 we hit a shift wrapping bug.
+This seems harmless, but I wanted to silence the static checker warning.
 
-Colin,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> csk is always null on the error return path and so the non-null check
-> and call to cxgbi_sock_closed on csk is redundant and can be removed.
-
-Applied to 4.15/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/sound/core/hwdep.c b/sound/core/hwdep.c
+index a73baa1242be..8faae3d1455d 100644
+--- a/sound/core/hwdep.c
++++ b/sound/core/hwdep.c
+@@ -228,6 +228,8 @@ static int snd_hwdep_dsp_load(struct snd_hwdep *hw,
+ 	memset(&info, 0, sizeof(info));
+ 	if (copy_from_user(&info, _info, sizeof(info)))
+ 		return -EFAULT;
++	if (info.index >= 32)
++		return -EINVAL;
+ 	/* check whether the dsp was already loaded */
+ 	if (hw->dsp_loaded & (1 << info.index))
+ 		return -EBUSY;
