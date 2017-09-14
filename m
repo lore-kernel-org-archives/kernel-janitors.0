@@ -1,34 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Sep 2017 21:53:46 +0000
-Subject: [PATCH] NFS: Cleanup error handling in nfs_idmap_request_key()
-Message-Id: <20170920215346.bgucxg77ayrcx6zy@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 14 Sep 2017 20:44:24 +0000
+Subject: [PATCH 2/2] ASoC: topology: Fix a potential memory leak in 'soc_tplg_dapm_widget_denum_create()'
+Message-Id: <20170914204424.25464-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-nfs_idmap_get_desc() can't actually return zero.  But if it did then
-we would return ERR_PTR(0) which is NULL and the caller,
-nfs_idmap_get_key(), doesn't expect that so it leads to a NULL pointer
-dereference.
+If this sanity check fails, we must free the memory that has already been
+allocated.
 
-I've cleaned this up by changing the "<=" to "<" so it's more clear that
-we don't return ERR_PTR(0).
+So we must go to 'err' as in the other error handling parth of this
+function.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 1a7dd6e2f192 ("ASoC: topology: Allow a widget to have multiple enum controls")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/soc-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index dd5d27da8c0c..30426c1a1bbd 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -274,7 +274,7 @@ static struct key *nfs_idmap_request_key(const char *name, size_t namelen,
- 	ssize_t ret;
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 2499b54a57e8..01a50413c66f 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1301,7 +1301,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 		/* validate kcontrol */
+ 		if (strnlen(ec->hdr.name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN) =
+ 			    SNDRV_CTL_ELEM_ID_NAME_MAXLEN)
+-			return NULL;
++			goto err;
  
- 	ret = nfs_idmap_get_desc(name, namelen, type, strlen(type), &desc);
--	if (ret <= 0)
-+	if (ret < 0)
- 		return ERR_PTR(ret);
- 
- 	rkey = request_key(&key_type_id_resolver, desc, "");
+ 		se = kzalloc(sizeof(*se), GFP_KERNEL);
+ 		if (se = NULL)
+-- 
+2.11.0
+
