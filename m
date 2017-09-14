@@ -1,46 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 16:02:14 +0000
-Subject: [PATCH 2/2] [media] c8sectpfe: Improve two size determinations in c8sectpfe_frontend_attach()
-Message-Id: <432261cc-ecf1-0673-b8e2-9ca317ceb772@users.sourceforge.net>
+Date: Thu, 14 Sep 2017 10:34:27 +0000
+Subject: [PATCH 4/8] [media] ttusb_dec: Delete an error message for a failed memory allocation in ttusb_dec_p
+Message-Id: <afc9e33f-65d2-ee56-ac4b-20f76a6489ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
-In-Reply-To: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
+References: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
+In-Reply-To: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 17:30:38 +0200
+Date: Wed, 13 Sep 2017 20:10:39 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/usb/ttusb-dec/ttusb_dec.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-index 1b23b188cd65..c3b09a9e30ec 100644
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
-@@ -164,12 +164,10 @@ int c8sectpfe_frontend_attach(struct dvb_frontend **fe,
- 		tda18212 = devm_kzalloc(c8sectpfe->device,
--					sizeof(struct tda18212_config),
-+					sizeof(*tda18212),
- 					GFP_KERNEL);
- 		if (!tda18212)
- 			return -ENOMEM;
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index 76070da3b7c7..26d637684b30 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -1659,10 +1659,8 @@ static int ttusb_dec_probe(struct usb_interface *intf,
+ 	udev = interface_to_usbdev(intf);
  
--		memcpy(tda18212, &tda18212_conf,
--			sizeof(struct tda18212_config));
--
-+		memcpy(tda18212, &tda18212_conf, sizeof(*tda18212));
- 		tda18212->fe = (*fe);
+ 	dec = kzalloc(sizeof(*dec), GFP_KERNEL);
+-	if (!dec) {
+-		printk("%s: couldn't allocate memory.\n", __func__);
++	if (!dec)
+ 		return -ENOMEM;
+-	}
  
- 		tda18212_info.platform_data = tda18212;
+ 	usb_set_intfdata(intf, (void *)dec);
+ 
 -- 
 2.14.1
 
