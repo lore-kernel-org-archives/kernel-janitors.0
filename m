@@ -1,49 +1,40 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Sep 2017 14:11:38 +0000
-Subject: [PATCH] i40e: make const array patterns static, reduces object code size
-Message-Id: <20170922141138.13038-1-colin.king@canonical.com>
+Date: Thu, 14 Sep 2017 18:02:19 +0000
+Subject: [PATCH] crypto: algboss: remove redundant setting of len to zero
+Message-Id: <20170914180219.12994-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate const array patterns on the stack, instead make it
-static. Makes the object code smaller by over 60 bytes:
+The variable len is set to zero, never read and then later updated
+to p - name, so clearly the zero'ing of len is redundant and
+can be removed.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   1953	    496	      0	   2449	    991	i40e_diag.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   1798	    584	      0	   2382	    94e	i40e_diag.o
-
-(gcc 6.3.0, x86-64)
+Detected by clang scan-build:
+" warning: Value stored to 'len' is never read"
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/intel/i40e/i40e_diag.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/algboss.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_diag.c b/drivers/net/ethernet/intel/i40e/i40e_diag.c
-index f141e78d409e..76ed56641864 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_diag.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_diag.c
-@@ -36,7 +36,9 @@
- static i40e_status i40e_diag_reg_pattern_test(struct i40e_hw *hw,
- 							u32 reg, u32 mask)
- {
--	const u32 patterns[] = {0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFF};
-+	static const u32 patterns[] = {
-+		0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFF
-+	};
- 	u32 pat, val, orig_val;
- 	int i;
+diff --git a/crypto/algboss.c b/crypto/algboss.c
+index 960d8548171b..5e6df2a087fa 100644
+--- a/crypto/algboss.c
++++ b/crypto/algboss.c
+@@ -122,7 +122,6 @@ static int cryptomgr_schedule_probe(struct crypto_larval *larval)
+ 		int notnum = 0;
  
+ 		name = ++p;
+-		len = 0;
+ 
+ 		for (; isalnum(*p) || *p = '-' || *p = '_'; p++)
+ 			notnum |= !isdigit(*p);
 -- 
 2.14.1
 
