@@ -1,49 +1,48 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Mon, 25 Sep 2017 16:27:08 +0000
-Subject: Re: [PATCH] apparmor: Fix harmless off by one in map_signal_num()
-Message-Id: <d117fc46-ff6e-584d-2f9a-8fc253e42f7d@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 Sep 2017 16:21:54 +0000
+Subject: [PATCH] drm/i915: remove redundant variable hw_check
+Message-Id: <20170914162154.11304-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170901085225.dpuirzpj7aq3yyim@mwanda>
-	<d2c82d40-2b1b-163d-85d3-4a902f62e818@canonical.com>
-	<20170925150910.5bo2j2wwwojoyl43@mwanda>
-In-Reply-To: <20170925150910.5bo2j2wwwojoyl43@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/25/2017 11:09 AM, Dan Carpenter wrote:
-> On Mon, Sep 25, 2017 at 10:25:01AM -0400, John Johansen wrote:
->> On 09/01/2017 04:52 AM, Dan Carpenter wrote:
->>> This patch has no effect on runtime.
->>>
->>> The sig_map[] array has MAXMAPPED_SIG (35) members so my static checker
->>> complains that the <= should be <.  But in this case it's not possible
->>> for "sig" to be more than 31 because of the "else if (sig >= SIGRTMIN)"
->>> condition since SIGRTMIN is 32.  The last three elements, 32-34, of
->>> sig_map[] are empty so this code works as designed.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
->>> index 66fb9ede9447..5091c78062e4 100644
->>> --- a/security/apparmor/ipc.c
->>> +++ b/security/apparmor/ipc.c
->>> @@ -128,7 +128,7 @@ static inline int map_signal_num(int sig)
->>>  		return SIGUNKNOWN;
->>>  	else if (sig >= SIGRTMIN)
->>>  		return sig - SIGRTMIN + 128;	/* rt sigs mapped to 128 */
->>> -	else if (sig <= MAXMAPPED_SIG)
->>> +	else if (sig < MAXMAPPED_SIG)
->>>  		return sig_map[sig];
->>>  	return SIGUNKNOWN;
->>>  }
->>>
->>
->> Colin King beat you to this one, its in apparmor-next
-> 
-> apparmor doesn't seem to be in linux-next at all.  Why is that?
-> 
-hrmmm, apparmor is pulled in via security-next merges, but you are right
-apparmor-next isn't being merged and we should set that up.
+From: Colin Ian King <colin.king@canonical.com>
+
+hw_check is being assigned and updated but is no longer being read,
+hence it is redundant and can be removed.
+
+Detected by clang scan-build:
+"warning: Value stored to 'hw_check' during its initialization
+is never read"
+
+Fixes: f6d1973db2d2 ("drm/i915: Move modeset state verifier calls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/intel_display.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index f17275519484..ac261eaa5ba5 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -12359,7 +12359,6 @@ static void intel_atomic_commit_tail(struct drm_atomic_state *state)
+ 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+ 	struct drm_crtc *crtc;
+ 	struct intel_crtc_state *intel_cstate;
+-	bool hw_check = intel_state->modeset;
+ 	u64 put_domains[I915_MAX_PIPES] = {};
+ 	unsigned crtc_vblank_mask = 0;
+ 	int i;
+@@ -12376,7 +12375,6 @@ static void intel_atomic_commit_tail(struct drm_atomic_state *state)
+ 
+ 		if (needs_modeset(new_crtc_state) ||
+ 		    to_intel_crtc_state(new_crtc_state)->update_pipe) {
+-			hw_check = true;
+ 
+ 			put_domains[to_intel_crtc(crtc)->pipe]  				modeset_get_crtc_power_domains(crtc,
+-- 
+2.14.1
 
