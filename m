@@ -1,39 +1,86 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 20:15:20 +0000
-Subject: [PATCH 0/8] [media] Cx231xx: Adjustments for several function implementations
-Message-Id: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+Date: Thu, 14 Sep 2017 10:32:36 +0000
+Subject: [PATCH 2/8] [media] ttusb_dec: Adjust five checks for null pointers
+Message-Id: <4cd3254b-abc3-2145-e693-c454a13d1a2a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
+In-Reply-To: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 21:30:12 +0200
+Date: Wed, 13 Sep 2017 18:22:35 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Some update suggestions were taken into account
-from static source code analysis.
+The script “checkpatch.pl” pointed information out like the following.
 
-Markus Elfring (8):
-  Delete eight error messages for a failed memory allocation
-  Adjust 56 checks for null pointers
-  Improve six size determinations
-  Delete an unnecessary variable initialisation in dvb_init()
-  Use common error handling code in dvb_init()
-  Use common error handling code in read_eeprom()
-  Delete an unnecessary variable initialisation in read_eeprom()
-  Use common error handling code in cx231xx_load_firmware()
+Comparison to NULL could be written …
 
- drivers/media/usb/cx231xx/cx231xx-417.c   |  65 +++++-----
- drivers/media/usb/cx231xx/cx231xx-audio.c |   2 +-
- drivers/media/usb/cx231xx/cx231xx-cards.c |  35 +++---
- drivers/media/usb/cx231xx/cx231xx-core.c  |  34 ++----
- drivers/media/usb/cx231xx/cx231xx-dvb.c   | 195 ++++++++++++------------------
- drivers/media/usb/cx231xx/cx231xx-vbi.c   |  17 +--
- drivers/media/usb/cx231xx/cx231xx-video.c |   6 +-
- 7 files changed, 143 insertions(+), 211 deletions(-)
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/ttusb-dec/ttusb_dec.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index 0bc80daf6e2e..901cb221aad2 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -406,15 +406,15 @@ static int ttusb_dec_get_stb_state (struct ttusb_dec *dec, unsigned int *mode,
+ 		return result;
+ 
+ 	if (c_length >= 0x0c) {
+-		if (mode != NULL) {
++		if (mode) {
+ 			memcpy(&tmp, c, 4);
+ 			*mode = ntohl(tmp);
+ 		}
+-		if (model != NULL) {
++		if (model) {
+ 			memcpy(&tmp, &c[4], 4);
+ 			*model = ntohl(tmp);
+ 		}
+-		if (version != NULL) {
++		if (version) {
+ 			memcpy(&tmp, &c[8], 4);
+ 			*version = ntohl(tmp);
+ 		}
+@@ -1393,7 +1393,7 @@ static int ttusb_dec_boot_dsp(struct ttusb_dec *dec)
+ 	j = 0;
+ 
+ 	b = kmalloc(ARM_PACKET_SIZE, GFP_KERNEL);
+-	if (b = NULL) {
++	if (!b) {
+ 		release_firmware(fw_entry);
+ 		return -ENOMEM;
+ 	}
+@@ -1703,18 +1703,17 @@ static int ttusb_dec_probe(struct usb_interface *intf,
+ 		break;
+ 	}
+ 
+-	if (dec->fe = NULL) {
++	if (!dec->fe)
+ 		printk("dvb-ttusb-dec: A frontend driver was not found for device [%04x:%04x]\n",
+ 		       le16_to_cpu(dec->udev->descriptor.idVendor),
+ 		       le16_to_cpu(dec->udev->descriptor.idProduct));
+-	} else {
++	else
+ 		if (dvb_register_frontend(&dec->adapter, dec->fe)) {
+ 			printk("budget-ci: Frontend registration failed!\n");
+ 			if (dec->fe->ops.release)
+ 				dec->fe->ops.release(dec->fe);
+ 			dec->fe = NULL;
+ 		}
+-	}
+ 
+ 	ttusb_dec_init_v_pes(dec);
+ 	ttusb_dec_init_filters(dec);
 -- 
 2.14.1
 
