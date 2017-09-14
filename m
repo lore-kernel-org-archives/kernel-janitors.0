@@ -1,91 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Sep 2017 20:17:15 +0000
-Subject: [PATCH 1/2] ACPI: Delete an error message for a failed memory allocation in five functions
-Message-Id: <dff53bcc-c056-4a09-e7d1-eabd2c3fa124@users.sourceforge.net>
+Date: Thu, 14 Sep 2017 10:36:22 +0000
+Subject: [PATCH 6/8] [media] ttusb_dec: Reduce the scope for three variables in ttusb_dec_process_urb()
+Message-Id: <7c7b66d3-bf34-0635-7941-faeb10854de8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <267c842c-d38a-67be-f61b-a2056f7e71ee@users.sourceforge.net>
-In-Reply-To: <267c842c-d38a-67be-f61b-a2056f7e71ee@users.sourceforge.net>
+References: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
+In-Reply-To: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Sep 2017 21:52:44 +0200
+Date: Wed, 13 Sep 2017 21:23:29 +0200
 
-Omit extra messages for a memory allocation failure in these functions.
+* Move the definition for the local variables "b", "d" and "length" into
+  an if branch so that the corresponding setting will only be performed
+  if a memory allocation succeeded in this function.
 
-This issue was detected by using the Coccinelle software.
+* Adjust their data types.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_platform.c | 1 -
- drivers/acpi/acpi_video.c    | 1 -
- drivers/acpi/ioapic.c        | 1 -
- drivers/acpi/scan.c          | 5 +----
- 4 files changed, 1 insertion(+), 7 deletions(-)
+ drivers/media/usb/ttusb-dec/ttusb_dec.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/acpi_platform.c b/drivers/acpi/acpi_platform.c
-index 88cd949003f3..9ca1fa1806ae 100644
---- a/drivers/acpi/acpi_platform.c
-+++ b/drivers/acpi/acpi_platform.c
-@@ -85,7 +85,6 @@ struct platform_device *acpi_create_platform_device(struct acpi_device *adev,
- 		resources = kzalloc(count * sizeof(struct resource),
- 				    GFP_KERNEL);
- 		if (!resources) {
--			dev_err(&adev->dev, "No memory for resources\n");
- 			acpi_dev_free_resource_list(&resource_list);
- 			return ERR_PTR(-ENOMEM);
- 		}
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 0972ec0e2eb8..0160f237d963 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -822,7 +822,6 @@ int acpi_video_get_levels(struct acpi_device *device,
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index 7759de653ee9..e9fe4c6142a5 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -812,19 +812,18 @@ static void ttusb_dec_process_urb(struct urb *urb)
+ 		int i;
  
- 	br = kzalloc(sizeof(*br), GFP_KERNEL);
- 	if (!br) {
--		printk(KERN_ERR "can't allocate memory\n");
- 		result = -ENOMEM;
- 		goto out;
- 	}
-diff --git a/drivers/acpi/ioapic.c b/drivers/acpi/ioapic.c
-index 3595aa9c7c18..99d7c69eae9b 100644
---- a/drivers/acpi/ioapic.c
-+++ b/drivers/acpi/ioapic.c
-@@ -124,7 +124,6 @@ static acpi_status handle_ioapic_add(acpi_handle handle, u32 lvl,
+ 		for (i = 0; i < FRAMES_PER_ISO_BUF; i++) {
+-			struct usb_iso_packet_descriptor *d;
+-			u8 *b;
+-			int length;
+ 			struct urb_frame *frame;
  
- 	ioapic = kzalloc(sizeof(*ioapic), GFP_KERNEL);
- 	if (!ioapic) {
--		pr_err("cannot allocate memory for new IOAPIC\n");
- 		goto exit;
- 	} else {
- 		ioapic->root_handle = (acpi_handle)context;
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 602f8ff212f2..7df7bea1e177 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -652,7 +652,6 @@ int acpi_device_add(struct acpi_device *device,
+-			d = &urb->iso_frame_desc[i];
+-			b = urb->transfer_buffer + d->offset;
+-			length = d->actual_length;
+-
+ 			frame = kmalloc(sizeof(*frame), GFP_ATOMIC);
+ 			if (frame) {
+ 				unsigned long flags;
++				struct usb_iso_packet_descriptor const *d;
++				u8 const *b;
++				unsigned int length;
  
- 	new_bus_id = kzalloc(sizeof(struct acpi_device_bus_id), GFP_KERNEL);
- 	if (!new_bus_id) {
--		pr_err(PREFIX "Memory allocation error\n");
- 		result = -ENOMEM;
- 		goto err_detach;
- 	}
-@@ -1579,10 +1578,8 @@ static int acpi_add_single_object(struct acpi_device **child,
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++				d = &urb->iso_frame_desc[i];
++				b = urb->transfer_buffer + d->offset;
++				length = d->actual_length;
+ 				memcpy(frame->data, b, length);
+ 				frame->length = length;
  
- 	device = kzalloc(sizeof(struct acpi_device), GFP_KERNEL);
--	if (!device) {
--		printk(KERN_ERR PREFIX "Memory allocation error\n");
-+	if (!device)
- 		return -ENOMEM;
--	}
- 
- 	acpi_init_device_object(device, handle, type, sta);
- 	acpi_bus_get_power_flags(device);
 -- 
-2.14.2
+2.14.1
 
