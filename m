@@ -1,55 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Sep 2017 19:45:49 +0000
-Subject: [PATCH 4/4] [media] sp2: Adjust three null pointer checks in sp2_exit()
-Message-Id: <2d2b6ac7-eb35-a439-3dab-ed4e01e3a9f8@users.sourceforge.net>
+Date: Thu, 14 Sep 2017 10:30:30 +0000
+Subject: [PATCH 0/8] [media] ttusb_dec: Fine-tuning for some function implementations
+Message-Id: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
-In-Reply-To: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Olli Salonen <olli.salonen@iki.fi>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Sep 2017 21:16:06 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 14 Sep 2017 12:26:24 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Comparison to NULL could be written !…
+Markus Elfring (8):
+  Use common error handling code in ttusb_dec_init_dvb()
+  Adjust five checks for null pointers
+  Improve a size determination in three functions
+  Delete an error message for a failed memory allocation in ttusb_dec_probe()
+  Move an assignment in ttusb_dec_probe()
+  Reduce the scope for three variables in ttusb_dec_process_urb()
+  Add spaces for better code readability
+  Delete four unwanted spaces
 
-Thus fix the affected source code places.
+ drivers/media/usb/ttusb-dec/ttusb_dec.c | 175 ++++++++++++++------------------
+ 1 file changed, 79 insertions(+), 96 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/sp2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/sp2.c b/drivers/media/dvb-frontends/sp2.c
-index b2a7a54174ae..9bd71ba36d86 100644
---- a/drivers/media/dvb-frontends/sp2.c
-+++ b/drivers/media/dvb-frontends/sp2.c
-@@ -357,14 +357,14 @@ static int sp2_exit(struct i2c_client *client)
- 
- 	dev_dbg(&client->dev, "\n");
- 
--	if (client = NULL)
-+	if (!client)
- 		return 0;
- 
- 	s = i2c_get_clientdata(client);
--	if (s = NULL)
-+	if (!s)
- 		return 0;
- 
--	if (s->ca.data = NULL)
-+	if (!s->ca.data)
- 		return 0;
- 
- 	dvb_ca_en50221_release(&s->ca);
 -- 
 2.14.1
 
