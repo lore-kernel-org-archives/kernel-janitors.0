@@ -1,31 +1,47 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Sep 2017 08:28:04 +0000
-Subject: Re: [PATCH 1/2] ALSA: us122l: Use common error handling code in us122l_create_card()
-Message-Id: <s5hd172kj57.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 14 Sep 2017 16:01:25 +0000
+Subject: [PATCH] tg3: clean up redundant initialization of tnapi
+Message-Id: <20170914160125.11007-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6743b977-4293-42d2-6c1b-cb83b687bd66@users.sourceforge.net>
- <cc84d72e-1474-2eb9-30cf-28034155bcc3@users.sourceforge.net>
-In-Reply-To: <cc84d72e-1474-2eb9-30cf-28034155bcc3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Johan Hovold <johan@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Siva Reddy Kallam <siva.kallam@broadcom.com>, Prashant Sreedharan <prashant@broadcom.com>, Michael Chan <mchan@broadcom.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 06 Sep 2017 15:16:29 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 14:45:09 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+tnapi is being initialized and then immediately updated and
+hence the initialiation is redundant.  Clean up the warning
+by moving the declaration and initialization to the inside
+of the for-loop.
 
+Cleans up clang scan-build warning:
+warning: Value stored to 'tnapi' during its initialization is never read
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/tg3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index af33dc15c55f..54588809b867 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -11536,11 +11536,11 @@ static int tg3_start(struct tg3 *tp, bool reset_phy, bool test_irq,
+ 	tg3_napi_enable(tp);
+ 
+ 	for (i = 0; i < tp->irq_cnt; i++) {
+-		struct tg3_napi *tnapi = &tp->napi[i];
+ 		err = tg3_request_irq(tp, i);
+ 		if (err) {
+ 			for (i--; i >= 0; i--) {
+-				tnapi = &tp->napi[i];
++				struct tg3_napi *tnapi = &tp->napi[i];
++
+ 				free_irq(tnapi->irq_vec, tnapi);
+ 			}
+ 			goto out_napi_fini;
+-- 
+2.14.1
+
