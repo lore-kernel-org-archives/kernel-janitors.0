@@ -1,45 +1,80 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Thu, 14 Sep 2017 02:24:37 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] igb: check memory allocation failure
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C6A028B@ORSMSX101.amr.corp.intel.com>
+From: "Waskiewicz Jr, Peter" <peter.waskiewicz.jr@intel.com>
+Date: Thu, 14 Sep 2017 14:47:17 +0000
+Subject: Re: [Intel-wired-lan] [PATCH] igb: check memory allocation failure
+Message-Id: <E0D909EE5BB15A4699798539EA149D7F077BED9A@ORSMSX103.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170827063951.5975-1-christophe.jaillet@wanadoo.fr>
  <E0D909EE5BB15A4699798539EA149D7F0779685B@ORSMSX103.amr.corp.intel.com>
  <95a0bc80-8b41-d74f-8059-ae7181493120@wanadoo.fr>
-In-Reply-To: <95a0bc80-8b41-d74f-8059-ae7181493120@wanadoo.fr>
+ <309B89C4C689E141A5FF6A0C5FB2118B8C6A028B@ORSMSX101.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Waskiewicz Jr, Peter" <peter.waskiewicz.jr@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: "Brown, Aaron F" <aaron.f.brown@intel.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
 Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-PiBGcm9tOiBJbnRlbC13aXJlZC1sYW4gW21haWx0bzppbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bv
-c3Vvc2wub3JnXSBPbiBCZWhhbGYNCj4gT2YgQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IE1v
-bmRheSwgQXVndXN0IDI4LCAyMDE3IDEwOjEzIEFNDQo+IFRvOiBXYXNraWV3aWN6IEpyLCBQZXRl
-ciA8cGV0ZXIud2Fza2lld2ljei5qckBpbnRlbC5jb20+OyBLaXJzaGVyLCBKZWZmcmV5IFQNCj4g
-PGplZmZyZXkudC5raXJzaGVyQGludGVsLmNvbT4NCj4gQ2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5v
-cmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGludGVsLXdpcmVkLQ0KPiBsYW5A
-bGlzdHMub3N1b3NsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0
-OiBSZTogW0ludGVsLXdpcmVkLWxhbl0gW1BBVENIXSBpZ2I6IGNoZWNrIG1lbW9yeSBhbGxvY2F0
-aW9uIGZhaWx1cmUNCj4gDQo+IExlIDI4LzA4LzIwMTcgw6AgMDE6MDksIFdhc2tpZXdpY3ogSnIs
-IFBldGVyIGEgw6ljcml0wqA6DQo+ID4gT24gOC8yNy8xNyAyOjQyIEFNLCBDaHJpc3RvcGhlIEpB
-SUxMRVQgd3JvdGU6DQo+ID4+IENoZWNrIG1lbW9yeSBhbGxvY2F0aW9uIGZhaWx1cmVzIGFuZCBy
-ZXR1cm4gLUVOT01FTSBpbiBzdWNoIGNhc2VzLCBhcw0KPiA+PiBhbHJlYWR5IGRvbmUgZm9yIG90
-aGVyIG1lbW9yeSBhbGxvY2F0aW9ucyBpbiB0aGlzIGZ1bmN0aW9uLg0KPiA+Pg0KPiA+PiBUaGlz
-IGF2b2lkcyBOVUxMIHBvaW50ZXJzIGRlcmVmZXJlbmNlLg0KPiA+Pg0KPiA+PiBTaWduZWQtb2Zm
-LWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZyPg0K
-PiA+PiAtLS0NCj4gPj4gICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWlu
-LmMgfCAyICsrDQo+ID4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gPj4N
-Cg0KVGhpcyBzZWVtcyB0byBiZSBmaW5lIGZyb20gYSAiaXQgZG9lcyBub3QgYnJlYWsgaW4gdGVz
-dGluZyIgcGVyc3BlY3RpdmUsIHNvLi4uDQoNClRlc3RlZC1ieTogQWFyb24gQnJvd24gPGFhcm9u
-LmYuYnJvd25AaW50ZWwuY29tDQoNCj4gPiAtUEoNCj4gPg0KPiBIaSwNCj4gDQo+IGluIGZhY3Qs
-IHRoZXJlIGlzIG5vIGxlYWsgYmVjYXVzZSB0aGUgb25seSBjYWxsZXIgb2YgJ2lnYl9zd19pbml0
-KCknDQo+IChpLmUuICdpZ2JfcHJvYmUoKScpLCBhbHJlYWR5IGZyZWVzIHRoZXNlIHJlc291cmNl
-cyBpbiBjYXNlIG9mIGVycm9yLA0KPiBzZWUgWzFdDQo+IA0KPiBUaGVzZSByZXNvdXJjZXMgYXJl
-IGFsc28gZnJlZWTCoCBpbiAnaWdiX3JlbW92ZSgpJy4NCj4gDQo+IEJlc3QgcmVhZ3JkcywNCj4g
-Q0oNCj4gDQo+IFsxXToNCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
-cm5lbC9naXQvbmV4dC9saW51eC0NCj4gbmV4dC5naXQvdHJlZS9kcml2ZXJzL25ldC9ldGhlcm5l
-dC9pbnRlbC9pZ2IvaWdiX21haW4uYyNuMjc3NQ0KDQpCdXQgaXMgUEoncyBjb21tZW50IHNheWlu
-ZyB0aGF0IGl0IGlzIG5vdCByZWFsbHkgbmVjZXNzYXJ5PyAgSWYgc28gSSB0ZW5kIHRvIGxlYW4g
-dG93YXJkcyB0aGUgZG9uJ3QgdG91Y2ggaXQgaWYgaXQncyBub3QgYnJva2VuIHBlcnNwZWN0aXZl
-Lg0KIA0KDQo
+On 9/13/17 7:24 PM, Brown, Aaron F wrote:
+>> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On Beh=
+alf
+>> Of Christophe JAILLET
+>> Sent: Monday, August 28, 2017 10:13 AM
+>> To: Waskiewicz Jr, Peter <peter.waskiewicz.jr@intel.com>; Kirsher, Jeffr=
+ey T
+>> <jeffrey.t.kirsher@intel.com>
+>> Cc: netdev@vger.kernel.org; kernel-janitors@vger.kernel.org; intel-wired-
+>> lan@lists.osuosl.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [Intel-wired-lan] [PATCH] igb: check memory allocation fail=
+ure
+>>
+>> Le 28/08/2017 =E0 01:09, Waskiewicz Jr, Peter a =E9crit=A0:
+>>> On 8/27/17 2:42 AM, Christophe JAILLET wrote:
+>>>> Check memory allocation failures and return -ENOMEM in such cases, as
+>>>> already done for other memory allocations in this function.
+>>>>
+>>>> This avoids NULL pointers dereference.
+>>>>
+>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>> ---
+>>>>     drivers/net/ethernet/intel/igb/igb_main.c | 2 ++
+>>>>     1 file changed, 2 insertions(+)
+>>>>
+>=20
+> This seems to be fine from a "it does not break in testing" perspective, =
+so...
+>=20
+> Tested-by: Aaron Brown <aaron.f.brown@intel.com
+>=20
+>>> -PJ
+>>>
+>> Hi,
+>>
+>> in fact, there is no leak because the only caller of 'igb_sw_init()'
+>> (i.e. 'igb_probe()'), already frees these resources in case of error,
+>> see [1]
+>>
+>> These resources are also freed=A0 in 'igb_remove()'.
+>>
+>> Best reagrds,
+>> CJ
+>>
+>> [1]:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-
+>> next.git/tree/drivers/net/ethernet/intel/igb/igb_main.c#n2775
+>=20
+> But is PJ's comment saying that it is not really necessary?  If so I tend=
+ to lean towards the don't touch it if it's not broken perspective.
+
+I guess I didn't respond after Christophe replied, sorry about that.=20
+The patch is good to me.  It's definitely catching an issue where we're=20
+not checking for a memory failure, then just follows the same=20
+de-allocation path on unwind.
+
+If you want it:
+
+Acked-by: PJ Waskiewicz <peter.waskiewicz.jr@intel.com>
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
