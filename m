@@ -1,55 +1,45 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Wed, 20 Sep 2017 06:28:56 +0000
-Subject: Re: [PATCH][V2] x86/xen: clean up clang build warning
-Message-Id: <9d7e21c4-1441-2c64-2bcf-815be566fe23@suse.com>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Thu, 14 Sep 2017 02:24:37 +0000
+Subject: RE: [Intel-wired-lan] [PATCH] igb: check memory allocation failure
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C6A028B@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918090312.27283-1-colin.king@canonical.com>
-In-Reply-To: <20170918090312.27283-1-colin.king@canonical.com>
+References: <20170827063951.5975-1-christophe.jaillet@wanadoo.fr>
+ <E0D909EE5BB15A4699798539EA149D7F0779685B@ORSMSX103.amr.corp.intel.com>
+ <95a0bc80-8b41-d74f-8059-ae7181493120@wanadoo.fr>
+In-Reply-To: <95a0bc80-8b41-d74f-8059-ae7181493120@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Waskiewicz Jr, Peter" <peter.waskiewicz.jr@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 18/09/17 11:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where sizeof(maddr) != sizeof(long) p is initialized and
-> never read and clang throws a warning on this.  Move declaration of
-> p to clean up the clang build warning:
-> 
-> warning: Value stored to 'p' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-
-Juergen
-
-> ---
->  arch/x86/include/asm/xen/hypercall.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
-> index 9606688caa4b..5ff77cb2529e 100644
-> --- a/arch/x86/include/asm/xen/hypercall.h
-> +++ b/arch/x86/include/asm/xen/hypercall.h
-> @@ -552,13 +552,13 @@ static inline void
->  MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
->  			struct desc_struct desc)
->  {
-> -	u32 *p = (u32 *) &desc;
-> -
->  	mcl->op = __HYPERVISOR_update_descriptor;
->  	if (sizeof(maddr) = sizeof(long)) {
->  		mcl->args[0] = maddr;
->  		mcl->args[1] = *(unsigned long *)&desc;
->  	} else {
-> +		u32 *p = (u32 *)&desc;
-> +
->  		mcl->args[0] = maddr;
->  		mcl->args[1] = maddr >> 32;
->  		mcl->args[2] = *p++;
-> 
-
+PiBGcm9tOiBJbnRlbC13aXJlZC1sYW4gW21haWx0bzppbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bv
+c3Vvc2wub3JnXSBPbiBCZWhhbGYNCj4gT2YgQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IE1v
+bmRheSwgQXVndXN0IDI4LCAyMDE3IDEwOjEzIEFNDQo+IFRvOiBXYXNraWV3aWN6IEpyLCBQZXRl
+ciA8cGV0ZXIud2Fza2lld2ljei5qckBpbnRlbC5jb20+OyBLaXJzaGVyLCBKZWZmcmV5IFQNCj4g
+PGplZmZyZXkudC5raXJzaGVyQGludGVsLmNvbT4NCj4gQ2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5v
+cmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGludGVsLXdpcmVkLQ0KPiBsYW5A
+bGlzdHMub3N1b3NsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0
+OiBSZTogW0ludGVsLXdpcmVkLWxhbl0gW1BBVENIXSBpZ2I6IGNoZWNrIG1lbW9yeSBhbGxvY2F0
+aW9uIGZhaWx1cmUNCj4gDQo+IExlIDI4LzA4LzIwMTcgw6AgMDE6MDksIFdhc2tpZXdpY3ogSnIs
+IFBldGVyIGEgw6ljcml0wqA6DQo+ID4gT24gOC8yNy8xNyAyOjQyIEFNLCBDaHJpc3RvcGhlIEpB
+SUxMRVQgd3JvdGU6DQo+ID4+IENoZWNrIG1lbW9yeSBhbGxvY2F0aW9uIGZhaWx1cmVzIGFuZCBy
+ZXR1cm4gLUVOT01FTSBpbiBzdWNoIGNhc2VzLCBhcw0KPiA+PiBhbHJlYWR5IGRvbmUgZm9yIG90
+aGVyIG1lbW9yeSBhbGxvY2F0aW9ucyBpbiB0aGlzIGZ1bmN0aW9uLg0KPiA+Pg0KPiA+PiBUaGlz
+IGF2b2lkcyBOVUxMIHBvaW50ZXJzIGRlcmVmZXJlbmNlLg0KPiA+Pg0KPiA+PiBTaWduZWQtb2Zm
+LWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZyPg0K
+PiA+PiAtLS0NCj4gPj4gICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWlu
+LmMgfCAyICsrDQo+ID4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gPj4N
+Cg0KVGhpcyBzZWVtcyB0byBiZSBmaW5lIGZyb20gYSAiaXQgZG9lcyBub3QgYnJlYWsgaW4gdGVz
+dGluZyIgcGVyc3BlY3RpdmUsIHNvLi4uDQoNClRlc3RlZC1ieTogQWFyb24gQnJvd24gPGFhcm9u
+LmYuYnJvd25AaW50ZWwuY29tDQoNCj4gPiAtUEoNCj4gPg0KPiBIaSwNCj4gDQo+IGluIGZhY3Qs
+IHRoZXJlIGlzIG5vIGxlYWsgYmVjYXVzZSB0aGUgb25seSBjYWxsZXIgb2YgJ2lnYl9zd19pbml0
+KCknDQo+IChpLmUuICdpZ2JfcHJvYmUoKScpLCBhbHJlYWR5IGZyZWVzIHRoZXNlIHJlc291cmNl
+cyBpbiBjYXNlIG9mIGVycm9yLA0KPiBzZWUgWzFdDQo+IA0KPiBUaGVzZSByZXNvdXJjZXMgYXJl
+IGFsc28gZnJlZWTCoCBpbiAnaWdiX3JlbW92ZSgpJy4NCj4gDQo+IEJlc3QgcmVhZ3JkcywNCj4g
+Q0oNCj4gDQo+IFsxXToNCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvbmV4dC9saW51eC0NCj4gbmV4dC5naXQvdHJlZS9kcml2ZXJzL25ldC9ldGhlcm5l
+dC9pbnRlbC9pZ2IvaWdiX21haW4uYyNuMjc3NQ0KDQpCdXQgaXMgUEoncyBjb21tZW50IHNheWlu
+ZyB0aGF0IGl0IGlzIG5vdCByZWFsbHkgbmVjZXNzYXJ5PyAgSWYgc28gSSB0ZW5kIHRvIGxlYW4g
+dG93YXJkcyB0aGUgZG9uJ3QgdG91Y2ggaXQgaWYgaXQncyBub3QgYnJva2VuIHBlcnNwZWN0aXZl
+Lg0KIA0KDQo
