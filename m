@@ -1,51 +1,37 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Sep 2017 20:32:11 +0000
-Subject: [PATCH 2/3] [media] xc2028: Adjust two null pointer checks in load_all_firmwares()
-Message-Id: <10e92128-444a-bec3-e021-61379c21bf4d@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:46:31 +0000
+Subject: [PATCH 0/9] [media] TM6000: Adjustments for some function implementations
+Message-Id: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
-In-Reply-To: <c2317603-f640-b0a6-ab86-7fda8040b6ba@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 9 Sep 2017 21:48:58 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Fri, 15 Sep 2017 08:24:56 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Comparison to NULL could be written !…
+Markus Elfring (9):
+  Delete seven error messages for a failed memory allocation
+  Adjust seven checks for null pointers
+  Use common error handling code in tm6000_usb_probe()
+  One function call less in tm6000_usb_probe() after error detection
+  Delete an unnecessary variable initialisation in tm6000_usb_probe()
+  Use common error handling code in tm6000_cards_setup()
+  Improve a size determination in dvb_init()
+  Use common error handling code in tm6000_start_stream()
+  Use common error handling code in tm6000_prepare_isoc()
 
-Thus fix the affected source code places.
+ drivers/media/usb/tm6000/tm6000-cards.c | 36 ++++++++++++++++-----------------
+ drivers/media/usb/tm6000/tm6000-dvb.c   | 24 +++++++++++-----------
+ drivers/media/usb/tm6000/tm6000-input.c |  2 +-
+ drivers/media/usb/tm6000/tm6000-video.c | 30 +++++++++++----------------
+ 4 files changed, 42 insertions(+), 50 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/tuners/tuner-xc2028.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/tuners/tuner-xc2028.c b/drivers/media/tuners/tuner-xc2028.c
-index 7353f25f9e7d..90efe11aa0a8 100644
---- a/drivers/media/tuners/tuner-xc2028.c
-+++ b/drivers/media/tuners/tuner-xc2028.c
-@@ -335,5 +335,5 @@ static int load_all_firmwares(struct dvb_frontend *fe,
- 		   priv->firm_version >> 8, priv->firm_version & 0xff);
- 
- 	priv->firm = kcalloc(n_array, sizeof(*priv->firm), GFP_KERNEL);
--	if (priv->firm = NULL) {
-+	if (!priv->firm) {
- 		rc = -ENOMEM;
-@@ -384,5 +384,5 @@ static int load_all_firmwares(struct dvb_frontend *fe,
- 		}
- 
- 		priv->firm[n].ptr = kzalloc(size, GFP_KERNEL);
--		if (priv->firm[n].ptr = NULL) {
-+		if (!priv->firm[n].ptr) {
- 			rc = -ENOMEM;
 -- 
 2.14.1
 
