@@ -1,115 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:49:31 +0000
-Subject: [PATCH 2/9] [media] tm6000: Adjust seven checks for null pointers
-Message-Id: <145283b1-0e7c-9cde-ca0f-64f2b12ba5c7@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 16:01:13 +0000
+Subject: [PATCH 1/2] [media] c8sectpfe: Delete an error message for a failed memory allocation in c8sectpfe_f
+Message-Id: <04a4e480-c7a2-fe8c-ca38-8d0b32b42307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+References: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
+In-Reply-To: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 14:51:15 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Fri, 15 Sep 2017 17:20:48 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-Comparison to NULL could be written …
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/tm6000/tm6000-cards.c | 2 +-
- drivers/media/usb/tm6000/tm6000-dvb.c   | 6 +++---
- drivers/media/usb/tm6000/tm6000-input.c | 2 +-
- drivers/media/usb/tm6000/tm6000-video.c | 4 ++--
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
-index 817bae8cb6a1..ef37fb1f05e4 100644
---- a/drivers/media/usb/tm6000/tm6000-cards.c
-+++ b/drivers/media/usb/tm6000/tm6000-cards.c
-@@ -1206,7 +1206,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
+diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
+index 2c0015b1264d..1b23b188cd65 100644
+--- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
++++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c
+@@ -166,7 +166,4 @@ int c8sectpfe_frontend_attach(struct dvb_frontend **fe,
+ 					GFP_KERNEL);
+-		if (!tda18212) {
+-			dev_err(c8sectpfe->device,
+-				"%s: devm_kzalloc failed\n", __func__);
++		if (!tda18212)
+ 			return -ENOMEM;
+-		}
  
- 	/* Create and initialize dev struct */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (dev = NULL) {
-+	if (!dev) {
- 		usb_put_dev(usbdev);
- 		return -ENOMEM;
- 	}
-diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
-index 61a4e0a52716..2bc584f75f87 100644
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -123,7 +123,7 @@ static int tm6000_start_stream(struct tm6000_core *dev)
- 	}
- 
- 	dvb->bulk_urb = usb_alloc_urb(0, GFP_KERNEL);
--	if (dvb->bulk_urb = NULL)
-+	if (!dvb->bulk_urb)
- 		return -ENOMEM;
- 
- 	pipe = usb_rcvbulkpipe(dev->udev, dev->bulk_in.endp->desc.bEndpointAddress
-@@ -133,7 +133,7 @@ static int tm6000_start_stream(struct tm6000_core *dev)
- 	size = size * 15; /* 512 x 8 or 12 or 15 */
- 
- 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
--	if (dvb->bulk_urb->transfer_buffer = NULL) {
-+	if (!dvb->bulk_urb->transfer_buffer) {
- 		usb_free_urb(dvb->bulk_urb);
- 		return -ENOMEM;
- 	}
-@@ -360,7 +360,7 @@ static void unregister_dvb(struct tm6000_core *dev)
- {
- 	struct tm6000_dvb *dvb = dev->dvb;
- 
--	if (dvb->bulk_urb != NULL) {
-+	if (dvb->bulk_urb) {
- 		struct urb *bulk_urb = dvb->bulk_urb;
- 
- 		kfree(bulk_urb->transfer_buffer);
-diff --git a/drivers/media/usb/tm6000/tm6000-input.c b/drivers/media/usb/tm6000/tm6000-input.c
-index 91889ad9cdd7..397990afe00b 100644
---- a/drivers/media/usb/tm6000/tm6000-input.c
-+++ b/drivers/media/usb/tm6000/tm6000-input.c
-@@ -352,7 +352,7 @@ static int __tm6000_ir_int_start(struct rc_dev *rc)
- 	dprintk(1, "IR max size: %d\n", size);
- 
- 	ir->int_urb->transfer_buffer = kzalloc(size, GFP_ATOMIC);
--	if (ir->int_urb->transfer_buffer = NULL) {
-+	if (!ir->int_urb->transfer_buffer) {
- 		usb_free_urb(ir->int_urb);
- 		return err;
- 	}
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index 701494e72edc..0d45f35e1697 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -470,7 +470,7 @@ static int tm6000_alloc_urb_buffers(struct tm6000_core *dev)
- 	int num_bufs = TM6000_NUM_URB_BUF;
- 	int i;
- 
--	if (dev->urb_buffer != NULL)
-+	if (dev->urb_buffer)
- 		return 0;
- 
- 	dev->urb_buffer = kmalloc(sizeof(void *)*num_bufs, GFP_KERNEL);
-@@ -503,7 +503,7 @@ static int tm6000_free_urb_buffers(struct tm6000_core *dev)
- {
- 	int i;
- 
--	if (dev->urb_buffer = NULL)
-+	if (!dev->urb_buffer)
- 		return 0;
- 
- 	for (i = 0; i < TM6000_NUM_URB_BUF; i++) {
 -- 
 2.14.1
 
