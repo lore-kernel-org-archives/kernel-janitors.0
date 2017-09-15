@@ -1,28 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 19:23:07 +0000
-Subject: [PATCH 0/3] [media] uvcvideo: Fine-tuning for some function implementations
-Message-Id: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 15 Sep 2017 19:56:08 +0000
+Subject: [PATCH] scsi: fdomain: Fix a resource leak in an error handling path in '__fdomain_16x0_detect()'
+Message-Id: <20170915195608.26865-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: faith@cs.unc.edu, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 21:20:12 +0200
+All error handling paths 'goto fail' in this function.
+If 'scsi_register()' fails, we should also go there, otherwise a
+'pci_dev_put(pdev)' will be missing.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+In order to keep consistance with the rest of the file, I've ignored
+checkpatch warnings about spaces vs tabs and indent.
+---
+ drivers/scsi/fdomain.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Markus Elfring (3):
-  Use common error handling code in uvc_ioctl_g_ext_ctrls()
-  Adjust 14 checks for null pointers
-  Add some spaces for better code readability
-
- drivers/media/usb/uvc/uvc_v4l2.c | 53 ++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/scsi/fdomain.c b/drivers/scsi/fdomain.c
+index ebbe5a3e665d..0dac03a9c6ed 100644
+--- a/drivers/scsi/fdomain.c
++++ b/drivers/scsi/fdomain.c
+@@ -960,10 +960,9 @@ struct Scsi_Host *__fdomain_16x0_detect(struct scsi_host_template *tpnt )
+    get resources.  */
+ 
+    shpnt = scsi_register( tpnt, 0 );
+-   if(shpnt = NULL) {
+-	release_region(port_base, 0x10);
+-   	return NULL;
+-   }
++   if (shpnt = NULL)
++      goto fail;
++
+    shpnt->irq = interrupt_level;
+    shpnt->io_port = port_base;
+    shpnt->n_io_port = 0x10;
 -- 
-2.14.1
+2.11.0
 
