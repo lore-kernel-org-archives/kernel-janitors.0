@@ -1,50 +1,57 @@
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Date: Fri, 22 Sep 2017 07:10:59 +0000
-Subject: Re: [PATCH] i2c: designware: make const array supported_speeds static to shink object code size
-Message-Id: <f2c03d85-da0d-7bb0-2f1a-5a3b298200e9@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 18:41:25 +0000
+Subject: [PATCH 1/2] [media] ti-vpe: Delete an error message for a failed memory allocation in two functions
+Message-Id: <066c05d5-ca92-2ff9-4b1d-ce21528ae938@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170921223007.21081-1-colin.king@canonical.com>
-In-Reply-To: <20170921223007.21081-1-colin.king@canonical.com>
+References: <8137a759-cbfd-e04d-0adb-06de1b3246d1@users.sourceforge.net>
+In-Reply-To: <8137a759-cbfd-e04d-0adb-06de1b3246d1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Archit Taneja <archit@ti.com>, Benoit Parrot <bparrot@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 09/22/2017 01:30 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const array supported_speeds on the stack, instead
-> make it static.  Makes the object code smaller by 150 bytes:
-> 
-> Before:
->     text	   data	    bss	    dec	    hex	filename
->     8474	   1440	      0	   9914	   26ba	i2c-designware-platdrv.o
-> 
-> After:
->     text	   data	    bss	    dec	    hex	filename
->     8324	   1440	      0	   9764	   2624	i2c-designware-platdrv.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-> index 0e65b97842b4..8a7b29b9afbe 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -257,7 +257,9 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
->   	u32 acpi_speed, ht = 0;
->   	struct resource *mem;
->   	int i, irq, ret;
-> -	const int supported_speeds[] = { 0, 100000, 400000, 1000000, 3400000 };
-> +	static const int supported_speeds[] = {
-> +		0, 100000, 400000, 1000000, 3400000
-> +	};
->   
-Oh, this is so easy to forget.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 20:15:17 +0200
 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/ti-vpe/csc.c | 4 +---
+ drivers/media/platform/ti-vpe/sc.c  | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/ti-vpe/csc.c b/drivers/media/platform/ti-vpe/csc.c
+index 44b8465cf101..135fc9993679 100644
+--- a/drivers/media/platform/ti-vpe/csc.c
++++ b/drivers/media/platform/ti-vpe/csc.c
+@@ -176,8 +176,6 @@ struct csc_data *csc_create(struct platform_device *pdev, const char *res_name)
+ 	csc = devm_kzalloc(&pdev->dev, sizeof(*csc), GFP_KERNEL);
+-	if (!csc) {
+-		dev_err(&pdev->dev, "couldn't alloc csc_data\n");
++	if (!csc)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	csc->pdev = pdev;
+ 
+diff --git a/drivers/media/platform/ti-vpe/sc.c b/drivers/media/platform/ti-vpe/sc.c
+index e9273b713782..e9e307875feb 100644
+--- a/drivers/media/platform/ti-vpe/sc.c
++++ b/drivers/media/platform/ti-vpe/sc.c
+@@ -284,8 +284,6 @@ struct sc_data *sc_create(struct platform_device *pdev, const char *res_name)
+ 	sc = devm_kzalloc(&pdev->dev, sizeof(*sc), GFP_KERNEL);
+-	if (!sc) {
+-		dev_err(&pdev->dev, "couldn't alloc sc_data\n");
++	if (!sc)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	sc->pdev = pdev;
+ 
+-- 
+2.14.1
+
