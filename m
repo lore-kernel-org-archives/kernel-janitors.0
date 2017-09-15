@@ -1,85 +1,115 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 15:09:40 +0000
-Subject: [PATCH 4/4] [media] usbvision-core: Replace four printk() calls by dev_err()
-Message-Id: <0c53a18c-eba1-524b-8825-7454bb8e58a4@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:49:31 +0000
+Subject: [PATCH 2/9] [media] tm6000: Adjust seven checks for null pointers
+Message-Id: <145283b1-0e7c-9cde-ca0f-64f2b12ba5c7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
-In-Reply-To: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
+References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 16:47:28 +0200
+Date: Thu, 14 Sep 2017 14:51:15 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Replace the local variable "proc" by the identifier "__func__".
+The script “checkpatch.pl” pointed information out like the following.
 
-* Use the interface "dev_err" instead of "printk" in these functions.
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/usbvision/usbvision-core.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/media/usb/tm6000/tm6000-cards.c | 2 +-
+ drivers/media/usb/tm6000/tm6000-dvb.c   | 6 +++---
+ drivers/media/usb/tm6000/tm6000-input.c | 2 +-
+ drivers/media/usb/tm6000/tm6000-video.c | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/usb/usbvision/usbvision-core.c b/drivers/media/usb/usbvision/usbvision-core.c
-index 54db35b03106..2c98805244df 100644
---- a/drivers/media/usb/usbvision/usbvision-core.c
-+++ b/drivers/media/usb/usbvision/usbvision-core.c
-@@ -1619,7 +1619,6 @@ static int usbvision_init_webcam(struct usb_usbvision *usbvision)
-  */
- static int usbvision_set_video_format(struct usb_usbvision *usbvision, int format)
- {
--	static const char proc[] = "usbvision_set_video_format";
- 	unsigned char *value = usbvision->ctrl_urb_buffer;
- 	int rc;
+diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
+index 817bae8cb6a1..ef37fb1f05e4 100644
+--- a/drivers/media/usb/tm6000/tm6000-cards.c
++++ b/drivers/media/usb/tm6000/tm6000-cards.c
+@@ -1206,7 +1206,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
  
-@@ -1631,8 +1630,9 @@ static int usbvision_set_video_format(struct usb_usbvision *usbvision, int forma
- 	if ((format != ISOC_MODE_YUV422)
- 	    && (format != ISOC_MODE_YUV420)
- 	    && (format != ISOC_MODE_COMPRESS)) {
--		printk(KERN_ERR "usbvision: unknown video format %02x, using default YUV420",
--		       format);
-+		dev_err(&usbvision->dev->dev,
-+			"%s: unknown video format %02x, using default YUV420\n",
-+			__func__, format);
- 		format = ISOC_MODE_YUV420;
+ 	/* Create and initialize dev struct */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (dev = NULL) {
++	if (!dev) {
+ 		usb_put_dev(usbdev);
+ 		return -ENOMEM;
  	}
- 	value[0] = 0x0A;  /* TODO: See the effect of the filter */
-@@ -1643,8 +1643,9 @@ static int usbvision_set_video_format(struct usb_usbvision *usbvision, int forma
- 			     USB_RECIP_ENDPOINT, 0,
- 			     (__u16) USBVISION_FILT_CONT, value, 2, HZ);
- 	if (rc < 0)
--		printk(KERN_ERR "%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
--		       proc, rc);
-+		dev_err(&usbvision->dev->dev,
-+			"%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
-+			__func__, rc);
+diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
+index 61a4e0a52716..2bc584f75f87 100644
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -123,7 +123,7 @@ static int tm6000_start_stream(struct tm6000_core *dev)
+ 	}
  
- 	usbvision->isoc_mode = format;
- 	return rc;
-@@ -2180,7 +2181,8 @@ int usbvision_restart_isoc(struct usb_usbvision *usbvision)
- int usbvision_audio_off(struct usb_usbvision *usbvision)
- {
- 	if (usbvision_write_reg(usbvision, USBVISION_IOPIN_REG, USBVISION_AUDIO_MUTE) < 0) {
--		printk(KERN_ERR "usbvision_audio_off: can't write reg\n");
-+		dev_err(&usbvision->dev->dev,
-+			"%s: can't write reg\n", __func__);
- 		return -1;
+ 	dvb->bulk_urb = usb_alloc_urb(0, GFP_KERNEL);
+-	if (dvb->bulk_urb = NULL)
++	if (!dvb->bulk_urb)
+ 		return -ENOMEM;
+ 
+ 	pipe = usb_rcvbulkpipe(dev->udev, dev->bulk_in.endp->desc.bEndpointAddress
+@@ -133,7 +133,7 @@ static int tm6000_start_stream(struct tm6000_core *dev)
+ 	size = size * 15; /* 512 x 8 or 12 or 15 */
+ 
+ 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
+-	if (dvb->bulk_urb->transfer_buffer = NULL) {
++	if (!dvb->bulk_urb->transfer_buffer) {
+ 		usb_free_urb(dvb->bulk_urb);
+ 		return -ENOMEM;
  	}
- 	usbvision->audio_mute = 0;
-@@ -2192,7 +2194,9 @@ int usbvision_set_audio(struct usb_usbvision *usbvision, int audio_channel)
+@@ -360,7 +360,7 @@ static void unregister_dvb(struct tm6000_core *dev)
  {
- 	if (!usbvision->audio_mute) {
- 		if (usbvision_write_reg(usbvision, USBVISION_IOPIN_REG, audio_channel) < 0) {
--			printk(KERN_ERR "usbvision_set_audio: can't write iopin register for audio switching\n");
-+			dev_err(&usbvision->dev->dev,
-+				"%s: can't write iopin register for audio switching\n",
-+				__func__);
- 			return -1;
- 		}
+ 	struct tm6000_dvb *dvb = dev->dvb;
+ 
+-	if (dvb->bulk_urb != NULL) {
++	if (dvb->bulk_urb) {
+ 		struct urb *bulk_urb = dvb->bulk_urb;
+ 
+ 		kfree(bulk_urb->transfer_buffer);
+diff --git a/drivers/media/usb/tm6000/tm6000-input.c b/drivers/media/usb/tm6000/tm6000-input.c
+index 91889ad9cdd7..397990afe00b 100644
+--- a/drivers/media/usb/tm6000/tm6000-input.c
++++ b/drivers/media/usb/tm6000/tm6000-input.c
+@@ -352,7 +352,7 @@ static int __tm6000_ir_int_start(struct rc_dev *rc)
+ 	dprintk(1, "IR max size: %d\n", size);
+ 
+ 	ir->int_urb->transfer_buffer = kzalloc(size, GFP_ATOMIC);
+-	if (ir->int_urb->transfer_buffer = NULL) {
++	if (!ir->int_urb->transfer_buffer) {
+ 		usb_free_urb(ir->int_urb);
+ 		return err;
  	}
+diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
+index 701494e72edc..0d45f35e1697 100644
+--- a/drivers/media/usb/tm6000/tm6000-video.c
++++ b/drivers/media/usb/tm6000/tm6000-video.c
+@@ -470,7 +470,7 @@ static int tm6000_alloc_urb_buffers(struct tm6000_core *dev)
+ 	int num_bufs = TM6000_NUM_URB_BUF;
+ 	int i;
+ 
+-	if (dev->urb_buffer != NULL)
++	if (dev->urb_buffer)
+ 		return 0;
+ 
+ 	dev->urb_buffer = kmalloc(sizeof(void *)*num_bufs, GFP_KERNEL);
+@@ -503,7 +503,7 @@ static int tm6000_free_urb_buffers(struct tm6000_core *dev)
+ {
+ 	int i;
+ 
+-	if (dev->urb_buffer = NULL)
++	if (!dev->urb_buffer)
+ 		return 0;
+ 
+ 	for (i = 0; i < TM6000_NUM_URB_BUF; i++) {
 -- 
 2.14.1
 
