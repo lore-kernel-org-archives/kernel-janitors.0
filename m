@@ -1,35 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Sep 2017 09:12:50 +0000
-Subject: Re: [PATCH 4/6] [media] go7007: Use common error handling code in s2250_probe()
-Message-Id: <20170920091250.rmrdilesv754sddi@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 17:29:42 +0000
+Subject: [PATCH 2/2] [media] stm32-dcmi: Improve four size determinations
+Message-Id: <f4e400ea-9660-05cd-3194-cdf2495a2376@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
- <c4d2e584-39ca-6e30-43ee-56088905149e@users.sourceforge.net>
- <20170919084216.ctvwpmswr3ckhwzc@mwanda>
- <a2259b43-381e-b59f-5e5d-082ae4e80d5e@users.sourceforge.net>
-In-Reply-To: <a2259b43-381e-b59f-5e5d-082ae4e80d5e@users.sourceforge.net>
+References: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
+In-Reply-To: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 20, 2017 at 09:09:16AM +0200, SF Markus Elfring wrote:
-> >> @@ -555,17 +553,13 @@ static int s2250_probe(struct i2c_client *client,
-> >>  	/* initialize the audio */
-> >>  	if (write_regs(audio, aud_regs) < 0) {
-> >>  		dev_err(&client->dev, "error initializing audio\n");
-> >> -		goto fail;
-> >> +		goto e_io;
-> > 
-> > Preserve the error code.
-> 
-> Do you suggest then to adjust the implementation of the function "write_regs"
-> so that a more meaningful value would be used instead of the failure indication "-1"?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 18:48:14 +0200
 
-If you want to, yeah, that would be good.
+Replace the specification of data types by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index df12d10bd230..c4895cc95cc1 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -1372,9 +1372,8 @@ static int dcmi_formats_init(struct stm32_dcmi *dcmi)
+ 	dcmi->sd_formats = devm_kcalloc(dcmi->dev,
+-					num_fmts, sizeof(struct dcmi_format *),
++					num_fmts, sizeof(*dcmi->sd_formats),
+ 					GFP_KERNEL);
+ 	if (!dcmi->sd_formats)
+ 		return -ENOMEM;
+ 
+-	memcpy(dcmi->sd_formats, sd_fmts,
+-	       num_fmts * sizeof(struct dcmi_format *));
++	memcpy(dcmi->sd_formats, sd_fmts, num_fmts * sizeof(*dcmi->sd_formats));
+ 	dcmi->sd_format = dcmi->sd_formats[0];
+@@ -1406,3 +1405,3 @@ static int dcmi_framesizes_init(struct stm32_dcmi *dcmi)
+ 	dcmi->sd_framesizes = devm_kcalloc(dcmi->dev, num_fsize,
+-					   sizeof(struct dcmi_framesize),
++					   sizeof(*dcmi->sd_framesizes),
+ 					   GFP_KERNEL);
+@@ -1570,5 +1569,5 @@ static int dcmi_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	dcmi = devm_kzalloc(&pdev->dev, sizeof(struct stm32_dcmi), GFP_KERNEL);
++	dcmi = devm_kzalloc(&pdev->dev, sizeof(*dcmi), GFP_KERNEL);
+ 	if (!dcmi)
+-- 
+2.14.1
 
