@@ -1,37 +1,61 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Sep 2017 22:33:06 +0000
-Subject: [PATCH 2/2] rapidio: Fix an error handling in 'rio_dma_transfer()'
-Message-Id: <d4235bd2b9274e99f6c86ea71b1fa1c7bd8d0c08.1505687047.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 08:00:28 +0000
+Subject: [PATCH 9/9] [media] tm6000: Use common error handling code in tm6000_prepare_isoc()
+Message-Id: <9ef1871e-1590-a031-84a9-31bd342b301e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
+References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mporter@kernel.crashing.org, alexandre.bounine@idt.com, lstoakes@gmail.com, akpm@linux-foundation.org, jesper.nilsson@axis.com, christian.koenig@amd.com, logang@deltatee.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In case of error, 'dma_map_sg()' returns 0, not a negative value.
-There is BUG_ON() in 'dma_map_sg_attrs()'  which makes sure of that.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 08:02:33 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/rapidio/devices/rio_mport_cdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/tm6000/tm6000-video.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-index 76afe1449cab..3dd37e35cf4e 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -961,7 +961,7 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
+diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
+index 0d45f35e1697..bfdeb41ed3a1 100644
+--- a/drivers/media/usb/tm6000/tm6000-video.c
++++ b/drivers/media/usb/tm6000/tm6000-video.c
+@@ -602,7 +602,5 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
+-	if (!dev->isoc_ctl.transfer_buffer) {
+-		kfree(dev->isoc_ctl.urb);
+-		return -ENOMEM;
+-	}
++	if (!dev->isoc_ctl.transfer_buffer)
++		goto free_urb;
  
- 	nents = dma_map_sg(chan->device->dev,
- 			   req->sgt.sgl, req->sgt.nents, dir);
--	if (nents = -EFAULT) {
-+	if (nents = 0) {
- 		rmcd_error("Failed to map SG list");
- 		ret = -EFAULT;
- 		goto err_pg;
+ 	dprintk(dev, V4L2_DEBUG_QUEUE, "Allocating %d x %d packets (%d bytes) of %d bytes each to handle %u size\n",
+ 		    max_packets, num_bufs, sb_size,
+@@ -616,7 +614,6 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
+ 		tm6000_free_urb_buffers(dev);
+-		kfree(dev->isoc_ctl.urb);
+ 		kfree(dev->isoc_ctl.transfer_buffer);
+-		return -ENOMEM;
++		goto free_urb;
+ 	}
+ 
+ 	/* allocate urbs and transfer buffers */
+@@ -646,6 +643,10 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
+ 	}
+ 
+ 	return 0;
++
++free_urb:
++	kfree(dev->isoc_ctl.urb);
++	return -ENOMEM;
+ }
+ 
+ static int tm6000_start_thread(struct tm6000_core *dev)
 -- 
-2.11.0
+2.14.1
 
