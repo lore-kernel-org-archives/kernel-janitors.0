@@ -1,41 +1,26 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 13:06:16 +0000
-Subject: [PATCH 1/4] [media] adv7604: Delete an error message for a failed memory allocation in adv76xx_probe
-Message-Id: <e714ab2d-4d08-8103-6d05-2eee7a58ba10@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 16:00:07 +0000
+Subject: [PATCH 0/2] [media] C8SECTPFE: Adjustments for c8sectpfe_frontend_attach()
+Message-Id: <3e5fcfbe-828a-8c15-12d4-c74e8a1f20f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
-In-Reply-To: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 11:28:55 +0200
+Date: Fri, 15 Sep 2017 17:55:43 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve two size determinations
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/i2c/adv7604.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 660bacb8f7d9..cc693ef71f33 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -3319,7 +3319,5 @@ static int adv76xx_probe(struct i2c_client *client,
--	if (!state) {
--		v4l_err(client, "Could not allocate adv76xx_state memory!\n");
-+	if (!state)
- 		return -ENOMEM;
--	}
- 
- 	state->i2c_clients[ADV76XX_PAGE_IO] = client;
- 
 -- 
 2.14.1
 
