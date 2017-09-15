@@ -1,41 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 15:52:05 +0000
-Subject: [PATCH 5/7] [media] ov9640: Improve a size determination in ov9640_probe()
-Message-Id: <5d342b6f-8283-c1ce-5469-fefeffcc05d4@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:50:43 +0000
+Subject: [PATCH 3/9] [media] tm6000: Use common error handling code in tm6000_usb_probe()
+Message-Id: <8d2722c0-98cf-4447-51ae-039d04dae185@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
-In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 16:37:03 +0200
+Date: Thu, 14 Sep 2017 16:00:47 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/i2c/soc_camera/ov9640.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/tm6000/tm6000-cards.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/i2c/soc_camera/ov9640.c b/drivers/media/i2c/soc_camera/ov9640.c
-index 0f02f022f3e9..67578f194928 100644
---- a/drivers/media/i2c/soc_camera/ov9640.c
-+++ b/drivers/media/i2c/soc_camera/ov9640.c
-@@ -675,5 +675,5 @@ static int ov9640_probe(struct i2c_client *client,
- 		return -EINVAL;
+diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
+index ef37fb1f05e4..e18632056976 100644
+--- a/drivers/media/usb/tm6000/tm6000-cards.c
++++ b/drivers/media/usb/tm6000/tm6000-cards.c
+@@ -1200,15 +1200,15 @@ static int tm6000_usb_probe(struct usb_interface *interface,
+ 	nr = find_first_zero_bit(&tm6000_devused, TM6000_MAXBOARDS);
+ 	if (nr >= TM6000_MAXBOARDS) {
+ 		printk(KERN_ERR "tm6000: Supports only %i tm60xx boards.\n", TM6000_MAXBOARDS);
+-		usb_put_dev(usbdev);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto put_device;
  	}
  
--	priv = devm_kzalloc(&client->dev, sizeof(struct ov9640_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
+ 	/* Create and initialize dev struct */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev) {
+-		usb_put_dev(usbdev);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto put_device;
+ 	}
+ 	spin_lock_init(&dev->slock);
+ 	mutex_init(&dev->usb_lock);
+@@ -1331,9 +1331,10 @@ static int tm6000_usb_probe(struct usb_interface *interface,
+ 	printk(KERN_ERR "tm6000: Error %d while registering\n", rc);
+ 
+ 	clear_bit(nr, &tm6000_devused);
+-	usb_put_dev(usbdev);
+ 
+ 	kfree(dev);
++put_device:
++	usb_put_dev(usbdev);
+ 	return rc;
+ }
+ 
 -- 
 2.14.1
 
