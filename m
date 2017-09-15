@@ -1,49 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Sep 2017 15:24:52 +0000
-Subject: [PATCH] rsi: fix a dereference on adapter before it has been null checked
-Message-Id: <20170908152452.3594-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:57:43 +0000
+Subject: [PATCH 7/9] [media] tm6000: Improve a size determination in dvb_init()
+Message-Id: <77a3eba4-aeba-6747-dcce-e545802882d6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:33:24 +0200
 
-The assignment of dev is dereferencing adapter before adapter has
-been null checked, potentially leading to a null pointer dereference.
-Fix this by simply moving the assignment of dev to a later point
-after the sanity null check of adapter.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Detected by CoverityScan CID#1398383 ("Dereference before null check")
+This issue was detected by using the Coccinelle software.
 
-Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/tm6000/tm6000-dvb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index 81df09dd2636..08730227cd18 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -73,8 +73,7 @@ static int rsi_write_multiple(struct rsi_hw *adapter,
- 			      u8 *data,
- 			      u32 count)
- {
--	struct rsi_91x_usbdev *dev -		(struct rsi_91x_usbdev *)adapter->rsi_dev;
-+	struct rsi_91x_usbdev *dev;
+diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
+index 2bc584f75f87..855874134fcf 100644
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -398,7 +398,7 @@ static int dvb_init(struct tm6000_core *dev)
+ 		return 0;
+ 	}
  
- 	if (!adapter)
- 		return -ENODEV;
-@@ -82,6 +81,7 @@ static int rsi_write_multiple(struct rsi_hw *adapter,
- 	if (endpoint = 0)
- 		return -EINVAL;
- 
-+	dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
- 	if (dev->write_fail)
- 		return -ENETDOWN;
+-	dvb = kzalloc(sizeof(struct tm6000_dvb), GFP_KERNEL);
++	dvb = kzalloc(sizeof(*dvb), GFP_KERNEL);
+ 	if (!dvb)
+ 		return -ENOMEM;
  
 -- 
 2.14.1
