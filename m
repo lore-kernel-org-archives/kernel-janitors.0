@@ -1,35 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Sep 2017 20:43:46 +0000
-Subject: [PATCH 2/2] USB: devio: Don't corrupt user memory
-Message-Id: <20170922204346.3cohwogfnu26c2xa@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:59:19 +0000
+Subject: [PATCH 8/9] [media] tm6000: Use common error handling code in tm6000_start_stream()
+Message-Id: <0aac22c7-bac1-190c-d5b8-9129d309ca3f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The user buffer has "uurb->buffer_length" bytes.  If the kernel has more
-information than that, we should truncate it instead of writing past
-the end of the user's buffer.  I added a WARN_ONCE() to help the user
-debug the issue.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 07:47:41 +0200
 
-Reported-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index 318bb3b96687..4664e543cf2f 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1571,7 +1576,11 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
- 			totlen += isopkt[u].length;
- 		}
- 		u *= sizeof(struct usb_iso_packet_descriptor);
--		uurb->buffer_length = totlen;
-+		if (totlen <= uurb->buffer_length)
-+			uurb->buffer_length = totlen;
-+		else
-+			WARN_ONCE(1, "uurb->buffer_length is too short %d vs %d",
-+				  totlen, uurb->buffer_length);
- 		break;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/tm6000/tm6000-dvb.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
+index 855874134fcf..b45e54d5cab9 100644
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -134,8 +134,8 @@ static int tm6000_start_stream(struct tm6000_core *dev)
  
- 	default:
+ 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
+ 	if (!dvb->bulk_urb->transfer_buffer) {
+-		usb_free_urb(dvb->bulk_urb);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_urb;
+ 	}
+ 
+ 	usb_fill_bulk_urb(dvb->bulk_urb, dev->udev, pipe,
+@@ -160,11 +160,14 @@ static int tm6000_start_stream(struct tm6000_core *dev)
+ 									ret);
+ 
+ 		kfree(dvb->bulk_urb->transfer_buffer);
+-		usb_free_urb(dvb->bulk_urb);
+-		return ret;
++		goto free_urb;
+ 	}
+ 
+ 	return 0;
++
++free_urb:
++	usb_free_urb(dvb->bulk_urb);
++	return ret;
+ }
+ 
+ static void tm6000_stop_stream(struct tm6000_core *dev)
+-- 
+2.14.1
+
