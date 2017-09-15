@@ -1,28 +1,26 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:30:12 +0000
-Subject: [PATCH 0/4] [media] CPia2: Fine-tuning for four function implementations
-Message-Id: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+Date: Fri, 15 Sep 2017 20:40:37 +0000
+Subject: [PATCH 0/2] [media] MA901: Adjustments for usb_ma901radio_probe()
+Message-Id: <6d4d9e92-9ac5-1e46-99ed-2b7d93bd7121@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
+To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 15:25:35 +0200
+Date: Fri, 15 Sep 2017 22:31:23 +0200
 
-A few update suggestions were taken into account
+Two update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (4):
-  Use common error handling code in cpia2_usb_probe()
-  Adjust two function calls together with a variable assignment
-  Delete unnecessary null pointer checks in free_sbufs()
-  Delete an unnecessary return statement in process_frame()
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Improve a size determination
 
- drivers/media/usb/cpia2/cpia2_usb.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ drivers/media/radio/radio-ma901.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 -- 
 2.14.1
