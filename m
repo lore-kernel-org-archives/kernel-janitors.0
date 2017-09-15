@@ -1,26 +1,24 @@
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-Date: Tue, 12 Sep 2017 15:10:54 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 15 Sep 2017 19:42:10 +0000
 Subject: Re: [PATCH] scsi: ufs: tc-dwc-g210: make arrays static, reduces object code size
-Message-Id: <1505229053.2537.0.camel@wdc.com>
+Message-Id: <yq1zi9voijx.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170912113228.1389-1-colin.king@canonical.com>
-In-Reply-To: <20170912113228.1389-1-colin.king@canonical.com>
+In-Reply-To: <20170912113228.1389-1-colin.king@canonical.com> (Colin King's
+        message of "Tue, 12 Sep 2017 12:32:28 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>, "colin.king@canonical.com" <colin.king@canonical.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "jpinto@synopsys.com" <jpinto@synopsys.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "vinholikatti@gmail.com" <vinholikatti@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Joao Pinto <jpinto@synopsys.com>, Vinayak Holikatti <vinholikatti@gmail.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE3LTA5LTEyIGF0IDEyOjMyICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gRG9u
-J3QgcG9wdWxhdGUgY29uc3QgYXJyYXlzIG9uIHRoZSBzdGFjaywgaW5zdGVhZCBtYWtlIHRoZW0N
-Cj4gc3RhdGljLiAgTWFrZXMgdGhlIG9iamVjdCBjb2RlIHNtYWxsZXIgYnkgb3ZlciA3NDAgYnl0
-ZXMuDQo+IA0KPiBCZWZvcmU6DQo+ICAgIHRleHQJICAgZGF0YQkgICAgYnNzCSAgICBkZWMJICAg
-IGhleAlmaWxlbmFtZQ0KPiAgICAzODQwCSAgICAyMDgJICAgICAgMAkgICA0MDQ4CSAgICBmZDAJ
-ZHJpdmVycy9zY3NpL3Vmcy90Yy1kd2MtZzIxMC5vDQo+IA0KPiBBZnRlcjoNCj4gICAgdGV4dAkg
-ICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgIDI2NzkJICAgIDYy
-NAkgICAgICAwCSAgIDMzMDMJICAgIGNlNwlkcml2ZXJzL3Njc2kvdWZzL3RjLWR3Yy1nMjEwLm8N
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNh
-bC5jb20+DQoNClBsZWFzZSBDQyB0aGUgbW9zdCBhY3RpdmUgY29udHJpYnV0b3JzIG9mIGEgZHJp
-dmVyIHdoZW4gc3VibWl0dGluZyBhIGRyaXZlcg0KcGF0Y2guIEFueXdheToNCg0KUmV2aWV3ZWQt
-Ynk6IEJhcnQgVmFuIEFzc2NoZSA8YmFydC52YW5hc3NjaGVAd2RjLmNvbT4
+
+Colin,
+
+> Don't populate const arrays on the stack, instead make them static.
+> Makes the object code smaller by over 740 bytes.
+
+Applied to 4.15/scsi-queue.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
