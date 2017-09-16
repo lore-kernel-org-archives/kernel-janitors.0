@@ -1,40 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Sep 2017 13:56:06 +0000
-Subject: Re: [PATCH] [media] Siano: Use common error handling code in smsusb_init_device()
-Message-Id: <20170920135605.sneukaioeabalkud@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 16 Sep 2017 05:40:29 +0000
+Subject: [PATCH] ASoC: davinci-mcasp: Fix an error handling path in 'davinci_mcasp_probe()'
+Message-Id: <20170916054029.27804-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be0003e5-d8e0-bff6-2205-7e88270ba2b4@users.sourceforge.net>
-In-Reply-To: <be0003e5-d8e0-bff6-2205-7e88270ba2b4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, peter.ujfalusi@ti.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Sep 20, 2017 at 02:40:28PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 20 Sep 2017 14:30:55 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better
-> reused at the end of this function.
-> 
-> This refactoring might fix also an error situation where the
-> function "kfree" was not called after a software failure
-> was noticed in two cases.
-> 
+All error handling paths in this function 'goto err' except this one.
 
-No.  It doesn't fix a leak, it introduces a double free.  If
-smscore_register_device() succeeds then mdev is freed when we call
-smsusb_term_device(intf);  The call tree is:
+If one of the 2 previous memory allocations fails, we should go through
+the existing error handling path. Otherwise there is an unbalanced
+pm_runtime_enable()/pm_runtime_disable().
 
-smsusb_term_device()
- -> smscore_unregister_device()
-    -> smscore_notify_clients()
-       -> smsdvb_onremove()
-          -> smsdvb_unregister_client()
-             -> smsdvb_media_device_unregister()
-                -> kfree(coredev->media_dev);
+Fixes: dd55ff8346a9 ("ASoC: davinci-mcasp: Add set_tdm_slots() support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/davinci/davinci-mcasp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
+index f395bbc7c354..23b0da7df1f2 100644
+--- a/sound/soc/davinci/davinci-mcasp.c
++++ b/sound/soc/davinci/davinci-mcasp.c
+@@ -1982,8 +1982,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 			     GFP_KERNEL);
+ 
+ 	if (!mcasp->chconstr[SNDRV_PCM_STREAM_PLAYBACK].list ||
+-	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list)
+-		return -ENOMEM;
++	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+ 	ret = davinci_mcasp_set_ch_constraints(mcasp);
+ 	if (ret)
+-- 
+2.11.0
 
