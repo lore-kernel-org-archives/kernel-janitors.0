@@ -1,45 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 20 Sep 2017 17:34:18 +0000
-Subject: [PATCH] staging: rtl8723bs: avoid null pointer dereference on pmlmepriv
-Message-Id: <20170920173418.17570-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 13:39:48 +0000
+Subject: [PATCH 3/3] [media] si470x: Delete an unnecessary variable initialisation in si470x_usb_driver_probe
+Message-Id: <3484e97b-4716-430c-b241-204c9364ddc3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b58222fa-99f8-f2d6-2755-5ccd4a91e783@users.sourceforge.net>
+In-Reply-To: <b58222fa-99f8-f2d6-2755-5ccd4a91e783@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 15:08:39 +0200
 
-There is a check to see if pmlmepriv is null before vfree'ing
-pmlmepriv->free_bss_buf hence implying pmlmepriv could potenially be
-null. However, a previous call to rtw_free_mlme_priv_ie_data
-can also dereference pmlmepriv, so move this call so that it is only
-called if pmlmepriv non-null.
+The variable "retval" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Detected by CoverityScan, CID#1077739 ("Dereference before null check")
-
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 37b683d4d1fa..0d94ced985c0 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -119,9 +119,8 @@ void rtw_free_mlme_priv_ie_data(struct mlme_priv *pmlmepriv)
+diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
+index 6fc6e8235f20..ae30e3da9d13 100644
+--- a/drivers/media/radio/si470x/radio-si470x-usb.c
++++ b/drivers/media/radio/si470x/radio-si470x-usb.c
+@@ -578,6 +578,6 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+ 	struct si470x_device *radio;
+ 	struct usb_host_interface *iface_desc;
+ 	struct usb_endpoint_descriptor *endpoint;
+-	int i, int_end_size, retval = 0;
++	int i, int_end_size, retval;
+ 	unsigned char version_warning = 0;
  
- void _rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
- {
--	rtw_free_mlme_priv_ie_data(pmlmepriv);
--
- 	if (pmlmepriv) {
-+		rtw_free_mlme_priv_ie_data(pmlmepriv);
- 		if (pmlmepriv->free_bss_buf) {
- 			vfree(pmlmepriv->free_bss_buf);
- 		}
 -- 
 2.14.1
 
