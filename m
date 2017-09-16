@@ -1,88 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 18:07:31 +0000
-Subject: [PATCH 3/4] [media] omap3isp: Use common error handling code in isp_video_open()
-Message-Id: <a3bcee14-f5d2-8648-a925-3dfd393e8f55@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 12:20:47 +0000
+Subject: [PATCH 2/3] [media] WL1273: Delete an unnecessary goto statement in wl1273_fm_suspend()
+Message-Id: <f725171e-5bf4-a4ce-0d07-987193df2ab7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
-In-Reply-To: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
+References: <edf138b9-0d47-5074-3ff4-63831c44f196@users.sourceforge.net>
+In-Reply-To: <edf138b9-0d47-5074-3ff4-63831c44f196@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 19:30:52 +0200
+Date: Sat, 16 Sep 2017 13:53:22 +0200
 
-* Adjust jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
+* Remove an extra goto statement.
 
-  This issue was detected by using the Coccinelle software.
-
-* Delete a repeated check (for the variable "ret") which became unnecessary
-  with this refactoring.
+* Delete the label "out" which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/omap3isp/ispvideo.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ drivers/media/radio/radio-wl1273.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index 7b9bd684337a..d4118466fc8a 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -1315,14 +1315,12 @@ static int isp_video_open(struct file *file)
- 	/* If this is the first user, initialise the pipeline. */
- 	if (omap3isp_get(video->isp) = NULL) {
- 		ret = -EBUSY;
--		goto done;
-+		goto delete_fh;
- 	}
+diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
+index 020a792173f6..74dc3195ea2c 100644
+--- a/drivers/media/radio/radio-wl1273.c
++++ b/drivers/media/radio/radio-wl1273.c
+@@ -683,12 +683,9 @@ static int wl1273_fm_suspend(struct wl1273_device *radio)
+ 	else
+ 		r = -EINVAL;
  
- 	ret = v4l2_pipeline_pm_use(&video->video.entity, 1);
--	if (ret < 0) {
--		omap3isp_put(video->isp);
--		goto done;
+-	if (r) {
++	if (r)
+ 		dev_err(radio->dev, "%s: POWER_SET fails: %d\n", __func__, r);
+-		goto out;
 -	}
-+	if (ret < 0)
-+		goto put_isp;
  
- 	queue = &handle->queue;
- 	queue->type = video->type;
-@@ -1335,10 +1333,8 @@ static int isp_video_open(struct file *file)
- 	queue->dev = video->isp->dev;
- 
- 	ret = vb2_queue_init(&handle->queue);
--	if (ret < 0) {
--		omap3isp_put(video->isp);
--		goto done;
--	}
-+	if (ret < 0)
-+		goto put_isp;
- 
- 	memset(&handle->format, 0, sizeof(handle->format));
- 	handle->format.type = video->type;
-@@ -1346,14 +1342,15 @@ static int isp_video_open(struct file *file)
- 
- 	handle->video = video;
- 	file->private_data = &handle->vfh;
-+	goto exit;
- 
--done:
--	if (ret < 0) {
--		v4l2_fh_del(&handle->vfh);
--		v4l2_fh_exit(&handle->vfh);
--		kfree(handle);
--	}
--
-+put_isp:
-+	omap3isp_put(video->isp);
-+delete_fh:
-+	v4l2_fh_del(&handle->vfh);
-+	v4l2_fh_exit(&handle->vfh);
-+	kfree(handle);
-+exit:
- 	return ret;
+-out:
+ 	return r;
  }
  
 -- 
