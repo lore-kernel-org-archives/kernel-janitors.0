@@ -1,76 +1,28 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 25 Sep 2017 16:16:38 +0000
-Subject: Applied "spi: sprd-adi: silence an uninitialized variable warning" to the spi tree
-Message-Id: <20170925161638.E9B1244005A@finisterre.ee.mobilebroadband>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 10:50:15 +0000
+Subject: [PATCH 0/3] [media] MR800: Adjustments for usb_amradio_probe()
+Message-Id: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922204808.7o7jn7pfj4se2s5r@mwanda>
-In-Reply-To: <20170922204808.7o7jn7pfj4se2s5r@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@spreadtrum.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 12:35:43 +0200
 
-   spi: sprd-adi: silence an uninitialized variable warning
+Three update suggestions were taken into account
+from static source code analysis.
 
-has been applied to the spi tree at
+Markus Elfring (3):
+  Delete two error messages for a failed memory allocation
+  Improve a size determination
+  Delete an unnecessary variable initialisation
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+ drivers/media/radio/radio-mr800.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b0d6e097b922ac7f538623c52794d9d63d6ee378 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Sep 2017 23:48:08 +0300
-Subject: [PATCH] spi: sprd-adi: silence an uninitialized variable warning
-
-If of_get_property() fails then "size" is uninitialized and it leads to
-a static checker warning:
-
-    drivers/spi/spi-sprd-adi.c:288 sprd_adi_hw_init()
-    error: uninitialized symbol 'size'.
-
-We can silence the warning by re-arranging the order of these checks.
-It obviously doesn't affect runtime at all.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sprd-adi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
-index bff6ef1caad7..1324463244d3 100644
---- a/drivers/spi/spi-sprd-adi.c
-+++ b/drivers/spi/spi-sprd-adi.c
-@@ -285,7 +285,7 @@ static void sprd_adi_hw_init(struct sprd_adi *sadi)
- 
- 	/* Set hardware channels setting */
- 	list = of_get_property(np, "sprd,hw-channels", &size);
--	if (!size || !list) {
-+	if (!list || !size) {
- 		dev_info(sadi->dev, "no hw channels setting in node\n");
- 		return;
- 	}
 -- 
 2.14.1
 
