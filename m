@@ -1,27 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 19:38:44 +0000
-Subject: [PATCH 0/2] versatile clock: Adjustments for icst_clk_setup()
-Message-Id: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 16:18:19 +0000
+Subject: [PATCH 1/2] [media] fc0012: Delete an error message for a failed memory allocation in fc0012_attach(
+Message-Id: <19ac45f6-f11b-6ca3-eb9a-39999bf6e21a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8f64b84d-cca0-d618-eb62-ec12f42b8c06@users.sourceforge.net>
+In-Reply-To: <8f64b84d-cca0-d618-eb62-ec12f42b8c06@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:34:43 +0200
+Date: Sat, 16 Sep 2017 17:47:52 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete two error messages for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/clk/versatile/clk-icst.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/tuners/fc0012.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/media/tuners/fc0012.c b/drivers/media/tuners/fc0012.c
+index 625ac6f51c39..7126dd1d5151 100644
+--- a/drivers/media/tuners/fc0012.c
++++ b/drivers/media/tuners/fc0012.c
+@@ -449,6 +449,5 @@ struct dvb_frontend *fc0012_attach(struct dvb_frontend *fe,
+ 	if (!priv) {
+ 		ret = -ENOMEM;
+-		dev_err(&i2c->dev, "%s: kzalloc() failed\n", KBUILD_MODNAME);
+ 		goto err;
+ 	}
+ 
 -- 
-2.14.2
+2.14.1
 
