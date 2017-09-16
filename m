@@ -1,66 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 17:02:53 +0000
-Subject: [PATCH 5/5] [media] s2255drv: Delete an unnecessary return statement in five functions
-Message-Id: <9c75bbfd-ee58-3f97-4fa7-47aa306d1396@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 12:18:50 +0000
+Subject: [PATCH 0/3] [media] WL1273: Adjustments for two function implementations
+Message-Id: <edf138b9-0d47-5074-3ff4-63831c44f196@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
-In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 17:50:36 +0200
+Date: Sat, 16 Sep 2017 14:05:45 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Three update suggestions were taken into account
+from static source code analysis.
 
-WARNING: void function return statements are not generally useful
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+  Delete an unnecessary goto statement
+  Delete an unnecessary variable initialisation
 
-Thus remove such a statement in the affected functions.
+ drivers/media/radio/radio-wl1273.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/s2255/s2255drv.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
-index 5a5d5ae833ff..2f0e0fafc4e2 100644
---- a/drivers/media/usb/s2255/s2255drv.c
-+++ b/drivers/media/usb/s2255/s2255drv.c
-@@ -471,6 +471,5 @@ static void planar422p_to_yuv_packed(const unsigned char *in,
- 		out[i + 3] = (fmt = V4L2_PIX_FMT_YUYV) ? *pCb++ : *pY++;
- 	}
--	return;
- }
- 
- static void s2255_reset_dsppower(struct s2255_dev *dev)
-@@ -482,5 +481,4 @@ static void s2255_reset_dsppower(struct s2255_dev *dev)
- 	s2255_vendor_req(dev, 0x10, 0x0000, 0x0000, NULL, 0, 1);
--	return;
- }
- 
- /* kickstarts the firmware loading. from probe
-@@ -1586,6 +1584,5 @@ static void s2255_video_device_release(struct video_device *vdev)
- 	if (atomic_dec_and_test(&dev->num_channels))
- 		s2255_destroy(dev);
--	return;
- }
- 
- static const struct video_device template = {
-@@ -1890,5 +1887,4 @@ static void s2255_read_video_callback(struct s2255_dev *dev,
- 	dprintk(dev, 50, "callback read video done\n");
--	return;
- }
- 
- static long s2255_vendor_req(struct s2255_dev *dev, unsigned char Request,
-@@ -2205,5 +2201,4 @@ static void s2255_stop_readpipe(struct s2255_dev *dev)
- 	dprintk(dev, 4, "%s", __func__);
--	return;
- }
- 
- static void s2255_fwload_start(struct s2255_dev *dev, int reset)
 -- 
 2.14.1
 
