@@ -1,35 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Sep 2017 20:48:08 +0000
-Subject: [PATCH] spi: sprd-adi: silence an uninitialized variable warning
-Message-Id: <20170922204808.7o7jn7pfj4se2s5r@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 18:32:30 +0000
+Subject: [PATCH 2/2] [media] it913x: Improve three size determinations
+Message-Id: <d3a7f3ed-1a5e-87f5-44fd-a6f242b219eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
+In-Reply-To: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@spreadtrum.com>
-Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If of_get_property() fails then "size" is uninitialized and it leads to
-a static checker warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 20:06:01 +0200
 
-    drivers/spi/spi-sprd-adi.c:288 sprd_adi_hw_init()
-    error: uninitialized symbol 'size'.
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-We can silence the warning by re-arranging the order of these checks.
-It obviously doesn't affect runtime at all.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/tuners/it913x.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
-index 0d481f8a46c2..146d674573f7 100644
---- a/drivers/spi/spi-sprd-adi.c
-+++ b/drivers/spi/spi-sprd-adi.c
-@@ -285,7 +285,7 @@ static void sprd_adi_hw_init(struct sprd_adi *sadi)
+diff --git a/drivers/media/tuners/it913x.c b/drivers/media/tuners/it913x.c
+index 6af9507823fa..149f36d5e503 100644
+--- a/drivers/media/tuners/it913x.c
++++ b/drivers/media/tuners/it913x.c
+@@ -393,5 +393,5 @@ static int it913x_probe(struct platform_device *pdev)
+ 	const struct platform_device_id *id = platform_get_device_id(pdev);
+ 	char *chip_ver_str;
  
- 	/* Set hardware channels setting */
- 	list = of_get_property(np, "sprd,hw-channels", &size);
--	if (!size || !list) {
-+	if (!list || !size) {
- 		dev_info(sadi->dev, "no hw channels setting in node\n");
- 		return;
- 	}
+-	dev = kzalloc(sizeof(struct it913x_dev), GFP_KERNEL);
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+@@ -404,8 +404,7 @@ static int it913x_probe(struct platform_device *pdev)
+ 	dev->role = pdata->role;
+ 
+ 	fe->tuner_priv = dev;
+-	memcpy(&fe->ops.tuner_ops, &it913x_tuner_ops,
+-			sizeof(struct dvb_tuner_ops));
++	memcpy(&fe->ops.tuner_ops, &it913x_tuner_ops, sizeof(it913x_tuner_ops));
+ 	platform_set_drvdata(pdev, dev);
+ 
+ 	if (dev->chip_ver = 1)
+@@ -427,8 +426,7 @@ static int it913x_remove(struct platform_device *pdev)
+ 	struct dvb_frontend *fe = dev->fe;
+ 
+ 	dev_dbg(&pdev->dev, "\n");
+-
+-	memset(&fe->ops.tuner_ops, 0, sizeof(struct dvb_tuner_ops));
++	memset(&fe->ops.tuner_ops, 0, sizeof(it913x_tuner_ops));
+ 	fe->tuner_priv = NULL;
+ 	kfree(dev);
+ 
+-- 
+2.14.1
+
