@@ -1,59 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:59:19 +0000
-Subject: [PATCH 8/9] [media] tm6000: Use common error handling code in tm6000_start_stream()
-Message-Id: <0aac22c7-bac1-190c-d5b8-9129d309ca3f@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 13:38:59 +0000
+Subject: [PATCH 2/3] [media] si470x: Improve a size determination in si470x_usb_driver_probe()
+Message-Id: <53bfd9dc-b0ba-5cf0-0aaf-0db358a10082@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+References: <b58222fa-99f8-f2d6-2755-5ccd4a91e783@users.sourceforge.net>
+In-Reply-To: <b58222fa-99f8-f2d6-2755-5ccd4a91e783@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:47:41 +0200
+Date: Sat, 16 Sep 2017 14:58:06 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/media/radio/si470x/radio-si470x-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
-index 855874134fcf..b45e54d5cab9 100644
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -134,8 +134,8 @@ static int tm6000_start_stream(struct tm6000_core *dev)
- 
- 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
- 	if (!dvb->bulk_urb->transfer_buffer) {
--		usb_free_urb(dvb->bulk_urb);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_urb;
- 	}
- 
- 	usb_fill_bulk_urb(dvb->bulk_urb, dev->udev, pipe,
-@@ -160,11 +160,14 @@ static int tm6000_start_stream(struct tm6000_core *dev)
- 									ret);
- 
- 		kfree(dvb->bulk_urb->transfer_buffer);
--		usb_free_urb(dvb->bulk_urb);
--		return ret;
-+		goto free_urb;
- 	}
- 
- 	return 0;
-+
-+free_urb:
-+	usb_free_urb(dvb->bulk_urb);
-+	return ret;
- }
- 
- static void tm6000_stop_stream(struct tm6000_core *dev)
+diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
+index af295530b20f..6fc6e8235f20 100644
+--- a/drivers/media/radio/si470x/radio-si470x-usb.c
++++ b/drivers/media/radio/si470x/radio-si470x-usb.c
+@@ -584,5 +584,5 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+ 	/* private data allocation and initialization */
+-	radio = kzalloc(sizeof(struct si470x_device), GFP_KERNEL);
++	radio = kzalloc(sizeof(*radio), GFP_KERNEL);
+ 	if (!radio) {
+ 		retval = -ENOMEM;
+ 		goto err_initial;
 -- 
 2.14.1
 
