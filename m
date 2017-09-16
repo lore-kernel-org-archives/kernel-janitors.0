@@ -1,35 +1,78 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 15:47:28 +0000
-Subject: [PATCH 0/7] [media] OmniVision: Adjustments for four function implementations
-Message-Id: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Sep 2017 15:34:24 +0000
+Subject: [PATCH] mwifiex: make const arrays static to shink object code size
+Message-Id: <20170916153424.28285-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 17:01:23 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+Don't populate const arrays on the stack, instead make them static
+Makes the object code smaller by nearly 300 bytes:
 
-Markus Elfring (7):
-  Delete an error message for a failed memory allocation in ov2640_probe()
-  Improve a size determination in ov2640_probe()
-  Delete an error message for a failed memory allocation in ov6650_probe()
-  Delete an error message for a failed memory allocation in ov9640_probe()
-  Improve a size determination in ov9640_probe()
-  Delete an error message for a failed memory allocation in ov9740_probe()
-  Improve a size determination in ov9740_probe()
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  69260	  16149	    576	  85985	  14fe1	cfg80211.o
 
- drivers/media/i2c/ov2640.c            | 7 ++-----
- drivers/media/i2c/ov6650.c            | 5 +----
- drivers/media/i2c/soc_camera/ov9640.c | 7 ++-----
- drivers/media/i2c/soc_camera/ov9740.c | 6 ++----
- 4 files changed, 7 insertions(+), 18 deletions(-)
+After:
+   text	   data	    bss	    dec	    hex	filename
+  68385	  16725	    576	  85686	  14eb6	cfg80211.o
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 32c5074da84c..c45b86fcfd8d 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -142,7 +142,7 @@ mwifiex_cfg80211_del_key(struct wiphy *wiphy, struct net_device *netdev,
+ 			 u8 key_index, bool pairwise, const u8 *mac_addr)
+ {
+ 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
+-	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
++	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	const u8 *peer_mac = pairwise ? mac_addr : bc_mac;
+ 
+ 	if (mwifiex_set_encode(priv, NULL, NULL, 0, key_index, peer_mac, 1)) {
+@@ -454,7 +454,7 @@ mwifiex_cfg80211_add_key(struct wiphy *wiphy, struct net_device *netdev,
+ {
+ 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
+ 	struct mwifiex_wep_key *wep_key;
+-	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
++	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	const u8 *peer_mac = pairwise ? mac_addr : bc_mac;
+ 
+ 	if (GET_BSS_ROLE(priv) = MWIFIEX_BSS_ROLE_UAP &&
+@@ -3250,8 +3250,8 @@ static int mwifiex_set_wowlan_mef_entry(struct mwifiex_private *priv,
+ 	int i, filt_num = 0, ret = 0;
+ 	bool first_pat = true;
+ 	u8 byte_seq[MWIFIEX_MEF_MAX_BYTESEQ + 1];
+-	const u8 ipv4_mc_mac[] = {0x33, 0x33};
+-	const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
++	static const u8 ipv4_mc_mac[] = {0x33, 0x33};
++	static const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
+ 
+ 	mef_entry->mode = MEF_MODE_HOST_SLEEP;
+ 	mef_entry->action = MEF_ACTION_ALLOW_AND_WAKEUP_HOST;
+@@ -3544,9 +3544,9 @@ static int mwifiex_set_rekey_data(struct wiphy *wiphy, struct net_device *dev,
+ 
+ static int mwifiex_get_coalesce_pkt_type(u8 *byte_seq)
+ {
+-	const u8 ipv4_mc_mac[] = {0x33, 0x33};
+-	const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
+-	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff};
++	static const u8 ipv4_mc_mac[] = {0x33, 0x33};
++	static const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
++	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff};
+ 
+ 	if ((byte_seq[0] & 0x01) &&
+ 	    (byte_seq[MWIFIEX_COALESCE_MAX_BYTESEQ] = 1))
 -- 
 2.14.1
 
