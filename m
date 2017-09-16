@@ -1,62 +1,27 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 01 Sep 2017 13:29:50 +0000
-Subject: Re: powerpc/macintosh: constify wf_sensor_ops structures
-Message-Id: <3xkKq244Czz9t3F@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 18:30:46 +0000
+Subject: [PATCH 0/2] [media] IT913X: Adjustments for two function implementations
+Message-Id: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1501707705-32425-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 2017-08-02 at 21:01:45 UTC, Julia Lawall wrote:
-> The wf_sensor_ops structures are only stored in the ops field of a
-> wf_sensor structure, which is declared as const.  Thus the
-> wf_sensor_ops structures themselves can be const.
-> 
-> Done with the help of Coccinelle.
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct wf_sensor_ops i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> struct wf_sensor s;
-> position p;
-> @@
-> s.ops = &i@p
-> 
-> @ok2@
-> identifier r.i;
-> struct wf_sat_sensor s;
-> position p;
-> @@
-> s.sens.ops = &i@p
-> 
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> struct wf_sensor_ops e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct wf_sensor_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 20:12:34 +0200
 
-Applied to powerpc next, thanks.
+Two update suggestions were taken into account
+from static source code analysis.
 
-https://git.kernel.org/powerpc/c/de854e54d79bc0ad5c45c5be50821b
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Improve three size determinations
 
-cheers
+ drivers/media/tuners/it913x.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+-- 
+2.14.1
+
