@@ -1,97 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 17:34:50 +0000
-Subject: [PATCH] ASoC: cs4270: Use common error handling code in two functions
-Message-Id: <e7525d1e-0a92-92c5-b779-e2f356b45e45@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 10:53:38 +0000
+Subject: [PATCH 3/3] [media] mr800: Delete an unnecessary variable initialisation in usb_amradio_probe()
+Message-Id: <89894f97-d8de-8687-0697-6e7fab1e922c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
+In-Reply-To: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 19:09:31 +0200
+Date: Sat, 16 Sep 2017 11:39:50 +0200
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
-
-This issue was detected by using the Coccinelle software.
+The variable "retval" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/cs4270.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/media/radio/radio-mr800.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs4270.c b/sound/soc/codecs/cs4270.c
-index 84f86745c30e..aa70d471cc57 100644
---- a/sound/soc/codecs/cs4270.c
-+++ b/sound/soc/codecs/cs4270.c
-@@ -362,10 +362,8 @@ static int cs4270_hw_params(struct snd_pcm_substream *substream,
- 		reg |= cs4270_mode_ratios[i].speed_mode;
+diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
+index 7c4554ce1cf0..a1f4dc9be284 100644
+--- a/drivers/media/radio/radio-mr800.c
++++ b/drivers/media/radio/radio-mr800.c
+@@ -511,5 +511,5 @@ static int usb_amradio_probe(struct usb_interface *intf,
+ 				const struct usb_device_id *id)
+ {
+ 	struct amradio_device *radio;
+-	int retval = 0;
++	int retval;
  
- 	ret = snd_soc_write(codec, CS4270_MODE, reg);
--	if (ret < 0) {
--		dev_err(codec->dev, "i2c write failed\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	/* Set the DAI format */
- 
-@@ -385,11 +383,13 @@ static int cs4270_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	ret = snd_soc_write(codec, CS4270_FORMAT, reg);
--	if (ret < 0) {
--		dev_err(codec->dev, "i2c write failed\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
-+
-+	return ret;
- 
-+report_failure:
-+	dev_err(codec->dev, "i2c write failed\n");
- 	return ret;
- }
- 
-@@ -512,10 +512,8 @@ static int cs4270_probe(struct snd_soc_codec *codec)
- 	 * re-enabled it by using the controls.
- 	 */
- 	ret = snd_soc_update_bits(codec, CS4270_MUTE, CS4270_MUTE_AUTO, 0);
--	if (ret < 0) {
--		dev_err(codec->dev, "i2c write failed\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	/* Disable automatic volume control.  The hardware enables, and it
- 	 * causes volume change commands to be delayed, sometimes until after
-@@ -524,15 +522,17 @@ static int cs4270_probe(struct snd_soc_codec *codec)
- 	 */
- 	ret = snd_soc_update_bits(codec, CS4270_TRANS,
- 		CS4270_TRANS_SOFT | CS4270_TRANS_ZERO, 0);
--	if (ret < 0) {
--		dev_err(codec->dev, "i2c write failed\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(cs4270->supplies),
- 				    cs4270->supplies);
- 
- 	return ret;
-+
-+report_failure:
-+	dev_err(codec->dev, "i2c write failed\n");
-+	return ret;
- }
- 
- /**
 -- 
 2.14.1
 
