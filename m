@@ -1,23 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 18:54:44 +0000
-Subject: Re: [media] stm32-dcmi: Improve four size determinations
-Message-Id: <fdcd16a7-0345-9a6c-1ef8-85ac32eb9448@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 16 Sep 2017 06:09:36 +0000
+Subject: [PATCH] perf kmem: Perform some cleanup if '--time' is given an invalid value
+Message-Id: <20170916060936.28199-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
- <f4e400ea-9660-05cd-3194-cdf2495a2376@users.sourceforge.net>
- <1505499388.27581.13.camel@perches.com>
-In-Reply-To: <1505499388.27581.13.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
->> +	memcpy(dcmi->sd_formats, sd_fmts, num_fmts * sizeof(*dcmi->sd_formats));
-> 
-> devm_kmemdup
+If the string passed in '--time' is invalid, we must do some cleanup
+before leaving. As in the other error handling paths of this function.
 
-Are function variants provided which handle memory duplications
-for arrays explicitly?
+Fixes: 2a865bd8dddd ("perf kmem: Add option to specify time window of interest")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ tools/perf/builtin-kmem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+index 24ee68ecdd42..d8f25ef8157b 100644
+--- a/tools/perf/builtin-kmem.c
++++ b/tools/perf/builtin-kmem.c
+@@ -1983,7 +1983,8 @@ int cmd_kmem(int argc, const char **argv)
+ 
+ 	if (perf_time__parse_str(&ptime, time_str) != 0) {
+ 		pr_err("Invalid time string\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_delete;
+ 	}
+ 
+ 	if (!strcmp(argv[0], "stat")) {
+-- 
+2.11.0
+
