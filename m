@@ -1,39 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 20 Sep 2017 12:47:40 +0000
-Subject: Re: mwifiex: make const arrays static to shink object code size
-Message-Id: <20170920124740.CCDD160912@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 10:51:29 +0000
+Subject: [PATCH 1/3] [media] mr800: Delete two error messages for a failed memory allocation in usb_amradio_p
+Message-Id: <a112f104-2058-5812-9601-8e9b629864d4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170916153424.28285-1-colin.king@canonical.com>
-In-Reply-To: <20170916153424.28285-1-colin.king@canonical.com>
+References: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
+In-Reply-To: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Sep 2017 11:23:53 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrays on the stack, instead make them static
-> Makes the object code smaller by nearly 300 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   69260	  16149	    576	  85985	  14fe1	cfg80211.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   68385	  16725	    576	  85686	  14eb6	cfg80211.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Omit extra messages for a memory allocation failure in this function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+This issue was detected by using the Coccinelle software.
 
-d157bcfaf854 mwifiex: make const arrays static to shink object code size
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/radio/radio-mr800.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
+index c9f59129af79..63a9b92ab495 100644
+--- a/drivers/media/radio/radio-mr800.c
++++ b/drivers/media/radio/radio-mr800.c
+@@ -518,5 +518,4 @@ static int usb_amradio_probe(struct usb_interface *intf,
+ 	if (!radio) {
+-		dev_err(&intf->dev, "kmalloc for amradio_device failed\n");
+ 		retval = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -526,5 +525,4 @@ static int usb_amradio_probe(struct usb_interface *intf,
+ 	if (!radio->buffer) {
+-		dev_err(&intf->dev, "kmalloc for radio->buffer failed\n");
+ 		retval = -ENOMEM;
+ 		goto err_nobuf;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/9954375/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
