@@ -1,27 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 12 Sep 2017 09:27:08 +0000
-Subject: Re: [PATCH 1/2] pinctrl: sprd: check for allocation failure
-Message-Id: <CACRpkdbezH6GcyZi8FgWhL-9zuDrrQJgfy+mhhvGQwLWr4kO0A@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 16 Sep 2017 11:33:08 +0000
+Subject: [PATCH] i2c: i2c-stm32f7: make structure stm32f7_setup static
+Message-Id: <20170916113308.25534-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170907072926.56oqezwk4r72yjgt@mwanda>
-In-Reply-To: <20170907072926.56oqezwk4r72yjgt@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Baolin Wang <baolin.wang@spreadtrum.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Sep 7, 2017 at 9:29 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> devm_pinctrl_get() could fail with ERR_PTR(-ENOMEM) so I have added a
-> check for that.  I also reversed the other IS_ERR() test because it was
-> a little confusing to test one way and then the opposite a couple lines
-> later.
->
-> Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The structure stm32f7_setup is local to the source and does not need
+to be in global scope, so make it static.
 
-Patch applied for fixes.
+Cleans up sparse warning:
+symbol 'stm32f7_setup' was not declared. Should it be static?
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 47c67b0ca896..a9cb78de22e0 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -265,7 +265,7 @@ static struct stm32f7_i2c_spec i2c_specs[] = {
+ 	},
+ };
+ 
+-struct stm32f7_i2c_setup stm32f7_setup = {
++static struct stm32f7_i2c_setup stm32f7_setup = {
+ 	.rise_time = STM32F7_I2C_RISE_TIME_DEFAULT,
+ 	.fall_time = STM32F7_I2C_FALL_TIME_DEFAULT,
+ 	.dnf = STM32F7_I2C_DNF_DEFAULT,
+-- 
+2.14.1
+
