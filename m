@@ -1,59 +1,55 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 12 Sep 2017 17:34:22 +0000
-Subject: [PATCH][V2] drm: qxl: remove pr_info message, stops log spamming
-Message-Id: <20170912173422.14062-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 13:34:22 +0000
+Subject: [PATCH 3/4] [media] cpia2: Delete unnecessary null pointer checks in free_sbufs()
+Message-Id: <d15c13d7-3b4c-e343-699b-c7dcb51244ef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>, virtualization@lists.linux-foundation.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 13:23:47 +0200
 
-Simply mmap'ing /dev/dri/card0 repeatedly will spam the kernel
-log with qxl_mmap information messages. The following example code
-illustrates this:
+The script "checkpatch.pl" pointed information out like the following.
 
-int main(void)
-{
-	int fd = open("/dev/dri/card0", O_RDONLY);
-	if (fd = -1)
-		err(1, "open failed");
+WARNING: kfree(NULL) is safe and this check is probably not required
 
-	for (;;) {
-		void *m = mmap(NULL, 4096, PROT_READ,
-			MAP_SHARED, fd, 0);
-		if (m != MAP_FAILED)
-			munmap(m, 4096);
-	}
-}
+Thus fix the affected source code place.
 
-Stop the spamming by removing the pr_info message. Since the mmap'ing
-returns -EINVAL there is no need for the pr_info message.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/qxl/qxl_ttm.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/usb/cpia2/cpia2_usb.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
-index 7ecf8a4b9fe6..0f50c0b25a58 100644
---- a/drivers/gpu/drm/qxl/qxl_ttm.c
-+++ b/drivers/gpu/drm/qxl/qxl_ttm.c
-@@ -123,11 +123,8 @@ int qxl_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct qxl_device *qdev;
- 	int r;
+diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
+index 161c9b827f8e..d1750fa48aa8 100644
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -519,15 +519,11 @@ static void free_sbufs(struct camera_data *cam)
+ 	int i;
  
--	if (unlikely(vma->vm_pgoff < DRM_FILE_PAGE_OFFSET)) {
--		pr_info("%s: vma->vm_pgoff (%ld) < DRM_FILE_PAGE_OFFSET\n",
--			__func__, vma->vm_pgoff);
-+	if (unlikely(vma->vm_pgoff < DRM_FILE_PAGE_OFFSET))
- 		return -EINVAL;
--	}
+ 	for (i = 0; i < NUM_SBUF; i++) {
+-		if(cam->sbuf[i].urb) {
+-			usb_kill_urb(cam->sbuf[i].urb);
+-			usb_free_urb(cam->sbuf[i].urb);
+-			cam->sbuf[i].urb = NULL;
+-		}
+-		if(cam->sbuf[i].data) {
+-			kfree(cam->sbuf[i].data);
+-			cam->sbuf[i].data = NULL;
+-		}
++		usb_kill_urb(cam->sbuf[i].urb);
++		usb_free_urb(cam->sbuf[i].urb);
++		cam->sbuf[i].urb = NULL;
++		kfree(cam->sbuf[i].data);
++		cam->sbuf[i].data = NULL;
+ 	}
+ }
  
- 	file_priv = filp->private_data;
- 	qdev = file_priv->minor->dev->dev_private;
 -- 
 2.14.1
 
