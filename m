@@ -1,39 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 08:40:26 +0000
-Subject: [PATCH] [media] Maxi Radio: Delete an error message for a failed memory allocation in maxiradio_prob
-Message-Id: <2c0d1f34-cdb0-f1c0-7243-4e80ad89af6a@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 09:18:03 +0000
+Subject: [PATCH 0/2] [media] AirSpy: Adjustments for airspy_probe()
+Message-Id: <d4c32723-ac16-7fad-0260-f8aef7105754@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 10:15:29 +0200
+Date: Sun, 17 Sep 2017 11:11:02 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/radio/radio-maxiradio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/usb/airspy/airspy.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/radio/radio-maxiradio.c b/drivers/media/radio/radio-maxiradio.c
-index 3aa5ad391581..995bdc7ff4e6 100644
---- a/drivers/media/radio/radio-maxiradio.c
-+++ b/drivers/media/radio/radio-maxiradio.c
-@@ -125,7 +125,5 @@ static int maxiradio_probe(struct pci_dev *pdev,
--	if (dev = NULL) {
--		dev_err(&pdev->dev, "not enough memory\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
- 
- 	v4l2_dev = &dev->v4l2_dev;
- 	v4l2_device_set_name(v4l2_dev, "maxiradio", &maxiradio_instance);
 -- 
 2.14.1
 
