@@ -1,62 +1,70 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Sep 2017 15:27:39 +0000
-Subject: [PATCH] CIFS: make arrays static const, reduces object code size
-Message-Id: <20170919152739.24749-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 20:22:12 +0000
+Subject: [PATCH 6/8] [media] cx231xx: Use common error handling code in read_eeprom()
+Message-Id: <8971b7e5-87ca-a1d5-f23d-64ed05c788b7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+In-Reply-To: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 20:22:15 +0200
 
-Don't populate the read-only arrays types[] on the stack, instead make
-them both static const.  Makes the object code smaller by over 200 bytes:
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 111503	  37696	    448	 149647	  2488f	fs/cifs/file.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
- 111140	  37856	    448	 149444	  247c4	fs/cifs/file.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/cifs/file.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-cards.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 0786f19d288f..822311919163 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1102,8 +1102,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
- 	struct cifs_tcon *tcon;
- 	unsigned int num, max_num, max_buf;
- 	LOCKING_ANDX_RANGE *buf, *cur;
--	int types[] = {LOCKING_ANDX_LARGE_FILES,
--		       LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES};
-+	static const int types[] = {
-+		LOCKING_ANDX_LARGE_FILES,
-+		LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES
-+	};
- 	int i;
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index d204f220dfe5..04c0734aee79 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -1117,20 +1117,17 @@ static int read_eeprom(struct cx231xx *dev, struct i2c_client *client,
  
- 	xid = get_xid();
-@@ -1434,8 +1436,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 		  unsigned int xid)
- {
- 	int rc = 0, stored_rc;
--	int types[] = {LOCKING_ANDX_LARGE_FILES,
--		       LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES};
-+	static const int types[] = {
-+		LOCKING_ANDX_LARGE_FILES,
-+		LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES
-+	};
- 	unsigned int i;
- 	unsigned int max_num, num, max_buf;
- 	LOCKING_ANDX_RANGE *buf, *cur;
+ 	/* start reading at offset 0 */
+ 	ret = i2c_transfer(client->adapter, &msg_write, 1);
+-	if (ret < 0) {
+-		dev_err(dev->dev, "Can't read eeprom\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	while (len_todo > 0) {
+ 		msg_read.len = (len_todo > 64) ? 64 : len_todo;
+ 		msg_read.buf = eedata_cur;
+ 
+ 		ret = i2c_transfer(client->adapter, &msg_read, 1);
+-		if (ret < 0) {
+-			dev_err(dev->dev, "Can't read eeprom\n");
+-			return ret;
+-		}
++		if (ret < 0)
++			goto report_failure;
++
+ 		eedata_cur += msg_read.len;
+ 		len_todo -= msg_read.len;
+ 	}
+@@ -1140,6 +1137,10 @@ static int read_eeprom(struct cx231xx *dev, struct i2c_client *client,
+ 			i, 16, &eedata[i]);
+ 
+ 	return 0;
++
++report_failure:
++	dev_err(dev->dev, "Can't read eeprom\n");
++	return ret;
+ }
+ 
+ void cx231xx_card_setup(struct cx231xx *dev)
 -- 
 2.14.1
 
