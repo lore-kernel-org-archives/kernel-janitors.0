@@ -1,48 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 16 Sep 2017 15:44:59 +0000
-Subject: [PATCH] scsi: scsi_transport_spi:  make const arrays static to shink object code size
-Message-Id: <20170916154459.28614-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 06:57:45 +0000
+Subject: [PATCH 1/2] [media] si2157: Delete an error message for a failed memory allocation in si2157_probe()
+Message-Id: <e9510d39-2aff-ca78-5e51-1cf97555a2e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <87f4a386-ac11-87f5-2d22-7bfc0593de34@users.sourceforge.net>
+In-Reply-To: <87f4a386-ac11-87f5-2d22-7bfc0593de34@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 08:20:04 +0200
 
-Don't populate const arrays on the stack, instead make them static.
-Makes the object code smaller by over 530 bytes:
+Omit an extra message for a memory allocation failure in this function.
 
-Before:
-  37010	  14144	    128	  51282	   c852	drivers/scsi/scsi_transport_spi.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  36312	  14304	    128	  50744	   c638	drivers/scsi/scsi_transport_spi.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/scsi_transport_spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/tuners/si2157.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/scsi_transport_spi.c b/drivers/scsi/scsi_transport_spi.c
-index d0219e36080c..3f7ad400fb8d 100644
---- a/drivers/scsi/scsi_transport_spi.c
-+++ b/drivers/scsi/scsi_transport_spi.c
-@@ -819,11 +819,11 @@ spi_dv_device_get_echo_buffer(struct scsi_device *sdev, u8 *buffer)
- 	 * fails, the device won't let us write to the echo buffer
- 	 * so just return failure */
- 	
--	const char spi_test_unit_ready[] = {
-+	static const char spi_test_unit_ready[] = {
- 		TEST_UNIT_READY, 0, 0, 0, 0, 0
- 	};
- 
--	const char spi_read_buffer_descriptor[] = {
-+	static const char spi_read_buffer_descriptor[] = {
- 		READ_BUFFER, 0x0b, 0, 0, 0, 0, 0, 0, 4, 0
- 	};
+diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
+index e35b1faf0ddc..aefa85718496 100644
+--- a/drivers/media/tuners/si2157.c
++++ b/drivers/media/tuners/si2157.c
+@@ -439,6 +439,5 @@ static int si2157_probe(struct i2c_client *client,
+ 	if (!dev) {
+ 		ret = -ENOMEM;
+-		dev_err(&client->dev, "kzalloc() failed\n");
+ 		goto err;
+ 	}
  
 -- 
 2.14.1
