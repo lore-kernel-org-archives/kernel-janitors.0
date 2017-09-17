@@ -1,44 +1,102 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 10:33:01 +0000
-Subject: [PATCH 6/6] [media] omap_vout: Delete two unnecessary variable initialisations in omap_vout_probe()
-Message-Id: <0f538063-3819-5ef8-3311-02676cb1042d@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 20:16:50 +0000
+Subject: [PATCH 1/8] [media] cx231xx: Delete eight error messages for a failed memory allocation
+Message-Id: <dd754a24-d113-2b6b-5f5c-01e9e6454ad9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
-In-Reply-To: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+References: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+In-Reply-To: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Sep 2017 11:33:39 +0200
+Date: Sun, 17 Sep 2017 17:43:47 +0200
 
-The variables "dssdev" and "vid_dev" will eventually be set
-to appropriate pointers a bit later.
-Thus omit the explicit initialisations at the beginning.
+Omit extra messages for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/omap/omap_vout.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-core.c | 14 ++------------
+ drivers/media/usb/cx231xx/cx231xx-dvb.c  |  7 ++-----
+ drivers/media/usb/cx231xx/cx231xx-vbi.c  | 11 +----------
+ 3 files changed, 5 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
-index f446a37064f4..0efcea820007 100644
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -2075,9 +2075,9 @@ static int __init omap_vout_probe(struct platform_device *pdev)
- {
- 	int ret = 0, i;
- 	struct omap_overlay *ovl;
--	struct omap_dss_device *dssdev = NULL;
-+	struct omap_dss_device *dssdev;
- 	struct omap_dss_device *def_display;
--	struct omap2video_device *vid_dev = NULL;
-+	struct omap2video_device *vid_dev;
+diff --git a/drivers/media/usb/cx231xx/cx231xx-core.c b/drivers/media/usb/cx231xx/cx231xx-core.c
+index f372ad3917a8..d9f4ae50e869 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-core.c
++++ b/drivers/media/usb/cx231xx/cx231xx-core.c
+@@ -1038,12 +1038,7 @@ int cx231xx_init_isoc(struct cx231xx *dev, int max_packets,
+-	if (!dev->video_mode.isoc_ctl.urb) {
+-		dev_err(dev->dev,
+-			"cannot alloc memory for usb buffers\n");
++	if (!dev->video_mode.isoc_ctl.urb)
+ 		return -ENOMEM;
+-	}
  
- 	if (omapdss_is_initialized() = false)
- 		return -EPROBE_DEFER;
+ 	dev->video_mode.isoc_ctl.transfer_buffer  	    kzalloc(sizeof(void *) * num_bufs, GFP_KERNEL);
+ 	if (!dev->video_mode.isoc_ctl.transfer_buffer) {
+-		dev_err(dev->dev,
+-			"cannot allocate memory for usbtransfer\n");
+ 		kfree(dev->video_mode.isoc_ctl.urb);
+@@ -1173,12 +1168,7 @@ int cx231xx_init_bulk(struct cx231xx *dev, int max_packets,
+-	if (!dev->video_mode.bulk_ctl.urb) {
+-		dev_err(dev->dev,
+-			"cannot alloc memory for usb buffers\n");
++	if (!dev->video_mode.bulk_ctl.urb)
+ 		return -ENOMEM;
+-	}
+ 
+ 	dev->video_mode.bulk_ctl.transfer_buffer  	    kzalloc(sizeof(void *) * num_bufs, GFP_KERNEL);
+ 	if (!dev->video_mode.bulk_ctl.transfer_buffer) {
+-		dev_err(dev->dev,
+-			"cannot allocate memory for usbtransfer\n");
+ 		kfree(dev->video_mode.bulk_ctl.urb);
+diff --git a/drivers/media/usb/cx231xx/cx231xx-dvb.c b/drivers/media/usb/cx231xx/cx231xx-dvb.c
+index c18bb33e060e..248b62e2099c 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-dvb.c
++++ b/drivers/media/usb/cx231xx/cx231xx-dvb.c
+@@ -618,9 +618,6 @@ static int dvb_init(struct cx231xx *dev)
+-
+-	if (dvb = NULL) {
+-		dev_info(dev->dev,
+-			 "cx231xx_dvb: memory allocation failed\n");
++	if (!dvb)
+ 		return -ENOMEM;
+-	}
++
+ 	dev->dvb = dvb;
+ 	dev->cx231xx_set_analog_freq = cx231xx_set_analog_freq;
+ 	dev->cx231xx_reset_analog_tuner = cx231xx_reset_analog_tuner;
+diff --git a/drivers/media/usb/cx231xx/cx231xx-vbi.c b/drivers/media/usb/cx231xx/cx231xx-vbi.c
+index 76e901920f6f..9c27db16db2a 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-vbi.c
++++ b/drivers/media/usb/cx231xx/cx231xx-vbi.c
+@@ -420,12 +420,7 @@ int cx231xx_init_vbi_isoc(struct cx231xx *dev, int max_packets,
+-	if (!dev->vbi_mode.bulk_ctl.urb) {
+-		dev_err(dev->dev,
+-			"cannot alloc memory for usb buffers\n");
++	if (!dev->vbi_mode.bulk_ctl.urb)
+ 		return -ENOMEM;
+-	}
+ 
+ 	dev->vbi_mode.bulk_ctl.transfer_buffer  	    kzalloc(sizeof(void *) * num_bufs, GFP_KERNEL);
+ 	if (!dev->vbi_mode.bulk_ctl.transfer_buffer) {
+-		dev_err(dev->dev,
+-			"cannot allocate memory for usbtransfer\n");
+ 		kfree(dev->vbi_mode.bulk_ctl.urb);
+@@ -453,8 +448,4 @@ int cx231xx_init_vbi_isoc(struct cx231xx *dev, int max_packets,
+ 		if (!dev->vbi_mode.bulk_ctl.transfer_buffer[i]) {
+-			dev_err(dev->dev,
+-				"unable to allocate %i bytes for transfer buffer %i%s\n",
+-				sb_size, i,
+-				in_interrupt() ? " while in int" : "");
+ 			cx231xx_uninit_vbi_isoc(dev);
+ 			return -ENOMEM;
+ 		}
 -- 
 2.14.1
 
