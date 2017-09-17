@@ -1,30 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 22 Sep 2017 10:13:29 +0000
-Subject: Re: [PATCH] crypto: aesni: make arrays aesni_simd_skciphers and aesni_simd_skciphers2 static
-Message-Id: <20170922101329.GF16270@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 20:15:20 +0000
+Subject: [PATCH 0/8] [media] Cx231xx: Adjustments for several function implementations
+Message-Id: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170820213438.14686-1-colin.king@canonical.com>
-In-Reply-To: <20170820213438.14686-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 20, 2017 at 10:34:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Arrays aesni_simd_skciphers and aesni_simd_skciphers2 are local to the
-> source and do not need to be in global scope, so make them static.
-> 
-> Cleans up sparse warnings:
-> symbol 'aesni_simd_skciphers' was not declared. Should it be static?
-> symbol 'aesni_simd_skciphers2' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 21:30:12 +0200
 
-Patch applied.  Thanks.
+Some update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (8):
+  Delete eight error messages for a failed memory allocation
+  Adjust 56 checks for null pointers
+  Improve six size determinations
+  Delete an unnecessary variable initialisation in dvb_init()
+  Use common error handling code in dvb_init()
+  Use common error handling code in read_eeprom()
+  Delete an unnecessary variable initialisation in read_eeprom()
+  Use common error handling code in cx231xx_load_firmware()
+
+ drivers/media/usb/cx231xx/cx231xx-417.c   |  65 +++++-----
+ drivers/media/usb/cx231xx/cx231xx-audio.c |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-cards.c |  35 +++---
+ drivers/media/usb/cx231xx/cx231xx-core.c  |  34 ++----
+ drivers/media/usb/cx231xx/cx231xx-dvb.c   | 195 ++++++++++++------------------
+ drivers/media/usb/cx231xx/cx231xx-vbi.c   |  17 +--
+ drivers/media/usb/cx231xx/cx231xx-video.c |   6 +-
+ 7 files changed, 143 insertions(+), 211 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.1
+
