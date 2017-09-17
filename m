@@ -1,42 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 14:25:18 +0000
-Subject: [PATCH] [media] sh_mobile_ceu_camera: Delete an error message for a failed memory allocation in sh_m
-Message-Id: <bcec3fbc-a3a8-5ee5-14b5-2df5c1103323@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Sep 2017 19:10:14 +0000
+Subject: [PATCH] tty: synclink: Reuse an existing error handling path
+Message-Id: <20170917191014.31577-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 16:15:47 +0200
+In order to avoid code duplication and to be more consistent with the
+other error handling paths in this function, we should 'goto errout'.
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/tty/synclink.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-index 36762ec954e7..28b1d6d1275a 100644
---- a/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-+++ b/drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-@@ -1653,10 +1653,8 @@ static int sh_mobile_ceu_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
+index 3be981101297..27db7818b673 100644
+--- a/drivers/tty/synclink.c
++++ b/drivers/tty/synclink.c
+@@ -4098,8 +4098,7 @@ static int mgsl_claim_resources(struct mgsl_struct *info)
+ 		if (request_dma(info->dma_level,info->device_name) < 0){
+ 			printk( "%s(%d):Can't request DMA channel on device %s DMA=%d\n",
+ 				__FILE__,__LINE__,info->device_name, info->dma_level );
+-			mgsl_release_resources( info );
+-			return -ENODEV;
++			goto errout;
+ 		}
+ 		info->dma_requested = true;
  
- 	pcdev = devm_kzalloc(&pdev->dev, sizeof(*pcdev), GFP_KERNEL);
--	if (!pcdev) {
--		dev_err(&pdev->dev, "Could not allocate pcdev\n");
-+	if (!pcdev)
- 		return -ENOMEM;
--	}
- 
- 	INIT_LIST_HEAD(&pcdev->capture);
- 	spin_lock_init(&pcdev->lock);
 -- 
-2.14.1
+2.11.0
 
