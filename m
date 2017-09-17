@@ -1,41 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 20:42:49 +0000
-Subject: [PATCH 2/2] [media] ma901: Improve a size determination in usb_ma901radio_probe()
-Message-Id: <a684cb0b-b478-b64e-e1d8-fe18a45d9885@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Sep 2017 22:33:06 +0000
+Subject: [PATCH 2/2] rapidio: Fix an error handling in 'rio_dma_transfer()'
+Message-Id: <d4235bd2b9274e99f6c86ea71b1fa1c7bd8d0c08.1505687047.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6d4d9e92-9ac5-1e46-99ed-2b7d93bd7121@users.sourceforge.net>
-In-Reply-To: <6d4d9e92-9ac5-1e46-99ed-2b7d93bd7121@users.sourceforge.net>
+References: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: mporter@kernel.crashing.org, alexandre.bounine@idt.com, lstoakes@gmail.com, akpm@linux-foundation.org, jesper.nilsson@axis.com, christian.koenig@amd.com, logang@deltatee.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 22:23:42 +0200
+In case of error, 'dma_map_sg()' returns 0, not a negative value.
+There is BUG_ON() in 'dma_map_sg_attrs()'  which makes sure of that.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/radio/radio-ma901.c | 2 +-
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/radio/radio-ma901.c b/drivers/media/radio/radio-ma901.c
-index c386fbd63703..61d1657f1ee7 100644
---- a/drivers/media/radio/radio-ma901.c
-+++ b/drivers/media/radio/radio-ma901.c
-@@ -357,5 +357,5 @@ static int usb_ma901radio_probe(struct usb_interface *intf,
- 		|| strncmp(dev->manufacturer, "www.masterkit.ru", 16) != 0))
- 		return -ENODEV;
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 76afe1449cab..3dd37e35cf4e 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -961,7 +961,7 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
  
--	radio = kzalloc(sizeof(struct ma901radio_device), GFP_KERNEL);
-+	radio = kzalloc(sizeof(*radio), GFP_KERNEL);
- 	if (!radio) {
+ 	nents = dma_map_sg(chan->device->dev,
+ 			   req->sgt.sgl, req->sgt.nents, dir);
+-	if (nents = -EFAULT) {
++	if (nents = 0) {
+ 		rmcd_error("Failed to map SG list");
+ 		ret = -EFAULT;
+ 		goto err_pg;
 -- 
-2.14.1
+2.11.0
 
