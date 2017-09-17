@@ -1,39 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 06:57:45 +0000
-Subject: [PATCH 1/2] [media] si2157: Delete an error message for a failed memory allocation in si2157_probe()
-Message-Id: <e9510d39-2aff-ca78-5e51-1cf97555a2e3@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 13:32:56 +0000
+Subject: [PATCH 2/4] [media] cpia2: Adjust two function calls together with a variable assignment
+Message-Id: <b7bd5189-926c-b48c-37af-5d764c0674ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87f4a386-ac11-87f5-2d22-7bfc0593de34@users.sourceforge.net>
-In-Reply-To: <87f4a386-ac11-87f5-2d22-7bfc0593de34@users.sourceforge.net>
+References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 08:20:04 +0200
+Date: Sun, 17 Sep 2017 12:56:50 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/tuners/si2157.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/usb/cpia2/cpia2_usb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
-index e35b1faf0ddc..aefa85718496 100644
---- a/drivers/media/tuners/si2157.c
-+++ b/drivers/media/tuners/si2157.c
-@@ -439,6 +439,5 @@ static int si2157_probe(struct i2c_client *client,
- 	if (!dev) {
- 		ret = -ENOMEM;
--		dev_err(&client->dev, "kzalloc() failed\n");
- 		goto err;
+diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
+index c6be2786a66f..161c9b827f8e 100644
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -367,7 +367,8 @@ static void cpia2_usb_complete(struct urb *urb)
+ 	if(cam->streaming) {
+ 		/* resubmit */
+ 		urb->dev = cam->dev;
+-		if ((i = usb_submit_urb(urb, GFP_ATOMIC)) != 0)
++		i = usb_submit_urb(urb, GFP_ATOMIC);
++		if (i != 0)
+ 			ERR("%s: usb_submit_urb ret %d!\n", __func__, i);
+ 	}
+ }
+@@ -852,5 +853,5 @@ static int cpia2_usb_probe(struct usb_interface *intf,
  	}
  
+-
+-	if((ret = cpia2_init_camera(cam)) < 0) {
++	ret = cpia2_init_camera(cam);
++	if (ret < 0) {
+ 		ERR("%s: failed to initialize cpia2 camera (ret = %d)\n", __func__, ret);
 -- 
 2.14.1
 
