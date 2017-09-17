@@ -1,57 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Sep 2017 12:07:50 +0000
-Subject: [PATCH] [media] imon: make two const arrays static, reduces object code size
-Message-Id: <20170905120750.16627-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 09:20:28 +0000
+Subject: [PATCH 2/2] [media] airspy: Improve a size determination in airspy_probe()
+Message-Id: <27a527c5-8d41-f54d-6d1d-132f0b37acbb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d4c32723-ac16-7fad-0260-f8aef7105754@users.sourceforge.net>
+In-Reply-To: <d4c32723-ac16-7fad-0260-f8aef7105754@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 11:03:21 +0200
 
-Don't populate the const arrays vfd_packet6 and fp_packet on the
-stack, instead make them static.  Makes the object code smaller
-by over 600 bytes:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  43794	  17920	   1024	  62738	   f512	drivers/media/rc/imon.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  42994	  18080	   1024	  62098	   f292	drivers/media/rc/imon.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/imon.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/airspy/airspy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-index 7b3f31cc63d2..c50875a8c5b6 100644
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -943,7 +943,7 @@ static ssize_t vfd_write(struct file *file, const char __user *buf,
- 	int seq;
- 	int retval = 0;
- 	struct imon_context *ictx;
--	const unsigned char vfd_packet6[] = {
-+	static const unsigned char vfd_packet6[] = {
- 		0x01, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF };
- 
- 	ictx = file->private_data;
-@@ -2047,8 +2047,8 @@ static struct rc_dev *imon_init_rdev(struct imon_context *ictx)
- {
- 	struct rc_dev *rdev;
+diff --git a/drivers/media/usb/airspy/airspy.c b/drivers/media/usb/airspy/airspy.c
+index 72b36dbcc0ba..5810c05f6300 100644
+--- a/drivers/media/usb/airspy/airspy.c
++++ b/drivers/media/usb/airspy/airspy.c
+@@ -981,5 +981,5 @@ static int airspy_probe(struct usb_interface *intf,
  	int ret;
--	const unsigned char fp_packet[] = { 0x40, 0x00, 0x00, 0x00,
--					    0x00, 0x00, 0x00, 0x88 };
-+	static const unsigned char fp_packet[] = {
-+		0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x88 };
+ 	u8 u8tmp, buf[BUF_SIZE];
  
- 	rdev = rc_allocate_device(ictx->dev_descr->flags & IMON_IR_RAW ?
- 				  RC_DRIVER_IR_RAW : RC_DRIVER_SCANCODE);
+-	s = kzalloc(sizeof(struct airspy), GFP_KERNEL);
++	s = kzalloc(sizeof(*s), GFP_KERNEL);
+ 	if (!s)
 -- 
 2.14.1
 
