@@ -1,47 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 21 Sep 2017 22:39:59 +0000
-Subject: [PATCH] staging: xgifb: make const array static to shink object code size
-Message-Id: <20170921223959.21400-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 08:20:01 +0000
+Subject: [PATCH 1/2] [media] tda18212: Delete an error message for a failed memory allocation in tda18212_pro
+Message-Id: <118a0240-23a9-d688-54c2-fc4113a195c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <eb35c033-46b3-4fd6-8398-f1e3869a67a8@users.sourceforge.net>
+In-Reply-To: <eb35c033-46b3-4fd6-8398-f1e3869a67a8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaud Patard <arnaud.patard@rtp-net.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Walt Feasel <waltfeasel@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 09:33:58 +0200
 
-Don't populate const array LCDARefreshIndex on the stack, instead
-make it static.  Makes the object code smaller by 340 bytes:
+* Omit an extra message for a memory allocation failure in this function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  84949	  12336	      0	  97285	  17c05	drivers/staging/xgifb/vb_setmode.o
+  This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  84506	  12432	      0	  96938	  17aaa	drivers/staging/xgifb/vb_setmode.o
+* Add a jump target so that the function "kfree" will be always called
+  with a non-null pointer.
 
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/xgifb/vb_setmode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/tuners/tda18212.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
-index d55ffa61bc40..a6cd0a1e8c05 100644
---- a/drivers/staging/xgifb/vb_setmode.c
-+++ b/drivers/staging/xgifb/vb_setmode.c
-@@ -5046,7 +5046,7 @@ unsigned short XGI_GetRatePtrCRT2(struct xgi_hw_device_info *pXGIHWDE,
- 				  unsigned short ModeIdIndex,
- 				  struct vb_device_info *pVBInfo)
- {
--	const u8 LCDARefreshIndex[] = {
-+	static const u8 LCDARefreshIndex[] = {
- 		0x00, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x00 };
+diff --git a/drivers/media/tuners/tda18212.c b/drivers/media/tuners/tda18212.c
+index 7b8068354fea..8f89d52cd39c 100644
+--- a/drivers/media/tuners/tda18212.c
++++ b/drivers/media/tuners/tda18212.c
+@@ -204,6 +204,5 @@ static int tda18212_probe(struct i2c_client *client,
+ 	if (dev = NULL) {
+ 		ret = -ENOMEM;
+-		dev_err(&client->dev, "kzalloc() failed\n");
+-		goto err;
++		goto report_failure;
+ 	}
  
- 	unsigned short RefreshRateTableIndex, i, index, temp;
+@@ -250,8 +249,9 @@ static int tda18212_probe(struct i2c_client *client,
+ 
+ 	return 0;
+ err:
+-	dev_dbg(&client->dev, "failed=%d\n", ret);
+ 	kfree(dev);
++report_failure:
++	dev_dbg(&client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
 -- 
 2.14.1
 
