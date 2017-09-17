@@ -1,42 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 20 Sep 2017 13:25:41 +0000
-Subject: [PATCH] scsi: libfc: fix potential null lport dereference
-Message-Id: <20170920132541.13691-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Sep 2017 09:43:13 +0000
+Subject: [PATCH] dlm: Reuse existing error handling path
+Message-Id: <20170917094313.30592-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Thumshirn <jth@kernel.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ccaulfie@redhat.com, teigland@redhat.com
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+The error handling path at label 'accept_err' already performs these
+'sock_release()' and 'mutex_unlock()' calls. The order is reversed, but
+it is not important.
+So avoid code duplication and 'goto accept_err'.
 
-Don't pass a null lport to FC_LPORT_DBG as this causes a null pointer
-dereference when accessing lport->host and lport->port_id. Instead
-use the FC_CHECK_LOGGING macro to print the kernel message via pr_info.
+While at it, add some missing spaces around a '='.
 
-Detected by CoverityScan, CID#113198 ("Dereference after null check")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/libfc/fc_exch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Instead of returning the magic number -1, we could also propagate the
+return value of 'addr_to_nodeid()', that is to say -EEXIST
+---
+ fs/dlm/lowcomms.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
-index 42bcf7f3a0f9..46d842d238f1 100644
---- a/drivers/scsi/libfc/fc_exch.c
-+++ b/drivers/scsi/libfc/fc_exch.c
-@@ -2603,8 +2603,8 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
- 
- 	/* lport lock ? */
- 	if (!lport || lport->state = LPORT_ST_DISABLED) {
--		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
--			     "has not been initialized correctly\n");
-+		FC_CHECK_LOGGING(FC_LPORT_LOGGING,
-+				 pr_info("Receiving frames for an lport that has not been initialized correctly\n"));
- 		fc_frame_free(fp);
- 		return;
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 4813d0e0cd9b..cd9305b17ad5 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -758,13 +758,12 @@ static int tcp_accept_from_sock(struct connection *con)
+ 	/* Get the new node's NODEID */
+ 	make_sockaddr(&peeraddr, 0, &len);
+ 	if (addr_to_nodeid(&peeraddr, &nodeid)) {
+-		unsigned char *b=(unsigned char *)&peeraddr;
++		unsigned char *b = (unsigned char *)&peeraddr;
+ 		log_print("connect from non cluster node");
+ 		print_hex_dump_bytes("ss: ", DUMP_PREFIX_NONE, 
+ 				     b, sizeof(struct sockaddr_storage));
+-		sock_release(newsock);
+-		mutex_unlock(&con->sock_mutex);
+-		return -1;
++		result = -1;
++		goto accept_err;
  	}
+ 
+ 	log_print("got connection from %d", nodeid);
 -- 
-2.14.1
+2.11.0
 
