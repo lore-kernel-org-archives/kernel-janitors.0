@@ -1,42 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 17:39:40 +0000
-Subject: [PATCH] [media] jl2005bcd: Delete an error message for a failed memory allocation in jl2005c_dostrea
-Message-Id: <7b118f3d-99e0-1936-16d4-09151a5da006@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 13:31:31 +0000
+Subject: [PATCH 1/4] [media] cpia2: Use common error handling code in cpia2_usb_probe()
+Message-Id: <a5c38437-f79b-e92e-b571-dd240090ca2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 19:24:24 +0200
-
-Omit an extra message for a memory allocation failure in this function.
+Date: Sun, 17 Sep 2017 12:40:14 +0200
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/gspca/jl2005bcd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/usb/cpia2/cpia2_usb.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-index 17c7a953564c..23400ead1919 100644
---- a/drivers/media/usb/gspca/jl2005bcd.c
-+++ b/drivers/media/usb/gspca/jl2005bcd.c
-@@ -320,10 +320,8 @@ static void jl2005c_dostream(struct work_struct *work)
- 	u8 *buffer;
+diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
+index 6089036049d9..c6be2786a66f 100644
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -849,13 +849,11 @@ static int cpia2_usb_probe(struct usb_interface *intf,
+ 	if (ret < 0) {
+ 		ERR("%s: usb_set_interface error (ret = %d)\n", __func__, ret);
+-		kfree(cam);
+-		return ret;
++		goto free_data;
+ 	}
  
- 	buffer = kmalloc(JL2005C_MAX_TRANSFER, GFP_KERNEL | GFP_DMA);
--	if (!buffer) {
--		pr_err("Couldn't allocate USB buffer\n");
-+	if (!buffer)
- 		goto quit_stream;
--	}
  
- 	while (gspca_dev->present && gspca_dev->streaming) {
- #ifdef CONFIG_PM
+ 	if((ret = cpia2_init_camera(cam)) < 0) {
+ 		ERR("%s: failed to initialize cpia2 camera (ret = %d)\n", __func__, ret);
+-		kfree(cam);
+-		return ret;
++		goto free_data;
+ 	}
+ 	LOG("  CPiA Version: %d.%02d (%d.%d)\n",
+@@ -877,9 +875,12 @@ static int cpia2_usb_probe(struct usb_interface *intf,
+ 	if (ret < 0) {
+ 		ERR("%s: Failed to register cpia2 camera (ret = %d)\n", __func__, ret);
+-		kfree(cam);
+-		return ret;
++		goto free_data;
+ 	}
+ 
+ 	return 0;
++
++free_data:
++	kfree(cam);
++	return ret;
+ }
+ 
 -- 
 2.14.1
 
