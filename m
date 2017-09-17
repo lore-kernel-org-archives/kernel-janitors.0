@@ -1,64 +1,34 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Mon, 04 Sep 2017 17:53:33 +0000
-Subject: Re: [PATCH] rpmsg: glink: initialize ret to zero to ensure error status check is correct
-Message-Id: <20170904175333.GI20643@builder>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Sep 2017 22:33:04 +0000
+Subject: [PATCH 0/2] rapidio: Two fixes for 'rio_dma_transfer()'
+Message-Id: <cover.1505687047.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170903130601.6533-1-colin.king@canonical.com>
-In-Reply-To: <20170903130601.6533-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mporter@kernel.crashing.org, alexandre.bounine@idt.com, lstoakes@gmail.com, akpm@linux-foundation.org, jesper.nilsson@axis.com, christian.koenig@amd.com, logang@deltatee.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun 03 Sep 06:06 PDT 2017, Colin King wrote:
+These 2 patches are really close and are both related to error handling
+in 'rio_dma_transfer()'.
+The first one fixes some resources leak in case of error.
+The 2nd one fixes a test so that the corresponding error can be handled
+correctly.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The new switch cases for RPM_CMD_RX_DONE, RPM_CMD_RX_DONE_W_REUSE,
-> RPM_CMD_RX_INTENT_REQ_ACK, RPM_CMD_INTENT and RPM_CMD_RX_INTENT_REQ from
-> 4 recent commits are not setting ret and so a later non-zero check on ret
-> is testing on a garbage value in ret. Fix this by initializing ret to zero.
-> 
-> Detected by CoverityScan CID#1455249 ("Uninitialized scalar variable")
-> 
-> Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents)
-> Fixes: dacbb35e930f ("glink: Receive and store the remote intent buffers")
-> Fixes: 27b9c5b66b23 ("rpmsg: glink: Request for intents when unavailable")
-> Fixes: 88c6060f5a7f ("rpmsg: glink: Handle remote rx done command")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I've splitted this into 2 paches because the first one looks trivial to me.
+But the 2nd one should require more attention, IMO. The existing error
+handling was dead code because 'dma_map_sg()' can not return -EFAULT. So
+this error handling code has never been executed/tested and I can't test it
+myself.
 
-Thanks Colin, applied both patches.
+Christophe JAILLET (2):
+  rapidio: Fix resources leak in error handling path in
+    'rio_dma_transfer()'
+  rapidio: Fix an error handling in 'rio_dma_transfer()'
 
-Regards,
-Bjorn
+ drivers/rapidio/devices/rio_mport_cdev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 8bc0d0456a40..5a5e927ea50f 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -957,7 +957,7 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
->  	unsigned int param2;
->  	unsigned int avail;
->  	unsigned int cmd;
-> -	int ret;
-> +	int ret = 0;
->  
->  	for (;;) {
->  		avail = qcom_glink_rx_avail(glink);
-> @@ -994,8 +994,6 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
->  
->  			mbox_send_message(glink->mbox_chan, NULL);
->  			mbox_client_txdone(glink->mbox_chan, 0);
-> -
-> -			ret = 0;
->  			break;
->  		case RPM_CMD_INTENT:
->  			qcom_glink_handle_intent(glink, param1, param2, avail);
-> -- 
-> 2.14.1
-> 
+-- 
+2.11.0
+
