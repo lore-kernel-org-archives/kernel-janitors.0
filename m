@@ -1,68 +1,143 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Sep 2017 19:15:06 +0000
-Subject: [PATCH] [media] cx88: Use common error handling code in get_key_pvr2000()
-Message-Id: <962b8373-ca02-b27a-cc25-eb9b4ac16e05@users.sourceforge.net>
+Date: Sun, 17 Sep 2017 20:24:16 +0000
+Subject: [PATCH 8/8] [media] cx231xx: Use common error handling code in cx231xx_load_firmware()
+Message-Id: <57f0d209-1b87-690c-589a-bff8e0ffe24f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+In-Reply-To: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrey Utkin <andrey_utkin@fastmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Sep 2017 21:03:57 +0200
+Date: Sun, 17 Sep 2017 21:07:39 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
+Add jump targets so that a bit of exception handling can be better reused
 at the end of this function.
-
-This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/cx88/cx88-input.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-417.c | 61 ++++++++++++++++-----------------
+ 1 file changed, 29 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
-index e02449bf2041..001fbb97bcdf 100644
---- a/drivers/media/pci/cx88/cx88-input.c
-+++ b/drivers/media/pci/cx88/cx88-input.c
-@@ -566,20 +566,17 @@ static int get_key_pvr2000(struct IR_i2c *ir, enum rc_proto *protocol,
+diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
+index d43345593172..88aac129b678 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-417.c
++++ b/drivers/media/usb/cx231xx/cx231xx-417.c
+@@ -954,16 +954,13 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
  
- 	/* poll IR chip */
- 	flags = i2c_smbus_read_byte_data(ir->c, 0x10);
--	if (flags < 0) {
--		dprintk("read error\n");
--		return 0;
+ 	p_current_fw = vmalloc(1884180 * 4);
+ 	p_fw = p_current_fw;
+-	if (!p_current_fw) {
+-		dprintk(2, "FAIL!!!\n");
+-		return -ENOMEM;
 -	}
-+	if (flags < 0)
-+		goto report_read_failure;
-+
- 	/* key pressed ? */
- 	if (0 = (flags & 0x80))
- 		return 0;
++	if (!p_current_fw)
++		goto e_nomem;
  
- 	/* read actual key code */
- 	code = i2c_smbus_read_byte_data(ir->c, 0x00);
--	if (code < 0) {
--		dprintk("read error\n");
--		return 0;
+ 	p_buffer = vmalloc(4096);
+ 	if (!p_buffer) {
+-		dprintk(2, "FAIL!!!\n");
+ 		vfree(p_current_fw);
+-		return -ENOMEM;
++		goto e_nomem;
+ 	}
+ 
+ 	dprintk(2, "%s()\n", __func__);
+@@ -986,9 +983,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
+ 	if (retval != 0) {
+ 		dev_err(dev->dev,
+ 			"%s: Error with mc417_register_write\n", __func__);
+-		vfree(p_current_fw);
+-		vfree(p_buffer);
+-		return retval;
++		goto free_fw;
+ 	}
+ 
+ 	retval = request_firmware(&firmware, CX231xx_FIRM_IMAGE_NAME,
+@@ -1000,28 +995,20 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
+ 			CX231xx_FIRM_IMAGE_NAME);
+ 		dev_err(dev->dev,
+ 			"Please fix your hotplug setup, the board will not work without firmware loaded!\n");
+-		vfree(p_current_fw);
+-		vfree(p_buffer);
+-		return retval;
++		goto free_fw;
+ 	}
+ 
+ 	if (firmware->size != CX231xx_FIRM_IMAGE_SIZE) {
+ 		dev_err(dev->dev,
+ 			"ERROR: Firmware size mismatch (have %zd, expected %d)\n",
+ 			firmware->size, CX231xx_FIRM_IMAGE_SIZE);
+-		release_firmware(firmware);
+-		vfree(p_current_fw);
+-		vfree(p_buffer);
+-		return -EINVAL;
++		goto e_inval;
+ 	}
+ 
+ 	if (0 != memcmp(firmware->data, magic, 8)) {
+ 		dev_err(dev->dev,
+ 			"ERROR: Firmware magic mismatch, wrong file?\n");
+-		release_firmware(firmware);
+-		vfree(p_current_fw);
+-		vfree(p_buffer);
+-		return -EINVAL;
++		goto e_inval;
+ 	}
+ 
+ 	initGPIO(dev);
+@@ -1065,26 +1052,36 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
+ 
+ 	retval |= mc417_register_write(dev, IVTV_REG_HW_BLOCKS,
+ 		IVTV_CMD_HW_BLOCKS_RST);
+-	if (retval < 0) {
+-		dev_err(dev->dev,
+-			"%s: Error with mc417_register_write\n",
+-			__func__);
+-		return retval;
 -	}
-+	if (code < 0)
-+		goto report_read_failure;
- 
- 	dprintk("IR Key/Flags: (0x%02x/0x%02x)\n",
- 		code & 0xff, flags & 0xff);
-@@ -588,6 +585,10 @@ static int get_key_pvr2000(struct IR_i2c *ir, enum rc_proto *protocol,
- 	*scancode = code & 0xff;
- 	*toggle = 0;
- 	return 1;
++	if (retval < 0)
++		goto report_write_failure;
 +
-+report_read_failure:
-+	dprintk("read error\n");
-+	return 0;
+ 	/* F/W power up disturbs the GPIOs, restore state */
+ 	retval |= mc417_register_write(dev, 0x9020, gpio_output);
+ 	retval |= mc417_register_write(dev, 0x900C, value);
+ 
+ 	retval |= mc417_register_read(dev, IVTV_REG_VPU, &value);
+ 	retval |= mc417_register_write(dev, IVTV_REG_VPU, value & 0xFFFFFFE8);
++	if (retval < 0)
++		goto report_write_failure;
+ 
+-	if (retval < 0) {
+-		dev_err(dev->dev,
+-			"%s: Error with mc417_register_write\n",
+-			__func__);
+-		return retval;
+-	}
+ 	return 0;
++
++e_nomem:
++	dprintk(2, "FAIL!!!\n");
++	return -ENOMEM;
++
++e_inval:
++	retval = -EINVAL;
++	release_firmware(firmware);
++
++free_fw:
++	vfree(p_current_fw);
++	vfree(p_buffer);
++	return retval;
++
++report_write_failure:
++	dev_err(dev->dev, "%s: Error with mc417_register_write\n", __func__);
++	return retval;
  }
  
- void cx88_i2c_init_ir(struct cx88_core *core)
+ static void cx231xx_417_check_encoder(struct cx231xx *dev)
 -- 
 2.14.1
 
