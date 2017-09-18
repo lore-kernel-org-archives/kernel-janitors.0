@@ -1,7 +1,7 @@
-From: Brian Foster <bfoster@redhat.com>
-Date: Mon, 18 Sep 2017 12:44:51 +0000
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Date: Mon, 18 Sep 2017 20:38:30 +0000
 Subject: Re: [PATCH] xfs: remove redundant re-initialization of total_nr_pages
-Message-Id: <20170918124450.GC29965@bfoster.bfoster>
+Message-Id: <20170918203830.GV6540@magnolia>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170918120157.30134-1-colin.king@canonical.com>
 In-Reply-To: <20170918120157.30134-1-colin.king@canonical.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Mon, Sep 18, 2017 at 01:01:57PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
@@ -21,10 +21,10 @@ On Mon, Sep 18, 2017 at 01:01:57PM +0100, Colin King wrote:
 > Value stored to 'total_nr_pages' during its initialization is never read
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
 > ---
-
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-
 >  fs/xfs/xfs_buf.c | 2 --
 >  1 file changed, 2 deletions(-)
 > 
