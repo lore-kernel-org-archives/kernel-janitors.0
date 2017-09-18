@@ -1,30 +1,86 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Tue, 19 Sep 2017 15:09:06 +0000
-Subject: Re: [PATCH] btrfs: make array types static const, reduces object code size
-Message-Id: <20170919150906.GG29043@twin.jikos.cz>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 13:31:40 +0000
+Subject: [PATCH] libata: make static arrays const, reduces object code size
+Message-Id: <20170918133140.31220-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170919150123.23913-1-colin.king@canonical.com>
-In-Reply-To: <20170919150123.23913-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Andrew Morton <akpm@linux-foundation.org>, piaojun <piaojun@huawei.com>, linux-ide@vger.kernel.org, ocfs2-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 19, 2017 at 04:01:23PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the read-only array types on the stack, instead make
-> it static const.  Makes the object code smaller by nearly 60 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   90536	   6552	     64	  97152	  17b80	fs/btrfs/ioctl.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   90414	   6616	     64	  97094	  17b46	fs/btrfs/ioctl.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Don't populate const arrayis on the stack, instead make them static.
+Makes the object code smaller by over 260 bytes:
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/ata/libata-scsi.c  | 10 +++++-----
+ fs/ocfs2/dlm/dlmrecovery.c |  1 -
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 44ba292f2cd7..c3c483fc2145 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -2145,7 +2145,7 @@ static void ata_scsi_rbuf_fill(struct ata_scsi_args *args,
+  */
+ static unsigned int ata_scsiop_inq_std(struct ata_scsi_args *args, u8 *rbuf)
+ {
+-	const u8 versions[] = {
++	static const u8 versions[] = {
+ 		0x00,
+ 		0x60,	/* SAM-3 (no version claimed) */
+ 
+@@ -2155,7 +2155,7 @@ static unsigned int ata_scsiop_inq_std(struct ata_scsi_args *args, u8 *rbuf)
+ 		0x03,
+ 		0x00	/* SPC-3 (no version claimed) */
+ 	};
+-	const u8 versions_zbc[] = {
++	static const u8 versions_zbc[] = {
+ 		0x00,
+ 		0xA0,	/* SAM-5 (no version claimed) */
+ 
+@@ -2227,7 +2227,7 @@ static unsigned int ata_scsiop_inq_std(struct ata_scsi_args *args, u8 *rbuf)
+ static unsigned int ata_scsiop_inq_00(struct ata_scsi_args *args, u8 *rbuf)
+ {
+ 	int num_pages;
+-	const u8 pages[] = {
++	static const u8 pages[] = {
+ 		0x00,	/* page 0x00, this page */
+ 		0x80,	/* page 0x80, unit serial no page */
+ 		0x83,	/* page 0x83, device ident page */
+@@ -2258,7 +2258,7 @@ static unsigned int ata_scsiop_inq_00(struct ata_scsi_args *args, u8 *rbuf)
+  */
+ static unsigned int ata_scsiop_inq_80(struct ata_scsi_args *args, u8 *rbuf)
+ {
+-	const u8 hdr[] = {
++	static const u8 hdr[] = {
+ 		0,
+ 		0x80,			/* this page code */
+ 		0,
+@@ -2580,7 +2580,7 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
+ {
+ 	struct ata_device *dev = args->dev;
+ 	u8 *scsicmd = args->cmd->cmnd, *p = rbuf;
+-	const u8 sat_blk_desc[] = {
++	static const u8 sat_blk_desc[] = {
+ 		0, 0, 0, 0,	/* number of blocks: sat unspecified */
+ 		0,
+ 		0, 0x2, 0x0	/* block length: 512 bytes */
+diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
+index 74407c6dd592..31a61e8e0152 100644
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -1129,7 +1129,6 @@ static int dlm_send_mig_lockres_msg(struct dlm_ctxt *dlm,
+ 		(mres->num_locks * sizeof(struct dlm_migratable_lock));
+ 
+ 	/* add an all-done flag if we reached the last lock */
+-	orig_flags = mres->flags;
+ 	BUG_ON(total_locks > mres_total_locks);
+ 	if (total_locks = mres_total_locks)
+ 		mres->flags |= DLM_MRES_ALL_DONE;
+-- 
+2.14.1
+
