@@ -1,40 +1,50 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 12:01:57 +0000
-Subject: [PATCH] xfs: remove redundant re-initialization of total_nr_pages
-Message-Id: <20170918120157.30134-1-colin.king@canonical.com>
+From: Brian Foster <bfoster@redhat.com>
+Date: Mon, 18 Sep 2017 12:44:51 +0000
+Subject: Re: [PATCH] xfs: remove redundant re-initialization of total_nr_pages
+Message-Id: <20170918124450.GC29965@bfoster.bfoster>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170918120157.30134-1-colin.king@canonical.com>
+In-Reply-To: <20170918120157.30134-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Sep 18, 2017 at 01:01:57PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable total_nr_pages is being initialized and then updated with
+> the same value, this latter assignment is redundant and can be
+> removed.  Cleans up clang build warning:
+> 
+> Value stored to 'total_nr_pages' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-Variable total_nr_pages is being initialized and then updated with
-the same value, this latter assignment is redundant and can be
-removed.  Cleans up clang build warning:
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-Value stored to 'total_nr_pages' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/xfs/xfs_buf.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index da14658da310..2f97c12ca75e 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1258,8 +1258,6 @@ xfs_buf_ioapply_map(
- 	int		size;
- 	int		offset;
- 
--	total_nr_pages = bp->b_page_count;
--
- 	/* skip the pages in the buffer before the start offset */
- 	page_index = 0;
- 	offset = *buf_offset;
--- 
-2.14.1
-
+>  fs/xfs/xfs_buf.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index da14658da310..2f97c12ca75e 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -1258,8 +1258,6 @@ xfs_buf_ioapply_map(
+>  	int		size;
+>  	int		offset;
+>  
+> -	total_nr_pages = bp->b_page_count;
+> -
+>  	/* skip the pages in the buffer before the start offset */
+>  	page_index = 0;
+>  	offset = *buf_offset;
+> -- 
+> 2.14.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
