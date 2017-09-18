@@ -1,64 +1,77 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 04 Sep 2017 20:12:38 +0000
-Subject: [PATCH 6/6] [media] atmel-isi: Adjust a null pointer check in three functions
-Message-Id: <c539c64a-c6f7-cb03-0dec-1eb4b74de71f@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 13:56:25 +0000
+Subject: [PATCH 3/6] [media] go7007: Improve a size determination in four functions
+Message-Id: <092d6885-5101-73b2-bb69-42873d940369@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
-In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
+In-Reply-To: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 4 Sep 2017 21:30:48 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 18 Sep 2017 11:27:30 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/atmel/atmel-isi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/go7007/go7007-driver.c | 2 +-
+ drivers/media/usb/go7007/go7007-usb.c    | 2 +-
+ drivers/media/usb/go7007/s2250-board.c   | 2 +-
+ drivers/media/usb/go7007/snd-go7007.c    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
-index ac40defce1e7..f2e13dfb19a1 100644
---- a/drivers/media/platform/atmel/atmel-isi.c
-+++ b/drivers/media/platform/atmel/atmel-isi.c
-@@ -411,7 +411,7 @@ static void buffer_queue(struct vb2_buffer *vb)
- 	spin_lock_irqsave(&isi->irqlock, flags);
- 	list_add_tail(&buf->list, &isi->video_buffer_list);
+diff --git a/drivers/media/usb/go7007/go7007-driver.c b/drivers/media/usb/go7007/go7007-driver.c
+index 390f66ec8fd2..f8c06b2f9d2f 100644
+--- a/drivers/media/usb/go7007/go7007-driver.c
++++ b/drivers/media/usb/go7007/go7007-driver.c
+@@ -699,5 +699,5 @@ struct go7007 *go7007_alloc(const struct go7007_board_info *board,
+ 	struct go7007 *go;
+ 	int i;
  
--	if (isi->active = NULL) {
-+	if (!isi->active) {
- 		isi->active = buf;
- 		if (vb2_is_streaming(vb->vb2_queue))
- 			start_dma(isi, buf);
-@@ -1141,7 +1141,7 @@ static int isi_graph_init(struct atmel_isi *isi)
- 
- 	/* Register the subdevices notifier. */
- 	subdevs = devm_kzalloc(isi->dev, sizeof(*subdevs), GFP_KERNEL);
--	if (subdevs = NULL) {
-+	if (!subdevs) {
- 		of_node_put(isi->entity.node);
+-	go = kzalloc(sizeof(struct go7007), GFP_KERNEL);
++	go = kzalloc(sizeof(*go), GFP_KERNEL);
+ 	if (!go)
+diff --git a/drivers/media/usb/go7007/go7007-usb.c b/drivers/media/usb/go7007/go7007-usb.c
+index 5ad40b77763d..f0f70a92541a 100644
+--- a/drivers/media/usb/go7007/go7007-usb.c
++++ b/drivers/media/usb/go7007/go7007-usb.c
+@@ -1122,5 +1122,5 @@ static int go7007_usb_probe(struct usb_interface *intf,
+ 	if (!go)
  		return -ENOMEM;
- 	}
-@@ -1200,7 +1200,7 @@ static int atmel_isi_probe(struct platform_device *pdev)
- 		return ret;
  
- 	isi->vdev = video_device_alloc();
--	if (isi->vdev = NULL) {
-+	if (!isi->vdev) {
- 		ret = -ENOMEM;
- 		goto err_vdev_alloc;
+-	usb = kzalloc(sizeof(struct go7007_usb), GFP_KERNEL);
++	usb = kzalloc(sizeof(*usb), GFP_KERNEL);
+ 	if (!usb) {
+diff --git a/drivers/media/usb/go7007/s2250-board.c b/drivers/media/usb/go7007/s2250-board.c
+index d987c5f2b45a..1fd4c09dd516 100644
+--- a/drivers/media/usb/go7007/s2250-board.c
++++ b/drivers/media/usb/go7007/s2250-board.c
+@@ -515,5 +515,5 @@ static int s2250_probe(struct i2c_client *client,
+ 	if (!audio)
+ 		return -ENOMEM;
+ 
+-	state = kzalloc(sizeof(struct s2250), GFP_KERNEL);
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (!state) {
+diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
+index 4e612cf1afd9..68e421bf38e1 100644
+--- a/drivers/media/usb/go7007/snd-go7007.c
++++ b/drivers/media/usb/go7007/snd-go7007.c
+@@ -235,5 +235,5 @@ int go7007_snd_init(struct go7007 *go)
+ 		dev++;
+ 		return -ENOENT;
  	}
+-	gosnd = kmalloc(sizeof(struct go7007_snd), GFP_KERNEL);
++	gosnd = kmalloc(sizeof(*gosnd), GFP_KERNEL);
+ 	if (!gosnd)
 -- 
 2.14.1
 
