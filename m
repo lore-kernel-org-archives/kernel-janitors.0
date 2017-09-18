@@ -1,76 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Sep 2017 11:27:41 +0000
-Subject: [PATCH] vme: Fix integer overflow checking in vme_check_window()
-Message-Id: <20170930112741.6wmswvk25j7o44ui@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 08:13:38 +0000
+Subject: [PATCH 1/2] [media] dvb_usb_core: Delete two error messages for a failed memory allocation in dvb_us
+Message-Id: <df160cc4-5dbf-b3f0-7ae1-7f323a45eb3f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <38627457-f64f-7356-bf5e-fc41296a26e4@users.sourceforge.net>
+In-Reply-To: <38627457-f64f-7356-bf5e-fc41296a26e4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martyn Welch <martyn@welchs.me.uk>, Dmitry Kalinkin <dmitry.kalinkin@gmail.com>
-Cc: Manohar Vanga <manohar.vanga@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The controversial part of this patch is that I've changed it so we now
-prevent integer overflows for VME_USER types and before we didn't.  I
-view it as kernel-hardening.  I looked at a couple places that used
-VME_USER types and they seemed pretty suspicious so I'm pretty sure
-preventing overflows here is a good idea.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 09:25:19 +0200
 
-The most common problem which this function is for cases like VME_A16
-where we don't put an upper bound on "size" so you could have "size" set
-to U64_MAX and a valid vme_base would overflow the "vme_base + size"
-into the valid range as well.
+Omit extra messages for a memory allocation failure in this function.
 
-In the VME_A64 case, the integer overflow checking doesn't work because
-"U64_MAX + 1" has an integer overflow and it's just a complicated way of
-saying zero.  That VME_A64 case is sort of interesting as well because
-there is a VME_A64_MAX define which is set to "U64_MAX + 1".  The
-compiler will never let anyone use it since it can't be stored in a u64
-variable...  With my patch it's now limited to just U64_MAX.
+This issue was detected by using the Coccinelle software.
 
-Anyway, I put one integer overflow check at the start of the function
-and deleted all existing checks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/dvb-usb-v2/dvb_usb_core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
+index 096bb75a24e5..d0fbf0b0b1cb 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
++++ b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
+@@ -923,5 +923,4 @@ int dvb_usbv2_probe(struct usb_interface *intf,
+ 	if (!d) {
+-		dev_err(&udev->dev, "%s: kzalloc() failed\n", KBUILD_MODNAME);
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -946,6 +945,4 @@ int dvb_usbv2_probe(struct usb_interface *intf,
+ 		if (!d->priv) {
+-			dev_err(&d->udev->dev, "%s: kzalloc() failed\n",
+-					KBUILD_MODNAME);
+ 			ret = -ENOMEM;
+ 			goto err_free_all;
+ 		}
+-- 
+2.14.1
 
-diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
-index 6a3ead42aba8..5b4c898d7509 100644
---- a/drivers/vme/vme.c
-+++ b/drivers/vme/vme.c
-@@ -208,29 +208,27 @@ int vme_check_window(u32 aspace, unsigned long long vme_base,
- {
- 	int retval = 0;
- 
-+	if (vme_base + size < size)
-+		return -EINVAL;
-+
- 	switch (aspace) {
- 	case VME_A16:
--		if (((vme_base + size) > VME_A16_MAX) ||
--				(vme_base > VME_A16_MAX))
-+		if (vme_base + size > VME_A16_MAX)
- 			retval = -EFAULT;
- 		break;
- 	case VME_A24:
--		if (((vme_base + size) > VME_A24_MAX) ||
--				(vme_base > VME_A24_MAX))
-+		if (vme_base + size > VME_A24_MAX)
- 			retval = -EFAULT;
- 		break;
- 	case VME_A32:
--		if (((vme_base + size) > VME_A32_MAX) ||
--				(vme_base > VME_A32_MAX))
-+		if (vme_base + size > VME_A32_MAX)
- 			retval = -EFAULT;
- 		break;
- 	case VME_A64:
--		if ((size != 0) && (vme_base > U64_MAX + 1 - size))
--			retval = -EFAULT;
-+		/* The VME_A64_MAX limit is actually U64_MAX + 1 */
- 		break;
- 	case VME_CRCSR:
--		if (((vme_base + size) > VME_CRCSR_MAX) ||
--				(vme_base > VME_CRCSR_MAX))
-+		if (vme_base + size > VME_CRCSR_MAX)
- 			retval = -EFAULT;
- 		break;
- 	case VME_USER1:
