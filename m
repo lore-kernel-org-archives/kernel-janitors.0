@@ -1,58 +1,55 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Date: Sat, 30 Sep 2017 18:04:35 +0000
-Subject: Re: [PATCH] usb: misc: usbtest: Fix overflow in usbtest_do_ioctl()
-Message-Id: <CABeXuvpASnm8KZj=_tbvcp-tJJMiJxjER9gHY0860-XzTCPQ8w@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 14:45:48 +0000
+Subject: [PATCH] hwmon: (sht15): remove redundant check on status and send of status value
+Message-Id: <20170918144548.32354-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
-In-Reply-To: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 30, 2017 at 1:15 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> There used to be a test against "if (param->sglen > MAX_SGLEN)" but it
-> was removed during a refactor.  It leads to an integer overflow and a
-> stack overflow in test_queue() if we try to create a too large urbs[]
-> array on the stack.
->
-> There is a second integer overflow in test_queue() as well if
-> "param->iterations" is too high.  I don't immediately see that it's
-> harmful but I've added a check to prevent it and silence the static
-> checker warning.
->
-> Fixes: 18fc4ebdc705 ("usb: misc: usbtest: Remove timeval usage")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
-> index eee82ca55b7b..113e38bfe0ef 100644
-> --- a/drivers/usb/misc/usbtest.c
-> +++ b/drivers/usb/misc/usbtest.c
-> @@ -1964,6 +1964,9 @@ test_queue(struct usbtest_dev *dev, struct usbtest_param_32 *param,
->         int                     status = 0;
->         struct urb              *urbs[param->sglen];
->
-> +       if (!param->sglen || param->iterations > UINT_MAX / param->sglen)
+From: Colin Ian King <colin.king@canonical.com>
 
-Would adding a comment here that we are checking for overflow of
-context.count make sense?
-It takes some time to figure out that context.count is unsigned and
-hence the check is against UINT_MAX here.
+A previous commit removed bit or'ing into to the integer status
+so now status is now always zero. This means that the non-zero check on
+status and the sht15_send_status call will never occur; it is deadcode.
+Clean this up by removing the dead code.
 
-> +               return -EINVAL;
-> +
->         memset(&context, 0, sizeof(context));
->         context.count = param->iterations * param->sglen;
->         context.dev = dev;
-> @@ -2087,6 +2090,8 @@ usbtest_do_ioctl(struct usb_interface *intf, struct usbtest_param_32 *param)
->
->         if (param->iterations <= 0)
->                 return -EINVAL;
-> +       if (param->sglen > MAX_SGLEN)
-> +               return -EINVAL;
+Detected by: CoverityScan CID#1456835 ("Logically dead code")
 
-Right. I seem to have missed this. Thanks.
+Fixes: aa7ab80c578c ("hwmon: (sht15) Root out platform data")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hwmon/sht15.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
+diff --git a/drivers/hwmon/sht15.c b/drivers/hwmon/sht15.c
+index 0e3e5f83f5cf..25d28343ba93 100644
+--- a/drivers/hwmon/sht15.c
++++ b/drivers/hwmon/sht15.c
+@@ -925,7 +925,6 @@ static int sht15_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 	struct sht15_data *data;
+-	u8 status = 0;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+@@ -1002,13 +1001,6 @@ static int sht15_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_release_reg;
+ 
+-	/* write status with platform data options */
+-	if (status) {
+-		ret = sht15_send_status(data, status);
+-		if (ret)
+-			goto err_release_reg;
+-	}
+-
+ 	ret = sysfs_create_group(&pdev->dev.kobj, &sht15_attr_group);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "sysfs create failed\n");
+-- 
+2.14.1
 
--Deepa
