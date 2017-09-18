@@ -1,48 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Sep 2017 18:47:39 +0000
-Subject: [PATCH 3/3] [media] hdpvr: Return an error code only as a constant in hdpvr_alloc_buffers()
-Message-Id: <0be95f0b-cc0e-27cc-5ec1-b5bc1bc48496@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 14:24:44 +0000
+Subject: [PATCH] [media] cxusb: pass buf as a const u8 * pointer and make buf static const
+Message-Id: <20170918142444.31914-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
-In-Reply-To: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Jonathan Sims <jonathan.625266@earthlink.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Michael Krufky <mkrufky@linuxtv.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Sep 2017 19:32:36 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-* Return an error code without storing it in an intermediate variable.
+Don't populate the read-only u8 array buf on the stack at run time but
+instead make it static const; makes object code smaller saving over 480
+bytes:
 
-* Delete the local variable "retval" which became unnecessary
-  with this refactoring.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  33030	  65936	    192	  99158	  18356	drivers/media/usb/dvb-usb/cxusb.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  32446	  66032	    192	  98670	  1816e	drivers/media/usb/dvb-usb/cxusb.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/hdpvr/hdpvr-video.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/usb/dvb-usb/cxusb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-video.c b/drivers/media/usb/hdpvr/hdpvr-video.c
-index f06efcd70c14..2b39834309d2 100644
---- a/drivers/media/usb/hdpvr/hdpvr-video.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-video.c
-@@ -136,6 +136,5 @@ int hdpvr_free_buffers(struct hdpvr_device *dev)
- int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
- {
- 	uint i;
--	int retval = -ENOMEM;
- 	u8 *mem;
- 	struct hdpvr_buffer *buf;
-@@ -181,6 +180,6 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
- 	kfree(buf);
- exit:
- 	hdpvr_free_buffers(dev);
--	return retval;
-+	return -ENOMEM;
- }
+diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
+index 37dea0adc695..b5cc1b990065 100644
+--- a/drivers/media/usb/dvb-usb/cxusb.c
++++ b/drivers/media/usb/dvb-usb/cxusb.c
+@@ -56,7 +56,7 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ #define deb_i2c(args...)    dprintk(dvb_usb_cxusb_debug, 0x02, args)
  
+ static int cxusb_ctrl_msg(struct dvb_usb_device *d,
+-			  u8 cmd, u8 *wbuf, int wlen, u8 *rbuf, int rlen)
++			  u8 cmd, const u8 *wbuf, int wlen, u8 *rbuf, int rlen)
+ {
+ 	struct cxusb_state *st = d->priv;
+ 	int ret;
+@@ -290,7 +290,8 @@ static int cxusb_aver_power_ctrl(struct dvb_usb_device *d, int onoff)
+ 		/* FIXME: We don't know why, but we need to configure the
+ 		 * lgdt3303 with the register settings below on resume */
+ 		int i;
+-		u8 buf, bufs[] = {
++		u8 buf;
++		static const u8 bufs[] = {
+ 			0x0e, 0x2, 0x00, 0x7f,
+ 			0x0e, 0x2, 0x02, 0xfe,
+ 			0x0e, 0x2, 0x02, 0x01,
 -- 
 2.14.1
 
