@@ -1,44 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 18 Sep 2017 08:56:38 +0000
-Subject: [PATCH] ASoC: zte: spdif: remove duplicate initialization of dma_data
-Message-Id: <20170918085638.27110-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 13:53:53 +0000
+Subject: [PATCH 1/6] [media] go7007: Delete an error message for a failed memory allocation in go7007_load_en
+Message-Id: <ce46e264-73fe-4613-e1b8-79a4bccc796b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
+In-Reply-To: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 10:52:42 +0200
 
-dma_data is being initialized twice, remove the unused first
-initialization and use the latter one instead.  Fixed clang warning:
+Omit an extra message for a memory allocation failure in this function.
 
-"warning: Value stored to 'dma_data' during its initialization is
-never read"
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/zte/zx-spdif.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/go7007/go7007-driver.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/zte/zx-spdif.c b/sound/soc/zte/zx-spdif.c
-index b143f9f682d2..17b6ce35037a 100644
---- a/sound/soc/zte/zx-spdif.c
-+++ b/sound/soc/zte/zx-spdif.c
-@@ -139,11 +139,11 @@ static int zx_spdif_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct zx_spdif_info *zx_spdif = dev_get_drvdata(socdai->dev);
- 	struct zx_spdif_info *spdif = snd_soc_dai_get_drvdata(socdai);
--	struct snd_dmaengine_dai_dma_data *dma_data = &zx_spdif->dma_data;
-+	struct snd_dmaengine_dai_dma_data *dma_data +		snd_soc_dai_get_dma_data(socdai, substream);
- 	u32 val, ch_num, rate;
- 	int ret;
- 
--	dma_data = snd_soc_dai_get_dma_data(socdai, substream);
- 	dma_data->addr_width = params_width(params) >> 3;
- 
- 	val = readl_relaxed(zx_spdif->reg_base + ZX_CTRL);
+diff --git a/drivers/media/usb/go7007/go7007-driver.c b/drivers/media/usb/go7007/go7007-driver.c
+index 05b1126f263e..222332189fa4 100644
+--- a/drivers/media/usb/go7007/go7007-driver.c
++++ b/drivers/media/usb/go7007/go7007-driver.c
+@@ -107,4 +107,3 @@ static int go7007_load_encoder(struct go7007 *go)
+-			v4l2_err(go, "unable to allocate %d bytes for firmware transfer\n", fw_len);
+ 			release_firmware(fw_entry);
+ 			return -1;
+ 		}
 -- 
 2.14.1
 
