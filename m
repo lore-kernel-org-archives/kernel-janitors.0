@@ -1,60 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 13:34:45 +0000
-Subject: [PATCH 1/2] [media] dmxdev: Use common error handling code in dvb_dmxdev_start_feed()
-Message-Id: <2c7d9cb4-983c-154c-6c0c-9d6a41bb82e1@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 20:12:26 +0000
+Subject: [PATCH 2/2] [media] vicam: Return directly after a failed kmalloc() in vicam_dostream()
+Message-Id: <a03c7497-3c98-7ba9-368e-7e1f5296144b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5f169dcb-b834-5ca3-2195-668e5295a7ca@users.sourceforge.net>
-In-Reply-To: <5f169dcb-b834-5ca3-2195-668e5295a7ca@users.sourceforge.net>
+References: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
+In-Reply-To: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Devendra Sharma <devendra.sharma9091@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 15:12:47 +0200
+Date: Mon, 18 Sep 2017 21:56:55 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+* Return directly after a call of the function "kmalloc" failed
+  at the beginning.
 
-This issue was detected by using the Coccinelle software.
+* Delete the jump target "exit" which became unnecessary
+  with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-core/dmxdev.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/media/usb/gspca/vicam.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dmxdev.c b/drivers/media/dvb-core/dmxdev.c
-index 45e91add73ba..f8bf7459d5ca 100644
---- a/drivers/media/dvb-core/dmxdev.c
-+++ b/drivers/media/dvb-core/dmxdev.c
-@@ -594,18 +594,18 @@ static int dvb_dmxdev_start_feed(struct dmxdev *dmxdev,
- 	tsfeed->priv = filter;
+diff --git a/drivers/media/usb/gspca/vicam.c b/drivers/media/usb/gspca/vicam.c
+index 15b6887a8e97..11508ab283cd 100644
+--- a/drivers/media/usb/gspca/vicam.c
++++ b/drivers/media/usb/gspca/vicam.c
+@@ -184,7 +184,7 @@ static void vicam_dostream(struct work_struct *work)
+ 		   HEADER_SIZE;
+ 	buffer = kmalloc(frame_sz, GFP_KERNEL | GFP_DMA);
+ 	if (!buffer)
+-		goto exit;
++		return;
  
- 	ret = tsfeed->set(tsfeed, feed->pid, ts_type, ts_pes, timeout);
--	if (ret < 0) {
--		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto release_feed;
- 
- 	ret = tsfeed->start_filtering(tsfeed);
--	if (ret < 0) {
--		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto release_feed;
- 
- 	return 0;
+ 	while (gspca_dev->present && gspca_dev->streaming) {
+ #ifdef CONFIG_PM
+@@ -205,7 +205,7 @@ static void vicam_dostream(struct work_struct *work)
+ 				frame_sz - HEADER_SIZE);
+ 		gspca_frame_add(gspca_dev, LAST_PACKET, NULL, 0);
+ 	}
+-exit:
 +
-+release_feed:
-+	dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
-+	return ret;
+ 	kfree(buffer);
  }
  
- static int dvb_dmxdev_filter_start(struct dmxdev_filter *filter)
 -- 
 2.14.1
 
