@@ -1,52 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 18:22:25 +0000
-Subject: [PATCH 2/4] clk-u300: Improve a size determination in two functions
-Message-Id: <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 17:39:40 +0000
+Subject: [PATCH] [media] jl2005bcd: Delete an error message for a failed memory allocation in jl2005c_dostrea
+Message-Id: <7b118f3d-99e0-1936-16d4-09151a5da006@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
-In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 19:33:02 +0200
+Date: Mon, 18 Sep 2017 19:24:24 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/clk-u300.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/gspca/jl2005bcd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
-index e524c3775264..ae78461c7836 100644
---- a/drivers/clk/clk-u300.c
-+++ b/drivers/clk/clk-u300.c
-@@ -702,7 +702,7 @@ syscon_clk_register(struct device *dev, const char *name,
- 	struct clk_init_data init;
- 	int ret;
+diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
+index 17c7a953564c..23400ead1919 100644
+--- a/drivers/media/usb/gspca/jl2005bcd.c
++++ b/drivers/media/usb/gspca/jl2005bcd.c
+@@ -320,10 +320,8 @@ static void jl2005c_dostream(struct work_struct *work)
+ 	u8 *buffer;
  
--	sclk = kzalloc(sizeof(struct clk_syscon), GFP_KERNEL);
-+	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
- 	if (!sclk)
- 		return ERR_PTR(-ENOMEM);
+ 	buffer = kmalloc(JL2005C_MAX_TRANSFER, GFP_KERNEL | GFP_DMA);
+-	if (!buffer) {
+-		pr_err("Couldn't allocate USB buffer\n");
++	if (!buffer)
+ 		goto quit_stream;
+-	}
  
-@@ -1121,7 +1121,7 @@ mclk_clk_register(struct device *dev, const char *name,
- 	struct clk_init_data init;
- 	int ret;
- 
--	mclk = kzalloc(sizeof(struct clk_mclk), GFP_KERNEL);
-+	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
- 	if (!mclk)
- 		return ERR_PTR(-ENOMEM);
- 
+ 	while (gspca_dev->present && gspca_dev->streaming) {
+ #ifdef CONFIG_PM
 -- 
 2.14.1
 
