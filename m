@@ -1,72 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 25 Sep 2017 16:16:40 +0000
-Subject: Applied "spi: sprd-adi: checking for NULL instead of IS_ERR()" to the spi tree
-Message-Id: <20170925161640.0D23644005B@finisterre.ee.mobilebroadband>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 16:45:23 +0000
+Subject: [PATCH] [media] gspca: Use common error handling code in gspca_init_transfer()
+Message-Id: <a5c4b993-1c06-3ccf-89b7-4ea74d23f580@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170925102133.4kef3fesnh3v3ixe@mwanda>
-In-Reply-To: <20170925102133.4kef3fesnh3v3ixe@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 18:40:05 +0200
 
-   spi: sprd-adi: checking for NULL instead of IS_ERR()
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-has been applied to the spi tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 04063a011f2f35c37e1146c736e6d4ad402a8557 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 25 Sep 2017 13:21:33 +0300
-Subject: [PATCH] spi: sprd-adi: checking for NULL instead of IS_ERR()
-
-devm_ioremap_resource() returns error pointers, it never returns NULL.
-
-Fixes: 7e2903cb91df ("spi: Add ADI driver for Spreadtrum platform")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-sprd-adi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/gspca/gspca.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
-index 0d481f8a46c2..bff6ef1caad7 100644
---- a/drivers/spi/spi-sprd-adi.c
-+++ b/drivers/spi/spi-sprd-adi.c
-@@ -341,8 +341,8 @@ static int sprd_adi_probe(struct platform_device *pdev)
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index 0f141762abf1..22cdefe38e07 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -904,10 +904,8 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
+ 			ret = create_urbs(gspca_dev,
+ 				alt_xfer(&intf->altsetting[alt], xfer,
+ 					 gspca_dev->xfer_ep));
+-			if (ret < 0) {
+-				destroy_urbs(gspca_dev);
+-				goto out;
+-			}
++			if (ret < 0)
++				goto destroy_urbs;
+ 		}
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sadi->base = devm_ioremap_resource(&pdev->dev, res);
--	if (!sadi->base) {
--		ret = -ENOMEM;
-+	if (IS_ERR(sadi->base)) {
-+		ret = PTR_ERR(sadi->base);
- 		goto put_ctlr;
- 	}
+ 		/* clear the bulk endpoint */
+@@ -917,10 +915,9 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
  
+ 		/* start the cam */
+ 		ret = gspca_dev->sd_desc->start(gspca_dev);
+-		if (ret < 0) {
+-			destroy_urbs(gspca_dev);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto destroy_urbs;
++
+ 		gspca_dev->streaming = 1;
+ 		v4l2_ctrl_handler_setup(gspca_dev->vdev.ctrl_handler);
+ 
+@@ -970,6 +967,10 @@ static int gspca_init_transfer(struct gspca_dev *gspca_dev)
+ out:
+ 	gspca_input_create_urb(gspca_dev);
+ 	return ret;
++
++destroy_urbs:
++	destroy_urbs(gspca_dev);
++	goto out;
+ }
+ 
+ static void gspca_set_default_mode(struct gspca_dev *gspca_dev)
 -- 
 2.14.1
 
