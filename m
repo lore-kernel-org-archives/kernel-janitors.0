@@ -1,42 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 25 Sep 2017 08:23:34 +0000
-Subject: Re: brcmsmac: make const array ucode_ofdm_rates static, reduces object code size
-Message-Id: <20170925082334.DB0A860618@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 08:14:37 +0000
+Subject: [PATCH 2/2] [media] dvb_usb_core: Improve a size determination in two functions
+Message-Id: <204db820-7fd1-579e-442d-ff2b983148f9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922140316.12768-1-colin.king@canonical.com>
-In-Reply-To: <20170922140316.12768-1-colin.king@canonical.com>
+References: <38627457-f64f-7356-bf5e-fc41296a26e4@users.sourceforge.net>
+In-Reply-To: <38627457-f64f-7356-bf5e-fc41296a26e4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 09:36:33 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const array ucode_ofdm_rates on the stack, instead make it
-> static. Makes the object code smaller by 100 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   39482	    564	      0	  40046	   9c6e	phy_cmn.o
-> 
-> After
->    text	   data	    bss	    dec	    hex	filename
->   39326	    620	      0	  39946	   9c0a	phy_cmn.o
-> 
-> (gcc 6.3.0, x86-64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/dvb-usb-v2/dvb_usb_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-d5633bb2c62a brcmsmac: make const array ucode_ofdm_rates static, reduces object code size
-
+diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
+index d0fbf0b0b1cb..f0b225ee4515 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
++++ b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
+@@ -279,5 +279,5 @@ static int dvb_usb_start_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 	if (d->props->get_stream_config) {
+ 		memcpy(&stream_props, &adap->props->stream,
+-				sizeof(struct usb_data_stream_properties));
++		       sizeof(stream_props));
+ 		ret = d->props->get_stream_config(adap->fe[adap->active_fe],
+ 				&adap->ts_type, &stream_props);
+@@ -919,5 +919,5 @@ int dvb_usbv2_probe(struct usb_interface *intf,
+ 		goto err;
+ 	}
+ 
+-	d = kzalloc(sizeof(struct dvb_usb_device), GFP_KERNEL);
++	d = kzalloc(sizeof(*d), GFP_KERNEL);
+ 	if (!d) {
 -- 
-https://patchwork.kernel.org/patch/9966221/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
