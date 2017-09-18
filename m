@@ -1,32 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 02 Sep 2017 01:31:07 +0000
-Subject: Re: [PATCH] net: phy: bcm7xxx: make array bcm7xxx_suspend_cfg static, reduces object code size
-Message-Id: <20170901.183107.1909375784040394690.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 20:11:30 +0000
+Subject: [PATCH 1/2] [media] vicam: Delete an error message for a failed memory allocation in vicam_dostream(
+Message-Id: <51554497-b44a-d05d-d32b-02430ee96302@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170831135715.27978-1-colin.king@canonical.com>
-In-Reply-To: <20170831135715.27978-1-colin.king@canonical.com>
+References: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
+In-Reply-To: <78839a2c-2076-f480-79d3-e783d2f8c0bf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 31 Aug 2017 14:57:15 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 21:48:55 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array bcm7xxx_suspend_cfg A on the stack, instead
-> make it static.  Makes the object code smaller by over 300 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    6351	   8146	      0	  14497	   38a1	drivers/net/phy/bcm7xxx.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    5986	   8210	      0	  14196	   3774	drivers/net/phy/bcm7xxx.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/gspca/vicam.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/vicam.c b/drivers/media/usb/gspca/vicam.c
+index 554b90ef2200..15b6887a8e97 100644
+--- a/drivers/media/usb/gspca/vicam.c
++++ b/drivers/media/usb/gspca/vicam.c
+@@ -183,10 +183,8 @@ static void vicam_dostream(struct work_struct *work)
+ 	frame_sz = gspca_dev->cam.cam_mode[gspca_dev->curr_mode].sizeimage +
+ 		   HEADER_SIZE;
+ 	buffer = kmalloc(frame_sz, GFP_KERNEL | GFP_DMA);
+-	if (!buffer) {
+-		pr_err("Couldn't allocate USB buffer\n");
++	if (!buffer)
+ 		goto exit;
+-	}
+ 
+ 	while (gspca_dev->present && gspca_dev->streaming) {
+ #ifdef CONFIG_PM
+-- 
+2.14.1
+
