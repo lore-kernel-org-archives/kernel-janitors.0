@@ -1,40 +1,40 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 19 Sep 2017 03:29:56 +0000
-Subject: Re: [PATCH] libata: make static arrays const, reduces object code size
-Message-Id: <20170919032956.GP378890@devbig577.frc2.facebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 12:01:57 +0000
+Subject: [PATCH] xfs: remove redundant re-initialization of total_nr_pages
+Message-Id: <20170918120157.30134-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918133140.31220-1-colin.king@canonical.com>
-In-Reply-To: <20170918133140.31220-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Andrew Morton <akpm@linux-foundation.org>, piaojun <piaojun@huawei.com>, linux-ide@vger.kernel.org, ocfs2-devel@oss.oracle.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 18, 2017 at 02:31:40PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrayis on the stack, instead make them static.
-> Makes the object code smaller by over 260 bytes:
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-...
-> diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-> index 74407c6dd592..31a61e8e0152 100644
-> --- a/fs/ocfs2/dlm/dlmrecovery.c
-> +++ b/fs/ocfs2/dlm/dlmrecovery.c
-> @@ -1129,7 +1129,6 @@ static int dlm_send_mig_lockres_msg(struct dlm_ctxt *dlm,
->  		(mres->num_locks * sizeof(struct dlm_migratable_lock));
->  
->  	/* add an all-done flag if we reached the last lock */
-> -	orig_flags = mres->flags;
->  	BUG_ON(total_locks > mres_total_locks);
->  	if (total_locks = mres_total_locks)
->  		mres->flags |= DLM_MRES_ALL_DONE;
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks like patch contamination.
+Variable total_nr_pages is being initialized and then updated with
+the same value, this latter assignment is redundant and can be
+removed.  Cleans up clang build warning:
 
-Thanks.
+Value stored to 'total_nr_pages' during its initialization is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/xfs_buf.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index da14658da310..2f97c12ca75e 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1258,8 +1258,6 @@ xfs_buf_ioapply_map(
+ 	int		size;
+ 	int		offset;
+ 
+-	total_nr_pages = bp->b_page_count;
+-
+ 	/* skip the pages in the buffer before the start offset */
+ 	page_index = 0;
+ 	offset = *buf_offset;
 -- 
-tejun
+2.14.1
+
