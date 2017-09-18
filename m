@@ -1,24 +1,47 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 15 Sep 2017 19:39:48 +0000
-Subject: Re: [PATCH] scsi: lpfc: remove redundant null check on eqe
-Message-Id: <yq18thfpx8b.fsf@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 09:03:12 +0000
+Subject: [PATCH][V2] x86/xen: clean up clang build warning
+Message-Id: <20170918090312.27283-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908080201.9592-1-colin.king@canonical.com>
-In-Reply-To: <20170908080201.9592-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 8 Sep 2017 09:02:01 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, xen-devel@lists.xenproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin,
+In the case where sizeof(maddr) != sizeof(long) p is initialized and
+never read and clang throws a warning on this.  Move declaration of
+p to clean up the clang build warning:
 
-> The pointer eqe is always non-null inside the while loop, so the check
-> to see if eqe is NULL is redudant and hence can be removed.
+warning: Value stored to 'p' during its initialization is never read
 
-Applied to 4.15/scsi-queue. Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/include/asm/xen/hypercall.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
+index 9606688caa4b..5ff77cb2529e 100644
+--- a/arch/x86/include/asm/xen/hypercall.h
++++ b/arch/x86/include/asm/xen/hypercall.h
+@@ -552,13 +552,13 @@ static inline void
+ MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
+ 			struct desc_struct desc)
+ {
+-	u32 *p = (u32 *) &desc;
+-
+ 	mcl->op = __HYPERVISOR_update_descriptor;
+ 	if (sizeof(maddr) = sizeof(long)) {
+ 		mcl->args[0] = maddr;
+ 		mcl->args[1] = *(unsigned long *)&desc;
+ 	} else {
++		u32 *p = (u32 *)&desc;
++
+ 		mcl->args[0] = maddr;
+ 		mcl->args[1] = maddr >> 32;
+ 		mcl->args[2] = *p++;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.14.1
+
