@@ -1,49 +1,49 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Mon, 11 Sep 2017 12:02:35 +0000
-Subject: Re: [PATCH] drm/i915: Fix an error handling in 'intel_framebuffer_init()'
-Message-Id: <87zia130kk.fsf@nikula.org>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 11:40:38 +0000
+Subject: [PATCH] net_sched: use explicit size of struct tcmsg, remove need to declare tcm
+Message-Id: <20170918114038.29741-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170910085642.13673-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170910085642.13673-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 10 Sep 2017, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> We should go through the error handling path to decrease the
-> 'framebuffer_references' as done everywhere else in this function.
->
-> Fixes: 2e2adb05736c ("drm/i915: Add render decompression support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed to drm-intel-next-queued, thanks for the patch.
+Pointer tcm is being initialized and is never read, it is only being used
+to determine the size of struct tcmsg.  Clean this up by removing
+variable tcm and explicitly using the sizeof struct tcmsg rather than *tcm.
+Cleans up clang warning:
 
-For future reference, the intel-gfx list will suffice.
+warning: Value stored to 'tcm' during its initialization is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sched/sch_api.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-BR,
-Jani.
-
-
-> ---
->  drivers/gpu/drm/i915/intel_display.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 7cd392f2cd94..478fa449003f 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -14077,7 +14077,7 @@ static int intel_framebuffer_init(struct intel_framebuffer *intel_fb,
->  
->  		if (mode_cmd->handles[i] != mode_cmd->handles[0]) {
->  			DRM_DEBUG_KMS("bad plane %d handle\n", i);
-> -			return -EINVAL;
-> +			goto err;
->  		}
->  
->  		stride_alignment = intel_fb_stride_alignment(fb, i);
-
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index c6deb74e3d2f..aa82116ed10c 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1500,7 +1500,6 @@ static int tc_dump_qdisc(struct sk_buff *skb, struct netlink_callback *cb)
+ 	int s_idx, s_q_idx;
+ 	struct net_device *dev;
+ 	const struct nlmsghdr *nlh = cb->nlh;
+-	struct tcmsg *tcm = nlmsg_data(nlh);
+ 	struct nlattr *tca[TCA_MAX + 1];
+ 	int err;
+ 
+@@ -1510,7 +1509,7 @@ static int tc_dump_qdisc(struct sk_buff *skb, struct netlink_callback *cb)
+ 	idx = 0;
+ 	ASSERT_RTNL();
+ 
+-	err = nlmsg_parse(nlh, sizeof(*tcm), tca, TCA_MAX, NULL, NULL);
++	err = nlmsg_parse(nlh, sizeof(struct tcmsg), tca, TCA_MAX, NULL, NULL);
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.14.1
+
