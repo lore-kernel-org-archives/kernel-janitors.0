@@ -1,26 +1,39 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 18 Sep 2017 13:39:28 +0000
-Subject: Re: [PATCH] ALSA: hwdep: prevent a harmless shift wrapping bug
-Message-Id: <s5hinggi0rz.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 08:15:39 +0000
+Subject: [PATCH][V2] i2c: i2c-stm32f7: make structure stm32f7_setup static const
+Message-Id: <20170918081539.26512-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170913230116.yspku7ov2hgqtigh@mwanda>
-In-Reply-To: <20170913230116.yspku7ov2hgqtigh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 14 Sep 2017 01:01:16 +0200,
-Dan Carpenter wrote:
-> 
-> The "info.index" variable represents a bit in hw->dsp_loaded which is
-> an unsigned int.  If it's higher than 31 we hit a shift wrapping bug.
-> This seems harmless, but I wanted to silence the static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The structure stm32f7_setup is local to the source and does not need
+to be in global scope, make it static const.
 
+Cleans up sparse warning:
+symbol 'stm32f7_setup' was not declared. Should it be static?
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 47c67b0ca896..3eae4fc96884 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -265,7 +265,7 @@ static struct stm32f7_i2c_spec i2c_specs[] = {
+ 	},
+ };
+ 
+-struct stm32f7_i2c_setup stm32f7_setup = {
++static const struct stm32f7_i2c_setup stm32f7_setup = {
+ 	.rise_time = STM32F7_I2C_RISE_TIME_DEFAULT,
+ 	.fall_time = STM32F7_I2C_FALL_TIME_DEFAULT,
+ 	.dnf = STM32F7_I2C_DNF_DEFAULT,
+-- 
+2.14.1
+
