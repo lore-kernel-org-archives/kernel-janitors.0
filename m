@@ -1,91 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 10:23:22 +0000
-Subject: [PATCH 2/3] ALSA: bebob: Adjust six checks for null pointers
-Message-Id: <3ef7ccac-9bab-4030-da89-92f5c488e8bf@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 09:48:43 +0000
+Subject: [PATCH] ASoC: hdmi-codec: use sizeof_field rather than declaring hcp
+Message-Id: <20170918094843.28121-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
-In-Reply-To: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 11:48:44 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+Use FIELD_SIZEOF rather than declaring and initializing hcp. Remove
+unused variables. Cleans up clang warning:
 
-Comparison to NULL could be written …
+warning: Value stored to 'hcp' during its initialization is never read
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/firewire/bebob/bebob_stream.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/sound/firewire/bebob/bebob_stream.c b/sound/firewire/bebob/bebob_stream.c
-index bc9e42b6368e..211ff43207d6 100644
---- a/sound/firewire/bebob/bebob_stream.c
-+++ b/sound/firewire/bebob/bebob_stream.c
-@@ -268,7 +268,7 @@ map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
- 	 * use the maximum length of FCP.
- 	 */
- 	buf = kzalloc(256, GFP_KERNEL);
--	if (buf = NULL)
-+	if (!buf)
- 		return -ENOMEM;
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 3abf82563408..5672e516bec3 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -303,11 +303,8 @@ enum {
+ static int hdmi_eld_ctl_info(struct snd_kcontrol *kcontrol,
+ 			     struct snd_ctl_elem_info *uinfo)
+ {
+-	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+-	struct hdmi_codec_priv *hcp = snd_soc_component_get_drvdata(component);
+-
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_BYTES;
+-	uinfo->count = sizeof(hcp->eld);
++	uinfo->count = FIELD_SIZEOF(struct hdmi_codec_priv, eld);
  
- 	if (s = &bebob->tx_stream)
-@@ -472,7 +472,7 @@ break_both_connections(struct snd_bebob *bebob)
- 	bebob->connected = false;
- 
- 	/* These models seems to be in transition state for a longer time. */
--	if (bebob->maudio_special_quirk != NULL)
-+	if (bebob->maudio_special_quirk)
- 		msleep(200);
+ 	return 0;
  }
- 
-@@ -496,7 +496,7 @@ start_stream(struct snd_bebob *bebob, struct amdtp_stream *stream,
- 		conn = &bebob->out_conn;
- 
- 	/* channel mapping */
--	if (bebob->maudio_special_quirk = NULL) {
-+	if (!bebob->maudio_special_quirk) {
- 		err = map_data_channels(bebob, stream);
- 		if (err < 0)
- 			goto end;
-@@ -611,7 +611,7 @@ int snd_bebob_stream_start_duplex(struct snd_bebob *bebob, unsigned int rate)
- 		 *
- 		 * For firmware customized by M-Audio, refer to next NOTE.
- 		 */
--		if (bebob->maudio_special_quirk = NULL) {
-+		if (!bebob->maudio_special_quirk) {
- 			err = rate_spec->set(bebob, rate);
- 			if (err < 0) {
- 				dev_err(&bebob->unit->device,
-@@ -637,7 +637,7 @@ int snd_bebob_stream_start_duplex(struct snd_bebob *bebob, unsigned int rate)
- 		 * The firmware customized by M-Audio uses these commands to
- 		 * start transmitting stream. This is not usual way.
- 		 */
--		if (bebob->maudio_special_quirk != NULL) {
-+		if (bebob->maudio_special_quirk) {
- 			err = rate_spec->set(bebob, rate);
- 			if (err < 0) {
- 				dev_err(&bebob->unit->device,
-@@ -794,7 +794,7 @@ fill_stream_formations(struct snd_bebob *bebob, enum avc_bridgeco_plug_dir dir,
- 	int err;
- 
- 	buf = kmalloc(FORMAT_MAXIMUM_LENGTH, GFP_KERNEL);
--	if (buf = NULL)
-+	if (!buf)
- 		return -ENOMEM;
- 
- 	if (dir = AVC_BRIDGECO_PLUG_DIR_IN)
 -- 
 2.14.1
 
