@@ -1,64 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 04 Sep 2017 20:08:38 +0000
-Subject: [PATCH 3/6] [media] atmel-isc: Adjust three checks for null pointers
-Message-Id: <fe343b19-3c18-16d0-8019-7999bf25f049@users.sourceforge.net>
+Date: Mon, 18 Sep 2017 14:00:13 +0000
+Subject: [PATCH 6/6] [media] go7007: Delete an unnecessary variable initialisation in go7007_snd_init()
+Message-Id: <cce9027f-ed91-44f8-a59e-a03291d9cf2e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
-In-Reply-To: <88d0739c-fdc1-9d7d-fe53-b7c2eeed1849@users.sourceforge.net>
+References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
+In-Reply-To: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Songjun Wu <songjun.wu@microchip.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 4 Sep 2017 20:54:20 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 18 Sep 2017 14:35:43 +0200
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
+The variable "ret" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/atmel/atmel-isc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/go7007/snd-go7007.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/atmel/atmel-isc.c b/drivers/media/platform/atmel/atmel-isc.c
-index f16bab0105c2..b6048cedb6cc 100644
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -1590,7 +1590,7 @@ static int isc_async_complete(struct v4l2_async_notifier *notifier)
- 	spin_lock_init(&isc->dma_queue_lock);
+diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
+index 7ae4d03ed3f7..27c09fd44657 100644
+--- a/drivers/media/usb/go7007/snd-go7007.c
++++ b/drivers/media/usb/go7007/snd-go7007.c
+@@ -227,7 +227,7 @@ int go7007_snd_init(struct go7007 *go)
+ {
+ 	static int dev;
+ 	struct go7007_snd *gosnd;
+-	int ret = 0;
++	int ret;
  
- 	sd_entity->config = v4l2_subdev_alloc_pad_config(sd_entity->sd);
--	if (sd_entity->config = NULL)
-+	if (!sd_entity->config)
- 		return -ENOMEM;
- 
- 	ret = isc_formats_init(isc);
-@@ -1714,7 +1714,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
- 
- 		subdev_entity = devm_kzalloc(dev,
- 					  sizeof(*subdev_entity), GFP_KERNEL);
--		if (subdev_entity = NULL) {
-+		if (!subdev_entity) {
- 			of_node_put(rem);
- 			ret = -ENOMEM;
- 			break;
-@@ -1722,7 +1722,7 @@ static int isc_parse_dt(struct device *dev, struct isc_device *isc)
- 
- 		subdev_entity->asd = devm_kzalloc(dev,
- 				     sizeof(*subdev_entity->asd), GFP_KERNEL);
--		if (subdev_entity->asd = NULL) {
-+		if (!subdev_entity->asd) {
- 			of_node_put(rem);
- 			ret = -ENOMEM;
- 			break;
+ 	if (dev >= SNDRV_CARDS)
+ 		return -ENODEV;
 -- 
 2.14.1
 
