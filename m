@@ -1,37 +1,29 @@
-From: "Singh, Krishneil K" <krishneil.k.singh@intel.com>
-Date: Mon, 18 Sep 2017 16:59:52 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] fm10k: Use seq_putc() in fm10k_dbg_desc_break()
-Message-Id: <EF50CC0C76A53A44BAD798C58E0A157E64AF65B8@ORSMSX103.amr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Sep 2017 18:44:24 +0000
+Subject: [PATCH 0/3] [media] HD PVR USB: Adjustments for two function implementations
+Message-Id: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4f8686c6-76cb-3d12-934e-6af67b6f084b@users.sourceforge.net>
-In-Reply-To: <4f8686c6-76cb-3d12-934e-6af67b6f084b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Jonathan Sims <jonathan.625266@earthlink.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Sep 2017 20:21:23 +0200
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On Behalf
-> Of SF Markus Elfring
-> Sent: Monday, May 8, 2017 9:18 AM
-> To: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>
-> Cc: kernel-janitors@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>
-> Subject: [Intel-wired-lan] [PATCH] fm10k: Use seq_putc() in
-> fm10k_dbg_desc_break()
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 8 May 2017 18:10:39 +0200
-> 
-> Two single characters should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Three update suggestions were taken into account
+from static source code analysis.
 
-Tested-by: Krishneil Singh  <krishneil.k.singh@intel.com>
+Markus Elfring (3):
+  Delete three error messages for a failed memory allocation
+  Improve a size determination in hdpvr_alloc_buffers()
+  Return an error code only as a constant in hdpvr_alloc_buffers()
+
+ drivers/media/usb/hdpvr/hdpvr-core.c  |  8 ++------
+ drivers/media/usb/hdpvr/hdpvr-video.c | 11 ++++-------
+ 2 files changed, 6 insertions(+), 13 deletions(-)
+
+-- 
+2.14.1
 
