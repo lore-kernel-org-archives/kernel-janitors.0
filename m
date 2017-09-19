@@ -1,59 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 10:36:22 +0000
-Subject: [PATCH 6/8] [media] ttusb_dec: Reduce the scope for three variables in ttusb_dec_process_urb()
-Message-Id: <7c7b66d3-bf34-0635-7941-faeb10854de8@users.sourceforge.net>
+Date: Tue, 19 Sep 2017 18:47:39 +0000
+Subject: [PATCH 3/3] [media] hdpvr: Return an error code only as a constant in hdpvr_alloc_buffers()
+Message-Id: <0be95f0b-cc0e-27cc-5ec1-b5bc1bc48496@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
-In-Reply-To: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
+References: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
+In-Reply-To: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Jonathan Sims <jonathan.625266@earthlink.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Sep 2017 21:23:29 +0200
+Date: Tue, 19 Sep 2017 19:32:36 +0200
 
-* Move the definition for the local variables "b", "d" and "length" into
-  an if branch so that the corresponding setting will only be performed
-  if a memory allocation succeeded in this function.
+* Return an error code without storing it in an intermediate variable.
 
-* Adjust their data types.
+* Delete the local variable "retval" which became unnecessary
+  with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/ttusb-dec/ttusb_dec.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/media/usb/hdpvr/hdpvr-video.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index 7759de653ee9..e9fe4c6142a5 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -812,19 +812,18 @@ static void ttusb_dec_process_urb(struct urb *urb)
- 		int i;
- 
- 		for (i = 0; i < FRAMES_PER_ISO_BUF; i++) {
--			struct usb_iso_packet_descriptor *d;
--			u8 *b;
--			int length;
- 			struct urb_frame *frame;
- 
--			d = &urb->iso_frame_desc[i];
--			b = urb->transfer_buffer + d->offset;
--			length = d->actual_length;
--
- 			frame = kmalloc(sizeof(*frame), GFP_ATOMIC);
- 			if (frame) {
- 				unsigned long flags;
-+				struct usb_iso_packet_descriptor const *d;
-+				u8 const *b;
-+				unsigned int length;
- 
-+				d = &urb->iso_frame_desc[i];
-+				b = urb->transfer_buffer + d->offset;
-+				length = d->actual_length;
- 				memcpy(frame->data, b, length);
- 				frame->length = length;
+diff --git a/drivers/media/usb/hdpvr/hdpvr-video.c b/drivers/media/usb/hdpvr/hdpvr-video.c
+index f06efcd70c14..2b39834309d2 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-video.c
++++ b/drivers/media/usb/hdpvr/hdpvr-video.c
+@@ -136,6 +136,5 @@ int hdpvr_free_buffers(struct hdpvr_device *dev)
+ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ {
+ 	uint i;
+-	int retval = -ENOMEM;
+ 	u8 *mem;
+ 	struct hdpvr_buffer *buf;
+@@ -181,6 +180,6 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ 	kfree(buf);
+ exit:
+ 	hdpvr_free_buffers(dev);
+-	return retval;
++	return -ENOMEM;
+ }
  
 -- 
 2.14.1
