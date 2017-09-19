@@ -1,48 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Sep 2017 19:44:06 +0000
-Subject: [PATCH 2/3] [media] fsl-viu: Improve two size determinations in viu_of_probe()
-Message-Id: <44462eba-a9dd-2af7-b187-9607fe8dc1ee@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Sep 2017 21:05:00 +0000
+Subject: [PATCH] mwifiex: make const array tos_to_ac static, reduces object code size
+Message-Id: <20170919210500.31330-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
-In-Reply-To: <bf912679-c695-c9c0-a464-3bd3e976fa8a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Geliang Tang <geliangtang@gmail.com>, Hans Verkuil <hansverk@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Sep 2017 21:12:52 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Don't populate the read-only const array tos_to_ac on the stack,
+instead make it static. Makes the object code smaller by 250 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  26104	   2720	    128	  28952	   7118	wmm.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  25758	   2816	    128	  28702	   701e	wmm.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/fsl-viu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/wmm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index 526f80649864..1fe2a295db93 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -1421,5 +1421,5 @@ static int viu_of_probe(struct platform_device *op)
- 	}
- 
- 	/* remap registers */
--	viu_regs = devm_ioremap(&op->dev, r.start, sizeof(struct viu_reg));
-+	viu_regs = devm_ioremap(&op->dev, r.start, sizeof(*viu_regs));
- 	if (!viu_regs) {
-@@ -1429,5 +1429,5 @@ static int viu_of_probe(struct platform_device *op)
- 	}
- 
- 	/* Prepare our private structure */
--	viu_dev = devm_kzalloc(&op->dev, sizeof(struct viu_dev), GFP_ATOMIC);
-+	viu_dev = devm_kzalloc(&op->dev, sizeof(*viu_dev), GFP_ATOMIC);
- 	if (!viu_dev) {
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
+index 0edd26881321..936a0a841af8 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -359,7 +359,8 @@ static enum mwifiex_wmm_ac_e
+ mwifiex_wmm_convert_tos_to_ac(struct mwifiex_adapter *adapter, u32 tos)
+ {
+ 	/* Map of TOS UP values to WMM AC */
+-	const enum mwifiex_wmm_ac_e tos_to_ac[] = { WMM_AC_BE,
++	static const enum mwifiex_wmm_ac_e tos_to_ac[] = {
++		WMM_AC_BE,
+ 		WMM_AC_BK,
+ 		WMM_AC_BK,
+ 		WMM_AC_BE,
 -- 
 2.14.1
 
