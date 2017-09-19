@@ -1,36 +1,76 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 14 Sep 2017 05:47:40 +0000
-Subject: [PATCH] scsi: libiscsi: Fix an error handling path in 'iscsi_session_setup()'
-Message-Id: <20170914054740.23129-1-christophe.jaillet@wanadoo.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 19 Sep 2017 13:47:02 +0000
+Subject: Applied "ASoC: hdmi-codec: use sizeof_field rather than declaring hcp" to the asoc tree
+Message-Id: <E1duIre-0008My-DY@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170918094843.28121-1-colin.king@canonical.com>
+In-Reply-To: <20170918094843.28121-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lduncan@suse.com, cleech@redhat.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-All error handling paths in this function go through
-'iscsi_host_dec_session_cnt()' except this one.
-Fix it and properly decrement the number of active sessions in such a case.
+The patch
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+   ASoC: hdmi-codec: use sizeof_field rather than declaring hcp
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0607aa3cd824bddf85fa5174fe4be34af5a429fb Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 10:48:43 +0100
+Subject: [PATCH] ASoC: hdmi-codec: use sizeof_field rather than declaring hcp
+
+Use FIELD_SIZEOF rather than declaring and initializing hcp. Remove
+unused variables. Cleans up clang warning:
+
+warning: Value stored to 'hcp' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/scsi/libiscsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/hdmi-codec.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index bd4605a34f54..5d195375ba75 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -2779,7 +2779,7 @@ iscsi_session_setup(struct iscsi_transport *iscsit, struct Scsi_Host *shost,
- 		       "must be a power of 2.\n", total_cmds);
- 		total_cmds = rounddown_pow_of_two(total_cmds);
- 		if (total_cmds < ISCSI_TOTAL_CMDS_MIN)
--			return NULL;
-+			goto dec_session_count;
- 		printk(KERN_INFO "iscsi: Rounding can_queue to %d.\n",
- 		       total_cmds);
- 	}
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 3abf82563408..5672e516bec3 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -303,11 +303,8 @@ enum {
+ static int hdmi_eld_ctl_info(struct snd_kcontrol *kcontrol,
+ 			     struct snd_ctl_elem_info *uinfo)
+ {
+-	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+-	struct hdmi_codec_priv *hcp = snd_soc_component_get_drvdata(component);
+-
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_BYTES;
+-	uinfo->count = sizeof(hcp->eld);
++	uinfo->count = FIELD_SIZEOF(struct hdmi_codec_priv, eld);
+ 
+ 	return 0;
+ }
 -- 
-2.11.0
+2.14.1
 
