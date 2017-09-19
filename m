@@ -1,23 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Sep 2017 12:41:51 +0000
-Subject: Re: [PATCH] iio staging: tsl2x7x: clean up limit checks
-Message-Id: <20170906124151.k7zftojr2dfodu7n@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Sep 2017 21:32:01 +0000
+Subject: [PATCH] video: fbdev: radeon: make const array post_divs static, reduces object code size
+Message-Id: <20170919213201.31845-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170821101103.sysrgce7qgzn2ltx@mwanda>
- <20170903123505.13ee5a25@archlinux>
- <20170904021246.vdsnm5vxg7bgl6jt@fd32499230b2>
- <20170905143910.myrudtgydjbu7dci@mwanda>
- <20170905210255.gcf2j523p3m2xldc@fd32499230b2>
- <20170905233123.vfrb4j4bnhtgcrrt@fd32499230b2>
-In-Reply-To: <20170905233123.vfrb4j4bnhtgcrrt@fd32499230b2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Masney <masneyb@onstation.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jon.Brenner@ams.com
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Let me try send a v2 and see what you think.
+From: Colin Ian King <colin.king@canonical.com>
 
-regards,
-dan carpenter
+Don't populate the read-only const array post_divs on the stack,
+nstead make it static. Makes the object code smaller by 90 bytes:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  40231	   8584	    896	  49711	   c22f	radeon_base.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  39914	   8744	    960	  49618	   c1d2	radeon_base.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/aty/radeon_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+index 1e2ec360f8c1..8ad1643e7d1c 100644
+--- a/drivers/video/fbdev/aty/radeon_base.c
++++ b/drivers/video/fbdev/aty/radeon_base.c
+@@ -1534,7 +1534,7 @@ void radeon_write_mode (struct radeonfb_info *rinfo, struct radeon_regs *mode,
+ static void radeon_calc_pll_regs(struct radeonfb_info *rinfo, struct radeon_regs *regs,
+ 				 unsigned long freq)
+ {
+-	const struct {
++	static const struct {
+ 		int divider;
+ 		int bitvalue;
+ 	} *post_div,
+-- 
+2.14.1
 
