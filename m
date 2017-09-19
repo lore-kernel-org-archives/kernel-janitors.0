@@ -1,65 +1,79 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Sep 2017 15:39:02 +0000
-Subject: [PATCH] b43: make const arrays static, reduces object code size
-Message-Id: <20170922153902.15372-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 19 Sep 2017 13:46:30 +0000
+Subject: Applied "ASoC: davinci-mcasp: Fix an error handling path in 'davinci_mcasp_probe()'" to the asoc tre
+Message-Id: <E1duIr8-0008G2-2j@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170916054029.27804-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170916054029.27804-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@kernel.org>@kernel.org, perex@perex.cz, @ti.comChristopheJAILLETchristophe.jaillet@wanadoo.fr, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Don't populate const arrays on the stack, instead make them static.
-Makes the object code smaller by over 60 bytes:
+   ASoC: davinci-mcasp: Fix an error handling path in 'davinci_mcasp_probe()'
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
+has been applied to the asoc tree at
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-(gcc 6.3.0, x86-64)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1b8b68b05d1868404316d32e20782b00442aba90 Mon Sep 17 00:00:00 2001
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Sat, 16 Sep 2017 07:40:29 +0200
+Subject: [PATCH] ASoC: davinci-mcasp: Fix an error handling path in
+ 'davinci_mcasp_probe()'
+
+All error handling paths in this function 'goto err' except this one.
+
+If one of the 2 previous memory allocations fails, we should go through
+the existing error handling path. Otherwise there is an unbalanced
+pm_runtime_enable()/pm_runtime_disable().
+
+Fixes: dd55ff8346a9 ("ASoC: davinci-mcasp: Add set_tdm_slots() support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/wireless/broadcom/b43/phy_ht.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/davinci/davinci-mcasp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
-index 718c90e81696..c3158d085c2b 100644
---- a/drivers/net/wireless/broadcom/b43/phy_ht.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
-@@ -119,7 +119,7 @@ static void b43_radio_2059_rcal(struct b43_wldev *dev)
- /* Calibrate the internal RC oscillator? */
- static void b43_radio_2057_rccal(struct b43_wldev *dev)
- {
--	const u16 radio_values[3][2] = {
-+	static const u16 radio_values[3][2] = {
- 		{ 0x61, 0xE9 }, { 0x69, 0xD5 }, { 0x73, 0x99 },
- 	};
- 	int i;
-@@ -154,7 +154,7 @@ static void b43_radio_2059_init_pre(struct b43_wldev *dev)
+diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
+index f395bbc7c354..23b0da7df1f2 100644
+--- a/sound/soc/davinci/davinci-mcasp.c
++++ b/sound/soc/davinci/davinci-mcasp.c
+@@ -1982,8 +1982,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 			     GFP_KERNEL);
  
- static void b43_radio_2059_init(struct b43_wldev *dev)
- {
--	const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
-+	static const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
- 	int i;
+ 	if (!mcasp->chconstr[SNDRV_PCM_STREAM_PLAYBACK].list ||
+-	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list)
+-		return -ENOMEM;
++	    !mcasp->chconstr[SNDRV_PCM_STREAM_CAPTURE].list) {
++		ret = -ENOMEM;
++		goto err;
++	}
  
- 	/* Prepare (reset?) radio */
-@@ -263,7 +263,7 @@ static void b43_phy_ht_reset_cca(struct b43_wldev *dev)
- static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
- {
- 	u8 i, j;
--	u16 base[] = { 0x40, 0x60, 0x80 };
-+	static const u16 base[] = { 0x40, 0x60, 0x80 };
- 
- 	for (i = 0; i < ARRAY_SIZE(base); i++) {
- 		for (j = 0; j < 4; j++)
+ 	ret = davinci_mcasp_set_ch_constraints(mcasp);
+ 	if (ret)
 -- 
 2.14.1
 
