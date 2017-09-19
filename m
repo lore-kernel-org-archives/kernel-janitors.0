@@ -1,92 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 13:58:37 +0000
-Subject: [PATCH 5/6] [media] go7007: Use common error handling code in go7007_snd_init()
-Message-Id: <05efac78-3a14-803c-5b4a-68670728628b@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Sep 2017 08:49:11 +0000
+Subject: Re: [PATCH 5/6] [media] go7007: Use common error handling code in go7007_snd_init()
+Message-Id: <20170919084911.zknru7vuhafljuxb@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
-In-Reply-To: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
+ <05efac78-3a14-803c-5b4a-68670728628b@users.sourceforge.net>
+In-Reply-To: <05efac78-3a14-803c-5b4a-68670728628b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 14:28:59 +0200
+On Mon, Sep 18, 2017 at 03:58:37PM +0200, SF Markus Elfring wrote:
+> diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
+> index 68e421bf38e1..7ae4d03ed3f7 100644
+> --- a/drivers/media/usb/go7007/snd-go7007.c
+> +++ b/drivers/media/usb/go7007/snd-go7007.c
+> @@ -243,22 +243,18 @@ int go7007_snd_init(struct go7007 *go)
+>  	gosnd->capturing = 0;
+>  	ret = snd_card_new(go->dev, index[dev], id[dev], THIS_MODULE, 0,
+>  			   &gosnd->card);
+> -	if (ret < 0) {
+> -		kfree(gosnd);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto free_snd;
+> +
+>  	ret = snd_device_new(gosnd->card, SNDRV_DEV_LOWLEVEL, go,
+>  			&go7007_snd_device_ops);
+> -	if (ret < 0) {
+> -		kfree(gosnd);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto free_snd;
+> +
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
 
-This issue was detected by using the Coccinelle software.
+I think the original code is buggy.  It should probably call
+snd_card_free() if snd_device_new() fails.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/go7007/snd-go7007.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
-index 68e421bf38e1..7ae4d03ed3f7 100644
---- a/drivers/media/usb/go7007/snd-go7007.c
-+++ b/drivers/media/usb/go7007/snd-go7007.c
-@@ -243,22 +243,18 @@ int go7007_snd_init(struct go7007 *go)
- 	gosnd->capturing = 0;
- 	ret = snd_card_new(go->dev, index[dev], id[dev], THIS_MODULE, 0,
- 			   &gosnd->card);
--	if (ret < 0) {
--		kfree(gosnd);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_snd;
-+
- 	ret = snd_device_new(gosnd->card, SNDRV_DEV_LOWLEVEL, go,
- 			&go7007_snd_device_ops);
--	if (ret < 0) {
--		kfree(gosnd);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_snd;
-+
- 	ret = snd_pcm_new(gosnd->card, "go7007", 0, 0, 1, &gosnd->pcm);
--	if (ret < 0) {
--		snd_card_free(gosnd->card);
--		kfree(gosnd);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_card;
-+
- 	strlcpy(gosnd->card->driver, "go7007", sizeof(gosnd->card->driver));
- 	strlcpy(gosnd->card->shortname, go->name, sizeof(gosnd->card->driver));
- 	strlcpy(gosnd->card->longname, gosnd->card->shortname,
-@@ -269,11 +265,8 @@ int go7007_snd_init(struct go7007 *go)
- 			&go7007_snd_capture_ops);
- 
- 	ret = snd_card_register(gosnd->card);
--	if (ret < 0) {
--		snd_card_free(gosnd->card);
--		kfree(gosnd);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_card;
- 
- 	gosnd->substream = NULL;
- 	go->snd_context = gosnd;
-@@ -281,6 +274,12 @@ int go7007_snd_init(struct go7007 *go)
- 	++dev;
- 
- 	return 0;
-+
-+free_card:
-+	snd_card_free(gosnd->card);
-+free_snd:
-+	kfree(gosnd);
-+	return ret;
- }
- EXPORT_SYMBOL(go7007_snd_init);
- 
--- 
-2.14.1
+regards,
+dan carpenter
 
