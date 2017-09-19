@@ -1,40 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:53:39 +0000
-Subject: [PATCH 5/9] [media] tm6000: Delete an unnecessary variable initialisation in tm6000_usb_probe()
-Message-Id: <9c547e6f-8a78-ec7b-2054-dd64708d5823@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Sep 2017 20:40:19 +0000
+Subject: [PATCH] ath9k: make const array reg_hole_list static, reduces object code size
+Message-Id: <20170919204019.30804-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 16:13:56 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The local variable "rc" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Don't populate the read-only array reg_hole_list on the stack, instead make
+it static.  Makes the object code smaller by over 200 bytes:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  57518	  15248	      0	  72766	  11c3e	debug.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  57218	  15344	      0	  72562	  11b72	debug.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/tm6000/tm6000-cards.c | 2 +-
+ drivers/net/wireless/ath/ath9k/debug.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
-index 77347541904d..72dd6b80394f 100644
---- a/drivers/media/usb/tm6000/tm6000-cards.c
-+++ b/drivers/media/usb/tm6000/tm6000-cards.c
-@@ -1185,7 +1185,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- {
- 	struct usb_device *usbdev;
- 	struct tm6000_core *dev;
--	int i, rc = 0;
-+	int i, rc;
- 	int nr = 0;
- 	char *speed;
- 
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index 01fa30117288..5a0a05abd51a 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -916,7 +916,7 @@ static int open_file_regdump(struct inode *inode, struct file *file)
+ 	u8 *buf;
+ 	int i, j = 0;
+ 	unsigned long num_regs, regdump_len, max_reg_offset;
+-	const struct reg_hole {
++	static const struct reg_hole {
+ 		u32 start;
+ 		u32 end;
+ 	} reg_hole_list[] = {
 -- 
 2.14.1
 
