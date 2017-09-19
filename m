@@ -1,77 +1,77 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Fri, 22 Sep 2017 18:09:16 +0000
-Subject: Re: [Intel-wired-lan] [PATCH][V3] e1000: avoid null pointer dereference on invalid stat type
-Message-Id: <CAKgT0Ucvfg_p=uMsDLe2DYA-KLcf+7WieOsOx4pP6R5pe8rm-Q@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 19 Sep 2017 13:47:18 +0000
+Subject: Applied "ASoC: zte: spdif: remove duplicate initialization of dma_data" to the asoc tree
+Message-Id: <E1duIru-0008PT-QD@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922171348.17630-1-colin.king@canonical.com>
-In-Reply-To: <20170922171348.17630-1-colin.king@canonical.com>
+References: <20170918085638.27110-1-colin.king@canonical.com>
+In-Reply-To: <20170918085638.27110-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-On Fri, Sep 22, 2017 at 10:13 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently if the stat type is invalid then data[i] is being set
-> either by dereferencing a null pointer p, or it is reading from
-> an incorrect previous location if we had a valid stat type
-> previously.  Fix this by skipping over the read of p on an invalid
-> stat type.
->
-> Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Looks good to me.
+   ASoC: zte: spdif: remove duplicate initialization of dma_data
 
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+has been applied to the asoc tree at
 
-> ---
->  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> index ec8aa4562cc9..3b3983a1ffbb 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> @@ -1824,11 +1824,12 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
->  {
->         struct e1000_adapter *adapter = netdev_priv(netdev);
->         int i;
-> -       char *p = NULL;
->         const struct e1000_stats *stat = e1000_gstrings_stats;
->
->         e1000_update_stats(adapter);
-> -       for (i = 0; i < E1000_GLOBAL_STATS_LEN; i++) {
-> +       for (i = 0; i < E1000_GLOBAL_STATS_LEN; i++, stat++) {
-> +               char *p;
-> +
->                 switch (stat->type) {
->                 case NETDEV_STATS:
->                         p = (char *)netdev + stat->stat_offset;
-> @@ -1839,15 +1840,13 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
->                 default:
->                         WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
->                                   stat->type, i);
-> -                       break;
-> +                       continue;
->                 }
->
->                 if (stat->sizeof_stat = sizeof(u64))
->                         data[i] = *(u64 *)p;
->                 else
->                         data[i] = *(u32 *)p;
-> -
-> -               stat++;
->         }
->  /* BUG_ON(i != E1000_STATS_LEN); */
->  }
-> --
-> 2.14.1
->
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b6145837218cb984245aea5ccd9201aeb5eb0501 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 09:56:38 +0100
+Subject: [PATCH] ASoC: zte: spdif: remove duplicate initialization of dma_data
+
+dma_data is being initialized twice, remove the unused first
+initialization and use the latter one instead.  Fixed clang warning:
+
+"warning: Value stored to 'dma_data' during its initialization is
+never read"
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/zte/zx-spdif.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/zte/zx-spdif.c b/sound/soc/zte/zx-spdif.c
+index b143f9f682d2..17b6ce35037a 100644
+--- a/sound/soc/zte/zx-spdif.c
++++ b/sound/soc/zte/zx-spdif.c
+@@ -139,11 +139,11 @@ static int zx_spdif_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct zx_spdif_info *zx_spdif = dev_get_drvdata(socdai->dev);
+ 	struct zx_spdif_info *spdif = snd_soc_dai_get_drvdata(socdai);
+-	struct snd_dmaengine_dai_dma_data *dma_data = &zx_spdif->dma_data;
++	struct snd_dmaengine_dai_dma_data *dma_data +		snd_soc_dai_get_dma_data(socdai, substream);
+ 	u32 val, ch_num, rate;
+ 	int ret;
+ 
+-	dma_data = snd_soc_dai_get_dma_data(socdai, substream);
+ 	dma_data->addr_width = params_width(params) >> 3;
+ 
+ 	val = readl_relaxed(zx_spdif->reg_base + ZX_CTRL);
+-- 
+2.14.1
+
