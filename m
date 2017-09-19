@@ -1,28 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 05 Sep 2017 20:34:46 +0000
-Subject: [PATCH 0/2] ALSA: rme9652: Adjustments for two function implementations
-Message-Id: <9832906e-3b04-b708-2c26-4755e0beb811@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 19 Sep 2017 15:27:39 +0000
+Subject: [PATCH] CIFS: make arrays static const, reduces object code size
+Message-Id: <20170919152739.24749-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Sep 2017 22:30:22 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Don't populate the read-only arrays types[] on the stack, instead make
+them both static const.  Makes the object code smaller by over 200 bytes:
 
-Markus Elfring (2):
-  Use common code in hdsp_get_iobox_version()
-  Use common error handling code in snd_hdspm_probe()
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 111503	  37696	    448	 149647	  2488f	fs/cifs/file.o
 
- sound/pci/rme9652/hdsp.c  | 26 +++++++++++---------------
- sound/pci/rme9652/hdspm.c | 16 ++++++++--------
- 2 files changed, 19 insertions(+), 23 deletions(-)
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 111140	  37856	    448	 149444	  247c4	fs/cifs/file.o
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifs/file.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 0786f19d288f..822311919163 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1102,8 +1102,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 	struct cifs_tcon *tcon;
+ 	unsigned int num, max_num, max_buf;
+ 	LOCKING_ANDX_RANGE *buf, *cur;
+-	int types[] = {LOCKING_ANDX_LARGE_FILES,
+-		       LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES};
++	static const int types[] = {
++		LOCKING_ANDX_LARGE_FILES,
++		LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES
++	};
+ 	int i;
+ 
+ 	xid = get_xid();
+@@ -1434,8 +1436,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 		  unsigned int xid)
+ {
+ 	int rc = 0, stored_rc;
+-	int types[] = {LOCKING_ANDX_LARGE_FILES,
+-		       LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES};
++	static const int types[] = {
++		LOCKING_ANDX_LARGE_FILES,
++		LOCKING_ANDX_SHARED_LOCK | LOCKING_ANDX_LARGE_FILES
++	};
+ 	unsigned int i;
+ 	unsigned int max_num, num, max_buf;
+ 	LOCKING_ANDX_RANGE *buf, *cur;
 -- 
 2.14.1
 
