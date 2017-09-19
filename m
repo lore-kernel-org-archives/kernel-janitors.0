@@ -1,38 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 20 Sep 2017 12:41:24 +0000
-Subject: Re: [1/2] b43: fix unitialized reads of ret by initializing the array to zero
-Message-Id: <20170920124124.7B32460725@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Sep 2017 18:46:30 +0000
+Subject: [PATCH 2/3] [media] hdpvr: Improve a size determination in hdpvr_alloc_buffers()
+Message-Id: <b586b33a-e305-8592-bc3e-fe337e05a39a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170905181550.23839-1-colin.king@canonical.com>
-In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
+References: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
+In-Reply-To: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Jonathan Sims <jonathan.625266@earthlink.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Sep 2017 19:27:53 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The u8 char array ret is not being initialized and elements outside
-> the range start to end contain just garbage values from the stack.
-> This results in a later scan of the array to read potentially
-> uninitialized values.  Fix this by initializing the array to zero.
-> This seems to have been an issue since the very first commit.
-> 
-> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Michael Buesch <m@bues.ch>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-2 patches applied to wireless-drivers-next.git, thanks.
+This issue was detected by using the Coccinelle software.
 
-e31fbe1034d9 b43: fix unitialized reads of ret by initializing the array to zero
-e3ae1c772046 b43legacy: fix unitialized reads of ret by initializing the array to zero
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/hdpvr/hdpvr-video.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/media/usb/hdpvr/hdpvr-video.c b/drivers/media/usb/hdpvr/hdpvr-video.c
+index 657d910dfa1d..f06efcd70c14 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-video.c
++++ b/drivers/media/usb/hdpvr/hdpvr-video.c
+@@ -145,6 +145,5 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ 		 "allocating %u buffers\n", count);
+ 
+ 	for (i = 0; i < count; i++) {
+-
+-		buf = kzalloc(sizeof(struct hdpvr_buffer), GFP_KERNEL);
++		buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+ 		if (!buf)
 -- 
-https://patchwork.kernel.org/patch/9939435/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
