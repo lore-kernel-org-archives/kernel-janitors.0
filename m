@@ -1,38 +1,85 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 07 Sep 2017 20:22:07 +0000
-Subject: [PATCH] [media] blackfin: Delete an error message for a failed memory allocation in ppi_create_insta
-Message-Id: <3f472947-091e-3e96-b278-093ca287b5a2@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 19 Sep 2017 13:47:06 +0000
+Subject: Applied "ASoC: qcom: remove duplicate initializations of dma_ch and v" to the asoc tree
+Message-Id: <E1duIri-0008Nz-2p@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170918092603.27613-1-colin.king@canonical.com>
+In-Reply-To: <20170918092603.27613-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Scott Jiang <scott.jiang.linux@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 7 Sep 2017 22:14:43 +0200
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: qcom: remove duplicate initializations of dma_ch and v
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 20cf7e3ce3083593e163849ae6ba95525f2366ca Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 18 Sep 2017 10:26:03 +0100
+Subject: [PATCH] ASoC: qcom: remove duplicate initializations of dma_ch and v
+
+dma_ch is being initialized to zero and then immediately afterwards
+being updated again, so the first initialization is redundant and
+can be remove.
+
+Likewise, the pointer v is being initialized twice, so remove the second
+duplicate initialization.
+
+Cleans up two clang build warnings:
+warning: Value stored to 'dma_ch' is never read
+warning: Value stored to 'v' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/blackfin/ppi.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/qcom/lpass-platform.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/platform/blackfin/ppi.c b/drivers/media/platform/blackfin/ppi.c
-index 37169054b828..478eb2f7d723 100644
---- a/drivers/media/platform/blackfin/ppi.c
-+++ b/drivers/media/platform/blackfin/ppi.c
-@@ -338,7 +338,6 @@ struct ppi_if *ppi_create_instance(struct platform_device *pdev,
- 	ppi = kzalloc(sizeof(*ppi), GFP_KERNEL);
- 	if (!ppi) {
- 		peripheral_free_list(info->pin_req);
--		dev_err(&pdev->dev, "unable to allocate memory for ppi handle\n");
- 		return NULL;
- 	}
- 	ppi->ops = &ppi_ops;
+diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
+index e1945e1772cd..caf71aab8196 100644
+--- a/sound/soc/qcom/lpass-platform.c
++++ b/sound/soc/qcom/lpass-platform.c
+@@ -74,7 +74,6 @@ static int lpass_platform_pcmops_open(struct snd_pcm_substream *substream)
+ 	data->i2s_port = cpu_dai->driver->id;
+ 	runtime->private_data = data;
+ 
+-	dma_ch = 0;
+ 	if (v->alloc_dma_channel)
+ 		dma_ch = v->alloc_dma_channel(drvdata, dir);
+ 	else
+@@ -122,7 +121,6 @@ static int lpass_platform_pcmops_close(struct snd_pcm_substream *substream)
+ 	struct lpass_pcm_data *data;
+ 
+ 	data = runtime->private_data;
+-	v = drvdata->variant;
+ 	drvdata->substream[data->dma_ch] = NULL;
+ 	if (v->free_dma_channel)
+ 		v->free_dma_channel(drvdata, data->dma_ch);
 -- 
 2.14.1
 
