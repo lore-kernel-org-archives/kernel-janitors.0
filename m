@@ -1,39 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Sep 2017 19:42:38 +0000
-Subject: [PATCH 1/4] [media] sp2: Delete an error message for a failed memory allocation in sp2_probe()
-Message-Id: <22129d4f-f26c-c63b-6704-0e5f5d9f854e@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 20 Sep 2017 12:40:41 +0000
+Subject: Re: rsi: fix a dereference on adapter before it has been null checked
+Message-Id: <20170920124041.DE3EA60134@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
-In-Reply-To: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
+References: <20170908152452.3594-1-colin.king@canonical.com>
+In-Reply-To: <20170908152452.3594-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Olli Salonen <olli.salonen@iki.fi>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, Karun Eagalapati <karun256@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Sep 2017 20:44:05 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignment of dev is dereferencing adapter before adapter has
+> been null checked, potentially leading to a null pointer dereference.
+> Fix this by simply moving the assignment of dev to a later point
+> after the sanity null check of adapter.
+> 
+> Detected by CoverityScan CID#1398383 ("Dereference before null check")
+> 
+> Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/sp2.c | 1 -
- 1 file changed, 1 deletion(-)
+6508497cbdc7 rsi: fix a dereference on adapter before it has been null checked
 
-diff --git a/drivers/media/dvb-frontends/sp2.c b/drivers/media/dvb-frontends/sp2.c
-index 43d47dfcc7b8..d3b4f8822096 100644
---- a/drivers/media/dvb-frontends/sp2.c
-+++ b/drivers/media/dvb-frontends/sp2.c
-@@ -385,6 +385,5 @@ static int sp2_probe(struct i2c_client *client,
- 	if (!s) {
- 		ret = -ENOMEM;
--		dev_err(&client->dev, "kzalloc() failed\n");
- 		goto err;
- 	}
- 
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/9944509/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
