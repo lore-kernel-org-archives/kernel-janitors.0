@@ -1,88 +1,77 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 28 Sep 2017 16:03:57 +0000
-Subject: Re: [PATCH 1/2] clk/ux500: Delete an error message for a failed memory allocation in three functions
-Message-Id: <CAPDyKFo3LUS4fy0U88nqoMgTKszhBwrjMAJvS_3hn5whCg=Yrg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 12:40:28 +0000
+Subject: [PATCH] [media] Siano: Use common error handling code in smsusb_init_device()
+Message-Id: <be0003e5-d8e0-bff6-2205-7e88270ba2b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
- <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
-In-Reply-To: <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 27 September 2017 at 20:46, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:23:58 +0200
->
-> Omit extra messages for a memory allocation failure in these functions.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 14:30:55 +0200
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Add a jump target so that a bit of exception handling can be better
+reused at the end of this function.
 
-> ---
->  drivers/clk/ux500/clk-prcc.c    | 4 +---
->  drivers/clk/ux500/clk-prcmu.c   | 4 +---
->  drivers/clk/ux500/clk-sysctrl.c | 4 +---
->  3 files changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-> index f50592775c9d..5ca07e6d1f64 100644
-> --- a/drivers/clk/ux500/clk-prcc.c
-> +++ b/drivers/clk/ux500/clk-prcc.c
-> @@ -108,10 +108,8 @@ static struct clk *clk_reg_prcc(const char *name,
->         }
->
->         clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
-> -       if (!clk) {
-> -               pr_err("clk_prcc: %s could not allocate clk\n", __func__);
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         clk->base = ioremap(phy_base, SZ_4K);
->         if (!clk->base)
-> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-> index 6e3e16b2e5ca..c137934f23ab 100644
-> --- a/drivers/clk/ux500/clk-prcmu.c
-> +++ b/drivers/clk/ux500/clk-prcmu.c
-> @@ -259,10 +259,8 @@ static struct clk *clk_reg_prcmu(const char *name,
->         }
->
->         clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
-> -       if (!clk) {
-> -               pr_err("clk_prcmu: %s could not allocate clk\n", __func__);
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         clk->cg_sel = cg_sel;
->         clk->is_prepared = 1;
-> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-> index 8a4e93ce1e42..e0a834c08a04 100644
-> --- a/drivers/clk/ux500/clk-sysctrl.c
-> +++ b/drivers/clk/ux500/clk-sysctrl.c
-> @@ -140,10 +140,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
->         }
->
->         clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
-> -       if (!clk) {
-> -               dev_err(dev, "clk_sysctrl: could not allocate clk\n");
-> +       if (!clk)
->                 return ERR_PTR(-ENOMEM);
-> -       }
->
->         /* set main clock registers */
->         clk->reg_sel[0] = reg_sel[0];
-> --
-> 2.14.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This refactoring might fix also an error situation where the
+function "kfree" was not called after a software failure
+was noticed in two cases.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/siano/smsusb.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
+index 8c1f926567ec..b8e7b05cf6d0 100644
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -458,12 +458,10 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 	rc = smscore_register_device(&params, &dev->coredev, mdev);
+ 	if (rc < 0) {
+ 		pr_err("smscore_register_device(...) failed, rc %d\n", rc);
+-		smsusb_term_device(intf);
+ #ifdef CONFIG_MEDIA_CONTROLLER_DVB
+ 		media_device_unregister(mdev);
+ #endif
+-		kfree(mdev);
+-		return rc;
++		goto terminate_device;
+ 	}
+ 
+ 	smscore_set_board_id(dev->coredev, board_id);
+@@ -480,8 +478,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 	rc = smsusb_start_streaming(dev);
+ 	if (rc < 0) {
+ 		pr_err("smsusb_start_streaming(...) failed\n");
+-		smsusb_term_device(intf);
+-		return rc;
++		goto terminate_device;
+ 	}
+ 
+ 	dev->state = SMSUSB_ACTIVE;
+@@ -489,13 +486,17 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 	rc = smscore_start_device(dev->coredev);
+ 	if (rc < 0) {
+ 		pr_err("smscore_start_device(...) failed\n");
+-		smsusb_term_device(intf);
+-		return rc;
++		goto terminate_device;
+ 	}
+ 
+ 	pr_debug("device 0x%p created\n", dev);
+ 
+ 	return rc;
++
++terminate_device:
++	smsusb_term_device(intf);
++	kfree(mdev);
++	return rc;
+ }
+ 
+ static int smsusb_probe(struct usb_interface *intf,
+-- 
+2.14.1
+
