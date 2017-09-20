@@ -1,41 +1,66 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Sep 2017 20:34:06 +0000
-Subject: [PATCH 4/7] [media] Hexium Gemini: Improve a size determination in hexium_attach()
-Message-Id: <e9295510-08e7-341b-8117-26d1e5a664af@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 17:02:53 +0000
+Subject: [PATCH 5/5] [media] s2255drv: Delete an unnecessary return statement in five functions
+Message-Id: <9c75bbfd-ee58-3f97-4fa7-47aa306d1396@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
-In-Reply-To: <170abf7f-3b62-a37c-966a-8b574acae230@users.sourceforge.net>
+References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
+In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Sep 2017 19:51:46 +0200
+Date: Wed, 20 Sep 2017 17:50:36 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/saa7146/hexium_gemini.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/s2255/s2255drv.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
-index 694b70fa3baf..a0fcf8150291 100644
---- a/drivers/media/pci/saa7146/hexium_gemini.c
-+++ b/drivers/media/pci/saa7146/hexium_gemini.c
-@@ -260,5 +260,5 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 5a5d5ae833ff..2f0e0fafc4e2 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -471,6 +471,5 @@ static void planar422p_to_yuv_packed(const unsigned char *in,
+ 		out[i + 3] = (fmt = V4L2_PIX_FMT_YUYV) ? *pCb++ : *pY++;
+ 	}
+-	return;
+ }
  
- 	DEB_EE("\n");
+ static void s2255_reset_dsppower(struct s2255_dev *dev)
+@@ -482,5 +481,4 @@ static void s2255_reset_dsppower(struct s2255_dev *dev)
+ 	s2255_vendor_req(dev, 0x10, 0x0000, 0x0000, NULL, 0, 1);
+-	return;
+ }
  
--	hexium = kzalloc(sizeof(struct hexium), GFP_KERNEL);
-+	hexium = kzalloc(sizeof(*hexium), GFP_KERNEL);
- 	if (!hexium)
+ /* kickstarts the firmware loading. from probe
+@@ -1586,6 +1584,5 @@ static void s2255_video_device_release(struct video_device *vdev)
+ 	if (atomic_dec_and_test(&dev->num_channels))
+ 		s2255_destroy(dev);
+-	return;
+ }
+ 
+ static const struct video_device template = {
+@@ -1890,5 +1887,4 @@ static void s2255_read_video_callback(struct s2255_dev *dev,
+ 	dprintk(dev, 50, "callback read video done\n");
+-	return;
+ }
+ 
+ static long s2255_vendor_req(struct s2255_dev *dev, unsigned char Request,
+@@ -2205,5 +2201,4 @@ static void s2255_stop_readpipe(struct s2255_dev *dev)
+ 	dprintk(dev, 4, "%s", __func__);
+-	return;
+ }
+ 
+ static void s2255_fwload_start(struct s2255_dev *dev, int reset)
 -- 
 2.14.1
 
