@@ -1,59 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 18:32:30 +0000
-Subject: [PATCH 2/2] [media] it913x: Improve three size determinations
-Message-Id: <d3a7f3ed-1a5e-87f5-44fd-a6f242b219eb@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 06:37:47 +0000
+Subject: [PATCH 2/3] [media] pvrusb2-ioread: Delete an unnecessary check before kfree() in two functions
+Message-Id: <a5db4b79-6b02-b49b-a618-fcb0f0ea762c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
-In-Reply-To: <0ad553a6-9aca-d20b-48df-4084d80e2223@users.sourceforge.net>
+References: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
+In-Reply-To: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 20:06:01 +0200
+Date: Tue, 19 Sep 2017 22:12:49 +0200
 
-Replace the specification of data structures by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: kfree(NULL) is safe and this check is probably not required
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/tuners/it913x.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-ioread.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/tuners/it913x.c b/drivers/media/tuners/it913x.c
-index 6af9507823fa..149f36d5e503 100644
---- a/drivers/media/tuners/it913x.c
-+++ b/drivers/media/tuners/it913x.c
-@@ -393,5 +393,5 @@ static int it913x_probe(struct platform_device *pdev)
- 	const struct platform_device_id *id = platform_get_device_id(pdev);
- 	char *chip_ver_str;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
+index 0218614ce988..4349f9b5f838 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
+@@ -98,10 +98,8 @@ void pvr2_ioread_destroy(struct pvr2_ioread *cp)
+ 	if (!cp) return;
+ 	pvr2_ioread_done(cp);
+ 	pvr2_trace(PVR2_TRACE_STRUCT,"pvr2_ioread_destroy id=%p",cp);
+-	if (cp->sync_key_ptr) {
+-		kfree(cp->sync_key_ptr);
+-		cp->sync_key_ptr = NULL;
+-	}
++	kfree(cp->sync_key_ptr);
++	cp->sync_key_ptr = NULL;
+ 	kfree(cp);
+ }
  
--	dev = kzalloc(sizeof(struct it913x_dev), GFP_KERNEL);
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
-@@ -404,8 +404,7 @@ static int it913x_probe(struct platform_device *pdev)
- 	dev->role = pdata->role;
+@@ -117,10 +115,8 @@ void pvr2_ioread_set_sync_key(struct pvr2_ioread *cp,
+ 	     (!memcmp(sync_key_ptr,cp->sync_key_ptr,sync_key_len)))) return;
  
- 	fe->tuner_priv = dev;
--	memcpy(&fe->ops.tuner_ops, &it913x_tuner_ops,
--			sizeof(struct dvb_tuner_ops));
-+	memcpy(&fe->ops.tuner_ops, &it913x_tuner_ops, sizeof(it913x_tuner_ops));
- 	platform_set_drvdata(pdev, dev);
- 
- 	if (dev->chip_ver = 1)
-@@ -427,8 +426,7 @@ static int it913x_remove(struct platform_device *pdev)
- 	struct dvb_frontend *fe = dev->fe;
- 
- 	dev_dbg(&pdev->dev, "\n");
--
--	memset(&fe->ops.tuner_ops, 0, sizeof(struct dvb_tuner_ops));
-+	memset(&fe->ops.tuner_ops, 0, sizeof(it913x_tuner_ops));
- 	fe->tuner_priv = NULL;
- 	kfree(dev);
- 
+ 	if (sync_key_len != cp->sync_key_len) {
+-		if (cp->sync_key_ptr) {
+-			kfree(cp->sync_key_ptr);
+-			cp->sync_key_ptr = NULL;
+-		}
++		kfree(cp->sync_key_ptr);
++		cp->sync_key_ptr = NULL;
+ 		cp->sync_key_len = 0;
+ 		if (sync_key_len) {
+ 			cp->sync_key_ptr = kmalloc(sync_key_len,GFP_KERNEL);
 -- 
 2.14.1
 
