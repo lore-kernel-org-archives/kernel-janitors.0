@@ -1,44 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Sep 2017 19:45:20 +0000
-Subject: [PATCH 2/3] [media] camss-csid: Reduce the scope for a variable in csid_set_power()
-Message-Id: <8c356ba6-62a3-033d-f3d6-75e1bab1814f@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 20 Sep 2017 12:41:24 +0000
+Subject: Re: [1/2] b43: fix unitialized reads of ret by initializing the array to zero
+Message-Id: <20170920124124.7B32460725@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
-In-Reply-To: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
+References: <20170905181550.23839-1-colin.king@canonical.com>
+In-Reply-To: <20170905181550.23839-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.tomov@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Sep 2017 21:00:30 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Move the definition for the local variable "dev" into an if branch
-so that the corresponding setting will only be performed if it was
-selected by the parameter "on" of this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 char array ret is not being initialized and elements outside
+> the range start to end contain just garbage values from the stack.
+> This results in a later scan of the array to read potentially
+> uninitialized values.  Fix this by initializing the array to zero.
+> This seems to have been an issue since the very first commit.
+> 
+> Detected by CoverityScan CID#139652 ("Uninitialized scalar variable")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Michael Buesch <m@bues.ch>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/qcom/camss-8x16/camss-csid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+2 patches applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/media/platform/qcom/camss-8x16/camss-csid.c b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-index 92d4dc6b4a66..ffda0fbfe4d8 100644
---- a/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-@@ -317,10 +317,10 @@ static int csid_reset(struct csid_device *csid)
- static int csid_set_power(struct v4l2_subdev *sd, int on)
- {
- 	struct csid_device *csid = v4l2_get_subdevdata(sd);
--	struct device *dev = to_device_index(csid, csid->id);
- 	int ret;
- 
- 	if (on) {
-+		struct device *dev = to_device_index(csid, csid->id);
- 		u32 hw_version;
- 
- 		ret = regulator_enable(csid->vdda);
+e31fbe1034d9 b43: fix unitialized reads of ret by initializing the array to zero
+e3ae1c772046 b43legacy: fix unitialized reads of ret by initializing the array to zero
+
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/9939435/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
