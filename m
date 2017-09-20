@@ -1,70 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Sep 2017 21:08:51 +0000
-Subject: [PATCH] [media] tuners: mxl5005s: make arrays static const, reduces object code size
-Message-Id: <20170908210851.12124-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 16:57:52 +0000
+Subject: [PATCH 1/5] [media] s2255drv: Delete three error messages for a failed memory allocation in s2255_pr
+Message-Id: <40736ede-e614-e498-8768-b8e5a1553f34@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
+In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, "Gustavo A . R . Silva" <garsilva@embeddedor.com>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 16:30:13 +0200
 
-Don't populate the arrays RegAddr on the stack, instead make them static
-const.  Makes the object code smaller by over 980 bytes:
+Omit extra messages for a memory allocation failure in this function.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  64923	    304	      0	  65227	   fecb	drivers/media/tuners/mxl5005s.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  63779	    464	      0	  64243	   faf3	drivers/media/tuners/mxl5005s.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/tuners/mxl5005s.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/media/usb/s2255/s2255drv.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
-index dd59c2c0e4a5..20ab7b0171f9 100644
---- a/drivers/media/tuners/mxl5005s.c
-+++ b/drivers/media/tuners/mxl5005s.c
-@@ -3591,10 +3591,11 @@ static u16 MXL_GetInitRegister(struct dvb_frontend *fe, u8 *RegNum,
- 	u16 status = 0;
- 	int i ;
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index b2f239c4ba42..29285e8cd742 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -2242,13 +2242,9 @@ static int s2255_probe(struct usb_interface *interface,
+-	if (dev = NULL) {
+-		s2255_dev_err(&interface->dev, "out of memory\n");
++	if (!dev)
+ 		return -ENOMEM;
+-	}
  
--	u8 RegAddr[] = {
-+	static const u8 RegAddr[] = {
- 		11, 12, 13, 22, 32, 43, 44, 53, 56, 59, 73,
- 		76, 77, 91, 134, 135, 137, 147,
--		156, 166, 167, 168, 25 };
-+		156, 166, 167, 168, 25
-+	};
+ 	dev->cmdbuf = kzalloc(S2255_CMDBUF_SIZE, GFP_KERNEL);
+-	if (dev->cmdbuf = NULL) {
+-		s2255_dev_err(&interface->dev, "out of memory\n");
++	if (!dev->cmdbuf)
+ 		goto errorFWDATA1;
+-	}
  
- 	*count = ARRAY_SIZE(RegAddr);
- 
-@@ -3616,11 +3617,15 @@ static u16 MXL_GetCHRegister(struct dvb_frontend *fe, u8 *RegNum, u8 *RegVal,
- 
- /* add 77, 166, 167, 168 register for 2.6.12 */
- #ifdef _MXL_PRODUCTION
--	u8 RegAddr[] = {14, 15, 16, 17, 22, 43, 65, 68, 69, 70, 73, 92, 93, 106,
--	   107, 108, 109, 110, 111, 112, 136, 138, 149, 77, 166, 167, 168 } ;
-+	static const u8 RegAddr[] = {
-+		14, 15, 16, 17, 22, 43, 65, 68, 69, 70, 73, 92, 93, 106,
-+		107, 108, 109, 110, 111, 112, 136, 138, 149, 77, 166, 167, 168
-+	};
- #else
--	u8 RegAddr[] = {14, 15, 16, 17, 22, 43, 68, 69, 70, 73, 92, 93, 106,
--	   107, 108, 109, 110, 111, 112, 136, 138, 149, 77, 166, 167, 168 } ;
-+	static const u8 RegAddr[] = {
-+		14, 15, 16, 17, 22, 43, 68, 69, 70, 73, 92, 93, 106,
-+		107, 108, 109, 110, 111, 112, 136, 138, 149, 77, 166, 167, 168
-+	};
- 	/*
- 	u8 RegAddr[171];
- 	for (i = 0; i <= 170; i++)
+ 	atomic_set(&dev->num_channels, 0);
+ 	dev->pid = id->idProduct;
+@@ -2303,7 +2299,6 @@ static int s2255_probe(struct usb_interface *interface,
+-	if (!dev->fw_data->pfw_data) {
+-		dev_err(&interface->dev, "out of memory!\n");
++	if (!dev->fw_data->pfw_data)
+ 		goto errorFWDATA2;
+-	}
++
+ 	/* load the first chunk */
+ 	if (request_firmware(&dev->fw_data->fw,
+ 			     FIRMWARE_FILE_NAME, &dev->udev->dev)) {
 -- 
 2.14.1
 
