@@ -1,35 +1,43 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 16 Sep 2017 19:33:51 +0000
-Subject: Re: [PATCH] i2c: i2c-stm32f7: make structure stm32f7_setup static
-Message-Id: <1505590431.16316.9.camel@perches.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 22:19:59 +0000
+Subject: [PATCH] media: dvb_ca_en50221: sanity check slot number from userspace
+Message-Id: <20170920221959.5979-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170916113308.25534-1-colin.king@canonical.com>
-In-Reply-To: <20170916113308.25534-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Jasmin Jessich <jasmin@anw.at>, Ralph Metzler <rjkm@metzlerbros.de>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 2017-09-16 at 12:33 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure stm32f7_setup is local to the source and does not need
-> to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'stm32f7_setup' was not declared. Should it be static?
-[]
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-[]
-> @@ -265,7 +265,7 @@ static struct stm32f7_i2c_spec i2c_specs[] = {
->  	},
->  };
->  
-> -struct stm32f7_i2c_setup stm32f7_setup = {
-> +static struct stm32f7_i2c_setup stm32f7_setup = {
+From: Colin Ian King <colin.king@canonical.com>
 
-better to use static const
+Currently a user can pass in an unsanitized slot number which
+will lead to and out of range index into ca->slot_info. Fix this
+by checking that the slot number is no more than the allowed
+maximum number of slots. Seems that this bug has been in the driver
+forever.
 
->  	.rise_time = STM32F7_I2C_RISE_TIME_DEFAULT,
->  	.fall_time = STM32F7_I2C_FALL_TIME_DEFAULT,
->  	.dnf = STM32F7_I2C_DNF_DEFAULT,
+Detected by CoverityScan, CID#139381 ("Untrusted pointer read")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-core/dvb_ca_en50221.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c b/drivers/media/dvb-core/dvb_ca_en50221.c
+index 95b3723282f4..e3a92b529dba 100644
+--- a/drivers/media/dvb-core/dvb_ca_en50221.c
++++ b/drivers/media/dvb-core/dvb_ca_en50221.c
+@@ -1474,6 +1474,9 @@ static ssize_t dvb_ca_en50221_io_write(struct file *file,
+ 		return -EFAULT;
+ 	buf += 2;
+ 	count -= 2;
++
++	if (slot >= ca->slot_count)
++		return -EINVAL;
+ 	sl = &ca->slot_info[slot];
+ 
+ 	/* check if the slot is actually running */
+-- 
+2.14.1
+
