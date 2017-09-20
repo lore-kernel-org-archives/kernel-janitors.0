@@ -1,44 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Sep 2017 11:03:32 +0000
-Subject: [PATCH] [media] cx25840: make array stds static const, reduces object code size
-Message-Id: <20170905110332.15324-1-colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 13:25:41 +0000
+Subject: [PATCH] scsi: libfc: fix potential null lport dereference
+Message-Id: <20170920132541.13691-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Pan Bian <bianpan2016@163.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array syds on the stack, instead make it static const.
-Makes the object code smaller by over 280 bytes:
+Don't pass a null lport to FC_LPORT_DBG as this causes a null pointer
+dereference when accessing lport->host and lport->port_id. Instead
+use the FC_CHECK_LOGGING macro to print the kernel message via pr_info.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  81451	  12784	    704	  94939	  172db	cx25840-core.o
-
-   text	   data	    bss	    dec	    hex	filename
-  81070	  12880	    704	  94654	  171be	cx25840-core.o
+Detected by CoverityScan, CID#113198 ("Dereference after null check")
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/cx25840/cx25840-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/libfc/fc_exch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/cx25840/cx25840-core.c b/drivers/media/i2c/cx25840/cx25840-core.c
-index 39f51daa7558..f38bf819d805 100644
---- a/drivers/media/i2c/cx25840/cx25840-core.c
-+++ b/drivers/media/i2c/cx25840/cx25840-core.c
-@@ -1745,7 +1745,7 @@ static int cx25840_g_std(struct v4l2_subdev *sd, v4l2_std_id *std)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+index 42bcf7f3a0f9..46d842d238f1 100644
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -2603,8 +2603,8 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
  
--	v4l2_std_id stds[] = {
-+	static const v4l2_std_id stds[] = {
- 		/* 0000 */ V4L2_STD_UNKNOWN,
- 
- 		/* 0001 */ V4L2_STD_NTSC_M,
+ 	/* lport lock ? */
+ 	if (!lport || lport->state = LPORT_ST_DISABLED) {
+-		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
+-			     "has not been initialized correctly\n");
++		FC_CHECK_LOGGING(FC_LPORT_LOGGING,
++				 pr_info("Receiving frames for an lport that has not been initialized correctly\n"));
+ 		fc_frame_free(fp);
+ 		return;
+ 	}
 -- 
 2.14.1
 
