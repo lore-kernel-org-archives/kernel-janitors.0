@@ -1,37 +1,131 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Thu, 28 Sep 2017 06:23:49 +0000
-Subject: Re: [PATCH] drm/omap: Fix error handling path in 'omap_dmm_probe()'
-Message-Id: <f6eff5aa-a578-b63d-5552-42557f8f73cf@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 16:58:56 +0000
+Subject: [PATCH 2/5] [media] s2255drv: Adjust 13 checks for null pointers
+Message-Id: <66f0b95e-e717-7a50-39d2-05fcbf7b77bd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
+References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
+In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8-sig"
-Content-Transfer-Encoding: base64
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-77u/ClRleGFzIEluc3RydW1lbnRzIEZpbmxhbmQgT3ksIFBvcmtrYWxhbmthdHUgMjIsIDAwMTgw
-IEhlbHNpbmtpLiBZLXR1bm51cy9CdXNpbmVzcyBJRDogMDYxNTUyMS00LiBLb3RpcGFpa2thL0Rv
-bWljaWxlOiBIZWxzaW5raQoKT24gMjQvMDkvMTcgMDk6MDEsIENocmlzdG9waGUgSkFJTExFVCB3
-cm90ZToKPiBJZiB3ZSBkb24ndCBmaW5kIGEgbWF0Y2hpbmcgZGV2aWNlIG5vZGUsIHdlIG11c3Qg
-ZnJlZSB0aGUgbWVtb3J5IGFsbG9jYXRlZAo+IGluICdvbWFwX2RtbScgYSBmZXcgbGluZXMgYWJv
-dmUuCj4gCj4gRml4ZXM6IDdjYjBkNmMxN2I5NiAoImRybS9vbWFwOiBmaXggVElMRVIgb24gT01B
-UDUiKQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3BoZS5qYWls
-bGV0QHdhbmFkb28uZnI+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZG1t
-X3RpbGVyLmMgfCAzICsrLQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRl
-bGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBf
-ZG1tX3RpbGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2RtbV90aWxlci5jCj4g
-aW5kZXggMWRkM2RhZmM1OWFmLi5jNjBhODVlODJjNmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL29tYXBkcm0vb21hcF9kbW1fdGlsZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9v
-bWFwZHJtL29tYXBfZG1tX3RpbGVyLmMKPiBAQCAtNjM4LDcgKzYzOCw4IEBAIHN0YXRpYyBpbnQg
-b21hcF9kbW1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZGV2KQo+ICAJCW1hdGNoID0g
-b2ZfbWF0Y2hfbm9kZShkbW1fb2ZfbWF0Y2gsIGRldi0+ZGV2Lm9mX25vZGUpOwo+ICAJCWlmICgh
-bWF0Y2gpIHsKPiAgCQkJZGV2X2VycigmZGV2LT5kZXYsICJmYWlsZWQgdG8gZmluZCBtYXRjaGlu
-ZyBkZXZpY2Ugbm9kZVxuIik7Cj4gLQkJCXJldHVybiAtRU5PREVWOwo+ICsJCQlyZXQgPSAtRU5P
-REVWOwo+ICsJCQlnb3RvIGZhaWw7Cj4gIAkJfQo+ICAKPiAgCQlvbWFwX2RtbS0+cGxhdF9kYXRh
-ID0gbWF0Y2gtPmRhdGE7Cj4gCgpUaGFua3MhIEkgaGF2ZSBwaWNrZWQgdGhpcyB1cC4KCiBUb21p
-CgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
-Y3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
-b21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
-ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 16:46:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The script “checkpatch.pl” pointed information out like the following.
+
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/s2255/s2255drv.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 29285e8cd742..aee83bf6fa94 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -516,6 +516,6 @@ static void s2255_fwchunk_complete(struct urb *urb)
+ 		wake_up(&data->wait_fw);
+ 		return;
+ 	}
+-	if (data->fw_urb = NULL) {
++	if (!data->fw_urb) {
+ 		s2255_dev_err(&udev->dev, "disconnected\n");
+ 		atomic_set(&data->fw_state, S2255_FW_FAILED);
+@@ -680,5 +680,5 @@ static int buffer_prepare(struct vb2_buffer *vb)
+ 	dprintk(vc->dev, 4, "%s\n", __func__);
+-	if (vc->fmt = NULL)
++	if (!vc->fmt)
+ 		return -EINVAL;
+ 
+ 	if ((w < norm_minw(vc)) ||
+@@ -785,6 +785,5 @@ static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
+ 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
+-
+-	if (fmt = NULL)
++	if (!fmt)
+ 		return -EINVAL;
+ 
+ 	field = f->fmt.pix.field;
+@@ -853,6 +852,5 @@ static int vidioc_s_fmt_vid_cap(struct file *file, void *priv,
+ 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
+-
+-	if (fmt = NULL)
++	if (!fmt)
+ 		return -EINVAL;
+ 
+ 	if (vb2_is_busy(q)) {
+@@ -936,6 +934,6 @@ static u32 get_transfer_size(struct s2255_mode *mode)
+ 	unsigned int mask_mult;
+ 
+-	if (mode = NULL)
++	if (!mode)
+ 		return 0;
+ 
+ 	if (mode->format = FORMAT_NTSC) {
+@@ -1390,4 +1388,4 @@ static int vidioc_enum_framesizes(struct file *file, void *priv,
+ 	fmt = format_by_fourcc(fe->pixel_format);
+-	if (fmt = NULL)
++	if (!fmt)
+ 		return -EINVAL;
+ 	fe->type = V4L2_FRMSIZE_TYPE_DISCRETE;
+@@ -1412,5 +1410,5 @@ static int vidioc_enum_frameintervals(struct file *file, void *priv,
+ 	fmt = format_by_fourcc(fe->pixel_format);
+-	if (fmt = NULL)
++	if (!fmt)
+ 		return -EINVAL;
+ 
+ 	sizes = is_ntsc ? ntsc_sizes : pal_sizes;
+@@ -1834,6 +1832,5 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
+ 	psrc = (u8 *)pipe_info->transfer_buffer + offset;
+ 
+-
+-	if (frm->lpvbits = NULL) {
++	if (!frm->lpvbits) {
+ 		dprintk(dev, 1, "s2255 frame buffer = NULL.%p %p %d %d",
+ 			frm, dev, dev->cc, idx);
+@@ -1965,6 +1962,6 @@ static int s2255_create_sys_buffers(struct s2255_vc *vc)
+ 		vc->buffer.frame[i].lpvbits = vmalloc(reqsize);
+ 		vc->buffer.frame[i].size = reqsize;
+-		if (vc->buffer.frame[i].lpvbits = NULL) {
++		if (!vc->buffer.frame[i].lpvbits) {
+ 			pr_info("out of memory.  using less frames\n");
+ 			vc->buffer.dwFrames = i;
+ 			break;
+@@ -2007,6 +2004,6 @@ static int s2255_board_init(struct s2255_dev *dev)
+ 	pipe->transfer_buffer = kzalloc(pipe->max_transfer_size,
+ 					GFP_KERNEL);
+-	if (pipe->transfer_buffer = NULL) {
++	if (!pipe->transfer_buffer) {
+ 		dprintk(dev, 1, "out of memory!\n");
+ 		return -ENOMEM;
+ 	}
+@@ -2068,8 +2065,8 @@ static void read_pipe_completion(struct urb *purb)
+ 	pipe_info = purb->context;
+-	if (pipe_info = NULL) {
++	if (!pipe_info) {
+ 		dev_err(&purb->dev->dev, "no context!\n");
+ 		return;
+ 	}
+ 	dev = pipe_info->dev;
+-	if (dev = NULL) {
++	if (!dev) {
+ 		dev_err(&purb->dev->dev, "no context!\n");
+@@ -2257,5 +2254,5 @@ static int s2255_probe(struct usb_interface *interface,
+ 	dev->udev = usb_get_dev(interface_to_usbdev(interface));
+-	if (dev->udev = NULL) {
++	if (!dev->udev) {
+ 		dev_err(&interface->dev, "null usb device\n");
+ 		retval = -ENODEV;
+ 		goto errorUDEV;
+-- 
+2.14.1
+
