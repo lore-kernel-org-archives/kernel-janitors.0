@@ -1,23 +1,44 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 25 Sep 2017 04:20:17 +0000
-Subject: Re: [PATCH] brcm80211: make const array ucode_ofdm_rates static, reduces object code size
-Message-Id: <87poaf76ke.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 21:38:28 +0000
+Subject: [PATCH] tty: vt: keyboard: add range check to kbs->kb_func index
+Message-Id: <20170920213828.5563-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922140316.12768-1-colin.king@canonical.com>
-        <96caf646-a43c-9b78-a4a9-2becf7e74125@broadcom.com>
-In-Reply-To: <96caf646-a43c-9b78-a4a9-2becf7e74125@broadcom.com> (Arend van
-        Spriel's message of "Fri, 22 Sep 2017 18:51:43 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Colin King <colin.king@canonical.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Arend van Spriel <arend.vanspriel@broadcom.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Please use 'brcmsmac:' as prefix instead of 'brcm80211:'.
+A value outside the range 0..MAX_NR_FUNC-1 in kbs->kb_func will
+cause an array bounds overflow on func_table. Fix this by adding
+a range check.
 
-I can fix that.
+Detected by CoverityScan, CID#401961 ("Untrusted array index read")
 
+Fixes: 079c9534a96d ("vt:tackle kbd_table")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/vt/keyboard.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+index f4166263bb3a..1ecf545a96a8 100644
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -1982,6 +1982,11 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
+ 	kbs->kb_string[sizeof(kbs->kb_string)-1] = '\0';
+ 	i = kbs->kb_func;
+ 
++	if (i < 0 || i >= MAX_NR_FUNC) {
++		ret = -EINVAL;
++		goto reterr;
++	}
++
+ 	switch (cmd) {
+ 	case KDGKBSENT:
+ 		sz = sizeof(kbs->kb_string) - 1; /* sz should have been
 -- 
-Kalle Valo
+2.14.1
+
