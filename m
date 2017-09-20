@@ -1,60 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 06:37:47 +0000
-Subject: [PATCH 2/3] [media] pvrusb2-ioread: Delete an unnecessary check before kfree() in two functions
-Message-Id: <a5db4b79-6b02-b49b-a618-fcb0f0ea762c@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Sep 2017 21:53:46 +0000
+Subject: [PATCH] NFS: Cleanup error handling in nfs_idmap_request_key()
+Message-Id: <20170920215346.bgucxg77ayrcx6zy@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
-In-Reply-To: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Sep 2017 22:12:49 +0200
+nfs_idmap_get_desc() can't actually return zero.  But if it did then
+we would return ERR_PTR(0) which is NULL and the caller,
+nfs_idmap_get_key(), doesn't expect that so it leads to a NULL pointer
+dereference.
 
-The script "checkpatch.pl" pointed information out like the following.
+I've cleaned this up by changing the "<=" to "<" so it's more clear that
+we don't return ERR_PTR(0).
 
-WARNING: kfree(NULL) is safe and this check is probably not required
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/pvrusb2/pvrusb2-ioread.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
-index 0218614ce988..4349f9b5f838 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
-@@ -98,10 +98,8 @@ void pvr2_ioread_destroy(struct pvr2_ioread *cp)
- 	if (!cp) return;
- 	pvr2_ioread_done(cp);
- 	pvr2_trace(PVR2_TRACE_STRUCT,"pvr2_ioread_destroy id=%p",cp);
--	if (cp->sync_key_ptr) {
--		kfree(cp->sync_key_ptr);
--		cp->sync_key_ptr = NULL;
--	}
-+	kfree(cp->sync_key_ptr);
-+	cp->sync_key_ptr = NULL;
- 	kfree(cp);
- }
+diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
+index dd5d27da8c0c..30426c1a1bbd 100644
+--- a/fs/nfs/nfs4idmap.c
++++ b/fs/nfs/nfs4idmap.c
+@@ -274,7 +274,7 @@ static struct key *nfs_idmap_request_key(const char *name, size_t namelen,
+ 	ssize_t ret;
  
-@@ -117,10 +115,8 @@ void pvr2_ioread_set_sync_key(struct pvr2_ioread *cp,
- 	     (!memcmp(sync_key_ptr,cp->sync_key_ptr,sync_key_len)))) return;
+ 	ret = nfs_idmap_get_desc(name, namelen, type, strlen(type), &desc);
+-	if (ret <= 0)
++	if (ret < 0)
+ 		return ERR_PTR(ret);
  
- 	if (sync_key_len != cp->sync_key_len) {
--		if (cp->sync_key_ptr) {
--			kfree(cp->sync_key_ptr);
--			cp->sync_key_ptr = NULL;
--		}
-+		kfree(cp->sync_key_ptr);
-+		cp->sync_key_ptr = NULL;
- 		cp->sync_key_len = 0;
- 		if (sync_key_len) {
- 			cp->sync_key_ptr = kmalloc(sync_key_len,GFP_KERNEL);
--- 
-2.14.1
-
+ 	rkey = request_key(&key_type_id_resolver, desc, "");
