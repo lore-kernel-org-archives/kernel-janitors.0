@@ -1,149 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 19:25:20 +0000
-Subject: [PATCH 2/3] [media] uvcvideo: Adjust 14 checks for null pointers
-Message-Id: <9f123108-2ef7-83ec-9981-280a24502771@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 17:34:18 +0000
+Subject: [PATCH] staging: rtl8723bs: avoid null pointer dereference on pmlmepriv
+Message-Id: <20170920173418.17570-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
-In-Reply-To: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 21:00:21 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+There is a check to see if pmlmepriv is null before vfree'ing
+pmlmepriv->free_bss_buf hence implying pmlmepriv could potenially be
+null. However, a previous call to rtw_free_mlme_priv_ie_data
+can also dereference pmlmepriv, so move this call so that it is only
+called if pmlmepriv non-null.
 
-Comparison to NULL could be written …
+Detected by CoverityScan, CID#1077739 ("Dereference before null check")
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/uvc/uvc_v4l2.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 6ec2b255c44a..184edf8a0885 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -41,7 +41,7 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
- 	int ret;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index 37b683d4d1fa..0d94ced985c0 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -119,9 +119,8 @@ void rtw_free_mlme_priv_ie_data(struct mlme_priv *pmlmepriv)
  
- 	map = kzalloc(sizeof *map, GFP_KERNEL);
--	if (map = NULL)
-+	if (!map)
- 		return -ENOMEM;
- 
- 	map->id = xmap->id;
-@@ -211,7 +211,7 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
- 			break;
- 	}
- 
--	if (frame = NULL) {
-+	if (!frame) {
- 		uvc_trace(UVC_TRACE_FORMAT, "Unsupported size %ux%u.\n",
- 				fmt->fmt.pix.width, fmt->fmt.pix.height);
- 		return -EINVAL;
-@@ -260,9 +260,9 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
- 	fmt->fmt.pix.colorspace = format->colorspace;
- 	fmt->fmt.pix.priv = 0;
- 
--	if (uvc_format != NULL)
-+	if (uvc_format)
- 		*uvc_format = format;
--	if (uvc_frame != NULL)
-+	if (uvc_frame)
- 		*uvc_frame = frame;
- 
- done:
-@@ -282,8 +282,7 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
- 	mutex_lock(&stream->mutex);
- 	format = stream->cur_format;
- 	frame = stream->cur_frame;
+ void _rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
+ {
+-	rtw_free_mlme_priv_ie_data(pmlmepriv);
 -
--	if (format = NULL || frame = NULL) {
-+	if (!format || !frame) {
- 		ret = -EINVAL;
- 		goto done;
- 	}
-@@ -499,7 +498,7 @@ static int uvc_v4l2_open(struct file *file)
- 
- 	/* Create the device handle. */
- 	handle = kzalloc(sizeof *handle, GFP_KERNEL);
--	if (handle = NULL) {
-+	if (!handle) {
- 		usb_autopm_put_interface(stream->dev->intf);
- 		return -ENOMEM;
- 	}
-@@ -811,7 +810,7 @@ static int uvc_ioctl_enum_input(struct file *file, void *fh,
- 	u32 index = input->index;
- 	int pin = 0;
- 
--	if (selector = NULL ||
-+	if (!selector ||
- 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
- 		if (index != 0)
- 			return -EINVAL;
-@@ -830,7 +829,7 @@ static int uvc_ioctl_enum_input(struct file *file, void *fh,
+ 	if (pmlmepriv) {
++		rtw_free_mlme_priv_ie_data(pmlmepriv);
+ 		if (pmlmepriv->free_bss_buf) {
+ 			vfree(pmlmepriv->free_bss_buf);
  		}
- 	}
- 
--	if (iterm = NULL || iterm->id != pin)
-+	if (!iterm || iterm->id != pin)
- 		return -EINVAL;
- 
- 	memset(input, 0, sizeof(*input));
-@@ -849,7 +848,7 @@ static int uvc_ioctl_g_input(struct file *file, void *fh, unsigned int *input)
- 	int ret;
- 	u8 i;
- 
--	if (chain->selector = NULL ||
-+	if (!chain->selector ||
- 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
- 		*input = 0;
- 		return 0;
-@@ -876,7 +875,7 @@ static int uvc_ioctl_s_input(struct file *file, void *fh, unsigned int input)
- 	if (ret < 0)
- 		return ret;
- 
--	if (chain->selector = NULL ||
-+	if (!chain->selector ||
- 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
- 		if (input)
- 			return -EINVAL;
-@@ -1160,7 +1159,7 @@ static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
- 			break;
- 		}
- 	}
--	if (format = NULL)
-+	if (!format)
- 		return -EINVAL;
- 
- 	if (fsize->index >= format->nframes)
-@@ -1189,7 +1188,7 @@ static int uvc_ioctl_enum_frameintervals(struct file *file, void *fh,
- 			break;
- 		}
- 	}
--	if (format = NULL)
-+	if (!format)
- 		return -EINVAL;
- 
- 	for (i = 0; i < format->nframes; i++) {
-@@ -1199,7 +1198,7 @@ static int uvc_ioctl_enum_frameintervals(struct file *file, void *fh,
- 			break;
- 		}
- 	}
--	if (frame = NULL)
-+	if (!frame)
- 		return -EINVAL;
- 
- 	if (frame->bFrameIntervalType) {
 -- 
 2.14.1
 
