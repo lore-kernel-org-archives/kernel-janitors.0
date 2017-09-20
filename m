@@ -1,29 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Sep 2017 18:44:24 +0000
-Subject: [PATCH 0/3] [media] HD PVR USB: Adjustments for two function implementations
-Message-Id: <82d14066-5816-111c-9d21-f6a439e559c1@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Sep 2017 21:45:30 +0000
+Subject: [PATCH] rtc: rv3029: Clean up error handling in rv3029_eeprom_write()
+Message-Id: <20170920214530.jusyjbnvkopsumrr@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, Jonathan Sims <jonathan.625266@earthlink.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Sep 2017 20:21:23 +0200
+We don't need both "ret" and "err" when they do the same thing.  All the
+functions called here return zero on success or negative error codes.
+It's more clear to return a literal zero at the end instead of
+"return ret;"
 
-Three update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (3):
-  Delete three error messages for a failed memory allocation
-  Improve a size determination in hdpvr_alloc_buffers()
-  Return an error code only as a constant in hdpvr_alloc_buffers()
-
- drivers/media/usb/hdpvr/hdpvr-core.c  |  8 ++------
- drivers/media/usb/hdpvr/hdpvr-video.c | 11 ++++-------
- 2 files changed, 6 insertions(+), 13 deletions(-)
-
--- 
-2.14.1
-
+diff --git a/drivers/rtc/rtc-rv3029c2.c b/drivers/rtc/rtc-rv3029c2.c
+index aa09771de04f..f4f957ab5fe6 100644
+--- a/drivers/rtc/rtc-rv3029c2.c
++++ b/drivers/rtc/rtc-rv3029c2.c
+@@ -282,13 +282,13 @@ static int rv3029_eeprom_read(struct device *dev, u8 reg,
+ static int rv3029_eeprom_write(struct device *dev, u8 reg,
+ 			       u8 const buf[], size_t len)
+ {
+-	int ret, err;
++	int ret;
+ 	size_t i;
+ 	u8 tmp;
+ 
+-	err = rv3029_eeprom_enter(dev);
+-	if (err < 0)
+-		return err;
++	ret = rv3029_eeprom_enter(dev);
++	if (ret < 0)
++		return ret;
+ 
+ 	for (i = 0; i < len; i++, reg++) {
+ 		ret = rv3029_read_regs(dev, reg, &tmp, 1);
+@@ -304,11 +304,11 @@ static int rv3029_eeprom_write(struct device *dev, u8 reg,
+ 			break;
+ 	}
+ 
+-	err = rv3029_eeprom_exit(dev);
+-	if (err < 0)
+-		return err;
++	ret = rv3029_eeprom_exit(dev);
++	if (ret < 0)
++		return ret;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int rv3029_eeprom_update_bits(struct device *dev,
