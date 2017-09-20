@@ -1,26 +1,59 @@
-From: Madalin-cristian Bucur <madalin.bucur@nxp.com>
-Date: Thu, 07 Sep 2017 07:14:12 +0000
-Subject: RE: [PATCH] fsl/fman: make arrays port_ids static, reduces object code size
-Message-Id: <AM5PR0402MB269115B69D04CEF3EC125855EC940@AM5PR0402MB2691.eurprd04.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 17:01:34 +0000
+Subject: [PATCH 4/5] [media] s2255drv: Use common error handling code in read_pipe_completion()
+Message-Id: <8e0409dd-0228-c15d-260c-b8d4e18eb07b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170831132449.27600-1-colin.king@canonical.com>
-In-Reply-To: <20170831132449.27600-1-colin.king@canonical.com>
+References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
+In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86
-Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgQXVndXN0IDMxLCAy
-MDE3IDQ6MjUgUE0NCj4gU3ViamVjdDogW1BBVENIXSBmc2wvZm1hbjogbWFrZSBhcnJheXMgcG9y
-dF9pZHMgc3RhdGljLCByZWR1Y2VzIG9iamVjdA0KPiBjb2RlIHNpemUNCj4gDQo+IEZyb206IENv
-bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBEb24ndCBwb3B1
-bGF0ZSB0aGUgYXJyYXlzIHBvcnRfaWRzIG9uIHRoZSBzdGFjaywgaW5zdGVhZCBtYWtlIHRoZW0g
-c3RhdGljLg0KPiBNYWtlcyB0aGUgb2JqZWN0IGNvZGUgc21hbGxlciBieSBvdmVyIDcwMCBieXRl
-czoNCj4gDQo+IEJlZm9yZToNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAg
-aGV4CWZpbGVuYW1lDQo+ICAgMjg3ODUJICAgNTgzMgkgICAgMTkyCSAgMzQ4MDkJICAgODdmOQlm
-bWFuLm8NCj4gDQo+IEFmdGVyOg0KPiAgICB0ZXh0CSAgIGRhdGEJICAgIGJzcwkgICAgZGVjCSAg
-ICBoZXgJZmlsZW5hbWUNCj4gICAyNzkyMQkgICA1OTkyCSAgICAxOTIJICAzNDEwNQkgICA4NTM5
-CWZtYW4ubw0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
-Y2Fub25pY2FsLmNvbT4NCg0KVGhhbmtzLA0KTWFkYWxpbg0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 17:45:13 +0200
+
+Add a jump target so that a bit of exception handling can be better
+reused at the end of this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/s2255/s2255drv.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 29bc73ad7d8a..5a5d5ae833ff 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -2065,11 +2065,9 @@ static void read_pipe_completion(struct urb *purb)
+ 	pipe_info = purb->context;
+-	if (!pipe_info) {
+-		dev_err(&purb->dev->dev, "no context!\n");
+-		return;
+-	}
++	if (!pipe_info)
++		goto report_failure;
++
+ 	dev = pipe_info->dev;
+-	if (!dev) {
+-		dev_err(&purb->dev->dev, "no context!\n");
+-		return;
+-	}
++	if (!dev)
++		goto report_failure;
++
+ 	status = purb->status;
+@@ -2107,6 +2105,9 @@ static void read_pipe_completion(struct urb *purb)
+ 		dprintk(dev, 2, "%s :complete state 0\n", __func__);
+ 	}
+ 	return;
++
++report_failure:
++	dev_err(&purb->dev->dev, "no context!\n");
+ }
+ 
+ static int s2255_start_readpipe(struct s2255_dev *dev)
+-- 
+2.14.1
+
