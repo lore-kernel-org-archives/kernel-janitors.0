@@ -1,62 +1,57 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 03 Sep 2017 16:41:35 +0000
-Subject: Re: [PATCH] iio: imu: inv_mpu6050: make arrays hz and d static
-Message-Id: <20170903174135.2ad75bf8@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 19:12:39 +0000
+Subject: [PATCH 2/3] [media] dvb-ttusb-budget: Improve two size determinations in ttusb_probe()
+Message-Id: <404d5faa-432b-9649-4b9e-f0cdf1c18338@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170830111616.27559-1-colin.king@canonical.com>
-In-Reply-To: <20170830111616.27559-1-colin.king@canonical.com>
+References: <1ad3c3ce-3738-fee1-2ee5-37142fa1bc70@users.sourceforge.net>
+In-Reply-To: <1ad3c3ce-3738-fee1-2ee5-37142fa1bc70@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jean-Baptiste Maneyrol <JManeyrol@invensense.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 30 Aug 2017 12:16:16 +0100
-Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 20:46:11 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays on the stack, instead make them static.
-> Makes the object code smaller by 135 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   15135	   4240	    128	  19503	   4c2f	inv_mpu_core.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   14840	   4400	    128	  19368	   4ba8	inv_mpu_core.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied to the togreg branch of iio.git and pushed out as
-testing or the autobuilders to play with it.
+* The script "checkpatch.pl" pointed information out like the following.
 
-Thanks,
+  ERROR: do not use assignment in if condition
 
-Jonathan
-> ---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> index 44830bce13df..6692f5e08dc8 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> @@ -570,10 +570,12 @@ static int inv_mpu6050_write_raw(struct iio_dev *indio_dev,
->   */
->  static int inv_mpu6050_set_lpf(struct inv_mpu6050_state *st, int rate)
->  {
-> -	const int hz[] = {188, 98, 42, 20, 10, 5};
-> -	const int d[] = {INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
-> -			INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
-> -			INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ};
-> +	static const int hz[] = {188, 98, 42, 20, 10, 5};
-> +	static const int d[] = {
-> +		INV_MPU6050_FILTER_188HZ, INV_MPU6050_FILTER_98HZ,
-> +		INV_MPU6050_FILTER_42HZ, INV_MPU6050_FILTER_20HZ,
-> +		INV_MPU6050_FILTER_10HZ, INV_MPU6050_FILTER_5HZ
-> +	};
->  	int i, h, result;
->  	u8 data;
->  
+  Thus fix an affected source code place.
+
+* Replace the specification of data structures by variable references
+  as the parameter for the operator "sizeof" to make the corresponding size
+  determination a bit safer according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
+index 38394c9ecc67..fef3c8554e91 100644
+--- a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
++++ b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
+@@ -1657,7 +1657,8 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
+ 
+ 	if (intf->altsetting->desc.bInterfaceNumber != 1) return -ENODEV;
+ 
+-	if (!(ttusb = kzalloc(sizeof(struct ttusb), GFP_KERNEL)))
++	ttusb = kzalloc(sizeof(*ttusb), GFP_KERNEL);
++	if (!ttusb)
+ 		return -ENOMEM;
+ 
+ 	ttusb->dev = udev;
+@@ -1692,7 +1693,7 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
+ 	ttusb->adapter.priv = ttusb;
+ 
+ 	/* i2c */
+-	memset(&ttusb->i2c_adap, 0, sizeof(struct i2c_adapter));
++	memset(&ttusb->i2c_adap, 0, sizeof(ttusb->i2c_adap));
+ 	strcpy(ttusb->i2c_adap.name, "TTUSB DEC");
+ 
+ 	i2c_set_adapdata(&ttusb->i2c_adap, ttusb);
+-- 
+2.14.1
 
