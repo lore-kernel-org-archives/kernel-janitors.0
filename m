@@ -1,41 +1,30 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 14 Sep 2017 20:44:12 +0000
-Subject: [PATCH 1/2] ASoC: topology: Fix a potential NULL pointer dereference in 'soc_tplg_dapm_widget_denum_
-Message-Id: <20170914204412.25413-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 16:55:33 +0000
+Subject: [PATCH 0/5] [media] s2255drv: Fine-tuning for some function implementations
+Message-Id: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-if 'se = kzalloc()' fails in the 'for' loop, we will branch to 'err'.
-But in this case, 'kc[i].private_value' will still be NULL. A NULL pointer
-dereference will then occur is the error handling path.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 18:18:28 +0200
 
-In such a case, it is safe to just 'continue' in order to skip this entry
-and free the other ones.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Fixes: 1a7dd6e2f192 ("ASoC: topology: Allow a widget to have multiple enum controls")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/soc-topology.c | 3 +++
- 1 file changed, 3 insertions(+)
+Markus Elfring (5):
+  Delete three error messages for a failed memory allocation in s2255_probe()
+  Adjust 13 checks for null pointers
+  Improve two size determinations in s2255_probe()
+  Use common error handling code in read_pipe_completion()
+  Delete an unnecessary return statement in five functions
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index dd471d2c0266..2499b54a57e8 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1378,6 +1378,9 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 	for (; i >= 0; i--) {
- 		/* free values and texts */
- 		se = (struct soc_enum *)kc[i].private_value;
-+		if (!se)
-+			continue;
-+
- 		kfree(se->dobj.control.dvalues);
- 		for (j = 0; j < ec->items; j++)
- 			kfree(se->dobj.control.dtexts[j]);
+ drivers/media/usb/s2255/s2255drv.c | 64 ++++++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 38 deletions(-)
+
 -- 
-2.11.0
+2.14.1
 
