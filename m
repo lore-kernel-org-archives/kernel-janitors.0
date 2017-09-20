@@ -1,44 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 16:21:42 +0000
-Subject: [PATCH 1/2] clk-mux: Delete an error message for a failed memory allocation in clk_hw_register_mux_t
-Message-Id: <31bc9968-20e9-1fd0-0f16-80cb0f2bffe0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 21:19:57 +0000
+Subject: [PATCH] staging: rtl8723bs: add missing range check on id
+Message-Id: <20170920211957.5232-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
-In-Reply-To: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 17:23:04 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The value of the u8 id needs to be upper bounds checked to ensure
+the cam_cache array on the adapter dvobj is not indexed outside
+of the allowed range of 0..TOTAL_CAM_ENTRY-1. This can currently
+occur if id is >= TOTAL_CAM_ENTRY when calling write_cam_from_cache.
+Fix this by adding an upper range check.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1428464 ("Use of untrusted scalar value")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/clk/clk-mux.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/rtw_proc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 16a3d5717f4e..1746dbf2f7ea 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -135,10 +135,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+diff --git a/drivers/staging/rtl8723bs/os_dep/rtw_proc.c b/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
+index 92277457aba4..ce1dd6f9036f 100644
+--- a/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
++++ b/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
+@@ -311,6 +311,8 @@ static ssize_t proc_set_cam(struct file *file, const char __user *buffer, size_t
  
- 	/* allocate the mux */
- 	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
--	if (!mux) {
--		pr_err("%s: could not allocate mux clk\n", __func__);
-+	if (!mux)
- 		return ERR_PTR(-ENOMEM);
--	}
+ 		if (num < 2)
+ 			return count;
++		if (id >= TOTAL_CAM_ENTRY)
++			return -EINVAL;
  
- 	init.name = name;
- 	if (clk_mux_flags & CLK_MUX_READ_ONLY)
+ 		if (strcmp("c", cmd) = 0) {
+ 			_clear_cam_entry(adapter, id);
 -- 
 2.14.1
 
