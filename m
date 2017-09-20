@@ -1,43 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 19:40:51 +0000
-Subject: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
-Message-Id: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+Date: Wed, 20 Sep 2017 06:36:40 +0000
+Subject: [PATCH 1/3] [media] pvrusb2-ioread: Use common error handling code in pvr2_ioread_get_buffer()
+Message-Id: <a104e713-00ee-54d2-7ba4-59db6384e146@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
-In-Reply-To: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+References: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
+In-Reply-To: <c8117427-6d4d-0a1c-96c7-56e25d838b3e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 21:24:43 +0200
+Date: Tue, 19 Sep 2017 21:50:05 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/versatile/clk-icst.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/pvrusb2/pvrusb2-ioread.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 20ab4ceffb28..dafe7a45875d 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -359,7 +359,7 @@ static struct clk *icst_clk_setup(struct device *dev,
- 	struct clk_init_data init;
- 	struct icst_params *pclone;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
+index 602097bdcf14..0218614ce988 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-ioread.c
+@@ -266,8 +266,7 @@ static int pvr2_ioread_get_buffer(struct pvr2_ioread *cp)
+ 				pvr2_trace(PVR2_TRACE_DATA_FLOW,
+ 					   "/*---TRACE_READ---*/ pvr2_ioread_read id=%p queue_error=%d",
+ 					   cp,stat);
+-				pvr2_ioread_stop(cp);
+-				return 0;
++				goto stop_read;
+ 			}
+ 			cp->c_buf = NULL;
+ 			cp->c_data_ptr = NULL;
+@@ -286,9 +285,8 @@ static int pvr2_ioread_get_buffer(struct pvr2_ioread *cp)
+ 				pvr2_trace(PVR2_TRACE_DATA_FLOW,
+ 					   "/*---TRACE_READ---*/ pvr2_ioread_read id=%p buffer_error=%d",
+ 					   cp,stat);
+-				pvr2_ioread_stop(cp);
+ 				// Give up.
+-				return 0;
++				goto stop_read;
+ 			}
+ 			// Start over...
+ 			continue;
+@@ -298,6 +296,10 @@ static int pvr2_ioread_get_buffer(struct pvr2_ioread *cp)
+ 			pvr2_buffer_get_id(cp->c_buf)];
+ 	}
+ 	return !0;
++
++stop_read:
++	pvr2_ioread_stop(cp);
++	return 0;
+ }
  
--	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
-+	icst = kzalloc(sizeof(*icst), GFP_KERNEL);
- 	if (!icst)
- 		return ERR_PTR(-ENOMEM);
- 
+ static void pvr2_ioread_filter(struct pvr2_ioread *cp)
 -- 
-2.14.2
+2.14.1
 
