@@ -1,70 +1,41 @@
-From: Sricharan R <sricharan@codeaurora.org>
-Date: Fri, 08 Sep 2017 11:26:21 +0000
-Subject: Re: [PATCH 2/2] rpmsg: glink: Fix memory leak in qcom_glink_alloc_intent()
-Message-Id: <4f052d23-b632-2423-7201-a51d8815ea91@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 20 Sep 2017 13:01:25 +0000
+Subject: [PATCH] ASoC: Intel: Skylake: fix swapped order of function arguments dir and pin_index
+Message-Id: <20170920130125.12984-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908103440.junitv63lrzc5ih5@mwanda>
-In-Reply-To: <20170908103440.junitv63lrzc5ih5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Ramesh Babu <ramesh.babu@intel.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 9/8/2017 4:04 PM, Dan Carpenter wrote:
-> We need to free "intent" and "intent->data" on a couple error paths.
-> 
-> Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index fecb1dafa8f3..5dcc9bf1c5bc 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
->  	unsigned long flags;
->  
->  	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
-> -
->  	if (!intent)
->  		return NULL;
->  
->  	intent->data = kzalloc(size, GFP_KERNEL);
->  	if (!intent->data)
-> -		return NULL;
-> +		goto free_intent;
->  
->  	spin_lock_irqsave(&channel->intent_lock, flags);
->  	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
->  	if (ret < 0) {
->  		spin_unlock_irqrestore(&channel->intent_lock, flags);
-> -		return NULL;
-> +		goto free_data;
->  	}
->  	spin_unlock_irqrestore(&channel->intent_lock, flags);
->  
-> @@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
->  	intent->reuse = reuseable;
->  
->  	return intent;
-> +
-> +free_data:
-> +	kfree(intent->data);
-> +free_intent:
-> +	kfree(intent);
-> +	return NULL;
+The call to slk_tplg_fill_res_tkn is passing dir and pin_index in the
+wrong order, they need to be in pin_index, dir order to match the function
+slk_tplg_fill_res_tkn  correctly.
 
-Acked-by: Sricharan R <sricharan@codeaurora.org>
+Detected by CoveritScan, CID#1454992 ("Arguments in wrong order")
 
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+Fixes: f6fa56e22559 ("ASoC: Intel: Skylake: Parse and update module config structure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+ sound/soc/intel/skylake/skl-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index 22f768ca3c73..27bcb62568fb 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -2382,7 +2382,7 @@ static int skl_tplg_get_token(struct device *dev,
+ 	case SKL_TKN_U32_MAX_MCPS:
+ 	case SKL_TKN_U32_OBS:
+ 	case SKL_TKN_U32_IBS:
+-		ret = skl_tplg_fill_res_tkn(dev, tkn_elem, res, dir, pin_index);
++		ret = skl_tplg_fill_res_tkn(dev, tkn_elem, res, pin_index, dir);
+ 		if (ret < 0)
+ 			return ret;
+ 
+-- 
+2.14.1
 
