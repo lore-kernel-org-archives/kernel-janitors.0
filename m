@@ -1,28 +1,43 @@
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 11 Sep 2017 13:23:45 +0000
-Subject: Re: [PATCH 2/3] [media] DaVinci-VPBE-Display: Improve a size determination in two functions
-Message-Id: <CA+V-a8sS4UjeFDsGa1bvG2nyLOoNVqCBg2Q18QuD6P3mu6FHJA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 21 Sep 2017 07:16:22 +0000
+Subject: [PATCH] USB: devio: Prevent integer overflow in proc_do_submiturb()
+Message-Id: <20170921071622.ue2oqayfivloxk7w@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e980c48c-9525-4942-a58e-20af8a96e531@users.sourceforge.net> <d4fc91b4-4850-b756-d297-fcebdc8d7131@users.sourceforge.net>
-In-Reply-To: <d4fc91b4-4850-b756-d297-fcebdc8d7131@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 8, 2017 at 1:32 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 8 Sep 2017 10:50:32 +0200
->
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+There used to be an integer overflow check in proc_do_submiturb() but
+it accidentally got removed.  We need to put it back.  The
+uurb->buffer_length variable is a signed integer and it's controlled by
+the user.  It can lead to an integer overflow when we do:
 
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+	num_sgs = DIV_ROUND_UP(uurb->buffer_length, USB_SG_SIZE);
 
-Cheers,
---Prabhakar Lad
+Fixes: 1129d270cbfb ("USB: Increase usbfs transfer limit")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 318bb3b96687..f3c9cff2101c 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -140,6 +140,9 @@ module_param(usbfs_memory_mb, uint, 0644);
+ MODULE_PARM_DESC(usbfs_memory_mb,
+ 		"maximum MB allowed for usbfs buffers (0 = no limit)");
+ 
++/* Hard limit, necessary to avoid arithmetic overflow */
++#define USBFS_XFER_MAX         (UINT_MAX / 2 - 1000000)
++
+ static atomic64_t usbfs_memory_usage;	/* Total memory currently allocated */
+ 
+ /* Check whether it's okay to allocate more memory for a transfer */
+@@ -1460,6 +1463,8 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
+ 				USBDEVFS_URB_ZERO_PACKET |
+ 				USBDEVFS_URB_NO_INTERRUPT))
+ 		return -EINVAL;
++	if (uurb->buffer_length >= USBFS_XFER_MAX)
++		return -EINVAL;
+ 	if (uurb->buffer_length > 0 && !uurb->buffer)
+ 		return -EINVAL;
+ 	if (!(uurb->type = USBDEVFS_URB_TYPE_CONTROL &&
