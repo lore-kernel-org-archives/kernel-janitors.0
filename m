@@ -1,51 +1,85 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 11 Sep 2017 15:15:28 +0000
-Subject: [PATCH] btrfs: avoid null pointer dereference on fs_info when calling btrfs_crit
-Message-Id: <20170911151528.26348-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 15:09:40 +0000
+Subject: [PATCH 4/4] [media] usbvision-core: Replace four printk() calls by dev_err()
+Message-Id: <0c53a18c-eba1-524b-8825-7454bb8e58a4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
+In-Reply-To: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 16:47:28 +0200
 
-There are checks on fs_info in __btrfs_panic to avoid dereferencing a
-null fs_info, however, there is a call to btrfs_crit that may also
-dereference a null fs_info. Fix this by adding a check to see if fs_info
-is null and only print the s_id if fs_info is non-null.
+* Replace the local variable "proc" by the identifier "__func__".
 
-Detected by CoverityScan CID#401973 ("Dereference after null check")
+* Use the interface "dev_err" instead of "printk" in these functions.
 
-Fixes: efe120a067c8 ("Btrfs: convert printk to btrfs_ and fix BTRFS prefix")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/btrfs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/usbvision/usbvision-core.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index e56a93f3113e..c669241f936e 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -202,7 +202,6 @@ static struct ratelimit_state printk_limits[] = {
- 
- void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
+diff --git a/drivers/media/usb/usbvision/usbvision-core.c b/drivers/media/usb/usbvision/usbvision-core.c
+index 54db35b03106..2c98805244df 100644
+--- a/drivers/media/usb/usbvision/usbvision-core.c
++++ b/drivers/media/usb/usbvision/usbvision-core.c
+@@ -1619,7 +1619,6 @@ static int usbvision_init_webcam(struct usb_usbvision *usbvision)
+  */
+ static int usbvision_set_video_format(struct usb_usbvision *usbvision, int format)
  {
--	struct super_block *sb = fs_info->sb;
- 	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = "\0";
- 	struct va_format vaf;
- 	va_list args;
-@@ -228,7 +227,8 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
- 	vaf.va = &args;
+-	static const char proc[] = "usbvision_set_video_format";
+ 	unsigned char *value = usbvision->ctrl_urb_buffer;
+ 	int rc;
  
- 	if (__ratelimit(ratelimit))
--		printk("%sBTRFS %s (device %s): %pV\n", lvl, type, sb->s_id, &vaf);
-+		printk("%sBTRFS %s (device %s): %pV\n", lvl, type,
-+			fs_info ? fs_info->sb->s_id : "<unknown>", &vaf);
+@@ -1631,8 +1630,9 @@ static int usbvision_set_video_format(struct usb_usbvision *usbvision, int forma
+ 	if ((format != ISOC_MODE_YUV422)
+ 	    && (format != ISOC_MODE_YUV420)
+ 	    && (format != ISOC_MODE_COMPRESS)) {
+-		printk(KERN_ERR "usbvision: unknown video format %02x, using default YUV420",
+-		       format);
++		dev_err(&usbvision->dev->dev,
++			"%s: unknown video format %02x, using default YUV420\n",
++			__func__, format);
+ 		format = ISOC_MODE_YUV420;
+ 	}
+ 	value[0] = 0x0A;  /* TODO: See the effect of the filter */
+@@ -1643,8 +1643,9 @@ static int usbvision_set_video_format(struct usb_usbvision *usbvision, int forma
+ 			     USB_RECIP_ENDPOINT, 0,
+ 			     (__u16) USBVISION_FILT_CONT, value, 2, HZ);
+ 	if (rc < 0)
+-		printk(KERN_ERR "%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
+-		       proc, rc);
++		dev_err(&usbvision->dev->dev,
++			"%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
++			__func__, rc);
  
- 	va_end(args);
- }
+ 	usbvision->isoc_mode = format;
+ 	return rc;
+@@ -2180,7 +2181,8 @@ int usbvision_restart_isoc(struct usb_usbvision *usbvision)
+ int usbvision_audio_off(struct usb_usbvision *usbvision)
+ {
+ 	if (usbvision_write_reg(usbvision, USBVISION_IOPIN_REG, USBVISION_AUDIO_MUTE) < 0) {
+-		printk(KERN_ERR "usbvision_audio_off: can't write reg\n");
++		dev_err(&usbvision->dev->dev,
++			"%s: can't write reg\n", __func__);
+ 		return -1;
+ 	}
+ 	usbvision->audio_mute = 0;
+@@ -2192,7 +2194,9 @@ int usbvision_set_audio(struct usb_usbvision *usbvision, int audio_channel)
+ {
+ 	if (!usbvision->audio_mute) {
+ 		if (usbvision_write_reg(usbvision, USBVISION_IOPIN_REG, audio_channel) < 0) {
+-			printk(KERN_ERR "usbvision_set_audio: can't write iopin register for audio switching\n");
++			dev_err(&usbvision->dev->dev,
++				"%s: can't write iopin register for audio switching\n",
++				__func__);
+ 			return -1;
+ 		}
+ 	}
 -- 
 2.14.1
 
