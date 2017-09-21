@@ -1,36 +1,88 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Wed, 06 Sep 2017 08:59:04 +0000
-Subject: Re: [PATCH] HID: hid-lg: make array cbuf static const to shink object code size
-Message-Id: <nycvar.YFH.7.76.1709061058560.4077@jbgna.fhfr.qr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 15:06:02 +0000
+Subject: [PATCH 1/4] [media] usbvision-core: Use common error handling code in usbvision_set_input()
+Message-Id: <bc54a99d-74af-a4bb-5823-70b075403624@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170825171250.23988-1-colin.king@canonical.com>
-In-Reply-To: <20170825171250.23988-1-colin.king@canonical.com>
+References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
+In-Reply-To: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 25 Aug 2017, Colin King wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 11:50:54 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate array cbuf on the stack, instead make it static.
-> Makes the object code smaller by over 110 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   15096	   3504	    128	  18728	   4928	drivers/hid/hid-lg.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   14884	   3600	    128	  18612	   48b4	drivers/hid/hid-lg.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
-Applied, thanks.
+  This issue was detected by using the Coccinelle software.
 
+* Replace the local variable "proc" by the identifier "__func__".
+
+* Use the interface "dev_err" instead of "printk".
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/usbvision/usbvision-core.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/media/usb/usbvision/usbvision-core.c b/drivers/media/usb/usbvision/usbvision-core.c
+index 3f87fbc80be2..16b76c85eeec 100644
+--- a/drivers/media/usb/usbvision/usbvision-core.c
++++ b/drivers/media/usb/usbvision/usbvision-core.c
+@@ -1931,7 +1931,6 @@ static int usbvision_set_compress_params(struct usb_usbvision *usbvision)
+  */
+ int usbvision_set_input(struct usb_usbvision *usbvision)
+ {
+-	static const char proc[] = "usbvision_set_input: ";
+ 	int rc;
+ 	unsigned char *value = usbvision->ctrl_urb_buffer;
+ 	unsigned char dvi_yuv_value;
+@@ -1953,12 +1952,8 @@ int usbvision_set_input(struct usb_usbvision *usbvision)
+ 	}
+ 
+ 	rc = usbvision_write_reg(usbvision, USBVISION_VIN_REG1, value[0]);
+-	if (rc < 0) {
+-		printk(KERN_ERR "%sERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
+-		       proc, rc);
+-		return rc;
+-	}
+-
++	if (rc < 0)
++		goto report_failure;
+ 
+ 	if (usbvision->tvnorm_id & V4L2_STD_PAL) {
+ 		value[0] = 0xC0;
+@@ -2019,12 +2014,8 @@ int usbvision_set_input(struct usb_usbvision *usbvision)
+ 			     USBVISION_OP_CODE,	/* USBVISION specific code */
+ 			     USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_ENDPOINT, 0,
+ 			     (__u16) USBVISION_LXSIZE_I, value, 8, HZ);
+-	if (rc < 0) {
+-		printk(KERN_ERR "%sERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
+-		       proc, rc);
+-		return rc;
+-	}
+-
++	if (rc < 0)
++		goto report_failure;
+ 
+ 	dvi_yuv_value = 0x00;	/* U comes after V, Ya comes after U/V, Yb comes after Yb */
+ 
+@@ -2036,6 +2027,12 @@ int usbvision_set_input(struct usb_usbvision *usbvision)
+ 	}
+ 
+ 	return usbvision_write_reg(usbvision, USBVISION_DVI_YUV, dvi_yuv_value);
++
++report_failure:
++	dev_err(&usbvision->dev->dev,
++		"%s: ERROR=%d. USBVISION stopped - reconnect or reload driver.\n",
++		__func__, rc);
++	return rc;
+ }
+ 
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.14.1
 
