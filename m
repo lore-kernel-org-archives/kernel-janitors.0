@@ -1,58 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 16:57:52 +0000
-Subject: [PATCH 1/5] [media] s2255drv: Delete three error messages for a failed memory allocation in s2255_pr
-Message-Id: <40736ede-e614-e498-8768-b8e5a1553f34@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 Sep 2017 22:39:59 +0000
+Subject: [PATCH] staging: xgifb: make const array static to shink object code size
+Message-Id: <20170921223959.21400-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
-In-Reply-To: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnaud Patard <arnaud.patard@rtp-net.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Walt Feasel <waltfeasel@gmail.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 16:30:13 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit extra messages for a memory allocation failure in this function.
+Don't populate const array LCDARefreshIndex on the stack, instead
+make it static.  Makes the object code smaller by 340 bytes:
 
-This issue was detected by using the Coccinelle software.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  84949	  12336	      0	  97285	  17c05	drivers/staging/xgifb/vb_setmode.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  84506	  12432	      0	  96938	  17aaa	drivers/staging/xgifb/vb_setmode.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/s2255/s2255drv.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/staging/xgifb/vb_setmode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
-index b2f239c4ba42..29285e8cd742 100644
---- a/drivers/media/usb/s2255/s2255drv.c
-+++ b/drivers/media/usb/s2255/s2255drv.c
-@@ -2242,13 +2242,9 @@ static int s2255_probe(struct usb_interface *interface,
--	if (dev = NULL) {
--		s2255_dev_err(&interface->dev, "out of memory\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
+diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
+index d55ffa61bc40..a6cd0a1e8c05 100644
+--- a/drivers/staging/xgifb/vb_setmode.c
++++ b/drivers/staging/xgifb/vb_setmode.c
+@@ -5046,7 +5046,7 @@ unsigned short XGI_GetRatePtrCRT2(struct xgi_hw_device_info *pXGIHWDE,
+ 				  unsigned short ModeIdIndex,
+ 				  struct vb_device_info *pVBInfo)
+ {
+-	const u8 LCDARefreshIndex[] = {
++	static const u8 LCDARefreshIndex[] = {
+ 		0x00, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x00 };
  
- 	dev->cmdbuf = kzalloc(S2255_CMDBUF_SIZE, GFP_KERNEL);
--	if (dev->cmdbuf = NULL) {
--		s2255_dev_err(&interface->dev, "out of memory\n");
-+	if (!dev->cmdbuf)
- 		goto errorFWDATA1;
--	}
- 
- 	atomic_set(&dev->num_channels, 0);
- 	dev->pid = id->idProduct;
-@@ -2303,7 +2299,6 @@ static int s2255_probe(struct usb_interface *interface,
--	if (!dev->fw_data->pfw_data) {
--		dev_err(&interface->dev, "out of memory!\n");
-+	if (!dev->fw_data->pfw_data)
- 		goto errorFWDATA2;
--	}
-+
- 	/* load the first chunk */
- 	if (request_firmware(&dev->fw_data->fw,
- 			     FIRMWARE_FILE_NAME, &dev->udev->dev)) {
+ 	unsigned short RefreshRateTableIndex, i, index, temp;
 -- 
 2.14.1
 
