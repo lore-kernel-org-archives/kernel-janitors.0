@@ -1,27 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 17:18:31 +0000
-Subject: Re: [media] Siano: Use common error handling code in smsusb_init_device()
-Message-Id: <5c4e91c6-80fd-e17a-d165-b8d4a5e5ce14@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 19:23:07 +0000
+Subject: [PATCH 0/3] [media] uvcvideo: Fine-tuning for some function implementations
+Message-Id: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be0003e5-d8e0-bff6-2205-7e88270ba2b4@users.sourceforge.net>
- <20170920135605.sneukaioeabalkud@mwanda>
-In-Reply-To: <20170920135605.sneukaioeabalkud@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> If smscore_register_device() succeeds then mdev is freed when we call
-> smsusb_term_device(intf);  The call tree is:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 21:20:12 +0200
 
-Thanks for your constructive information.
+Three update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (3):
+  Use common error handling code in uvc_ioctl_g_ext_ctrls()
+  Adjust 14 checks for null pointers
+  Add some spaces for better code readability
 
-How do you think about another implementation detail in this function then?
+ drivers/media/usb/uvc/uvc_v4l2.c | 53 ++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 26 deletions(-)
 
-May the statement “kfree(mdev);” be executed before “smsusb_term_device(intf);”
-in one if branch?
+-- 
+2.14.1
 
-Regards,
-Markus
