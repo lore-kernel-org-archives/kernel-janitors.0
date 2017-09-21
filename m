@@ -1,67 +1,62 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 20 Sep 2017 18:33:48 +0000
-Subject: Re: [PATCH] drm/vmwgfx: remove DRM_ERROR message, stops log spamming
-Message-Id: <20170920183348.GD25248@dvetter-linux.ger.corp.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 21 Sep 2017 22:01:58 +0000
+Subject: [PATCH] e1000: avoid null pointer dereference on invalid stat type
+Message-Id: <20170921220158.19341-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170912173530.14132-1-colin.king@canonical.com>
- <211c7afe-c778-cf39-760a-05bc3a62e5db@vmware.com>
- <c4ed4d3c-7f6c-cb79-c213-cbbfae1377af@canonical.com>
- <CACvgo53QktiPssai5hzoMP=Sy4Wtbrti+fOTHE4pGZXCZbUryA@mail.gmail.com>
-In-Reply-To: <CACvgo53QktiPssai5hzoMP=Sy4Wtbrti+fOTHE4pGZXCZbUryA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, VMware Graphics <linux-graphics-maintainer@vmware.com>, Colin Ian King <colin.king@canonical.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 12, 2017 at 06:54:45PM +0100, Emil Velikov wrote:
-> On 12 September 2017 at 18:47, Colin Ian King <colin.king@canonical.com> wrote:
-> > On 12/09/17 18:42, Thomas Hellstrom wrote:
-> >> Hi, Colin,
-> >>
-> >> On 09/12/2017 07:35 PM, Colin King wrote:
-> >>> From: Colin Ian King <colin.king@canonical.com>
-> >>>
-> >>> mmap'ing the device multiple times will spam the kernel log with the
-> >>> DRM_ERROR message about illegal mmap'ing the old fifo space.
-> >> How are you hitting this? Multiple mappings should be fine as long as
-> >> mapping offsets are correct,
-> >> so hitting this message should indicate that the user-space app is doing
-> >> something seriously wrong, and
-> >> having it present in the log should probably help more than it hurts.
-> >>
-> >> /Thomas
-> >
-> > Good question.  I hit similar issues with the drm qxl driver when
-> > running some kernel regression tests with stress-ng [1]. I realize this
-> > is an artificial test scenario so it is definitely not a typical
-> > use-case, however, sync the illegal mmapping will return -EINVAL the
-> > application will pick up that this is an error without the need of
-> > spotting it in the kernel log. And a user space application can perform
-> > many millions of these invalid mmaps causing kernel log spamming.
-> >
-> FWIW I'm the one to "blame" here - pointing Colin to drop the message.
-> 
-> Two reasons come to mind:
->  - there is a unwritten rule that roughly says "user input should not
-> cause kernel log spam"
->  - out of all the DRM drivers only QXL and VMWGFX print a message,
-> with a patch addressing the former
+From: Colin Ian King <colin.king@canonical.com>
 
-Maybe we should make this a written rule by patching
-Documentation/drivers/gpu? Would definitely make sense as part of this
-patch series.
+Currently if the stat type is invalid then data[i] is being set
+either by dereferencing a null pointer p, or it is reading from
+an incorrect previous location if we had a valid stat type
+previously.  Fix this by nullify pointer p if a stat type is
+invalid and only setting data if p is not null.
 
-Thanks, Daniel
-> 
-> HTH
-> Emil
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+index ec8aa4562cc9..2ef6f08b580b 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -1824,11 +1824,12 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+ {
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
+ 	int i;
+-	char *p = NULL;
+ 	const struct e1000_stats *stat = e1000_gstrings_stats;
+ 
+ 	e1000_update_stats(adapter);
+ 	for (i = 0; i < E1000_GLOBAL_STATS_LEN; i++) {
++		char *p;
++
+ 		switch (stat->type) {
+ 		case NETDEV_STATS:
+ 			p = (char *)netdev + stat->stat_offset;
+@@ -1837,12 +1838,13 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+ 			p = (char *)adapter + stat->stat_offset;
+ 			break;
+ 		default:
++			p = NULL;
+ 			WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
+ 				  stat->type, i);
+ 			break;
+ 		}
+ 
+-		if (stat->sizeof_stat = sizeof(u64))
++		if (p && stat->sizeof_stat = sizeof(u64))
+ 			data[i] = *(u64 *)p;
+ 		else
+ 			data[i] = *(u32 *)p;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.14.1
+
