@@ -1,69 +1,149 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 24 Sep 2017 06:26:41 +0000
-Subject: [PATCH] dmaengine: imx-sdma: Report a DMA_ERROR in status if 'count' or 'dma_address' do not match D
-Message-Id: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 19:25:20 +0000
+Subject: [PATCH 2/3] [media] uvcvideo: Adjust 14 checks for null pointers
+Message-Id: <9f123108-2ef7-83ec-9981-280a24502771@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
+In-Reply-To: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: vinod.koul@intel.com, dan.j.williams@intel.com
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-All sanity checks in this function set 'sdmac->status = DMA_ERROR' if
-something looks wrong, except if the byte count or the address don't match
-the bus width.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 21:00:21 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Fix it and report the error in status in such a case.
+The script “checkpatch.pl” pointed information out like the following.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Comparison to NULL could be written …
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Untested, so please review carefuly.
----
- drivers/dma/imx-sdma.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/media/usb/uvc/uvc_v4l2.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index a67ec1bdc4e0..f0419967eb92 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1240,26 +1240,31 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
- 		sdmac->chn_count += count;
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index 6ec2b255c44a..184edf8a0885 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -41,7 +41,7 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
+ 	int ret;
  
- 		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES) {
--			ret =  -EINVAL;
-+			ret = -EINVAL;
- 			goto err_out;
+ 	map = kzalloc(sizeof *map, GFP_KERNEL);
+-	if (map = NULL)
++	if (!map)
+ 		return -ENOMEM;
+ 
+ 	map->id = xmap->id;
+@@ -211,7 +211,7 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+ 			break;
+ 	}
+ 
+-	if (frame = NULL) {
++	if (!frame) {
+ 		uvc_trace(UVC_TRACE_FORMAT, "Unsupported size %ux%u.\n",
+ 				fmt->fmt.pix.width, fmt->fmt.pix.height);
+ 		return -EINVAL;
+@@ -260,9 +260,9 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+ 	fmt->fmt.pix.colorspace = format->colorspace;
+ 	fmt->fmt.pix.priv = 0;
+ 
+-	if (uvc_format != NULL)
++	if (uvc_format)
+ 		*uvc_format = format;
+-	if (uvc_frame != NULL)
++	if (uvc_frame)
+ 		*uvc_frame = frame;
+ 
+ done:
+@@ -282,8 +282,7 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+ 	mutex_lock(&stream->mutex);
+ 	format = stream->cur_format;
+ 	frame = stream->cur_frame;
+-
+-	if (format = NULL || frame = NULL) {
++	if (!format || !frame) {
+ 		ret = -EINVAL;
+ 		goto done;
+ 	}
+@@ -499,7 +498,7 @@ static int uvc_v4l2_open(struct file *file)
+ 
+ 	/* Create the device handle. */
+ 	handle = kzalloc(sizeof *handle, GFP_KERNEL);
+-	if (handle = NULL) {
++	if (!handle) {
+ 		usb_autopm_put_interface(stream->dev->intf);
+ 		return -ENOMEM;
+ 	}
+@@ -811,7 +810,7 @@ static int uvc_ioctl_enum_input(struct file *file, void *fh,
+ 	u32 index = input->index;
+ 	int pin = 0;
+ 
+-	if (selector = NULL ||
++	if (!selector ||
+ 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
+ 		if (index != 0)
+ 			return -EINVAL;
+@@ -830,7 +829,7 @@ static int uvc_ioctl_enum_input(struct file *file, void *fh,
  		}
+ 	}
  
- 		switch (sdmac->word_size) {
- 		case DMA_SLAVE_BUSWIDTH_4_BYTES:
- 			bd->mode.command = 0;
--			if (count & 3 || sg->dma_address & 3)
--				return NULL;
-+			if (count & 3 || sg->dma_address & 3) {
-+				ret = -EINVAL;
-+				goto err_out;
-+			}
+-	if (iterm = NULL || iterm->id != pin)
++	if (!iterm || iterm->id != pin)
+ 		return -EINVAL;
+ 
+ 	memset(input, 0, sizeof(*input));
+@@ -849,7 +848,7 @@ static int uvc_ioctl_g_input(struct file *file, void *fh, unsigned int *input)
+ 	int ret;
+ 	u8 i;
+ 
+-	if (chain->selector = NULL ||
++	if (!chain->selector ||
+ 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
+ 		*input = 0;
+ 		return 0;
+@@ -876,7 +875,7 @@ static int uvc_ioctl_s_input(struct file *file, void *fh, unsigned int input)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (chain->selector = NULL ||
++	if (!chain->selector ||
+ 	    (chain->dev->quirks & UVC_QUIRK_IGNORE_SELECTOR_UNIT)) {
+ 		if (input)
+ 			return -EINVAL;
+@@ -1160,7 +1159,7 @@ static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
  			break;
- 		case DMA_SLAVE_BUSWIDTH_2_BYTES:
- 			bd->mode.command = 2;
--			if (count & 1 || sg->dma_address & 1)
--				return NULL;
-+			if (count & 1 || sg->dma_address & 1) {
-+				ret = -EINVAL;
-+				goto err_out;
-+			}
- 			break;
- 		case DMA_SLAVE_BUSWIDTH_1_BYTE:
- 			bd->mode.command = 1;
- 			break;
- 		default:
--			return NULL;
-+			ret = -EINVAL;
-+			goto err_out;
  		}
+ 	}
+-	if (format = NULL)
++	if (!format)
+ 		return -EINVAL;
  
- 		param = BD_DONE | BD_EXTD | BD_CONT;
+ 	if (fsize->index >= format->nframes)
+@@ -1189,7 +1188,7 @@ static int uvc_ioctl_enum_frameintervals(struct file *file, void *fh,
+ 			break;
+ 		}
+ 	}
+-	if (format = NULL)
++	if (!format)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < format->nframes; i++) {
+@@ -1199,7 +1198,7 @@ static int uvc_ioctl_enum_frameintervals(struct file *file, void *fh,
+ 			break;
+ 		}
+ 	}
+-	if (frame = NULL)
++	if (!frame)
+ 		return -EINVAL;
+ 
+ 	if (frame->bFrameIntervalType) {
 -- 
-2.11.0
+2.14.1
 
