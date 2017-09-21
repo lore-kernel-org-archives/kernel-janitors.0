@@ -1,7 +1,7 @@
-From: Daniel Drake <drake@endlessm.com>
-Date: Wed, 13 Sep 2017 23:33:31 +0000
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Sep 2017 11:37:16 +0000
 Subject: Re: [PATCH][pinctrl-next] pinctrl/amd: make functions amd_gpio_suspend and amd_gpio_resume static
-Message-Id: <CAD8Lp45RpFwFALmbsr8jRqtUFx8MxTveV-ruBsLon8VbnEBApg@mail.gmail.com>
+Message-Id: <CACRpkdYeOgyS45V8xWFy0OTdrb-h-xfy6X=q6BPv3uqO-1KxNg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170913161501.7356-1-colin.king@canonical.com>
 In-Reply-To: <20170913161501.7356-1-colin.king@canonical.com>
@@ -9,10 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 14, 2017 at 12:15 AM, Colin King <colin.king@canonical.com> wrote:
->
+On Wed, Sep 13, 2017 at 6:15 PM, Colin King <colin.king@canonical.com> wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 >
 > The functions amd_gpio_suspend and amd_gpio_resume are local to the
@@ -24,4 +24,7 @@ On Thu, Sep 14, 2017 at 12:15 AM, Colin King <colin.king@canonical.com> wrote:
 >
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Daniel Drake <drake@endlessm.com>
+Patch applied with Daniel's review tag.
+
+Yours,
+Linus Walleij
