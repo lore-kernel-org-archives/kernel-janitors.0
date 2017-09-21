@@ -1,32 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 Sep 2017 07:52:34 +0000
-Subject: [PATCH 2/2] rtlwifi: silence underflow warning
-Message-Id: <20170929075234.dgyuiwbowu3jq6r4@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 19:24:16 +0000
+Subject: [PATCH 1/3] [media] uvcvideo: Use common error handling code in uvc_ioctl_g_ext_ctrls()
+Message-Id: <76eb5628-7f9b-c5b7-9341-0904cd719abd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20170929075117.cno3vnrebea32upt@mwanda>
+References: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
+In-Reply-To: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-My static checker complains that we have an upper bound but no lower
-bound.  I suspect neither are really required but it doesn't hurt to add
-a check for negatives.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 21 Sep 2017 20:47:02 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
-index c53cbf3d52bd..294a6b43d1bc 100644
---- a/drivers/net/wireless/realtek/rtlwifi/core.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-@@ -453,7 +453,8 @@ static void _rtl_add_wowlan_patterns(struct ieee80211_hw *hw,
- 	for (i = 0; i < wow->n_patterns; i++) {
- 		memset(&rtl_pattern, 0, sizeof(struct rtl_wow_pattern));
- 		memset(mask, 0, MAX_WOL_BIT_MASK_SIZE);
--		if (patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
-+		if (patterns[i].pattern_len < 0 ||
-+		    patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
- 			RT_TRACE(rtlpriv, COMP_POWER, DBG_WARNING,
- 				 "Pattern[%d] is too long\n", i);
- 			continue;
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/uvc/uvc_v4l2.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index 3e7e283a44a8..6ec2b255c44a 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -998,10 +998,8 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *fh,
+ 			struct v4l2_queryctrl qc = { .id = ctrl->id };
+ 
+ 			ret = uvc_query_v4l2_ctrl(chain, &qc);
+-			if (ret < 0) {
+-				ctrls->error_idx = i;
+-				return ret;
+-			}
++			if (ret < 0)
++				goto set_index;
+ 
+ 			ctrl->value = qc.default_value;
+ 		}
+@@ -1017,14 +1015,17 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *fh,
+ 		ret = uvc_ctrl_get(chain, ctrl);
+ 		if (ret < 0) {
+ 			uvc_ctrl_rollback(handle);
+-			ctrls->error_idx = i;
+-			return ret;
++			goto set_index;
+ 		}
+ 	}
+ 
+ 	ctrls->error_idx = 0;
+ 
+ 	return uvc_ctrl_rollback(handle);
++
++set_index:
++	ctrls->error_idx = i;
++	return ret;
+ }
+ 
+ static int uvc_ioctl_s_try_ext_ctrls(struct uvc_fh *handle,
+-- 
+2.14.1
+
