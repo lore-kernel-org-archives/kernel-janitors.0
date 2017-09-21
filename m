@@ -1,33 +1,36 @@
-From: Gerd Hoffmann <kraxel@redhat.com>
-Date: Tue, 12 Sep 2017 14:21:57 +0000
-Subject: Re: [PATCH] drm: qxl: ratelimit pr_info message, reduce log spamming
-Message-Id: <1505226117.31639.24.camel@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 21 Sep 2017 23:01:11 +0000
+Subject: [PATCH] cnic: Fix an error handling path in 'cnic_alloc_bnx2x_resc()'
+Message-Id: <20170921230111.10135-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170912094548.30603-1-colin.king@canonical.com>
-	<CACvgo53vbGbvejkEnQuuB-ZuVfbzvSmAsx3Ovj-wMWMQE8ihXw@mail.gmail.com>
-	<20170912140921.maegwq32x5a6jyql@mwanda>
-In-Reply-To: <20170912140921.maegwq32x5a6jyql@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>, Dave Airlie <airlied@redhat.com>, Colin King <colin.king@canonical.com>
+To: jmaxwell37@gmail.com, davem@davemloft.net, stephen@networkplumber.org, danielj@mellanox.com, parav@mellanox.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Tue, 2017-09-12 at 17:09 +0300, Dan Carpenter wrote:
-> On Tue, Sep 12, 2017 at 03:02:04PM +0100, Emil Velikov wrote:
-> > That said, I'm not sure how useful the information is - perhaps
-> > it's
-> > better to drop it all together?
-> 
-> Or a WARN_ONCE().
+All the error handling paths 'goto error', except this one.
+We should also go to error in this case, or some resources will be
+leaking.
 
-It's userspace calling into the driver with invalid parameters.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/broadcom/cnic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-IMO we should never WARN_ONCE() on something userspace can trigger.
-
-I'd suggest to just drop the message altogether, simply throwing EINVAL
-at userspace is perfectly fine IMHO.
-
-cheers,
-  Gerd
+diff --git a/drivers/net/ethernet/broadcom/cnic.c b/drivers/net/ethernet/broadcom/cnic.c
+index cec94bbb2ea5..8bc126a156e8 100644
+--- a/drivers/net/ethernet/broadcom/cnic.c
++++ b/drivers/net/ethernet/broadcom/cnic.c
+@@ -1278,7 +1278,7 @@ static int cnic_alloc_bnx2x_resc(struct cnic_dev *dev)
+ 
+ 	ret = cnic_alloc_dma(dev, kwq_16_dma, pages, 0);
+ 	if (ret)
+-		return -ENOMEM;
++		goto error;
+ 
+ 	n = CNIC_PAGE_SIZE / CNIC_KWQ16_DATA_SIZE;
+ 	for (i = 0, j = 0; i < cp->max_cid_space; i++) {
+-- 
+2.11.0
 
