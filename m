@@ -1,68 +1,91 @@
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Date: Thu, 21 Sep 2017 14:31:58 +0000
-Subject: Re: [PATCH][drm-next] drm/i915/gvt: ensure -ve return value is handled correctly
-Message-Id: <1506004318.5382.4.camel@linux.intel.com>
+From: "Wang, Zhi A" <zhi.a.wang@intel.com>
+Date: Thu, 21 Sep 2017 16:17:13 +0000
+Subject: RE: [PATCH][drm-next] drm/i915/gvt: ensure -ve return value is handled correctly
+Message-Id: <F3B0350DF4CB6849A642218320DE483D7D64178C@SHSMSX101.ccr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170919155534.25334-1-colin.king@canonical.com>
  <20170919214614.cfiolgznopouv34e@zhen-hp.sh.intel.com>
  <1505874923.2067.14.camel@perches.com>
  <20170920224406.jscthkglwfy3xhtf@zhen-hp.sh.intel.com>
-In-Reply-To: <20170920224406.jscthkglwfy3xhtf@zhen-hp.sh.intel.com>
+ <1506004318.5382.4.camel@linux.intel.com>
+In-Reply-To: <1506004318.5382.4.camel@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Joe Perches <joe@perches.com>
-Cc: fred gao <fred.gao@intel.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, Colin King <colin.king@canonical.com>, intel-gvt-dev@lists.freedesktop.org, Zhi Wang <zhi.a.wang@intel.com>
+To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Joe Perches <joe@perches.com>
+Cc: "Gao, Fred" <fred.gao@intel.com>, David Airlie <airlied@linux.ie>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Vivi,
+ Rodrigo" <rodrigo.vivi@intel.com>, Colin King <colin.king@canonical.com>, "intel-gvt-dev@lists.freedesktop.org" <intel-gvt-dev@lists.freedesktop.org>
 
-On Thu, 2017-09-21 at 06:44 +0800, Zhenyu Wang wrote:
-> On 2017.09.19 19:35:23 -0700, Joe Perches wrote:
-> > On Wed, 2017-09-20 at 05:46 +0800, Zhenyu Wang wrote:
-> > > On 2017.09.19 16:55:34 +0100, Colin King wrote:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > > 
-> > > > An earlier fix changed the return type from find_bb_size however the
-> > > > integer return is being assigned to a unsigned int so the -ve error
-> > > > check will never be detected. Make bb_size an int to fix this.
-> > > > 
-> > > > Detected by CoverityScan CID#1456886 ("Unsigned compared against 0")
-> > > > 
-> > > > Fixes: 1e3197d6ad73 ("drm/i915/gvt: Refine error handling for perform_bb_shadow")
-> > > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > > ---
-> > > >  drivers/gpu/drm/i915/gvt/cmd_parser.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.c b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-> > > > index 2c0ccbb817dc..f41cbf664b69 100644
-> > > > --- a/drivers/gpu/drm/i915/gvt/cmd_parser.c
-> > > > +++ b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-> > > > @@ -1628,7 +1628,7 @@ static int perform_bb_shadow(struct parser_exec_state *s)
-> > > >  	struct intel_shadow_bb_entry *entry_obj;
-> > > >  	struct intel_vgpu *vgpu = s->vgpu;
-> > > >  	unsigned long gma = 0;
-> > > > -	uint32_t bb_size;
-> > > > +	int bb_size;
-> > > >  	void *dst = NULL;
-> > > >  	int ret = 0;
-> > > >  
-> > > 
-> > > Applied this, thanks!
-> > 
-> > Is it possible for bb_size to be both >= 2g and valid?
-> 
-> Never be possible in practise and if really that big I think something
-> is already insane indeed.
-
-It's good idea to document these assumptions as WARN_ON's. In i915, if
-the value is completely internal to kernel, we're using GEM_BUG_ON for
-these so that our CI will notice breakage. If it's not a driver
-internal value only, a WARN_ON is the appropriate action.
-
-Otherwise the information is lost and the next person reading the code
-will have the same question in mind.
-
-Regards, Joonas
--- 
-Joonas Lahtinen
-Open Source Technology Center
-Intel Corporation
+SGkgSm9vbmFzOg0KDQpUaGFua3MgZm9yIHRoZSBpbnRyb2R1Y3Rpb24uIEkgaGF2ZSBiZWVuIHRo
+aW5raW5nIGFib3V0IHRoZSBwb3NzaWJpbGl0eSBvZiBpbnRyb2R1Y2luZyBHRU1fQlVHX09OIGlu
+dG8gR1ZULWcgcmVjZW50bHkgYW5kIGludmVzdGlnYXRpbmcgb24gaXQuIEknbSBqdXN0IGEgYml0
+IGNvbmZ1c2VkIGFib3V0IHRoZSB1c2FnZSBiZXR3ZWVuIEdFTV9CVUdfT04gYW5kIFdBUk5fT04u
+DQoNCkdFTV9CVUdfT04gaXMgb25seSBlbmFibGVkIHdoZW4ga2VybmVsIGRlYnVnIGlzIGVuYWJs
+ZWQsIHdoaWNoIG1vc3RseSBpcyBkaXNhYmxlZCBpbiBhIHByb2R1Y3Rpb24ga2VybmVsLiBJbiB0
+aGUgY2FzZSBvZiBpOTE1LCBJJ20gc3VyZSBpdCB3aWxsIGJlIGVuYWJsZWQgaW4gQ0kgdGVzdCBz
+byB0aGF0IGl0IGNhbiBjYXRjaCBicm9rZW4gY29kZSBwYXRoLiBMb29raW5nIGludG8gR1ZULWcs
+IHRoZSBzaW1pbGFyIHNjZW5hcmlvIGlzIHdlIGVuYWJsZSBpdCBpbiBRQSB0ZXN0Lg0KDQpMZXQn
+cyBzYXkgR0VNX0JVR19PTiBjYW4gZG8gaXRzIHdvcmsgdmVyeSB3ZWxsIGluIFFBIHRlc3QgYnV0
+IFFBIHRlc3QgaXMgbm90IGZ1bGx5IGNvdmVyZWQgYWxsIHRoZSBjb25kaXRpb24sIHRoZW4gc29t
+ZXRoaW5nIG1pZ2h0IGJlIHN0aWxsIGJyb2tlbiB3aGVuIGl0IGNvbWVzIHRvIHRoZSBwcm9kdWN0
+aW9uIGtlcm5lbCBmb3IgdXNlciBhbmQgR0VNX0JVR19PTiB3aWxsIGJlIGRpc2FibGVkIGFuZCB3
+aWxsIG5vdCBjYXRjaCB0aGF0LCBJIGd1ZXNzLg0KDQpUaGF0J3MgbXkgY29uZnVzaW9uIHdoaWNo
+IHNjcmF0Y2hlZCBteSBtaW5kIGR1cmluZyB0aGUgaW52ZXN0aWdhdGlvbjogSWYgR0VNX0JVR19P
+TiBpcyBub3QgYWx3YXlzIHdvcmtpbmcsIHRoZW4gaXQgbG9va3MgV0FSTl9PTiBzaG91bGQgYWx3
+YXlzIGJlIHVzZWQuLi4uIEV4cGVjdGVkIHRvIGxlYXJuIG1vcmUgYWJvdXQgdGhlIHN0b3J5IGJl
+aGluZC4gOikNCg0KVGhhbmtzLA0KWmhpLg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
+RnJvbTogaW50ZWwtZ3Z0LWRldiBbbWFpbHRvOmludGVsLWd2dC1kZXYtYm91bmNlc0BsaXN0cy5m
+cmVlZGVza3RvcC5vcmddIE9uIEJlaGFsZiBPZiBKb29uYXMgTGFodGluZW4NClNlbnQ6IFRodXJz
+ZGF5LCBTZXB0ZW1iZXIgMjEsIDIwMTcgNTozMiBQTQ0KVG86IFpoZW55dSBXYW5nIDx6aGVueXV3
+QGxpbnV4LmludGVsLmNvbT47IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5jb20+DQpDYzogR2Fv
+LCBGcmVkIDxmcmVkLmdhb0BpbnRlbC5jb20+OyBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXgu
+aWU+OyBpbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOyBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKYW5pIE5pa3VsYSA8
+amFuaS5uaWt1bGFAbGludXguaW50ZWwuY29tPjsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZzsgVml2aSwgUm9kcmlnbyA8cm9kcmlnby52aXZpQGludGVsLmNvbT47IENvbGluIEtpbmcg
+PGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT47IGludGVsLWd2dC1kZXZAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnOyBXYW5nLCBaaGkgQSA8emhpLmEud2FuZ0BpbnRlbC5jb20+DQpTdWJqZWN0OiBSZTog
+W1BBVENIXVtkcm0tbmV4dF0gZHJtL2k5MTUvZ3Z0OiBlbnN1cmUgLXZlIHJldHVybiB2YWx1ZSBp
+cyBoYW5kbGVkIGNvcnJlY3RseQ0KDQpPbiBUaHUsIDIwMTctMDktMjEgYXQgMDY6NDQgKzA4MDAs
+IFpoZW55dSBXYW5nIHdyb3RlOg0KPiBPbiAyMDE3LjA5LjE5IDE5OjM1OjIzIC0wNzAwLCBKb2Ug
+UGVyY2hlcyB3cm90ZToNCj4gPiBPbiBXZWQsIDIwMTctMDktMjAgYXQgMDU6NDYgKzA4MDAsIFpo
+ZW55dSBXYW5nIHdyb3RlOg0KPiA+ID4gT24gMjAxNy4wOS4xOSAxNjo1NTozNCArMDEwMCwgQ29s
+aW4gS2luZyB3cm90ZToNCj4gPiA+ID4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCj4gPiA+ID4gDQo+ID4gPiA+IEFuIGVhcmxpZXIgZml4IGNoYW5nZWQg
+dGhlIHJldHVybiB0eXBlIGZyb20gZmluZF9iYl9zaXplIGhvd2V2ZXIgDQo+ID4gPiA+IHRoZSBp
+bnRlZ2VyIHJldHVybiBpcyBiZWluZyBhc3NpZ25lZCB0byBhIHVuc2lnbmVkIGludCBzbyB0aGUg
+DQo+ID4gPiA+IC12ZSBlcnJvciBjaGVjayB3aWxsIG5ldmVyIGJlIGRldGVjdGVkLiBNYWtlIGJi
+X3NpemUgYW4gaW50IHRvIGZpeCB0aGlzLg0KPiA+ID4gPiANCj4gPiA+ID4gRGV0ZWN0ZWQgYnkg
+Q292ZXJpdHlTY2FuIENJRCMxNDU2ODg2ICgiVW5zaWduZWQgY29tcGFyZWQgYWdhaW5zdCANCj4g
+PiA+ID4gMCIpDQo+ID4gPiA+IA0KPiA+ID4gPiBGaXhlczogMWUzMTk3ZDZhZDczICgiZHJtL2k5
+MTUvZ3Z0OiBSZWZpbmUgZXJyb3IgaGFuZGxpbmcgZm9yIA0KPiA+ID4gPiBwZXJmb3JtX2JiX3No
+YWRvdyIpDQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5n
+QGNhbm9uaWNhbC5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZHJpdmVycy9ncHUvZHJtL2k5
+MTUvZ3Z0L2NtZF9wYXJzZXIuYyB8IDIgKy0NCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4gPiANCj4gPiA+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9jbWRfcGFyc2VyLmMgDQo+ID4gPiA+IGIvZHJpdmVy
+cy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJzZXIuYw0KPiA+ID4gPiBpbmRleCAyYzBjY2JiODE3
+ZGMuLmY0MWNiZjY2NGI2OSAxMDA2NDQNCj4gPiA+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5
+MTUvZ3Z0L2NtZF9wYXJzZXIuYw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9n
+dnQvY21kX3BhcnNlci5jDQo+ID4gPiA+IEBAIC0xNjI4LDcgKzE2MjgsNyBAQCBzdGF0aWMgaW50
+IHBlcmZvcm1fYmJfc2hhZG93KHN0cnVjdCBwYXJzZXJfZXhlY19zdGF0ZSAqcykNCj4gPiA+ID4g
+IAlzdHJ1Y3QgaW50ZWxfc2hhZG93X2JiX2VudHJ5ICplbnRyeV9vYmo7DQo+ID4gPiA+ICAJc3Ry
+dWN0IGludGVsX3ZncHUgKnZncHUgPSBzLT52Z3B1Ow0KPiA+ID4gPiAgCXVuc2lnbmVkIGxvbmcg
+Z21hID0gMDsNCj4gPiA+ID4gLQl1aW50MzJfdCBiYl9zaXplOw0KPiA+ID4gPiArCWludCBiYl9z
+aXplOw0KPiA+ID4gPiAgCXZvaWQgKmRzdCA9IE5VTEw7DQo+ID4gPiA+ICAJaW50IHJldCA9IDA7
+DQo+ID4gPiA+ICANCj4gPiA+IA0KPiA+ID4gQXBwbGllZCB0aGlzLCB0aGFua3MhDQo+ID4gDQo+
+ID4gSXMgaXQgcG9zc2libGUgZm9yIGJiX3NpemUgdG8gYmUgYm90aCA+PSAyZyBhbmQgdmFsaWQ/
+DQo+IA0KPiBOZXZlciBiZSBwb3NzaWJsZSBpbiBwcmFjdGlzZSBhbmQgaWYgcmVhbGx5IHRoYXQg
+YmlnIEkgdGhpbmsgc29tZXRoaW5nIA0KPiBpcyBhbHJlYWR5IGluc2FuZSBpbmRlZWQuDQoNCkl0
+J3MgZ29vZCBpZGVhIHRvIGRvY3VtZW50IHRoZXNlIGFzc3VtcHRpb25zIGFzIFdBUk5fT04ncy4g
+SW4gaTkxNSwgaWYgdGhlIHZhbHVlIGlzIGNvbXBsZXRlbHkgaW50ZXJuYWwgdG8ga2VybmVsLCB3
+ZSdyZSB1c2luZyBHRU1fQlVHX09OIGZvciB0aGVzZSBzbyB0aGF0IG91ciBDSSB3aWxsIG5vdGlj
+ZSBicmVha2FnZS4gSWYgaXQncyBub3QgYSBkcml2ZXIgaW50ZXJuYWwgdmFsdWUgb25seSwgYSBX
+QVJOX09OIGlzIHRoZSBhcHByb3ByaWF0ZSBhY3Rpb24uDQoNCk90aGVyd2lzZSB0aGUgaW5mb3Jt
+YXRpb24gaXMgbG9zdCBhbmQgdGhlIG5leHQgcGVyc29uIHJlYWRpbmcgdGhlIGNvZGUgd2lsbCBo
+YXZlIHRoZSBzYW1lIHF1ZXN0aW9uIGluIG1pbmQuDQoNClJlZ2FyZHMsIEpvb25hcw0KLS0NCkpv
+b25hcyBMYWh0aW5lbg0KT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXINCkludGVsIENvcnBv
+cmF0aW9uDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K
+aW50ZWwtZ3Z0LWRldiBtYWlsaW5nIGxpc3QNCmludGVsLWd2dC1kZXZAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnDQpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lu
+dGVsLWd2dC1kZXYNCg=
