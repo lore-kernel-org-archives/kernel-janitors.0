@@ -1,80 +1,68 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 04 Sep 2017 12:17:01 +0000
-Subject: Re: [PATCH] RDMA/nes: do not leak uninitialized resp.reserved to userspace
-Message-Id: <20170904121701.GS10539@mtr-leonro.local>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mpb+VUhBqKoEsre9"
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 22 Sep 2017 07:23:16 +0000
+Subject: Re: [PATCH] wireless: iwlegacy: make const array static to shink object code size Content-Type: text
+Message-Id: <alpine.DEB.2.20.1709220921350.2024@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170904112316.23832-1-colin.king@canonical.com>
-In-Reply-To: <20170904112316.23832-1-colin.king@canonical.com>
+References: <20170921225630.21916-1-colin.king@canonical.com>
+In-Reply-To: <20170921225630.21916-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
-Cc: Faisal Latif <faisal.latif@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---mpb+VUhBqKoEsre9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Sep 04, 2017 at 12:23:16PM +0100, Colin King wrote:
+On Thu, 21 Sep 2017, Colin King wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 >
-> resp.reserved has not been initialized and so the copy_to_user (via
-> ib_copy_to_udata) is copying uninitialized data from the stack back
-> to user space which is a potential information leak. Fix this by
-> setting resp.reserved to zero.
+> Don't populate const array ac_to_fifo on the stack in an inlined
+> function, instead make it static.  Makes the object code smaller
+> by over 800 bytes:
 >
-> Fixes: 3c2d774cad5b ("RDMA/nes: Add a driver for NetEffect RNICs")
-> Cc: <stable@vger.kernel.org> [2.6.24+]
+>    text	   data	    bss	    dec	    hex	filename
+>  159029	  33154	   1216	 193399	  2f377	4965-mac.o
+>
+>    text	   data	    bss	    dec	    hex	filename
+>  158122	  33250	   1216	 192588	  2f04c	4965-mac.o
+>
+> (gcc version 7.2.0 x86_64)
+
+Gcc 7 must be much more aggressive about inlining than gcc 4.  Here is the
+change that I got on this file:
+
+     text          data     bss     dec     hex filename
+-   76346          1494     152   77992   130a8 drivers/net/wireless/intel/iwlegacy/4965-mac.o
++   76298          1494     152   77944   13078 drivers/net/wireless/intel/iwlegacy/4965-mac.o
+decrease of 48
+
+julia
+
+>
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/infiniband/hw/nes/nes_verbs.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-> index f0dc5f4aa177..052c3822dfed 100644
-> --- a/drivers/infiniband/hw/nes/nes_verbs.c
-> +++ b/drivers/infiniband/hw/nes/nes_verbs.c
-> @@ -1666,6 +1666,7 @@ static struct ib_cq *nes_create_cq(struct ib_device *ibdev,
->  		resp.cq_id = nescq->hw_cq.cq_number;
->  		resp.cq_size = nescq->hw_cq.cq_size;
->  		resp.mmap_db_index = 0;
-> +		resp.reserved = 0;
-
-Right and it is better to initialize the "struct nes_create_cq_resp resp" to zero
-at the beginning of the function.
-
-Thanks
-
-
->  		if (ib_copy_to_udata(udata, &resp, sizeof resp - sizeof resp.reserved)) {
->  			nes_free_resource(nesadapter, nesadapter->allocated_cqs, cq_num);
->  			kfree(nescq);
+> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> index de9b6522c43f..65eba2c24292 100644
+> --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> @@ -1480,7 +1480,7 @@ il4965_get_ac_from_tid(u16 tid)
+>  static inline int
+>  il4965_get_fifo_from_tid(u16 tid)
+>  {
+> -	const u8 ac_to_fifo[] = {
+> +	static const u8 ac_to_fifo[] = {
+>  		IL_TX_FIFO_VO,
+>  		IL_TX_FIFO_VI,
+>  		IL_TX_FIFO_BE,
 > --
 > 2.14.1
 >
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---mpb+VUhBqKoEsre9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlmtRDYACgkQ5GN7iDZy
-WKdiXBAArhqWCC8Zob9DWdfU6xIkul2RpFUozNKYb+3zCWaClCtF+WykZwOb3aks
-crB7VIhyW3SUcKQPy2sSPO7NDNlDkT3EyybuGjAG/FK9CxhXfIrAv8xsrEsZEyQe
-7LutmI6NnYSzAn9LIla89yAD6idknNphlJdPBYnoc3IHlKDyI/mHADHvHWoKXJqY
-khsS4sVjfX6RrJXfmk3T15O+QG6skc/vDnHDMqXNnv2HnZQASrjGtU2+M+fA9TOg
-gwGkPRrXZPUc03syYA/Ij1NFmZef6kjWVmuZU76xl/vOaAdBrE86ZDT058kc8PBW
-3Um1B1pSsOkVbqFQroJ8iha78+YsX8TmHVfwRsrIxMeBhhOpYCi2yNo0Qr65hzuc
-OejG0W5RPn2ix4EkWho/MagvgsqDPz2HGjwH0XQ46bxLKEh18BSedK0XkvshfSpb
-w3OVknrfHEtgTX1E4XLA71Ehftenqj0zfGkfxJXK8kVV17nak0mSXwGItrqHR54e
-Y0/e8eu0NOnl4ofNSvR5ey0vGF5rORtv3n+H87s7vTD5e3RMIeNVd80GftBaqIrh
-NJFBooE1ue3Ox/QSkY9yk71t8QuR4edjOiwV36m7JWSOjIPYTcX4j5NZtkJrMmQV
-0WuSezjfxM6gxSKaE8wIh8fxn+iYQ8ufU3as4i0ujaZqb+6ryOk=
-=GU6M
------END PGP SIGNATURE-----
-
---mpb+VUhBqKoEsre9--
+>
