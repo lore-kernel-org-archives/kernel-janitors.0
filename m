@@ -1,103 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 18:45:53 +0000
-Subject: [PATCH 2/2] [media] ti-vpe: Adjust nine checks for null pointers
-Message-Id: <1af449dd-d42d-bcf6-8f0c-7a8dc91dc928@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 22 Sep 2017 19:35:53 +0000
+Subject: [PATCH] staging: rtl8192u: Check some memory allocation failure
+Message-Id: <20170922193553.16358-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8137a759-cbfd-e04d-0adb-06de1b3246d1@users.sourceforge.net>
-In-Reply-To: <8137a759-cbfd-e04d-0adb-06de1b3246d1@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Archit Taneja <archit@ti.com>, Benoit Parrot <bparrot@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@linuxfoundation.org, singhalsimran0@gmail.com, baoyou.xie@linaro.org, davem@davemloft.net, jarod@redhat.com, szekelyszilv@gmail.com, elia.f.geretto@gmail.com, gs051095@gmail.com, shreeya.patel23498@gmail.com, robsonde@gmail.com, colin.king@canonical.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 20:22:44 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+If one of these memory allocations fail, a NULL pointer dereference will
+occur later on.
+Return -ENOMEM instead.
 
-The script “checkpatch.pl” pointed information out like the following.
+There is no need to free the resources already allocated, this is done
+by the caller (i.e. 'rtl8192_usb_probe()') which calls
+'rtl8192_usb_deleteendpoints()'.
 
-Comparison to NULL could be written !…
+The calling graph is:
+rtl8192_usb_probe
+  --> rtl8192_init
+    --> rtl8192_usb_initendpoints
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/ti-vpe/csc.c   |  2 +-
- drivers/media/platform/ti-vpe/vpdma.c |  2 +-
- drivers/media/platform/ti-vpe/vpe.c   | 14 +++++++-------
- 3 files changed, 9 insertions(+), 9 deletions(-)
+The error handling path in 'rtl8192_usb_probe' must also be fixed because
+it is bogus. Will do that in another patch.
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/ti-vpe/csc.c b/drivers/media/platform/ti-vpe/csc.c
-index 135fc9993679..b6568e620a8d 100644
---- a/drivers/media/platform/ti-vpe/csc.c
-+++ b/drivers/media/platform/ti-vpe/csc.c
-@@ -181,7 +181,7 @@ struct csc_data *csc_create(struct platform_device *pdev, const char *res_name)
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 46b3f19e0878..48b7fd071900 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -1687,9 +1687,13 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+ #ifndef JACKSON_NEW_RX
+ 	for (i = 0; i < (MAX_RX_URB + 1); i++) {
+ 		priv->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
++		if (!priv->rx_urb[i])
++			return -ENOMEM;
  
- 	csc->res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
- 						res_name);
--	if (csc->res = NULL) {
-+	if (!csc->res) {
- 		dev_err(&pdev->dev, "missing '%s' platform resources data\n",
- 			res_name);
- 		return ERR_PTR(-ENODEV);
-diff --git a/drivers/media/platform/ti-vpe/vpdma.c b/drivers/media/platform/ti-vpe/vpdma.c
-index e2cf2b90e500..b9acd29ebd9a 100644
---- a/drivers/media/platform/ti-vpe/vpdma.c
-+++ b/drivers/media/platform/ti-vpe/vpdma.c
-@@ -1145,7 +1145,7 @@ int vpdma_create(struct platform_device *pdev, struct vpdma_data *vpdma,
- 	spin_lock_init(&vpdma->lock);
+ 		priv->rx_urb[i]->transfer_buffer  			kmalloc(RX_URB_SIZE, GFP_KERNEL);
++		if (!priv->rx_urb[i]->transfer_buffer)
++			return -ENOMEM;
  
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "vpdma");
--	if (res = NULL) {
-+	if (!res) {
- 		dev_err(&pdev->dev, "missing platform resources data\n");
- 		return -ENODEV;
+ 		priv->rx_urb[i]->transfer_buffer_length = RX_URB_SIZE;
  	}
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index 45bd10544189..6bc210e68f6a 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -601,7 +601,7 @@ static void free_vbs(struct vpe_ctx *ctx)
- 	struct vpe_dev *dev = ctx->dev;
- 	unsigned long flags;
- 
--	if (ctx->src_vbs[2] = NULL)
-+	if (!ctx->src_vbs[2])
- 		return;
- 
- 	spin_lock_irqsave(&dev->lock, flags);
-@@ -1216,22 +1216,22 @@ static void device_run(void *priv)
- 		 * It will be removed when using bottom field
- 		 */
- 		ctx->src_vbs[0] = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
--		WARN_ON(ctx->src_vbs[0] = NULL);
-+		WARN_ON(!ctx->src_vbs[0]);
- 	} else {
- 		ctx->src_vbs[0] = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--		WARN_ON(ctx->src_vbs[0] = NULL);
-+		WARN_ON(!ctx->src_vbs[0]);
- 	}
- 
- 	ctx->dst_vb = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--	WARN_ON(ctx->dst_vb = NULL);
-+	WARN_ON(!ctx->dst_vb);
- 
- 	if (ctx->deinterlacing) {
- 
--		if (ctx->src_vbs[2] = NULL) {
-+		if (!ctx->src_vbs[2]) {
- 			ctx->src_vbs[2] = ctx->src_vbs[0];
--			WARN_ON(ctx->src_vbs[2] = NULL);
-+			WARN_ON(!ctx->src_vbs[2]);
- 			ctx->src_vbs[1] = ctx->src_vbs[0];
--			WARN_ON(ctx->src_vbs[1] = NULL);
-+			WARN_ON(!ctx->src_vbs[1]);
- 		}
- 
- 		/*
 -- 
-2.14.1
+2.11.0
 
