@@ -1,51 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Sep 2017 20:44:23 +0000
-Subject: Re: [media] spca500: Use common error handling code in spca500_synch310()
-Message-Id: <ce9f77e1-aeb6-65ac-9224-33e12d81d641@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 14:59:46 +0000
+Subject: [PATCH] lib: zstd: make const array rtbTable static, reduces object code size
+Message-Id: <20170922145946.14316-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d496ca24-1725-768b-5e55-4e45097cb77d@users.sourceforge.net>
- <alpine.DEB.2.20.1709221908230.3170@hadrien>
- <4921ea61-49cd-4071-e636-c199daddec8e@users.sourceforge.net>
- <alpine.DEB.2.20.1709221941020.3170@hadrien>
- <0baa322a-6019-70dc-0245-caae824ccb49@users.sourceforge.net>
- <25a82438-8760-66fd-23d3-24569078f906@grinta.net>
-In-Reply-To: <25a82438-8760-66fd-23d3-24569078f906@grinta.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniele Nicolodi <daniele@grinta.net>, linux-media@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> No one needs to argue about keeping it the way it is.
+From: Colin Ian King <colin.king@canonical.com>
 
-I got an other impression in this case after a bit of information
-was presented which seems to be contradictory.
+Don't populate const array rtbTable on the stack, instead make it
+static. Also split overly long line to clean a chechkpach warning.
+Makes the object code smaller by nearly 500 bytes:
 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  13297	    104	      0	  13401	   3459	lib/zstd/fse_compress.o
 
-> I don't see any improvement brought by the proposed change,
+After:
+   text	   data	    bss	    dec	    hex	filename
+  12742	    160	      0	  12902	   3266	lib/zstd/fse_compress.o
 
-Do you care if the source code for an error message is present only once
-in this function?
+(gcc 6.3.0, x86-64)
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/zstd/fse_compress.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> other than making the code harder to read.
-
-I suggest to reconsider this concern.
-
-
-> I find goto statements hard to read, because they inherently make some
-> information non local.  They are justified in error path handling,
-> if the error path only unwinds what the function did early on.
-> That's not the case here.
-
-I am looking also for change possibilities without such a restriction.
-
+diff --git a/lib/zstd/fse_compress.c b/lib/zstd/fse_compress.c
+index ef3d1741d532..f41c13128ed2 100644
+--- a/lib/zstd/fse_compress.c
++++ b/lib/zstd/fse_compress.c
+@@ -618,7 +618,10 @@ size_t FSE_normalizeCount(short *normalizedCounter, unsigned tableLog, const uns
+ 		return ERROR(GENERIC); /* Too small tableLog, compression potentially impossible */
  
-> The same applies to dozens of patches you proposed recently.
+ 	{
+-		U32 const rtbTable[] = {0, 473195, 504333, 520860, 550000, 700000, 750000, 830000};
++		U32 static const rtbTable[] = {
++			0, 473195, 504333, 520860,
++			550000, 700000, 750000, 830000
++		};
+ 		U64 const scale = 62 - tableLog;
+ 		U64 const step = div_u64((U64)1 << 62, (U32)total); /* <= here, one division ! */
+ 		U64 const vStep = 1ULL << (scale - 20);
+-- 
+2.14.1
 
-I proposed some software updates to reduce a bit of code duplication.
-
-Do you find any corresponding approaches useful?
-
-Regards,
-Markus
