@@ -1,36 +1,34 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 22 Sep 2017 06:00:29 +0000
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Date: Fri, 22 Sep 2017 09:56:10 +0000
 Subject: Re: [PATCH] wireless: iwlegacy:  make const array static to shink object code size Content-Type: tex
-Message-Id: <1506060029.2048.9.camel@sipsolutions.net>
+Message-Id: <20170922095609.GA27551@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170921225630.21916-1-colin.king@canonical.com>
-         (sfid-20170922_005652_800251_1E085F58)
-In-Reply-To: <20170921225630.21916-1-colin.king@canonical.com> (sfid-20170922_005652_800251_1E085F58)
+In-Reply-To: <20170921225630.21916-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Colin King <colin.king@canonical.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2017-09-21 at 23:56 +0100, Colin King wrote:
+On Thu, Sep 21, 2017 at 11:56:30PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Don't populate const array ac_to_fifo on the stack in an inlined
-> function, instead make it static.  Makes the object code smaller
+> function, instead make it static.  Makes the object code smaller
 > by over 800 bytes:
 > 
->    text	   data	    bss	    dec	    hex	
-> filename
->  159029	  33154	   1216	 193399	  2f377	
-> 4965-mac.o
+>    text	   data	    bss	    dec	    hex	filename
+>  159029	  33154	   1216	 193399	  2f377	4965-mac.o
 > 
->    text	   data	    bss	    dec	    hex	
-> filename
->  158122	  33250	   1216	 192588	  2f04c	
-> 4965-mac.o
+>    text	   data	    bss	    dec	    hex	filename
+>  158122	  33250	   1216	 192588	  2f04c	4965-mac.o
 > 
 > (gcc version 7.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I'm curious - how did you find this?
+Content type information was added at the end of the topic, but
+I think Kalle can fix that when he will be committing the patch.
 
-johannes
+Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
