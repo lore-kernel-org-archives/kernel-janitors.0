@@ -1,73 +1,62 @@
-From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
-Date: Fri, 08 Sep 2017 19:44:52 +0000
-Subject: Re: [PATCH net] net: qualcomm: rmnet: Fix a double free
-Message-Id: <2ddbb6da514108b4e70ccd8362292134@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Sep 2017 17:06:01 +0000
+Subject: [PATCH] [media] spca500: Use common error handling code in spca500_synch310()
+Message-Id: <d496ca24-1725-768b-5e55-4e45097cb77d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908102356.tzysh6qaiesd2umz@mwanda>
-In-Reply-To: <20170908102356.tzysh6qaiesd2umz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> index 557c9bf1a469..0335fce54201 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> @@ -95,10 +95,8 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff 
-> *skb)
->  	skb_pull(skb, packet_len);
-> 
->  	/* Some hardware can send us empty frames. Catch them */
-> -	if (ntohs(maph->pkt_len) = 0) {
-> -		kfree_skb(skb);
-> +	if (ntohs(maph->pkt_len) = 0)
->  		return NULL;
-> -	}
-> 
->  	return skbn;
->  }
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Sep 2017 18:45:07 +0200
 
-Thanks for the patch. This is fixing the double free, but is leaking the 
-new skb skbn
-created. Perhaps we should add the check earlier -
+Adjust a jump target so that a bit of exception handling can be better
+reused at the end of this function.
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c 
-b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-index 557c9bf..86b8c75 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-@@ -84,6 +84,10 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff 
-*skb)
-         if (((int)skb->len - (int)packet_len) < 0)
-                 return NULL;
+This issue was detected by using the Coccinelle software.
 
-+       /* Some hardware can send us empty frames. Catch them */
-+       if (ntohs(maph->pkt_len) = 0)
-+               return NULL;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/gspca/spca500.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/spca500.c b/drivers/media/usb/gspca/spca500.c
+index da2d9027914c..1f224f5e5b19 100644
+--- a/drivers/media/usb/gspca/spca500.c
++++ b/drivers/media/usb/gspca/spca500.c
+@@ -501,7 +501,6 @@ static int spca500_full_reset(struct gspca_dev *gspca_dev)
+ static int spca500_synch310(struct gspca_dev *gspca_dev)
+ {
+-	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, 0) < 0) {
+-		PERR("Set packet size: set interface error");
+-		goto error;
+-	}
++	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, 0) < 0)
++		goto report_failure;
 +
-         skbn = alloc_skb(packet_len + RMNET_MAP_DEAGGR_SPACING, 
-GFP_ATOMIC);
-         if (!skbn)
-                 return NULL;
-@@ -94,11 +98,5 @@ struct sk_buff *rmnet_map_deaggregate(struct sk_buff 
-*skb)
-         memcpy(skbn->data, skb->data, packet_len);
-         skb_pull(skb, packet_len);
-
--       /* Some hardware can send us empty frames. Catch them */
--       if (ntohs(maph->pkt_len) = 0) {
--               kfree_skb(skb);
--               return NULL;
--       }
--
-         return skbn;
-  }
-
-
+ 	spca500_ping310(gspca_dev);
+@@ -514,12 +513,12 @@ static int spca500_synch310(struct gspca_dev *gspca_dev)
+ 	/* Windoze use pipe with altsetting 6 why 7 here */
+-	if (usb_set_interface(gspca_dev->dev,
+-				gspca_dev->iface,
+-				gspca_dev->alt) < 0) {
+-		PERR("Set packet size: set interface error");
+-		goto error;
+-	}
++	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, gspca_dev->alt)
++	    < 0)
++		goto report_failure;
++
+ 	return 0;
+-error:
++
++report_failure:
++	PERR("Set packet size: set interface error");
+ 	return -EBUSY;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+2.14.1
+
