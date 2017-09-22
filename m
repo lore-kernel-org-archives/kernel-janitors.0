@@ -1,65 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Wed, 27 Sep 2017 09:26:53 +0000
-Subject: Re: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
-Message-Id: <03eb0051-e03b-ee13-c68f-ee76a181a863@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 14:03:16 +0000
+Subject: [PATCH] brcm80211: make const array ucode_ofdm_rates static, reduces object code size
+Message-Id: <20170922140316.12768-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-	<CGME20170927072816epcas3p1b533de74f5dcdee311045a24f6e60f50@epcas3p1.samsung.com>
-	<e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
-In-Reply-To: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/27/2017 09:27 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 09:00:21 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
+Don't populate const array ucode_ofdm_rates on the stack, instead make it
+static. Makes the object code smaller by 100 bytes:
 
-Can you please fix your process and stop posting with above tags 
-in the commit message? These 3 tags are already in the header
-of message you are sending. After your patches get applied 
-we end up with a mess in commit messages as below.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  39482	    564	      0	  40046	   9c6e	phy_cmn.o
 
-------------------------------8<-------------------------------
-commit 0b08273c8ab7e688832120c4817b1adfdc56e231
-Author: Markus Elfring <elfring@users.sourceforge.net>
-Date:   Thu Aug 17 21:35:16 2017 +0200
+After
+   text	   data	    bss	    dec	    hex	filename
+  39326	    620	      0	  39946	   9c0a	phy_cmn.o
 
-    orangefs: Adjust three checks for null pointers
-    
-    MIME-Version: 1.0
-    Content-Type: text/plain; charset=UTF-8
-    Content-Transfer-Encoding: 8bit
-    
-    The script “checkpatch.pl” pointed information out like the following.
-    
-    Comparison to NULL could be written !…
-    
-    Thus fix affected source code places.
-    
-    Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-    Signed-off-by: Mike Marshall <hubcap@omnibond.com>
-------------------------------8<-------------------------------
+(gcc 6.3.0, x86-64)
 
-Please see "DISCUSSION" paragraph of [1] for an explanation 
-of what should be put in the message body.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://git-scm.com/docs/git-format-patch
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
+index 1c4e9dd57960..3a13d176b221 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
+@@ -1916,7 +1916,7 @@ void wlc_phy_txpower_update_shm(struct brcms_phy *pi)
+ 				     pi->hwpwr_txcur);
+ 
+ 		for (j = TXP_FIRST_OFDM; j <= TXP_LAST_OFDM; j++) {
+-			const u8 ucode_ofdm_rates[] = {
++			static const u8 ucode_ofdm_rates[] = {
+ 				0x0c, 0x12, 0x18, 0x24, 0x30, 0x48, 0x60, 0x6c
+ 			};
+ 			offset = wlapi_bmac_rate_shm_offset(
+-- 
+2.14.1
 
---
-Thanks,
-Sylwester
-
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written !…
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
