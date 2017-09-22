@@ -1,33 +1,84 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 07:23:28 +0000
-Subject: [PATCH 0/3] MMP clock: Adjustments for seven function implementations
-Message-Id: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 22 Sep 2017 14:47:04 +0000
+Subject: Re: [Intel-wired-lan] [PATCH][V2] e1000: avoid null pointer dereference on invalid stat type
+Message-Id: <CAKgT0UdigPw=rpUoJSMDA98iLewQnn__P-wdn8A1Ltm0HU2jtA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170922134131.12283-1-colin.king@canonical.com>
+In-Reply-To: <20170922134131.12283-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 09:21:23 +0200
+On Fri, Sep 22, 2017 at 6:41 AM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently if the stat type is invalid then data[i] is being set
+> either by dereferencing a null pointer p, or it is reading from
+> an incorrect previous location if we had a valid stat type
+> previously.  Fix this by nullify pointer p if a stat type is
+> invalid and only setting data if p is not null.
+>
+> Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+> index ec8aa4562cc9..724c93a6ea92 100644
+> --- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+> +++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+> @@ -1824,7 +1824,7 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+>  {
+>         struct e1000_adapter *adapter = netdev_priv(netdev);
+>         int i;
+> -       char *p = NULL;
+> +       char *p;
+>         const struct e1000_stats *stat = e1000_gstrings_stats;
+>
+>         e1000_update_stats(adapter);
 
-Three update suggestions were taken into account
-from static source code analysis.
+I was honestly happier with the portion of the first patch that moved
+this into the loop.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in three functions
-  Use common error handling code in mmp_clk_register_mix()
-  Adjust 12 checks for null pointers
+> @@ -1837,16 +1837,18 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+>                         p = (char *)adapter + stat->stat_offset;
+>                         break;
+>                 default:
+> +                       p = NULL;
+>                         WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
+>                                   stat->type, i);
+>                         break;
+>                 }
+>
+> -               if (stat->sizeof_stat = sizeof(u64))
+> -                       data[i] = *(u64 *)p;
+> -               else
+> -                       data[i] = *(u32 *)p;
+> -
+> +               if (p) {
+> +                       if (stat->sizeof_stat = sizeof(u64))
+> +                               data[i] = *(u64 *)p;
+> +                       else
+> +                               data[i] = *(u32 *)p;
+> +               }
+>                 stat++;
+>         }
 
- drivers/clk/mmp/clk-frac.c   |  4 +---
- drivers/clk/mmp/clk-gate.c   |  4 +---
- drivers/clk/mmp/clk-mix.c    | 27 +++++++++++----------------
- drivers/clk/mmp/clk-mmp2.c   |  6 +++---
- drivers/clk/mmp/clk-pxa168.c |  6 +++---
- drivers/clk/mmp/clk-pxa910.c |  8 ++++----
- 6 files changed, 23 insertions(+), 32 deletions(-)
+Instead of doing all this why not just call out a "continue;" instead
+of a "break" if the type isn't recognized, and move the stat++ into
+the loop declaration and process it at the same time as i++? That
+would clean most of this up and we don't have to worry about any loop
+carried variables and the like.
 
--- 
-2.14.1
-
+>  /* BUG_ON(i != E1000_STATS_LEN); */
+> --
+> 2.14.1
+>
+> _______________________________________________
+> Intel-wired-lan mailing list
+> Intel-wired-lan@osuosl.org
+> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
