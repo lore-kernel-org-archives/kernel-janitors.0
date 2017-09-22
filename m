@@ -1,46 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 21 Sep 2017 22:56:30 +0000
-Subject: [PATCH] wireless: iwlegacy:  make const array static to shink object code size Content-Type: text/pl
-Message-Id: <20170921225630.21916-1-colin.king@canonical.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Fri, 22 Sep 2017 06:00:29 +0000
+Subject: Re: [PATCH] wireless: iwlegacy:  make const array static to shink object code size Content-Type: tex
+Message-Id: <1506060029.2048.9.camel@sipsolutions.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170921225630.21916-1-colin.king@canonical.com>
+         (sfid-20170922_005652_800251_1E085F58)
+In-Reply-To: <20170921225630.21916-1-colin.king@canonical.com> (sfid-20170922_005652_800251_1E085F58)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2017-09-21 at 23:56 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array ac_to_fifo on the stack in an inlined
+> function, instead make it static.  Makes the object code smaller
+> by over 800 bytes:
+> 
+>    text	   data	    bss	    dec	    hex	
+> filename
+>  159029	  33154	   1216	 193399	  2f377	
+> 4965-mac.o
+> 
+>    text	   data	    bss	    dec	    hex	
+> filename
+>  158122	  33250	   1216	 192588	  2f04c	
+> 4965-mac.o
+> 
+> (gcc version 7.2.0 x86_64)
 
-Don't populate const array ac_to_fifo on the stack in an inlined
-function, instead make it static.  Makes the object code smaller
-by over 800 bytes:
+I'm curious - how did you find this?
 
-   text	   data	    bss	    dec	    hex	filename
- 159029	  33154	   1216	 193399	  2f377	4965-mac.o
-
-   text	   data	    bss	    dec	    hex	filename
- 158122	  33250	   1216	 192588	  2f04c	4965-mac.o
-
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-index de9b6522c43f..65eba2c24292 100644
---- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-@@ -1480,7 +1480,7 @@ il4965_get_ac_from_tid(u16 tid)
- static inline int
- il4965_get_fifo_from_tid(u16 tid)
- {
--	const u8 ac_to_fifo[] = {
-+	static const u8 ac_to_fifo[] = {
- 		IL_TX_FIFO_VO,
- 		IL_TX_FIFO_VI,
- 		IL_TX_FIFO_BE,
--- 
-2.14.1
-
+johannes
