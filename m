@@ -1,51 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Sep 2017 14:59:46 +0000
-Subject: [PATCH] lib: zstd: make const array rtbTable static, reduces object code size
-Message-Id: <20170922145946.14316-1-colin.king@canonical.com>
+From: Nick Terrell <terrelln@fb.com>
+Date: Fri, 22 Sep 2017 19:14:05 +0000
+Subject: Re: [PATCH] lib: zstd: make const array rtbTable static, reduces object code size
+Message-Id: <6C490CCD-32E1-4AC3-BCCF-5EB3A56EA887@fb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170922145946.14316-1-colin.king@canonical.com>
+In-Reply-To: <20170922145946.14316-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Chris Mason <clm@fb.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate const array rtbTable on the stack, instead make it
-static. Also split overly long line to clean a chechkpach warning.
-Makes the object code smaller by nearly 500 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  13297	    104	      0	  13401	   3459	lib/zstd/fse_compress.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  12742	    160	      0	  12902	   3266	lib/zstd/fse_compress.o
-
-(gcc 6.3.0, x86-64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- lib/zstd/fse_compress.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/lib/zstd/fse_compress.c b/lib/zstd/fse_compress.c
-index ef3d1741d532..f41c13128ed2 100644
---- a/lib/zstd/fse_compress.c
-+++ b/lib/zstd/fse_compress.c
-@@ -618,7 +618,10 @@ size_t FSE_normalizeCount(short *normalizedCounter, unsigned tableLog, const uns
- 		return ERROR(GENERIC); /* Too small tableLog, compression potentially impossible */
- 
- 	{
--		U32 const rtbTable[] = {0, 473195, 504333, 520860, 550000, 700000, 750000, 830000};
-+		U32 static const rtbTable[] = {
-+			0, 473195, 504333, 520860,
-+			550000, 700000, 750000, 830000
-+		};
- 		U64 const scale = 62 - tableLog;
- 		U64 const step = div_u64((U64)1 << 62, (U32)total); /* <= here, one division ! */
- 		U64 const vStep = 1ULL << (scale - 20);
--- 
-2.14.1
-
+T24gOS8yMi8xNywgODowMCBBTSwgImxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcg
+b24gYmVoYWxmIG9mIENvbGluIEtpbmciIDxsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwu
+b3JnIG9uIGJlaGFsZiBvZiBjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+IHdyb3RlOg0KPiBGcm9t
+OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gRG9uJ3Qg
+cG9wdWxhdGUgY29uc3QgYXJyYXkgcnRiVGFibGUgb24gdGhlIHN0YWNrLCBpbnN0ZWFkIG1ha2Ug
+aXQNCj4gc3RhdGljLiBBbHNvIHNwbGl0IG92ZXJseSBsb25nIGxpbmUgdG8gY2xlYW4gYSBjaGVj
+aGtwYWNoIHdhcm5pbmcuDQo+IE1ha2VzIHRoZSBvYmplY3QgY29kZSBzbWFsbGVyIGJ5IG5lYXJs
+eSA1MDAgYnl0ZXM6DQo+IA0KPiBCZWZvcmU6DQo+ICAgIHRleHQJICAgZGF0YQkgICAgYnNzCSAg
+ICBkZWMJICAgIGhleAlmaWxlbmFtZQ0KPiAgIDEzMjk3CSAgICAxMDQJICAgICAgMAkgIDEzNDAx
+CSAgIDM0NTkJbGliL3pzdGQvZnNlX2NvbXByZXNzLm8NCj4gDQo+IEFmdGVyOg0KPiAgICB0ZXh0
+CSAgIGRhdGEJICAgIGJzcwkgICAgZGVjCSAgICBoZXgJZmlsZW5hbWUNCj4gICAxMjc0MgkgICAg
+MTYwCSAgICAgIDAJICAxMjkwMgkgICAzMjY2CWxpYi96c3RkL2ZzZV9jb21wcmVzcy5vDQo+IA0K
+PiAoZ2NjIDYuMy4wLCB4ODYtNjQpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2lu
+ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpJIHRlc3RlZCB5b3VyIHBhdGNoIHdpdGgg
+Z2NjLTcuMSBvbiB4ODYsIGFuZCBiZW5jaG1hcmtlZCB0aGUgc3BlZWQgb24NCnVwc3RyZWFtIHpz
+dGQuIFRoZXJlIGlzbid0IGEgbm90aWNlYWJsZSBzcGVlZCBkaWZmZXJlbmNlLCBzaW5jZSBpdCBp
+c24ndCBhDQpwYXJ0aWN1bGFybHkgaG90IHBpZWNlIG9mIGNvZGUuIFdvdWxkIHlvdSBiZSBhYmxl
+IHRvIHN1Ym1pdCB0aGUgc2FtZSBwYXRjaA0KdXBzdHJlYW0gWzFdLCBvciB3b3VsZCB5b3UgYmUg
+b2theSB3aXRoIG1lIHBvcnRpbmcgaXQgYmFjayB1cHN0cmVhbSwgc28gaXQNCmRvZXNuJ3QgZ2V0
+IGxvc3Qgb24gYW4gdXBkYXRlPw0KDQpJIGRpZG4ndCBleHBlY3QgZ2NjIHRvIGxlYXZlIGNvbnN0
+YW50IGFycmF5cyBvbiB0aGUgc3RhY2ssIHRoYXQgc2VlbXMNCnNpbGx5LiBDbGFuZyBtYWtlcyBp
+dCBzdGF0aWMsIGJ1dCBnY2MgbG9hZHMgaXQgb250byB0aGUgc3RhY2ssIGFuZCBpbiA2LjMrDQpp
+dCBzYXZlcyB0aGUgZGF0YSBzdGF0aWNhbGx5LCBhbmQgdGhlbiB1c2VzIHZlY3RvciBpbnN0cnVj
+dGlvbnMgdG8gbG9hZCBpdA0Kb250byB0aGUgc3RhY2sgWzJdLg0KDQpUZXN0ZWQtYnk6IE5pY2sg
+VGVycmVsbCA8dGVycmVsbG5AZmIuY29tPg0KDQpbMV0gaHR0cHM6Ly9naXRodWIuY29tL2ZhY2Vi
+b29rL3pzdGQNClsyXSBodHRwczovL2dvZGJvbHQub3JnL2cvZnZUY0VEDQoNCg0K
