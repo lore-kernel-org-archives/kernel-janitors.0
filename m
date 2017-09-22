@@ -1,61 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 08:00:28 +0000
-Subject: [PATCH 9/9] [media] tm6000: Use common error handling code in tm6000_prepare_isoc()
-Message-Id: <9ef1871e-1590-a031-84a9-31bd342b301e@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 15:39:02 +0000
+Subject: [PATCH] b43: make const arrays static, reduces object code size
+Message-Id: <20170922153902.15372-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 08:02:33 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Don't populate const arrays on the stack, instead make them static.
+Makes the object code smaller by over 60 bytes:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
+
+(gcc 6.3.0, x86-64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/tm6000/tm6000-video.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_ht.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index 0d45f35e1697..bfdeb41ed3a1 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -602,7 +602,5 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
--	if (!dev->isoc_ctl.transfer_buffer) {
--		kfree(dev->isoc_ctl.urb);
--		return -ENOMEM;
--	}
-+	if (!dev->isoc_ctl.transfer_buffer)
-+		goto free_urb;
+diff --git a/drivers/net/wireless/broadcom/b43/phy_ht.c b/drivers/net/wireless/broadcom/b43/phy_ht.c
+index 718c90e81696..c3158d085c2b 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_ht.c
++++ b/drivers/net/wireless/broadcom/b43/phy_ht.c
+@@ -119,7 +119,7 @@ static void b43_radio_2059_rcal(struct b43_wldev *dev)
+ /* Calibrate the internal RC oscillator? */
+ static void b43_radio_2057_rccal(struct b43_wldev *dev)
+ {
+-	const u16 radio_values[3][2] = {
++	static const u16 radio_values[3][2] = {
+ 		{ 0x61, 0xE9 }, { 0x69, 0xD5 }, { 0x73, 0x99 },
+ 	};
+ 	int i;
+@@ -154,7 +154,7 @@ static void b43_radio_2059_init_pre(struct b43_wldev *dev)
  
- 	dprintk(dev, V4L2_DEBUG_QUEUE, "Allocating %d x %d packets (%d bytes) of %d bytes each to handle %u size\n",
- 		    max_packets, num_bufs, sb_size,
-@@ -616,7 +614,6 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
- 		tm6000_free_urb_buffers(dev);
--		kfree(dev->isoc_ctl.urb);
- 		kfree(dev->isoc_ctl.transfer_buffer);
--		return -ENOMEM;
-+		goto free_urb;
- 	}
+ static void b43_radio_2059_init(struct b43_wldev *dev)
+ {
+-	const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
++	static const u16 routing[] = { R2059_C1, R2059_C2, R2059_C3 };
+ 	int i;
  
- 	/* allocate urbs and transfer buffers */
-@@ -646,6 +643,10 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev)
- 	}
+ 	/* Prepare (reset?) radio */
+@@ -263,7 +263,7 @@ static void b43_phy_ht_reset_cca(struct b43_wldev *dev)
+ static void b43_phy_ht_zero_extg(struct b43_wldev *dev)
+ {
+ 	u8 i, j;
+-	u16 base[] = { 0x40, 0x60, 0x80 };
++	static const u16 base[] = { 0x40, 0x60, 0x80 };
  
- 	return 0;
-+
-+free_urb:
-+	kfree(dev->isoc_ctl.urb);
-+	return -ENOMEM;
- }
- 
- static int tm6000_start_thread(struct tm6000_core *dev)
+ 	for (i = 0; i < ARRAY_SIZE(base); i++) {
+ 		for (j = 0; j < 4; j++)
 -- 
 2.14.1
 
