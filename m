@@ -1,47 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 22 Sep 2017 15:50:23 +0000
-Subject: [PATCH] hv_netvsc:  make const array ver_list static, reduces object code size
-Message-Id: <20170922155023.15821-1-colin.king@canonical.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Fri, 22 Sep 2017 16:00:37 +0000
+Subject: RE: [PATCH] hv_netvsc:  make const array ver_list static, reduces object code size
+Message-Id: <MWHPR21MB04795E0C01527E2D096E6B05CA670@MWHPR21MB0479.namprd21.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170922155023.15821-1-colin.king@canonical.com>
+In-Reply-To: <20170922155023.15821-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate const array ver_list on the stack, instead make it
-static. Makes the object code smaller by over 400 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  18444	   3168	    320	  21932	   55ac	drivers/net/hyperv/netvsc.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  17950	   3224	    320	  21494	   53f6	drivers/net/hyperv/netvsc.o
-
-(gcc 6.3.0, x86-64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/hyperv/netvsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index 8d5077fb0492..b0d323e24978 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -484,7 +484,7 @@ static int netvsc_connect_vsp(struct hv_device *device,
- 			      struct netvsc_device *net_device,
- 			      const struct netvsc_device_info *device_info)
- {
--	const u32 ver_list[] = {
-+	static const u32 ver_list[] = {
- 		NVSP_PROTOCOL_VERSION_1, NVSP_PROTOCOL_VERSION_2,
- 		NVSP_PROTOCOL_VERSION_4, NVSP_PROTOCOL_VERSION_5
- 	};
--- 
-2.14.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIg
+MjIsIDIwMTcgODo1MCBBTQ0KPiBUbzogS1kgU3Jpbml2YXNhbiA8a3lzQG1pY3Jvc29mdC5jb20+
+OyBIYWl5YW5nIFpoYW5nDQo+IDxoYWl5YW5nekBtaWNyb3NvZnQuY29tPjsgU3RlcGhlbiBIZW1t
+aW5nZXIgPHN0aGVtbWluQG1pY3Jvc29mdC5jb20+Ow0KPiBkZXZlbEBsaW51eGRyaXZlcnByb2pl
+Y3Qub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQ
+QVRDSF0gaHZfbmV0dnNjOiBtYWtlIGNvbnN0IGFycmF5IHZlcl9saXN0IHN0YXRpYywgcmVkdWNl
+cw0KPiBvYmplY3QgY29kZSBzaXplDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4u
+a2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gRG9uJ3QgcG9wdWxhdGUgY29uc3QgYXJyYXkgdmVy
+X2xpc3Qgb24gdGhlIHN0YWNrLCBpbnN0ZWFkIG1ha2UgaXQNCj4gc3RhdGljLiBNYWtlcyB0aGUg
+b2JqZWN0IGNvZGUgc21hbGxlciBieSBvdmVyIDQwMCBieXRlczoNCj4gDQo+IEJlZm9yZToNCj4g
+ICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgMTg0
+NDQJICAgMzE2OAkgICAgMzIwCSAgMjE5MzIJICAgNTVhYw0KPiAJZHJpdmVycy9uZXQvaHlwZXJ2
+L25ldHZzYy5vDQo+IA0KPiBBZnRlcjoNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRl
+YwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgMTc5NTAJICAgMzIyNAkgICAgMzIwCSAgMjE0OTQJICAg
+NTNmNg0KPiAJZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzYy5vDQo+IA0KPiAoZ2NjIDYuMy4wLCB4
+ODYtNjQpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPg0KPiAtLS0NCg0KUmV2aWV3ZWQtYnk6IEhhaXlhbmcgWmhhbmcgPGhhaXlh
+bmd6QG1pY3Jvc29mdC5jb20+DQoNCg0K
