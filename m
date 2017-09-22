@@ -1,27 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 20:07:00 +0000
-Subject: [PATCH 0/2] [media] M88RS6000T: Adjustments for two function implementations
-Message-Id: <278b14e0-f717-7471-6dc3-45dc98d64443@users.sourceforge.net>
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Date: Fri, 22 Sep 2017 16:44:02 +0000
+Subject: Re: [Intel-wired-lan] [PATCH] i40e: make const array patterns static, reduces object code size
+Message-Id: <20170922094402.00001ad2@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170922141138.13038-1-colin.king@canonical.com>
+In-Reply-To: <20170922141138.13038-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, jesse.brandeburg@intel.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 21:48:45 +0200
+On Fri, 22 Sep 2017 15:11:38 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array patterns on the stack, instead make it
+> static. Makes the object code smaller by over 60 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    1953	    496	      0	   2449	    991	i40e_diag.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    1798	    584	      0	   2382	    94e	i40e_diag.o
+> 
+> (gcc 6.3.0, x86-64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve three size determinations
+Looks good, thanks Colin!
 
- drivers/media/tuners/m88rs6000t.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
--- 
-2.14.1
-
+Acked-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
