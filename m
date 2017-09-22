@@ -1,27 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 08 Sep 2017 20:50:13 +0000
-Subject: [PATCH 0/3] S5P MFC: Adjustments for five function implementations
-Message-Id: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 14:11:38 +0000
+Subject: [PATCH] i40e: make const array patterns static, reduces object code size
+Message-Id: <20170922141138.13038-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 8 Sep 2017 22:44:55 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Don't populate const array patterns on the stack, instead make it
+static. Makes the object code smaller by over 60 bytes:
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in s5p_mfc_probe()
-  Improve a size determination ins5p_mfc_alloc_memdev()
-  Adjust a null pointer check in four functions
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   1953	    496	      0	   2449	    991	i40e_diag.o
 
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+After:
+   text	   data	    bss	    dec	    hex	filename
+   1798	    584	      0	   2382	    94e	i40e_diag.o
 
+(gcc 6.3.0, x86-64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_diag.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_diag.c b/drivers/net/ethernet/intel/i40e/i40e_diag.c
+index f141e78d409e..76ed56641864 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_diag.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_diag.c
+@@ -36,7 +36,9 @@
+ static i40e_status i40e_diag_reg_pattern_test(struct i40e_hw *hw,
+ 							u32 reg, u32 mask)
+ {
+-	const u32 patterns[] = {0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFF};
++	static const u32 patterns[] = {
++		0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFF
++	};
+ 	u32 pat, val, orig_val;
+ 	int i;
+ 
 -- 
 2.14.1
 
