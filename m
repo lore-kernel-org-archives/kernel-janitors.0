@@ -1,32 +1,30 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 27 Sep 2017 17:42:51 +0000
-Subject: Re: [PATCH] clk/spear: Delete five error messages for a failed memory allocation
-Message-Id: <20170927174251.GD12211@ubuntu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Sep 2017 20:45:18 +0000
+Subject: [PATCH] ovl: Return -ENOMEM if an allocation fails ovl_lookup()
+Message-Id: <20170922204518.cqagl2vlh7jiwt6y@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
-In-Reply-To: <4283fdab-7005-f774-9594-821582c5a9fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-unionfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 27-09-17, 18:15, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 18:00:21 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/clk/spear/clk-aux-synth.c  | 4 +---
->  drivers/clk/spear/clk-frac-synth.c | 4 +---
->  drivers/clk/spear/clk-gpt-synth.c  | 4 +---
->  drivers/clk/spear/clk-vco-pll.c    | 8 ++------
->  4 files changed, 5 insertions(+), 15 deletions(-)
+The error code is missing here so it means we return ERR_PTR(0) or NULL.
+The other error paths all return an error code so this probably should
+as well.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: 02b69b284cd7 ("ovl: lookup redirects")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-viresh
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index c3addd1114f1..beb8a988df51 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -634,6 +634,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		}
+ 
+ 		if (d.redirect) {
++			err = -ENOMEM;
+ 			upperredirect = kstrdup(d.redirect, GFP_KERNEL);
+ 			if (!upperredirect)
+ 				goto out_put_upper;
