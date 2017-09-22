@@ -1,33 +1,51 @@
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 11 Sep 2017 13:26:33 +0000
-Subject: Re: [PATCH 3/3] [media] DaVinci-VPBE-Display: Adjust 12 checks for null pointers
-Message-Id: <CA+V-a8v6xCx_tc2GZnL-PbGqybG-7_4bo=cmzWtJ4hiq3uwCaA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 16:05:16 +0000
+Subject: [PATCH][drm-next] drm/tve200: make two functions static
+Message-Id: <20170922160516.16283-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e980c48c-9525-4942-a58e-20af8a96e531@users.sourceforge.net> <3331c4f8-a327-abc6-df00-09e67d3769fe@users.sourceforge.net>
-In-Reply-To: <3331c4f8-a327-abc6-df00-09e67d3769fe@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 8, 2017 at 1:33 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 8 Sep 2017 14:00:20 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
->
-> The script “checkpatch.pl” pointed information out like the following.
->
-> Comparison to NULL could be written …
->
-> Thus fix the affected source code places.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+The functions tve200_display_disable and tve200_display_funcs are
+local to the source and do not need to be in global scope, so make
+them static.
 
-Cheers,
---Prabhakar Lad
+Cleans up sparse warnings:
+symbol 'tve200_display_disable' was not declared. Should it be static?
+symbol 'tve200_display_funcs' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/tve200/tve200_display.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tve200/tve200_display.c b/drivers/gpu/drm/tve200/tve200_display.c
+index 18457de47bbc..904e38b93530 100644
+--- a/drivers/gpu/drm/tve200/tve200_display.c
++++ b/drivers/gpu/drm/tve200/tve200_display.c
+@@ -221,7 +221,7 @@ static void tve200_display_enable(struct drm_simple_display_pipe *pipe,
+ 	drm_crtc_vblank_on(crtc);
+ }
+ 
+-void tve200_display_disable(struct drm_simple_display_pipe *pipe)
++static void tve200_display_disable(struct drm_simple_display_pipe *pipe)
+ {
+ 	struct drm_crtc *crtc = &pipe->crtc;
+ 	struct drm_device *drm = crtc->dev;
+@@ -293,7 +293,7 @@ static int tve200_display_prepare_fb(struct drm_simple_display_pipe *pipe,
+ 	return drm_fb_cma_prepare_fb(&pipe->plane, plane_state);
+ }
+ 
+-const struct drm_simple_display_pipe_funcs tve200_display_funcs = {
++static const struct drm_simple_display_pipe_funcs tve200_display_funcs = {
+ 	.check = tve200_display_check,
+ 	.enable = tve200_display_enable,
+ 	.disable = tve200_display_disable,
+-- 
+2.14.1
+
