@@ -1,23 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 Sep 2017 03:38:54 +0000
-Subject: Re: [PATCH v2] openvswitch: Fix an error handling path in 'ovs_nla_init_match_and_action()'
-Message-Id: <20170912.203854.934620252544016023.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 15:50:23 +0000
+Subject: [PATCH] hv_netvsc:  make const array ver_list static, reduces object code size
+Message-Id: <20170922155023.15821-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170911195620.17931-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170911195620.17931-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: pshelar@nicira.com, xiangxia.m.yue@gmail.com, netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 11 Sep 2017 21:56:20 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> All other error handling paths in this function go through the 'error'
-> label. This one should do the same.
-> 
-> Fixes: 9cc9a5cb176c ("datapath: Avoid using stack larger than 1024.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Don't populate const array ver_list on the stack, instead make it
+static. Makes the object code smaller by over 400 bytes:
 
-Applied.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  18444	   3168	    320	  21932	   55ac	drivers/net/hyperv/netvsc.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  17950	   3224	    320	  21494	   53f6	drivers/net/hyperv/netvsc.o
+
+(gcc 6.3.0, x86-64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/hyperv/netvsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 8d5077fb0492..b0d323e24978 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -484,7 +484,7 @@ static int netvsc_connect_vsp(struct hv_device *device,
+ 			      struct netvsc_device *net_device,
+ 			      const struct netvsc_device_info *device_info)
+ {
+-	const u32 ver_list[] = {
++	static const u32 ver_list[] = {
+ 		NVSP_PROTOCOL_VERSION_1, NVSP_PROTOCOL_VERSION_2,
+ 		NVSP_PROTOCOL_VERSION_4, NVSP_PROTOCOL_VERSION_5
+ 	};
+-- 
+2.14.1
+
