@@ -1,36 +1,21 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Sep 2017 19:10:14 +0000
-Subject: [PATCH] tty: synclink: Reuse an existing error handling path
-Message-Id: <20170917191014.31577-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Sep 2017 15:03:05 +0000
+Subject: Re: [media] usbvision-core: Delete unnecessary braces in 11 functions
+Message-Id: <4ce4fba0-604f-7a25-dec5-1bc57e17f8f5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
+ <f4b939c7-b16e-c956-190b-51339afaac53@users.sourceforge.net>
+ <20170922114221.5tk24euy2ygmghm7@mwanda>
+In-Reply-To: <20170922114221.5tk24euy2ygmghm7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
+Cc: Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In order to avoid code duplication and to be more consistent with the
-other error handling paths in this function, we should 'goto errout'.
+> No.  Multi-line indents get curly braces for readability.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/tty/synclink.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Which of the proposed change possibilities do you not like especially at the moment?
 
-diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
-index 3be981101297..27db7818b673 100644
---- a/drivers/tty/synclink.c
-+++ b/drivers/tty/synclink.c
-@@ -4098,8 +4098,7 @@ static int mgsl_claim_resources(struct mgsl_struct *info)
- 		if (request_dma(info->dma_level,info->device_name) < 0){
- 			printk( "%s(%d):Can't request DMA channel on device %s DMA=%d\n",
- 				__FILE__,__LINE__,info->device_name, info->dma_level );
--			mgsl_release_resources( info );
--			return -ENODEV;
-+			goto errout;
- 		}
- 		info->dma_requested = true;
- 
--- 
-2.11.0
-
+Regards,
+Markus
