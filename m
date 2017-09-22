@@ -1,63 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 10:38:03 +0000
-Subject: [PATCH 8/8] [media] ttusb_dec: Delete four unwanted spaces
-Message-Id: <525012eb-3970-c64f-b21d-24f13232a999@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 22 Sep 2017 20:06:50 +0000
+Subject: [PATCH] staging: rtl8192u: Fix some error handling path
+Message-Id: <20170922200650.18103-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
-In-Reply-To: <66b087d3-6dd3-1e1c-d33d-e34c9e2ffe25@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, singhalsimran0@gmail.com, baoyou.xie@linaro.org, davem@davemloft.net, jarod@redhat.com, szekelyszilv@gmail.com, elia.f.geretto@gmail.com, gs051095@gmail.com, shreeya.patel23498@gmail.com, robsonde@gmail.com, colin.king@canonical.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Sep 2017 22:22:41 +0200
+If 'rtl8192_usb_initendpoints()' fails, it may have allocated some
+resources that need to be freed. The corresponding is propagated up to
+'rtl8192_usb_prob()'. So, in this function if an error
+code is returned by 'rtl8192_init()' we should call
+'rtl8192_usb_deleteendpoints()'.
 
-The script "checkpatch.pl" pointed information out like the following.
+Some error handling code is also duplicated in 'rtl8192_init()' and in
+'rtl8192_usb_prob()'. This looks harmless because the freed pointers are
+set to NULL but it looks confusing.
 
-ERROR: space prohibited after that open parenthesis '('
+Fix all that by just moving the 'fail' label and removing duplicated
+error handling code from 'rtl8192_ini()'. All this resources freeing will
+be handled by 'rtl8192_usb_prob()' directly.
 
-Thus fix affected source code places.
+The calling graph is:
+rtl8192_usb_probe
+  --> rtl8192_init
+    --> rtl8192_usb_initendpoints
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/usb/ttusb-dec/ttusb_dec.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This patch is compile tested and the corresponding looks a bit tricky.
+So, review carefully :)
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index 58256d518fa6..b05f83eac95d 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -258,7 +258,7 @@ static int dvb_filter_pes2ts(struct dvb_filter_pes2ts *p2ts,
- static void ttusb_dec_set_model(struct ttusb_dec *dec,
- 				enum ttusb_dec_model model);
- 
--static void ttusb_dec_handle_irq( struct urb *urb)
-+static void ttusb_dec_handle_irq(struct urb *urb)
- {
- 	struct ttusb_dec *dec = urb->context;
- 	char *buffer = dec->irq_buffer;
-@@ -393,8 +393,8 @@ static int ttusb_dec_send_command(struct ttusb_dec *dec, const u8 command,
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 48b7fd071900..8701ce25abe4 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -2694,9 +2694,6 @@ static short rtl8192_init(struct net_device *dev)
+ 	err = rtl8192_read_eeprom_info(dev);
+ 	if (err) {
+ 		DMESG("Reading EEPROM info failed");
+-		kfree(priv->pFirmware);
+-		priv->pFirmware = NULL;
+-		free_ieee80211(dev);
+ 		return err;
  	}
- }
+ 	rtl8192_get_channel_map(dev);
+@@ -4998,11 +4995,11 @@ static int rtl8192_usb_probe(struct usb_interface *intf,
  
--static int ttusb_dec_get_stb_state (struct ttusb_dec *dec, unsigned int *mode,
--				    unsigned int *model, unsigned int *version)
-+static int ttusb_dec_get_stb_state(struct ttusb_dec *dec, unsigned int *mode,
-+				   unsigned int *model, unsigned int *version)
- {
- 	u8 c[COMMAND_PACKET_SIZE];
- 	int c_length;
-@@ -1233,7 +1233,7 @@ static void ttusb_dec_init_tasklet(struct ttusb_dec *dec)
- 		     (unsigned long)dec);
- }
+ fail2:
+ 	rtl8192_down(dev);
++fail:
+ 	kfree(priv->pFirmware);
+ 	priv->pFirmware = NULL;
+ 	rtl8192_usb_deleteendpoints(dev);
+ 	mdelay(10);
+-fail:
+ 	free_ieee80211(dev);
  
--static int ttusb_init_rc( struct ttusb_dec *dec)
-+static int ttusb_init_rc(struct ttusb_dec *dec)
- {
- 	struct input_dev *input_dev;
- 	u8 b[] = { 0x00, 0x01 };
+ 	RT_TRACE(COMP_ERR, "wlan driver load failed\n");
 -- 
-2.14.1
+2.11.0
 
