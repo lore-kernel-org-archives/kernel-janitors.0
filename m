@@ -1,41 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 13:10:13 +0000
-Subject: [PATCH 4/4] [media] adv7842: Improve a size determination in adv7842_probe()
-Message-Id: <0ffbe17f-7de1-a456-a066-227f25642fa1@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 13:41:31 +0000
+Subject: [PATCH][V2] e1000: avoid null pointer dereference on invalid stat type
+Message-Id: <20170922134131.12283-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
-In-Reply-To: <0e67e095-4931-b78f-a925-7335326ab69c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 12:53:15 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Currently if the stat type is invalid then data[i] is being set
+either by dereferencing a null pointer p, or it is reading from
+an incorrect previous location if we had a valid stat type
+previously.  Fix this by nullify pointer p if a stat type is
+invalid and only setting data if p is not null.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/i2c/adv7842.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
-index 366a294edd7b..aa8b3bcdd750 100644
---- a/drivers/media/i2c/adv7842.c
-+++ b/drivers/media/i2c/adv7842.c
-@@ -3467,5 +3467,5 @@ static int adv7842_probe(struct i2c_client *client,
- 		return -ENODEV;
- 	}
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+index ec8aa4562cc9..724c93a6ea92 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -1824,7 +1824,7 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+ {
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
+ 	int i;
+-	char *p = NULL;
++	char *p;
+ 	const struct e1000_stats *stat = e1000_gstrings_stats;
  
--	state = devm_kzalloc(&client->dev, sizeof(struct adv7842_state), GFP_KERNEL);
-+	state = devm_kzalloc(&client->dev, sizeof(*state), GFP_KERNEL);
- 	if (!state)
+ 	e1000_update_stats(adapter);
+@@ -1837,16 +1837,18 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+ 			p = (char *)adapter + stat->stat_offset;
+ 			break;
+ 		default:
++			p = NULL;
+ 			WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
+ 				  stat->type, i);
+ 			break;
+ 		}
+ 
+-		if (stat->sizeof_stat = sizeof(u64))
+-			data[i] = *(u64 *)p;
+-		else
+-			data[i] = *(u32 *)p;
+-
++		if (p) {
++			if (stat->sizeof_stat = sizeof(u64))
++				data[i] = *(u64 *)p;
++			else
++				data[i] = *(u32 *)p;
++		}
+ 		stat++;
+ 	}
+ /* BUG_ON(i != E1000_STATS_LEN); */
 -- 
 2.14.1
 
