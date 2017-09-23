@@ -1,64 +1,53 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 08 Sep 2017 14:05:04 +0000
-Subject: [PATCH][V2] drm/vc4: clean up error handling on devm_kzalloc failure
-Message-Id: <20170908140504.1340-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Sep 2017 15:27:10 +0000
+Subject: Re: [media] v4l2-core: Fine-tuning for some function implementations
+Message-Id: <85cf0892-68d4-560e-58df-874148d82143@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+ <20161227115111.GN16630@valkosipuli.retiisi.org.uk>
+ <b804f4dd-392e-ae8e-41de-a02260fef550@xs4all.nl>
+ <8241c145-03f4-6dd2-401e-7d251cd5d251@users.sourceforge.net>
+ <f48e9219-3092-1b1f-4458-f9437746bf14@xs4all.nl>
+In-Reply-To: <f48e9219-3092-1b1f-4458-f9437746bf14@xs4all.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+>> Will the software evolution be continued for related source files?
+>> Are there any update candidates left over in the directory =93v4l2-core=
+=94?
+>=20
+> Sorry, I don't understand the question.
 
-The current error handling when devm_kzalloc fails performs a
-non-null check on connector which is redundant because connector
-is null at that failure point.  Once this is removed, make the
-failure path into a trivial -ENOMEM return to clean up the
-error handling. Also remove need to initialize connector to NULL.
+I try to explain my view again.
 
-Detected by CoverityScan CID#1339527 ("Logically dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 937da8dd65b8..fa37a1c07cf6 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -309,16 +309,13 @@ static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs  static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
- 						     struct drm_encoder *encoder)
- {
--	struct drm_connector *connector = NULL;
-+	struct drm_connector *connector;
- 	struct vc4_hdmi_connector *hdmi_connector;
--	int ret = 0;
- 
- 	hdmi_connector = devm_kzalloc(dev->dev, sizeof(*hdmi_connector),
- 				      GFP_KERNEL);
--	if (!hdmi_connector) {
--		ret = -ENOMEM;
--		goto fail;
--	}
-+	if (!hdmi_connector)
-+		return ERR_PTR(-ENOMEM);
- 	connector = &hdmi_connector->base;
- 
- 	hdmi_connector->encoder = encoder;
-@@ -336,12 +333,6 @@ static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
- 	drm_mode_connector_attach_encoder(connector, encoder);
- 
- 	return connector;
--
-- fail:
--	if (connector)
--		vc4_hdmi_connector_destroy(connector);
--
--	return ERR_PTR(ret);
- }
- 
- static void vc4_hdmi_encoder_destroy(struct drm_encoder *encoder)
--- 
-2.14.1
+> We don't want to touch the videobuf-* files unless there is a very good r=
+eason.
 
+I hoped that my update suggestions could be good enough once more for this =
+area.
+
+
+> That old videobuf framework is deprecated and the code is quite fragile
+> (i.e. easy to break things).
+
+How do you think about to move this stuff into a separate subdirectory
+so that it might become a bit easier to distinguish these software componen=
+ts?
+
+
+> Everything else in that directory is under continuous development.
+
+I am curious if there are still update candidates left over
+(also from my selection of change possibilities).
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
