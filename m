@@ -1,66 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 19:24:16 +0000
-Subject: [PATCH 1/3] [media] uvcvideo: Use common error handling code in uvc_ioctl_g_ext_ctrls()
-Message-Id: <76eb5628-7f9b-c5b7-9341-0904cd719abd@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 23 Sep 2017 06:03:34 +0000
+Subject: [PATCH 0/3] iio: adc: twl4030: Fix some  error handling issues in 'twl4030_madc_probe()'
+Message-Id: <cover.1506146101.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
-In-Reply-To: <20a8d1a5-45f1-2f98-e4b3-cfc24e9c04b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Sep 2017 20:47:02 +0200
+These 3 patches are all related to error hangling in 'twl4030_madc_probe()'.
+They are also all related to commit 7cc97d77ee8a
+("iio: adc: twl4030: Fix ADC[3:6] readings")
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+The semantic of the patches behing slighly different:
+   - direct return instead of going through the error handling path
+   - missing function in the error handling path
+   - spurious pattern (IMO) if unable to enable a regulator
+I have splitted them in 3 parts.
 
-This issue was detected by using the Coccinelle software.
+Christophe JAILLET (3):
+  iio: adc: twl4030: Fix an error handling path in
+    'twl4030_madc_probe()'
+  iio: adc: twl4030: Disable the vusb3v1 rugulator in the error handling
+    path of 'twl4030_madc_probe()'
+  iio: adc: twl4030: Return an error if we can not enable the vusb3v1
+    regulator in 'twl4030_madc_probe()'
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/uvc/uvc_v4l2.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/iio/adc/twl4030-madc.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 3e7e283a44a8..6ec2b255c44a 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -998,10 +998,8 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *fh,
- 			struct v4l2_queryctrl qc = { .id = ctrl->id };
- 
- 			ret = uvc_query_v4l2_ctrl(chain, &qc);
--			if (ret < 0) {
--				ctrls->error_idx = i;
--				return ret;
--			}
-+			if (ret < 0)
-+				goto set_index;
- 
- 			ctrl->value = qc.default_value;
- 		}
-@@ -1017,14 +1015,17 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *fh,
- 		ret = uvc_ctrl_get(chain, ctrl);
- 		if (ret < 0) {
- 			uvc_ctrl_rollback(handle);
--			ctrls->error_idx = i;
--			return ret;
-+			goto set_index;
- 		}
- 	}
- 
- 	ctrls->error_idx = 0;
- 
- 	return uvc_ctrl_rollback(handle);
-+
-+set_index:
-+	ctrls->error_idx = i;
-+	return ret;
- }
- 
- static int uvc_ioctl_s_try_ext_ctrls(struct uvc_fh *handle,
 -- 
-2.14.1
+2.11.0
 
