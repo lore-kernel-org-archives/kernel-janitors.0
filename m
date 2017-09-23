@@ -1,28 +1,49 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 11 Sep 2017 09:21:29 +0000
-Subject: Re: [PATCH 3/3] [media] s5p-mfc: Adjust a null pointer check in four functions
-Message-Id: <6c2d20b3-4437-0473-73d4-73c049ba52a9@samsung.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 23 Sep 2017 06:06:20 +0000
+Subject: [PATCH 3/3] iio: adc: twl4030: Return an error if we can not enable the vusb3v1 regulator in 'twl403
+Message-Id: <128d2bb662f174ed84c61dc268940bd87878f0d1.1506146101.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <482a6c92-a85e-0bcd-edf7-3c2f63ea74c5@users.sourceforge.net>
- <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
- <CGME20170911092134epcas2p1a1b11c056b52d68c3b0e4ea2e1e8f758@epcas2p1.samsung.com>
-In-Reply-To: <e794361b-8f2a-7457-007f-72ef4fa66d02@users.sourceforge.net>
+References: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 09/08/2017 10:53 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
+If we can not enable the regulator, go through the error handling path
+instead of silently continuing.
 
-> Date: Fri, 8 Sep 2017 22:37:00 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
+Fixes: 7cc97d77ee8a ("iio: adc: twl4030: Fix ADC[3:6] readings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is highly speculative.
+I don't find logical to return an error if we don't find the 'vusb3v1'
+regulator, but continue if we find it, but can't enable it.
+Returning an error if both cases (i.e. failing 'devm_regulator_get()' or
+'regulator_enable)' seems the usual pattern in all the .probe functions
+with a 'regulator_enable()' call have looked at (~ 10 of them taken
+randomly)
+---
+ drivers/iio/adc/twl4030-madc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Can you resend with that 4 lines removed? Are you using git send-email
-for sending patches?
+diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
+index 32db23d9a483..e3cfb91bffc6 100644
+--- a/drivers/iio/adc/twl4030-madc.c
++++ b/drivers/iio/adc/twl4030-madc.c
+@@ -893,8 +893,10 @@ static int twl4030_madc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = regulator_enable(madc->usb3v1);
+-	if (ret)
++	if (ret) {
+ 		dev_err(madc->dev, "could not enable 3v1 bias regulator\n");
++		goto err_i2c;
++	}
+ 
+ 	ret = iio_device_register(iio_dev);
+ 	if (ret) {
+-- 
+2.11.0
 
---
-Thanks,
-Sylwester
