@@ -1,39 +1,73 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 20:23:12 +0000
-Subject: [PATCH 7/8] [media] cx231xx: Delete an unnecessary variable initialisation in read_eeprom()
-Message-Id: <3c6d0990-b341-9359-94ef-e6cb74f94a5b@users.sourceforge.net>
+Date: Sat, 23 Sep 2017 19:44:15 +0000
+Subject: [PATCH 1/3] [media] camss-csid: Use common error handling code in csid_set_power()
+Message-Id: <0fe4e31f-02e2-8b48-c8a8-811ecd8a482f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
-In-Reply-To: <f2c1ca56-ecdc-318c-f18f-9bef6c670ffb@users.sourceforge.net>
+References: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
+In-Reply-To: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Johan Hovold <johan@kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Peter Rosin <peda@axentia.se>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.tomov@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 20:28:00 +0200
+Date: Sat, 23 Sep 2017 20:48:33 +0200
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cx231xx/cx231xx-cards.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/qcom/camss-8x16/camss-csid.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index 04c0734aee79..69fdd507fa92 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -1106,6 +1106,6 @@ static void cx231xx_config_tuner(struct cx231xx *dev)
- static int read_eeprom(struct cx231xx *dev, struct i2c_client *client,
- 		       u8 *eedata, int len)
- {
--	int ret = 0;
-+	int ret;
- 	u8 start_offset = 0;
- 	int len_todo = len;
+diff --git a/drivers/media/platform/qcom/camss-8x16/camss-csid.c b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
+index 64df82817de3..92d4dc6b4a66 100644
+--- a/drivers/media/platform/qcom/camss-8x16/camss-csid.c
++++ b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
+@@ -330,13 +330,9 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 		ret = csid_set_clock_rates(csid);
+-		if (ret < 0) {
+-			regulator_disable(csid->vdda);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto disable_regulator;
+ 
+ 		ret = camss_enable_clocks(csid->nclocks, csid->clock, dev);
+-		if (ret < 0) {
+-			regulator_disable(csid->vdda);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto disable_regulator;
+ 
+ 		enable_irq(csid->irq);
+@@ -345,8 +341,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 		if (ret < 0) {
+ 			disable_irq(csid->irq);
+ 			camss_disable_clocks(csid->nclocks, csid->clock);
+-			regulator_disable(csid->vdda);
+-			return ret;
++			goto disable_regulator;
+ 		}
+ 
+ 		hw_version = readl_relaxed(csid->base + CAMSS_CSID_HW_VERSION);
+@@ -357,6 +352,11 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 		ret = regulator_disable(csid->vdda);
+ 	}
+ 
++	goto exit;
++
++disable_regulator:
++	regulator_disable(csid->vdda);
++exit:
+ 	return ret;
+ }
+ 
 -- 
 2.14.1
 
