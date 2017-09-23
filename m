@@ -1,61 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 26 Sep 2017 14:55:46 +0000
-Subject: [PATCH][sdhci-next] mmc: sdhci-omap: make three functions static, fixes warnings
-Message-Id: <20170926145546.17206-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Sep 2017 19:43:05 +0000
+Subject: [PATCH 0/3] [media] camss-csid: Fine-tuning for three function implementations
+Message-Id: <168ff884-7ace-c548-7f90-d4f2910bb337@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Todor Tomov <todor.tomov@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Sep 2017 21:24:56 +0200
 
-The functions sdhci_omap_set_ios, sdhci_omap_set_power and
-sdhci_omap_get_min_clock are local to the source and do not need
-to be in global scope, so make them static.
+Three update suggestions were taken into account
+from static source code analysis.
 
-Cleans up sparse warnings:
-symbol 'sdhci_omap_set_ios' was not declared. Should it be static?
-symbol 'sdhci_omap_set_power' was not declared. Should it be static?
-symbol 'sdhci_omap_get_min_clock' was not declared. Should it be static?
+Markus Elfring (3):
+  Use common error handling code in csid_set_power()
+  Reduce the scope for a variable in csid_set_power()
+  Adjust a null pointer check in two functions
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mmc/host/sdhci-omap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../media/platform/qcom/camss-8x16/camss-csid.c    | 26 +++++++++++-----------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 5ddae39816b7..628bfe9a3d17 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -262,7 +262,7 @@ static void sdhci_omap_set_bus_mode(struct sdhci_omap_host *omap_host,
- 	omap_host->bus_mode = mode;
- }
- 
--void sdhci_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-+static void sdhci_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- {
- 	struct sdhci_host *host = mmc_priv(mmc);
- 	struct sdhci_pltfm_host *pltfm_host;
-@@ -323,7 +323,7 @@ static void sdhci_omap_set_clock(struct sdhci_host *host, unsigned int clock)
- 	sdhci_omap_start_clock(omap_host);
- }
- 
--void sdhci_omap_set_power(struct sdhci_host *host, unsigned char mode,
-+static void sdhci_omap_set_power(struct sdhci_host *host, unsigned char mode,
- 			  unsigned short vdd)
- {
- 	struct mmc_host *mmc = host->mmc;
-@@ -344,7 +344,7 @@ static int sdhci_omap_enable_dma(struct sdhci_host *host)
- 	return 0;
- }
- 
--unsigned int sdhci_omap_get_min_clock(struct sdhci_host *host)
-+static unsigned int sdhci_omap_get_min_clock(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 
 -- 
 2.14.1
 
