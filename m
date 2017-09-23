@@ -1,39 +1,43 @@
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Date: Mon, 25 Sep 2017 09:32:24 +0000
-Subject: Re: [PATCH][drm-next] drm/i915/gvt: ensure -ve return value is handled correctly
-Message-Id: <1506331944.5593.10.camel@linux.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 23 Sep 2017 06:06:18 +0000
+Subject: [PATCH 1/3] iio: adc: twl4030: Fix an error handling path in 'twl4030_madc_probe()'
+Message-Id: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170919155534.25334-1-colin.king@canonical.com>
-         <20170919214614.cfiolgznopouv34e@zhen-hp.sh.intel.com>
-         <1505874923.2067.14.camel@perches.com>
-         <20170920224406.jscthkglwfy3xhtf@zhen-hp.sh.intel.com>
-         <1506004318.5382.4.camel@linux.intel.com>
-         <F3B0350DF4CB6849A642218320DE483D7D64178C@SHSMSX101.ccr.corp.intel.com>
-         <1506078663.6232.65.camel@linux.intel.com>
-         <F3B0350DF4CB6849A642218320DE483D7D643090@SHSMSX101.ccr.corp.intel.com>
-In-Reply-To: <F3B0350DF4CB6849A642218320DE483D7D643090@SHSMSX101.ccr.corp.intel.com>
+References: <cover.1506146101.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1506146101.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Wang, Zhi A" <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Joe Perches <joe@perches.com>
-Cc: "Gao, Fred" <fred.gao@intel.com>, David Airlie <airlied@linux.ie>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>, Colin King <colin.king@canonical.com>, "intel-gvt-dev@lists.freedesktop.org" <intel-gvt-dev@lists.freedesktop.org>
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, 2017-09-22 at 17:50 +0000, Wang, Zhi A wrote:
-> Thanks for the reply. Learned a lot. :)
-> 
-> GEM_BUG_ON is new to me since it wasn't there at the beginning of
-> GVT-g upstream. It showed up later. So I left a lot of WARN_ON in the
-> code and some of them should be GEM_BUG_ON now.
-> 
-> Now I can figure out those differences. We can discuss with our QA to
-> see if they would like to enable I915_GEM_DEBUG and then we can move
-> to GEM_BUG_ON also, or maybe we can have a dedicated GVT_BUG_ON. :)
-> Thank you so much. Have a great weekend.
+If 'devm_regulator_get()' fails, we should go through the existing error
+handling path instead of returning directly, as done is all the other
+error handling paths in this function.
 
-GVT_BUG_ON is probably the way to go :)
+Fixes: 7cc97d77ee8a ("iio: adc: twl4030: Fix ADC[3:6] readings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/adc/twl4030-madc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Regards, Joonas
+diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
+index 1edd99f0c5e5..80ab2ed70b85 100644
+--- a/drivers/iio/adc/twl4030-madc.c
++++ b/drivers/iio/adc/twl4030-madc.c
+@@ -887,8 +887,10 @@ static int twl4030_madc_probe(struct platform_device *pdev)
+ 
+ 	/* Enable 3v1 bias regulator for MADC[3:6] */
+ 	madc->usb3v1 = devm_regulator_get(madc->dev, "vusb3v1");
+-	if (IS_ERR(madc->usb3v1))
+-		return -ENODEV;
++	if (IS_ERR(madc->usb3v1)) {
++		ret = -ENODEV;
++		goto err_i2c;
++	}
+ 
+ 	ret = regulator_enable(madc->usb3v1);
+ 	if (ret)
 -- 
-Joonas Lahtinen
-Open Source Technology Center
-Intel Corporation
+2.11.0
+
