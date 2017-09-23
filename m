@@ -1,59 +1,48 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 14 Sep 2017 17:13:46 +0000
-Subject: Re: DR Checker and KINT static checkers
-Message-Id: <114caf1f-c78d-b8ee-7f7e-53625867299c@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 23 Sep 2017 06:06:19 +0000
+Subject: [PATCH 2/3] iio: adc: twl4030: Disable the vusb3v1 rugulator in the error handling path of 'twl4030_
+Message-Id: <6bb9b8b3cba56c9cd201d4f025831ef776fbfef1.1506146101.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170913095202.a6zsi3xeryzhmxrl@mwanda>
-In-Reply-To: <20170913095202.a6zsi3xeryzhmxrl@mwanda>
+References: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 13/09/17 11:04, Julia Lawall wrote:
-> 
-> 
-> On Wed, 13 Sep 2017, Colin Ian King wrote:
-> 
->> On 13/09/17 10:52, Dan Carpenter wrote:
->>> LWN.net recently had an article about Dr Checker.  It's a promising new
->>> static analysis tool.  The LWN article is for subscribers only until
->>> tomorrow, but anyone can read the PDF or install the code.  It would be
->>> really interesting if someone could run Dr Checker on a mainline kernel
->>> tree and post the results.
->>> https://lwn.net/Articles/733056/
->>> https://www.usenix.org/system/files/conference/usenixsecurity17/sec17-machiry.pdf
->>> https://github.com/ucsb-seclab/dr_checker/
->>>
->>> The other tool that's quite interesting is KINT which looks for integer
->>> overflows.  It's a bit of a pain because you have to annotate some
->>> kernel functions to make it work.  The PDF and source code are here:
->>>
->>> http://css.csail.mit.edu/kint/
->>>
->>> regards,
->>> dan carpenter
->>>
->>
->> Funnily enough, I tried Dr Checker out earlier this week.  One has to
->> make it do a fake build of the kernel to gather information on how to
->> build the specific kernel config (e.g. how it was compiled and the gcc
->> build flags) and then this gets parsed by DR-Checker.  Unfortunately it
->> seems that it only supported arm architecture builds and it could not
->> handle the gcc output for a modern x86 amd64 gcc (gcc 7.2). I kind of
->> gave up after a couple of hours trying to make it work.  I suspect more
->> patient developers may figure out how to make it work. I may go back and
->> revisit this when I have some free time.
-> 
-> You could ask the authors.  They may be happy to have some feedback.
-> 
-> julia
-> 
+Commit 7cc97d77ee8a has introduced a call to 'regulator_disable()' in the
+.remove function.
+So we should also have such a call in the .probe function in case of
+error after a successful 'regulator_enable()' call.
 
-I've requested assistance from Aravind Machiry and he will help me with
-x86 checking once he's finished a paper, so I expect to report back with
-my results sometime at the end of the month if all goes well. Keep you
-posted.
+Add a new label for that and use it.
 
-Colin
+Fixes: 7cc97d77ee8a ("iio: adc: twl4030: Fix ADC[3:6] readings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/adc/twl4030-madc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
+index 80ab2ed70b85..32db23d9a483 100644
+--- a/drivers/iio/adc/twl4030-madc.c
++++ b/drivers/iio/adc/twl4030-madc.c
+@@ -899,11 +899,13 @@ static int twl4030_madc_probe(struct platform_device *pdev)
+ 	ret = iio_device_register(iio_dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "could not register iio device\n");
+-		goto err_i2c;
++		goto err_usb3v1;
+ 	}
+ 
+ 	return 0;
+ 
++err_usb3v1:
++	regulator_disable(madc->usb3v1);
+ err_i2c:
+ 	twl4030_madc_set_current_generator(madc, 0, 0);
+ err_current_generator:
+-- 
+2.11.0
 
