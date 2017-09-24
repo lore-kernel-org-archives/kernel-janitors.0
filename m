@@ -1,60 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Sep 2017 14:02:17 +0000
-Subject: [PATCH 1/2] [media] meye: Delete three error messages for a failed memory allocation in meye_probe()
-Message-Id: <ba90af37-ef8d-ed7f-f331-c15694064672@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 10:24:45 +0000
+Subject: [PATCH 2/6] [media] omap_vout: Improve a size determination in two functions
+Message-Id: <7edbd298-6d56-3ac7-08c1-b25527181994@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4370c644-e440-1268-089b-8a8686bbcd5c@users.sourceforge.net>
-In-Reply-To: <4370c644-e440-1268-089b-8a8686bbcd5c@users.sourceforge.net>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+In-Reply-To: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Pan Bian <bianpan2016@163.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Sep 2017 15:30:04 +0200
+Date: Sun, 24 Sep 2017 10:18:26 +0200
 
-Omit extra messages for a memory allocation failure in this function.
+Replace the specification of data structures by variable references
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/meye/meye.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/media/platform/omap/omap_vout.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/pci/meye/meye.c b/drivers/media/pci/meye/meye.c
-index 9c4a024745de..db36040770a6 100644
---- a/drivers/media/pci/meye/meye.c
-+++ b/drivers/media/pci/meye/meye.c
-@@ -1626,23 +1626,18 @@ static int meye_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
- 	meye.mchip_dev = pcidev;
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index aebc1e628ac5..4a4d171ca573 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1943,8 +1943,7 @@ static int __init omap_vout_create_video_devices(struct platform_device *pdev)
+ 			struct omap2video_device, v4l2_dev);
  
- 	meye.grab_temp = vmalloc(MCHIP_NB_PAGES_MJPEG * PAGE_SIZE);
--	if (!meye.grab_temp) {
--		v4l2_err(v4l2_dev, "grab buffer allocation failed\n");
-+	if (!meye.grab_temp)
- 		goto outvmalloc;
--	}
+ 	for (k = 0; k < pdev->num_resources; k++) {
+-
+-		vout = kzalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
++		vout = kzalloc(sizeof(*vout), GFP_KERNEL);
+ 		if (!vout)
+ 			return -ENOMEM;
  
- 	spin_lock_init(&meye.grabq_lock);
- 	if (kfifo_alloc(&meye.grabq, sizeof(int) * MEYE_MAX_BUFNBRS,
--				GFP_KERNEL)) {
--		v4l2_err(v4l2_dev, "fifo allocation failed\n");
-+			GFP_KERNEL))
- 		goto outkfifoalloc1;
--	}
-+
- 	spin_lock_init(&meye.doneq_lock);
- 	if (kfifo_alloc(&meye.doneq, sizeof(int) * MEYE_MAX_BUFNBRS,
--				GFP_KERNEL)) {
--		v4l2_err(v4l2_dev, "fifo allocation failed\n");
-+			GFP_KERNEL))
- 		goto outkfifoalloc2;
--	}
+@@ -2095,7 +2094,7 @@ static int __init omap_vout_probe(struct platform_device *pdev)
+ 		goto err_dss_init;
+ 	}
  
- 	meye.vdev = meye_template;
- 	meye.vdev.v4l2_dev = &meye.v4l2_dev;
+-	vid_dev = kzalloc(sizeof(struct omap2video_device), GFP_KERNEL);
++	vid_dev = kzalloc(sizeof(*vid_dev), GFP_KERNEL);
+ 	if (vid_dev = NULL) {
+ 		ret = -ENOMEM;
+ 		goto err_dss_init;
 -- 
 2.14.1
 
