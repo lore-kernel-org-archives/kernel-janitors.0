@@ -1,28 +1,37 @@
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Fri, 29 Sep 2017 17:35:20 +0000
-Subject: Re: [PATCH][net-next] net_sched: remove redundant assignment to ret
-Message-Id: <CAM_iQpUEKK4jJo9aPLExudGXub4j_Mz8Jv+Lu+wJTGj3Zk7Jmw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Sep 2017 06:01:03 +0000
+Subject: [PATCH] drm/omap: Fix error handling path in 'omap_dmm_probe()'
+Message-Id: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929140116.8642-1-colin.king@canonical.com>
-In-Reply-To: <20170929140116.8642-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, Linux Kernel Network Developers <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: tomi.valkeinen@ti.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Sep 29, 2017 at 7:01 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The assignment of -EINVAL to variable ret is redundant as it
-> is being overwritten on the following error exit paths or
-> to the return value from the following call to basic_set_parms.
-> Fix this up by removing it. Cleans up clang warning message:
->
-> net/sched/cls_basic.c:185:2: warning: Value stored to 'err' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+If we don't find a matching device node, we must free the memory allocated
+in 'omap_dmm' a few lines above.
 
-Fixes: 1d8134fea2eb ("net_sched: use idr to allocate basic filter handles")
+Fixes: 7cb0d6c17b96 ("drm/omap: fix TILER on OMAP5")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 1dd3dafc59af..c60a85e82c6d 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -638,7 +638,8 @@ static int omap_dmm_probe(struct platform_device *dev)
+ 		match = of_match_node(dmm_of_match, dev->dev.of_node);
+ 		if (!match) {
+ 			dev_err(&dev->dev, "failed to find matching device node\n");
+-			return -ENODEV;
++			ret = -ENODEV;
++			goto fail;
+ 		}
+ 
+ 		omap_dmm->plat_data = match->data;
+-- 
+2.11.0
+
