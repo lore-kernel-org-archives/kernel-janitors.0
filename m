@@ -1,41 +1,90 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 25 Sep 2017 08:30:44 +0000
-Subject: Re: b43: make const arrays static, reduces object code size
-Message-Id: <20170925083044.D348A6025D@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 18:07:31 +0000
+Subject: [PATCH 3/4] [media] omap3isp: Use common error handling code in isp_video_open()
+Message-Id: <a3bcee14-f5d2-8648-a925-3dfd393e8f55@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922153902.15372-1-colin.king@canonical.com>
-In-Reply-To: <20170922153902.15372-1-colin.king@canonical.com>
+References: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
+In-Reply-To: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 19:30:52 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const arrays on the stack, instead make them static.
-> Makes the object code smaller by over 60 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
-> 
-> (gcc 6.3.0, x86-64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Adjust jump targets so that a bit of exception handling can be better
+  reused at the end of this function.
 
-Patch applied to wireless-drivers-next.git, thanks.
+  This issue was detected by using the Coccinelle software.
 
-96cbe3d638e4 b43: make const arrays static, reduces object code size
+* Delete a repeated check (for the variable "ret") which became unnecessary
+  with this refactoring.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/omap3isp/ispvideo.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
+index 7b9bd684337a..d4118466fc8a 100644
+--- a/drivers/media/platform/omap3isp/ispvideo.c
++++ b/drivers/media/platform/omap3isp/ispvideo.c
+@@ -1315,14 +1315,12 @@ static int isp_video_open(struct file *file)
+ 	/* If this is the first user, initialise the pipeline. */
+ 	if (omap3isp_get(video->isp) = NULL) {
+ 		ret = -EBUSY;
+-		goto done;
++		goto delete_fh;
+ 	}
+ 
+ 	ret = v4l2_pipeline_pm_use(&video->video.entity, 1);
+-	if (ret < 0) {
+-		omap3isp_put(video->isp);
+-		goto done;
+-	}
++	if (ret < 0)
++		goto put_isp;
+ 
+ 	queue = &handle->queue;
+ 	queue->type = video->type;
+@@ -1335,10 +1333,8 @@ static int isp_video_open(struct file *file)
+ 	queue->dev = video->isp->dev;
+ 
+ 	ret = vb2_queue_init(&handle->queue);
+-	if (ret < 0) {
+-		omap3isp_put(video->isp);
+-		goto done;
+-	}
++	if (ret < 0)
++		goto put_isp;
+ 
+ 	memset(&handle->format, 0, sizeof(handle->format));
+ 	handle->format.type = video->type;
+@@ -1346,14 +1342,15 @@ static int isp_video_open(struct file *file)
+ 
+ 	handle->video = video;
+ 	file->private_data = &handle->vfh;
++	goto exit;
+ 
+-done:
+-	if (ret < 0) {
+-		v4l2_fh_del(&handle->vfh);
+-		v4l2_fh_exit(&handle->vfh);
+-		kfree(handle);
+-	}
+-
++put_isp:
++	omap3isp_put(video->isp);
++delete_fh:
++	v4l2_fh_del(&handle->vfh);
++	v4l2_fh_exit(&handle->vfh);
++	kfree(handle);
++exit:
+ 	return ret;
+ }
+ 
 -- 
-https://patchwork.kernel.org/patch/9966415/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.1
 
