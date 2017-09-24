@@ -1,33 +1,37 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Fri, 22 Sep 2017 16:00:37 +0000
-Subject: RE: [PATCH] hv_netvsc:  make const array ver_list static, reduces object code size
-Message-Id: <MWHPR21MB04795E0C01527E2D096E6B05CA670@MWHPR21MB0479.namprd21.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 07:06:12 +0000
+Subject: Re: ALSA: bebob: Use common error handling code in snd_bebob_stream_start_duplex()
+Message-Id: <3afecbef-b7ac-a4e8-f439-a351916f05e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922155023.15821-1-colin.king@canonical.com>
-In-Reply-To: <20170922155023.15821-1-colin.king@canonical.com>
+References: <85f95150-9cec-7a53-7692-837ba543e1ec@users.sourceforge.net>
+ <541f0f9f-fc87-f65b-bbd8-fec5d45d5d2e@users.sourceforge.net>
+ <a1dee732-f5c4-5b35-9f82-553fc8ce430d@sakamocchi.jp>
+In-Reply-To: <a1dee732-f5c4-5b35-9f82-553fc8ce430d@sakamocchi.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, KY Srinivasan <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>, Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
-bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIg
-MjIsIDIwMTcgODo1MCBBTQ0KPiBUbzogS1kgU3Jpbml2YXNhbiA8a3lzQG1pY3Jvc29mdC5jb20+
-OyBIYWl5YW5nIFpoYW5nDQo+IDxoYWl5YW5nekBtaWNyb3NvZnQuY29tPjsgU3RlcGhlbiBIZW1t
-aW5nZXIgPHN0aGVtbWluQG1pY3Jvc29mdC5jb20+Ow0KPiBkZXZlbEBsaW51eGRyaXZlcnByb2pl
-Y3Qub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnDQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQ
-QVRDSF0gaHZfbmV0dnNjOiBtYWtlIGNvbnN0IGFycmF5IHZlcl9saXN0IHN0YXRpYywgcmVkdWNl
-cw0KPiBvYmplY3QgY29kZSBzaXplDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4u
-a2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gRG9uJ3QgcG9wdWxhdGUgY29uc3QgYXJyYXkgdmVy
-X2xpc3Qgb24gdGhlIHN0YWNrLCBpbnN0ZWFkIG1ha2UgaXQNCj4gc3RhdGljLiBNYWtlcyB0aGUg
-b2JqZWN0IGNvZGUgc21hbGxlciBieSBvdmVyIDQwMCBieXRlczoNCj4gDQo+IEJlZm9yZToNCj4g
-ICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgMTg0
-NDQJICAgMzE2OAkgICAgMzIwCSAgMjE5MzIJICAgNTVhYw0KPiAJZHJpdmVycy9uZXQvaHlwZXJ2
-L25ldHZzYy5vDQo+IA0KPiBBZnRlcjoNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRl
-YwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgMTc5NTAJICAgMzIyNAkgICAgMzIwCSAgMjE0OTQJICAg
-NTNmNg0KPiAJZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzYy5vDQo+IA0KPiAoZ2NjIDYuMy4wLCB4
-ODYtNjQpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
-YW5vbmljYWwuY29tPg0KPiAtLS0NCg0KUmV2aWV3ZWQtYnk6IEhhaXlhbmcgWmhhbmcgPGhhaXlh
-bmd6QG1pY3Jvc29mdC5jb20+DQoNCg0K
+> 668     if (!amdtp_stream_wait_callback(&bebob->tx_stream,
+> 669                                     CALLBACK_TIMEOUT)) {
+> 670         amdtp_stream_stop(&bebob->tx_stream);
+> 671         amdtp_stream_stop(&bebob->rx_stream);
+> 672         break_both_connections(bebob);
+> 673         err = -ETIMEDOUT;
+> 674     }
+> 675 }
+> 
+> I think it better to apply your solution too in the above to keep code consistency.
+
+How do you think about to adjust this function implementation after the other two
+update steps from the patch series would be integrated?
+
+
+> For the other patches, I can find no merit to apply except for reduction
+> of the number of characters included in the file.
+
+Would you like to refer to any specific update suggestions for further clarification?
+
+Regards,
+Markus
