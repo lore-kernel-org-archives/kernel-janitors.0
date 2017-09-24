@@ -1,39 +1,47 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 14 Sep 2017 20:44:24 +0000
-Subject: [PATCH 2/2] ASoC: topology: Fix a potential memory leak in 'soc_tplg_dapm_widget_denum_create()'
-Message-Id: <20170914204424.25464-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 10:28:54 +0000
+Subject: [PATCH 4/6] [media] omap_vout: Fix a possible null pointer dereference in omap_vout_open()
+Message-Id: <15332564-0c8d-a197-b987-f54e29768e56@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+In-Reply-To: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, Vaibhav Hiremath <hvaibhav@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If this sanity check fails, we must free the memory that has already been
-allocated.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 11:00:57 +0200
 
-So we must go to 'err' as in the other error handling parth of this
-function.
+Move a debug message so that a null pointer access can not happen
+for the variable "vout" in this function.
 
-Fixes: 1a7dd6e2f192 ("ASoC: topology: Allow a widget to have multiple enum controls")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 5c7ab6348e7b3fcca2b8ee548306c774472971e2 ("V4L/DVB: V4L2: Add support for OMAP2/3 V4L2 display driver on top of DSS2")
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/soc-topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/omap/omap_vout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 2499b54a57e8..01a50413c66f 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1301,7 +1301,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 		/* validate kcontrol */
- 		if (strnlen(ec->hdr.name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN) =
- 			    SNDRV_CTL_ELEM_ID_NAME_MAXLEN)
--			return NULL;
-+			goto err;
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 2b55a8ebd1ad..71b77426271e 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1004,11 +1004,11 @@ static int omap_vout_open(struct file *file)
+ 	struct omap_vout_device *vout = NULL;
  
- 		se = kzalloc(sizeof(*se), GFP_KERNEL);
- 		if (se = NULL)
+ 	vout = video_drvdata(file);
+-	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
+-
+ 	if (!vout)
+ 		return -ENODEV;
+ 
++	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
++
+ 	/* for now, we only support single open */
+ 	if (vout->opened)
+ 		return -EBUSY;
 -- 
-2.11.0
+2.14.1
 
