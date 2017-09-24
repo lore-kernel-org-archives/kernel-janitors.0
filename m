@@ -1,39 +1,40 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 21 Sep 2017 23:23:56 +0000
-Subject: [PATCH] media: bt8xx: Fix err 'bt878_probe()'
-Message-Id: <20170921232356.10433-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 10:30:36 +0000
+Subject: [PATCH 5/6] [media] omap_vout: Delete an unnecessary variable initialisation in omap_vout_open()
+Message-Id: <63bf382e-733f-2060-a4c8-e9863a38f3b7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+In-Reply-To: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org, arvind.yadav.cs@gmail.com, hans.verkuil@cisco.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This is odd to call 'pci_disable_device()' in an error path before a
-coresponding successful 'pci_enable_device()'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 11:20:11 +0200
 
-Return directly instead.
+The local variable "vout" is reassigned by a statement at the beginning.
+Thus omit the explicit initialisation.
 
-Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/bt8xx/bt878.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/omap/omap_vout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/bt8xx/bt878.c b/drivers/media/pci/bt8xx/bt878.c
-index a5f52137d306..d4bc78b4fcb5 100644
---- a/drivers/media/pci/bt8xx/bt878.c
-+++ b/drivers/media/pci/bt8xx/bt878.c
-@@ -422,8 +422,7 @@ static int bt878_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
- 	       bt878_num);
- 	if (bt878_num >= BT878_MAX) {
- 		printk(KERN_ERR "bt878: Too many devices inserted\n");
--		result = -ENOMEM;
--		goto fail0;
-+		return -ENOMEM;
- 	}
- 	if (pci_enable_device(dev))
- 		return -EIO;
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 71b77426271e..f446a37064f4 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1001,7 +1001,7 @@ static int omap_vout_release(struct file *file)
+ static int omap_vout_open(struct file *file)
+ {
+ 	struct videobuf_queue *q;
+-	struct omap_vout_device *vout = NULL;
++	struct omap_vout_device *vout;
+ 
+ 	vout = video_drvdata(file);
+ 	if (!vout)
 -- 
-2.11.0
+2.14.1
 
