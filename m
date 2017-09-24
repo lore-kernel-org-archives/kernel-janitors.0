@@ -1,29 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 Sep 2017 19:45:29 +0000
-Subject: [PATCH 0/3] ALSA: ymfpci: Fine-tuning for some function implementations
-Message-Id: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 24 Sep 2017 06:26:41 +0000
+Subject: [PATCH] dmaengine: imx-sdma: Report a DMA_ERROR in status if 'count' or 'dma_address' do not match D
+Message-Id: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: vinod.koul@intel.com, dan.j.williams@intel.com
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 6 Sep 2017 21:37:32 +0200
+All sanity checks in this function set 'sdmac->status = DMA_ERROR' if
+something looks wrong, except if the byte count or the address don't match
+the bus width.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Fix it and report the error in status in such a case.
 
-Markus Elfring (3):
-  Use common error handling code in snd_card_ymfpci_probe()
-  Use common error handling code in snd_ymfpci_create()
-  Adjust 17 checks for null pointers
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Untested, so please review carefuly.
+---
+ drivers/dma/imx-sdma.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
- sound/pci/ymfpci/ymfpci.c      | 62 ++++++++++++++++++------------------
- sound/pci/ymfpci/ymfpci_main.c | 72 ++++++++++++++++++++++--------------------
- 2 files changed, 67 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index a67ec1bdc4e0..f0419967eb92 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1240,26 +1240,31 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 		sdmac->chn_count += count;
+ 
+ 		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES) {
+-			ret =  -EINVAL;
++			ret = -EINVAL;
+ 			goto err_out;
+ 		}
+ 
+ 		switch (sdmac->word_size) {
+ 		case DMA_SLAVE_BUSWIDTH_4_BYTES:
+ 			bd->mode.command = 0;
+-			if (count & 3 || sg->dma_address & 3)
+-				return NULL;
++			if (count & 3 || sg->dma_address & 3) {
++				ret = -EINVAL;
++				goto err_out;
++			}
+ 			break;
+ 		case DMA_SLAVE_BUSWIDTH_2_BYTES:
+ 			bd->mode.command = 2;
+-			if (count & 1 || sg->dma_address & 1)
+-				return NULL;
++			if (count & 1 || sg->dma_address & 1) {
++				ret = -EINVAL;
++				goto err_out;
++			}
+ 			break;
+ 		case DMA_SLAVE_BUSWIDTH_1_BYTE:
+ 			bd->mode.command = 1;
+ 			break;
+ 		default:
+-			return NULL;
++			ret = -EINVAL;
++			goto err_out;
+ 		}
+ 
+ 		param = BD_DONE | BD_EXTD | BD_CONT;
 -- 
-2.14.1
+2.11.0
 
