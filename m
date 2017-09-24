@@ -1,40 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 10:52:30 +0000
-Subject: [PATCH 2/3] [media] mr800: Improve a size determination in usb_amradio_probe()
-Message-Id: <bb6b93dd-f25b-ff5d-e56c-9aa1abfc635e@users.sourceforge.net>
+Date: Sun, 24 Sep 2017 18:03:23 +0000
+Subject: [PATCH 0/4] [media] OMAP3 ISP: Adjustments for some function implementations
+Message-Id: <692bab24-7990-c971-b577-b2dea4176e64@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
-In-Reply-To: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 11:34:11 +0200
+Date: Sun, 24 Sep 2017 19:57:34 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Some update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in three functions
+  Adjust 53 checks for null pointers
+  Use common error handling code in isp_video_open()
+  Delete an unnecessary variable initialisation in isp_video_open()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/radio/radio-mr800.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/omap3isp/isp.c         | 20 +++++-----
+ drivers/media/platform/omap3isp/ispccdc.c     | 28 +++++++-------
+ drivers/media/platform/omap3isp/ispccp2.c     |  6 +--
+ drivers/media/platform/omap3isp/ispcsi2.c     |  6 +--
+ drivers/media/platform/omap3isp/ispcsiphy.c   |  2 +-
+ drivers/media/platform/omap3isp/isph3a_aewb.c |  5 +--
+ drivers/media/platform/omap3isp/isph3a_af.c   |  7 +---
+ drivers/media/platform/omap3isp/isphist.c     |  4 +-
+ drivers/media/platform/omap3isp/isppreview.c  |  8 ++--
+ drivers/media/platform/omap3isp/ispresizer.c  |  8 ++--
+ drivers/media/platform/omap3isp/ispstat.c     |  4 +-
+ drivers/media/platform/omap3isp/ispvideo.c    | 53 +++++++++++++--------------
+ 12 files changed, 70 insertions(+), 81 deletions(-)
 
-diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
-index 63a9b92ab495..7c4554ce1cf0 100644
---- a/drivers/media/radio/radio-mr800.c
-+++ b/drivers/media/radio/radio-mr800.c
-@@ -515,4 +515,3 @@ static int usb_amradio_probe(struct usb_interface *intf,
- 
--	radio = kzalloc(sizeof(struct amradio_device), GFP_KERNEL);
--
-+	radio = kzalloc(sizeof(*radio), GFP_KERNEL);
- 	if (!radio) {
 -- 
 2.14.1
 
