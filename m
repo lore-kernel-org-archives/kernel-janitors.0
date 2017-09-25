@@ -1,55 +1,32 @@
-From: Sricharan R <sricharan@codeaurora.org>
-Date: Fri, 08 Sep 2017 11:25:06 +0000
-Subject: Re: [PATCH 1/2] rpmsg: glink: Unlock on error in qcom_glink_request_intent()
-Message-Id: <1ee63e71-d736-254e-dddc-41497f5fcb74@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Sep 2017 10:30:38 +0000
+Subject: [PATCH] drm: of: always initialize panel in drm_of_find_panel_or_bridge()
+Message-Id: <20170925103038.lvr5msjvekwczctn@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908103345.brf5wcj5yg6zpslz@mwanda>
-In-Reply-To: <20170908103345.brf5wcj5yg6zpslz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+The callers expect "panel" to be initialized, but that isn't true if we
+return -ENODEV.  It causes bugs like:
 
-On 9/8/2017 4:03 PM, Dan Carpenter wrote:
-> If qcom_glink_tx() fails, then we need to unlock before returning the
-> error code.
-> 
-> Fixes: 27b9c5b66b23 ("rpmsg: glink: Request for intents when unavailable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 5a5e927ea50f..fecb1dafa8f3 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1197,7 +1197,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
->  
->  	ret = qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
->  	if (ret)
-> -		return ret;
-> +		goto unlock;
->  
->  	ret = wait_for_completion_timeout(&channel->intent_req_comp, 10 * HZ);
->  	if (!ret) {
-> @@ -1207,6 +1207,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
->  		ret = channel->intent_req_result ? 0 : -ECANCELED;
->  	}
->  
-> +unlock:
+    drivers/gpu/drm/tve200/tve200_drv.c:83 tve200_modeset_init()
+    error: uninitialized symbol 'panel'.
 
-Thanks for the catch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Sricharan R <sricharan@codeaurora.org>
-
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
-
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 8dafbdfcd2ea..4c191c050e7d 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -233,6 +233,8 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 
+ 	if (!panel && !bridge)
+ 		return -EINVAL;
++	if (panel)
++		*panel = NULL;
+ 
+ 	remote = of_graph_get_remote_node(np, port, endpoint);
+ 	if (!remote)
