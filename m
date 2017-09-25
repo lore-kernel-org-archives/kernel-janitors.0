@@ -1,43 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 20 Sep 2017 21:19:57 +0000
-Subject: [PATCH] staging: rtl8723bs: add missing range check on id
-Message-Id: <20170920211957.5232-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 25 Sep 2017 08:24:59 +0000
+Subject: Re: mwifiex: make const array tos_to_ac static, reduces object code size
+Message-Id: <20170925082459.B18ED60719@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170919210500.31330-1-colin.king@canonical.com>
+In-Reply-To: <20170919210500.31330-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-The value of the u8 id needs to be upper bounds checked to ensure
-the cam_cache array on the adapter dvobj is not indexed outside
-of the allowed range of 0..TOTAL_CAM_ENTRY-1. This can currently
-occur if id is >= TOTAL_CAM_ENTRY when calling write_cam_from_cache.
-Fix this by adding an upper range check.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the read-only const array tos_to_ac on the stack,
+> instead make it static. Makes the object code smaller by 250 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   26104	   2720	    128	  28952	   7118	wmm.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   25758	   2816	    128	  28702	   701e	wmm.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Detected by CoverityScan, CID#1428464 ("Use of untrusted scalar value")
+Patch applied to wireless-drivers-next.git, thanks.
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8723bs/os_dep/rtw_proc.c | 2 ++
- 1 file changed, 2 insertions(+)
+7dfb0ebd022b mwifiex: make const array tos_to_ac static, reduces object code size
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/rtw_proc.c b/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
-index 92277457aba4..ce1dd6f9036f 100644
---- a/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
-+++ b/drivers/staging/rtl8723bs/os_dep/rtw_proc.c
-@@ -311,6 +311,8 @@ static ssize_t proc_set_cam(struct file *file, const char __user *buffer, size_t
- 
- 		if (num < 2)
- 			return count;
-+		if (id >= TOTAL_CAM_ENTRY)
-+			return -EINVAL;
- 
- 		if (strcmp("c", cmd) = 0) {
- 			_clear_cam_entry(adapter, id);
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/9960331/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
