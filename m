@@ -1,30 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 18:40:12 +0000
-Subject: [PATCH 0/2] [media] TI-VPE: Adjustments for five function implementations
-Message-Id: <8137a759-cbfd-e04d-0adb-06de1b3246d1@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 25 Sep 2017 23:25:37 +0000
+Subject: Re: [PATCH] hv_netvsc: make const array ver_list static, reduces object code size
+Message-Id: <20170925.162537.46489269812058623.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170922155023.15821-1-colin.king@canonical.com>
+In-Reply-To: <20170922155023.15821-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Archit Taneja <archit@ti.com>, Benoit Parrot <bparrot@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: colin.king@canonical.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 20:30:40 +0200
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 22 Sep 2017 16:50:23 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array ver_list on the stack, instead make it
+> static. Makes the object code smaller by over 400 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   18444	   3168	    320	  21932	   55ac	drivers/net/hyperv/netvsc.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   17950	   3224	    320	  21494	   53f6	drivers/net/hyperv/netvsc.o
+> 
+> (gcc 6.3.0, x86-64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Adjust nine checks for null pointers
-
- drivers/media/platform/ti-vpe/csc.c   |  6 ++----
- drivers/media/platform/ti-vpe/sc.c    |  4 +---
- drivers/media/platform/ti-vpe/vpdma.c |  2 +-
- drivers/media/platform/ti-vpe/vpe.c   | 14 +++++++-------
- 4 files changed, 11 insertions(+), 15 deletions(-)
-
--- 
-2.14.1
-
+Applied to net-next, thanks.
