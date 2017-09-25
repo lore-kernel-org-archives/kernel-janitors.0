@@ -1,18 +1,17 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:31:31 +0000
-Subject: [PATCH 1/4] [media] cpia2: Use common error handling code in cpia2_usb_probe()
-Message-Id: <a5c38437-f79b-e92e-b571-dd240090ca2b@users.sourceforge.net>
+Date: Mon, 25 Sep 2017 19:15:06 +0000
+Subject: [PATCH] [media] cx88: Use common error handling code in get_key_pvr2000()
+Message-Id: <962b8373-ca02-b27a-cc25-eb9b4ac16e05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
-In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
+To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrey Utkin <andrey_utkin@fastmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 12:40:14 +0200
+Date: Mon, 25 Sep 2017 21:03:57 +0200
+
 Add a jump target so that a bit of exception handling can be better reused
 at the end of this function.
 
@@ -20,44 +19,50 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cpia2/cpia2_usb.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/media/pci/cx88/cx88-input.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
-index 6089036049d9..c6be2786a66f 100644
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -849,13 +849,11 @@ static int cpia2_usb_probe(struct usb_interface *intf,
- 	if (ret < 0) {
- 		ERR("%s: usb_set_interface error (ret = %d)\n", __func__, ret);
--		kfree(cam);
--		return ret;
-+		goto free_data;
- 	}
+diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
+index e02449bf2041..001fbb97bcdf 100644
+--- a/drivers/media/pci/cx88/cx88-input.c
++++ b/drivers/media/pci/cx88/cx88-input.c
+@@ -566,20 +566,17 @@ static int get_key_pvr2000(struct IR_i2c *ir, enum rc_proto *protocol,
  
- 
- 	if((ret = cpia2_init_camera(cam)) < 0) {
- 		ERR("%s: failed to initialize cpia2 camera (ret = %d)\n", __func__, ret);
--		kfree(cam);
--		return ret;
-+		goto free_data;
- 	}
- 	LOG("  CPiA Version: %d.%02d (%d.%d)\n",
-@@ -877,9 +875,12 @@ static int cpia2_usb_probe(struct usb_interface *intf,
- 	if (ret < 0) {
- 		ERR("%s: Failed to register cpia2 camera (ret = %d)\n", __func__, ret);
--		kfree(cam);
--		return ret;
-+		goto free_data;
- 	}
- 
- 	return 0;
+ 	/* poll IR chip */
+ 	flags = i2c_smbus_read_byte_data(ir->c, 0x10);
+-	if (flags < 0) {
+-		dprintk("read error\n");
+-		return 0;
+-	}
++	if (flags < 0)
++		goto report_read_failure;
 +
-+free_data:
-+	kfree(cam);
-+	return ret;
+ 	/* key pressed ? */
+ 	if (0 = (flags & 0x80))
+ 		return 0;
+ 
+ 	/* read actual key code */
+ 	code = i2c_smbus_read_byte_data(ir->c, 0x00);
+-	if (code < 0) {
+-		dprintk("read error\n");
+-		return 0;
+-	}
++	if (code < 0)
++		goto report_read_failure;
+ 
+ 	dprintk("IR Key/Flags: (0x%02x/0x%02x)\n",
+ 		code & 0xff, flags & 0xff);
+@@ -588,6 +585,10 @@ static int get_key_pvr2000(struct IR_i2c *ir, enum rc_proto *protocol,
+ 	*scancode = code & 0xff;
+ 	*toggle = 0;
+ 	return 1;
++
++report_read_failure:
++	dprintk("read error\n");
++	return 0;
  }
  
+ void cx88_i2c_init_ir(struct cx88_core *core)
 -- 
 2.14.1
 
