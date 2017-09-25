@@ -1,21 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Sep 2017 15:03:05 +0000
-Subject: Re: [media] usbvision-core: Delete unnecessary braces in 11 functions
-Message-Id: <4ce4fba0-604f-7a25-dec5-1bc57e17f8f5@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 25 Sep 2017 08:23:34 +0000
+Subject: Re: brcmsmac: make const array ucode_ofdm_rates static, reduces object code size
+Message-Id: <20170925082334.DB0A860618@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c0e6e8e7-e47d-dc88-3317-2e46eaa51dc6@users.sourceforge.net>
- <f4b939c7-b16e-c956-190b-51339afaac53@users.sourceforge.net>
- <20170922114221.5tk24euy2ygmghm7@mwanda>
-In-Reply-To: <20170922114221.5tk24euy2ygmghm7@mwanda>
+References: <20170922140316.12768-1-colin.king@canonical.com>
+In-Reply-To: <20170922140316.12768-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> No.  Multi-line indents get curly braces for readability.
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Which of the proposed change possibilities do you not like especially at the moment?
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array ucode_ofdm_rates on the stack, instead make it
+> static. Makes the object code smaller by 100 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   39482	    564	      0	  40046	   9c6e	phy_cmn.o
+> 
+> After
+>    text	   data	    bss	    dec	    hex	filename
+>   39326	    620	      0	  39946	   9c0a	phy_cmn.o
+> 
+> (gcc 6.3.0, x86-64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-Regards,
-Markus
+Patch applied to wireless-drivers-next.git, thanks.
+
+d5633bb2c62a brcmsmac: make const array ucode_ofdm_rates static, reduces object code size
+
+-- 
+https://patchwork.kernel.org/patch/9966221/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
