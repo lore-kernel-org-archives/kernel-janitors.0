@@ -1,63 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:50:43 +0000
-Subject: [PATCH 3/9] [media] tm6000: Use common error handling code in tm6000_usb_probe()
-Message-Id: <8d2722c0-98cf-4447-51ae-039d04dae185@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 25 Sep 2017 08:30:44 +0000
+Subject: Re: b43: make const arrays static, reduces object code size
+Message-Id: <20170925083044.D348A6025D@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+References: <20170922153902.15372-1-colin.king@canonical.com>
+In-Reply-To: <20170922153902.15372-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 16:00:47 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const arrays on the stack, instead make them static.
+> Makes the object code smaller by over 60 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   14816	   1296	      0	  16112	   3ef0	b43/phy_ht.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   14551	   1496	      0	  16047	   3eaf	b43/phy_ht.o
+> 
+> (gcc 6.3.0, x86-64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/usb/tm6000/tm6000-cards.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
-index ef37fb1f05e4..e18632056976 100644
---- a/drivers/media/usb/tm6000/tm6000-cards.c
-+++ b/drivers/media/usb/tm6000/tm6000-cards.c
-@@ -1200,15 +1200,15 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 	nr = find_first_zero_bit(&tm6000_devused, TM6000_MAXBOARDS);
- 	if (nr >= TM6000_MAXBOARDS) {
- 		printk(KERN_ERR "tm6000: Supports only %i tm60xx boards.\n", TM6000_MAXBOARDS);
--		usb_put_dev(usbdev);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto put_device;
- 	}
- 
- 	/* Create and initialize dev struct */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev) {
--		usb_put_dev(usbdev);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto put_device;
- 	}
- 	spin_lock_init(&dev->slock);
- 	mutex_init(&dev->usb_lock);
-@@ -1331,9 +1331,10 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 	printk(KERN_ERR "tm6000: Error %d while registering\n", rc);
- 
- 	clear_bit(nr, &tm6000_devused);
--	usb_put_dev(usbdev);
- 
- 	kfree(dev);
-+put_device:
-+	usb_put_dev(usbdev);
- 	return rc;
- }
- 
+96cbe3d638e4 b43: make const arrays static, reduces object code size
+
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/9966415/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
