@@ -1,37 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Sep 2017 18:20:38 +0000
-Subject: [PATCH] [media] si2168: Delete an error message for a failed memory allocation in si2168_probe()
-Message-Id: <67e4ee2f-7fd8-5d46-4000-61dae57ca729@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 25 Sep 2017 08:29:49 +0000
+Subject: Re: iwlegacy: make const array static to shink object code size
+Message-Id: <20170925082949.EF68E60719@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170921225630.21916-1-colin.king@canonical.com>
+In-Reply-To: <20170921225630.21916-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Sep 2017 19:50:45 +0200
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate const array ac_to_fifo on the stack in an inlined
+> function, instead make it static.  Makes the object code smaller
+> by over 800 bytes:
+> 
+>    text	   data	    bss	    dec	    hex	filename
+>  159029	  33154	   1216	 193399	  2f377	4965-mac.o
+> 
+>    text	   data	    bss	    dec	    hex	filename
+>  158122	  33250	   1216	 192588	  2f04c	4965-mac.o
+> 
+> (gcc version 7.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/si2168.c | 1 -
- 1 file changed, 1 deletion(-)
+9b029e178ea1 iwlegacy: make const array static to shink object code size
 
-diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
-index 172fc367ccaa..41d9c513b7e8 100644
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -697,6 +697,5 @@ static int si2168_probe(struct i2c_client *client,
- 	if (!dev) {
- 		ret = -ENOMEM;
--		dev_err(&client->dev, "kzalloc() failed\n");
- 		goto err;
- 	}
- 
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/9964889/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
