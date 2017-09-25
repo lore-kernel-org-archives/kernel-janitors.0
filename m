@@ -1,54 +1,31 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Fri, 01 Sep 2017 13:29:45 +0000
-Subject: Re: [08/15] powerpc/iommu: use permission-specific DEVICE_ATTR variants
-Message-Id: <3xkKpy0Lxrz9t2d@ozlabs.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Sep 2017 10:21:33 +0000
+Subject: [PATCH] spi: sprd-adi: checking for NULL instead of IS_ERR()
+Message-Id: <20170925102133.4kef3fesnh3v3ixe@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1477769829-22230-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat, 2016-10-29 at 19:37:02 UTC, Julia Lawall wrote:
-> Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
-> source code, improves readbility, and reduces the chance of
-> inconsistencies.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @rw@
-> declarer name DEVICE_ATTR;
-> identifier x,x_show,x_store;
-> @@
-> 
-> DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-> 
-> @script:ocaml@
-> x << rw.x;
-> x_show << rw.x_show;
-> x_store << rw.x_store;
-> @@
-> 
-> if not (x^"_show" = x_show && x^"_store" = x_store)
-> then Coccilib.include_match false
-> 
-> @@
-> declarer name DEVICE_ATTR_RW;
-> identifier rw.x,rw.x_show,rw.x_store;
-> @@
-> 
-> - DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-> + DEVICE_ATTR_RW(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+devm_ioremap_resource() returns error pointers, it never returns NULL.
 
-Applied to powerpc next, thanks.
+Fixes: 7e2903cb91df ("spi: Add ADI driver for Spreadtrum platform")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://git.kernel.org/powerpc/c/8a7aef2cb3dafd2e8560750f4e5ad2
-
-cheers
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 0d481f8a46c2..bff6ef1caad7 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -341,8 +341,8 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sadi->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!sadi->base) {
+-		ret = -ENOMEM;
++	if (IS_ERR(sadi->base)) {
++		ret = PTR_ERR(sadi->base);
+ 		goto put_ctlr;
+ 	}
+ 
