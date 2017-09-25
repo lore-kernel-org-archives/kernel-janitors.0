@@ -1,59 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 08:20:55 +0000
-Subject: [PATCH 2/2] [media] tda18212: Improve three size determinations
-Message-Id: <e3688a0e-1970-c7ff-fdf8-d943bf4bb8e2@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 25 Sep 2017 16:16:38 +0000
+Subject: Applied "spi: sprd-adi: silence an uninitialized variable warning" to the spi tree
+Message-Id: <20170925161638.E9B1244005A@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eb35c033-46b3-4fd6-8398-f1e3869a67a8@users.sourceforge.net>
-In-Reply-To: <eb35c033-46b3-4fd6-8398-f1e3869a67a8@users.sourceforge.net>
+References: <20170922204808.7o7jn7pfj4se2s5r@mwanda>
+In-Reply-To: <20170922204808.7o7jn7pfj4se2s5r@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@spreadtrum.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 09:42:17 +0200
+The patch
 
-Replace the specification of data structures by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+   spi: sprd-adi: silence an uninitialized variable warning
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b0d6e097b922ac7f538623c52794d9d63d6ee378 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Sep 2017 23:48:08 +0300
+Subject: [PATCH] spi: sprd-adi: silence an uninitialized variable warning
+
+If of_get_property() fails then "size" is uninitialized and it leads to
+a static checker warning:
+
+    drivers/spi/spi-sprd-adi.c:288 sprd_adi_hw_init()
+    error: uninitialized symbol 'size'.
+
+We can silence the warning by re-arranging the order of these checks.
+It obviously doesn't affect runtime at all.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/tuners/tda18212.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/spi/spi-sprd-adi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/tda18212.c b/drivers/media/tuners/tda18212.c
-index 8f89d52cd39c..16a90d75f7d4 100644
---- a/drivers/media/tuners/tda18212.c
-+++ b/drivers/media/tuners/tda18212.c
-@@ -207,6 +207,6 @@ static int tda18212_probe(struct i2c_client *client,
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index bff6ef1caad7..1324463244d3 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -285,7 +285,7 @@ static void sprd_adi_hw_init(struct sprd_adi *sadi)
+ 
+ 	/* Set hardware channels setting */
+ 	list = of_get_property(np, "sprd,hw-channels", &size);
+-	if (!size || !list) {
++	if (!list || !size) {
+ 		dev_info(sadi->dev, "no hw channels setting in node\n");
+ 		return;
  	}
- 
--	memcpy(&dev->cfg, cfg, sizeof(struct tda18212_config));
-+	memcpy(&dev->cfg, cfg, sizeof(*cfg));
- 	dev->client = client;
- 	dev->regmap = devm_regmap_init_i2c(client, &regmap_config);
- 	if (IS_ERR(dev->regmap)) {
-@@ -244,7 +244,7 @@ static int tda18212_probe(struct i2c_client *client,
- 
- 	fe->tuner_priv = dev;
- 	memcpy(&fe->ops.tuner_ops, &tda18212_tuner_ops,
--			sizeof(struct dvb_tuner_ops));
-+	       sizeof(fe->ops.tuner_ops));
- 	i2c_set_clientdata(client, dev);
- 
- 	return 0;
-@@ -261,8 +261,7 @@ static int tda18212_remove(struct i2c_client *client)
- 	struct dvb_frontend *fe = dev->cfg.fe;
- 
- 	dev_dbg(&client->dev, "\n");
--
--	memset(&fe->ops.tuner_ops, 0, sizeof(struct dvb_tuner_ops));
-+	memset(&fe->ops.tuner_ops, 0, sizeof(fe->ops.tuner_ops));
- 	fe->tuner_priv = NULL;
- 	kfree(dev);
- 
 -- 
 2.14.1
 
