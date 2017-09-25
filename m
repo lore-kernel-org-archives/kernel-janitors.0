@@ -1,108 +1,39 @@
-From: "Wang, Zhi A" <zhi.a.wang@intel.com>
-Date: Fri, 22 Sep 2017 17:50:40 +0000
-Subject: RE: [PATCH][drm-next] drm/i915/gvt: ensure -ve return value is handled correctly
-Message-Id: <F3B0350DF4CB6849A642218320DE483D7D643090@SHSMSX101.ccr.corp.intel.com>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Date: Mon, 25 Sep 2017 09:32:24 +0000
+Subject: Re: [PATCH][drm-next] drm/i915/gvt: ensure -ve return value is handled correctly
+Message-Id: <1506331944.5593.10.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170919155534.25334-1-colin.king@canonical.com>
- <20170919214614.cfiolgznopouv34e@zhen-hp.sh.intel.com>
- <1505874923.2067.14.camel@perches.com>
- <20170920224406.jscthkglwfy3xhtf@zhen-hp.sh.intel.com>
- <1506004318.5382.4.camel@linux.intel.com>
- <F3B0350DF4CB6849A642218320DE483D7D64178C@SHSMSX101.ccr.corp.intel.com>
- <1506078663.6232.65.camel@linux.intel.com>
-In-Reply-To: <1506078663.6232.65.camel@linux.intel.com>
+         <20170919214614.cfiolgznopouv34e@zhen-hp.sh.intel.com>
+         <1505874923.2067.14.camel@perches.com>
+         <20170920224406.jscthkglwfy3xhtf@zhen-hp.sh.intel.com>
+         <1506004318.5382.4.camel@linux.intel.com>
+         <F3B0350DF4CB6849A642218320DE483D7D64178C@SHSMSX101.ccr.corp.intel.com>
+         <1506078663.6232.65.camel@linux.intel.com>
+         <F3B0350DF4CB6849A642218320DE483D7D643090@SHSMSX101.ccr.corp.intel.com>
+In-Reply-To: <F3B0350DF4CB6849A642218320DE483D7D643090@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Joe Perches <joe@perches.com>
-Cc: "Gao, Fred" <fred.gao@intel.com>, David Airlie <airlied@linux.ie>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Vivi,
- Rodrigo" <rodrigo.vivi@intel.com>, Colin King <colin.king@canonical.com>, "intel-gvt-dev@lists.freedesktop.org" <intel-gvt-dev@lists.freedesktop.org>
+To: "Wang, Zhi A" <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Joe Perches <joe@perches.com>
+Cc: "Gao, Fred" <fred.gao@intel.com>, David Airlie <airlied@linux.ie>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>, Colin King <colin.king@canonical.com>, "intel-gvt-dev@lists.freedesktop.org" <intel-gvt-dev@lists.freedesktop.org>
 
-VGhhbmtzIGZvciB0aGUgcmVwbHkuIExlYXJuZWQgYSBsb3QuIDopDQoNCkdFTV9CVUdfT04gaXMg
-bmV3IHRvIG1lIHNpbmNlIGl0IHdhc24ndCB0aGVyZSBhdCB0aGUgYmVnaW5uaW5nIG9mIEdWVC1n
-IHVwc3RyZWFtLiBJdCBzaG93ZWQgdXAgbGF0ZXIuIFNvIEkgbGVmdCBhIGxvdCBvZiBXQVJOX09O
-IGluIHRoZSBjb2RlIGFuZCBzb21lIG9mIHRoZW0gc2hvdWxkIGJlIEdFTV9CVUdfT04gbm93Lg0K
-DQpOb3cgSSBjYW4gZmlndXJlIG91dCB0aG9zZSBkaWZmZXJlbmNlcy4gV2UgY2FuIGRpc2N1c3Mg
-d2l0aCBvdXIgUUEgdG8gc2VlIGlmIHRoZXkgd291bGQgbGlrZSB0byBlbmFibGUgSTkxNV9HRU1f
-REVCVUcgYW5kIHRoZW4gd2UgY2FuIG1vdmUgdG8gR0VNX0JVR19PTiBhbHNvLCBvciBtYXliZSB3
-ZSBjYW4gaGF2ZSBhIGRlZGljYXRlZCBHVlRfQlVHX09OLiA6KSBUaGFuayB5b3Ugc28gbXVjaC4g
-SGF2ZSBhIGdyZWF0IHdlZWtlbmQuDQoNClRoYW5rcywNClpoaS4NCg0KLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCkZyb206IEpvb25hcyBMYWh0aW5lbiBbbWFpbHRvOmpvb25hcy5sYWh0aW5l
-bkBsaW51eC5pbnRlbC5jb21dIA0KU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgMjIsIDIwMTcgMjox
-MSBQTQ0KVG86IFdhbmcsIFpoaSBBIDx6aGkuYS53YW5nQGludGVsLmNvbT47IFpoZW55dSBXYW5n
-IDx6aGVueXV3QGxpbnV4LmludGVsLmNvbT47IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5jb20+
-DQpDYzogR2FvLCBGcmVkIDxmcmVkLmdhb0BpbnRlbC5jb20+OyBEYXZpZCBBaXJsaWUgPGFpcmxp
-ZWRAbGludXguaWU+OyBpbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOyBrZXJuZWwtamFu
-aXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKYW5p
-IE5pa3VsYSA8amFuaS5uaWt1bGFAbGludXguaW50ZWwuY29tPjsgZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZzsgVml2aSwgUm9kcmlnbyA8cm9kcmlnby52aXZpQGludGVsLmNvbT47IENv
-bGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT47IGludGVsLWd2dC1kZXZAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnDQpTdWJqZWN0OiBSZTogW1BBVENIXVtkcm0tbmV4dF0gZHJtL2k5MTUv
-Z3Z0OiBlbnN1cmUgLXZlIHJldHVybiB2YWx1ZSBpcyBoYW5kbGVkIGNvcnJlY3RseQ0KDQpPbiBU
-aHUsIDIwMTctMDktMjEgYXQgMTY6MTcgKzAwMDAsIFdhbmcsIFpoaSBBIHdyb3RlOg0KPiBIaSBK
-b29uYXM6DQo+IA0KPiBUaGFua3MgZm9yIHRoZSBpbnRyb2R1Y3Rpb24uIEkgaGF2ZSBiZWVuIHRo
-aW5raW5nIGFib3V0IHRoZSANCj4gcG9zc2liaWxpdHkgb2YgaW50cm9kdWNpbmcgR0VNX0JVR19P
-TiBpbnRvIEdWVC1nIHJlY2VudGx5IGFuZCANCj4gaW52ZXN0aWdhdGluZyBvbiBpdC4gSSdtIGp1
-c3QgYSBiaXQgY29uZnVzZWQgYWJvdXQgdGhlIHVzYWdlIGJldHdlZW4gDQo+IEdFTV9CVUdfT04g
-YW5kIFdBUk5fT04uDQoNCkdFTV9CVUdfT04gaXMgYmFzaWNhbGx5IHRoZXJlIHRvIGNhdGNoIHRo
-aW5ncyB0aGF0IHdlIGRvIG5vdCBleHBlY3QgZXZlciB0byBoYXBwZW4gd2l0aGluIHRoZSBkcml2
-ZXIuIFNvIHdlIG9mdGVuIGxpc3QgdGhlIGZ1bmN0aW9uIHByZWNvbmRpdGlvbnMgYXMgR0VNX0JV
-R19PTi4gSXQncyB0aGVyZSBmb3IgdGhlIHNhbWUgcmVhc29uIGFzIHRoZSBsb2NrZGVwX2Fzc2Vy
-dF9oZWxkIGFuZCBLQVNBTi4gSXQncyBzb21ldGltZXMgaGVhdnkgY2hlY2tzIHRoYXQgd2UgcmVh
-bGx5IHdhbnQgdG8gcnVuIHdoZW4gZnVuY3Rpb25hbGx5IHZhbGlkYXRpbmcga2VybmVsLg0KDQpH
-RU1fQlVHX09OIGJlY2FtZSB0byBleGlzdGVuY2UgYmVjYXVzZSBhZGRpbmcgY2hlY2tzIGZvciBv
-YnZpb3VzIGNvbmRpdGlvbnMgYXQgdGhlIGNyaXRpY2FsIGNvbW1hbmQgc3VibWlzc2lvbiBwYXRo
-IEdFTSBpcyBub3Qgc3VzdGFpbmFibGUgZm9yIHBlcmZvcm1hbmNlIGluIHByb2R1Y3Rpb24uDQoN
-ClRoZSBleHBlY3RhdGlvbiBpcyB0aGF0IGVhY2ggR0VNX0JVR19PTiBoYXMgYSB0ZXN0Y2FzZSBp
-biBJLUctVCB0aGF0IGhhcyB0aGUgcG90ZW50aWFsIHRvIGhpdCBpdCBpZiBkcml2ZXIgd2FzIG1v
-ZGlmaWVkIG5vdCB0byByZXNwZWN0IHRob3NlIHByZWNvbmRpdGlvbnMuIFNvIG9uY2Ugb3VyIHRl
-c3Rlc3QgcGFzc2VzLCB3ZSBjYW4gZGlzYWJsZSB0aGUgR0VNX0JVR19PTnMgYW5kIGJlIGNvbmZp
-ZGVudCBvZiB0aGUgaW50ZXJuYWwgZHJpdmVyIHF1YWxpdHkgYW5kIGdldCB0aGUgcmVsZWFzZSBw
-ZXJmb3JtYW5jZS4NCg0KV0FSTl9PTiBpcyBtb3N0bHkgdXNlZCBmb3IgdGhlIGNhc2VzIHdoZW4g
-dGhlIGhhcmR3YXJlIGlzIGJlaGF2aW5nIGRpZmZlcmVudGx5IHRoYW4gd2UgZXhwZWN0LiBXZSBj
-YW4ndCByZW1vdmUgdGhlbSBhcyB3ZSBkb24ndCBoYXZlIGFsbCB0aGUgaGFyZHdhcmUgaW4gdGhl
-IHdvcmxkIHRvIHRlc3QsIGJ1dCB3ZSB0cnkgdG8gZXhlcmNpc2UgdGhlbSB0b28gdGhyb3VnaCBJ
-LUctVHMuIFRoZSB0ZXN0IHdpbGwgb2Z0ZW4gYmUgdGhlIHN1YnRlc3QgdGhhdCB3YXMgd3JpdHRl
-biB0byByZXByb2R1Y2UgdGhlIHByb2JsZW0gd2l0aCBvdXIgZXhwZWN0YXRpb25zIG9mIGhhcmR3
-YXJlIGluIGNhc2Ugb2YgaGFuZ3MgYW5kIG90aGVyIGJ1Z3MuIEFmdGVyIHdlJ3ZlIGNvcnJlY3Rl
-ZCB0aGUgZHJpdmVyIGJlaGF2aW91ciwgb3IgZ290IGEgaGFyZHdhcmUgVy9BIGFzc2lnbmVkLCB3
-ZSBrZWVwIHRoZSB0ZXN0IGFuZCBhZGQgYSBXQVJOX09OIHRvIG1ha2Ugc3VyZSB0aGVyZSB3aWxs
-IGJlIG5vIHJlZ3Jlc3Npb24gYmFjayB0byB0aGUgc2FtZSBzaXR1YXRpb24uDQoNClRoaXMgaXMg
-YXQgbGVhc3Qgd2hhdCBzaG91bGQgaGFwcGVuLCBnaXZlbiB0aW1lIGNvbnN0cmFpbnRzLCB0aGVy
-ZSBtYXkgYmUgdmFyaWF0aW9ucy4NCg0KVXNlciBiZWhhdmluZyB1bmV4cGVjdGVkbHkgc2hvdWxk
-IG5ldmVyIHJlc3VsdCBpbiBXQVJOX09OIChvciBldmVuIHdvcnNlLCBCVUdfT04pLCBzaG91bGQg
-YWx3YXlzIGp1c3QgYmUgZGVidWcgbWVzc2FnZXMgZGlzcGxheWVkIChub3QgdG8gdHJpZ2dlciB0
-aGUgQ0kpIGFuZCBlcnJvcnMgcHJvcGFnYXRlZCBiYWNrIHRvIHVzZXI6DQoNCmh0dHBzOi8vMDEu
-b3JnL2xpbnV4Z3JhcGhpY3MvZ2Z4LWRvY3MvZHJtL2dwdS9kcm0tdWFwaS5odG1sI3JlY29tbWVu
-ZGVkDQotaW9jdGwtcmV0dXJuLXZhbHVlcw0KDQpCYXJlIEJVR19PTiBzaG91bGQgb25seSBiZSB1
-c2VkIHdoZW4gdGhlcmUncyB0aGUgZGFuZ2VyIG9mIGNvcnJ1cHRpbmcgc3lzdGVtIG1lbW9yeSBv
-ciBmaWxlc3lzdGVtcywgc28gZnJvbSBncmFwaGljcyBkcml2ZXIsIHRoYXQncyBub3QgdmVyeSBv
-ZnRlbi4gQ29udHJvbGxlZCBwcm9wYWdhdGlvbiBvZiBlcnJvcnMgYW5kIG1heWJlIFdBUk5fT04g
-aXMgYWx3YXlzIHByZWZlcnJlZCBpZiBwb3NzaWJsZS4NCg0KDQo+IEdFTV9CVUdfT04gaXMgb25s
-eSBlbmFibGVkIHdoZW4ga2VybmVsIGRlYnVnIGlzIGVuYWJsZWQsIHdoaWNoIG1vc3RseSANCj4g
-aXMgZGlzYWJsZWQgaW4gYSBwcm9kdWN0aW9uIGtlcm5lbC4gSW4gdGhlIGNhc2Ugb2YgaTkxNSwg
-SSdtIHN1cmUgaXQgDQo+IHdpbGwgYmUgZW5hYmxlZCBpbiBDSSB0ZXN0IHNvIHRoYXQgaXQgY2Fu
-IGNhdGNoIGJyb2tlbiBjb2RlIHBhdGguDQo+IExvb2tpbmcgaW50byBHVlQtZywgdGhlIHNpbWls
-YXIgc2NlbmFyaW8gaXMgd2UgZW5hYmxlIGl0IGluIFFBIHRlc3QuDQo+IA0KPiBMZXQncyBzYXkg
-R0VNX0JVR19PTiBjYW4gZG8gaXRzIHdvcmsgdmVyeSB3ZWxsIGluIFFBIHRlc3QgYnV0IFFBIHRl
-c3QgDQo+IGlzIG5vdCBmdWxseSBjb3ZlcmVkIGFsbCB0aGUgY29uZGl0aW9uLCB0aGVuIHNvbWV0
-aGluZyBtaWdodCBiZSBzdGlsbCANCj4gYnJva2VuIHdoZW4gaXQgY29tZXMgdG8gdGhlIHByb2R1
-Y3Rpb24ga2VybmVsIGZvciB1c2VyIGFuZCBHRU1fQlVHX09OIA0KPiB3aWxsIGJlIGRpc2FibGVk
-IGFuZCB3aWxsIG5vdCBjYXRjaCB0aGF0LCBJIGd1ZXNzLg0KPiANCj4gVGhhdCdzIG15IGNvbmZ1
-c2lvbiB3aGljaCBzY3JhdGNoZWQgbXkgbWluZCBkdXJpbmcgdGhlIGludmVzdGlnYXRpb246DQo+
-IElmIEdFTV9CVUdfT04gaXMgbm90IGFsd2F5cyB3b3JraW5nLCB0aGVuIGl0IGxvb2tzIFdBUk5f
-T04gc2hvdWxkIA0KPiBhbHdheXMgYmUgdXNlZC4uLi4gRXhwZWN0ZWQgdG8gbGVhcm4gbW9yZSBh
-Ym91dCB0aGUgc3RvcnkgYmVoaW5kLiA6KQ0KDQpTbyBpZiB0aGUgc2F5aW5nIGlzIHNvbWUgb2Jq
-ZWN0IGlzICJuZXZlciBnb2luZyB0byBiZSBiaWdnZXIgdGhhbiAyRyIsIHRoZXJlIHNob3VsZCBi
-ZSBlaXRoZXI6DQoNCjEuIEdFTV9CVUdfT04gbGlrZSBhc3NlcnRpb24gZm9yIGl0IGFuZCBhIHRl
-c3QgdGhhdCB0cmllcyB0byBoaXQgaXQsIGJ5IHRyeWluZyB0byBhbGxvY2F0ZSBhIGh1Z2Ugb2Jq
-ZWN0IGZvciBleGFtcGxlLCBhbmQgc2hvdWxkIGdldCByZWplY3Rpb24gYXMgLUVJTlZBTA0KDQoy
-LiBUZXN0IHRvIHNlZSBpZiB0aGUgb2JqZWN0IGlzIGJpZ2dlciwgYW5kIHByb3BhZ2F0ZSBiYWNr
-IHRoZSBlcnJvciBpZiBpdCBpcy4gRWl0aGVyIHJlc3VsdGluZyBpbiB1c2VyIHJlcG9ydGVkIGVy
-cm9yIGlmIHRoZSBvcmlnaW4gb2YgdGhlIG9iamVjdCBpcyBvdXRzaWRlIG9mIGtlcm5lbCA8LT4g
-aGFyZHdhcmUuIE9yIGEgV0FSTl9PTiBpZiBpdCdzIHN0cmFuZ2UgaGFyZHdhcmUgb3Iga2VybmVs
-IGRyaXZlciBiZWhhdmlvci4NCg0KWW91IHNob3VsZCBjaG9vc2UgZGVwZW5kaW5nIG9uIGhvdyBv
-ZnRlbiB5b3VyIGZ1bmN0aW9uIGdldHMgY2FsbGVkLCBhbmQgaG93IGNyaXRpY2FsIHRoZSBleGVj
-dXRpb24gdGltZSBpcy4NCg0KSG9wZWZ1bGx5IHRoaXMgY2xhcmlmaWVkIHRoaW5ncy4NCg0KUmVn
-YXJkcywgSm9vbmFzDQotLQ0KSm9vbmFzIExhaHRpbmVuDQpPcGVuIFNvdXJjZSBUZWNobm9sb2d5
-IENlbnRlcg0KSW50ZWwgQ29ycG9yYXRpb24NCg=
+On Fri, 2017-09-22 at 17:50 +0000, Wang, Zhi A wrote:
+> Thanks for the reply. Learned a lot. :)
+> 
+> GEM_BUG_ON is new to me since it wasn't there at the beginning of
+> GVT-g upstream. It showed up later. So I left a lot of WARN_ON in the
+> code and some of them should be GEM_BUG_ON now.
+> 
+> Now I can figure out those differences. We can discuss with our QA to
+> see if they would like to enable I915_GEM_DEBUG and then we can move
+> to GEM_BUG_ON also, or maybe we can have a dedicated GVT_BUG_ON. :)
+> Thank you so much. Have a great weekend.
+
+GVT_BUG_ON is probably the way to go :)
+
+Regards, Joonas
+-- 
+Joonas Lahtinen
+Open Source Technology Center
+Intel Corporation
