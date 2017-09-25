@@ -1,41 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Sep 2017 15:49:28 +0000
-Subject: [PATCH 2/7] [media] ov2640: Improve a size determination in ov2640_probe()
-Message-Id: <457f2678-da7f-cb67-8893-5cdb7ce804dd@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 25 Sep 2017 16:16:40 +0000
+Subject: Applied "spi: sprd-adi: checking for NULL instead of IS_ERR()" to the spi tree
+Message-Id: <20170925161640.0D23644005B@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
-In-Reply-To: <c9f2ba21-c742-e1e8-26d9-a56c51c56d65@users.sourceforge.net>
+References: <20170925102133.4kef3fesnh3v3ixe@mwanda>
+In-Reply-To: <20170925102133.4kef3fesnh3v3ixe@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>, =?UTF-8?Q?Frank_Sch=c3=a4fer?= <fschaefer.oss@googlemail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Hans Verkuil <hans.verkuil@cisco.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Sep 2017 16:09:35 +0200
+The patch
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+   spi: sprd-adi: checking for NULL instead of IS_ERR()
 
-This issue was detected by using the Coccinelle software.
+has been applied to the spi tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 04063a011f2f35c37e1146c736e6d4ad402a8557 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Sep 2017 13:21:33 +0300
+Subject: [PATCH] spi: sprd-adi: checking for NULL instead of IS_ERR()
+
+devm_ioremap_resource() returns error pointers, it never returns NULL.
+
+Fixes: 7e2903cb91df ("spi: Add ADI driver for Spreadtrum platform")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/i2c/ov2640.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-sprd-adi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2640.c b/drivers/media/i2c/ov2640.c
-index e4ae53410097..456aa977bce8 100644
---- a/drivers/media/i2c/ov2640.c
-+++ b/drivers/media/i2c/ov2640.c
-@@ -1097,5 +1097,5 @@ static int ov2640_probe(struct i2c_client *client,
- 		return -EIO;
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 0d481f8a46c2..bff6ef1caad7 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -341,8 +341,8 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sadi->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!sadi->base) {
+-		ret = -ENOMEM;
++	if (IS_ERR(sadi->base)) {
++		ret = PTR_ERR(sadi->base);
+ 		goto put_ctlr;
  	}
  
--	priv = devm_kzalloc(&client->dev, sizeof(struct ov2640_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
 -- 
 2.14.1
 
