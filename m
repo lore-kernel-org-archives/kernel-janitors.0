@@ -1,55 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:34:22 +0000
-Subject: [PATCH 3/4] [media] cpia2: Delete unnecessary null pointer checks in free_sbufs()
-Message-Id: <d15c13d7-3b4c-e343-699b-c7dcb51244ef@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 19:41:18 +0000
+Subject: [PATCH 1/2] clk-xgene: Delete an error message for a failed memory allocation in two functions
+Message-Id: <2a6fb281-932f-e043-f084-355a3020411a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
-In-Reply-To: <c2ff478e-94d7-6c92-f467-69f5b66b8a1e@users.sourceforge.net>
+References: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
+In-Reply-To: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Shyam Saini <mayhs11saini@gmail.com>
+To: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Sep 2017 13:23:47 +0200
+Date: Tue, 26 Sep 2017 21:19:19 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Omit extra messages for a memory allocation failure in these functions.
 
-WARNING: kfree(NULL) is safe and this check is probably not required
-
-Thus fix the affected source code place.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cpia2/cpia2_usb.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/clk/clk-xgene.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
-index 161c9b827f8e..d1750fa48aa8 100644
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -519,15 +519,11 @@ static void free_sbufs(struct camera_data *cam)
- 	int i;
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index 4c75821a3933..3cc84a65f686 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -146,10 +146,8 @@ static struct clk *xgene_register_clk_pll(struct device *dev,
  
- 	for (i = 0; i < NUM_SBUF; i++) {
--		if(cam->sbuf[i].urb) {
--			usb_kill_urb(cam->sbuf[i].urb);
--			usb_free_urb(cam->sbuf[i].urb);
--			cam->sbuf[i].urb = NULL;
--		}
--		if(cam->sbuf[i].data) {
--			kfree(cam->sbuf[i].data);
--			cam->sbuf[i].data = NULL;
--		}
-+		usb_kill_urb(cam->sbuf[i].urb);
-+		usb_free_urb(cam->sbuf[i].urb);
-+		cam->sbuf[i].urb = NULL;
-+		kfree(cam->sbuf[i].data);
-+		cam->sbuf[i].data = NULL;
- 	}
- }
+ 	/* allocate the APM clock structure */
+ 	apmclk = kzalloc(sizeof(*apmclk), GFP_KERNEL);
+-	if (!apmclk) {
+-		pr_err("%s: could not allocate APM clk\n", __func__);
++	if (!apmclk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
  
+ 	init.name = name;
+ 	init.ops = &xgene_clk_pll_ops;
+@@ -650,10 +648,8 @@ static struct clk *xgene_register_clk(struct device *dev,
+ 
+ 	/* allocate the APM clock structure */
+ 	apmclk = kzalloc(sizeof(*apmclk), GFP_KERNEL);
+-	if (!apmclk) {
+-		pr_err("%s: could not allocate APM clk\n", __func__);
++	if (!apmclk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &xgene_clk_ops;
 -- 
 2.14.1
 
