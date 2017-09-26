@@ -1,30 +1,50 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Sep 2017 08:30:12 +0000
-Subject: Re: [PATCH] ALSA: 6Fire: Use common error handling code in usb6fire_chip_probe()
-Message-Id: <s5ha826kj1n.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 15:05:19 +0000
+Subject: [PATCH] [media] clk-kona-setup: Delete two error messages for a failed memory allocation in parent_p
+Message-Id: <022c9ba4-f3c4-e4e3-f804-2bd54937a138@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6b3e5ec7-557c-4330-4fa4-221530d6c811@users.sourceforge.net>
-In-Reply-To: <6b3e5ec7-557c-4330-4fa4-221530d6c811@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Torsten Schenk <torsten.schenk@zoho.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, Alex Elder <elder@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 06 Sep 2017 16:38:25 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 16:26:29 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 16:54:20 +0200
 
-Applied, thanks.
+Omit extra messages for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-Takashi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/bcm/clk-kona-setup.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+index c37a7f0e83aa..281f4322355c 100644
+--- a/drivers/clk/bcm/clk-kona-setup.c
++++ b/drivers/clk/bcm/clk-kona-setup.c
+@@ -579,18 +579,13 @@ static u32 *parent_process(const char *clocks[],
+ 	 */
+ 	parent_names = kmalloc_array(parent_count, sizeof(*parent_names),
+ 			       GFP_KERNEL);
+-	if (!parent_names) {
+-		pr_err("%s: error allocating %u parent names\n", __func__,
+-				parent_count);
++	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* There is at least one parent, so allocate a selector array */
+ 	parent_sel = kmalloc_array(parent_count, sizeof(*parent_sel),
+ 				   GFP_KERNEL);
+ 	if (!parent_sel) {
+-		pr_err("%s: error allocating %u parent selectors\n", __func__,
+-				parent_count);
+ 		kfree(parent_names);
+ 
+ 		return ERR_PTR(-ENOMEM);
+-- 
+2.14.1
+
