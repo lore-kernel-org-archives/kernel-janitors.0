@@ -1,83 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 07:51:49 +0000
-Subject: [PATCH 4/9] [media] tm6000: One function call less in tm6000_usb_probe() after error detection
-Message-Id: <66140cb8-68e4-b891-2313-3c07e54ab3e2@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 11:33:39 +0000
+Subject: [PATCH 5/6] [media] tda8261: Adjust three function calls together with a variable assignment
+Message-Id: <8e60d1bf-ebdb-a9f8-8cf2-3dee7a1c4c96@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
-In-Reply-To: <2aade468-5dfd-76ee-f59f-c25864930f61@users.sourceforge.net>
+References: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
+In-Reply-To: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Santosh Kumar Singh <kumar.san1093@gmail.com>, Sean Young <sean@mess.org>, Wei Yongjun <weiyongjun1@huawei.com>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Sep 2017 16:11:55 +0200
+Date: Tue, 26 Sep 2017 12:52:24 +0200
 
-* Adjust jump targets so that the function "kfree" will be always called
-  with a non-null pointer.
+The script "checkpatch.pl" pointed information out like the following.
 
-* Delete an initialisation for the local variable "dev"
-  which became unnecessary with this refactoring.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/tm6000/tm6000-cards.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/media/dvb-frontends/tda8261.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-cards.c b/drivers/media/usb/tm6000/tm6000-cards.c
-index e18632056976..77347541904d 100644
---- a/drivers/media/usb/tm6000/tm6000-cards.c
-+++ b/drivers/media/usb/tm6000/tm6000-cards.c
-@@ -1184,7 +1184,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 			    const struct usb_device_id *id)
- {
- 	struct usb_device *usbdev;
--	struct tm6000_core *dev = NULL;
-+	struct tm6000_core *dev;
- 	int i, rc = 0;
- 	int nr = 0;
- 	char *speed;
-@@ -1194,7 +1194,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 	/* Selects the proper interface */
- 	rc = usb_set_interface(usbdev, 0, 1);
- 	if (rc < 0)
--		goto err;
-+		goto report_failure;
+diff --git a/drivers/media/dvb-frontends/tda8261.c b/drivers/media/dvb-frontends/tda8261.c
+index 492d8c03a5fa..20185ee8f253 100644
+--- a/drivers/media/dvb-frontends/tda8261.c
++++ b/drivers/media/dvb-frontends/tda8261.c
+@@ -42,7 +42,8 @@ static int tda8261_read(struct tda8261_state *state, u8 *buf)
+ 	int err = 0;
+ 	struct i2c_msg msg = { .addr	= config->addr, .flags = I2C_M_RD,.buf = buf,  .len = 1 };
  
- 	/* Check to see next free device and mark as used */
- 	nr = find_first_zero_bit(&tm6000_devused, TM6000_MAXBOARDS);
-@@ -1312,8 +1312,7 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 	if (!dev->isoc_in.endp) {
- 		printk(KERN_ERR "tm6000: probing error: no IN ISOC endpoint!\n");
- 		rc = -ENODEV;
+-	if ((err = i2c_transfer(state->i2c, &msg, 1)) != 1)
++	err = i2c_transfer(state->i2c, &msg, 1);
++	if (err != 1)
+ 		pr_err("%s: read error, err=%d\n", __func__, err);
+ 
+ 	return err;
+@@ -54,7 +55,8 @@ static int tda8261_write(struct tda8261_state *state, u8 *buf)
+ 	int err = 0;
+ 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = 4 };
+ 
+-	if ((err = i2c_transfer(state->i2c, &msg, 1)) != 1)
++	err = i2c_transfer(state->i2c, &msg, 1);
++	if (err != 1)
+ 		pr_err("%s: write error, err=%d\n", __func__, err);
+ 
+ 	return err;
+@@ -67,8 +69,8 @@ static int tda8261_get_status(struct dvb_frontend *fe, u32 *status)
+ 	int err = 0;
+ 
+ 	*status = 0;
 -
--		goto err;
-+		goto free_device;
+-	if ((err = tda8261_read(state, &result)) < 0) {
++	err = tda8261_read(state, &result);
++	if (err < 0) {
+ 		pr_err("%s: I/O Error\n", __func__);
+ 		return err;
  	}
- 
- 	/* save our data pointer in this interface device */
-@@ -1323,16 +1322,16 @@ static int tm6000_usb_probe(struct usb_interface *interface,
- 
- 	rc = tm6000_init_dev(dev);
- 	if (rc < 0)
--		goto err;
-+		goto free_device;
- 
- 	return 0;
- 
--err:
-+free_device:
-+	kfree(dev);
-+report_failure:
- 	printk(KERN_ERR "tm6000: Error %d while registering\n", rc);
- 
- 	clear_bit(nr, &tm6000_devused);
--
--	kfree(dev);
- put_device:
- 	usb_put_dev(usbdev);
- 	return rc;
 -- 
 2.14.1
 
