@@ -1,40 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 14:00:13 +0000
-Subject: [PATCH 6/6] [media] go7007: Delete an unnecessary variable initialisation in go7007_snd_init()
-Message-Id: <cce9027f-ed91-44f8-a59e-a03291d9cf2e@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 26 Sep 2017 06:17:44 +0000
+Subject: [PATCH] crypto: xts - Fix an error handling path in 'create()'
+Message-Id: <20170926061744.31587-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
-In-Reply-To: <b36ece3f-0f31-9bb6-14ae-c4abf7cd23ee@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Sep 2017 14:35:43 +0200
+All error handling paths 'goto err_drop_spawn' except this one.
+In order to avoid some resources leak, we should do it as well here.
 
-The variable "ret" will eventually be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: f1c131b45410 ("crypto: xts - Convert to skcipher")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/usb/go7007/snd-go7007.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/xts.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
-index 7ae4d03ed3f7..27c09fd44657 100644
---- a/drivers/media/usb/go7007/snd-go7007.c
-+++ b/drivers/media/usb/go7007/snd-go7007.c
-@@ -227,7 +227,7 @@ int go7007_snd_init(struct go7007 *go)
- {
- 	static int dev;
- 	struct go7007_snd *gosnd;
--	int ret = 0;
-+	int ret;
+diff --git a/crypto/xts.c b/crypto/xts.c
+index d86c11a8c882..e31828ed0046 100644
+--- a/crypto/xts.c
++++ b/crypto/xts.c
+@@ -554,8 +554,10 @@ static int create(struct crypto_template *tmpl, struct rtattr **tb)
+ 		ctx->name[len - 1] = 0;
  
- 	if (dev >= SNDRV_CARDS)
- 		return -ENODEV;
+ 		if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
+-			     "xts(%s)", ctx->name) >= CRYPTO_MAX_ALG_NAME)
+-			return -ENAMETOOLONG;
++			     "xts(%s)", ctx->name) >= CRYPTO_MAX_ALG_NAME) {
++			err = -ENAMETOOLONG;
++			goto err_drop_spawn;
++		}
+ 	} else
+ 		goto err_drop_spawn;
+ 
 -- 
-2.14.1
+2.11.0
 
