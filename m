@@ -1,45 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 19 Sep 2017 20:40:19 +0000
-Subject: [PATCH] ath9k: make const array reg_hole_list static, reduces object code size
-Message-Id: <20170919204019.30804-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 13:33:37 +0000
+Subject: [PATCH 0/2] [media] dmxdev: Fine-tuning for two function implementations
+Message-Id: <5f169dcb-b834-5ca3-2195-668e5295a7ca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Devendra Sharma <devendra.sharma9091@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 15:30:03 +0200
 
-Don't populate the read-only array reg_hole_list on the stack, instead make
-it static.  Makes the object code smaller by over 200 bytes:
+Two update suggestions were taken into account
+from static source code analysis.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  57518	  15248	      0	  72766	  11c3e	debug.o
+Markus Elfring (2):
+  Use common error handling code in dvb_dmxdev_start_feed()
+  Improve a size determination in dvb_dmxdev_add_pid()
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  57218	  15344	      0	  72562	  11b72	debug.o
+ drivers/media/dvb-core/dmxdev.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath9k/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
-index 01fa30117288..5a0a05abd51a 100644
---- a/drivers/net/wireless/ath/ath9k/debug.c
-+++ b/drivers/net/wireless/ath/ath9k/debug.c
-@@ -916,7 +916,7 @@ static int open_file_regdump(struct inode *inode, struct file *file)
- 	u8 *buf;
- 	int i, j = 0;
- 	unsigned long num_regs, regdump_len, max_reg_offset;
--	const struct reg_hole {
-+	static const struct reg_hole {
- 		u32 start;
- 		u32 end;
- 	} reg_hole_list[] = {
 -- 
 2.14.1
 
