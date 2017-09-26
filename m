@@ -1,57 +1,40 @@
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Date: Sat, 30 Sep 2017 00:43:34 +0000
-Subject: Re: [PATCH] net: hns3: fix null pointer dereference before null check
-Message-Id: <b8f17467-71f6-688c-a18e-64c1e6dc0b89@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 26 Sep 2017 15:14:09 +0000
+Subject: [PATCH][next] cxgb4: make function ch_flower_stats_cb, fixes warning
+Message-Id: <20170926151409.18244-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929195123.4189-1-colin.king@canonical.com>
-In-Reply-To: <20170929195123.4189-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: Ganesh Goudar <ganeshgr@chelsio.com>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi, Colin
+From: Colin Ian King <colin.king@canonical.com>
 
-On 2017/9/30 3:51, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> pointer ndev is being dereferenced with the call to netif_running
-> before it is being null checked.  Re-order the code to only dereference
-> ndev after it has been null checked.
+The function ch_flower_stats_cb is local to the source and does not need
+to be in global scope, so make it static.
 
-Thanks for fixing it.
+Cleans up sparse warnings:
+symbol 'ch_flower_stats_cb' was not declared. Should it be static?
 
-> 
-> Detected by CoverityScan, CID#1457206 ("Dereference before null check")
-> 
-> Fixes: 9df8f79a4d29 ("net: hns3: Add DCB support when interacting with network stack")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-> index 4a0890f98b70..c31506514e5d 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-> @@ -2865,7 +2865,7 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
->  {
->  	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
->  	struct net_device *ndev = kinfo->netdev;
-> -	bool if_running = netif_running(ndev);
-> +	bool if_running;
->  	int ret;
->  	u8 i;
->  
-> @@ -2875,6 +2875,8 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
->  	if (!ndev)
->  		return -ENODEV;
->  
-> +	if_running = netif_running(ndev);
-> +
->  	ret = netdev_set_num_tc(ndev, tc);
->  	if (ret)
->  		return ret;
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+index a36bd66d2834..92a311767381 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+@@ -366,7 +366,7 @@ int cxgb4_tc_flower_destroy(struct net_device *dev,
+ 	return ret;
+ }
+ 
+-void ch_flower_stats_cb(unsigned long data)
++static void ch_flower_stats_cb(unsigned long data)
+ {
+ 	struct adapter *adap = (struct adapter *)data;
+ 	struct ch_tc_flower_entry *flower_entry;
+-- 
+2.14.1
 
