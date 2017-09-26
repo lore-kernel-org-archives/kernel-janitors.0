@@ -1,60 +1,59 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 24 Sep 2017 12:05:06 +0000
-Subject: Re: [PATCH 3/3] iio: adc: twl4030: Return an error if we can not enable the vusb3v1 regulator in 'tw
-Message-Id: <20170924130506.19e1b733@archlinux>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 26 Sep 2017 13:18:36 +0000
+Subject: [PATCH][next] ieee802154: atusb: make two structures static, fixes warnings
+Message-Id: <20170926131836.15171-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4bcd315895de7135369e6e0d2402fc2794f2ee99.1506146101.git.christophe.jaillet@wanadoo.fr>
-        <128d2bb662f174ed84c61dc268940bd87878f0d1.1506146101.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <128d2bb662f174ed84c61dc268940bd87878f0d1.1506146101.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org, wsa@the-dreams.de, kishon@ti.com, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stefan Schmidt <stefan@osg.samsung.com>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 23 Sep 2017 08:06:20 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If we can not enable the regulator, go through the error handling path
-> instead of silently continuing.
-> 
-> Fixes: 7cc97d77ee8a ("iio: adc: twl4030: Fix ADC[3:6] readings")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The arrays atusb_chip_data and hulusb_chip_data are local to the source
+and do not need to be in global scope, so make them static. Also
+remove unnecessary forward declaration of atusb_chip_data.
 
-Applied to the fixes-togreg-post-rc1 branch of iio.git.
+Cleans up sparse warnings:
+symbol 'atusb_chip_data' was not declared. Should it be static?
+symbol 'hulusb_chip_data' was not declared. Should it be static?
 
-I haven't explicitly marked this one for stable as it isn't broken
-as such, just inconsistent.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ieee802154/atusb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks,
-
-Jonathan
-> ---
-> This patch is highly speculative.
-> I don't find logical to return an error if we don't find the 'vusb3v1'
-> regulator, but continue if we find it, but can't enable it.
-> Returning an error if both cases (i.e. failing 'devm_regulator_get()' or
-> 'regulator_enable)' seems the usual pattern in all the .probe functions
-> with a 'regulator_enable()' call have looked at (~ 10 of them taken
-> randomly)
-> ---
->  drivers/iio/adc/twl4030-madc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
-> index 32db23d9a483..e3cfb91bffc6 100644
-> --- a/drivers/iio/adc/twl4030-madc.c
-> +++ b/drivers/iio/adc/twl4030-madc.c
-> @@ -893,8 +893,10 @@ static int twl4030_madc_probe(struct platform_device *pdev)
->  	}
->  
->  	ret = regulator_enable(madc->usb3v1);
-> -	if (ret)
-> +	if (ret) {
->  		dev_err(madc->dev, "could not enable 3v1 bias regulator\n");
-> +		goto err_i2c;
-> +	}
->  
->  	ret = iio_device_register(iio_dev);
->  	if (ret) {
+diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
+index 115fa3f37a86..8b0718de568f 100644
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -45,8 +45,6 @@
+ #define ATUSB_ALLOC_DELAY_MS	100	/* delay after failed allocation */
+ #define ATUSB_TX_TIMEOUT_MS	200	/* on the air timeout */
+ 
+-struct atusb_chip_data;
+-
+ struct atusb {
+ 	struct ieee802154_hw *hw;
+ 	struct usb_device *usb_dev;
+@@ -767,14 +765,14 @@ atusb_set_promiscuous_mode(struct ieee802154_hw *hw, const bool on)
+ 	return 0;
+ }
+ 
+-struct atusb_chip_data atusb_chip_data = {
++static struct atusb_chip_data atusb_chip_data = {
+ 	.t_channel_switch = 1,
+ 	.rssi_base_val = -91,
+ 	.set_txpower = atusb_set_txpower,
+ 	.set_channel = atusb_set_channel,
+ };
+ 
+-struct atusb_chip_data hulusb_chip_data = {
++static struct atusb_chip_data hulusb_chip_data = {
+ 	.t_channel_switch = 11,
+ 	.rssi_base_val = -100,
+ 	.set_txpower = hulusb_set_txpower,
+-- 
+2.14.1
 
