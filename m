@@ -1,26 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 17:27:03 +0000
-Subject: [PATCH 0/2] [media] STM32-DCMI: Adjustments for three function implementations
-Message-Id: <730b535e-39a5-2c2b-f463-e76da967a723@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 16:21:42 +0000
+Subject: [PATCH 1/2] clk-mux: Delete an error message for a failed memory allocation in clk_hw_register_mux_t
+Message-Id: <31bc9968-20e9-1fd0-0f16-80cb0f2bffe0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+In-Reply-To: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Sep 2017 19:01:23 +0200
+Date: Tue, 26 Sep 2017 17:23:04 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Improve four size determinations
+This issue was detected by using the Coccinelle software.
 
- drivers/media/platform/stm32/stm32-dcmi.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-mux.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 16a3d5717f4e..1746dbf2f7ea 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -135,10 +135,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
+ 
+ 	/* allocate the mux */
+ 	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
+-	if (!mux) {
+-		pr_err("%s: could not allocate mux clk\n", __func__);
++	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	if (clk_mux_flags & CLK_MUX_READ_ONLY)
 -- 
 2.14.1
 
