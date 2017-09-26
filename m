@@ -1,78 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 16 Sep 2017 15:34:24 +0000
-Subject: [PATCH] mwifiex: make const arrays static to shink object code size
-Message-Id: <20170916153424.28285-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 18:25:15 +0000
+Subject: [PATCH 4/4] clk-u300: Fix a typo in two comment lines
+Message-Id: <c113ba39-e9b4-a4e5-6fa1-f83c9b59a4d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+In-Reply-To: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 19:57:50 +0200
 
-Don't populate const arrays on the stack, instead make them static
-Makes the object code smaller by nearly 300 bytes:
+Add a missing character in these descriptions.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  69260	  16149	    576	  85985	  14fe1	cfg80211.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  68385	  16725	    576	  85686	  14eb6	cfg80211.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/clk-u300.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index 32c5074da84c..c45b86fcfd8d 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -142,7 +142,7 @@ mwifiex_cfg80211_del_key(struct wiphy *wiphy, struct net_device *netdev,
- 			 u8 key_index, bool pairwise, const u8 *mac_addr)
- {
- 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
--	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-+	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	const u8 *peer_mac = pairwise ? mac_addr : bc_mac;
- 
- 	if (mwifiex_set_encode(priv, NULL, NULL, 0, key_index, peer_mac, 1)) {
-@@ -454,7 +454,7 @@ mwifiex_cfg80211_add_key(struct wiphy *wiphy, struct net_device *netdev,
- {
- 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(netdev);
- 	struct mwifiex_wep_key *wep_key;
--	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-+	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	const u8 *peer_mac = pairwise ? mac_addr : bc_mac;
- 
- 	if (GET_BSS_ROLE(priv) = MWIFIEX_BSS_ROLE_UAP &&
-@@ -3250,8 +3250,8 @@ static int mwifiex_set_wowlan_mef_entry(struct mwifiex_private *priv,
- 	int i, filt_num = 0, ret = 0;
- 	bool first_pat = true;
- 	u8 byte_seq[MWIFIEX_MEF_MAX_BYTESEQ + 1];
--	const u8 ipv4_mc_mac[] = {0x33, 0x33};
--	const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
-+	static const u8 ipv4_mc_mac[] = {0x33, 0x33};
-+	static const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
- 
- 	mef_entry->mode = MEF_MODE_HOST_SLEEP;
- 	mef_entry->action = MEF_ACTION_ALLOW_AND_WAKEUP_HOST;
-@@ -3544,9 +3544,9 @@ static int mwifiex_set_rekey_data(struct wiphy *wiphy, struct net_device *dev,
- 
- static int mwifiex_get_coalesce_pkt_type(u8 *byte_seq)
- {
--	const u8 ipv4_mc_mac[] = {0x33, 0x33};
--	const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
--	const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff};
-+	static const u8 ipv4_mc_mac[] = {0x33, 0x33};
-+	static const u8 ipv6_mc_mac[] = {0x01, 0x00, 0x5e};
-+	static const u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff};
- 
- 	if ((byte_seq[0] & 0x01) &&
- 	    (byte_seq[MWIFIEX_COALESCE_MAX_BYTESEQ] = 1))
+diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
+index b36ca3a14c42..7b3e1921771f 100644
+--- a/drivers/clk/clk-u300.c
++++ b/drivers/clk/clk-u300.c
+@@ -256,7 +256,7 @@
+ #define U300_SYSCON_S1CCR_SEL_APP_FSM_CLK			(0x2 << 1)
+ #define U300_SYSCON_S1CCR_SEL_RTC_CLK				(0x4 << 1)
+ #define U300_SYSCON_S1CCR_SEL_APP_PLL208_CLK			(0x6 << 1)
+-/* SYS_2_CLK_CONTROL third clock contol 16 bit (R/W) */
++/* SYS_2_CLK_CONTROL third clock control 16 bit (R/W) */
+ #define U300_SYSCON_S2CCR					(0x128)
+ #define U300_SYSCON_S2CCR_FIELD_MASK				(0xC3FF)
+ #define U300_SYSCON_S2CCR_CLK_STEAL				(0x8000)
+@@ -378,7 +378,7 @@
+  *  +- ISP Image Signal Processor (U335 only)
+  *  +- CDS (U335 only)
+  *  +- DMA Direct Memory Access Controller
+- *  +- AAIF APP/ACC Inteface (Mobile Scalable Link, MSL)
++ *  +- AAIF APP/ACC Interface (Mobile Scalable Link, MSL)
+  *  +- APEX
+  *  +- VIDEO_ENC AVE2/3 Video Encoder
+  *  +- XGAM Graphics Accelerator Controller
 -- 
 2.14.1
 
