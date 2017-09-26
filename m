@@ -1,23 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 24 Sep 2017 00:04:50 +0000
-Subject: Re: [PATCH] cnic: Fix an error handling path in 'cnic_alloc_bnx2x_resc()'
-Message-Id: <20170923.170450.1710391787785987052.davem@davemloft.net>
+From: John Garry <john.garry@huawei.com>
+Date: Tue, 26 Sep 2017 14:38:26 +0000
+Subject: Re: [PATCH] scsi: libsas: remove unused variable sas_ha
+Message-Id: <ed1c0302-d775-b5b7-8b64-f6e0c68350dd@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170921230111.10135-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170921230111.10135-1-christophe.jaillet@wanadoo.fr>
+References: <20170926191750.25444-1-colin.king@canonical.com>
+In-Reply-To: <20170926191750.25444-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jmaxwell37@gmail.com, stephen@networkplumber.org, danielj@mellanox.com, parav@mellanox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Colin King <colin.king@canonical.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, yanaijie@huawei.com
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 22 Sep 2017 01:01:11 +0200
+On 26/09/2017 20:17, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Remove unused variable sas_ha to clean up build warning
+> "unused variable ‘sas_ha’ [-Wunused-variable]"
+>
+> Fixes: 042ebd293b86 ("scsi: libsas: kill useless ha_event and do some cleanup")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> All the error handling paths 'goto error', except this one.
-> We should also go to error in this case, or some resources will be
-> leaking.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: John Garry <john.garry@huawei.com>
 
-Applied, thank you.
+> ---
+>  drivers/scsi/hisi_sas/hisi_sas_main.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> index 29d6cb39299c..9e2990268f00 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> @@ -1046,7 +1046,6 @@ static void hisi_sas_rescan_topology(struct hisi_hba *hisi_hba, u32 old_state,
+>
+>  static int hisi_sas_controller_reset(struct hisi_hba *hisi_hba)
+>  {
+> -	struct sas_ha_struct *sas_ha = &hisi_hba->sha;
+>  	struct device *dev = hisi_hba->dev;
+>  	struct Scsi_Host *shost = hisi_hba->shost;
+>  	u32 old_state, state;
+>
+
+
