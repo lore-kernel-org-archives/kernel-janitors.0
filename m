@@ -1,56 +1,43 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Mon, 04 Sep 2017 18:53:39 +0000
-Subject: Re: [PATCH][capabilities-next] commoncap: move assignment of fs_ns to avoid null pointer dereference
-Message-Id: <20170904185339.GA11576@mail.hallyn.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Sep 2017 20:05:20 +0000
+Subject: [bug report] lib: Add zstd modules
+Message-Id: <20170926200519.uqc5uvwic4ez7mp7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170904175005.29871-1-colin.king@canonical.com>
-In-Reply-To: <20170904175005.29871-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 04, 2017 at 06:50:05PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer fs_ns is assigned from inode->i_ib->s_user_ns before
-> a null pointer check on inode, hence if inode is actually null we
-> will get a null pointer dereference on this assignment. Fix this
-> by only dereferencing inode after the null pointer check on
-> inode.
-> 
-> Detected by CoverityScan CID#1455328 ("Dereference before null check")
-> 
-> Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hello Nick Terrell,
 
-thanks!
+The patch 73f3d1b48f50: "lib: Add zstd modules" from Aug 9, 2017,
+leads to the following static checker warning:
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+	lib/zstd/zstd_opt.h:547 ZSTD_compressBlock_opt_generic()
+	error: buffer overflow 'opt[cur - mlen].rep' 3 <= 3
 
-> ---
->  security/commoncap.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index c25e0d27537f..fc46f5b85251 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -585,13 +585,14 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data
->  	struct vfs_ns_cap_data data, *nscaps = &data;
->  	struct vfs_cap_data *caps = (struct vfs_cap_data *) &data;
->  	kuid_t rootkuid;
-> -	struct user_namespace *fs_ns = inode->i_sb->s_user_ns;
-> +	struct user_namespace *fs_ns;
->  
->  	memset(cpu_caps, 0, sizeof(struct cpu_vfs_cap_data));
->  
->  	if (!inode)
->  		return -ENODATA;
->  
-> +	fs_ns = inode->i_sb->s_user_ns;
->  	size = __vfs_getxattr((struct dentry *)dentry, inode,
->  			      XATTR_NAME_CAPS, &data, XATTR_CAPS_SZ);
->  	if (size = -ENODATA || size = -EOPNOTSUPP)
-> -- 
-> 2.14.1
+lib/zstd/zstd_opt.h
+   537  
+   538                          mlen = opt[cur].mlen;
+   539                          if (opt[cur].off > ZSTD_REP_MOVE_OPT) {
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The checker is complaining that assume "opt[cur].off = ZSTD_REP_MOVE_OPT".
+
+   540                                  opt[cur].rep[2] = opt[cur - mlen].rep[1];
+   541                                  opt[cur].rep[1] = opt[cur - mlen].rep[0];
+   542                                  opt[cur].rep[0] = opt[cur].off - ZSTD_REP_MOVE_OPT;
+   543                          } else {
+   544                                  opt[cur].rep[2] = (opt[cur].off > 1) ? opt[cur - mlen].rep[1] : opt[cur - mlen].rep[2];
+   545                                  opt[cur].rep[1] = (opt[cur].off > 0) ? opt[cur - mlen].rep[0] : opt[cur - mlen].rep[1];
+   546                                  opt[cur].rep[0]    547                                      ((opt[cur].off = ZSTD_REP_MOVE_OPT) && (mlen != 1)) ? (opt[cur - mlen].rep[0] - 1) : (opt[cur - mlen].rep[opt[cur].off]);
+                                                                                                                                                   ^^^^^^^^^^^^^^^^^
+also we have to assume "mlen = 1" then opt[cur - mlen].rep[opt[cur].off]
+is reading one element beyond the end of the array.  It's possible that
+both conditions can't be true but static analysis tools get annoyed when
+we have impossible conditions.
+
+   548                          }
+   549  
+
+regards,
+dan carpenter
