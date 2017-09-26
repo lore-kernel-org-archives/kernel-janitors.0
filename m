@@ -1,42 +1,42 @@
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Date: Mon, 18 Sep 2017 09:18:02 +0000
-Subject: Re: [PATCH][V2] i2c: i2c-stm32f7: make structure stm32f7_setup static const
-Message-Id: <3684ee87-f9ca-85e8-302a-7f681c58fdd5@st.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 20:05:59 +0000
+Subject: [PATCH] clk: hisilicon: Delete an error message for a failed memory allocation in hisi_register_clkg
+Message-Id: <920f1461-2c2a-430f-28ef-18af18788889@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918081539.26512-1-colin.king@canonical.com>
-In-Reply-To: <20170918081539.26512-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-clk@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Leo Yan <leo.yan@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 09/18/2017 10:15 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure stm32f7_setup is local to the source and does not need
-> to be in global scope, make it static const.
-> 
-> Cleans up sparse warning:
-> symbol 'stm32f7_setup' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/i2c/busses/i2c-stm32f7.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index 47c67b0ca896..3eae4fc96884 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -265,7 +265,7 @@ static struct stm32f7_i2c_spec i2c_specs[] = {
->  	},
->  };
->  
-> -struct stm32f7_i2c_setup stm32f7_setup = {
-> +static const struct stm32f7_i2c_setup stm32f7_setup = {
->  	.rise_time = STM32F7_I2C_RISE_TIME_DEFAULT,
->  	.fall_time = STM32F7_I2C_FALL_TIME_DEFAULT,
->  	.dnf = STM32F7_I2C_DNF_DEFAULT,
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 22:00:05 +0200
 
-Acked-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/hisilicon/clkgate-separated.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
+index 7908bc3c9ec7..f028bcffe12c 100644
+--- a/drivers/clk/hisilicon/clkgate-separated.c
++++ b/drivers/clk/hisilicon/clkgate-separated.c
+@@ -105,10 +105,8 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
+ 	struct clk_init_data init;
+ 
+ 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
+-	if (!sclk) {
+-		pr_err("%s: fail to allocate separated gated clk\n", __func__);
++	if (!sclk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &clkgate_separated_ops;
+-- 
+2.14.1
+
