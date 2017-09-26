@@ -1,25 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 12 Sep 2017 09:28:19 +0000
-Subject: Re: [PATCH 2/2] pinctrl: sprd: fix off by one bugs
-Message-Id: <CACRpkdY61cYzLJyZpwcN1sp_gby=szYRA4ZuCCWvRgitrDxORg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 11:27:47 +0000
+Subject: [PATCH 1/6] [media] tda8261: Use common error handling code in tda8261_set_params()
+Message-Id: <28425caf-2736-96ae-00a7-3fb273b1f9d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170907072926.56oqezwk4r72yjgt@mwanda> <20170907073211.zgcgmdfrphtqy3d7@mwanda>
-In-Reply-To: <20170907073211.zgcgmdfrphtqy3d7@mwanda>
+References: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
+In-Reply-To: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Baolin Wang <baolin.wang@spreadtrum.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Sep 7, 2017 at 1:12 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 11:01:44 +0200
 
-> info->groups[] has info->ngroups elements so these comparisons should be
->>= instead of >.
->
-> Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
-Patch applied with Baolin's review tag.
+  This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+* The script "checkpatch.pl" pointed information out like the following.
+
+  ERROR: do not use assignment in if condition
+
+  Thus fix an affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/dvb-frontends/tda8261.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/tda8261.c b/drivers/media/dvb-frontends/tda8261.c
+index 4eb294f330bc..5a8a9b6b8107 100644
+--- a/drivers/media/dvb-frontends/tda8261.c
++++ b/drivers/media/dvb-frontends/tda8261.c
+@@ -129,18 +129,18 @@ static int tda8261_set_params(struct dvb_frontend *fe)
+ 
+ 	/* Set params */
+ 	err = tda8261_write(state, buf);
+-	if (err < 0) {
+-		pr_err("%s: I/O Error\n", __func__);
+-		return err;
+-	}
++	err = tda8261_get_status(fe, &status);
++	if (err < 0)
++		goto report_failure;
++
+ 	/* sleep for some time */
+ 	pr_debug("%s: Waiting to Phase LOCK\n", __func__);
+ 	msleep(20);
+ 	/* check status */
+-	if ((err = tda8261_get_status(fe, &status)) < 0) {
+-		pr_err("%s: I/O Error\n", __func__);
+-		return err;
+-	}
++	err = tda8261_get_status(fe, &status);
++	if (err < 0)
++		goto report_failure;
++
+ 	if (status = 1) {
+ 		pr_debug("%s: Tuner Phase locked: status=%d\n", __func__,
+ 			 status);
+@@ -150,6 +150,10 @@ static int tda8261_set_params(struct dvb_frontend *fe)
+ 	}
+ 
+ 	return 0;
++
++report_failure:
++	pr_err("%s: I/O Error\n", __func__);
++	return err;
+ }
+ 
+ static void tda8261_release(struct dvb_frontend *fe)
+-- 
+2.14.1
+
