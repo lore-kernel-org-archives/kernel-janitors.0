@@ -1,37 +1,64 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Sep 2017 08:35:30 +0000
-Subject: Re: [PATCH 2/3] ALSA: ymfpci: Use common error handling code in snd_ymfpci_create()
-Message-Id: <s5h60cukist.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 07:26:23 +0000
+Subject: [PATCH 2/3] clk/mmp: Use common error handling code in mmp_clk_register_mix()
+Message-Id: <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dafe6d86-1bfd-41a8-e189-bde7ae30dea9@users.sourceforge.net>
- <f2b7317e-b45d-a817-a307-d0208af65f56@users.sourceforge.net>
-In-Reply-To: <f2b7317e-b45d-a817-a307-d0208af65f56@users.sourceforge.net>
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+In-Reply-To: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@kernel.org>, Bhumika Goyal <bhumirks@gmail.com>
+To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 06 Sep 2017 21:48:11 +0200,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 6 Sep 2017 21:12:51 +0200
-> 
-> * Add a jump target so that a bit of exception handling can be better
->   reused at the end of this function.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * The script "checkpatch.pl" pointed information out like the following.
-> 
->   ERROR: do not use assignment in if condition
-> 
->   Thus fix a few source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Sep 2017 22:33:18 +0200
 
-Applied, thanks.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mmp/clk-mix.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Takashi
+diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+index 1ae532df20f7..b2471fb369f1 100644
+--- a/drivers/clk/mmp/clk-mix.c
++++ b/drivers/clk/mmp/clk-mix.c
+@@ -464,10 +464,9 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	if (config->table) {
+ 		table_bytes = sizeof(*config->table) * config->table_size;
+ 		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
+-		if (!mix->table) {
+-			kfree(mix);
+-			return ERR_PTR(-ENOMEM);
+-		}
++		if (!mix->table)
++			goto free_mix;
++
+ 		mix->table_size = config->table_size;
+ 	}
+ 
+@@ -477,8 +476,7 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 					 GFP_KERNEL);
+ 		if (!mix->mux_table) {
+ 			kfree(mix->table);
+-			kfree(mix);
+-			return ERR_PTR(-ENOMEM);
++			goto free_mix;
+ 		}
+ 	}
+ 
+@@ -502,4 +500,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	}
+ 
+ 	return clk;
++
++free_mix:
++	kfree(mix);
++	return ERR_PTR(-ENOMEM);
+ }
+-- 
+2.14.1
+
