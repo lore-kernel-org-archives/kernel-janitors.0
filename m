@@ -1,7 +1,7 @@
 From: Nick Terrell <terrelln@fb.com>
-Date: Tue, 26 Sep 2017 21:54:28 +0000
+Date: Wed, 27 Sep 2017 23:54:50 +0000
 Subject: Re: [bug report] lib: Add zstd modules
-Message-Id: <20170926215428.1100022-1-terrelln@fb.com>
+Message-Id: <20170927235450.379490-1-terrelln@fb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170926200519.uqc5uvwic4ez7mp7@mwanda>
 In-Reply-To: <20170926200519.uqc5uvwic4ez7mp7@mwanda>
@@ -39,9 +39,20 @@ On 9/26/17, 1:06 PM, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
 > both conditions can't be true but static analysis tools get annoyed when
 > we have impossible conditions.
 
-Thanks for the report! I'm not certain if both conditions can be true or
-not. I'll investigate tomorrow and post an update, with a patch if
-necessary.
+I've looked into the code. It is impossible for both `mlen = 1' and
+`opt[cur].off = ZSTD_REP_MOVE_OPT' to be true.
+
+`mlen = 1' means that the previous byte will be encoded as a literal.
+`opt[cur].off = ZSTD_REP_MOVE_OPT' is only used when the current position
+is directly after a match, meaning that the previous byte is encoded as
+match, not a literal.
+
+The second part of the condition `mlen != 1' will always be true and can be
+deleted. I deleted it in upstream zstd [1]. Since it is functionally
+equivalent, I'm not sure if it is worthwhile to immediately port the change
+to the kernel, but I can if you like.
+
+[1] https://github.com/facebook/zstd/pull/871
 
 >
 >    548                          }
