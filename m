@@ -1,55 +1,77 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Tue, 19 Sep 2017 20:13:15 +0000
-Subject: Re: [PATCH] mtd: nand: lpc32xx_mlc: Fix an error handling path in lpc32xx_nand_probe()
-Message-Id: <20170919221315.11d94426@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 16:53:10 +0000
+Subject: [PATCH] clk/tegra: Delete an error message for a failed memory allocation in three functions
+Message-Id: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170903115831.1326-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170903115831.1326-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun,  3 Sep 2017 13:58:31 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:40:34 +0200
 
-> If 'clk_prepare_enable()' fails, we must 'put' the corresponding clock.
-> 
-> Fixes: 4d26f012ab59 ("mtd: nand: lpc32xx_mlc: Handle return value of clk_prepare_enable.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Omit extra messages for a memory allocation failure in these functions.
 
-Applied.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/tegra/clk-audio-sync.c  | 4 +---
+ drivers/clk/tegra/clk-divider.c     | 5 +----
+ drivers/clk/tegra/clk-periph-gate.c | 4 +---
+ 3 files changed, 3 insertions(+), 10 deletions(-)
 
-Boris
-
-> ---
-> Labels in the error handling path could be renamed, but it does not worth
-> the effort, IMHO.
-> ---
->  drivers/mtd/nand/lpc32xx_mlc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/lpc32xx_mlc.c b/drivers/mtd/nand/lpc32xx_mlc.c
-> index c3bb358ef01e..5f72a824e67d 100644
-> --- a/drivers/mtd/nand/lpc32xx_mlc.c
-> +++ b/drivers/mtd/nand/lpc32xx_mlc.c
-> @@ -707,7 +707,7 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
->  	}
->  	res = clk_prepare_enable(host->clk);
->  	if (res)
-> -		goto err_exit1;
-> +		goto err_put_clk;
->  
->  	nand_chip->cmd_ctrl = lpc32xx_nand_cmd_ctrl;
->  	nand_chip->dev_ready = lpc32xx_nand_device_ready;
-> @@ -814,6 +814,7 @@ static int lpc32xx_nand_probe(struct platform_device *pdev)
->  		dma_release_channel(host->dma_chan);
->  err_exit2:
->  	clk_disable_unprepare(host->clk);
-> +err_put_clk:
->  	clk_put(host->clk);
->  err_exit1:
->  	lpc32xx_wp_enable(host);
+diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
+index 92d04ce2dee6..62a84c883dd4 100644
+--- a/drivers/clk/tegra/clk-audio-sync.c
++++ b/drivers/clk/tegra/clk-audio-sync.c
+@@ -62,10 +62,8 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+ 	struct clk *clk;
+ 
+ 	sync = kzalloc(sizeof(*sync), GFP_KERNEL);
+-	if (!sync) {
+-		pr_err("%s: could not allocate sync source clk\n", __func__);
++	if (!sync)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	sync->rate = rate;
+ 	sync->max_rate = max_rate;
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee14773..5ee9423ccac2 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -156,11 +156,8 @@ struct clk *tegra_clk_register_divider(const char *name,
+ 	struct clk_init_data init;
+ 
+ 	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+-	if (!divider) {
+-		pr_err("%s: could not allocate fractional divider clk\n",
+-		       __func__);
++	if (!divider)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.ops = &tegra_clk_frac_div_ops;
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 303ef32ee3f1..276cc4c59204 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -141,10 +141,8 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate) {
+-		pr_err("%s: could not allocate periph gate clk\n", __func__);
++	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+ 	init.flags = flags;
+-- 
+2.14.2
 
