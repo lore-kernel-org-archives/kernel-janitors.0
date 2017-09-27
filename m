@@ -1,68 +1,70 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 22 Sep 2017 17:09:04 +0000
-Subject: Re: [PATCH] [media] spca500: Use common error handling code in spca500_synch310()
-Message-Id: <alpine.DEB.2.20.1709221908230.3170@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:47:53 +0000
+Subject: [PATCH 2/2] clk/ux500: Improve a size determination in three functions
+Message-Id: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d496ca24-1725-768b-5e55-4e45097cb77d@users.sourceforge.net>
-In-Reply-To: <d496ca24-1725-768b-5e55-4e45097cb77d@users.sourceforge.net>
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
+In-Reply-To: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 20:30:53 +0200
 
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-On Fri, 22 Sep 2017, SF Markus Elfring wrote:
+This issue was detected by using the Coccinelle software.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 22 Sep 2017 18:45:07 +0200
->
-> Adjust a jump target so that a bit of exception handling can be better
-> reused at the end of this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/usb/gspca/spca500.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/media/usb/gspca/spca500.c b/drivers/media/usb/gspca/spca500.c
-> index da2d9027914c..1f224f5e5b19 100644
-> --- a/drivers/media/usb/gspca/spca500.c
-> +++ b/drivers/media/usb/gspca/spca500.c
-> @@ -501,7 +501,6 @@ static int spca500_full_reset(struct gspca_dev *gspca_dev)
->  static int spca500_synch310(struct gspca_dev *gspca_dev)
->  {
-> -	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, 0) < 0) {
-> -		PERR("Set packet size: set interface error");
-> -		goto error;
-> -	}
-> +	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, 0) < 0)
-> +		goto report_failure;
-> +
->  	spca500_ping310(gspca_dev);
-> @@ -514,12 +513,12 @@ static int spca500_synch310(struct gspca_dev *gspca_dev)
->  	/* Windoze use pipe with altsetting 6 why 7 here */
-> -	if (usb_set_interface(gspca_dev->dev,
-> -				gspca_dev->iface,
-> -				gspca_dev->alt) < 0) {
-> -		PERR("Set packet size: set interface error");
-> -		goto error;
-> -	}
-> +	if (usb_set_interface(gspca_dev->dev, gspca_dev->iface, gspca_dev->alt)
-> +	    < 0)
-> +		goto report_failure;
-> +
->  	return 0;
-> -error:
-> +
-> +report_failure:
-> +	PERR("Set packet size: set interface error");
->  	return -EBUSY;
->  }
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/ux500/clk-prcc.c    | 2 +-
+ drivers/clk/ux500/clk-prcmu.c   | 2 +-
+ drivers/clk/ux500/clk-sysctrl.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Why change the label name?  They are both equally uninformative.
+diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+index 5ca07e6d1f64..7cfb59c9136d 100644
+--- a/drivers/clk/ux500/clk-prcc.c
++++ b/drivers/clk/ux500/clk-prcc.c
+@@ -107,7 +107,7 @@ static struct clk *clk_reg_prcc(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+index c137934f23ab..9d1f2d4550ad 100644
+--- a/drivers/clk/ux500/clk-prcmu.c
++++ b/drivers/clk/ux500/clk-prcmu.c
+@@ -258,7 +258,7 @@ static struct clk *clk_reg_prcmu(const char *name,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
++	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+index e0a834c08a04..7c0403b733ae 100644
+--- a/drivers/clk/ux500/clk-sysctrl.c
++++ b/drivers/clk/ux500/clk-sysctrl.c
+@@ -139,7 +139,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
++	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.14.2
 
-julia
