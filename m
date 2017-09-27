@@ -1,53 +1,38 @@
-From: Leo Yan <leo.yan@linaro.org>
-Date: Wed, 27 Sep 2017 06:52:17 +0000
-Subject: Re: [PATCH] clk: hisilicon: Delete an error message for a failed memory allocation in hisi_register_
-Message-Id: <20170927065217.GC8173@leoy-ThinkPad-T440>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 09:44:30 +0000
+Subject: [PATCH] clk: rockchip: Delete an error message for a failed memory allocation in rockchip_clk_regist
+Message-Id: <dfcd3f8a-f858-ab71-b08c-e5b2e3005d7c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <920f1461-2c2a-430f-28ef-18af18788889@users.sourceforge.net>
-In-Reply-To: <920f1461-2c2a-430f-28ef-18af18788889@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 11:38:17 +0200
 
-On Tue, Sep 26, 2017 at 10:05:59PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 22:00:05 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Omit an extra message for a memory allocation failure in this function.
 
-This patch is good for me, it's true that below error log senstence is
-redundant with its caller hisi_clk_register_gate_sep().
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/rockchip/clk-cpu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> ---
->  drivers/clk/hisilicon/clkgate-separated.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
-> index 7908bc3c9ec7..f028bcffe12c 100644
-> --- a/drivers/clk/hisilicon/clkgate-separated.c
-> +++ b/drivers/clk/hisilicon/clkgate-separated.c
-> @@ -105,10 +105,8 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
->  	struct clk_init_data init;
->  
->  	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
-> -	if (!sclk) {
-> -		pr_err("%s: fail to allocate separated gated clk\n", __func__);
-> +	if (!sclk)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	init.name = name;
->  	init.ops = &clkgate_separated_ops;
-> -- 
-> 2.14.1
-> 
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 0e09684d43a5..32c19c0f1e14 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -322,8 +322,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 					     sizeof(*rates) * nrates,
+ 					     GFP_KERNEL);
+ 		if (!cpuclk->rate_table) {
+-			pr_err("%s: could not allocate memory for cpuclk rates\n",
+-			       __func__);
+ 			ret = -ENOMEM;
+ 			goto unregister_notifier;
+ 		}
+-- 
+2.14.1
+
