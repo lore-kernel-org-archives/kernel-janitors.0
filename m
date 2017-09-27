@@ -1,29 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 16:55:33 +0000
-Subject: [PATCH 0/5] [media] s2255drv: Fine-tuning for some function implementations
-Message-Id: <55718a41-d76f-36bf-7197-db92014dcd3c@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 07:23:28 +0000
+Subject: [PATCH 0/3] MMP clock: Adjustments for seven function implementations
+Message-Id: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Sep 2017 18:18:28 +0200
+Date: Wed, 27 Sep 2017 09:21:23 +0200
 
-A few update suggestions were taken into account
+Three update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (5):
-  Delete three error messages for a failed memory allocation in s2255_probe()
-  Adjust 13 checks for null pointers
-  Improve two size determinations in s2255_probe()
-  Use common error handling code in read_pipe_completion()
-  Delete an unnecessary return statement in five functions
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in three functions
+  Use common error handling code in mmp_clk_register_mix()
+  Adjust 12 checks for null pointers
 
- drivers/media/usb/s2255/s2255drv.c | 64 ++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 38 deletions(-)
+ drivers/clk/mmp/clk-frac.c   |  4 +---
+ drivers/clk/mmp/clk-gate.c   |  4 +---
+ drivers/clk/mmp/clk-mix.c    | 27 +++++++++++----------------
+ drivers/clk/mmp/clk-mmp2.c   |  6 +++---
+ drivers/clk/mmp/clk-pxa168.c |  6 +++---
+ drivers/clk/mmp/clk-pxa910.c |  8 ++++----
+ 6 files changed, 23 insertions(+), 32 deletions(-)
 
 -- 
 2.14.1
