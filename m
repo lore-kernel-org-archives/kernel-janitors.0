@@ -1,30 +1,77 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Fri, 22 Sep 2017 10:25:52 +0000
-Subject: Re: [PATCH] ASoC: Intel: Skylake: fix swapped order of function arguments dir and pin_index
-Message-Id: <20170922101352.GT30097@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 18:46:45 +0000
+Subject: [PATCH 1/2] clk/ux500: Delete an error message for a failed memory allocation in three functions
+Message-Id: <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170920130125.12984-1-colin.king@canonical.com>
-In-Reply-To: <20170920130125.12984-1-colin.king@canonical.com>
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
+In-Reply-To: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Ramesh Babu <ramesh.babu@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 20, 2017 at 02:01:25PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to slk_tplg_fill_res_tkn is passing dir and pin_index in the
-> wrong order, they need to be in pin_index, dir order to match the function
-> slk_tplg_fill_res_tkn  correctly.
-> 
-> Detected by CoveritScan, CID#1454992 ("Arguments in wrong order")
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 20:23:58 +0200
 
-thanks for this.
+Omit extra messages for a memory allocation failure in these functions.
 
+This issue was detected by using the Coccinelle software.
 
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Tested-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/ux500/clk-prcc.c    | 4 +---
+ drivers/clk/ux500/clk-prcmu.c   | 4 +---
+ drivers/clk/ux500/clk-sysctrl.c | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+index f50592775c9d..5ca07e6d1f64 100644
+--- a/drivers/clk/ux500/clk-prcc.c
++++ b/drivers/clk/ux500/clk-prcc.c
+@@ -108,10 +108,8 @@ static struct clk *clk_reg_prcc(const char *name,
+ 	}
+ 
+ 	clk = kzalloc(sizeof(struct clk_prcc), GFP_KERNEL);
+-	if (!clk) {
+-		pr_err("clk_prcc: %s could not allocate clk\n", __func__);
++	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	clk->base = ioremap(phy_base, SZ_4K);
+ 	if (!clk->base)
+diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+index 6e3e16b2e5ca..c137934f23ab 100644
+--- a/drivers/clk/ux500/clk-prcmu.c
++++ b/drivers/clk/ux500/clk-prcmu.c
+@@ -259,10 +259,8 @@ static struct clk *clk_reg_prcmu(const char *name,
+ 	}
+ 
+ 	clk = kzalloc(sizeof(struct clk_prcmu), GFP_KERNEL);
+-	if (!clk) {
+-		pr_err("clk_prcmu: %s could not allocate clk\n", __func__);
++	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	clk->cg_sel = cg_sel;
+ 	clk->is_prepared = 1;
+diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
+index 8a4e93ce1e42..e0a834c08a04 100644
+--- a/drivers/clk/ux500/clk-sysctrl.c
++++ b/drivers/clk/ux500/clk-sysctrl.c
+@@ -140,10 +140,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
+ 	}
+ 
+ 	clk = devm_kzalloc(dev, sizeof(struct clk_sysctrl), GFP_KERNEL);
+-	if (!clk) {
+-		dev_err(dev, "clk_sysctrl: could not allocate clk\n");
++	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	/* set main clock registers */
+ 	clk->reg_sel[0] = reg_sel[0];
 -- 
-~Vinod
+2.14.2
+
