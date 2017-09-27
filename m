@@ -1,40 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 05 Sep 2017 15:19:44 +0000
-Subject: [PATCH] [media] cobalt: remove redundant zero check on retval
-Message-Id: <20170905151944.20491-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 19:38:44 +0000
+Subject: [PATCH 0/2] versatile clock: Adjustments for icst_clk_setup()
+Message-Id: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 27 Sep 2017 21:34:43 +0200
 
-The error handling paths all end up with retval being non-zero,
-so the check for retval being zero is always false and hence
-is redundant. Remove it.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan CID#1309479 ("Logically dead code")
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Improve a size determination
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cobalt/cobalt-driver.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/versatile/clk-icst.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/pci/cobalt/cobalt-driver.c b/drivers/media/pci/cobalt/cobalt-driver.c
-index 98b6cb9505d1..8487ecaa4d30 100644
---- a/drivers/media/pci/cobalt/cobalt-driver.c
-+++ b/drivers/media/pci/cobalt/cobalt-driver.c
-@@ -767,8 +767,6 @@ static int cobalt_probe(struct pci_dev *pci_dev,
- err_wq:
- 	destroy_workqueue(cobalt->irq_work_queues);
- err:
--	if (retval = 0)
--		retval = -ENODEV;
- 	cobalt_err("error %d on initialization\n", retval);
- 
- 	v4l2_device_unregister(&cobalt->v4l2_dev);
 -- 
-2.14.1
+2.14.2
 
