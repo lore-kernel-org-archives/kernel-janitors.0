@@ -1,37 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 24 Sep 2017 06:01:03 +0000
-Subject: [PATCH] drm/omap: Fix error handling path in 'omap_dmm_probe()'
-Message-Id: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Thu, 28 Sep 2017 06:23:49 +0000
+Subject: Re: [PATCH] drm/omap: Fix error handling path in 'omap_dmm_probe()'
+Message-Id: <f6eff5aa-a578-b63d-5552-42557f8f73cf@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170924060103.26604-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: tomi.valkeinen@ti.com, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8-sig"
+Content-Transfer-Encoding: base64
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, airlied@linux.ie
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-If we don't find a matching device node, we must free the memory allocated
-in 'omap_dmm' a few lines above.
-
-Fixes: 7cb0d6c17b96 ("drm/omap: fix TILER on OMAP5")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 1dd3dafc59af..c60a85e82c6d 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -638,7 +638,8 @@ static int omap_dmm_probe(struct platform_device *dev)
- 		match = of_match_node(dmm_of_match, dev->dev.of_node);
- 		if (!match) {
- 			dev_err(&dev->dev, "failed to find matching device node\n");
--			return -ENODEV;
-+			ret = -ENODEV;
-+			goto fail;
- 		}
- 
- 		omap_dmm->plat_data = match->data;
--- 
-2.11.0
-
+77u/ClRleGFzIEluc3RydW1lbnRzIEZpbmxhbmQgT3ksIFBvcmtrYWxhbmthdHUgMjIsIDAwMTgw
+IEhlbHNpbmtpLiBZLXR1bm51cy9CdXNpbmVzcyBJRDogMDYxNTUyMS00LiBLb3RpcGFpa2thL0Rv
+bWljaWxlOiBIZWxzaW5raQoKT24gMjQvMDkvMTcgMDk6MDEsIENocmlzdG9waGUgSkFJTExFVCB3
+cm90ZToKPiBJZiB3ZSBkb24ndCBmaW5kIGEgbWF0Y2hpbmcgZGV2aWNlIG5vZGUsIHdlIG11c3Qg
+ZnJlZSB0aGUgbWVtb3J5IGFsbG9jYXRlZAo+IGluICdvbWFwX2RtbScgYSBmZXcgbGluZXMgYWJv
+dmUuCj4gCj4gRml4ZXM6IDdjYjBkNmMxN2I5NiAoImRybS9vbWFwOiBmaXggVElMRVIgb24gT01B
+UDUiKQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVCA8Y2hyaXN0b3BoZS5qYWls
+bGV0QHdhbmFkb28uZnI+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZG1t
+X3RpbGVyLmMgfCAzICsrLQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRl
+bGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBf
+ZG1tX3RpbGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2RtbV90aWxlci5jCj4g
+aW5kZXggMWRkM2RhZmM1OWFmLi5jNjBhODVlODJjNmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL29tYXBkcm0vb21hcF9kbW1fdGlsZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9v
+bWFwZHJtL29tYXBfZG1tX3RpbGVyLmMKPiBAQCAtNjM4LDcgKzYzOCw4IEBAIHN0YXRpYyBpbnQg
+b21hcF9kbW1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZGV2KQo+ICAJCW1hdGNoID0g
+b2ZfbWF0Y2hfbm9kZShkbW1fb2ZfbWF0Y2gsIGRldi0+ZGV2Lm9mX25vZGUpOwo+ICAJCWlmICgh
+bWF0Y2gpIHsKPiAgCQkJZGV2X2VycigmZGV2LT5kZXYsICJmYWlsZWQgdG8gZmluZCBtYXRjaGlu
+ZyBkZXZpY2Ugbm9kZVxuIik7Cj4gLQkJCXJldHVybiAtRU5PREVWOwo+ICsJCQlyZXQgPSAtRU5P
+REVWOwo+ICsJCQlnb3RvIGZhaWw7Cj4gIAkJfQo+ICAKPiAgCQlvbWFwX2RtbS0+cGxhdF9kYXRh
+ID0gbWF0Y2gtPmRhdGE7Cj4gCgpUaGFua3MhIEkgaGF2ZSBwaWNrZWQgdGhpcyB1cC4KCiBUb21p
+CgotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
+Y3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
+b21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
+ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
