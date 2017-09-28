@@ -1,29 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Sep 2017 19:41:41 +0000
-Subject: [PATCH 0/4] [media] SP2: Adjustments for two function implementations
-Message-Id: <6142ca34-fcda-f2b6-bc35-dbbde0d34378@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Sep 2017 13:03:54 +0000
+Subject: [PATCH] media: tc358743: remove an unneeded condition
+Message-Id: <20170928130354.jzh2tawjkymd4xri@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Olli Salonen <olli.salonen@iki.fi>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mats Randgaard <matrandg@cisco.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Sep 2017 21:31:23 +0200
+We can remove the check for if "state->cec_adap" is NULL.  The
+cec_allocate_adapter() function never returns NULL and also we verified
+that "state->cec_adap" is an error pointer.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Adjust a jump target
-  Adjust three null pointer checks
-
- drivers/media/dvb-frontends/sp2.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
--- 
-2.14.1
-
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index e1d8eef7055e..6bbe112be267 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -2122,7 +2122,7 @@ static int tc358743_probe(struct i2c_client *client,
+ 		state, dev_name(&client->dev),
+ 		CEC_CAP_DEFAULTS | CEC_CAP_MONITOR_ALL, CEC_MAX_LOG_ADDRS);
+ 	if (IS_ERR(state->cec_adap)) {
+-		err = state->cec_adap ? PTR_ERR(state->cec_adap) : -ENOMEM;
++		err = PTR_ERR(state->cec_adap);
+ 		goto err_hdl;
+ 	}
+ 	irq_mask |= MASK_CEC_RMSK | MASK_CEC_TMSK;
