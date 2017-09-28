@@ -1,39 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 26 Sep 2017 19:17:50 +0000
-Subject: [PATCH] scsi: libsas: remove unused variable sas_ha
-Message-Id: <20170926191750.25444-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 28 Sep 2017 01:50:20 +0000
+Subject: Re: [PATCH] scsi: libsas: remove unused variable sas_ha
+Message-Id: <yq1lgkz8ucj.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ed1c0302-d775-b5b7-8b64-f6e0c68350dd@huawei.com>
-In-Reply-To: <ed1c0302-d775-b5b7-8b64-f6e0c68350dd@huawei.com>
+References: <20170926191750.25444-1-colin.king@canonical.com>
+In-Reply-To: <20170926191750.25444-1-colin.king@canonical.com> (Colin King's
+        message of "Tue, 26 Sep 2017 20:17:50 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: John Garry <john.garry@huawei.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Remove unused variable sas_ha to clean up build warning
-"unused variable ‘sas_ha’ [-Wunused-variable]"
+Colin,
 
-Fixes: 042ebd293b86 ("scsi: libsas: kill useless ha_event and do some cleanup")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 1 -
- 1 file changed, 1 deletion(-)
+> Remove unused variable sas_ha to clean up build warning
+> "unused variable ‘sas_ha’ [-Wunused-variable]"
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 29d6cb39299c..9e2990268f00 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1046,7 +1046,6 @@ static void hisi_sas_rescan_topology(struct hisi_hba *hisi_hba, u32 old_state,
- 
- static int hisi_sas_controller_reset(struct hisi_hba *hisi_hba)
- {
--	struct sas_ha_struct *sas_ha = &hisi_hba->sha;
- 	struct device *dev = hisi_hba->dev;
- 	struct Scsi_Host *shost = hisi_hba->shost;
- 	u32 old_state, state;
+Applied to 4.15/scsi-queue. Thanks!
+
 -- 
-2.14.1
-
+Martin K. Petersen	Oracle Linux Engineering
