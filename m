@@ -1,32 +1,50 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 29 Sep 2017 15:27:54 +0000
-Subject: Re: [PATCH][rdma-next] RDMA/hns: remove redundant assignment to variable j
-Message-Id: <1506698874.2919.21.camel@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 Sep 2017 13:46:17 +0000
+Subject: [PATCH][drm-next] drm/radeon: make functions alloc_pasid and free_pasid static
+Message-Id: <20170928134617.8168-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929135227.8343-1-colin.king@canonical.com>
-In-Reply-To: <20170929135227.8343-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+To: Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2017-09-29 at 14:52 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable j is being assigned to loop_j and then later being
-> assigned to a new value in for loops. The first initialization
-> is therefore redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: Value stored to 'j' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The functions alloc_pasid  and free_pasid are local to the
+source and do not need to be in global scope, so make them static.
 
+Cleans up sparse warnings:
+warning: symbol 'alloc_pasid' was not declared. Should it be static?
+warning: symbol 'free_pasid' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/radeon/radeon_kfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_kfd.c b/drivers/gpu/drm/radeon/radeon_kfd.c
+index a2ac8ac0930d..385b4d76956d 100644
+--- a/drivers/gpu/drm/radeon/radeon_kfd.c
++++ b/drivers/gpu/drm/radeon/radeon_kfd.c
+@@ -352,7 +352,7 @@ static uint32_t get_max_engine_clock_in_mhz(struct kgd_dev *kgd)
+  */
+ static DEFINE_IDA(pasid_ida);
+ 
+-int alloc_pasid(unsigned int bits)
++static int alloc_pasid(unsigned int bits)
+ {
+ 	int pasid = -EINVAL;
+ 
+@@ -367,7 +367,7 @@ int alloc_pasid(unsigned int bits)
+ 	return pasid;
+ }
+ 
+-void free_pasid(unsigned int pasid)
++static void free_pasid(unsigned int pasid)
+ {
+ 	ida_simple_remove(&pasid_ida, pasid);
+ }
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.14.1
 
