@@ -1,40 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 29 Sep 2017 14:01:16 +0000
-Subject: [PATCH][net-next] net_sched: remove redundant assignment to ret
-Message-Id: <20170929140116.8642-1-colin.king@canonical.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Fri, 29 Sep 2017 17:35:20 +0000
+Subject: Re: [PATCH][net-next] net_sched: remove redundant assignment to ret
+Message-Id: <CAM_iQpUEKK4jJo9aPLExudGXub4j_Mz8Jv+Lu+wJTGj3Zk7Jmw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170929140116.8642-1-colin.king@canonical.com>
+In-Reply-To: <20170929140116.8642-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>, "David S . Miller" <davem@davemloft.net>, Linux Kernel Network Developers <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Sep 29, 2017 at 7:01 AM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The assignment of -EINVAL to variable ret is redundant as it
+> is being overwritten on the following error exit paths or
+> to the return value from the following call to basic_set_parms.
+> Fix this up by removing it. Cleans up clang warning message:
+>
+> net/sched/cls_basic.c:185:2: warning: Value stored to 'err' is never read
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The assignment of -EINVAL to variable ret is redundant as it
-is being overwritten on the following error exit paths or
-to the return value from the following call to basic_set_parms.
-Fix this up by removing it. Cleans up clang warning message:
+Fixes: 1d8134fea2eb ("net_sched: use idr to allocate basic filter handles")
 
-net/sched/cls_basic.c:185:2: warning: Value stored to 'err' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/sched/cls_basic.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/net/sched/cls_basic.c b/net/sched/cls_basic.c
-index cfeb6f158566..700b345b07f9 100644
---- a/net/sched/cls_basic.c
-+++ b/net/sched/cls_basic.c
-@@ -182,7 +182,6 @@ static int basic_change(struct net *net, struct sk_buff *in_skb,
- 	if (err < 0)
- 		goto errout;
- 
--	err = -EINVAL;
- 	if (handle) {
- 		fnew->handle = handle;
- 		if (!fold) {
--- 
-2.14.1
-
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
