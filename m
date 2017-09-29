@@ -1,29 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Sep 2017 04:17:58 +0000
-Subject: Re: [PATCH net v2] sctp: Fix a big endian bug in sctp_diag_dump()
-Message-Id: <20170926.211758.629176988425489674.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 19:51:23 +0000
+Subject: [PATCH] net: hns3: fix null pointer dereference before null check
+Message-Id: <20170929195123.4189-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CADvbK_dCT6Z6JwD+VtjNg6UUkQneU2OLeme9JVqrXjnJJ63cGg@mail.gmail.com>
-        <20170925101926.db4f6x4hblh7tcvo@mwanda>
-In-Reply-To: <20170925101926.db4f6x4hblh7tcvo@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, lucien.xin@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 25 Sep 2017 13:19:26 +0300
+From: Colin Ian King <colin.king@canonical.com>
 
-> The sctp_for_each_transport() function takes an pointer to int.  The
-> cb->args[] array holds longs so it's only using the high 32 bits.  It
-> works on little endian system but will break on big endian 64 bit
-> machines.
-> 
-> Fixes: d25adbeb0cdb ("sctp: fix an use-after-free issue in sctp_sock_dump")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: The v1 patch changed the function to take a long pointer, but v2
->     just changes the caller.
+pointer ndev is being dereferenced with the call to netif_running
+before it is being null checked.  Re-order the code to only dereference
+ndev after it has been null checked.
 
-Applied, thanks.
+Detected by CoverityScan, CID#1457206 ("Dereference before null check")
+
+Fixes: 9df8f79a4d29 ("net: hns3: Add DCB support when interacting with network stack")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+index 4a0890f98b70..c31506514e5d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -2865,7 +2865,7 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
+ {
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+ 	struct net_device *ndev = kinfo->netdev;
+-	bool if_running = netif_running(ndev);
++	bool if_running;
+ 	int ret;
+ 	u8 i;
+ 
+@@ -2875,6 +2875,8 @@ static int hns3_client_setup_tc(struct hnae3_handle *handle, u8 tc)
+ 	if (!ndev)
+ 		return -ENODEV;
+ 
++	if_running = netif_running(ndev);
++
+ 	ret = netdev_set_num_tc(ndev, tc);
+ 	if (ret)
+ 		return ret;
+-- 
+2.14.1
+
