@@ -1,35 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Sep 2017 00:00:19 +0000
-Subject: Re: [PATCH v2 net] sctp: potential read out of bounds in sctp_ulpevent_type_enabled()
-Message-Id: <20170913.170019.543516362575770735.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 Sep 2017 07:51:17 +0000
+Subject: [PATCH 1/2] staging: rtlwifi: silence underflow warning
+Message-Id: <20170929075117.cno3vnrebea32upt@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170913.092522.934509429497822082.davem@davemloft.net>
-        <20170913230054.fmtidvfi2swvy2mm@mwanda>
-In-Reply-To: <20170913230054.fmtidvfi2swvy2mm@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Sep 2017 02:00:54 +0300
+I'm not totally certain that it's necessary to put an upper limit here.
+I think it happens at lower levels.  But if we are going to do that then
+we should have a lower bound as well.
 
-> This code causes a static checker warning because Smatch doesn't trust
-> anything that comes from skb->data.  I've reviewed this code and I do
-> think skb->data can be controlled by the user here.
-> 
-> The sctp_event_subscribe struct has 13 __u8 fields and we want to see
-> if ours is non-zero.  sn_type can be any value in the 0-USHRT_MAX range.
-> We're subtracting SCTP_SN_TYPE_BASE which is 1 << 15 so we could read
-> either before the start of the struct or after the end.
-> 
-> This is a very old bug and it's surprising that it would go undetected
-> for so long but my theory is that it just doesn't have a big impact so
-> it would be hard to notice.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  Use reverse-christmas-tree local variable ordering.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied and queued up for -stable, thanks.
+diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
+index 43b8b9efe25f..b55e18304a60 100644
+--- a/drivers/staging/rtlwifi/core.c
++++ b/drivers/staging/rtlwifi/core.c
+@@ -412,7 +412,8 @@ static void _rtl_add_wowlan_patterns(struct ieee80211_hw *hw,
+ 	for (i = 0; i < wow->n_patterns; i++) {
+ 		memset(&rtl_pattern, 0, sizeof(struct rtl_wow_pattern));
+ 		memset(mask, 0, MAX_WOL_BIT_MASK_SIZE);
+-		if (patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
++		if (patterns[i].pattern_len < 0 ||
++		    patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
+ 			RT_TRACE(rtlpriv, COMP_POWER, DBG_WARNING,
+ 				 "Pattern[%d] is too long\n", i);
+ 			continue;
