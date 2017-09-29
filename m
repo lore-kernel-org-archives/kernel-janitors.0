@@ -1,40 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 11:32:26 +0000
-Subject: [PATCH 4/6] [media] tda8261: Delete an unnecessary variable initialisation in tda8261_attach()
-Message-Id: <f666b7ca-146e-6574-b066-2b1e034c26f5@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 13:34:22 +0000
+Subject: [PATCH][net-next] net: ipmr: make function ipmr_notifier_init static
+Message-Id: <20170929133422.7846-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
-In-Reply-To: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 12:24:57 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-The local variable "state" is reassigned by a statement at the beginning.
-Thus omit the explicit initialisation.
+The function ipmr_notifier_init is local to the source and does
+not need to be in global scope, so make it static.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up sparse warning:
+warning: symbol 'ipmr_notifier_init' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/dvb-frontends/tda8261.c | 2 +-
+ net/ipv4/ipmr.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/tda8261.c b/drivers/media/dvb-frontends/tda8261.c
-index e3b4183d00c2..492d8c03a5fa 100644
---- a/drivers/media/dvb-frontends/tda8261.c
-+++ b/drivers/media/dvb-frontends/tda8261.c
-@@ -183,7 +183,7 @@ struct dvb_frontend *tda8261_attach(struct dvb_frontend *fe,
- 				    const struct tda8261_config *config,
- 				    struct i2c_adapter *i2c)
- {
--	struct tda8261_state *state = NULL;
-+	struct tda8261_state *state;
+diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+index 292a8e80bdfa..a844738b38bd 100644
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -3224,7 +3224,7 @@ static const struct fib_notifier_ops ipmr_notifier_ops_template = {
+ 	.owner		= THIS_MODULE,
+ };
  
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
+-int __net_init ipmr_notifier_init(struct net *net)
++static int __net_init ipmr_notifier_init(struct net *net)
+ {
+ 	struct fib_notifier_ops *ops;
+ 
 -- 
 2.14.1
 
