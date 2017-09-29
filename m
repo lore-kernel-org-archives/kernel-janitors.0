@@ -1,46 +1,39 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Thu, 07 Sep 2017 07:56:12 +0000
-Subject: Re: [PATCH] mfd: stw481x: make three arrays static const, reduces object code size
-Message-Id: <20170907075612.oijcvnxjymygb22p@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 20:13:08 +0000
+Subject: [PATCH] RDMA/hns: return 0 rather than return a garbage status value
+Message-Id: <20170929201308.4704-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170905112712.15779-1-colin.king@canonical.com>
-In-Reply-To: <20170905112712.15779-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, 05 Sep 2017, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Don't populate the arrays vcore_val, vpll_val and vaux_val on the
-> stack, instead make them static const.  Makes the object code smaller
-> by over 370 bytes:
->=20
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    6971	   3248	     64	  10283	   282b	drivers/mfd/stw481x.o
->=20
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    6338	   3504	     64	   9906	   26b2	drivers/mfd/stw481x.o
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mfd/stw481x.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+For the case where hr_qp->state = IB_QPS_RESET, an uninitialized
+value in ret is being returned by function hns_roce_v2_query_qp.
+Fix this by setting ret to 0 for this specific return condition.
 
-Applied for v4.15, thanks.
+Detected by CoverityScan, CID#1457203 ("Unitialized scalar variable")
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 4870b51caab9..791dae72e775 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -2805,6 +2805,7 @@ static int hns_roce_v2_query_qp(struct ib_qp *ibqp, struct ib_qp_attr *qp_attr,
+ 
+ 	if (hr_qp->state = IB_QPS_RESET) {
+ 		qp_attr->qp_state = IB_QPS_RESET;
++		ret = 0;
+ 		goto done;
+ 	}
+ 
+-- 
+2.14.1
+
