@@ -1,45 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Sep 2017 23:40:52 +0000
-Subject: Re: [PATCH] tty: vt: keyboard: add range check to kbs->kb_func index
-Message-Id: <20170920234052.euqzh6opnn27nxth@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 13:52:27 +0000
+Subject: [PATCH][rdma-next] RDMA/hns: remove redundant assignment to variable j
+Message-Id: <20170929135227.8343-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170920213828.5563-1-colin.king@canonical.com>
-In-Reply-To: <20170920213828.5563-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 20, 2017 at 10:38:28PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A value outside the range 0..MAX_NR_FUNC-1 in kbs->kb_func will
-> cause an array bounds overflow on func_table. Fix this by adding
-> a range check.
-> 
-> Detected by CoverityScan, CID#401961 ("Untrusted array index read")
-> 
-> Fixes: 079c9534a96d ("vt:tackle kbd_table")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/tty/vt/keyboard.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-> index f4166263bb3a..1ecf545a96a8 100644
-> --- a/drivers/tty/vt/keyboard.c
-> +++ b/drivers/tty/vt/keyboard.c
-> @@ -1982,6 +1982,11 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
->  	kbs->kb_string[sizeof(kbs->kb_string)-1] = '\0';
->  	i = kbs->kb_func;
->  
-> +	if (i < 0 || i >= MAX_NR_FUNC) {
+From: Colin Ian King <colin.king@canonical.com>
 
-kbs->kb_func is an unsigned char and MAX_NR_FUNC is 256 so this check
-will never be true.
+Variable j is being assigned to loop_j and then later being
+assigned to a new value in for loops. The first initialization
+is therefore redundant and can be removed.
 
-regards,
-dan carpenter
+Cleans up clang warning:
+warning: Value stored to 'j' is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_mr.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
+index 7e6ce76b32df..452136d98ad5 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_mr.c
++++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
+@@ -272,7 +272,6 @@ static void hns_roce_loop_free(struct hns_roce_dev *hr_dev,
+ 	mhop_num = hr_dev->caps.pbl_hop_num;
+ 
+ 	i = loop_i;
+-	j = loop_j;
+ 	if (mhop_num = 3 && err_loop_index = 2) {
+ 		for (; i >= 0; i--) {
+ 			dma_free_coherent(dev, pbl_bt_sz, mr->pbl_bt_l1[i],
+-- 
+2.14.1
 
