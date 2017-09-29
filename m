@@ -1,20 +1,20 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 16:19:34 +0000
-Subject: [PATCH 2/2] [media] fc0012: Improve a size determination in fc0012_attach()
-Message-Id: <27e2548c-09cb-2adb-9f65-f06c0e4ba86d@users.sourceforge.net>
+Date: Fri, 29 Sep 2017 20:18:58 +0000
+Subject: [PATCH 2/2] ACPI-scan: Improve a size determination in three functions
+Message-Id: <ec5d2c85-2c48-f8b6-9467-5bd6b38bcd0b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8f64b84d-cca0-d618-eb62-ec12f42b8c06@users.sourceforge.net>
-In-Reply-To: <8f64b84d-cca0-d618-eb62-ec12f42b8c06@users.sourceforge.net>
+References: <267c842c-d38a-67be-f61b-a2056f7e71ee@users.sourceforge.net>
+In-Reply-To: <267c842c-d38a-67be-f61b-a2056f7e71ee@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 17:55:27 +0200
+Date: Fri, 29 Sep 2017 22:00:25 +0200
 
-Replace the specification of a data structure by a pointer dereference
+Replace the specification of data structures by pointer dereferences
 as the parameter for the operator "sizeof" to make the corresponding size
 determination a bit safer according to the Linux coding style convention.
 
@@ -22,20 +22,40 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/tuners/fc0012.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/scan.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/tuners/fc0012.c b/drivers/media/tuners/fc0012.c
-index 7126dd1d5151..c008513bd64a 100644
---- a/drivers/media/tuners/fc0012.c
-+++ b/drivers/media/tuners/fc0012.c
-@@ -445,5 +445,5 @@ struct dvb_frontend *fc0012_attach(struct dvb_frontend *fe,
- 	if (fe->ops.i2c_gate_ctrl)
- 		fe->ops.i2c_gate_ctrl(fe, 1);
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 7df7bea1e177..34bc7274dc8e 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -650,7 +650,7 @@ int acpi_device_add(struct acpi_device *device,
+ 	INIT_LIST_HEAD(&device->del_list);
+ 	mutex_init(&device->physical_node_lock);
  
--	priv = kzalloc(sizeof(struct fc0012_priv), GFP_KERNEL);
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv) {
+-	new_bus_id = kzalloc(sizeof(struct acpi_device_bus_id), GFP_KERNEL);
++	new_bus_id = kzalloc(sizeof(*new_bus_id), GFP_KERNEL);
+ 	if (!new_bus_id) {
+ 		result = -ENOMEM;
+ 		goto err_detach;
+@@ -1577,7 +1577,7 @@ static int acpi_add_single_object(struct acpi_device **child,
+ 	struct acpi_device *device;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+ 
+-	device = kzalloc(sizeof(struct acpi_device), GFP_KERNEL);
++	device = kzalloc(sizeof(*device), GFP_KERNEL);
+ 	if (!device)
+ 		return -ENOMEM;
+ 
+@@ -1786,7 +1786,7 @@ static void acpi_device_dep_initialize(struct acpi_device *adev)
+ 		if (skip)
+ 			continue;
+ 
+-		dep = kzalloc(sizeof(struct acpi_dep_data), GFP_KERNEL);
++		dep = kzalloc(sizeof(*dep), GFP_KERNEL);
+ 		if (!dep)
+ 			return;
+ 
 -- 
-2.14.1
+2.14.2
 
