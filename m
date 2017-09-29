@@ -1,64 +1,30 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Mon, 18 Sep 2017 14:51:26 +0000
-Subject: Re: [PATCH] hwmon: (sht15): remove redundant check on status and send of status value
-Message-Id: <20170918145126.GD11868@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 Sep 2017 07:49:43 +0000
+Subject: [PATCH] i40iw: delete some stray tabs
+Message-Id: <20170929074943.cs2jea5xttk2r6vm@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170918144548.32354-1-colin.king@canonical.com>
-In-Reply-To: <20170918144548.32354-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 18, 2017 at 03:45:48PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A previous commit removed bit or'ing into to the integer status
-> so now status is now always zero. This means that the non-zero check on
-> status and the sht15_send_status call will never occur; it is deadcode.
-> Clean this up by removing the dead code.
-> 
-> Detected by: CoverityScan CID#1456835 ("Logically dead code")
-> 
-> Fixes: aa7ab80c578c ("hwmon: (sht15) Root out platform data")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+These lines were indented too far by mistake.
 
-Applied to hwmon-next.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/sht15.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/hwmon/sht15.c b/drivers/hwmon/sht15.c
-> index 0e3e5f83f5cf..25d28343ba93 100644
-> --- a/drivers/hwmon/sht15.c
-> +++ b/drivers/hwmon/sht15.c
-> @@ -925,7 +925,6 @@ static int sht15_probe(struct platform_device *pdev)
->  {
->  	int ret;
->  	struct sht15_data *data;
-> -	u8 status = 0;
->  
->  	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
->  	if (!data)
-> @@ -1002,13 +1001,6 @@ static int sht15_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_release_reg;
->  
-> -	/* write status with platform data options */
-> -	if (status) {
-> -		ret = sht15_send_status(data, status);
-> -		if (ret)
-> -			goto err_release_reg;
-> -	}
-> -
->  	ret = sysfs_create_group(&pdev->dev.kobj, &sht15_attr_group);
->  	if (ret) {
->  		dev_err(&pdev->dev, "sysfs create failed\n");
-> -- 
-> 2.14.1
-> 
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_cm.c b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+index 5230dd3c938c..9017c1cc51d4 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+@@ -1524,8 +1524,8 @@ static bool i40iw_port_in_use(struct i40iw_cm_core *cm_core, u16 port, bool acti
+ 				break;
+ 			}
+ 		}
+-			if (!ret)
+-				clear_bit(port, cm_core->active_side_ports);
++		if (!ret)
++			clear_bit(port, cm_core->active_side_ports);
+ 		spin_unlock_irqrestore(&cm_core->ht_lock, flags);
+ 	} else {
+ 		spin_lock_irqsave(&cm_core->listen_list_lock, flags);
