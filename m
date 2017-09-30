@@ -1,47 +1,46 @@
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Date: Sun, 10 Sep 2017 11:56:17 +0000
-Subject: Re: [PATCH] btrfs: tests: Fix a memory leak in error handling path in 'run_test()'
-Message-Id: <72f72ca7-8c48-5501-7835-ac619801cd34@gmx.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 08:15:29 +0000
+Subject: [PATCH] usb: misc: usbtest: Fix overflow in usbtest_do_ioctl()
+Message-Id: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170910111938.15201-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170910111938.15201-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, clm@fb.com, jbacik@fb.com, dsterba@suse.com, nborisov@suse.com, jeffm@suse.com, osandov@fb.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+There used to be a test against "if (param->sglen > MAX_SGLEN)" but it
+was removed during a refactor.  It leads to an integer overflow and a
+stack overflow in test_queue() if we try to create a too large urbs[]
+array on the stack.
 
+There is a second integer overflow in test_queue() as well if
+"param->iterations" is too high.  I don't immediately see that it's
+harmful but I've added a check to prevent it and silence the static
+checker warning.
 
-On 2017年09月10日 19:19, Christophe JAILLET wrote:
-> If 'btrfs_alloc_path()' fails, we must free the resourses already
-> allocated, as done in the other error handling paths in this function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 18fc4ebdc705 ("usb: misc: usbtest: Remove timeval usage")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-
-BTW, I also checked all btrfs_alloc_path() in self tests, not such leak 
-remaining.
-
-Thanks,
-Qu
-> ---
->   fs/btrfs/tests/free-space-tree-tests.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/tests/free-space-tree-tests.c b/fs/btrfs/tests/free-space-tree-tests.c
-> index 1458bb0ea124..8444a018cca2 100644
-> --- a/fs/btrfs/tests/free-space-tree-tests.c
-> +++ b/fs/btrfs/tests/free-space-tree-tests.c
-> @@ -500,7 +500,8 @@ static int run_test(test_func_t test_func, int bitmaps, u32 sectorsize,
->   	path = btrfs_alloc_path();
->   	if (!path) {
->   		test_msg("Couldn't allocate path\n");
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto out;
->   	}
->   
->   	ret = add_block_group_free_space(&trans, root->fs_info, cache);
-> 
+diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
+index eee82ca55b7b..113e38bfe0ef 100644
+--- a/drivers/usb/misc/usbtest.c
++++ b/drivers/usb/misc/usbtest.c
+@@ -1964,6 +1964,9 @@ test_queue(struct usbtest_dev *dev, struct usbtest_param_32 *param,
+ 	int			status = 0;
+ 	struct urb		*urbs[param->sglen];
+ 
++	if (!param->sglen || param->iterations > UINT_MAX / param->sglen)
++		return -EINVAL;
++
+ 	memset(&context, 0, sizeof(context));
+ 	context.count = param->iterations * param->sglen;
+ 	context.dev = dev;
+@@ -2087,6 +2090,8 @@ usbtest_do_ioctl(struct usb_interface *intf, struct usbtest_param_32 *param)
+ 
+ 	if (param->iterations <= 0)
+ 		return -EINVAL;
++	if (param->sglen > MAX_SGLEN)
++		return -EINVAL;
+ 	/*
+ 	 * Just a bunch of test cases that every HCD is expected to handle.
+ 	 *
