@@ -1,65 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 11:33:39 +0000
-Subject: [PATCH 5/6] [media] tda8261: Adjust three function calls together with a variable assignment
-Message-Id: <8e60d1bf-ebdb-a9f8-8cf2-3dee7a1c4c96@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 08:14:13 +0000
+Subject: [PATCH 2/2] drm/amdgpu: Potential uninitialized variable in amdgpu_vm_update_directories()
+Message-Id: <20170930081413.t6ohq5vrj7pmpthz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
-In-Reply-To: <15d74bee-7467-4687-24e1-3501c22f6d75@users.sourceforge.net>
+References: <20170930081328.kher7yumqzi2vsrg@mwanda>
+In-Reply-To: <20170930081328.kher7yumqzi2vsrg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max.kellermann@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: kernel-janitors@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>, Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, "Zhang,
+ Jerry" <Jerry.Zhang@amd.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 12:52:24 +0200
+After commit ea09729c9302 ("drm/amdgpu: rework page directory filling
+v2") then it becomes a lot harder to verify that "r" is initialized.  My
+static checker complains and so I've reviewed the code.  It does look
+like it might be buggy... Anyway, it doesn't hurt to set "r" to zero
+at the start.
 
-The script "checkpatch.pl" pointed information out like the following.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-ERROR: do not use assignment in if condition
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/tda8261.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/tda8261.c b/drivers/media/dvb-frontends/tda8261.c
-index 492d8c03a5fa..20185ee8f253 100644
---- a/drivers/media/dvb-frontends/tda8261.c
-+++ b/drivers/media/dvb-frontends/tda8261.c
-@@ -42,7 +42,8 @@ static int tda8261_read(struct tda8261_state *state, u8 *buf)
- 	int err = 0;
- 	struct i2c_msg msg = { .addr	= config->addr, .flags = I2C_M_RD,.buf = buf,  .len = 1 };
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index bbcc67038203..fb3afab55907 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -1243,7 +1243,7 @@ static void amdgpu_vm_invalidate_level(struct amdgpu_vm *vm,
+ int amdgpu_vm_update_directories(struct amdgpu_device *adev,
+ 				 struct amdgpu_vm *vm)
+ {
+-	int r;
++	int r = 0;
  
--	if ((err = i2c_transfer(state->i2c, &msg, 1)) != 1)
-+	err = i2c_transfer(state->i2c, &msg, 1);
-+	if (err != 1)
- 		pr_err("%s: read error, err=%d\n", __func__, err);
- 
- 	return err;
-@@ -54,7 +55,8 @@ static int tda8261_write(struct tda8261_state *state, u8 *buf)
- 	int err = 0;
- 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = 4 };
- 
--	if ((err = i2c_transfer(state->i2c, &msg, 1)) != 1)
-+	err = i2c_transfer(state->i2c, &msg, 1);
-+	if (err != 1)
- 		pr_err("%s: write error, err=%d\n", __func__, err);
- 
- 	return err;
-@@ -67,8 +69,8 @@ static int tda8261_get_status(struct dvb_frontend *fe, u32 *status)
- 	int err = 0;
- 
- 	*status = 0;
--
--	if ((err = tda8261_read(state, &result)) < 0) {
-+	err = tda8261_read(state, &result);
-+	if (err < 0) {
- 		pr_err("%s: I/O Error\n", __func__);
- 		return err;
- 	}
--- 
-2.14.1
-
+ 	spin_lock(&vm->status_lock);
+ 	while (!list_empty(&vm->relocated)) {
