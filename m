@@ -1,89 +1,32 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 20 Sep 2017 15:36:38 +0000
-Subject: Applied "ASoC: rl6231: make arrays div and pd static const, reduces object code size" to the asoc tr
-Message-Id: <E1duh3G-0000eN-3i@debutante>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 08:17:32 +0000
+Subject: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
+Message-Id: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170919215000.32040-1-colin.king@canonical.com>
-In-Reply-To: <20170919215000.32040-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: Ivan Hu <ivan.hu-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The patch
+If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
+will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
+try to dereference it inside the loop and crash.
 
-   ASoC: rl6231: make arrays div and pd static const, reduces object code size
+Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 57f7feff2912d6996b5f3fcac084308ce195127c Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 19 Sep 2017 22:50:00 +0100
-Subject: [PATCH] ASoC: rl6231: make arrays div and pd static const, reduces
- object code size
-
-Don't populate the read-only arrays div and pd on the stack,
-instead make them static const. Makes the object code smaller by 210 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   2869	    720	      0	   3589	    e05	sound/soc/codecs/rl6231.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   2495	    880	      0	   3375	    d2f	sound/soc/codecs/rl6231.o
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/rl6231.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/rl6231.c b/sound/soc/codecs/rl6231.c
-index 7b447d0b173a..974a9040651d 100644
---- a/sound/soc/codecs/rl6231.c
-+++ b/sound/soc/codecs/rl6231.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL_GPL(rl6231_get_pre_div);
-  */
- int rl6231_calc_dmic_clk(int rate)
- {
--	int div[] = {2, 3, 4, 6, 8, 12};
-+	static const int div[] = {2, 3, 4, 6, 8, 12};
- 	int i;
+diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
+index 08129b7b80ab..41c48a1e8baa 100644
+--- a/drivers/firmware/efi/test/efi_test.c
++++ b/drivers/firmware/efi/test/efi_test.c
+@@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
+ 	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
+ 		return -EFAULT;
  
- 	if (rate < 1000000 * div[0]) {
-@@ -189,7 +189,8 @@ EXPORT_SYMBOL_GPL(rl6231_pll_calc);
- 
- int rl6231_get_clk_info(int sclk, int rate)
- {
--	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
-+	int i;
-+	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
- 
- 	if (sclk <= 0 || rate <= 0)
- 		return -EINVAL;
--- 
-2.14.1
-
++	if (qcaps.capsule_count = ULONG_MAX)
++		return -EINVAL;
++
+ 	capsules = kcalloc(qcaps.capsule_count + 1,
+ 			   sizeof(efi_capsule_header_t), GFP_KERNEL);
+ 	if (!capsules)
