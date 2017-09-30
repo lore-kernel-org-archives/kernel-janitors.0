@@ -1,61 +1,32 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Thu, 21 Sep 2017 15:33:21 +0000
-Subject: Re: [PATCH] USB: devio: Prevent integer overflow in proc_do_submiturb()
-Message-Id: <Pine.LNX.4.44L0.1709211126570.1423-100000@iolanthe.rowland.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 08:13:28 +0000
+Subject: [PATCH 1/2] drm/amdgpu: potential uninitialized variable in amdgpu_vce_ring_parse_cs()
+Message-Id: <20170930081328.kher7yumqzi2vsrg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170921071622.ue2oqayfivloxk7w@mwanda>
-In-Reply-To: <20170921071622.ue2oqayfivloxk7w@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: David Airlie <airlied@linux.ie>, Xiangliang Yu <Xiangliang.Yu@amd.com>, Leo Liu <leo.liu@amd.com>, Frank Min <Frank.Min@amd.com>, Junwei Zhang <Jerry.Zhang@amd.com>, Chris Wilson <chris@chris-wilson.co.uk>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Thu, 21 Sep 2017, Dan Carpenter wrote:
+We shifted some code around in commit 9cca0b8e5df0 ("drm/amdgpu: move
+amdgpu_cs_sysvm_access_required into find_mapping") and now my static
+checker complains that "r" might not be initialized at the end of the
+function.  I've reviewed the code, and that seems possible, but it's
+also possible I may have missed something.
 
-> On Thu, Sep 21, 2017 at 10:17:03AM -0400, Alan Stern wrote:
-> > On Thu, 21 Sep 2017, Dan Carpenter wrote:
-> > 
-> > > There used to be an integer overflow check in proc_do_submiturb() but
-> > > it accidentally got removed.  We need to put it back.  The
-> > 
-> > The removal was deliberate, not accidental.  :-)
-> > 
-> > > uurb->buffer_length variable is a signed integer and it's controlled by
-> > > the user.  It can lead to an integer overflow when we do:
-> > > 
-> > > 	num_sgs = DIV_ROUND_UP(uurb->buffer_length, USB_SG_SIZE);
-> > 
-> > Sorry, I don't understand.  How can division by 16384 lead to an
-> > integer overflow?
-> > 
-> > Now, I agree that uurb->buffer_length can cause problems.  We don't
-> > check for meaningless negative values on all the execution paths (the
-> > field should have been unsigned from the beginning).
-> 
-> Checking against USBFS_XFER_MAX prevents negative values but I'll add
-> another check for readability.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The fact that USBFS_XFER_MAX generates an unsigned comparison is
-awfully subtle.  However, if you explicitly cast uurb->buffer_length to
-unsigned int in the test, then it should be clear that the test also
-catches negative values.  Maybe adding a comment would be good, but I
-think with the cast, no additional check is needed.
-
-> >  And in the
-> > USBDEVFS_URB_TYPE_ISO case, we overwrite uurb->buffer_length without
-> > checking that the new value is <= the old value, which could lead to a 
-> > userspace buffer overflow.
-> 
-> Hm...  Yeah.  I'm not sure what's the right thing, should I print a
-> warning if we truncate the output or would users figure it out on their
-> own?
-> 	if (totlen <= uurb->buffer_length)
-> 		uurb->buffer_length = totlen;
-> 	else
-> 		WARN_ONCE(1, "uurb->buffer_length is too short %d vs %d",
-> 			  totlen, uurb->buffer_length);
-
-I like the WARN_ONCE.
-
-Alan Stern
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+index b46280c1279f..2918de2f39ec 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+@@ -648,7 +648,7 @@ int amdgpu_vce_ring_parse_cs(struct amdgpu_cs_parser *p, uint32_t ib_idx)
+ 	uint32_t allocated = 0;
+ 	uint32_t tmp, handle = 0;
+ 	uint32_t *size = &tmp;
+-	int i, r, idx = 0;
++	int i, r = 0, idx = 0;
+ 
+ 	p->job->vm = NULL;
+ 	ib->gpu_addr = amdgpu_sa_bo_gpu_addr(ib->sa_bo);
