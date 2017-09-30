@@ -1,44 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 10:51:29 +0000
-Subject: [PATCH 1/3] [media] mr800: Delete two error messages for a failed memory allocation in usb_amradio_p
-Message-Id: <a112f104-2058-5812-9601-8e9b629864d4@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 11:27:41 +0000
+Subject: [PATCH] vme: Fix integer overflow checking in vme_check_window()
+Message-Id: <20170930112741.6wmswvk25j7o44ui@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
-In-Reply-To: <7efe75db-dbb4-0fe7-509d-908b81072ca1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Martyn Welch <martyn@welchs.me.uk>, Dmitry Kalinkin <dmitry.kalinkin@gmail.com>
+Cc: Manohar Vanga <manohar.vanga@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Sep 2017 11:23:53 +0200
+The controversial part of this patch is that I've changed it so we now
+prevent integer overflows for VME_USER types and before we didn't.  I
+view it as kernel-hardening.  I looked at a couple places that used
+VME_USER types and they seemed pretty suspicious so I'm pretty sure
+preventing overflows here is a good idea.
 
-Omit extra messages for a memory allocation failure in this function.
+The most common problem which this function is for cases like VME_A16
+where we don't put an upper bound on "size" so you could have "size" set
+to U64_MAX and a valid vme_base would overflow the "vme_base + size"
+into the valid range as well.
 
-This issue was detected by using the Coccinelle software.
+In the VME_A64 case, the integer overflow checking doesn't work because
+"U64_MAX + 1" has an integer overflow and it's just a complicated way of
+saying zero.  That VME_A64 case is sort of interesting as well because
+there is a VME_A64_MAX define which is set to "U64_MAX + 1".  The
+compiler will never let anyone use it since it can't be stored in a u64
+variable...  With my patch it's now limited to just U64_MAX.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/radio/radio-mr800.c | 2 --
- 1 file changed, 2 deletions(-)
+Anyway, I put one integer overflow check at the start of the function
+and deleted all existing checks.
 
-diff --git a/drivers/media/radio/radio-mr800.c b/drivers/media/radio/radio-mr800.c
-index c9f59129af79..63a9b92ab495 100644
---- a/drivers/media/radio/radio-mr800.c
-+++ b/drivers/media/radio/radio-mr800.c
-@@ -518,5 +518,4 @@ static int usb_amradio_probe(struct usb_interface *intf,
- 	if (!radio) {
--		dev_err(&intf->dev, "kmalloc for amradio_device failed\n");
- 		retval = -ENOMEM;
- 		goto err;
- 	}
-@@ -526,5 +525,4 @@ static int usb_amradio_probe(struct usb_interface *intf,
- 	if (!radio->buffer) {
--		dev_err(&intf->dev, "kmalloc for radio->buffer failed\n");
- 		retval = -ENOMEM;
- 		goto err_nobuf;
- 	}
--- 
-2.14.1
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
+index 6a3ead42aba8..5b4c898d7509 100644
+--- a/drivers/vme/vme.c
++++ b/drivers/vme/vme.c
+@@ -208,29 +208,27 @@ int vme_check_window(u32 aspace, unsigned long long vme_base,
+ {
+ 	int retval = 0;
+ 
++	if (vme_base + size < size)
++		return -EINVAL;
++
+ 	switch (aspace) {
+ 	case VME_A16:
+-		if (((vme_base + size) > VME_A16_MAX) ||
+-				(vme_base > VME_A16_MAX))
++		if (vme_base + size > VME_A16_MAX)
+ 			retval = -EFAULT;
+ 		break;
+ 	case VME_A24:
+-		if (((vme_base + size) > VME_A24_MAX) ||
+-				(vme_base > VME_A24_MAX))
++		if (vme_base + size > VME_A24_MAX)
+ 			retval = -EFAULT;
+ 		break;
+ 	case VME_A32:
+-		if (((vme_base + size) > VME_A32_MAX) ||
+-				(vme_base > VME_A32_MAX))
++		if (vme_base + size > VME_A32_MAX)
+ 			retval = -EFAULT;
+ 		break;
+ 	case VME_A64:
+-		if ((size != 0) && (vme_base > U64_MAX + 1 - size))
+-			retval = -EFAULT;
++		/* The VME_A64_MAX limit is actually U64_MAX + 1 */
+ 		break;
+ 	case VME_CRCSR:
+-		if (((vme_base + size) > VME_CRCSR_MAX) ||
+-				(vme_base > VME_CRCSR_MAX))
++		if (vme_base + size > VME_CRCSR_MAX)
+ 			retval = -EFAULT;
+ 		break;
+ 	case VME_USER1:
