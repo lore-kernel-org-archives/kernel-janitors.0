@@ -1,54 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Sep 2017 08:15:52 +0000
-Subject: [PATCH 1/2] misc: pci_endpoint_test: Prevent some integer overflows
-Message-Id: <20170930081552.rm4tjhxcyegpg3vn@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 Sep 2017 05:34:34 +0000
+Subject: [PATCH] net: hns3: Fix an error handling path in 'hclge_rss_init_hw()'
+Message-Id: <20170930053434.4558-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net, linyunsheng@huawei.com, lipeng321@huawei.com, colin.king@canonical.com, arnd@arndb.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-"size + max" can have an arithmetic overflow when we're allocating:
+If this sanity check fails, we must free 'rss_indir'. Otherwise there is a
+memory leak.
+'goto err' as done in the other error handling paths to fix it.
 
-	orig_src_addr = dma_alloc_coherent(dev, size + alignment, ...
+Fixes: 46a3df9f9718 ("net: hns3: Fix for setting rss_size incorrectly")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I've added a few checks to prevent that.
-
-Fixes: 13107c60681f ("misc: pci_endpoint_test: Add support to provide aligned buffer addresses")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index deb203026496..c0d323077ad0 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -226,6 +226,9 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	u32 src_crc32;
- 	u32 dst_crc32;
- 
-+	if (size > SIZE_MAX - alignment)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index e0685e630afe..c1cdbfd83bdb 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2652,7 +2652,8 @@ static int hclge_rss_init_hw(struct hclge_dev *hdev)
+ 		dev_err(&hdev->pdev->dev,
+ 			"Configure rss tc size failed, invalid TC_SIZE = %d\n",
+ 			rss_size);
+-		return -EINVAL;
++		ret = -EINVAL;
 +		goto err;
-+
- 	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
- 					   &orig_src_phys_addr, GFP_KERNEL);
- 	if (!orig_src_addr) {
-@@ -311,6 +314,9 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 	size_t alignment = test->alignment;
- 	u32 crc32;
+ 	}
  
-+	if (size > SIZE_MAX - alignment)
-+		goto err;
-+
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
-@@ -369,6 +375,9 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 	size_t alignment = test->alignment;
- 	u32 crc32;
- 
-+	if (size > SIZE_MAX - alignment)
-+		goto err;
-+
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
+ 	roundup_size = roundup_pow_of_two(rss_size);
+-- 
+2.11.0
+
