@@ -1,56 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 16 Sep 2017 16:32:51 +0000
-Subject: [PATCH] staging: ccree: remove unused and redundant variable idx
-Message-Id: <20170916163251.29796-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Sep 2017 08:16:51 +0000
+Subject: [PATCH 2/2] misc: pci_endpoint_test: Avoid triggering a BUG()
+Message-Id: <20170930081651.htijnjc6nyibo2uv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20170930081552.rm4tjhxcyegpg3vn@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gilad Ben-Yossef <gilad@benyossef.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-crypto@vger.kernel.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If you call ida_simple_remove(&pci_endpoint_test_ida, id) with a
+negative "id" then it triggers an immediate BUG_ON().  Let's not allow
+that.
 
-Variable idx is being set but never read and thus it can be
-removed because it is redundant. Cleans up clang build warnings:
+Fixes: 2c156ac71c6b ("misc: Add host side PCI driver for PCI test function device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-warning: Value stored to 'idx' during its initialization is never read
-warning: Value stored to 'idx' is never read
-warning: Value stored to 'idx' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/ccree/ssi_aead.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/staging/ccree/ssi_aead.c b/drivers/staging/ccree/ssi_aead.c
-index 5abe6b24ff8c..8d6b95efce86 100644
---- a/drivers/staging/ccree/ssi_aead.c
-+++ b/drivers/staging/ccree/ssi_aead.c
-@@ -1812,7 +1812,6 @@ static inline int ssi_aead_gcm(
- 	unsigned int *seq_size)
- {
- 	struct aead_req_ctx *req_ctx = aead_request_ctx(req);
--	unsigned int idx = *seq_size;
- 	unsigned int cipher_flow_mode;
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index c0d323077ad0..d40a34f594c7 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -597,6 +597,8 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
  
- 	if (req_ctx->gen_ctx.op_type = DRV_CRYPTO_DIRECTION_DECRYPT) {
-@@ -1829,7 +1828,6 @@ static inline int ssi_aead_gcm(
- 		ssi_aead_create_assoc_desc(req, DIN_HASH, desc, seq_size);
- 		ssi_aead_gcm_setup_gctr_desc(req, desc, seq_size);
- 		ssi_aead_process_gcm_result_desc(req, desc, seq_size);
--		idx = *seq_size;
- 		return 0;
- 	}
+ 	if (sscanf(misc_device->name, DRV_MODULE_NAME ".%d", &id) != 1)
+ 		return;
++	if (id < 0)
++		return;
  
-@@ -1844,7 +1842,6 @@ static inline int ssi_aead_gcm(
- 		ssi_aead_process_cipher_data_desc(req, cipher_flow_mode, desc, seq_size);
- 	ssi_aead_process_gcm_result_desc(req, desc, seq_size);
- 
--	idx = *seq_size;
- 	return 0;
- }
- 
--- 
-2.14.1
-
+ 	misc_deregister(&test->miscdev);
+ 	ida_simple_remove(&pci_endpoint_test_ida, id);
