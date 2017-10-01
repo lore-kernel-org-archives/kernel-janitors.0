@@ -1,40 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 20:18:57 +0000
-Subject: [PATCH] xilinx_hwicap: Improve a size determination in hwicap_setup()
-Message-Id: <a5c9b285-7c07-0023-b123-34da09556826@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 01 Oct 2017 03:07:21 +0000
+Subject: Re: [PATCH][net-next] net: ipmr: make function ipmr_notifier_init static
+Message-Id: <20171001.040721.1898715383953902696.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170929133422.7846-1-colin.king@canonical.com>
+In-Reply-To: <20170929133422.7846-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: colin.king@canonical.com
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 22:10:32 +0200
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 14:34:22 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function ipmr_notifier_init is local to the source and does
+> not need to be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> warning: symbol 'ipmr_notifier_init' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/char/xilinx_hwicap/xilinx_hwicap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-index 067396bedf22..2ab9df5a60bd 100644
---- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-+++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-@@ -634,7 +634,7 @@ static int hwicap_setup(struct device *dev, int id,
- 
- 	devt = MKDEV(XHWICAP_MAJOR, XHWICAP_MINOR + id);
- 
--	drvdata = kzalloc(sizeof(struct hwicap_drvdata), GFP_KERNEL);
-+	drvdata = kzalloc(sizeof(*drvdata), GFP_KERNEL);
- 	if (!drvdata) {
- 		retval = -ENOMEM;
- 		goto failed0;
--- 
-2.14.2
-
+Applied, thank you.
