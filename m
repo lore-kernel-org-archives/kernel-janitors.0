@@ -1,44 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 12:18:07 +0000
-Subject: [PATCH 1/3] char/pcmcia: Delete an error message for a failed memory allocation in mgslpc_probe()
-Message-Id: <378e6889-d956-af80-7885-4bc8c6500d1f@users.sourceforge.net>
+Date: Sun, 01 Oct 2017 19:50:33 +0000
+Subject: [PATCH 2/2] atm: Improve a size determination in adummy_init()
+Message-Id: <80b86793-c590-7755-df8b-1d9394929120@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
-In-Reply-To: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
+References: <8fe2ca8a-e1f7-d492-db69-c52b66143ac6@users.sourceforge.net>
+In-Reply-To: <8fe2ca8a-e1f7-d492-db69-c52b66143ac6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 11:46:38 +0200
+Date: Sun, 1 Oct 2017 21:35:18 +0200
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/pcmcia/synclink_cs.c | 4 +---
+ drivers/atm/adummy.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
-index 62be953e5fb0..4db7eda2e7f2 100644
---- a/drivers/char/pcmcia/synclink_cs.c
-+++ b/drivers/char/pcmcia/synclink_cs.c
-@@ -520,10 +520,8 @@ static int mgslpc_probe(struct pcmcia_device *link)
- 		printk("mgslpc_attach\n");
+diff --git a/drivers/atm/adummy.c b/drivers/atm/adummy.c
+index 94b73ddfb731..1ef2d8ee8d67 100644
+--- a/drivers/atm/adummy.c
++++ b/drivers/atm/adummy.c
+@@ -146,9 +146,7 @@ static int __init adummy_init(void)
+ 	int err = 0;
  
- 	info = kzalloc(sizeof(MGSLPC_INFO), GFP_KERNEL);
--	if (!info) {
--		printk("Error can't allocate device instance data\n");
-+	if (!info)
- 		return -ENOMEM;
--	}
- 
- 	info->magic = MGSLPC_MAGIC;
- 	tty_port_init(&info->port);
+ 	printk(KERN_ERR "adummy: version %s\n", DRV_VERSION);
+-
+-	adummy_dev = kzalloc(sizeof(struct adummy_dev),
+-						   GFP_KERNEL);
++	adummy_dev = kzalloc(sizeof(*adummy_dev), GFP_KERNEL);
+ 	if (!adummy_dev) {
+ 		err = -ENOMEM;
+ 		goto out;
 -- 
 2.14.2
 
