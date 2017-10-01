@@ -1,39 +1,184 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Mon, 16 Oct 2017 21:26:25 +0000
-Subject: Re: [PATCH] platform/x86: mlx-platform: make a couple of structures static
-Message-Id: <20171016212625.GB14419@fury>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 Oct 2017 12:42:48 +0000
+Subject: [PATCH] coccinelle: api: detect duplicate chip data arrays
+Message-Id: <1506861768-5734-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171005104211.30440-1-colin.king@canonical.com>
- <CAHp75Vf8k-hmk4n86foSfSPZxVUQJmGNFkf8ExUKbF2nXaSy8A@mail.gmail.com>
-In-Reply-To: <CAHp75Vf8k-hmk4n86foSfSPZxVUQJmGNFkf8ExUKbF2nXaSy8A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Vadim Pasternak <vadimp@mellanox.com>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-On Sat, Oct 07, 2017 at 05:03:41PM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 5, 2017 at 1:42 PM, Colin King <colin.king@canonical.com> wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The structures mlxplat_dev and mlxplat_hotplug are local to the source
-> > and do not need to be in global scope, so make them static.
-> >
-> > Cleans up sparse warnings:
-> > symbol 'mlxplat_dev' was not declared. Should it be static?
-> > symbol 'mlxplat_hotplug' was not declared. Should it be static?
-> 
-> Thanks for the patch.
-> Since Vadim did some rather big driver changes I would like to hear
-> from him how to proceed with this one: either I apply it now, or after
-> we get Vadim's series in.
-> 
+This semantic patch detects duplicate arrays declared using BQ27XXX_DATA
+within a single structure.  It is currently specific to the file
+drivers/power/supply/bq27xxx_battery.c.
 
-I've asked Vadim to rework some of the mlx platform and hotplug patches, so I'll
-be taking this now as it is a minimal patch - this way it doesn't get lost.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks Colin.
+---
+ scripts/coccinelle/api/battery.cocci |  161 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 161 insertions(+)
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+diff --git a/scripts/coccinelle/api/battery.cocci b/scripts/coccinelle/api/battery.cocci
+new file mode 100644
+index 0000000..77c145a
+--- /dev/null
++++ b/scripts/coccinelle/api/battery.cocci
+@@ -0,0 +1,161 @@
++/// Detect BQ27XXX_DATA structures with identical registers, dm registers or
++/// properties.
++//# Doesn't unfold macros used in register or property fields.
++//# Requires OCaml scripting
++///
++// Confidence: High
++// Copyright: (C) 2017 Julia Lawall, Inria/LIP6, GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Requires: 1.0.7
++// Keywords: BQ27XXX_DATA
++
++virtual report
++
++@initialize:ocaml@
++@@
++
++let print_report p msg +  let p = List.hd p in
++  Printf.printf "%s:%d:%d-%d: %s" p.file p.line p.col p.col_end msg
++
++@str depends on report@
++type t;
++identifier i,i1,i2;
++expression e1,e2;
++@@
++
++t i[] = {
++  ...,
++  [e1] = BQ27XXX_DATA(i1,...),
++  ...,
++  [e2] = BQ27XXX_DATA(i2,...),
++  ...,
++};
++
++@script:ocaml tocheck@
++i1 << str.i1;
++i2 << str.i2;
++i1regs; i2regs;
++i1dmregs; i2dmregs;
++i1props; i2props;
++@@
++
++if not(i1 = i2)
++then
++  begin
++    i1regs := make_ident (i1 ^ "_regs");
++    i2regs := make_ident (i2 ^ "_regs");
++    i1dmregs := make_ident (i1 ^ "_dm_regs");
++    i2dmregs := make_ident (i2 ^ "_dm_regs");
++    i1props := make_ident (i1 ^ "_props");
++    i2props := make_ident (i2 ^ "_props")
++  end
++
++(* ---------------------------------------------------------------- *)
++
++@getregs1@
++typedef u8;
++identifier tocheck.i1regs;
++initializer list i1regs_vals;
++position p1;
++@@
++
++u8 i1regs@p1[...] = { i1regs_vals, };
++
++@getregs2@
++identifier tocheck.i2regs;
++initializer list i2regs_vals;
++position p2;
++@@
++
++u8 i2regs@p2[...] = { i2regs_vals, };
++
++@script:ocaml@
++(_,i1regs_vals) << getregs1.i1regs_vals;
++(_,i2regs_vals) << getregs2.i2regs_vals;
++i1regs << tocheck.i1regs;
++i2regs << tocheck.i2regs;
++p1 << getregs1.p1;
++p2 << getregs2.p2;
++@@
++
++if i1regs < i2regs &&
++   List.sort compare i1regs_vals = List.sort compare i2regs_vals
++then
++  let msg +    Printf.sprintf
++      "WARNING %s and %s (line %d) have the same registers\n"
++      i1regs i2regs (List.hd p2).line in
++  print_report p1 msg
++
++(* ---------------------------------------------------------------- *)
++
++@getdmregs1@
++identifier tocheck.i1dmregs;
++initializer list i1dmregs_vals;
++position p1;
++@@
++
++struct bq27xxx_dm_reg i1dmregs@p1[] = { i1dmregs_vals, };
++
++@getdmregs2@
++identifier tocheck.i2dmregs;
++initializer list i2dmregs_vals;
++position p2;
++@@
++
++struct bq27xxx_dm_reg i2dmregs@p2[] = { i2dmregs_vals, };
++
++@script:ocaml@
++(_,i1dmregs_vals) << getdmregs1.i1dmregs_vals;
++(_,i2dmregs_vals) << getdmregs2.i2dmregs_vals;
++i1dmregs << tocheck.i1dmregs;
++i2dmregs << tocheck.i2dmregs;
++p1 << getdmregs1.p1;
++p2 << getdmregs2.p2;
++@@
++
++if i1dmregs < i2dmregs &&
++   List.sort compare i1dmregs_vals = List.sort compare i2dmregs_vals
++then
++  let msg +    Printf.sprintf
++      "WARNING %s and %s (line %d) have the same dm registers\n"
++      i1dmregs i2dmregs (List.hd p2).line in
++  print_report p1 msg
++
++(* ---------------------------------------------------------------- *)
++
++@getprops1@
++identifier tocheck.i1props;
++initializer list[n1] i1props_vals;
++position p1;
++@@
++
++enum power_supply_property i1props@p1[] = { i1props_vals, };
++
++@getprops2@
++identifier tocheck.i2props;
++initializer list[n2] i2props_vals;
++position p2;
++@@
++
++enum power_supply_property i2props@p2[] = { i2props_vals, };
++
++@script:ocaml@
++(_,i1props_vals) << getprops1.i1props_vals;
++(_,i2props_vals) << getprops2.i2props_vals;
++i1props << tocheck.i1props;
++i2props << tocheck.i2props;
++p1 << getprops1.p1;
++p2 << getprops2.p2;
++@@
++
++if i1props < i2props &&
++   List.sort compare i1props_vals = List.sort compare i2props_vals
++then
++  let msg +    Printf.sprintf
++      "WARNING %s and %s (line %d) have the same properties\n"
++      i1props i2props (List.hd p2).line in
++  print_report p1 msg
+
