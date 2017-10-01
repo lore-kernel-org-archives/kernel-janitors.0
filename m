@@ -1,31 +1,28 @@
-From: Markus Trippelsdorf <markus@trippelsdorf.de>
-Date: Mon, 23 Oct 2017 10:28:21 +0000
-Subject: Re: [PATCH] um: Use common error handling code in port_listen_fd()
-Message-Id: <20171023102821.GA238@x4>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 01 Oct 2017 03:08:28 +0000
+Subject: Re: [PATCH][net-next] net_sched: remove redundant assignment to ret
+Message-Id: <20171001.040828.1047378292144214219.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b16407cf-0caa-ea1d-7997-0e9a231468f3@users.sourceforge.net>
- <20171023084800.p26qcpb7iqyqrz4v@mwanda>
-In-Reply-To: <20171023084800.p26qcpb7iqyqrz4v@mwanda>
+References: <20170929140116.8642-1-colin.king@canonical.com>
+In-Reply-To: <20170929140116.8642-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, user-mode-linux-devel@lists.sourceforge.net, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: colin.king@canonical.com
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017.10.23 at 11:48 +0300, Dan Carpenter wrote:
-> This business of moving the error code to the bottom of the function
-> just makes the code less readable.  I know you never listen to anyone,
-> but you should stop doing it.
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Sep 2017 15:01:16 +0100
 
-How long have we to put up with this?
-He just keeps sending these crap patches without listening to anybody,
-thereby wasting valuable developer time.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignment of -EINVAL to variable ret is redundant as it
+> is being overwritten on the following error exit paths or
+> to the return value from the following call to basic_set_parms.
+> Fix this up by removing it. Cleans up clang warning message:
+> 
+> net/sched/cls_basic.c:185:2: warning: Value stored to 'err' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Even browsing LKML is no fun anymore, because his endless mindless patch
-series drags everything down qualitywise.
-
-David, would it be possible to simply ban him (SF Markus Elfring) from
-vger.kernel.org?
-
--- 
-Markus
+Applied.
