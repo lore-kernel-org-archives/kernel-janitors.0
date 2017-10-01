@@ -1,51 +1,53 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 04 Oct 2017 08:59:55 +0000
-Subject: Re: [PATCH] mmc: sdhci-of-at91: make function sdhci_at91_set_uhs_signaling static
-Message-Id: <CAPDyKFrLQdjd2nG3iH1_VQAFHSq7TQ44GUBhZXPHeO6b24KRBg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 01 Oct 2017 08:00:11 +0000
+Subject: Re: [PATCH] usb: misc: usbtest: Fix overflow in usbtest_do_ioctl()
+Message-Id: <20171001080010.krkbk73stkxzlwns@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003100636.26124-1-colin.king@canonical.com>
-In-Reply-To: <20171003100636.26124-1-colin.king@canonical.com>
+References: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
+In-Reply-To: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On 3 October 2017 at 12:06, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function sdhci_at91_set_uhs_signaling  is local to the source and does
-> not need to be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> symbol 'sdhci_at91_set_uhs_signaling' was not declared. Should it be
-> static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Sat, Sep 30, 2017 at 11:04:35AM -0700, Deepa Dinamani wrote:
+> On Sat, Sep 30, 2017 at 1:15 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > There used to be a test against "if (param->sglen > MAX_SGLEN)" but it
+> > was removed during a refactor.  It leads to an integer overflow and a
+> > stack overflow in test_queue() if we try to create a too large urbs[]
+> > array on the stack.
+> >
+> > There is a second integer overflow in test_queue() as well if
+> > "param->iterations" is too high.  I don't immediately see that it's
+> > harmful but I've added a check to prevent it and silence the static
+> > checker warning.
+> >
+> > Fixes: 18fc4ebdc705 ("usb: misc: usbtest: Remove timeval usage")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> > diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
+> > index eee82ca55b7b..113e38bfe0ef 100644
+> > --- a/drivers/usb/misc/usbtest.c
+> > +++ b/drivers/usb/misc/usbtest.c
+> > @@ -1964,6 +1964,9 @@ test_queue(struct usbtest_dev *dev, struct usbtest_param_32 *param,
+> >         int                     status = 0;
+> >         struct urb              *urbs[param->sglen];
+> >
+> > +       if (!param->sglen || param->iterations > UINT_MAX / param->sglen)
+> 
+> Would adding a comment here that we are checking for overflow of
+> context.count make sense?
+> It takes some time to figure out that context.count is unsigned and
+> hence the check is against UINT_MAX here.
 
-Thanks, applied for next!
+To be honest, this is a very typical sort of integer overflow test and
+it looks pretty self explanatory to me.  We're avoiding a divide by zero
+bug and we're making sure the result isn't more than UINT_MAX.
 
-Kind regards
-Uffe
+It has nothing to do with context.count.  param->iterations and
+param->sglen are both unsinged int, so if we do "param->iterations *
+param->sglen" that will overflow.
 
-> ---
->  drivers/mmc/host/sdhci-of-at91.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-> index 4e47ed6bc716..682c573e20a7 100644
-> --- a/drivers/mmc/host/sdhci-of-at91.c
-> +++ b/drivers/mmc/host/sdhci-of-at91.c
-> @@ -114,7 +114,8 @@ static void sdhci_at91_set_power(struct sdhci_host *host, unsigned char mode,
->         sdhci_set_power_noreg(host, mode, vdd);
->  }
->
-> -void sdhci_at91_set_uhs_signaling(struct sdhci_host *host, unsigned int timing)
-> +static void sdhci_at91_set_uhs_signaling(struct sdhci_host *host,
-> +                                        unsigned int timing)
->  {
->         if (timing = MMC_TIMING_MMC_DDR52)
->                 sdhci_writeb(host, SDMMC_MC1R_DDR, SDMMC_MC1R);
-> --
-> 2.14.1
->
+regards,
+dan carpenter
+
