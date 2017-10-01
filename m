@@ -1,67 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 20:17:29 +0000
-Subject: [PATCH 2/2] iio/accel/stk8ba50: Improve unlocking of a mutex in stk8ba50_read_raw()
-Message-Id: <8e9436af-440e-b4a8-5024-1f2a51c41b6b@users.sourceforge.net>
+Date: Sun, 01 Oct 2017 19:49:30 +0000
+Subject: [PATCH 1/2] atm: Delete an error message for a failed memory allocation in adummy_init()
+Message-Id: <500829be-1d9b-90b0-c675-854463055c97@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
-In-Reply-To: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+References: <8fe2ca8a-e1f7-d492-db69-c52b66143ac6@users.sourceforge.net>
+In-Reply-To: <8fe2ca8a-e1f7-d492-db69-c52b66143ac6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 22:00:42 +0200
+Date: Sun, 1 Oct 2017 21:31:32 +0200
 
-Adjust jump targets so that a call of the function "mutex_unlock" is stored
-only once in a case branch of this function implementation.
-Replace two calls by goto statements.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iio/accel/stk8ba50.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/atm/adummy.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iio/accel/stk8ba50.c b/drivers/iio/accel/stk8ba50.c
-index afe90567ad37..ffc26b5d1fad 100644
---- a/drivers/iio/accel/stk8ba50.c
-+++ b/drivers/iio/accel/stk8ba50.c
-@@ -221,20 +221,24 @@ static int stk8ba50_read_raw(struct iio_dev *indio_dev,
- 			return -EBUSY;
- 		mutex_lock(&data->lock);
- 		ret = stk8ba50_set_power(data, STK8BA50_MODE_NORMAL);
--		if (ret < 0) {
--			mutex_unlock(&data->lock);
--			return -EINVAL;
--		}
-+		if (ret < 0)
-+			goto e_inval;
-+
- 		ret = stk8ba50_read_accel(data, chan->address);
- 		if (ret < 0) {
- 			stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
--			mutex_unlock(&data->lock);
--			return -EINVAL;
-+e_inval:
-+			ret = -EINVAL;
-+			goto unlock;
- 		}
- 		*val = sign_extend32(ret >> STK8BA50_DATA_SHIFT, 9);
--		stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
-+		ret = stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
-+unlock:
- 		mutex_unlock(&data->lock);
--		return IIO_VAL_INT;
-+		if (ret >= 0)
-+			ret = IIO_VAL_INT;
-+
-+		return ret;
- 	case IIO_CHAN_INFO_SCALE:
- 		*val = 0;
- 		*val2 = stk8ba50_scale_table[data->range].scale_val;
+diff --git a/drivers/atm/adummy.c b/drivers/atm/adummy.c
+index 8d98130ecd40..94b73ddfb731 100644
+--- a/drivers/atm/adummy.c
++++ b/drivers/atm/adummy.c
+@@ -150,7 +150,6 @@ static int __init adummy_init(void)
+ 	adummy_dev = kzalloc(sizeof(struct adummy_dev),
+ 						   GFP_KERNEL);
+ 	if (!adummy_dev) {
+-		printk(KERN_ERR DEV_LABEL ": kzalloc() failed\n");
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
 -- 
-2.14.3
+2.14.2
 
