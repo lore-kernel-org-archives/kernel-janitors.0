@@ -1,46 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 31 Oct 2017 16:56:21 +0000
-Subject: Re: Sony-laptop: Use common error handling code in sony_nc_setup_rfkill()
-Message-Id: <136e2b05-a601-f8de-dd84-d72b765ea4df@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 16:45:50 +0000
+Subject: [PATCH] ARM: footbridge: Delete an error message for a failed memory allocation in dc21285_setup()
+Message-Id: <a7a12144-a9fa-9c38-ff2f-c8f70ca451a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
- <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
- <dadb7068-e4ed-b91d-ce31-aca2d6afd9f3@users.sourceforge.net>
- <CAHp75VeDYakxD_g+N0RcmXFmGR3Du+p2yRaTiYhNxgr+0SQ9og@mail.gmail.com>
-In-Reply-To: <CAHp75VeDYakxD_g+N0RcmXFmGR3Du+p2yRaTiYhNxgr+0SQ9og@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
->> I performed another simple software refactoring.
-> 
-> Which is _useless_ per se
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 18:36:56 +0200
 
-I disagree in this case because the goal of a refactoring should be
-to adjust something in a desired direction without changing
-the provided functionality.
+Omit an extra message for a memory allocation failure in this function.
 
+This issue was detected by using the Coccinelle software.
 
-> by the reasons you had been told already _several_ times about.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-footbridge/dc21285.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-There can be other reasons why you do not like a concrete change.
+diff --git a/arch/arm/mach-footbridge/dc21285.c b/arch/arm/mach-footbridge/dc21285.c
+index 96a3d73ef4bf..e40c78358b16 100644
+--- a/arch/arm/mach-footbridge/dc21285.c
++++ b/arch/arm/mach-footbridge/dc21285.c
+@@ -258,10 +258,8 @@ int __init dc21285_setup(int nr, struct pci_sys_data *sys)
+ 		return 0;
+ 
+ 	res = kzalloc(sizeof(struct resource) * 2, GFP_KERNEL);
+-	if (!res) {
+-		printk("out of memory for root bus resources");
++	if (!res)
+ 		return 0;
+-	}
+ 
+ 	res[0].flags = IORESOURCE_MEM;
+ 	res[0].name  = "Footbridge non-prefetch";
+-- 
+2.14.2
 
-
-> Either you do a real fix (propagate correct error codes
-> to upper layers), or just don't bother at all.
-
-Have the involved contributors any preferences on organisation
-of corresponding update steps?
-
-* Correct exception handling first and then apply the shown
-  source code reduction again.
-
-* Combine better exception handling with smaller code
-  in one patch.
-
-* Addition of the tag “Fixes” in the commit message?
-
-Regards,
-Markus
