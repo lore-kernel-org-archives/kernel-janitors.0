@@ -1,98 +1,39 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 16:42:00 +0000
-Subject: Re: [PATCH 1/2] iio/accel/stk8ba50: Use common error handling code in stk8ba50_probe()
-Message-Id: <20171026174200.5c00b06d@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 20:40:44 +0000
+Subject: [PATCH 2/2] ARM: s3c64xx: Delete an unnecessary return statement in samsung_bl_set()
+Message-Id: <6d599b4d-93e3-3e3e-875a-f24ee879ca74@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
-        <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
-In-Reply-To: <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
+References: <0b695686-2e07-910d-6278-91d54a1b0b2f@users.sourceforge.net>
+In-Reply-To: <0b695686-2e07-910d-6278-91d54a1b0b2f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 25 Oct 2017 22:16:31 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 22:30:55 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Oct 2017 21:36:03 +0200
-> 
-> * Add a jump target so that a specific error message is stored only once
->   at the end of this function implementation.
-> 
-> * Replace two calls of the function "dev_err" by goto statements.
-> 
-> * Adjust condition checks.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Again readability is hurt by the more complex code flow.  As such
-this is never going to be an acceptable change in the kernel.
+The script "checkpatch.pl" pointed information out like the following.
 
-Sorry Markus, but all patches have to pass a test on whether
-any advantages to outweight complexity  This is definitely not
-true here.
+WARNING: void function return statements are not generally useful
 
-Again, a general kernel development rule is to float only one
-patch of a given type until you have had feedback on it.  These
-backwards goto cases are sufficiently different from your earlier
-patch that got reviews that, at most, you should have sent one to the
-list and then given time for it to be properly reviewed (up to a week
-on IIO list typically).  That would have saved your time and mine.
+Thus remove such a statement in the affected function.
 
-As I said in one of the other patches, I always reply to all
-patches I am rejecting so that anyone coming across them later
-on their own from an archive or similar can immediately see the
-reasons why they are a bad idea without having to know the mailing
-list context.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-s3c64xx/dev-backlight.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Jonathan
-
-> ---
->  drivers/iio/accel/stk8ba50.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/stk8ba50.c b/drivers/iio/accel/stk8ba50.c
-> index 576b6b140f08..afe90567ad37 100644
-> --- a/drivers/iio/accel/stk8ba50.c
-> +++ b/drivers/iio/accel/stk8ba50.c
-> @@ -426,16 +426,13 @@ static int stk8ba50_probe(struct i2c_client *client,
->  	/* Set up interrupts */
->  	ret = i2c_smbus_write_byte_data(client,
->  			STK8BA50_REG_INTEN2, STK8BA50_DREADY_INT_MASK);
-> -	if (ret < 0) {
-> -		dev_err(&client->dev, "failed to set up interrupts\n");
-> -		goto err_power_off;
-> -	}
-> +	if (ret)
-> +		goto report_failure;
-> +
->  	ret = i2c_smbus_write_byte_data(client,
->  			STK8BA50_REG_INTMAP2, STK8BA50_DREADY_INT_MAP);
-> -	if (ret < 0) {
-> -		dev_err(&client->dev, "failed to set up interrupts\n");
-> -		goto err_power_off;
-> -	}
-> +	if (ret)
-> +		goto report_failure;
->  
->  	if (client->irq > 0) {
->  		ret = devm_request_threaded_irq(&client->dev, client->irq,
-> @@ -495,6 +492,10 @@ static int stk8ba50_probe(struct i2c_client *client,
->  err_power_off:
->  	stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
->  	return ret;
-> +
-> +report_failure:
-> +	dev_err(&client->dev, "failed to set up interrupts\n");
-> +	goto err_power_off;
-
-Simple code flow is replaced by more complex flow for little gain.
-Not a good idea.
-
->  }
->  
->  static int stk8ba50_remove(struct i2c_client *client)
+diff --git a/arch/arm/mach-s3c64xx/dev-backlight.c b/arch/arm/mach-s3c64xx/dev-backlight.c
+index 7e2db762c442..7ef8b9019344 100644
+--- a/arch/arm/mach-s3c64xx/dev-backlight.c
++++ b/arch/arm/mach-s3c64xx/dev-backlight.c
+@@ -141,5 +141,4 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
+ 	kfree(samsung_bl_data);
+ err_data:
+ 	kfree(samsung_bl_device);
+-	return;
+ }
+-- 
+2.14.2
 
