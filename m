@@ -1,47 +1,41 @@
-From: Jean Delvare <jdelvare@suse.de>
-Date: Tue, 03 Oct 2017 12:20:11 +0000
-Subject: Re: [PATCH] firmware: google: make structure gsmi_dev static
-Message-Id: <20171003142011.4bd5a033@endymion>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Oct 2017 22:05:25 +0000
+Subject: [PATCH] input: synaptics-rmi4: make array rmi_f54_report_type_names static
+Message-Id: <20171002220525.11339-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003084048.24375-1-colin.king@canonical.com>
-In-Reply-To: <20171003084048.24375-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mike Waychison <mikew@google.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Andrew Duggan <aduggan@synaptics.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue,  3 Oct 2017 09:40:48 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure gsmi_dev is local to the source and does not need to be
-> in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'gsmi_dev' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/firmware/google/gsmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-> index c8f169bf2e27..734146eec1b9 100644
-> --- a/drivers/firmware/google/gsmi.c
-> +++ b/drivers/firmware/google/gsmi.c
-> @@ -84,7 +84,7 @@ struct gsmi_buf {
->  	u32 address;			/* physical address of buffer */
->  };
->  
-> -struct gsmi_device {
-> +static struct gsmi_device {
->  	struct platform_device *pdev;	/* platform device */
->  	struct gsmi_buf *name_buf;	/* variable name buffer */
->  	struct gsmi_buf *data_buf;	/* generic data buffer */
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Jean Delvare <jdelvare@suse.de>
+The array rmi_f54_report_type_names is local to the source and does
+not need to be in global scope, so make it static. Also make the array
+const char * const
 
-Thanks,
+Cleans up sparse warning:
+symbol 'rmi_f54_report_type_names' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/rmi4/rmi_f54.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
+index f5206e2c767e..70f6310f1d15 100644
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -73,7 +73,7 @@ enum rmi_f54_report_type {
+ 	F54_MAX_REPORT_TYPE,
+ };
+ 
+-const char *rmi_f54_report_type_names[] = {
++static const char * const rmi_f54_report_type_names[] = {
+ 	[F54_REPORT_NONE]		= "Unknown",
+ 	[F54_8BIT_IMAGE]		= "Normalized 8-Bit Image",
+ 	[F54_16BIT_IMAGE]		= "Normalized 16-Bit Image",
 -- 
-Jean Delvare
-SUSE L3 Support
+2.14.1
+
