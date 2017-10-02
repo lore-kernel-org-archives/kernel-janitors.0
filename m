@@ -1,29 +1,43 @@
-From: <Woojung.Huh@microchip.com>
-Date: Mon, 30 Oct 2017 14:32:59 +0000
-Subject: RE: [PATCH] lan78xx: Use common error handling code in lan78xx_phy_init()
-Message-Id: <9235D6609DB808459E95D78E17F2E43D40B9D816@CHN-SV-EXMX02.mchp-main.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 18:01:28 +0000
+Subject: [PATCH 4/6] ARM: s3c24xx: Delete an error message for a failed memory allocation in s3c2412_iotiming
+Message-Id: <381d4a29-d777-93ee-ed4d-3f41a5ed97cc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
-In-Reply-To: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net, netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-PiBGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBbbWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9y
-Z2UubmV0XQ0KPiBTZW50OiBTYXR1cmRheSwgT2N0b2JlciAyOCwgMjAxNyA0OjU3IFBNDQo+IFRv
-OiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBVTkdM
-aW51eERyaXZlcjsNCj4gV29vanVuZyBIdWggLSBDMjE2OTkNCj4gQ2M6IExLTUw7IGtlcm5lbC1q
-YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBsYW43OHh4OiBVc2Ug
-Y29tbW9uIGVycm9yIGhhbmRsaW5nIGNvZGUgaW4NCj4gbGFuNzh4eF9waHlfaW5pdCgpDQo+IA0K
-PiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+
-IERhdGU6IFNhdCwgMjggT2N0IDIwMTcgMjI6NDI6NTIgKzAyMDANCj4gDQo+ICogQWRkIGEganVt
-cCB0YXJnZXQgc28gdGhhdCBhIHNwZWNpZmljIGVycm9yIG1lc3NhZ2UgaXMgc3RvcmVkIG9ubHkg
-b25jZQ0KPiAgIGF0IHRoZSBlbmQgb2YgdGhpcyBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvbi4NCj4g
-DQo+ICogUmVwbGFjZSB0d28gY2FsbHMgb2YgdGhlIGZ1bmN0aW9uICJuZXRkZXZfZXJyIiBieSBn
-b3RvIHN0YXRlbWVudHMuDQo+IA0KPiAqIEFkanVzdCB0d28gY29uZGl0aW9uIGNoZWNrcy4NCj4g
-DQo+IFRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3
-YXJlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMu
-c291cmNlZm9yZ2UubmV0Pg0KPiAtLS0NCg0KUmV2aWV3ZWQtYnk6IFdvb2p1bmcgSHVoIDxXb29q
-dW5nLkh1aEBtaWNyb2NoaXAuY29tPg0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:37:07 +0200
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+index 28b13951de87..f09d5d5ea7ed 100644
+--- a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
++++ b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+@@ -243,10 +243,8 @@ int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
+ 			continue;
+ 
+ 		bt = kzalloc(sizeof(struct s3c2412_iobank_timing), GFP_KERNEL);
+-		if (!bt) {
+-			printk(KERN_ERR "%s: no memory for bank\n", __func__);
++		if (!bt)
+ 			return -ENOMEM;
+-		}
+ 
+ 		timings->bank[bank].io_2412 = bt;
+ 		s3c2412_iotiming_getbank(cfg, bt, bank);
+-- 
+2.14.2
+
