@@ -1,112 +1,40 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sun, 01 Oct 2017 14:28:33 +0000
-Subject: Re: hwmon: (xgene) Fix up error handling path mixup in 'xgene_hwmon_probe()'
-Message-Id: <20171001142833.GA688@roeck-us.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Oct 2017 14:59:31 +0000
+Subject: [PATCH] x86/intel_rdt/cqm: make integer rmid_limbo_count static
+Message-Id: <20171002145931.27479-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170923064415.25307-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170923064415.25307-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 23, 2017 at 08:44:15AM +0200, Christophe Jaillet wrote:
-> Commit 2ca492e22cb7 has moved the call to 'kfifo_alloc()' from after the
-> main 'if' statement to before it.
-> But it has not updated the error handling paths accordingly.
-> 
-> Fix all that:
->    - if 'kfifo_alloc()' fails we can return directly
->    - direct returns after 'kfifo_alloc()' must now go to 'out_mbox_free'
->    - 'goto out_mbox_free' must be replaced by 'goto out', otherwise the
->      '[pcc_]mbox_free_channel()' call will be missed.
-> 
-> Fixes: 2ca492e22cb7 ("hwmon: (xgene) Fix crash when alarm occurs before driver probe")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+The unsigned int rmid_limbo_count is local to the source and does
+not need to be in global scope, so make it static.
 
-Thanks,
-Guenter
+Cleans up sparse warning:
+symbol 'rmid_limbo_count' was not declared. Should it be static?
 
-> ---
->  drivers/hwmon/xgene-hwmon.c | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hwmon/xgene-hwmon.c b/drivers/hwmon/xgene-hwmon.c
-> index 9c0dbb8191ad..e1be61095532 100644
-> --- a/drivers/hwmon/xgene-hwmon.c
-> +++ b/drivers/hwmon/xgene-hwmon.c
-> @@ -630,7 +630,7 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  			 sizeof(struct slimpro_resp_msg) * ASYNC_MSG_FIFO_SIZE,
->  			 GFP_KERNEL);
->  	if (rc)
-> -		goto out_mbox_free;
-> +		return -ENOMEM;
->  
->  	INIT_WORK(&ctx->workq, xgene_hwmon_evt_work);
->  
-> @@ -646,7 +646,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  		if (IS_ERR(ctx->mbox_chan)) {
->  			dev_err(&pdev->dev,
->  				"SLIMpro mailbox channel request failed\n");
-> -			return -ENODEV;
-> +			rc = -ENODEV;
-> +			goto out_mbox_free;
->  		}
->  	} else {
->  		struct acpi_pcct_hw_reduced *cppc_ss;
-> @@ -654,7 +655,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  		if (device_property_read_u32(&pdev->dev, "pcc-channel",
->  					     &ctx->mbox_idx)) {
->  			dev_err(&pdev->dev, "no pcc-channel property\n");
-> -			return -ENODEV;
-> +			rc = -ENODEV;
-> +			goto out_mbox_free;
->  		}
->  
->  		cl->rx_callback = xgene_hwmon_pcc_rx_cb;
-> @@ -662,7 +664,8 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  		if (IS_ERR(ctx->mbox_chan)) {
->  			dev_err(&pdev->dev,
->  				"PPC channel request failed\n");
-> -			return -ENODEV;
-> +			rc = -ENODEV;
-> +			goto out_mbox_free;
->  		}
->  
->  		/*
-> @@ -675,13 +678,13 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  		if (!cppc_ss) {
->  			dev_err(&pdev->dev, "PPC subspace not found\n");
->  			rc = -ENODEV;
-> -			goto out_mbox_free;
-> +			goto out;
->  		}
->  
->  		if (!ctx->mbox_chan->mbox->txdone_irq) {
->  			dev_err(&pdev->dev, "PCC IRQ not supported\n");
->  			rc = -ENODEV;
-> -			goto out_mbox_free;
-> +			goto out;
->  		}
->  
->  		/*
-> @@ -696,14 +699,14 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
->  		} else {
->  			dev_err(&pdev->dev, "Failed to get PCC comm region\n");
->  			rc = -ENODEV;
-> -			goto out_mbox_free;
-> +			goto out;
->  		}
->  
->  		if (!ctx->pcc_comm_addr) {
->  			dev_err(&pdev->dev,
->  				"Failed to ioremap PCC comm region\n");
->  			rc = -ENOMEM;
-> -			goto out_mbox_free;
-> +			goto out;
->  		}
->  
->  		/*
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kernel/cpu/intel_rdt_monitor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+index 30827510094b..681450eee428 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
++++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+@@ -51,7 +51,7 @@ static LIST_HEAD(rmid_free_lru);
+  *     may have a occupancy value > intel_cqm_threshold. User can change
+  *     the threshold occupancy value.
+  */
+-unsigned int rmid_limbo_count;
++static unsigned int rmid_limbo_count;
+ 
+ /**
+  * @rmid_entry - The entry in the limbo and free lists.
+-- 
+2.14.1
+
