@@ -1,55 +1,38 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 05 Oct 2017 00:00:28 +0000
-Subject: Re: [PATCH] input: synaptics-rmi4: make array rmi_f54_report_type_names static
-Message-Id: <20171005000028.GA16508@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 18:00:27 +0000
+Subject: [PATCH 3/6] ARM: s3c2410: Fix a typo in a comment line
+Message-Id: <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171002220525.11339-1-colin.king@canonical.com>
- <20171002221852.GA12530@roeck-us.net>
-In-Reply-To: <20171002221852.GA12530@roeck-us.net>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Colin King <colin.king@canonical.com>, Andrew Duggan <aduggan@synaptics.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Oct 02, 2017 at 03:18:52PM -0700, Guenter Roeck wrote:
-> On Mon, Oct 02, 2017 at 11:05:25PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The array rmi_f54_report_type_names is local to the source and does
-> > not need to be in global scope, so make it static. Also make the array
-> > const char * const
-> > 
-> > Cleans up sparse warning:
-> > symbol 'rmi_f54_report_type_names' was not declared. Should it be static?
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:34:36 +0200
 
-Applied, thank you.
+Adjust a word in this function description.
 
-> 
-> > ---
-> >  drivers/input/rmi4/rmi_f54.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
-> > index f5206e2c767e..70f6310f1d15 100644
-> > --- a/drivers/input/rmi4/rmi_f54.c
-> > +++ b/drivers/input/rmi4/rmi_f54.c
-> > @@ -73,7 +73,7 @@ enum rmi_f54_report_type {
-> >  	F54_MAX_REPORT_TYPE,
-> >  };
-> >  
-> > -const char *rmi_f54_report_type_names[] = {
-> > +static const char * const rmi_f54_report_type_names[] = {
-> >  	[F54_REPORT_NONE]		= "Unknown",
-> >  	[F54_8BIT_IMAGE]		= "Normalized 8-Bit Image",
-> >  	[F54_16BIT_IMAGE]		= "Normalized 16-Bit Image",
-> > -- 
-> > 2.14.1
-> > 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+index c18769b5f15a..d5f1f06e4811 100644
+--- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+@@ -206,7 +206,7 @@ static int calc_tacc(unsigned int cyc, int nwait_en,
+ }
+ 
+ /**
+- * s3c2410_calc_bank - calculate bank timing infromation
++ * s3c2410_calc_bank - calculate bank timing information
+  * @cfg: The configuration we need to calculate for.
+  * @bt: The bank timing information.
+  *
 -- 
-Dmitry
+2.14.2
+
