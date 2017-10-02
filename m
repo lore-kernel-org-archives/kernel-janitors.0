@@ -1,46 +1,41 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 10 Oct 2017 18:05:08 +0000
-Subject: NACK: [PATCH][net-next] ipv6: fix incorrect bitwise operator used on rt6i_flags
-Message-Id: <105be222-2b82-a998-dfc6-925f330e3382@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 02 Oct 2017 14:40:33 +0000
+Subject: [PATCH] ACPI / sysfs: make function param_set_trace_method_name static
+Message-Id: <20171002144033.26965-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171010175527.21982-1-colin.king@canonical.com>
-In-Reply-To: <20171010175527.21982-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/10/17 18:55, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The use of the | operator always leads to true on the expression
-> (rt->rt6i_flags | RTF_CACHE) which looks rather suspect to me. I
-> believe this is fixed by using & instead to just check the
-> RTF_CACHE entry bit.
-> 
-> Detected by CoverityScan, CID#1457747 ("Wrong operator used")
-> 
-> Fixes: 35732d01fe31 ("ipv6: introduce a hash table to store dst cache")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/ipv6/route.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-> index 6db1541eaa7b..0556d1ee189c 100644
-> --- a/net/ipv6/route.c
-> +++ b/net/ipv6/route.c
-> @@ -1425,7 +1425,7 @@ int rt6_remove_exception_rt(struct rt6_info *rt)
->  	int err;
->  
->  	if (!from ||
-> -	    !(rt->rt6i_flags | RTF_CACHE))
-> +	    !(rt->rt6i_flags & RTF_CACHE))
->  		return -EINVAL;
->  
->  	if (!rcu_access_pointer(from->rt6i_exception_bucket))
-> 
-Nack that, seems like this occurs more than once and I failed to spot
-the others.
+From: Colin Ian King <colin.king@canonical.com>
+
+The function param_set_trace_method_name is local to the source and does
+not need to be in global scope, so make it static.
+
+Cleans up sparse warning:
+symbol 'param_set_trace_method_name' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/sysfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
+index 78a5a23010ab..ca80e13aeeb1 100644
+--- a/drivers/acpi/sysfs.c
++++ b/drivers/acpi/sysfs.c
+@@ -168,7 +168,8 @@ module_param_cb(debug_level, &param_ops_debug_level, &acpi_dbg_level, 0644);
+ 
+ static char trace_method_name[1024];
+ 
+-int param_set_trace_method_name(const char *val, const struct kernel_param *kp)
++static int param_set_trace_method_name(const char *val,
++				       const struct kernel_param *kp)
+ {
+ 	u32 saved_flags = 0;
+ 	bool is_abs_path = true;
+-- 
+2.14.1
 
