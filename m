@@ -1,70 +1,38 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 22 Oct 2017 08:23:01 +0000
-Subject: [PATCH] mtd: cfi_cmdset_0001: Fix a potential double mutex_lock
-Message-Id: <20171022082301.26220-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 18:04:40 +0000
+Subject: [PATCH 6/6] ARM: s3c2412: Fix a typo in a comment line
+Message-Id: <e2567b9e-d556-bac2-a810-ca478f4398bd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-If 'chip->state = FL_SYNCING', we will 'goto retry' with the mutex
-'&shared->lock' already taken.
-In such a case, the 'mutex_lock' at line 927 can never succeed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:41:10 +0200
 
-In order to avoid a deadlock, move the 'mutex_lock(&shared->lock)' at the
-very end of the block.
+Adjust a word in this function description.
 
-This has been spotted with the following coccinelle script:
-
-@find@
-expression x, t;
-@@
-
-	mutex_lock(x);
-	... when != mutex_unlock(x)
-	mutex_lock(t);
-
-@@
-expression find.t;
-expression find.x;
-@@
-
-*	mutex_lock(t);
-	... when != mutex_unlock(t)
-*	mutex_lock(x);
-
-
-Fixes: 3afe7eb37f4d ("[MTD] [NOR] fix cfi_cmdset_0001 FL_SYNCING race (take 2)")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Review carefuly, untested.
----
- drivers/mtd/chips/cfi_cmdset_0001.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
-index 5e1b68cbcd0a..bddf407a366d 100644
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -952,7 +952,6 @@ static int get_chip(struct map_info *map, struct flchip *chip, unsigned long adr
- 				mutex_unlock(&contender->mutex);
- 				return ret;
- 			}
--			mutex_lock(&shared->lock);
+diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+index 01bcd7d5dac7..c5b12f6b02b5 100644
+--- a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
++++ b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+@@ -35,7 +35,7 @@
+ #define print_ns(x) ((x) / 10), ((x) % 10)
  
- 			/* We should not own chip if it is already
- 			 * in FL_SYNCING state. Put contender and retry. */
-@@ -962,6 +961,8 @@ static int get_chip(struct map_info *map, struct flchip *chip, unsigned long adr
- 				goto retry;
- 			}
- 			mutex_unlock(&contender->mutex);
-+
-+			mutex_lock(&shared->lock);
- 		}
- 
- 		/* Check if we already have suspended erase
+ /**
+- * s3c2412_print_timing - print timing infromation via printk.
++ * s3c2412_print_timing - print timing information via printk.
+  * @pfx: The prefix to print each line with.
+  * @iot: The IO timing information
+  */
 -- 
-2.14.1
+2.14.2
 
