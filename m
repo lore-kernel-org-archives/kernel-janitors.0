@@ -1,40 +1,93 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Oct 2017 14:59:31 +0000
-Subject: [PATCH] x86/intel_rdt/cqm: make integer rmid_limbo_count static
-Message-Id: <20171002145931.27479-1-colin.king@canonical.com>
+Date: Mon, 02 Oct 2017 21:51:49 +0000
+Subject: [PATCH] staging: rtlwifi: make various structures static
+Message-Id: <20171002215149.11027-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The unsigned int rmid_limbo_count is local to the source and does
-not need to be in global scope, so make it static.
+The structures created from macros RTL_DEBUG_IMPL_MAC_SERIES,
+RTL_DEBUG_IMPL_BB_SERIES, RTL_DEBUG_IMPL_RF_SERIES and
+RTL_DEBUG_IMPL_CAM_SERIES are all local to the source and do
+not need to be in global scope, so make them static.
 
-Cleans up sparse warning:
-symbol 'rmid_limbo_count' was not declared. Should it be static?
+Cleans up 37 sparse warnings of the form:
+symbol 'rtl_debug_priv_mac_0' was not declared. Should it be static?
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_monitor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtlwifi/debug.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-index 30827510094b..681450eee428 100644
---- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-@@ -51,7 +51,7 @@ static LIST_HEAD(rmid_free_lru);
-  *     may have a occupancy value > intel_cqm_threshold. User can change
-  *     the threshold occupancy value.
-  */
--unsigned int rmid_limbo_count;
-+static unsigned int rmid_limbo_count;
+diff --git a/drivers/staging/rtlwifi/debug.c b/drivers/staging/rtlwifi/debug.c
+index 7446d71c41d1..63a9b70ec60f 100644
+--- a/drivers/staging/rtlwifi/debug.c
++++ b/drivers/staging/rtlwifi/debug.c
+@@ -127,10 +127,10 @@ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
+ 	return 0;
+ }
  
- /**
-  * @rmid_entry - The entry in the limbo and free lists.
+-#define RTL_DEBUG_IMPL_MAC_SERIES(page, addr)		\
+-struct rtl_debugfs_priv rtl_debug_priv_mac_ ##page = {	\
+-	.cb_read = rtl_debug_get_mac_page,		\
+-	.cb_data = addr,				\
++#define RTL_DEBUG_IMPL_MAC_SERIES(page, addr)			\
++static struct rtl_debugfs_priv rtl_debug_priv_mac_ ##page = {	\
++	.cb_read = rtl_debug_get_mac_page,			\
++	.cb_data = addr,					\
+ }
+ 
+ RTL_DEBUG_IMPL_MAC_SERIES(0, 0x0000);
+@@ -169,10 +169,10 @@ static int rtl_debug_get_bb_page(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-#define RTL_DEBUG_IMPL_BB_SERIES(page, addr)		\
+-struct rtl_debugfs_priv rtl_debug_priv_bb_ ##page = {	\
+-	.cb_read = rtl_debug_get_bb_page,		\
+-	.cb_data = addr,				\
++#define RTL_DEBUG_IMPL_BB_SERIES(page, addr)			\
++static struct rtl_debugfs_priv rtl_debug_priv_bb_ ##page = {	\
++	.cb_read = rtl_debug_get_bb_page,			\
++	.cb_data = addr,					\
+ }
+ 
+ RTL_DEBUG_IMPL_BB_SERIES(8, 0x0800);
+@@ -216,10 +216,10 @@ static int rtl_debug_get_reg_rf(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-#define RTL_DEBUG_IMPL_RF_SERIES(page, addr)		\
+-struct rtl_debugfs_priv rtl_debug_priv_rf_ ##page = {	\
+-	.cb_read = rtl_debug_get_reg_rf,		\
+-	.cb_data = addr,				\
++#define RTL_DEBUG_IMPL_RF_SERIES(page, addr)			\
++static struct rtl_debugfs_priv rtl_debug_priv_rf_ ##page = {	\
++	.cb_read = rtl_debug_get_reg_rf,			\
++	.cb_data = addr,					\
+ }
+ 
+ RTL_DEBUG_IMPL_RF_SERIES(a, RF90_PATH_A);
+@@ -271,10 +271,10 @@ static int rtl_debug_get_cam_register(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-#define RTL_DEBUG_IMPL_CAM_SERIES(page, addr)		\
+-struct rtl_debugfs_priv rtl_debug_priv_cam_ ##page = {	\
+-	.cb_read = rtl_debug_get_cam_register,		\
+-	.cb_data = addr,				\
++#define RTL_DEBUG_IMPL_CAM_SERIES(page, addr)			\
++static struct rtl_debugfs_priv rtl_debug_priv_cam_ ##page = {	\
++	.cb_read = rtl_debug_get_cam_register,			\
++	.cb_data = addr,					\
+ }
+ 
+ RTL_DEBUG_IMPL_CAM_SERIES(1, 0);
 -- 
 2.14.1
 
