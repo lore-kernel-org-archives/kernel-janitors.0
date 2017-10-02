@@ -1,27 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Oct 2017 03:20:16 +0000
-Subject: Re: [PATCH][net-next] net: mpls: make function ipgre_mpls_encap_hlen static
-Message-Id: <20171011.202016.1730207765050552906.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Oct 2017 17:58:02 +0000
+Subject: [PATCH 1/6] ARM: s3c24xx: Delete an error message for a failed memory allocation in s3c2410_iotiming
+Message-Id: <1207a56d-3fa6-9c80-d9fe-4b56b11ff0a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171011095328.17546-1-colin.king@canonical.com>
-In-Reply-To: <20171011095328.17546-1-colin.king@canonical.com>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: dsahern@gmail.com, rshearma@brocade.com, roopa@cumulusnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Oct 2017 10:53:28 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Oct 2017 19:14:20 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function ipgre_mpls_encap_hlen is local to the source and
-> does not need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'ipgre_mpls_encap_hlen' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Omit an extra message for a memory allocation failure in this function.
 
-Applied, thanks Colin.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+index b7970f1fa3d5..f587c78fba33 100644
+--- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+@@ -454,10 +454,8 @@ int s3c2410_iotiming_get(struct s3c_cpufreq_config *cfg,
+ 			       __func__, bank, bankcon);
+ 
+ 		bt = kzalloc(sizeof(struct s3c2410_iobank_timing), GFP_KERNEL);
+-		if (!bt) {
+-			printk(KERN_ERR "%s: no memory for bank\n", __func__);
++		if (!bt)
+ 			return -ENOMEM;
+-		}
+ 
+ 		/* find out in nWait is enabled for bank. */
+ 
+-- 
+2.14.2
+
