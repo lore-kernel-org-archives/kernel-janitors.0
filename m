@@ -1,45 +1,53 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Tue, 17 Oct 2017 20:47:34 +0000
-Subject: Re: [PATCH][ipmi-next] ipmi_si: fix memory leak on new_smi
-Message-Id: <1fe921ca-73d9-6ccf-d7dc-8174340369ae@acm.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Oct 2017 08:40:05 +0000
+Subject: [PATCH] ARM: vexpress/spc: Delete an error message for a failed memory allocation in two functions
+Message-Id: <557666e2-45b6-8f47-2fc9-756bd7f23541@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171017155452.24807-1-colin.king@canonical.com>
-In-Reply-To: <20171017155452.24807-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, openipmi-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 10/17/2017 10:54 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The error exit path omits kfree'ing the allocated new_smi, causing a memory
-> leak.  Fix this by kfree'ing new_smi.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Oct 2017 10:30:07 +0200
 
-Thanks, queued for the next release.
+Omit extra messages for a memory allocation failure in these functions.
 
--corey
+This issue was detected by using the Coccinelle software.
 
-> Detected by CoverityScan, CID#14582571 ("Resource Leak")
->
-> Fixes: 7e030d6dff71 ("ipmi: Prefer ACPI system interfaces over SMBIOS ones")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/char/ipmi/ipmi_si_intf.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index 55e0c42bee4d..4c16af64f73a 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -2004,6 +2004,7 @@ int ipmi_si_add_smi(struct si_sm_io *io)
->   				 ipmi_addr_src_to_str(new_smi->io.addr_source),
->   				 si_to_str[new_smi->io.si_type]);
->   			rv = -EBUSY;
-> +			kfree(new_smi);
->   			goto out_err;
->   		}
->   	}
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-vexpress/spc.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
+diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
+index fe488523694c..21c064267af5 100644
+--- a/arch/arm/mach-vexpress/spc.c
++++ b/arch/arm/mach-vexpress/spc.c
+@@ -451,10 +451,8 @@ int __init ve_spc_init(void __iomem *baseaddr, u32 a15_clusid, int irq)
+ {
+ 	int ret;
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+-	if (!info) {
+-		pr_err(SPCLOG "unable to allocate mem\n");
++	if (!info)
+ 		return -ENOMEM;
+-	}
+ 
+ 	info->baseaddr = baseaddr;
+ 	info->a15_clusid = a15_clusid;
+@@ -535,10 +533,8 @@ static struct clk *ve_spc_clk_register(struct device *cpu_dev)
+ 	struct clk_spc *spc;
+ 
+ 	spc = kzalloc(sizeof(*spc), GFP_KERNEL);
+-	if (!spc) {
+-		pr_err("could not allocate spc clk\n");
++	if (!spc)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	spc->hw.init = &init;
+ 	spc->cluster = topology_physical_package_id(cpu_dev->id);
+-- 
+2.14.2
 
