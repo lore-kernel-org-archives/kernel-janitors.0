@@ -1,53 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Oct 2017 08:40:05 +0000
-Subject: [PATCH] ARM: vexpress/spc: Delete an error message for a failed memory allocation in two functions
-Message-Id: <557666e2-45b6-8f47-2fc9-756bd7f23541@users.sourceforge.net>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Tue, 03 Oct 2017 14:21:25 +0000
+Subject: Re: [PATCH] ARM: vexpress/spc: Delete an error message for a failed memory allocation in two functio
+Message-Id: <eb4e21f3-f16c-e640-80b2-0d12b01ea4e2@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <557666e2-45b6-8f47-2fc9-756bd7f23541@users.sourceforge.net>
+In-Reply-To: <557666e2-45b6-8f47-2fc9-756bd7f23541@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Oct 2017 10:30:07 +0200
+Hi,
 
-Omit extra messages for a memory allocation failure in these functions.
+I am not sure if such trivial patches get merged by someone via
+kernel-janitors list with just maintainers ack or not. Please let
+me know if you want me to pickup this, for now I am just Ack-ing.
 
-This issue was detected by using the Coccinelle software.
+On 03/10/17 09:40, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Oct 2017 10:30:07 +0200
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-vexpress/spc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
-index fe488523694c..21c064267af5 100644
---- a/arch/arm/mach-vexpress/spc.c
-+++ b/arch/arm/mach-vexpress/spc.c
-@@ -451,10 +451,8 @@ int __init ve_spc_init(void __iomem *baseaddr, u32 a15_clusid, int irq)
- {
- 	int ret;
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
--	if (!info) {
--		pr_err(SPCLOG "unable to allocate mem\n");
-+	if (!info)
- 		return -ENOMEM;
--	}
- 
- 	info->baseaddr = baseaddr;
- 	info->a15_clusid = a15_clusid;
-@@ -535,10 +533,8 @@ static struct clk *ve_spc_clk_register(struct device *cpu_dev)
- 	struct clk_spc *spc;
- 
- 	spc = kzalloc(sizeof(*spc), GFP_KERNEL);
--	if (!spc) {
--		pr_err("could not allocate spc clk\n");
-+	if (!spc)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	spc->hw.init = &init;
- 	spc->cluster = topology_physical_package_id(cpu_dev->id);
 -- 
-2.14.2
-
+Regards,
+Sudeep
