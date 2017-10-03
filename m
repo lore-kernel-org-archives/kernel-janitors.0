@@ -1,35 +1,41 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 12 Oct 2017 15:10:13 +0000
-Subject: Re: [PATCH 0/2] crypto: lrw - Fixes for the 'create()' function
-Message-Id: <20171012151013.GB31122@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Oct 2017 09:23:23 +0000
+Subject: [PATCH] ARM: cache-l2x0-pmu: Delete an error message for a failed memory allocation in l2x0_pmu_init
+Message-Id: <672554ba-b476-8852-3c37-9e8716f1eec4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1507445539.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1507445539.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Oct 08, 2017 at 11:39:48AM +0200, Christophe JAILLET wrote:
-> The first patch is the same as the one committed for crypto/xts.c applied a
-> few days ago.
-> (commit 5125e4e867ab ("crypto: xts - Fix an error handling path in 'create()'")
-> in /git/herbert/crypto-2.6.git)
-> 
-> The 2nd one is a pure speculation from me.
-> The create function in 'crypto/xts.c' and 'crypto/lrw.c' look very
-> similar.
-> However, there is one more sanity check in xts. This patch proposes to
-> add the same test in lrw. Not sure at all if correct!
-> I just send it for consistency.
-> 
-> Christophe JAILLET (2):
->   crypto: lrw - Fix an error handling path in 'create()'
->   crypto: lrw - Check for incorrect cipher name
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Oct 2017 11:16:56 +0200
 
-All applied.  Thanks.
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mm/cache-l2x0-pmu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
+index 0a1e2280141f..b3734da93010 100644
+--- a/arch/arm/mm/cache-l2x0-pmu.c
++++ b/arch/arm/mm/cache-l2x0-pmu.c
+@@ -528,10 +528,8 @@ static __init int l2x0_pmu_init(void)
+ 		return 0;
+ 
+ 	l2x0_pmu = kzalloc(sizeof(*l2x0_pmu), GFP_KERNEL);
+-	if (!l2x0_pmu) {
+-		pr_warn("Unable to allocate L2x0 PMU\n");
++	if (!l2x0_pmu)
+ 		return -ENOMEM;
+-	}
+ 
+ 	*l2x0_pmu = (struct pmu) {
+ 		.task_ctx_nr = perf_invalid_context,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.2
+
