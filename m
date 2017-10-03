@@ -1,50 +1,30 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Sun, 15 Oct 2017 20:46:06 +0000
-Subject: Re: [PATCH] x86/intel_cacheinfo: remove redundant assignment to this_leaf
-Message-Id: <20171015204606.gs67hxz32g4skjca@pd.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Oct 2017 10:54:18 +0000
+Subject: [PATCH] RDMA/hns: Fix uninitialized variable in hns_roce_v2_query_qp()
+Message-Id: <20171003105418.jpthrfu7j7ojk5fg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171015160203.12332-1-colin.king@canonical.com>
-In-Reply-To: <20171015160203.12332-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, Oct 15, 2017 at 05:02:03PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable this_leaf is being assigned a value that is never
-> read and it is being updated a little later with a newer value,
-> hence we can remove the redundant assignment.
-> 
-> Cleans up clang warning: Value stored to 'this_leaf' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kernel/cpu/intel_cacheinfo.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
-> index 24f749324c0f..9990a71e311f 100644
-> --- a/arch/x86/kernel/cpu/intel_cacheinfo.c
-> +++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
-> @@ -831,7 +831,6 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
->  	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
->  		unsigned int apicid, nshared, first, last;
->  
-> -		this_leaf = this_cpu_ci->info_list + index;
->  		nshared = base->eax.split.num_threads_sharing + 1;
->  		apicid = cpu_data(cpu).apicid;
->  		first = apicid - (apicid % nshared);
-> -- 
+We accidentally return an uninitialized value if
+(hr_qp->state = IB_QPS_RESET).  We should be returning success.
 
-Looks ok to me.
+Fixes: 926a01dc000d ("RDMA/hns: Add QP operations support for hip08 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 4171f73bdad5..e1c59dc066c9 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -2792,7 +2792,7 @@ static int hns_roce_v2_query_qp(struct ib_qp *ibqp, struct ib_qp_attr *qp_attr,
+ 	struct device *dev = hr_dev->dev;
+ 	int tmp_qp_state;
+ 	int state;
+-	int ret;
++	int ret = 0;
+ 
+ 	context = kzalloc(sizeof(*context), GFP_KERNEL);
+ 	if (!context)
