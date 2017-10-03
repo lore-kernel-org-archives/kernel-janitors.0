@@ -1,42 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 17:35:23 +0000
-Subject: [PATCH 2/2] drm/tegra: Use an error code directly in tegra_output_probe()
-Message-Id: <b42b5119-55af-88b2-055b-ce5d6a25a8d8@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Oct 2017 09:51:17 +0000
+Subject: [PATCH] md-cluster: make function cluster_check_sync_size static
+Message-Id: <20171003095117.25539-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
-In-Reply-To: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 19:21:24 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Return the code "-EPROBE_DEFER" directly in one if branch
-without assigning it to the local variable "err" before.
+The function cluster_check_sync_size is local to the source and does
+not need to be in global scope, so make it static.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up sparse warning:
+symbol 'cluster_check_sync_size' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/tegra/output.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/md/md-cluster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 1e0915e213b4..a9b458f22de6 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -115,9 +115,8 @@ int tegra_output_probe(struct tegra_output *output)
- 	if (ddc) {
- 		output->ddc = of_find_i2c_adapter_by_node(ddc);
- 		if (!output->ddc) {
--			err = -EPROBE_DEFER;
- 			of_node_put(ddc);
--			return err;
-+			return -EPROBE_DEFER;
- 		}
- 
- 		of_node_put(ddc);
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index 03082e17c65c..bf41492a2cb0 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -1094,7 +1094,7 @@ static void metadata_update_cancel(struct mddev *mddev)
+ /*
+  * return 0 if all the bitmaps have the same sync_size
+  */
+-int cluster_check_sync_size(struct mddev *mddev)
++static int cluster_check_sync_size(struct mddev *mddev)
+ {
+ 	int i, rv;
+ 	bitmap_super_t *sb;
 -- 
-2.14.3
+2.14.1
 
