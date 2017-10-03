@@ -1,53 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 01 Oct 2017 08:00:11 +0000
-Subject: Re: [PATCH] usb: misc: usbtest: Fix overflow in usbtest_do_ioctl()
-Message-Id: <20171001080010.krkbk73stkxzlwns@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Oct 2017 10:39:18 +0000
+Subject: [PATCH] net: dsa: lan9303: make functions lan9303_mdio_phy_{read|write} static
+Message-Id: <20171003103918.26934-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
-In-Reply-To: <20170930081529.g3vtwn22yfrjdbjv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 30, 2017 at 11:04:35AM -0700, Deepa Dinamani wrote:
-> On Sat, Sep 30, 2017 at 1:15 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > There used to be a test against "if (param->sglen > MAX_SGLEN)" but it
-> > was removed during a refactor.  It leads to an integer overflow and a
-> > stack overflow in test_queue() if we try to create a too large urbs[]
-> > array on the stack.
-> >
-> > There is a second integer overflow in test_queue() as well if
-> > "param->iterations" is too high.  I don't immediately see that it's
-> > harmful but I've added a check to prevent it and silence the static
-> > checker warning.
-> >
-> > Fixes: 18fc4ebdc705 ("usb: misc: usbtest: Remove timeval usage")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
-> > index eee82ca55b7b..113e38bfe0ef 100644
-> > --- a/drivers/usb/misc/usbtest.c
-> > +++ b/drivers/usb/misc/usbtest.c
-> > @@ -1964,6 +1964,9 @@ test_queue(struct usbtest_dev *dev, struct usbtest_param_32 *param,
-> >         int                     status = 0;
-> >         struct urb              *urbs[param->sglen];
-> >
-> > +       if (!param->sglen || param->iterations > UINT_MAX / param->sglen)
-> 
-> Would adding a comment here that we are checking for overflow of
-> context.count make sense?
-> It takes some time to figure out that context.count is unsigned and
-> hence the check is against UINT_MAX here.
+From: Colin Ian King <colin.king@canonical.com>
 
-To be honest, this is a very typical sort of integer overflow test and
-it looks pretty self explanatory to me.  We're avoiding a divide by zero
-bug and we're making sure the result isn't more than UINT_MAX.
+The functions lan9303_mdio_phy_write and lan9303_mdio_phy_read are local
+to the source and do not need to be in global scope, so make them static.
 
-It has nothing to do with context.count.  param->iterations and
-param->sglen are both unsinged int, so if we do "param->iterations *
-param->sglen" that will overflow.
+Cleans up sparse warnings:
+symbol 'lan9303_mdio_phy_write' was not declared. Should it be static?
+symbol 'lan9303_mdio_phy_read' was not declared. Should it be static?
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/lan9303_mdio.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/dsa/lan9303_mdio.c b/drivers/net/dsa/lan9303_mdio.c
+index fc16668a487f..0bc56b9900f9 100644
+--- a/drivers/net/dsa/lan9303_mdio.c
++++ b/drivers/net/dsa/lan9303_mdio.c
+@@ -67,14 +67,15 @@ static int lan9303_mdio_read(void *ctx, uint32_t reg, uint32_t *val)
+ 	return 0;
+ }
+ 
+-int lan9303_mdio_phy_write(struct lan9303 *chip, int phy, int reg, u16 val)
++static int lan9303_mdio_phy_write(struct lan9303 *chip, int phy, int reg,
++				  u16 val)
+ {
+ 	struct lan9303_mdio *sw_dev = dev_get_drvdata(chip->dev);
+ 
+ 	return mdiobus_write_nested(sw_dev->device->bus, phy, reg, val);
+ }
+ 
+-int lan9303_mdio_phy_read(struct lan9303 *chip, int phy,  int reg)
++static int lan9303_mdio_phy_read(struct lan9303 *chip, int phy,  int reg)
+ {
+ 	struct lan9303_mdio *sw_dev = dev_get_drvdata(chip->dev);
+ 
+-- 
+2.14.1
 
