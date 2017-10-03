@@ -1,29 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 19 Oct 2017 12:15:50 +0000
-Subject: Re: [PATCH][next] mqprio: fix potential null pointer dereference on opt
-Message-Id: <20171019.131550.485803458070670938.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Oct 2017 10:53:41 +0000
+Subject: [PATCH 2/2 net-next] mlxsw: spectrum: Add missing error code on allocation failure
+Message-Id: <20171003105340.llwk5oajgrohbksu@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171017150130.23606-1-colin.king@canonical.com>
-In-Reply-To: <20171017150130.23606-1-colin.king@canonical.com>
+References: <20171003105303.u7yrzxknddmmerol@mwanda>
+In-Reply-To: <20171003105303.u7yrzxknddmmerol@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>, Yotam Gigi <yotamg@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Oct 2017 16:01:30 +0100
+We accidentally return success if the kmalloc_array() call fails.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer opt has a null check however before for this check opt is
-> dereferenced when len is initialized, hence we potentially have a null
-> pointer deference on opt.  Avoid this by checking for a null opt before
-> dereferencing it.
-> 
-> Detected by CoverityScan, CID#1458234 ("Dereference before null check")
-> 
-> Fixes: 4e8b86c06269 ("mqprio: Introduce new hardware offload mode and shaper in mqprio")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 0e14c7777acb ("mlxsw: spectrum: Add the multicast routing hardware logic")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
+index 5e4ccbf17e3d..839eadf0765b 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
+@@ -763,8 +763,10 @@ mlxsw_sp_mr_tcam_region_init(struct mlxsw_sp *mlxsw_sp,
+ 
+ 	parman_prios = kmalloc_array(MLXSW_SP_MR_ROUTE_PRIO_MAX + 1,
+ 				     sizeof(*parman_prios), GFP_KERNEL);
+-	if (!parman_prios)
++	if (!parman_prios) {
++		err = -ENOMEM;
+ 		goto err_parman_prios_alloc;
++	}
+ 	mr_tcam_region->parman_prios = parman_prios;
+ 
+ 	for (i = 0; i < MLXSW_SP_MR_ROUTE_PRIO_MAX + 1; i++)
