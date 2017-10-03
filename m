@@ -1,33 +1,32 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Oct 2017 19:04:28 +0000
-Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Delete an error message for a failed memory allocation in three functi
-Message-Id: <20171004190428.6agsco3456oeyab5@kozik-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Oct 2017 10:53:03 +0000
+Subject: [PATCH 1/2 net-next] mlxsw: spectrum: Fix check for IS_ERR() instead of NULL
+Message-Id: <20171003105303.u7yrzxknddmmerol@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
- <ae29b97e-9a60-fdf4-5bd2-af33f6081446@users.sourceforge.net>
-In-Reply-To: <ae29b97e-9a60-fdf4-5bd2-af33f6081446@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jiri Pirko <jiri@mellanox.com>, Yotam Gigi <yotamg@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 04, 2017 at 01:11:56PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Oct 2017 09:33:52 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/plat-samsung/adc.c          | 8 ++------
->  arch/arm/plat-samsung/platformdata.c | 4 +---
->  2 files changed, 3 insertions(+), 9 deletions(-)
-> 
+mlxsw_afa_block_create() doesn't return error pointers, it returns NULL
+on error.
 
-Thanks, applied.
+Fixes: 0e14c7777acb ("mlxsw: spectrum: Add the multicast routing hardware logic")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards,
-Krzysztof
-
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
+index cda9e9ad10e3..5e4ccbf17e3d 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_mr_tcam.c
+@@ -239,8 +239,8 @@ mlxsw_sp_mr_tcam_afa_block_create(struct mlxsw_sp *mlxsw_sp,
+ 	int err;
+ 
+ 	afa_block = mlxsw_afa_block_create(mlxsw_sp->afa);
+-	if (IS_ERR(afa_block))
+-		return afa_block;
++	if (!afa_block)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	err = mlxsw_afa_block_append_counter(afa_block, counter_index);
+ 	if (err)
