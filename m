@@ -1,29 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 03 Oct 2017 20:25:37 +0000
-Subject: Re: [PATCH 1/2] clk/versatile: Delete two error messages for a failed memory allocation in icst_clk_
-Message-Id: <CACRpkdbQQKXYRMe+qvOfnN3ESex7NJ7RzfSfJsAQQpDeeEu9wg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Oct 2017 20:14:20 +0000
+Subject: [PATCH 2/4] ARM: OMAP: Improve a size determination in two functions
+Message-Id: <8735e7ee-a744-cda4-005b-7a32075655a5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net> <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
-In-Reply-To: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
+References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
+In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 27, 2017 at 9:39 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Oct 2017 20:46:48 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:21:23 +0200
->
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/plat-omap/dma.c     | 2 +-
+ arch/arm/plat-omap/dmtimer.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
+index 6ede0427548c..409e4ecaebe9 100644
+--- a/arch/arm/plat-omap/dma.c
++++ b/arch/arm/plat-omap/dma.c
+@@ -1316,7 +1316,7 @@ static int omap_system_dma_probe(struct platform_device *pdev)
+ 	enable_1510_mode	= d->dev_caps & ENABLE_1510_MODE;
+ 
+ 	dma_chan = devm_kcalloc(&pdev->dev, dma_lch_count,
+-				sizeof(struct omap_dma_lch), GFP_KERNEL);
++				sizeof(*dma_chan), GFP_KERNEL);
+ 	if (!dma_chan)
+ 		return -ENOMEM;
+ 
+diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
+index 446ac0e3a35a..14779d6f425d 100644
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -857,7 +857,7 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	timer = devm_kzalloc(dev, sizeof(struct omap_dm_timer), GFP_KERNEL);
++	timer = devm_kzalloc(dev, sizeof(*timer), GFP_KERNEL);
+ 	if (!timer)
+ 		return  -ENOMEM;
+ 
+-- 
+2.14.2
+
