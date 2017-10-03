@@ -1,58 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 18 Oct 2017 11:52:12 +0000
-Subject: [PATCH] drivers: hv: balloon: remove extraneous assignment to region_start
-Message-Id: <20171018115212.29111-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Oct 2017 20:16:45 +0000
+Subject: [PATCH 4/4] ARM: OMAP: Fix typos in two comment lines in _omap_dm_timer_request()
+Message-Id: <fba4ace8-a277-fb08-7a6b-89d518ada080@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
+In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Oct 2017 21:24:00 +0200
 
-The variable region_start is assigned twice, the first value is
-never read and redundant, so can be removed.  We can clean up the
-code further by assigning rg_start directly rather than using the
-temporary variable region_start which can then be removed. Cleans
-up the clang warning:
+Adjust three words in this description.
 
-drivers/hv/hv_balloon.c:976:3: warning: Value stored to 'region_start'
-is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hv/hv_balloon.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/arm/plat-omap/dmtimer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index db0e6652d7ef..54e1ab3d5bad 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -964,7 +964,6 @@ static void hot_add_req(struct work_struct *dummy)
- 
- 	if ((rg_start = 0) && (!dm->host_specified_ha_region)) {
- 		unsigned long region_size;
--		unsigned long region_start;
- 
- 		/*
- 		 * The host has not specified the hot-add region.
-@@ -973,14 +972,11 @@ static void hot_add_req(struct work_struct *dummy)
- 		 * that need to be hot-added while ensuring the alignment
- 		 * and size requirements of Linux as it relates to hot-add.
- 		 */
--		region_start = pg_start;
- 		region_size = (pfn_cnt / HA_CHUNK) * HA_CHUNK;
- 		if (pfn_cnt % HA_CHUNK)
- 			region_size += HA_CHUNK;
- 
--		region_start = (pg_start / HA_CHUNK) * HA_CHUNK;
--
--		rg_start = region_start;
-+		rg_start = (pg_start / HA_CHUNK) * HA_CHUNK;
- 		rg_sz = region_size;
- 	}
- 
+diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
+index 14779d6f425d..d443e481c3e9 100644
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -254,8 +254,8 @@ static struct omap_dm_timer *_omap_dm_timer_request(int req_type, void *data)
+ 			if (cap = (t->capability & cap)) {
+ 				/*
+ 				 * If timer is not NULL, we have already found
+-				 * one timer but it was not an exact match
+-				 * because it had more capabilites that what
++				 * one timer. But it was not an exact match
++				 * because it had more capabilities than what
+ 				 * was required. Therefore, unreserve the last
+ 				 * timer found and see if this one is a better
+ 				 * match.
 -- 
-2.14.1
+2.14.2
 
