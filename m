@@ -1,37 +1,54 @@
-From: Matt Fleming <matt@codeblueprint.co.uk>
-Date: Fri, 06 Oct 2017 12:19:39 +0000
-Subject: Re: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
-Message-Id: <20171006121939.GC3314@codeblueprint.co.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 03 Oct 2017 08:31:45 +0000
+Subject: [PATCH] drivers/fsi: make a couple of functions static
+Message-Id: <20171003083145.24054-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
-In-Reply-To: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ivan Hu <ivan.hu@canonical.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Bostic <cbostic@linux.vnet.ibm.com>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Chris Bostic <cbostic@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 30 Sep, at 11:17:32AM, Dan Carpenter wrote:
-> If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
-> will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
-> try to dereference it inside the loop and crash.
-> 
-> Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
-> index 08129b7b80ab..41c48a1e8baa 100644
-> --- a/drivers/firmware/efi/test/efi_test.c
-> +++ b/drivers/firmware/efi/test/efi_test.c
-> @@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
->  	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
->  		return -EFAULT;
->  
-> +	if (qcaps.capsule_count = ULONG_MAX)
-> +		return -EINVAL;
-> +
->  	capsules = kcalloc(qcaps.capsule_count + 1,
->  			   sizeof(efi_capsule_header_t), GFP_KERNEL);
->  	if (!capsules)
+From: Colin Ian King <colin.king@canonical.com>
 
-This looks OK to me. Ivan?
+The functions fsi_slave_report_and_clear_errors and fsi_slave_handle_error
+are local to the source and do not need to be in global scope, so make
+them static.
+
+Cleans up sparse warnings:
+symbol 'fsi_slave_report_and_clear_errors' was not declared. Should it
+be static?
+symbol 'fsi_slave_handle_error' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/fsi/fsi-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 4ea63d9bd131..e318bf8c623c 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -185,7 +185,7 @@ static int fsi_slave_calc_addr(struct fsi_slave *slave, uint32_t *addrp,
+ 	return 0;
+ }
+ 
+-int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
++static int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
+ {
+ 	struct fsi_master *master = slave->master;
+ 	uint32_t irq, stat;
+@@ -215,8 +215,8 @@ int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
+ 
+ static int fsi_slave_set_smode(struct fsi_master *master, int link, int id);
+ 
+-int fsi_slave_handle_error(struct fsi_slave *slave, bool write, uint32_t addr,
+-		size_t size)
++static int fsi_slave_handle_error(struct fsi_slave *slave, bool write,
++				  uint32_t addr, size_t size)
+ {
+ 	struct fsi_master *master = slave->master;
+ 	int rc, link;
+-- 
+2.14.1
+
