@@ -1,46 +1,31 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Thu, 05 Oct 2017 21:09:49 +0000
-Subject: Re: [PATCH] switchtec: make struct event_regs static
-Message-Id: <20171005210949.GX25517@bhelgaas-glaptop.roam.corp.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 03 Oct 2017 20:26:18 +0000
+Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
+Message-Id: <CACRpkdaWQpjHhx+Jp5Ne-mZ110S-4iZ19TUYqwV2km0jbqTn6g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171005100145.29309-1-colin.king@canonical.com>
-In-Reply-To: <20171005100145.29309-1-colin.king@canonical.com>
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net> <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Stephen Bates <stephen.bates@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 05, 2017 at 11:01:45AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure event_regs is local to the source and does not need to
-> be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'event_regs' was not declared. Should it be static
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Wed, Sep 27, 2017 at 9:40 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Applied with Logan's ack to pci/switchtec for v4.15, thanks!
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 21:24:43 +0200
+>
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-> ---
->  drivers/pci/switch/switchtec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-> index af81b2dec42e..da45dbea20ce 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -943,7 +943,7 @@ static u32 __iomem *pff_ev_reg(struct switchtec_dev *stdev,
->  #define EV_PAR(i, r)[i] = {offsetof(struct part_cfg_regs, r), part_ev_reg}
->  #define EV_PFF(i, r)[i] = {offsetof(struct pff_csr_regs, r), pff_ev_reg}
->  
-> -const struct event_reg {
-> +static const struct event_reg {
->  	size_t offset;
->  	u32 __iomem *(*map_reg)(struct switchtec_dev *stdev,
->  				size_t offset, int index);
-> -- 
-> 2.14.1
-> 
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
