@@ -1,29 +1,55 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 06 Oct 2017 02:02:33 +0000
-Subject: Re: [PATCH 1/2] powerpc/platforms/cell: Delete an error message for a failed memory allocation in th
-Message-Id: <1507255353.4434.54.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 18:45:14 +0000
+Subject: [PATCH 1/5] cris: nand: Delete an error message for a failed memory allocation in crisv32_nand_flash
+Message-Id: <92a95fe3-5b8d-5dd9-a7bf-131a999e74c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <db9efaf4-f3d7-d5dc-b0b2-f20e418fa3c8@users.sourceforge.net>
- <62146108-5be0-c236-f404-4be122e162ac@users.sourceforge.net>
- <20171005220210.681f78e8@kitsune.suse.cz>
- <alpine.DEB.2.20.1710052205560.2626@hadrien>
- <20171005222949.3a288238@kitsune.suse.cz>
-In-Reply-To: <20171005222949.3a288238@kitsune.suse.cz>
+References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
+In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Michal =?ISO-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Jeremy Kerr <jk@ozlabs.org>, linuxppc-dev@lists.ozlabs.org, SF Markus Elfring <elfring@users.sourceforge.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 2017-10-05 at 22:29 +0200, Michal Such=E1nek wrote:
-> I do not expect the kernel to generate a
-> stack trace every time memory allocation fails. With all the hooks in
-> the code it is hard to tell, though.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Oct 2017 17:54:11 +0200
 
-All [kv].alloc failures without __GFP_NOWARN call dump_stack()
+Omit an extra message for a memory allocation failure in this function.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 2 --
+ arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+index 925a98eb6d68..259aa1f46fbe 100644
+--- a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
++++ b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+@@ -136,8 +136,6 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 	/* Allocate memory for MTD device structure and private data */
+ 	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
+ 	if (!wrapper) {
+-		printk(KERN_ERR "Unable to allocate CRISv32 NAND MTD "
+-			"device structure.\n");
+ 		err = -ENOMEM;
+ 		return NULL;
+ 	}
+diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+index 53b56a429dde..1baf16ee74e8 100644
+--- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
++++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+@@ -111,8 +111,6 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 	/* Allocate memory for MTD device structure and private data */
+ 	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
+ 	if (!wrapper) {
+-		printk(KERN_ERR "Unable to allocate CRISv32 NAND MTD "
+-			"device structure.\n");
+ 		err = -ENOMEM;
+ 		return NULL;
+ 	}
+-- 
+2.14.2
+
