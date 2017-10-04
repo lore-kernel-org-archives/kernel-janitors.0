@@ -1,56 +1,73 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Oct 2017 20:14:20 +0000
-Subject: [PATCH 2/4] ARM: OMAP: Improve a size determination in two functions
-Message-Id: <8735e7ee-a744-cda4-005b-7a32075655a5@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 18:50:37 +0000
+Subject: [PATCH 5/5] cris: nand: Split a condition check in crisv32_nand_flash_probe()
+Message-Id: <290ad3d7-eb40-5c60-068f-3835063babc2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
-In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
+References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
+In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Oct 2017 20:46:48 +0200
+Date: Wed, 4 Oct 2017 20:02:12 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* Split a condition check for failed calls of the function "ioremap"
+  so that the return value in the variable "write_cs" will also be
+  immediately checked.
 
-This issue was detected by using the Coccinelle software.
+* Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/plat-omap/dma.c     | 2 +-
- arch/arm/plat-omap/dmtimer.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
-index 6ede0427548c..409e4ecaebe9 100644
---- a/arch/arm/plat-omap/dma.c
-+++ b/arch/arm/plat-omap/dma.c
-@@ -1316,7 +1316,7 @@ static int omap_system_dma_probe(struct platform_device *pdev)
- 	enable_1510_mode	= d->dev_caps & ENABLE_1510_MODE;
+diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+index 2b53f0c615ea..564218a12213 100644
+--- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
++++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+@@ -113,13 +113,17 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 		return NULL;
  
- 	dma_chan = devm_kcalloc(&pdev->dev, dma_lch_count,
--				sizeof(struct omap_dma_lch), GFP_KERNEL);
-+				sizeof(*dma_chan), GFP_KERNEL);
- 	if (!dma_chan)
- 		return -ENOMEM;
- 
-diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
-index 446ac0e3a35a..14779d6f425d 100644
---- a/arch/arm/plat-omap/dmtimer.c
-+++ b/arch/arm/plat-omap/dmtimer.c
-@@ -857,7 +857,7 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 		return -ENODEV;
+ 	read_cs = ioremap(MEM_CSP0_START | MEM_NON_CACHEABLE, 8192);
+-	write_cs = ioremap(MEM_CSP1_START | MEM_NON_CACHEABLE, 8192);
+-
+-	if (!read_cs || !write_cs) {
++	if (!read_cs) {
+ 		printk(KERN_ERR "CRISv32 NAND ioremap failed\n");
+ 		goto out_mtd;
  	}
  
--	timer = devm_kzalloc(dev, sizeof(struct omap_dm_timer), GFP_KERNEL);
-+	timer = devm_kzalloc(dev, sizeof(*timer), GFP_KERNEL);
- 	if (!timer)
- 		return  -ENOMEM;
++	write_cs = ioremap(MEM_CSP1_START | MEM_NON_CACHEABLE, 8192);
++	if (!write_cs) {
++		printk(KERN_ERR "CRISv32 NAND ioremap failed\n");
++		goto unmap_read;
++	}
++
+ 	/* Get pointer to private data */
+ 	this = &wrapper->chip;
+ 	crisv32_mtd = nand_to_mtd(this);
+@@ -149,13 +153,14 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
  
+ 	/* Scan to find existence of the device */
+ 	if (nand_scan(crisv32_mtd, 1))
+-		goto out_ior;
++		goto unmap_io;
+ 
+ 	return crisv32_mtd;
+ 
+-out_ior:
+-	iounmap((void *)read_cs);
++unmap_io:
+ 	iounmap((void *)write_cs);
++unmap_read:
++	iounmap((void *)read_cs);
+ out_mtd:
+ 	kfree(wrapper);
+ 	return NULL;
 -- 
 2.14.2
 
