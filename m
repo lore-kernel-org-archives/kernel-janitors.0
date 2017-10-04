@@ -1,110 +1,31 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 16:31:13 +0000
-Subject: Re: [PATCH] iio/light/gp2ap020a00f: Use common error handling code in gp2ap020a00f_adjust_lux_mode()
-Message-Id: <20171026173113.371995f3@archlinux>
+From: Doug Ledford <dledford@redhat.com>
+Date: Wed, 04 Oct 2017 18:40:43 +0000
+Subject: Re: [PATCH] RDMA/hns: return 0 rather than return a garbage status value
+Message-Id: <1507142443.46071.0.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <06da0424-1ec9-209e-a433-48288c49132b@users.sourceforge.net>
-In-Reply-To: <06da0424-1ec9-209e-a433-48288c49132b@users.sourceforge.net>
+References: <20170929201308.4704-1-colin.king@canonical.com>
+In-Reply-To: <20170929201308.4704-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 26 Oct 2017 10:00:21 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Oct 2017 09:50:21 +0200
+On Fri, 2017-09-29 at 21:13 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> * Add jump targets so that two error messages are stored only once
->   at the end of this function implementation.
+> For the case where hr_qp->state = IB_QPS_RESET, an uninitialized
+> value in ret is being returned by function hns_roce_v2_query_qp.
+> Fix this by setting ret to 0 for this specific return condition.
 > 
-> * Adjust condition checks.
+> Detected by CoverityScan, CID#1457203 ("Unitialized scalar variable")
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Same issue - readability is worse than without the patch so it is always
-going to be rejected.
+Thanks, applied.
 
-Hence I am not going to take this or anything similar, and I doubt anyone
-else in the kernel will either...
-
-Jonathan
-
-> ---
->  drivers/iio/light/gp2ap020a00f.c | 37 +++++++++++++++++--------------------
->  1 file changed, 17 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
-> index 44b13fbcd093..ae29bce660ac 100644
-> --- a/drivers/iio/light/gp2ap020a00f.c
-> +++ b/drivers/iio/light/gp2ap020a00f.c
-> @@ -741,19 +741,13 @@ static bool gp2ap020a00f_adjust_lux_mode(struct gp2ap020a00f_data *data,
->  		 */
->  		err =  gp2ap020a00f_write_event_threshold(data,
->  					GP2AP020A00F_THRESH_TH, false);
-> -		if (err < 0) {
-> -			dev_err(&data->client->dev,
-> -				"Clearing als threshold register failed.\n");
-> -			return false;
-> -		}
-> +		if (err)
-> +			goto report_clearing_failure;
->  
->  		err =  gp2ap020a00f_write_event_threshold(data,
->  					GP2AP020A00F_THRESH_TL, false);
-> -		if (err < 0) {
-> -			dev_err(&data->client->dev,
-> -				"Clearing als threshold register failed.\n");
-> -			return false;
-> -		}
-> +		if (err)
-> +			goto report_clearing_failure;
->  
->  		/* Change lux mode */
->  		err = regmap_update_bits(data->regmap,
-> @@ -793,27 +787,30 @@ static bool gp2ap020a00f_adjust_lux_mode(struct gp2ap020a00f_data *data,
->  		if (test_bit(GP2AP020A00F_FLAG_ALS_RISING_EV, &data->flags)) {
->  			err =  gp2ap020a00f_write_event_threshold(data,
->  					GP2AP020A00F_THRESH_TH, true);
-> -			if (err < 0) {
-> -				dev_err(&data->client->dev,
-> -				"Adjusting als threshold value failed.\n");
-> -				return false;
-> -			}
-> +			if (err)
-> +				goto report_adjustment_failure;
->  		}
->  
->  		if (test_bit(GP2AP020A00F_FLAG_ALS_FALLING_EV, &data->flags)) {
->  			err =  gp2ap020a00f_write_event_threshold(data,
->  					GP2AP020A00F_THRESH_TL, true);
-> -			if (err < 0) {
-> -				dev_err(&data->client->dev,
-> -				"Adjusting als threshold value failed.\n");
-> -				return false;
-> -			}
-> +			if (err)
-> +				goto report_adjustment_failure;
->  		}
->  
->  		return true;
->  	}
->  
->  	return false;
-> +
-> +report_clearing_failure:
-> +	dev_err(&data->client->dev,
-> +		"Clearing als threshold register failed.\n");
-> +	return false;
-> +
-> +report_adjustment_failure:
-> +	dev_err(&data->client->dev, "Adjusting als threshold value failed.\n");
-> +	return false;
->  }
->  
->  static void gp2ap020a00f_output_to_lux(struct gp2ap020a00f_data *data,
+-- 
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
