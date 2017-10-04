@@ -1,36 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 09 Oct 2017 20:48:11 +0000
-Subject: [PATCH 0/3] net-ATM: Adjustments for several function implementations
-Message-Id: <10a92558-1105-b947-86a2-6ac763cca36d@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 18:47:28 +0000
+Subject: [PATCH 3/5] cris: nand: Delete a jump target in crisv32_nand_flash_probe()
+Message-Id: <c70b5a98-3c08-e926-23cf-18dea0ddeb5f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
+In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Mitchell Blank Jr <mitch@sfgoth.com>, Roopa Prabhu <roopa@cumulusnetworks.com>
+To: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 9 Oct 2017 22:30:33 +0200
+Date: Wed, 4 Oct 2017 18:55:01 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+* Move a bit of exception handling code into an if branch
+  because the code was used only for one case before.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in five functions
-  Improve a size determination in 12 functions
-  Adjust 121 checks for null pointers
+* Delete the jump target "out_mtd" which became unnecessary
+  with this refactoring.
 
- net/atm/addr.c        |   2 +-
- net/atm/br2684.c      |  19 ++++----
- net/atm/clip.c        |   6 +--
- net/atm/lec.c         |  49 ++++++++++----------
- net/atm/mpc.c         | 126 ++++++++++++++++++++++++--------------------------
- net/atm/mpoa_caches.c |  75 +++++++++++++++---------------
- net/atm/pppoatm.c     |  11 ++---
- net/atm/proc.c        |   2 +-
- net/atm/signaling.c   |   2 +-
- 9 files changed, 141 insertions(+), 151 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+index 3b5be9b984b4..f30579ec8ad7 100644
+--- a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
++++ b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+@@ -163,13 +163,10 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
+ 	/* Scan to find existence of the device */
+ 	if (nand_scan(crisv32_mtd, 1)) {
+ 		err = -ENXIO;
+-		goto out_mtd;
++		kfree(wrapper);
++		return NULL;
+ 	}
+ 
+ 	return crisv32_mtd;
+-
+-out_mtd:
+-	kfree(wrapper);
+-	return NULL;
+ }
+ 
 -- 
 2.14.2
 
