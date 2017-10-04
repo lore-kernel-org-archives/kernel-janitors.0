@@ -1,74 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 12:30:13 +0000
-Subject: [PATCH] ibmphp_pci: Use common error handling code in unconfigure_boot_device()
-Message-Id: <9db967bd-b7f9-d7e8-a858-a409f07c2a51@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 11:10:44 +0000
+Subject: [PATCH 0/2] ARM-SAMSUNG: Adjustments for 14 function implementations
+Message-Id: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 13:26:32 +0100
+Date: Wed, 4 Oct 2017 12:48:24 +0200
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
+Two update suggestions were taken into account
+from static source code analysis.
 
-* Replace two calls of the macro "err" by goto statements.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in 13 functions
 
-* Adjust two condition checks.
+ arch/arm/plat-samsung/adc.c          | 12 ++++--------
+ arch/arm/plat-samsung/devs.c         | 33 +++++++++++----------------------
+ arch/arm/plat-samsung/platformdata.c |  4 +---
+ 3 files changed, 16 insertions(+), 33 deletions(-)
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pci/hotplug/ibmphp_pci.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
-index dc1876feb06f..25edd0b18b75 100644
---- a/drivers/pci/hotplug/ibmphp_pci.c
-+++ b/drivers/pci/hotplug/ibmphp_pci.c
-@@ -1267,20 +1267,19 @@ static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
- 			size = size & 0xFFFFFFFC;
- 			size = ~size + 1;
- 			end_address = start_address + size - 1;
--			if (ibmphp_find_resource(bus, start_address, &io, IO) < 0) {
--				err("cannot find corresponding IO resource to remove\n");
--				return -EIO;
--			}
-+			if (ibmphp_find_resource(bus, start_address, &io, IO))
-+				goto report_search_failure;
-+
- 			debug("io->start = %x\n", io->start);
- 			temp_end = io->end;
- 			start_address = io->end + 1;
- 			ibmphp_remove_resource(io);
- 			/* This is needed b/c of the old I/O restrictions in the BIOS */
- 			while (temp_end < end_address) {
--				if (ibmphp_find_resource(bus, start_address, &io, IO) < 0) {
--					err("cannot find corresponding IO resource to remove\n");
--					return -EIO;
--				}
-+				if (ibmphp_find_resource(bus, start_address,
-+							 &io, IO))
-+					goto report_search_failure;
-+
- 				debug("io->start = %x\n", io->start);
- 				temp_end = io->end;
- 				start_address = io->end + 1;
-@@ -1327,6 +1326,10 @@ static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
- 	}	/* end of for */
- 
- 	return 0;
-+
-+report_search_failure:
-+	err("cannot find corresponding IO resource to remove\n");
-+	return -EIO;
- }
- 
- static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
 -- 
-2.14.3
+2.14.2
 
