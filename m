@@ -1,73 +1,72 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 30 Oct 2017 03:52:13 +0000
-Subject: Re: [PATCH] Coccinelle: use false positive annotation
-Message-Id: <alpine.DEB.2.20.1710301151210.2632@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 11:11:56 +0000
+Subject: [PATCH 1/2] ARM: SAMSUNG: Delete an error message for a failed memory allocation in three functions
+Message-Id: <ae29b97e-9a60-fdf4-5bd2-af33f6081446@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1509234189-26916-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAK7LNASBEvt6Ef3fJ=twQmV4LKSd_nbLd2BxmLtKEV8eYf3HBw@mail.gmail.com>
-In-Reply-To: <CAK7LNASBEvt6Ef3fJ=twQmV4LKSd_nbLd2BxmLtKEV8eYf3HBw@mail.gmail.com>
+References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
+In-Reply-To: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-arm-kernel@lists.infradead.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Oct 2017 09:33:52 +0200
 
+Omit extra messages for a memory allocation failure in these functions.
 
-On Mon, 30 Oct 2017, Masahiro Yamada wrote:
+This issue was detected by using the Coccinelle software.
 
-> Hi Julia,
->
->
-> 2017-10-29 8:43 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> > /// is to describe the semantic patch, while //# indicates reasons
-> > for false positives.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  scripts/coccinelle/misc/ifcol.cocci |    6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/scripts/coccinelle/misc/ifcol.cocci b/scripts/coccinelle/misc/ifcol.cocci
-> > index d0d00ef..30b248b 100644
-> > --- a/scripts/coccinelle/misc/ifcol.cocci
-> > +++ b/scripts/coccinelle/misc/ifcol.cocci
-> > @@ -3,9 +3,9 @@
-> >  /// Sometimes, code after an if that is indented is actually intended to be
-> >  /// part of the if branch.
-> >  ///
-> > -/// This has a high rate of false positives, because Coccinelle's column
-> > -/// calculation does not distinguish between spaces and tabs, so code that
-> > -/// is not visually aligned may be considered to be in the same column.
-> > +//# This has a high rate of false positives, because Coccinelle's column
-> > +//# calculation does not distinguish between spaces and tabs, so code that
-> > +//# is not visually aligned may be considered to be in the same column.
-> >  ///
->
-> Just a nit.
->
-> The last /// should be turned into //
-> if you want to avoid two blank lines in a series
-> after the semantic patch information.
->
-> (I can fix it locally if you agree with it and I am supposed to pick up this.)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/plat-samsung/adc.c          | 8 ++------
+ arch/arm/plat-samsung/platformdata.c | 4 +---
+ 2 files changed, 3 insertions(+), 9 deletions(-)
 
-Thanks for detecting the problem.  It would be great if you could pick it
-up, since I haven't heard confirmation from Michal that he will start this
-again.  The change seems fine.  Thanks for your help.
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index daf3db9f0058..f8d6206e4daa 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -239,10 +239,8 @@ struct s3c_adc_client *s3c_adc_register(struct platform_device *pdev,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	client = kzalloc(sizeof(struct s3c_adc_client), GFP_KERNEL);
+-	if (!client) {
+-		dev_err(&pdev->dev, "no memory for adc client\n");
++	if (!client)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	client->pdev = pdev;
+ 	client->is_ts = is_ts;
+@@ -345,10 +343,8 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 	unsigned tmp;
+ 
+ 	adc = devm_kzalloc(dev, sizeof(struct adc_device), GFP_KERNEL);
+-	if (adc = NULL) {
+-		dev_err(dev, "failed to allocate adc_device\n");
++	if (!adc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	spin_lock_init(&adc->lock);
+ 
+diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-samsung/platformdata.c
+index b430e9946287..6cf52ee7eeec 100644
+--- a/arch/arm/plat-samsung/platformdata.c
++++ b/arch/arm/plat-samsung/platformdata.c
+@@ -29,10 +29,8 @@ void __init *s3c_set_platdata(void *pd, size_t pdsize,
+ 	}
+ 
+ 	npd = kmemdup(pd, pdsize, GFP_KERNEL);
+-	if (!npd) {
+-		printk(KERN_ERR "%s: cannot clone platform data\n", pdev->name);
++	if (!npd)
+ 		return NULL;
+-	}
+ 
+ 	pdev->dev.platform_data = npd;
+ 	return npd;
+-- 
+2.14.2
 
-julia
-
->
->
->
-> >  // Confidence: Low
-> >  // Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-> >
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
->
