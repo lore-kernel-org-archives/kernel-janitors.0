@@ -1,93 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Oct 2017 21:51:49 +0000
-Subject: [PATCH] staging: rtlwifi: make various structures static
-Message-Id: <20171002215149.11027-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Oct 2017 19:55:21 +0000
+Subject: Re: cris: nand: Delete an error message for a failed memory allocation in crisv32_nand_flash_probe()
+Message-Id: <86983988-9ede-09f8-2914-25c09699be67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
+ <92a95fe3-5b8d-5dd9-a7bf-131a999e74c6@users.sourceforge.net>
+ <20171004214432.20833a0ff3b9c8fdced2ebaa@gmail.com>
+In-Reply-To: <20171004214432.20833a0ff3b9c8fdced2ebaa@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, linux-cris-kernel@axis.com
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+>> Omit an extra message for a memory allocation failure in this function.
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+> what exactly has the software detected?
 
-The structures created from macros RTL_DEBUG_IMPL_MAC_SERIES,
-RTL_DEBUG_IMPL_BB_SERIES, RTL_DEBUG_IMPL_RF_SERIES and
-RTL_DEBUG_IMPL_CAM_SERIES are all local to the source and do
-not need to be in global scope, so make them static.
+Do you prefer the notification “WARNING: Possible unnecessary 'out of memory' message”
+by the script “checkpatch.pl” instead?
 
-Cleans up 37 sparse warnings of the form:
-symbol 'rtl_debug_priv_mac_0' was not declared. Should it be static?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtlwifi/debug.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+> I cannot find, how this error is reported otherwise, it seems
+> to me that the message is not that superflous.
 
-diff --git a/drivers/staging/rtlwifi/debug.c b/drivers/staging/rtlwifi/debug.c
-index 7446d71c41d1..63a9b70ec60f 100644
---- a/drivers/staging/rtlwifi/debug.c
-+++ b/drivers/staging/rtlwifi/debug.c
-@@ -127,10 +127,10 @@ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#define RTL_DEBUG_IMPL_MAC_SERIES(page, addr)		\
--struct rtl_debugfs_priv rtl_debug_priv_mac_ ##page = {	\
--	.cb_read = rtl_debug_get_mac_page,		\
--	.cb_data = addr,				\
-+#define RTL_DEBUG_IMPL_MAC_SERIES(page, addr)			\
-+static struct rtl_debugfs_priv rtl_debug_priv_mac_ ##page = {	\
-+	.cb_read = rtl_debug_get_mac_page,			\
-+	.cb_data = addr,					\
- }
- 
- RTL_DEBUG_IMPL_MAC_SERIES(0, 0x0000);
-@@ -169,10 +169,10 @@ static int rtl_debug_get_bb_page(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#define RTL_DEBUG_IMPL_BB_SERIES(page, addr)		\
--struct rtl_debugfs_priv rtl_debug_priv_bb_ ##page = {	\
--	.cb_read = rtl_debug_get_bb_page,		\
--	.cb_data = addr,				\
-+#define RTL_DEBUG_IMPL_BB_SERIES(page, addr)			\
-+static struct rtl_debugfs_priv rtl_debug_priv_bb_ ##page = {	\
-+	.cb_read = rtl_debug_get_bb_page,			\
-+	.cb_data = addr,					\
- }
- 
- RTL_DEBUG_IMPL_BB_SERIES(8, 0x0800);
-@@ -216,10 +216,10 @@ static int rtl_debug_get_reg_rf(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#define RTL_DEBUG_IMPL_RF_SERIES(page, addr)		\
--struct rtl_debugfs_priv rtl_debug_priv_rf_ ##page = {	\
--	.cb_read = rtl_debug_get_reg_rf,		\
--	.cb_data = addr,				\
-+#define RTL_DEBUG_IMPL_RF_SERIES(page, addr)			\
-+static struct rtl_debugfs_priv rtl_debug_priv_rf_ ##page = {	\
-+	.cb_read = rtl_debug_get_reg_rf,			\
-+	.cb_data = addr,					\
- }
- 
- RTL_DEBUG_IMPL_RF_SERIES(a, RF90_PATH_A);
-@@ -271,10 +271,10 @@ static int rtl_debug_get_cam_register(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#define RTL_DEBUG_IMPL_CAM_SERIES(page, addr)		\
--struct rtl_debugfs_priv rtl_debug_priv_cam_ ##page = {	\
--	.cb_read = rtl_debug_get_cam_register,		\
--	.cb_data = addr,				\
-+#define RTL_DEBUG_IMPL_CAM_SERIES(page, addr)			\
-+static struct rtl_debugfs_priv rtl_debug_priv_cam_ ##page = {	\
-+	.cb_read = rtl_debug_get_cam_register,			\
-+	.cb_data = addr,					\
- }
- 
- RTL_DEBUG_IMPL_CAM_SERIES(1, 0);
--- 
-2.14.1
+Would you find the default allocation failure report sufficient?
 
+Regards,
+Markus
