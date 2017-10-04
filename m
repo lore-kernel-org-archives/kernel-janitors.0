@@ -1,77 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 14:00:07 +0000
-Subject: [PATCH] pinctrl: max77620: Use common error handling code in max77620_pinconf_set()
-Message-Id: <afdb4e5f-15f7-14b5-7a35-f8420dec683c@users.sourceforge.net>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Wed, 04 Oct 2017 09:09:11 +0000
+Subject: Re: ath9k: make const array reg_hole_list static, reduces object code size
+Message-Id: <0458c03b374e494892d03dd4b6a889c9@euamsexm01e.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170919204019.30804-1-colin.king@canonical.com>
+In-Reply-To: <20170919204019.30804-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 14:55:52 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
+> Don't populate the read-only array reg_hole_list on the stack, instead make
+> it static.  Makes the object code smaller by over 200 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   57518	  15248	      0	  72766	  11c3e	debug.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   57218	  15344	      0	  72562	  11b72	debug.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 
-* Replace two calls of the function "dev_err" by goto statements.
+Patch applied to ath-next branch of ath.git, thanks.
 
-* Adjust two condition checks.
+eba0f28473b2 ath9k: make const array reg_hole_list static, reduces object code size
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-max77620.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-max77620.c b/drivers/pinctrl/pinctrl-max77620.c
-index b8d2180a2bea..a7f37063518e 100644
---- a/drivers/pinctrl/pinctrl-max77620.c
-+++ b/drivers/pinctrl/pinctrl-max77620.c
-@@ -420,11 +420,9 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
- 						 MAX77620_REG_GPIO0 + pin,
- 						 MAX77620_CNFG_GPIO_DRV_MASK,
- 						 val);
--			if (ret < 0) {
--				dev_err(dev, "Reg 0x%02x update failed %d\n",
--					MAX77620_REG_GPIO0 + pin, ret);
--				return ret;
--			}
-+			if (ret)
-+				goto report_update_failure;
-+
- 			mpci->pin_info[pin].drv_type = val ?
- 				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
- 			break;
-@@ -435,11 +433,9 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
- 						 MAX77620_REG_GPIO0 + pin,
- 						 MAX77620_CNFG_GPIO_DRV_MASK,
- 						 val);
--			if (ret < 0) {
--				dev_err(dev, "Reg 0x%02x update failed %d\n",
--					MAX77620_REG_GPIO0 + pin, ret);
--				return ret;
--			}
-+			if (ret)
-+				goto report_update_failure;
-+
- 			mpci->pin_info[pin].drv_type = val ?
- 				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
- 			break;
-@@ -536,6 +532,11 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
- 	}
- 
- 	return 0;
-+
-+report_update_failure:
-+	dev_err(dev, "Reg 0x%02x update failed %d\n",
-+		MAX77620_REG_GPIO0 + pin, ret);
-+	return ret;
- }
- 
- static const struct pinconf_ops max77620_pinconf_ops = {
 -- 
-2.14.3
+https://patchwork.kernel.org/patch/9960183/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
