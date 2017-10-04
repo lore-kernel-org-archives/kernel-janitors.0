@@ -1,54 +1,53 @@
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
-Date: Sun, 29 Oct 2017 07:50:06 +0000
-Subject: Re: [PATCH net-next] qed: Set error code for allocation failures
-Message-Id: <CY1PR0701MB201234A30578ED57BA9EAE6E88580@CY1PR0701MB2012.namprd07.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 04 Oct 2017 13:20:37 +0000
+Subject: [PATCH] cxgb4vf: make a couple of functions static
+Message-Id: <20171004132037.6409-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171027064020.aq52ue4kfp5htrb5@mwanda>
-In-Reply-To: <20171027064020.aq52ue4kfp5htrb5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Elior, Ariel" <Ariel.Elior@cavium.com>
-Cc: Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Casey Leedom <leedom@chelsio.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Sent: Friday, October 27, 2017 9:40 AM
+From: Colin Ian King <colin.king@canonical.com>
 
-> There are several places where we accidentally return success when
-> kcalloc() fails.
-> 
-> Fixes: fcb39f6c10b2 ("qed: Add mpa buffer descriptors for storing and processing mpa fpdus")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-> index 409041eab189..6366f2ef82b7 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-> @@ -2585,7 +2585,7 @@ qed_iwarp_ll2_start(struct qed_hwfn *p_hwfn,
->         struct qed_ll2_cbs cbs;
->         u32 mpa_buff_size;
->         u16 n_ooo_bufs;
-> -       int rc = 0;
-> +       int rc;
->         int i;
-> 
->         iwarp_info = &p_hwfn->p_rdma_info->iwarp;
-> @@ -2696,6 +2696,7 @@ qed_iwarp_ll2_start(struct qed_hwfn *p_hwfn,
->         if (rc)
->                goto err;
-> 
-> +       rc = -ENOMEM;
->         iwarp_info->partial_fpdus = kcalloc((u16)p_hwfn->p_rdma_info->num_qps,
->                                             sizeof(*iwarp_info->partial_fpdus),
->                                             GFP_KERNEL);
-> @@ -2724,7 +2725,7 @@ qed_iwarp_ll2_start(struct qed_hwfn *p_hwfn,
->         for (i = 0; i < data.input.rx_num_desc; i++)
->                 list_add_tail(&iwarp_info->mpa_bufs[i].list_entry,
->                               &iwarp_info->mpa_buf_list);
-> -       return rc;
-> +       return 0;
->  err:
->         qed_iwarp_ll2_stop(p_hwfn, p_ptt);
+The functions t4vf_link_down_rc_str and t4vf_handle_get_port_info are
+local to the source and do not need to be in global scope, so make
+them static.
 
-Thanks Dan,
-Acked-by: Michal Kalderon <michal.kalderon@cavium.com>
+Cleans up sparse warnings:
+symbol 't4vf_link_down_rc_str' was not declared. Should it be static?
+symbol 't4vf_handle_get_port_info' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c b/drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c
+index a8d94963b4d0..67aec59a14e6 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c
+@@ -1812,7 +1812,7 @@ int t4vf_eth_eq_free(struct adapter *adapter, unsigned int eqid)
+  *
+  *	Returns a string representation of the Link Down Reason Code.
+  */
+-const char *t4vf_link_down_rc_str(unsigned char link_down_rc)
++static const char *t4vf_link_down_rc_str(unsigned char link_down_rc)
+ {
+ 	static const char * const reason[] = {
+ 		"Link Down",
+@@ -1838,8 +1838,8 @@ const char *t4vf_link_down_rc_str(unsigned char link_down_rc)
+  *
+  *	Processes a GET_PORT_INFO FW reply message.
+  */
+-void t4vf_handle_get_port_info(struct port_info *pi,
+-			       const struct fw_port_cmd *cmd)
++static void t4vf_handle_get_port_info(struct port_info *pi,
++				      const struct fw_port_cmd *cmd)
+ {
+ 	int action = FW_PORT_CMD_ACTION_G(be32_to_cpu(cmd->action_to_len16));
+ 	struct adapter *adapter = pi->adapter;
+-- 
+2.14.1
+
