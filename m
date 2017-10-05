@@ -1,103 +1,57 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Date: Tue, 31 Oct 2017 16:13:42 +0000
-Subject: Re: [PATCH] pinctrl: pistachio: Use common error handling code in pistachio_gpio_register()
-Message-Id: <CAL1qeaEQV+Cz6Y5XUg-kAZUhANHGsSoAWT_oGgM4Y_PieZOXdA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 12:01:53 +0000
+Subject: [PATCH] scsi: aic7xxx: make a couple of functions static
+Message-Id: <20171005120153.32383-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
-In-Reply-To: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Damien Horsley <Damien.Horsley@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
+To: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Oct 30, 2017 at 10:51 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 30 Oct 2017 18:40:10 +0100
->
-> Adjust jump targets so that a bit of exception handling can be better
-> reused at the end of this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Functions ahc_devlimited_syncrate and ahc_linux_initialize_scsi_bus
+are declared static in their prototypes but are missing in their
+definitions, so add the missing static.
 
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
+Cleans up sparse warnings:
+symbol 'ahc_devlimited_syncrate' was not declared. Should it be static?
+symbol 'ahc_linux_initialize_scsi_bus' was not declared. Should it
+be static?
 
-> ---
->  drivers/pinctrl/pinctrl-pistachio.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
-> index 55375b1b3cc8..b314eb61bf35 100644
-> --- a/drivers/pinctrl/pinctrl-pistachio.c
-> +++ b/drivers/pinctrl/pinctrl-pistachio.c
-> @@ -1362,21 +1362,21 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->                 if (!child) {
->                         dev_err(pctl->dev, "No node for bank %u\n", i);
->                         ret = -ENODEV;
-> -                       goto err;
-> +                       goto remove_chips;
->                 }
->
->                 if (!of_find_property(child, "gpio-controller", NULL)) {
->                         dev_err(pctl->dev,
->                                 "No gpio-controller property for bank %u\n", i);
->                         ret = -ENODEV;
-> -                       goto err;
-> +                       goto remove_chips;
->                 }
->
->                 irq = irq_of_parse_and_map(child, 0);
->                 if (irq < 0) {
->                         dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
->                         ret = irq;
-> -                       goto err;
-> +                       goto remove_chips;
->                 }
->
->                 bank = &pctl->gpio_banks[i];
-> @@ -1389,7 +1389,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->                 if (ret < 0) {
->                         dev_err(pctl->dev, "Failed to add GPIO chip %u: %d\n",
->                                 i, ret);
-> -                       goto err;
-> +                       goto remove_chips;
->                 }
->
->                 ret = gpiochip_irqchip_add(&bank->gpio_chip, &bank->irq_chip,
-> @@ -1397,8 +1397,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->                 if (ret < 0) {
->                         dev_err(pctl->dev, "Failed to add IRQ chip %u: %d\n",
->                                 i, ret);
-> -                       gpiochip_remove(&bank->gpio_chip);
-> -                       goto err;
-> +                       goto remove_chip;
->                 }
->                 gpiochip_set_chained_irqchip(&bank->gpio_chip, &bank->irq_chip,
->                                              irq, pistachio_gpio_irq_handler);
-> @@ -1409,13 +1408,15 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->                 if (ret < 0) {
->                         dev_err(pctl->dev, "Failed to add GPIO range %u: %d\n",
->                                 i, ret);
-> -                       gpiochip_remove(&bank->gpio_chip);
-> -                       goto err;
-> +                       goto remove_chip;
->                 }
->         }
->
->         return 0;
-> -err:
-> +
-> +remove_chip:
-> +       gpiochip_remove(&bank->gpio_chip);
-> +remove_chips:
->         for (; i > 0; i--) {
->                 bank = &pctl->gpio_banks[i - 1];
->                 gpiochip_remove(&bank->gpio_chip);
-> --
-> 2.14.3
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
+ drivers/scsi/aic7xxx/aic7xxx_osm.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index 381846164003..6612ff3b2e83 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -2212,7 +2212,7 @@ ahc_free_tstate(struct ahc_softc *ahc, u_int scsi_id, char channel, int force)
+  * by the capabilities of the bus connectivity of and sync settings for
+  * the target.
+  */
+-const struct ahc_syncrate *
++static const struct ahc_syncrate *
+ ahc_devlimited_syncrate(struct ahc_softc *ahc,
+ 			struct ahc_initiator_tinfo *tinfo,
+ 			u_int *period, u_int *ppr_options, role_t role)
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+index acd687f4554e..c6be3aeb302b 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+@@ -1141,7 +1141,7 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
+  * or forcing transfer negotiations on the next command to any
+  * target.
+  */
+-void
++static void
+ ahc_linux_initialize_scsi_bus(struct ahc_softc *ahc)
+ {
+ 	int i;
+-- 
+2.14.1
+
