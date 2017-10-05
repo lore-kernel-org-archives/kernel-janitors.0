@@ -1,63 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 20:50:10 +0000
-Subject: [PATCH] bq2415x_charger: Use common error handling code in bq2415x_timer_work()
-Message-Id: <48b34d35-8c41-d25b-0cb7-6257b37c5a44@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 20:51:13 +0000
+Subject: [PATCH 1/2] powermac: Delete an error message for a failed memory allocation in kw_i2c_host_init()
+Message-Id: <5dc8fe2f-0459-faff-585f-a92137115895@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5188c0b3-476a-6a14-bab5-052ad0f4dae0@users.sourceforge.net>
+In-Reply-To: <5188c0b3-476a-6a14-bab5-052ad0f4dae0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 21:45:09 +0100
+Date: Thu, 5 Oct 2017 22:30:29 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/power/supply/bq2415x_charger.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/powerpc/platforms/powermac/low_i2c.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
-index c4770a94cc8e..8385e02e1634 100644
---- a/drivers/power/supply/bq2415x_charger.c
-+++ b/drivers/power/supply/bq2415x_charger.c
-@@ -914,16 +914,12 @@ static void bq2415x_timer_work(struct work_struct *work)
- 	}
+diff --git a/arch/powerpc/platforms/powermac/low_i2c.c b/arch/powerpc/platforms/powermac/low_i2c.c
+index 70183eb3d5c8..ecd166b5549b 100644
+--- a/arch/powerpc/platforms/powermac/low_i2c.c
++++ b/arch/powerpc/platforms/powermac/low_i2c.c
+@@ -493,11 +493,8 @@ static struct pmac_i2c_host_kw *__init kw_i2c_host_init(struct device_node *np)
+ 	u32			steps;
  
- 	boost = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_STATUS);
--	if (boost < 0) {
--		bq2415x_timer_error(bq, "Unknown error");
--		return;
+ 	host = kzalloc(sizeof(struct pmac_i2c_host_kw), GFP_KERNEL);
+-	if (host = NULL) {
+-		printk(KERN_ERR "low_i2c: Can't allocate host for %pOF\n",
+-		       np);
++	if (!host)
+ 		return NULL;
 -	}
-+	if (boost < 0)
-+		goto report_timer_error;
  
- 	error = bq2415x_exec_command(bq, BQ2415X_FAULT_STATUS);
--	if (error < 0) {
--		bq2415x_timer_error(bq, "Unknown error");
--		return;
--	}
-+	if (error < 0)
-+		goto report_timer_error;
- 
- 	if (boost) {
- 		switch (error) {
-@@ -992,6 +988,10 @@ static void bq2415x_timer_work(struct work_struct *work)
- 	}
- 
- 	schedule_delayed_work(&bq->work, BQ2415X_TIMER_TIMEOUT * HZ);
-+	return;
-+
-+report_timer_error:
-+	bq2415x_timer_error(bq, "Unknown error");
- }
- 
- /**** power supply interface code ****/
+ 	/* Apple is kind enough to provide a valid AAPL,address property
+ 	 * on all i2c keywest nodes so far ... we would have to fallback
 -- 
-2.14.3
+2.14.2
 
