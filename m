@@ -1,45 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 10:03:45 +0000
-Subject: Re: drm/rcar-du: Use common error handling code in rcar_du_encoders_init()
-Message-Id: <fb1a946b-99ea-89a7-8fad-6c15e1934ce4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 10:11:37 +0000
+Subject: [PATCH] pinctrl: ingenic: make function ingenic_pinctrl_probe static
+Message-Id: <20171005101137.29664-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
- <9fafa688-f699-c587-ef77-840efa71bf76@users.sourceforge.net>
- <87tvyke8g2.fsf@intel.com> <1864580.oVLIQZJ4NS@avalon>
- <87d155gdyw.fsf@intel.com>
-In-Reply-To: <87d155gdyw.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> In general, I'll pick up any patches that are good,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is usual.
+The function ingenic_pinctrl_probe is local to the source and does
+not need to be in global scope, so make it static.
 
+Cleans up sparse warnings
+symbol 'ingenic_pinctrl_probe' was not declared. Should it be static?
 
-> but the current track record is that Markus' patches need extra scrutiny,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I find that this can be fine according to a safe review for presented
-update suggestions.
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index d84761822243..372ddf386bdb 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -717,7 +717,7 @@ static const struct of_device_id ingenic_pinctrl_of_match[] = {
+ 	{},
+ };
+ 
+-int ingenic_pinctrl_probe(struct platform_device *pdev)
++static int ingenic_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ingenic_pinctrl *jzpc;
+-- 
+2.14.1
 
-
-> and many of the patches contain subjective changes that lead to debate
-
-Some discussion is occasionally needed to achieve the desired change acceptance,
-isn't it?
-
-
-> that is not constructive.
-
-I got an other opinion here.
-
-
-> There's no return on investment here.
-
-I hope that the view can become more positive.
-How will the clarification evolve further?
-
-Regards,
-Markus
