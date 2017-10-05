@@ -1,40 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 18 Oct 2017 12:10:38 +0000
-Subject: [PATCH] hwmon: (asc7621): remove redundant assignment to newval
-Message-Id: <20171018121038.29409-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 20:50:29 +0000
+Subject: [PATCH 0/2] Power Mac: Adjustments for five function implementations
+Message-Id: <5188c0b3-476a-6a14-bab5-052ad0f4dae0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: George Joseph <george.joseph@fairview5.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Oct 2017 22:48:22 +0200
 
-The setting of newval to zero is redundant as the following if/else
-stanzas will always update newval to a new value. Remove the
-redundant setting, cleans up clang build warning:
+Two update suggestions were taken into account
+from static source code analysis.
 
-drivers/hwmon/asc7621.c:582:2: warning: Value stored to 'newval' is
-never read
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in kw_i2c_host_init()
+  Improve a size determination in five functions
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hwmon/asc7621.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/platforms/powermac/low_i2c.c    | 11 ++++-------
+ arch/powerpc/platforms/powermac/pfunc_core.c |  4 ++--
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/hwmon/asc7621.c b/drivers/hwmon/asc7621.c
-index 4875e99b59c9..6d34c05a4f83 100644
---- a/drivers/hwmon/asc7621.c
-+++ b/drivers/hwmon/asc7621.c
-@@ -579,7 +579,6 @@ static ssize_t show_pwm_enable(struct device *dev,
- 	mutex_unlock(&data->update_lock);
- 
- 	val = config | (altbit << 3);
--	newval = 0;
- 
- 	if (val = 3 || val >= 10)
- 		newval = 255;
 -- 
-2.14.1
+2.14.2
 
