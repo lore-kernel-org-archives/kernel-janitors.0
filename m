@@ -1,31 +1,40 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Tue, 31 Oct 2017 13:22:44 +0000
-Subject: Re: [PATCH] net: hso: remove redundant unused variable dev
-Message-Id: <20171031132244.GP7223@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 10:01:45 +0000
+Subject: [PATCH] switchtec: make struct event_regs static
+Message-Id: <20171005100145.29309-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031120147.22348-1-colin.king@canonical.com>
-In-Reply-To: <20171031120147.22348-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Stephen Bates <stephen.bates@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 12:01:47PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer dev is being assigned but is never used, hence it is
-> redundant and can be removed. Cleans up clang warning:
-> 
-> drivers/net/usb/hso.c:2280:2: warning: Value stored to 'dev' is
-> never read
+From: Colin Ian King <colin.king@canonical.com>
 
-You could also have mentioned that it was a leftover since commit
-4134069f3ea6 ("hso: Use static attribute groups for sysfs entry").
+The structure event_regs is local to the source and does not need to
+be in global scope, so make it static.
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cleans up sparse warning:
+symbol 'event_regs' was not declared. Should it be static
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/switch/switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Johan
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index af81b2dec42e..da45dbea20ce 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -943,7 +943,7 @@ static u32 __iomem *pff_ev_reg(struct switchtec_dev *stdev,
+ #define EV_PAR(i, r)[i] = {offsetof(struct part_cfg_regs, r), part_ev_reg}
+ #define EV_PFF(i, r)[i] = {offsetof(struct pff_csr_regs, r), pff_ev_reg}
+ 
+-const struct event_reg {
++static const struct event_reg {
+ 	size_t offset;
+ 	u32 __iomem *(*map_reg)(struct switchtec_dev *stdev,
+ 				size_t offset, int index);
+-- 
+2.14.1
+
