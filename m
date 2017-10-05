@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 05 Oct 2017 19:40:51 +0000
+Date: Thu, 05 Oct 2017 19:41:43 +0000
 Subject: Re: [PATCH] coccinelle: api: detect duplicate chip data arrays
-Message-Id: <alpine.DEB.2.20.1710052140200.2626@hadrien>
+Message-Id: <alpine.DEB.2.20.1710052141201.2626@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1506861768-5734-1-git-send-email-Julia.Lawall@lip6.fr>
  <CAKvHMgT07xoBW_VmAYsxUmoYaz_iN4vFh7Ljb_UQEWAd8bt22w@mail.gmail.com>
@@ -34,12 +34,6 @@ On Thu, 5 Oct 2017, Liam Breck wrote:
 >
 > How do we ask the 0-day bot team to configure their build to run this
 > script? Will they just pick it up?
-
-I put kbuild in CC.  I don't know what is the criterion for including
-semantic patches.
-
-julia
-
 >
 > >> Also maybe the name of the script should include "bq27xxx_data"?
 > >
@@ -158,6 +152,12 @@ julia
 >
 > The order of the properties has no impact, so a duplicate is
 > functionally identical.
+
+If you prefer identical, I can put that.
+
+julia
+
+
 >
 > >
 > > julia
@@ -247,4 +247,8 @@ julia
 > >> the body of a message to majordomo@vger.kernel.org
 > >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > >>
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
