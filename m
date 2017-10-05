@@ -1,44 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 15:04:16 +0000
-Subject: [PATCH 1/4] char/snsc: Adjust one function call together with a variable assignment
-Message-Id: <1fa3d6ea-bd7d-5036-399a-8b9187dccffa@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 19:34:32 +0000
+Subject: [PATCH 0/2] PowerPC-Cell platform: Adjustments for four function implementations
+Message-Id: <db9efaf4-f3d7-d5dc-b0b2-f20e418fa3c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
-In-Reply-To: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 16:15:21 +0200
+Date: Thu, 5 Oct 2017 21:25:43 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Two update suggestions were taken into account
+from static source code analysis.
 
-ERROR: do not use assignment in if condition
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in three functions
 
-Thus fix the affected source code place.
+ arch/powerpc/platforms/cell/axon_msi.c          |  7 ++-----
+ arch/powerpc/platforms/cell/spider-pci.c        | 11 +++--------
+ arch/powerpc/platforms/cell/spufs/lscsa_alloc.c |  2 +-
+ 3 files changed, 6 insertions(+), 14 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/char/snsc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/snsc.c b/drivers/char/snsc.c
-index 6aa32679fd58..f551a625686a 100644
---- a/drivers/char/snsc.c
-+++ b/drivers/char/snsc.c
-@@ -419,7 +419,8 @@ scdrv_init(void)
- 
- 			/* initialize sysctl device data fields */
- 			scd->scd_nasid = cnodeid_to_nasid(cnode);
--			if (!(salbuf = kmalloc(SCDRV_BUFSZ, GFP_KERNEL))) {
-+			salbuf = kmalloc(SCDRV_BUFSZ, GFP_KERNEL);
-+			if (!salbuf) {
- 				printk("%s: failed to allocate driver buffer"
- 				       "(%s%s)\n", __func__,
- 				       SYSCTL_BASENAME, devname);
 -- 
 2.14.2
 
