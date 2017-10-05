@@ -1,78 +1,39 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Date: Wed, 25 Oct 2017 15:52:48 +0000
-Subject: Re: [PATCH] I2C-Octeon: Use common error handling code in octeon_i2c_probe()
-Message-Id: <77df0e64-bf30-b6d0-b28b-ddb3c0574dfe@caviumnetworks.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Oct 2017 12:58:27 +0000
+Subject: [PATCH] remoteproc: imx_rproc: fix a couple off by one bugs
+Message-Id: <20171005125827.sfnrpmqhrgmpy3fp@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <73affb84-9cdd-9f5c-b96a-5a392739e789@users.sourceforge.net>
-In-Reply-To: <73affb84-9cdd-9f5c-b96a-5a392739e789@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-i2c@vger.kernel.org, David Daney <david.daney@cavium.com>, Jan Glauber <jglauber@cavium.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/25/2017 02:52 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
+The priv->mem[] array has IMX7D_RPROC_MEM_MAX elements so the > should
+be >= to avoid writing one element beyond the end of the array.
 
-NAK.  We don't need any more Markus Elfring spam.
+Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> Date: Wed, 25 Oct 2017 11:45:48 +0200
-> 
-> Add a jump target so that a specific error message is stored only once
-> at the end of this function implementation.
-
-Please read C standard about duplicate literal strings to see why this 
-is a completely misleading and false statement.
-
-
-> Replace two calls of the function "dev_err" by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/i2c/busses/i2c-octeon-platdrv.c | 14 ++++++--------
->   1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-octeon-platdrv.c b/drivers/i2c/busses/i2c-octeon-platdrv.c
-> index 64bda83e65ac..ac8a1099c523 100644
-> --- a/drivers/i2c/busses/i2c-octeon-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-octeon-platdrv.c
-> @@ -207,10 +207,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
->   		result = devm_request_irq(&pdev->dev, i2c->hlc_irq,
->   					  octeon_i2c_hlc_isr78, 0,
->   					  DRV_NAME, i2c);
-> -		if (result < 0) {
-> -			dev_err(i2c->dev, "failed to attach interrupt\n");
-> -			goto out;
-> -		}
-> +		if (result < 0)
-> +			goto report_failure;
->   	} else {
->   		i2c->int_enable = octeon_i2c_int_enable;
->   		i2c->int_disable = octeon_i2c_int_disable;
-> @@ -220,10 +218,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
->   
->   	result = devm_request_irq(&pdev->dev, i2c->irq,
->   				  octeon_i2c_isr, 0, DRV_NAME, i2c);
-> -	if (result < 0) {
-> -		dev_err(i2c->dev, "failed to attach interrupt\n");
-> -		goto out;
-> -	}
-> +	if (result < 0)
-> +		goto report_failure;
->   
->   	if (OCTEON_IS_MODEL(OCTEON_CN38XX))
->   		i2c->broken_irq_check = true;
-> @@ -251,6 +247,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
->   	dev_info(i2c->dev, "probed\n");
->   	return 0;
->   
-> +report_failure:
-> +	dev_err(i2c->dev, "failed to attach interrupt\n");
->   out:
->   	return result;
->   };
-> 
-
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 612d91403341..81ba44510b75 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -264,7 +264,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 		if (!(att->flags & ATT_OWN))
+ 			continue;
+ 
+-		if (b > IMX7D_RPROC_MEM_MAX)
++		if (b >= IMX7D_RPROC_MEM_MAX)
+ 			break;
+ 
+ 		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev,
+@@ -296,7 +296,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 			return err;
+ 		}
+ 
+-		if (b > IMX7D_RPROC_MEM_MAX)
++		if (b >= IMX7D_RPROC_MEM_MAX)
+ 			break;
+ 
+ 		priv->mem[b].cpu_addr = devm_ioremap_resource(&pdev->dev, &res);
