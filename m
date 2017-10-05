@@ -1,40 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Oct 2017 09:51:17 +0000
-Subject: [PATCH] md-cluster: make function cluster_check_sync_size static
-Message-Id: <20171003095117.25539-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 15:40:05 +0000
+Subject: [PATCH 0/2] PowerPC-Cell OProfile: Adjustments for three function implementations
+Message-Id: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, oprofile-list@lists.sf.net, Al Viro <viro@zeniv.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Robert Richter <rric@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Oct 2017 17:32:10 +0200
 
-The function cluster_check_sync_size is local to the source and does
-not need to be in global scope, so make it static.
+Two update suggestions were taken into account
+from static source code analysis.
 
-Cleans up sparse warning:
-symbol 'cluster_check_sync_size' was not declared. Should it be static?
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in three functions
+  Improve a size determination in two functions
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/md/md-cluster.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/oprofile/cell/spu_task_sync.c | 10 +---------
+ arch/powerpc/oprofile/cell/vma_map.c       |  6 ++----
+ 2 files changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index 03082e17c65c..bf41492a2cb0 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -1094,7 +1094,7 @@ static void metadata_update_cancel(struct mddev *mddev)
- /*
-  * return 0 if all the bitmaps have the same sync_size
-  */
--int cluster_check_sync_size(struct mddev *mddev)
-+static int cluster_check_sync_size(struct mddev *mddev)
- {
- 	int i, rv;
- 	bitmap_super_t *sb;
 -- 
-2.14.1
+2.14.2
 
