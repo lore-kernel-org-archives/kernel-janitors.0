@@ -1,68 +1,58 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 17:06:00 +0000
-Subject: [PATCH] wimax/i2400m: Use common error handling code in i2400m_wake_tx_work()
-Message-Id: <62ad3417-8297-b763-ae49-bb8c097c2679@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 15:42:08 +0000
+Subject: [PATCH 2/2] powerpc/oprofile/cell: Improve a size determination in two functions
+Message-Id: <8c013b7f-a0b0-26e8-ef4a-76f5a48d73c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
+In-Reply-To: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-wimax@intel.com, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, oprofile-list@lists.sf.net, Al Viro <viro@zeniv.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Robert Richter <rric@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 18:00:17 +0100
+Date: Thu, 5 Oct 2017 17:18:33 +0200
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wimax/i2400m/netdev.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/powerpc/oprofile/cell/spu_task_sync.c | 2 +-
+ arch/powerpc/oprofile/cell/vma_map.c       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wimax/i2400m/netdev.c b/drivers/net/wimax/i2400m/netdev.c
-index a654687b5fa2..e3acdd295f12 100644
---- a/drivers/net/wimax/i2400m/netdev.c
-+++ b/drivers/net/wimax/i2400m/netdev.c
-@@ -181,8 +181,7 @@ void i2400m_wake_tx_work(struct work_struct *ws)
- 	if (result < 0) {
- 		dev_err(dev, "WAKE&TX: device didn't get out of idle: "
- 			"%d - resetting\n", result);
--		i2400m_reset(i2400m, I2400M_RT_BUS);
--		goto error;
-+		goto reset_i2400m;
- 	}
- 	result = wait_event_timeout(i2400m->state_wq,
- 				    i2400m->state != I2400M_SS_IDLE,
-@@ -192,12 +191,11 @@ void i2400m_wake_tx_work(struct work_struct *ws)
- 	if (result < 0) {
- 		dev_err(dev, "WAKE&TX: error waiting for device to exit IDLE: "
- 			"%d - resetting\n", result);
--		i2400m_reset(i2400m, I2400M_RT_BUS);
--		goto error;
-+		goto reset_i2400m;
- 	}
- 	msleep(20);	/* device still needs some time or it drops it */
- 	result = i2400m_tx(i2400m, skb->data, skb->len, I2400M_PT_DATA);
--error:
-+wake_queue:
- 	netif_wake_queue(net_dev);
- out_kfree:
- 	kfree_skb(skb);	/* refcount transferred by _hard_start_xmit() */
-@@ -205,6 +203,11 @@ void i2400m_wake_tx_work(struct work_struct *ws)
- 	i2400m_put(i2400m);
- 	d_fnend(3, dev, "(ws %p i2400m %p skb %p) = void [%d]\n",
- 		ws, i2400m, skb, result);
-+	return;
+diff --git a/arch/powerpc/oprofile/cell/spu_task_sync.c b/arch/powerpc/oprofile/cell/spu_task_sync.c
+index f1dd732b2998..8ab442925296 100644
+--- a/arch/powerpc/oprofile/cell/spu_task_sync.c
++++ b/arch/powerpc/oprofile/cell/spu_task_sync.c
+@@ -208,7 +208,7 @@ prepare_cached_spu_info(struct spu *spu, unsigned long objectId)
+ 	/* Create cached_info and set spu_info[spu->number] to point to it.
+ 	 * spu->number is a system-wide value, not a per-node value.
+ 	 */
+-	info = kzalloc(sizeof(struct cached_info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info) {
+ 		retval = -ENOMEM;
+ 		goto err_alloc;
+diff --git a/arch/powerpc/oprofile/cell/vma_map.c b/arch/powerpc/oprofile/cell/vma_map.c
+index a115d9ede053..03de415a377c 100644
+--- a/arch/powerpc/oprofile/cell/vma_map.c
++++ b/arch/powerpc/oprofile/cell/vma_map.c
+@@ -69,8 +69,8 @@ vma_map_add(struct vma_to_fileoffset_map *map, unsigned int vma,
+ 	    unsigned int size, unsigned int offset, unsigned int guard_ptr,
+ 	    unsigned int guard_val)
+ {
+-	struct vma_to_fileoffset_map *new -		kzalloc(sizeof(struct vma_to_fileoffset_map), GFP_KERNEL);
++	struct vma_to_fileoffset_map *new = kzalloc(sizeof(*new), GFP_KERNEL);
 +
-+reset_i2400m:
-+	i2400m_reset(i2400m, I2400M_RT_BUS);
-+	goto wake_queue;
- }
- 
- 
+ 	if (!new) {
+ 		vma_map_free(map);
+ 		return NULL;
 -- 
-2.14.3
+2.14.2
 
