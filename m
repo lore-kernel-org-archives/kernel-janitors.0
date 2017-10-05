@@ -1,39 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Oct 2017 09:10:23 +0000
-Subject: [PATCH] net: qcom/emac: make function emac_isr static
-Message-Id: <20171005091023.27781-1-colin.king@canonical.com>
+From: Timur Tabi <timur@codeaurora.org>
+Date: Thu, 05 Oct 2017 19:31:58 +0000
+Subject: Re: [PATCH] net: qcom/emac: make function emac_isr static
+Message-Id: <d47cb43f-a4d7-8e54-93da-1db2ce213096@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171005091023.27781-1-colin.king@canonical.com>
+In-Reply-To: <20171005091023.27781-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@codeaurora.org>, netdev@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 10/05/2017 04:10 AM, Colin King wrote:
+> From: Colin Ian King<colin.king@canonical.com>
+> 
+> The function emac_isr is local to the source and does not need to
+> be in global scope, so make it static.
+> 
+> Cleans up sparse warnings:
+> symbol 'emac_isr' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King<colin.king@canonical.com>
 
-The function emac_isr is local to the source and does not need to
-be in global scope, so make it static.
+ACK
 
-Cleans up sparse warnings:
-symbol 'emac_isr' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/qualcomm/emac/emac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac.c b/drivers/net/ethernet/qualcomm/emac/emac.c
-index 759543512117..f477ba29c569 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac.c
-@@ -130,7 +130,7 @@ static int emac_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	return emac_mac_tx_buf_send(adpt, &adpt->tx_q, skb);
- }
- 
--irqreturn_t emac_isr(int _irq, void *data)
-+static irqreturn_t emac_isr(int _irq, void *data)
- {
- 	struct emac_irq *irq = data;
- 	struct emac_adapter *adpt -- 
-2.14.1
-
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
