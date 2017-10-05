@@ -1,78 +1,50 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 10 Oct 2017 08:32:11 +0000
-Subject: Re: [PATCH 1/2] crypto: lrw - Fix an error handling path in 'create()'
-Message-Id: <59DC858B.4070203@bfs.de>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 09:55:57 +0000
+Subject: [PATCH] libnvdimm, namespace: make a couple of functions static
+Message-Id: <20171005095557.29063-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1507445539.git.christophe.jaillet@wanadoo.fr> <53e4cc621176b8aeeb58e493b133be853c66ef49.1507445539.git.christophe.jaillet@wanadoo.fr> <59DBE89C.3090700@bfs.de> <573ace7e-a5d4-44ef-e6df-9d5fe1e61e6e@wanadoo.fr>
-In-Reply-To: <573ace7e-a5d4-44ef-e6df-9d5fe1e61e6e@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The functions create_namespace_pmem and create_namespace_blk are local
+to the source and do not need to be in global scope, so make them static.
 
-Am 10.10.2017 08:05, schrieb Christophe JAILLET:
-> Le 09/10/2017 à 23:22, walter harms a écrit :
->> Am 08.10.2017 11:39, schrieb Christophe JAILLET:
->>> All error handling paths 'goto err_drop_spawn' except this one.
->>> In order to avoid some resources leak, we should do it as well here.
->>>
->>> Fixes: 700cb3f5fe75 ("crypto: lrw - Convert to skcipher")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   crypto/lrw.c | 6 ++++--
->>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/crypto/lrw.c b/crypto/lrw.c
->>> index a8bfae4451bf..eb681e9fe574 100644
->>> --- a/crypto/lrw.c
->>> +++ b/crypto/lrw.c
->>> @@ -610,8 +610,10 @@ static int create(struct crypto_template *tmpl,
->>> struct rtattr **tb)
->>>           ecb_name[len - 1] = 0;
->>>             if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
->>> -                 "lrw(%s)", ecb_name) >= CRYPTO_MAX_ALG_NAME)
->>     this check can be done more easy,
->>     the length of ecb_name is len
->>     the length of inst->alg.base.cra_name is CRYPTO_MAX_ALG_NAME
->>     if CRYPTO_MAX_ALG_NAME-len < "lrw()" < 5
->>         no need to involve snprintf()
->>
->>     just my 2 cents
->>     re,
->>           wh
-> It does not only check for the length, it also copies some data.
-> The test should be read: "If the copy succeeds (i.e if there is enough
-> space for the copy to succeed)", and not "if the string is too long".
-> IMHO, the snprintf is just fine here.
+Cleans up sparse warnings:
+symbol 'create_namespace_pmem' was not declared. Should it be static?
+symbol 'create_namespace_blk' was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvdimm/namespace_devs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-under "normal" circumstance i would say "does not matter" when
-something ends up as crippled string but in case of crypto sameone
-(the maintainer) needs to be careful. I have no idea about the
-consequences, i can only point to strange looking things and
-say "be careful".
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 3e4d1e7998da..2029e70a24f4 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -1875,7 +1875,7 @@ static int select_pmem_id(struct nd_region *nd_region, u8 *pmem_id)
+  * @nspm: target namespace to create
+  * @nd_label: target pmem namespace label to evaluate
+  */
+-struct device *create_namespace_pmem(struct nd_region *nd_region,
++static struct device *create_namespace_pmem(struct nd_region *nd_region,
+ 		struct nd_namespace_index *nsindex,
+ 		struct nd_namespace_label *nd_label)
+ {
+@@ -2186,7 +2186,7 @@ static int add_namespace_resource(struct nd_region *nd_region,
+ 	return i;
+ }
+ 
+-struct device *create_namespace_blk(struct nd_region *nd_region,
++static struct device *create_namespace_blk(struct nd_region *nd_region,
+ 		struct nd_namespace_label *nd_label, int count)
+ {
+ 
+-- 
+2.14.1
 
-re,
- wh
-
-> 
-> CJ
->>> -            return -ENAMETOOLONG;
->>> +                 "lrw(%s)", ecb_name) >= CRYPTO_MAX_ALG_NAME) {
->>> +            err = -ENAMETOOLONG;
->>> +            goto err_drop_spawn;
->>> +        }
->>>       }
->>>         inst->alg.base.cra_flags = alg->base.cra_flags &
->>> CRYPTO_ALG_ASYNC;
-> 
-> 
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe
-> kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
