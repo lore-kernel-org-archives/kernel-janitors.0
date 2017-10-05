@@ -1,19 +1,39 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Sun, 08 Oct 2017 10:59:28 +0000
-Subject: Re: [PATCH] dmaengine: stm32-dmamux: Fix a NULL vs IS_ERR() check in probe
-Message-Id: <20171008104727.GM30097@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 09:10:23 +0000
+Subject: [PATCH] net: qcom/emac: make function emac_isr static
+Message-Id: <20171005091023.27781-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003105450.nll2ogf44l3eq4ge@mwanda>
-In-Reply-To: <20171003105450.nll2ogf44l3eq4ge@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 03, 2017 at 01:54:50PM +0300, Dan Carpenter wrote:
-> devm_ioremap_resource() doesn't return NULL, it returns error pointers.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+The function emac_isr is local to the source and does not need to
+be in global scope, so make it static.
 
--- 
-~Vinod
+Cleans up sparse warnings:
+symbol 'emac_isr' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qualcomm/emac/emac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qualcomm/emac/emac.c b/drivers/net/ethernet/qualcomm/emac/emac.c
+index 759543512117..f477ba29c569 100644
+--- a/drivers/net/ethernet/qualcomm/emac/emac.c
++++ b/drivers/net/ethernet/qualcomm/emac/emac.c
+@@ -130,7 +130,7 @@ static int emac_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	return emac_mac_tx_buf_send(adpt, &adpt->tx_q, skb);
+ }
+ 
+-irqreturn_t emac_isr(int _irq, void *data)
++static irqreturn_t emac_isr(int _irq, void *data)
+ {
+ 	struct emac_irq *irq = data;
+ 	struct emac_adapter *adpt -- 
+2.14.1
+
