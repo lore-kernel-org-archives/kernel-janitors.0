@@ -1,32 +1,43 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Oct 2017 18:38:35 +0000
-Subject: Re: [PATCH 1/2] ARM: s3c64xx: Delete two error messages for a failed memory allocation in samsung_bl
-Message-Id: <20171004183835.7mtvoyia7ta4uqxl@kozik-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 10:42:11 +0000
+Subject: [PATCH] platform/x86: mlx-platform: make a couple of structures static
+Message-Id: <20171005104211.30440-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b695686-2e07-910d-6278-91d54a1b0b2f@users.sourceforge.net>
- <7f06d074-231b-85b9-3649-304edce6bc2c@users.sourceforge.net>
-In-Reply-To: <7f06d074-231b-85b9-3649-304edce6bc2c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Vadim Pasternak <vadimp@mellanox.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 10:39:56PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 2 Oct 2017 22:20:39 +0200
-> 
-> Omit extra messages for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/mach-s3c64xx/dev-backlight.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The structures mlxplat_dev and mlxplat_hotplug are local to the source
+and do not need to be in global scope, so make them static.
 
-Best regards,
-Krzysztof
+Cleans up sparse warnings:
+symbol 'mlxplat_dev' was not declared. Should it be static?
+symbol 'mlxplat_hotplug' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/mlx-platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index 4f3de2a8c4df..504256c3660d 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -216,8 +216,8 @@ static struct resource mlxplat_mlxcpld_resources[] = {
+ 	[0] = DEFINE_RES_IRQ_NAMED(17, "mlxcpld-hotplug"),
+ };
+ 
+-struct platform_device *mlxplat_dev;
+-struct mlxcpld_hotplug_platform_data *mlxplat_hotplug;
++static struct platform_device *mlxplat_dev;
++static struct mlxcpld_hotplug_platform_data *mlxplat_hotplug;
+ 
+ static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
+ {
+-- 
+2.14.1
 
