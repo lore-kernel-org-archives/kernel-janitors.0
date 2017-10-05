@@ -1,48 +1,38 @@
-From: Archit Taneja <architt@codeaurora.org>
-Date: Wed, 18 Oct 2017 04:25:18 +0000
-Subject: Re: [PATCH] drm/bridge: adv7511: Fix a use after free
-Message-Id: <bdd9b820-93ea-80bd-d11f-82ffbff07338@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 11:23:30 +0000
+Subject: [PATCH] KVM: PPC: Book3S HV: Delete an error message for a failed memory allocation in kvmppc_alloca
+Message-Id: <124a92d4-7d49-0769-ae0e-c4ab007ae146@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171017204343.zctliubjkq7imudi@mwanda>
-In-Reply-To: <20171017204343.zctliubjkq7imudi@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, David Airlie <airlied@linux.ie>, John Stultz <john.stultz@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, Neil Armstrong <narmstrong@baylibre.com>, Bhumika Goyal <bhumirks@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Oct 2017 13:16:51 +0200
 
+Omit an extra message for a memory allocation failure in this function.
 
-On 10/18/2017 02:13 AM, Dan Carpenter wrote:
-> We free "edid", then use it again on the next line.
-> 
-> Fixes: 3b1b975003e4 ("drm: adv7511/33: add HDMI CEC support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
 
-Thanks for the fix. I've queued this to drm-misc-next.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Archit
-
-> 
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> index 31ca883bda83..0e14f1572d05 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> @@ -607,10 +607,10 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
->   	adv7511_set_config_csc(adv7511, connector, adv7511->rgb,
->   			       drm_detect_hdmi_monitor(edid));
->   
-> -	kfree(edid);
-> -
->   	cec_s_phys_addr_from_edid(adv7511->cec_adap, edid);
->   
-> +	kfree(edid);
-> +
->   	return count;
->   }
->   
-> 
-
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+index 7c62967d672c..7df89d58ee91 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -106,7 +106,6 @@ int kvmppc_allocate_hpt(struct kvm_hpt_info *info, u32 order)
+ 	/* Allocate reverse map array */
+ 	rev = vmalloc(sizeof(struct revmap_entry) * npte);
+ 	if (!rev) {
+-		pr_err("kvmppc_allocate_hpt: Couldn't alloc reverse map array\n");
+ 		if (cma)
+ 			kvm_free_hpt_cma(page, 1 << (order - PAGE_SHIFT));
+ 		else
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.2
+
