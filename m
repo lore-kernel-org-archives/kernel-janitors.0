@@ -1,55 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sun, 01 Oct 2017 14:16:25 +0000
-Subject: Re: hwmon: (w83793): make const array watchdog_minors static, reduces object code size
-Message-Id: <20171001141625.GA32284@roeck-us.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Oct 2017 15:41:09 +0000
+Subject: [PATCH 1/2] powerpc/oprofile/cell: Delete an error message for a failed memory allocation in three f
+Message-Id: <ce22780f-a968-e955-6a09-5ab66c68d0ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170922143620.13780-1-colin.king@canonical.com>
-In-Reply-To: <20170922143620.13780-1-colin.king@canonical.com>
+References: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
+In-Reply-To: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Rudolf Marek <r.marek@assembler.cz>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, oprofile-list@lists.sf.net, Al Viro <viro@zeniv.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Robert Richter <rric@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 22, 2017 at 03:36:20PM +0100, Colin Ian King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate const array watchdog_minors on the stack, instead make it
-> static. Makes the object code smaller by over 350 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   48019	  38144	    256	  86419	  15193	drivers/hwmon/w83793.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   47574	  38232	    256	  86062	  1502e	drivers/hwmon/w83793.o
-> 
-> (gcc 6.3.0, x86-64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Oct 2017 17:10:11 +0200
 
-Applied to hwmon-next.
+Omit extra messages for a memory allocation failure in these functions.
 
-Thanks,
-Guenter
+This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/hwmon/w83793.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
-> index dab5c515d5a3..5ba9d9f1daa1 100644
-> --- a/drivers/hwmon/w83793.c
-> +++ b/drivers/hwmon/w83793.c
-> @@ -1676,7 +1676,9 @@ static int w83793_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
->  {
->  	struct device *dev = &client->dev;
-> -	const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
-> +	static const int watchdog_minors[] = {
-> +		WATCHDOG_MINOR, 212, 213, 214, 215
-> +	};
->  	struct w83793_data *data;
->  	int i, tmp, val, err;
->  	int files_fan = ARRAY_SIZE(w83793_left_fan) / 7;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/oprofile/cell/spu_task_sync.c | 8 --------
+ arch/powerpc/oprofile/cell/vma_map.c       | 2 --
+ 2 files changed, 10 deletions(-)
+
+diff --git a/arch/powerpc/oprofile/cell/spu_task_sync.c b/arch/powerpc/oprofile/cell/spu_task_sync.c
+index 44d67b167e0b..f1dd732b2998 100644
+--- a/arch/powerpc/oprofile/cell/spu_task_sync.c
++++ b/arch/powerpc/oprofile/cell/spu_task_sync.c
+@@ -210,9 +210,6 @@ prepare_cached_spu_info(struct spu *spu, unsigned long objectId)
+ 	 */
+ 	info = kzalloc(sizeof(struct cached_info), GFP_KERNEL);
+ 	if (!info) {
+-		printk(KERN_ERR "SPU_PROF: "
+-		       "%s, line %d: create vma_map failed\n",
+-		       __func__, __LINE__);
+ 		retval = -ENOMEM;
+ 		goto err_alloc;
+ 	}
+@@ -481,11 +478,6 @@ static int oprofile_spu_buff_create(void)
+ 					     GFP_KERNEL);
+ 
+ 		if (!spu_buff[spu].buff) {
+-			printk(KERN_ERR "SPU_PROF: "
+-			       "%s, line %d:  oprofile_spu_buff_create "
+-		       "failed to allocate spu buffer %d.\n",
+-			       __func__, __LINE__, spu);
+-
+ 			/* release the spu buffers that have been allocated */
+ 			while (spu >= 0) {
+ 				kfree(spu_buff[spu].buff);
+diff --git a/arch/powerpc/oprofile/cell/vma_map.c b/arch/powerpc/oprofile/cell/vma_map.c
+index c579b16845da..a115d9ede053 100644
+--- a/arch/powerpc/oprofile/cell/vma_map.c
++++ b/arch/powerpc/oprofile/cell/vma_map.c
+@@ -72,8 +72,6 @@ vma_map_add(struct vma_to_fileoffset_map *map, unsigned int vma,
+ 	struct vma_to_fileoffset_map *new  		kzalloc(sizeof(struct vma_to_fileoffset_map), GFP_KERNEL);
+ 	if (!new) {
+-		printk(KERN_ERR "SPU_PROF: %s, line %d: malloc failed\n",
+-		       __func__, __LINE__);
+ 		vma_map_free(map);
+ 		return NULL;
+ 	}
+-- 
+2.14.2
+
