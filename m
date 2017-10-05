@@ -1,50 +1,40 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 20 Oct 2017 10:02:46 +0000
-Subject: Re: [PATCH 2/2] mmc: meson-mx-sdio: Cleanup IS_ERR() checks
-Message-Id: <CAPDyKFrm_RmRid2hD=E2Pkf++FS2rZ30ONynVbJ6h_42xjUFqQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 05 Oct 2017 09:47:12 +0000
+Subject: [PATCH] NFC: fdp: make struct nci_ops static
+Message-Id: <20171005094712.28627-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171013111943.zyp5myiwb3pp56vh@mwanda>
- <20171013112049.rdcdqv6ooktlv5wz@mwanda>
-In-Reply-To: <20171013112049.rdcdqv6ooktlv5wz@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus-amlogic@lists.infradead.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "David S . Miller" <davem@davemloft.net>, Stephen Hemminger <stephen@networkplumber.org>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13 October 2017 at 13:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Using PTR_ERR_OR_ZERO() instead of IS_ERR() works, but it's not how
-> you're supposed to write these conditions.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied for next!
+The structure nci_ops is local to the source and does not need to
+be in global scope, so make it static.
 
-Kind regards
-Uffe
+Cleans up sparse warning:
+symbol 'nci_ops' was not declared. Should it be static?
 
-> ---
-> I really hope it doesn't become a trend on to wrap all error checks in a
-> WARN_ON() macro...
->
-> diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-> index dc30ed5e964b..d0d921e0e589 100644
-> --- a/drivers/mmc/host/meson-mx-sdio.c
-> +++ b/drivers/mmc/host/meson-mx-sdio.c
-> @@ -602,7 +602,7 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
->
->         host->fixed_factor_clk = devm_clk_register(host->controller_dev,
->                                                  &host->fixed_factor.hw);
-> -       if (WARN_ON(PTR_ERR_OR_ZERO(host->fixed_factor_clk)))
-> +       if (WARN_ON(IS_ERR(host->fixed_factor_clk)))
->                 return PTR_ERR(host->fixed_factor_clk);
->
->         clk_div_parent = __clk_get_name(host->fixed_factor_clk);
-> @@ -620,7 +620,7 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
->
->         host->cfg_div_clk = devm_clk_register(host->controller_dev,
->                                               &host->cfg_div.hw);
-> -       if (WARN_ON(PTR_ERR_OR_ZERO(host->cfg_div_clk)))
-> +       if (WARN_ON(IS_ERR(host->cfg_div_clk)))
->                 return PTR_ERR(host->cfg_div_clk);
->
->         return 0;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nfc/fdp/fdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index ec50027b0d8b..d5784a47fc13 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -726,7 +726,7 @@ static struct nci_driver_ops fdp_prop_ops[] = {
+ 	},
+ };
+ 
+-struct nci_ops nci_ops = {
++static struct nci_ops nci_ops = {
+ 	.open = fdp_nci_open,
+ 	.close = fdp_nci_close,
+ 	.send = fdp_nci_send,
+-- 
+2.14.1
+
