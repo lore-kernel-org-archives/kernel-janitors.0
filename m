@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 19:23:56 +0000
-Subject: [PATCH] Input-mpr121: Use common error handling code in mpr_touchkey_interrupt()
-Message-Id: <38f2360b-5f45-b6e6-4e7d-a9cc1a43939a@users.sourceforge.net>
+Date: Fri, 06 Oct 2017 15:12:10 +0000
+Subject: [PATCH] kernel/module: Delete an error message for a failed memory allocation in add_module_usage()
+Message-Id: <a47bc166-7592-2ff8-9b94-4d45e18b6004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Zhang Jiejing <jiejing.zhang@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Jessica Yu <jeyu@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 21:16:53 +0200
+Date: Fri, 6 Oct 2017 16:27:26 +0200
 
-Add a jump target so that an error message can be better reused
-in an if branch of this function.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/keyboard/mpr121_touchkey.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/module.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/mpr121_touchkey.c b/drivers/input/keyboard/mpr121_touchkey.c
-index 884a74d8a7ed..af840a842246 100644
---- a/drivers/input/keyboard/mpr121_touchkey.c
-+++ b/drivers/input/keyboard/mpr121_touchkey.c
-@@ -129,14 +129,13 @@ static irqreturn_t mpr_touchkey_interrupt(int irq, void *dev_id)
- 	int reg;
+diff --git a/kernel/module.c b/kernel/module.c
+index de66ec825992..07ef44767245 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -837,10 +837,8 @@ static int add_module_usage(struct module *a, struct module *b)
  
- 	reg = i2c_smbus_read_byte_data(client, ELE_TOUCH_STATUS_1_ADDR);
--	if (reg < 0) {
--		dev_err(&client->dev, "i2c read error [%d]\n", reg);
--		goto out;
+ 	pr_debug("Allocating new usage for %s.\n", a->name);
+ 	use = kmalloc(sizeof(*use), GFP_ATOMIC);
+-	if (!use) {
+-		pr_warn("%s: out of memory loading\n", a->name);
++	if (!use)
+ 		return -ENOMEM;
 -	}
-+	if (reg < 0)
-+		goto report_read_failure;
  
- 	reg <<= 8;
- 	reg |= i2c_smbus_read_byte_data(client, ELE_TOUCH_STATUS_0_ADDR);
- 	if (reg < 0) {
-+report_read_failure:
- 		dev_err(&client->dev, "i2c read error [%d]\n", reg);
- 		goto out;
- 	}
+ 	use->source = a;
+ 	use->target = b;
 -- 
-2.14.3
+2.14.2
 
