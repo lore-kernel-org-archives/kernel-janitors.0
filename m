@@ -1,30 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Oct 2017 12:53:47 +0000
-Subject: [PATCH net] selftests/net: rxtimestamp: Fix an off by one
-Message-Id: <20171005125347.otplfss4mo7hfopv@mwanda>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 06 Oct 2017 04:29:36 +0000
+Subject: Re: [PATCH net] selftests/net: rxtimestamp: Fix an off by one
+Message-Id: <20171005.212936.1533429317037705562.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171005125347.otplfss4mo7hfopv@mwanda>
+In-Reply-To: <20171005125347.otplfss4mo7hfopv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shuah Khan <shuah@kernel.org>, Mike Maloney <maloney@google.com>
-Cc: Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: shuah@kernel.org, maloney@google.com, willemb@google.com, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The > should be >= so that we don't write one element beyond the end of
-the array.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 5 Oct 2017 15:53:47 +0300
 
-Fixes: 16e781224198 ("selftests/net: Add a test to validate behavior of rx timestamps")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The > should be >= so that we don't write one element beyond the end of
+> the array.
+> 
+> Fixes: 16e781224198 ("selftests/net: Add a test to validate behavior of rx timestamps")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/tools/testing/selftests/networking/timestamping/rxtimestamp.c b/tools/testing/selftests/networking/timestamping/rxtimestamp.c
-index 00f286661dcd..dd4162fc0419 100644
---- a/tools/testing/selftests/networking/timestamping/rxtimestamp.c
-+++ b/tools/testing/selftests/networking/timestamping/rxtimestamp.c
-@@ -341,7 +341,7 @@ int main(int argc, char **argv)
- 			return 0;
- 		case 'n':
- 			t = atoi(optarg);
--			if (t > ARRAY_SIZE(test_cases))
-+			if (t >= ARRAY_SIZE(test_cases))
- 				error(1, 0, "Invalid test case: %d", t);
- 			all_tests = false;
- 			test_cases[t].enabled = true;
+Applied.
