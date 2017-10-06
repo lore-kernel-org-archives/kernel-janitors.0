@@ -1,44 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 21:36:44 +0000
-Subject: [PATCH 2/2] max8997_charger: Improve a size determination in max8997_battery_probe()
-Message-Id: <47b1573e-6f12-6949-e330-7dbe7a39c60c@users.sourceforge.net>
+From: Matt Fleming <matt@codeblueprint.co.uk>
+Date: Fri, 06 Oct 2017 12:19:39 +0000
+Subject: Re: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
+Message-Id: <20171006121939.GC3314@codeblueprint.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <286b1fea-ccff-5fed-5e2d-fc3b0064cd4d@users.sourceforge.net>
-In-Reply-To: <286b1fea-ccff-5fed-5e2d-fc3b0064cd4d@users.sourceforge.net>
+References: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
+In-Reply-To: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ivan Hu <ivan.hu@canonical.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 22:22:54 +0100
+On Sat, 30 Sep, at 11:17:32AM, Dan Carpenter wrote:
+> If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
+> will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
+> try to dereference it inside the loop and crash.
+> 
+> Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
+> index 08129b7b80ab..41c48a1e8baa 100644
+> --- a/drivers/firmware/efi/test/efi_test.c
+> +++ b/drivers/firmware/efi/test/efi_test.c
+> @@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
+>  	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
+>  		return -EFAULT;
+>  
+> +	if (qcaps.capsule_count = ULONG_MAX)
+> +		return -EINVAL;
+> +
+>  	capsules = kcalloc(qcaps.capsule_count + 1,
+>  			   sizeof(efi_capsule_header_t), GFP_KERNEL);
+>  	if (!capsules)
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/power/supply/max8997_charger.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
-index 38a01706a56b..1de0e74b7dea 100644
---- a/drivers/power/supply/max8997_charger.c
-+++ b/drivers/power/supply/max8997_charger.c
-@@ -142,8 +142,7 @@ static int max8997_battery_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto report_bus_failure;
- 
--	charger = devm_kzalloc(&pdev->dev, sizeof(struct charger_data),
--				GFP_KERNEL);
-+	charger = devm_kzalloc(&pdev->dev, sizeof(*charger), GFP_KERNEL);
- 	if (!charger)
- 		return -ENOMEM;
- 
--- 
-2.14.3
-
+This looks OK to me. Ivan?
