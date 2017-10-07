@@ -1,53 +1,94 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 18 Oct 2017 12:50:20 +0000
-Subject: Re: [PATCH] ceph: remove unused and redundant variable dropping
-Message-Id: <CAOi1vP_vZNPs9cT1WPHHrLLtB0MDj9FdLxHHZDocZTAhs0WMHw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Oct 2017 14:15:14 +0000
+Subject: [PATCH] kernel/trace: Delete five error messages for a failed memory allocation
+Message-Id: <c0d21fa1-a40f-92e5-821c-66e2596112c9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171018113425.28658-1-colin.king@canonical.com>
-In-Reply-To: <20171018113425.28658-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 1:34 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable dropping is set but never read and hence is redundant
-> and can be removed. Cleans up clang warning:
->
-> fs/ceph/caps.c:1170:2: warning: Value stored to 'dropping' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/ceph/caps.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 157fe59fbabe..14df41e3751c 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -1159,7 +1159,7 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
->         struct ceph_inode_info *ci = cap->ci;
->         struct inode *inode = &ci->vfs_inode;
->         struct cap_msg_args arg;
-> -       int held, revoking, dropping;
-> +       int held, revoking;
->         int wake = 0;
->         int delayed = 0;
->         int ret;
-> @@ -1167,7 +1167,6 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
->         held = cap->issued | cap->implemented;
->         revoking = cap->implemented & ~cap->issued;
->         retain &= ~revoking;
-> -       dropping = cap->issued & ~retain;
->
->         dout("__send_cap %p cap %p session %p %s -> %s (revoking %s)\n",
->              inode, cap, cap->session,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Oct 2017 16:10:06 +0200
 
-Applied.
+Omit extra messages for a memory allocation failure in these functions.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-                Ilya
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/trace/trace_kprobe.c   | 1 -
+ kernel/trace/trace_probe.c    | 5 ++---
+ kernel/trace/trace_selftest.c | 4 +---
+ kernel/trace/trace_uprobe.c   | 2 --
+ 4 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 8a907e12b6b9..79a2ee2fc1f4 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -776,7 +776,6 @@ static int create_trace_kprobe(int argc, char **argv)
+ 		}
+ 
+ 		if (!parg->name) {
+-			pr_info("Failed to allocate argument[%d] name.\n", i);
+ 			ret = -ENOMEM;
+ 			goto error;
+ 		}
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 52478f033f88..cf544d899eaa 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -545,10 +545,9 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+ 		return -ENOSPC;
+ 	}
+ 	parg->comm = kstrdup(arg, GFP_KERNEL);
+-	if (!parg->comm) {
+-		pr_info("Failed to allocate memory for command '%s'.\n", arg);
++	if (!parg->comm)
+ 		return -ENOMEM;
+-	}
++
+ 	t = strchr(parg->comm, ':');
+ 	if (t) {
+ 		arg[t - parg->comm] = '\0';
+diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+index cb917cebae29..6a2a57def182 100644
+--- a/kernel/trace/trace_selftest.c
++++ b/kernel/trace/trace_selftest.c
+@@ -250,10 +250,8 @@ static int trace_selftest_ops(struct trace_array *tr, int cnt)
+ 
+ 	/* Add a dynamic probe */
+ 	dyn_ops = kzalloc(sizeof(*dyn_ops), GFP_KERNEL);
+-	if (!dyn_ops) {
+-		printk("MEMORY ERROR ");
++	if (!dyn_ops)
+ 		goto out;
+-	}
+ 
+ 	dyn_ops->func = trace_selftest_test_dyn_func;
+ 
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 4525e0271a53..9131f7372502 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -492,7 +492,6 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	tu->filename = kstrdup(filename, GFP_KERNEL);
+ 
+ 	if (!tu->filename) {
+-		pr_info("Failed to allocate filename.\n");
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
+@@ -518,7 +517,6 @@ static int create_trace_uprobe(int argc, char **argv)
+ 		}
+ 
+ 		if (!parg->name) {
+-			pr_info("Failed to allocate argument[%d] name.\n", i);
+ 			ret = -ENOMEM;
+ 			goto error;
+ 		}
+-- 
+2.14.2
+
