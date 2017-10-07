@@ -1,27 +1,25 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 20:15:02 +0000
-Subject: [PATCH 0/2] iio/accel/stk8ba50: Fine-tuning for two function implementations
-Message-Id: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Sat, 07 Oct 2017 04:17:52 +0000
+Subject: Re: [PATCH] crypto: xts - Fix an error handling path in 'create()'
+Message-Id: <20171007041752.GA29803@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170926061744.31587-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170926061744.31587-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 22:10:12 +0200
+On Tue, Sep 26, 2017 at 08:17:44AM +0200, Christophe JAILLET wrote:
+> All error handling paths 'goto err_drop_spawn' except this one.
+> In order to avoid some resources leak, we should do it as well here.
+> 
+> Fixes: f1c131b45410 ("crypto: xts - Convert to skcipher")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Two update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (2):
-  Use common error handling code in stk8ba50_probe()
-  Improve unlocking of a mutex in stk8ba50_read_raw()
-
- drivers/iio/accel/stk8ba50.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
-
+Patch applied.  Thanks.
 -- 
-2.14.3
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
