@@ -1,41 +1,100 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 09:16:32 +0000
-Subject: Re: Unicode characters in commit messages?
-Message-Id: <88ad0486-7c55-74c3-062d-53b591b7b254@users.sourceforge.net>
+Date: Sat, 07 Oct 2017 17:48:37 +0000
+Subject: [PATCH 1/2] lib/test: Delete five error messages for a failed memory allocation
+Message-Id: <410a4c5a-4ee0-6fcc-969c-103d8e496b78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
- <2dd8c930-77e8-a2ee-6356-fc9c1d21384d@users.sourceforge.net>
- <20171025060209.pqtyqk4weduvmzxj@mwanda>
- <2d491a67-184a-c03f-e6ee-da88066e97f0@users.sourceforge.net>
- <20171025073250.i6v6jwijbkmybmtk@mwanda>
- <4d93d77b-57f7-fac2-a6aa-314d05778e2d@users.sourceforge.net>
- <20171025084346.dkaeutig7qy2byx4@mwanda>
-In-Reply-To: <20171025084346.dkaeutig7qy2byx4@mwanda>
+References: <9a81d82d-fb1b-38d3-1dbf-31e6bf4ff677@users.sourceforge.net>
+In-Reply-To: <9a81d82d-fb1b-38d3-1dbf-31e6bf4ff677@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: iommu@lists.linux-foundation.org, kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Daniel Mentz <danielmentz@google.com>, Dmitry Vyukov <dvyukov@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Lars Ellenberg <lars.ellenberg@linbit.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Philipp Reisner <philipp.reisner@linbit.com>, Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> These long email threads are a waste of time
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Oct 2017 17:34:23 +0200
 
-They occur for different topics.
+Omit extra messages for a memory allocation failure in these functions.
 
+This issue was detected by using the Coccinelle software.
 
-> when we already answered your questions completely
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ lib/test_kasan.c     | 5 ++---
+ lib/test_kmod.c      | 8 ++------
+ lib/test_list_sort.c | 9 +++------
+ 3 files changed, 7 insertions(+), 15 deletions(-)
 
-There were some attempts for specific details.
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index a25c9763fce1..ef1a3ac1397e 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -353,10 +353,9 @@ static noinline void __init memcg_accounted_kmem_cache(void)
+ 	 */
+ 	for (i = 0; i < 5; i++) {
+ 		p = kmem_cache_alloc(cache, GFP_KERNEL);
+-		if (!p) {
+-			pr_err("Allocation failed\n");
++		if (!p)
+ 			goto free_cache;
+-		}
++
+ 		kmem_cache_free(cache, p);
+ 		msleep(100);
+ 	}
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index fba78d25e825..337f408b4de6 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -783,10 +783,8 @@ static int kmod_config_sync_info(struct kmod_test_device *test_dev)
+ 	free_test_dev_info(test_dev);
+ 	test_dev->info = vzalloc(config->num_threads *
+ 				 sizeof(struct kmod_test_device_info));
+-	if (!test_dev->info) {
+-		dev_err(test_dev->dev, "Cannot alloc test_dev info\n");
++	if (!test_dev->info)
+ 		return -ENOMEM;
+-	}
+ 
+ 	return 0;
+ }
+@@ -1089,10 +1087,8 @@ static struct kmod_test_device *alloc_test_dev_kmod(int idx)
+ 	struct miscdevice *misc_dev;
+ 
+ 	test_dev = vzalloc(sizeof(struct kmod_test_device));
+-	if (!test_dev) {
+-		pr_err("Cannot alloc test_dev\n");
++	if (!test_dev)
+ 		goto err_out;
+-	}
+ 
+ 	mutex_init(&test_dev->config_mutex);
+ 	mutex_init(&test_dev->trigger_mutex);
+diff --git a/lib/test_list_sort.c b/lib/test_list_sort.c
+index 28e817387b04..5474f3f3e41d 100644
+--- a/lib/test_list_sort.c
++++ b/lib/test_list_sort.c
+@@ -76,17 +76,14 @@ static int __init list_sort_test(void)
+ 	pr_debug("start testing list_sort()\n");
+ 
+ 	elts = kcalloc(TEST_LIST_LEN, sizeof(*elts), GFP_KERNEL);
+-	if (!elts) {
+-		pr_err("error: cannot allocate memory\n");
++	if (!elts)
+ 		return err;
+-	}
+ 
+ 	for (i = 0; i < TEST_LIST_LEN; i++) {
+ 		el = kmalloc(sizeof(*el), GFP_KERNEL);
+-		if (!el) {
+-			pr_err("error: cannot allocate memory\n");
++		if (!el)
+ 			goto exit;
+-		}
++
+ 		 /* force some equivalencies */
+ 		el->value = prandom_u32() % (TEST_LIST_LEN / 3);
+ 		el->serial = i;
+-- 
+2.14.2
 
-
-> and over and over.
-
-I hope that further useful adjustments can be achieved for
-involved information sources.
-
-
-> The feedback was clear.
-
-I disagree on some aspects.
-
-Regards,
-Markus
