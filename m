@@ -1,51 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Oct 2017 20:44:48 +0000
-Subject: Re: char/tpm: Less checks in tpm_ibmvtpm_probe() after error detection
-Message-Id: <c1b3b269-46eb-7102-a281-c8f105abdf7e@users.sourceforge.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Sat, 07 Oct 2017 04:36:33 +0000
+Subject: Re: [PATCH] crypto: algboss: remove redundant setting of len to zero
+Message-Id: <20171007043633.GH29803@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
- <20171019135632.4af42743@kitsune.suse.cz>
- <20171019133646.gu7qv2tywfk4tcxj@mwanda>
-In-Reply-To: <20171019133646.gu7qv2tywfk4tcxj@mwanda>
+References: <20170914180219.12994-1-colin.king@canonical.com>
+In-Reply-To: <20170914180219.12994-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> If the code doing the allocation is changed in the future the single
->> cleanup can stay whereas multiple labels have to be rewritten again.
+On Thu, Sep 14, 2017 at 07:02:19PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> No, they don't unless you choose bad label names.  Perhaps numbered
-> labels?  We don't get a lot of those in the kernel any more.  Label
-> name should be based on what the label does.  Often I see bad label
-> names like generic labels:
+> The variable len is set to zero, never read and then later updated
+> to p - name, so clearly the zero'ing of len is redundant and
+> can be removed.
 > 
-> 	foo = kmalloc();
-> 	if (!foo)
-> 		goto out;
+> Detected by clang scan-build:
+> " warning: Value stored to 'len' is never read"
 > 
-> What is out going to do?  Another common anti-pattern is come-from
-> labels:
-> 
-> 	foo = kmalloc();
-> 	if (!foo)
-> 		goto kmalloc_failed;
-> 
-> Obviously, we can see from the if statement that the alloc failed and
-> you *just* know the next line is going to be is going to be:
-> 
-> 	if (invalid)
-> 		goto kmalloc_failed;
-> 
-> Which is wrong because kmalloc didn't fail...  But if the label name is
-> based on what it does then, when you add or a remove an allocation, you
-> just have to edit the one thing.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Would you be interested in an update on a topic like “Source code review
-around jump label usage”?
-https://lkml.org/lkml/2015/12/11/378
-
-Regards,
-Markus
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
