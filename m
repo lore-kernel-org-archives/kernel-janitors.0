@@ -1,32 +1,42 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Oct 2017 17:59:39 +0000
-Subject: Re: [PATCH 1/6] ARM: s3c24xx: Delete an error message for a failed memory allocation in s3c2410_ioti
-Message-Id: <20171004175939.ofotquvf52quvgbo@kozik-lap>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 08 Oct 2017 09:39:49 +0000
+Subject: [PATCH 1/2] crypto: lrw - Fix an error handling path in 'create()'
+Message-Id: <53e4cc621176b8aeeb58e493b133be853c66ef49.1507445539.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
- <1207a56d-3fa6-9c80-d9fe-4b56b11ff0a7@users.sourceforge.net>
-In-Reply-To: <1207a56d-3fa6-9c80-d9fe-4b56b11ff0a7@users.sourceforge.net>
+References: <cover.1507445539.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1507445539.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Oct 02, 2017 at 07:58:02PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 2 Oct 2017 19:14:20 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
+All error handling paths 'goto err_drop_spawn' except this one.
+In order to avoid some resources leak, we should do it as well here.
 
-Thanks, applied.
+Fixes: 700cb3f5fe75 ("crypto: lrw - Convert to skcipher")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ crypto/lrw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/crypto/lrw.c b/crypto/lrw.c
+index a8bfae4451bf..eb681e9fe574 100644
+--- a/crypto/lrw.c
++++ b/crypto/lrw.c
+@@ -610,8 +610,10 @@ static int create(struct crypto_template *tmpl, struct rtattr **tb)
+ 		ecb_name[len - 1] = 0;
+ 
+ 		if (snprintf(inst->alg.base.cra_name, CRYPTO_MAX_ALG_NAME,
+-			     "lrw(%s)", ecb_name) >= CRYPTO_MAX_ALG_NAME)
+-			return -ENAMETOOLONG;
++			     "lrw(%s)", ecb_name) >= CRYPTO_MAX_ALG_NAME) {
++			err = -ENAMETOOLONG;
++			goto err_drop_spawn;
++		}
+ 	}
+ 
+ 	inst->alg.base.cra_flags = alg->base.cra_flags & CRYPTO_ALG_ASYNC;
+-- 
+2.11.0
 
