@@ -1,73 +1,56 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date: Sun, 08 Oct 2017 21:26:10 +0000
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 09 Oct 2017 08:31:48 +0000
 Subject: Re: [PATCH 0/2] detect identical chip data arrays
-Message-Id: <20171008212610.kdnsr7bcuitvmedc@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="fsh4555bxuekk5ei"
+Message-Id: <CAK7LNATGdz52SbYWD2bv7uYBQGVAHAK7xb9oJOgUVsTQJEPN5Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1507490321-24900-1-git-send-email-Julia.Lawall@lip6.fr>
  <20171008203258.y7kqx7ipondxlsix@earth>
  <alpine.DEB.2.20.1710082243140.2160@hadrien>
 In-Reply-To: <alpine.DEB.2.20.1710082243140.2160@hadrien>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-
---fsh4555bxuekk5ei
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Sun, Oct 08, 2017 at 10:44:50PM +0200, Julia Lawall wrote:
+2017-10-09 5:44 GMT+09:00 Julia Lawall <julia.lawall@lip6.fr>:
+>
+>
 > On Sun, 8 Oct 2017, Sebastian Reichel wrote:
-> > Hi,
-> >
-> > On Sun, Oct 08, 2017 at 09:18:39PM +0200, Julia Lawall wrote:
-> > > Rename battery.cocci as check_bq27xxx_data.cocci and adjust the warni=
-ng
-> > > messages to indicate that some structures are the same, in response to
-> > > feedback from Liam Breck.
-> > >
-> > > Although check_bq27xxx_data.cocci says is requires Coccinelle 1.0.7, =
-which
-> > > is not yet released, it actually works with the version currently ava=
-ilable
-> > > on Github, eg from Coccinelle commit 3ba77b3a0f91.
-> >
-> > I think the rename makes sense, but I would expect the move to
-> > happen in one go with "git send-email -M", so that it detects the
-> > rename.
->=20
+>
+>> Hi,
+>>
+>> On Sun, Oct 08, 2017 at 09:18:39PM +0200, Julia Lawall wrote:
+>> > Rename battery.cocci as check_bq27xxx_data.cocci and adjust the warning
+>> > messages to indicate that some structures are the same, in response to
+>> > feedback from Liam Breck.
+>> >
+>> > Although check_bq27xxx_data.cocci says is requires Coccinelle 1.0.7, which
+>> > is not yet released, it actually works with the version currently available
+>> > on Github, eg from Coccinelle commit 3ba77b3a0f91.
+>>
+>> I think the rename makes sense, but I would expect the move to
+>> happen in one go with "git send-email -M", so that it detects the
+>> rename.
+>
 > I'm not actually sure what is the status of the previous version.
 > Masahiro said applied, but I downloaded his tree and it was not there.  So
 > I thought this way would be easier.
->=20
-> julia
 
-Ok. In that case it makes sense to just apply the one with better
-name of course :) Thanks for the script!
+My tree is here:
+git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
 
--- Sebastian
+I had applied your patch a few days before.
 
---fsh4555bxuekk5ei
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+BTW, how should I handle this series?
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlnal/EACgkQ2O7X88g7
-+pr6rQ/8DI5O5Up9d3GlgJ1eAm5gCaZTb80pYTxHYS/oxnfjZN93zoh7IJTLr5CF
-2ZCMrh5WREyPSr945NOngGEUqSwIllAGdARadwC/smjbLAu+s/+xB53zsWXaiZTH
-DmEW6KYs1cHqASjwdkZi8gg1kLJ1TINDIVAe3XpMsvV5U5NpOejnBRx/rDi8ORtJ
-tTBiRL1MK+iiAa6aXMlpduqxTbrVhoT9T8JQg2W2S+uFbuwRGL/puor6J+7wh24N
-NiL7AnRhofIbzYRgTxxFYgXX5gq4Wxvnkf93HF2q84zVDMW5E0U7I4oZbHyU/n56
-9HyTC391xHysdDR4YTzq9ozh5qVb/NB4olHCZmK4j6hCjbBlEErtF1kGmnK4KRJO
-ke4SpGYO9EaEG/2QdDPLGdpI+BHVpGybeJTc+gMZUiBvBVwYSbnZztidiIcZTVN/
-cAbrL9yLLX+lnef+MbaG5rQgkOZLRaHOihjGHoOBZHgcwrBdo514ZVO2aScCEpsI
-54Jo/1yu7Dxpc3r0WQzIIkKBz8sVwWa7B/Yqrya91oiPZZg5a0bJgaAnLtpF77WE
-TNaa0XMy2M0jv9DjQAFB+erHwk2rOJH0sZgEboBl/uWN6L8vYhuCZ31FQ+oPgNlw
-/K4u9DEw/I83Lk0igPNtZG79NE/mu6ha9Icn+X9pcRZhxIUHAhs=
-=i+ea
------END PGP SIGNATURE-----
+1/2 is reverting it.
 
---fsh4555bxuekk5ei--
+So, I can drop the previous one entirely,
+then pick up 2/2 only.
+
+Is this a good thing to do?
+
+-- 
+Best Regards
+Masahiro Yamada
