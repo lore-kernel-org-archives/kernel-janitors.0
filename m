@@ -1,40 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 05 Oct 2017 10:11:37 +0000
-Subject: [PATCH] pinctrl: ingenic: make function ingenic_pinctrl_probe static
-Message-Id: <20171005101137.29664-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 09 Oct 2017 21:02:22 +0000
+Subject: Re: [PATCH] pinctrl: ingenic: make function ingenic_pinctrl_probe static
+Message-Id: <CACRpkdb4ZyXpRGJNoNB-yHKA=jEeS5a2AEURJJiCisyDAm+aYQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171005101137.29664-1-colin.king@canonical.com>
+In-Reply-To: <20171005101137.29664-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Oct 5, 2017 at 12:11 PM, Colin King <colin.king@canonical.com> wrote:
 
-The function ingenic_pinctrl_probe is local to the source and does
-not need to be in global scope, so make it static.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The function ingenic_pinctrl_probe is local to the source and does
+> not need to be in global scope, so make it static.
+>
+> Cleans up sparse warnings
+> symbol 'ingenic_pinctrl_probe' was not declared. Should it be static?
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Cleans up sparse warnings
-symbol 'ingenic_pinctrl_probe' was not declared. Should it be static?
+Patch applied.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/pinctrl-ingenic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index d84761822243..372ddf386bdb 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -717,7 +717,7 @@ static const struct of_device_id ingenic_pinctrl_of_match[] = {
- 	{},
- };
- 
--int ingenic_pinctrl_probe(struct platform_device *pdev)
-+static int ingenic_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct ingenic_pinctrl *jzpc;
--- 
-2.14.1
-
+Yours,
+Linus Walleij
