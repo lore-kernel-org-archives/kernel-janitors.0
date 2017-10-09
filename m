@@ -1,56 +1,116 @@
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-Date: Thu, 19 Oct 2017 12:39:49 +0000
-Subject: Re: [PATCH 4/5] powerpc-pseries: Return directly after a failed kzalloc_node() in iommu_pseries_allo
-Message-Id: <20171019143949.2c87ea66@kitsune.suse.cz>
+From: Doug Ledford <dledford@redhat.com>
+Date: Mon, 09 Oct 2017 13:16:35 +0000
+Subject: Re: [PATCH] IB/rxe: check for allocation failure on elem
+Message-Id: <1507554995.46071.25.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
- <a824fe65-1708-16ba-68d6-df0f73e0f49a@users.sourceforge.net>
- <20171019134148.52b890b4@kitsune.suse.cz>
- <2f1e61bd-9d79-1b9f-e686-f9d13a6f0afc@users.sourceforge.net>
-In-Reply-To: <2f1e61bd-9d79-1b9f-e686-f9d13a6f0afc@users.sourceforge.net>
+References: <20170908143745.2445-1-colin.king@canonical.com>
+         <20170909125607.GA22465@mtr-leonro.local>
+         <20170912144829.GR3405@mtr-leonro.local>
+In-Reply-To: <20170912144829.GR3405@mtr-leonro.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linuxppc-dev@lists.ozlabs.org, Rob Herring <robh@kernel.org>, Sahil Mehta <sahilmehta17@gmail.com>, Alexey Kardashevskiy <aik@ozlabs.ru>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Johan Hovold <johan@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Alex Williamson <alex.williamson@redhat.com>, Paul Mackerras <paulus@samba.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bart Van Assche <bart.vanassche@sandisk.com>, Andrew Morton <akpm@linux-foundation.org>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, David Gibson <david@gibson.dropbear.id.au>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Leon Romanovsky <leon@kernel.org>, Colin King <colin.king@canonical.com>
+Cc: Moni Shoua <monis@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 19 Oct 2017 14:04:43 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> >> @@ -61,7 +61,7 @@ static struct iommu_table_group
-> >> *iommu_pseries_alloc_group(int node) table_group > >> kzalloc_node(sizeof(*table_group), GFP_KERNEL, node); if
-> >> (!table_group)
-> >> -		goto fail_exit;
-> >> +		return NULL;
-> >>  
-> >>  	tbl = kzalloc_node(sizeof(*tbl), GFP_KERNEL, node);
-> >>  	if (!tbl)  
+On Tue, 2017-09-12 at 17:48 +0300, Leon Romanovsky wrote:
+> On Sat, Sep 09, 2017 at 03:56:07PM +0300, Leon Romanovsky wrote:
+> > On Fri, Sep 08, 2017 at 03:37:45PM +0100, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > The allocation for elem may fail (especially because we're using
+> > > GFP_ATOMIC) so best to check for a null return.  This fixes a
+> > > potential
+> > > null pointer dereference when assigning elem->pool.
+> > > 
+> > > Detected by CoverityScan CID#1357507 ("Dereference null return
+> > > value")
+> > > 
+> > > Fixes: 8700e3e7c485 ("Soft RoCE driver")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/infiniband/sw/rxe/rxe_pool.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/infiniband/sw/rxe/rxe_pool.c
+> > > b/drivers/infiniband/sw/rxe/rxe_pool.c
+> > > index c1b5f38f31a5..3b4916680018 100644
+> > > --- a/drivers/infiniband/sw/rxe/rxe_pool.c
+> > > +++ b/drivers/infiniband/sw/rxe/rxe_pool.c
+> > > @@ -404,6 +404,8 @@ void *rxe_alloc(struct rxe_pool *pool)
+> > >  	elem = kmem_cache_zalloc(pool_cache(pool),
+> > >  				 (pool->flags & RXE_POOL_ATOMIC)
+> > > ?
+> > >  				 GFP_ATOMIC : GFP_KERNEL);
+> > > +	if (!elem)
+> > > +		return NULL;
+> > > 
 > > 
-> > I have seen quite a few fixes that do inverse of this patch after a
-> > piece of code allocating some extra piece of memory was added before
-> > code that just returns on fail because it is the first allocation in
-> > the function.
-> > 
-> > This is not useful.  
+> > It is not enough to simply return NULL, you also should release
+> > "pool" too.
 > 
-> How do you think about an information from the section “7)
-> Centralized exiting of functions” in the document “coding-style.rst”
-> then?
-> 
-> “…
-> If there is no cleanup needed then just return directly.
-> …”
+> Colin,
+> do you plan to fix the comment and resend it?
 
-There is also stated benefit
+Since Colin is non-responsive in this thread, I went ahead and took his
+patch, but then applied a fixup of my own:
 
-"
-- errors by not updating individual exit points when making
-  modifications are prevented
-"
+commit a79c0f939da23740c12f43019720055aade89367 (HEAD -> k.o/for-next)
+Author: Doug Ledford <dledford@redhat.com>
+Date:   Mon Oct 9 09:11:32 2017 -0400
 
-which is furthered by using the common cleanup even in case no cleanup
-is required but running the cleanup does not cause any harm.
+    IB/rxe: put the pool on allocation failure
+    
+    If the allocation of elem fails, it is not sufficient to simply check
+    for NULL and return.  We need to also put our reference on the pool or
+    else we will leave the pool with a permanent ref count and we will never
+    be able to free it.
+    
+    Fixes: 4831ca9e4a8e (IB/rxe: check for allocation failure on elem)
+    Suggested-by: Leon Romanovsky <leon@kernel.org>
+    Signed-off-by: Doug Ledford <dledford@redhat.com>
 
-Thanks
+diff --git a/drivers/infiniband/sw/rxe/rxe_pool.c b/drivers/infiniband/sw/rxe/rxe_pool.c
+index 3b4916680018..b4a8acc7bb7d 100644
+--- a/drivers/infiniband/sw/rxe/rxe_pool.c
++++ b/drivers/infiniband/sw/rxe/rxe_pool.c
+@@ -394,23 +394,25 @@ void *rxe_alloc(struct rxe_pool *pool)
+ 
+        kref_get(&pool->rxe->ref_cnt);
+ 
+-       if (atomic_inc_return(&pool->num_elem) > pool->max_elem) {
+-               atomic_dec(&pool->num_elem);
+-               rxe_dev_put(pool->rxe);
+-               rxe_pool_put(pool);
+-               return NULL;
+-       }
++       if (atomic_inc_return(&pool->num_elem) > pool->max_elem)
++               goto out_put_pool;
+ 
+        elem = kmem_cache_zalloc(pool_cache(pool),
+                                 (pool->flags & RXE_POOL_ATOMIC) ?
+                                 GFP_ATOMIC : GFP_KERNEL);
+        if (!elem)
+-               return NULL;
++               goto out_put_pool;
+ 
+        elem->pool = pool;
+        kref_init(&elem->ref_cnt);
+ 
+        return elem;
++
++out_put_pool:
++       atomic_dec(&pool->num_elem);
++       rxe_dev_put(pool->rxe);
++       rxe_pool_put(pool);
++       return NULL;
+ }
+ 
+ void rxe_elem_release(struct kref *kref)
 
-Michal
+
+-- 
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
