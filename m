@@ -1,163 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Oct 2017 12:12:54 +0000
-Subject: [PATCH 2/3] powerpc-opal: Improve 12 size determinations
-Message-Id: <a650ec8d-8c53-2d19-22b3-5f7f5b5ced00@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Oct 2017 17:26:55 +0000
+Subject: [PATCH] perf/x86/intel/uncore: fix memory leaks on allocation failures
+Message-Id: <20171009172655.6132-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5fb4f314-cd23-c439-ab13-96b8188070e0@users.sourceforge.net>
-In-Reply-To: <5fb4f314-cd23-c439-ab13-96b8188070e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Anju T Sudhakar <anju@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Bhumika Goyal <bhumirks@gmail.com>, Corentin Labbe <clabbe.montjoie@gmail.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Michael Neuling <mikey@neuling.org>, Neelesh Gupta <neelegup@linux.vnet.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Oct 2017 13:20:19 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data types by variable references
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Currently if an allocation fails then the error return paths
+don't free up any currently allocated pmus[].boxes and pmus causing
+a memory leak.  Add an error clean up exit path that frees these
+objects.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Detected by CoverityScan, CID#711632 ("Resource Leak")
+
+Fixes: 087bfbb03269 ("perf/x86: Add generic Intel uncore PMU support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/powerpc/platforms/powernv/opal-flash.c         |  4 ++--
- arch/powerpc/platforms/powernv/opal-hmi.c           |  2 +-
- arch/powerpc/platforms/powernv/opal-imc.c           | 10 +++++-----
- arch/powerpc/platforms/powernv/opal-memory-errors.c |  2 +-
- arch/powerpc/platforms/powernv/opal-psr.c           |  2 +-
- arch/powerpc/platforms/powernv/opal-sensor-groups.c |  4 ++--
- arch/powerpc/platforms/powernv/opal-xscom.c         |  2 +-
- 7 files changed, 13 insertions(+), 13 deletions(-)
+ arch/x86/events/intel/uncore.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/opal-flash.c b/arch/powerpc/platforms/powernv/opal-flash.c
-index 77d564266a59..9c6b54c86d71 100644
---- a/arch/powerpc/platforms/powernv/opal-flash.c
-+++ b/arch/powerpc/platforms/powernv/opal-flash.c
-@@ -418,12 +418,12 @@ static int alloc_image_buf(char *buffer, size_t count)
- 	void *addr;
- 	int size;
- 
--	if (count < sizeof(struct image_header_t)) {
-+	if (count < sizeof(image_header)) {
- 		pr_warn("FLASH: Invalid candidate image\n");
- 		return -EINVAL;
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 1c5390f1cf09..123685a54b2a 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -822,7 +822,7 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+ 		pmus[i].type	= type;
+ 		pmus[i].boxes	= kzalloc(size, GFP_KERNEL);
+ 		if (!pmus[i].boxes)
+-			return -ENOMEM;
++			goto err;
  	}
  
--	memcpy(&image_header, (void *)buffer, sizeof(struct image_header_t));
-+	memcpy(&image_header, (void *)buffer, sizeof(image_header));
- 	image_data.size = be32_to_cpu(image_header.size);
- 	pr_debug("FLASH: Candidate image size = %u\n", image_data.size);
+ 	type->pmus = pmus;
+@@ -836,7 +836,7 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+ 		attr_group = kzalloc(sizeof(struct attribute *) * (i + 1) +
+ 					sizeof(*attr_group), GFP_KERNEL);
+ 		if (!attr_group)
+-			return -ENOMEM;
++			goto err;
  
-diff --git a/arch/powerpc/platforms/powernv/opal-hmi.c b/arch/powerpc/platforms/powernv/opal-hmi.c
-index b7dfe41a0a96..92b1e12a7eed 100644
---- a/arch/powerpc/platforms/powernv/opal-hmi.c
-+++ b/arch/powerpc/platforms/powernv/opal-hmi.c
-@@ -313,7 +313,7 @@ static int opal_handle_hmi_event(struct notifier_block *nb,
- 	if (!msg_node)
- 		return -ENOMEM;
+ 		attrs = (struct attribute **)(attr_group + 1);
+ 		attr_group->name = "events";
+@@ -850,6 +850,12 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
  
--	memcpy(&msg_node->hmi_evt, hmi_evt, sizeof(struct OpalHMIEvent));
-+	memcpy(&msg_node->hmi_evt, hmi_evt, sizeof(*hmi_evt));
+ 	type->pmu_group = &uncore_pmu_attr_group;
+ 	return 0;
++
++err:
++	for (i = 0; i < type->num_boxes; i++)
++		kfree(pmus[i].boxes);
++	kfree(pmus);
++	return -ENOMEM;
+ }
  
- 	spin_lock_irqsave(&opal_hmi_evt_lock, flags);
- 	list_add(&msg_node->list, &opal_hmi_evt_list);
-diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-index 21f6531fae20..2302cfb953bd 100644
---- a/arch/powerpc/platforms/powernv/opal-imc.c
-+++ b/arch/powerpc/platforms/powernv/opal-imc.c
-@@ -38,11 +38,11 @@ static int imc_get_mem_addr_nest(struct device_node *node,
- 	if (nr_chips <= 0)
- 		return -ENODEV;
- 
--	base_addr_arr = kcalloc(nr_chips, sizeof(u64), GFP_KERNEL);
-+	base_addr_arr = kcalloc(nr_chips, sizeof(*base_addr_arr), GFP_KERNEL);
- 	if (!base_addr_arr)
- 		return -ENOMEM;
- 
--	chipid_arr = kcalloc(nr_chips, sizeof(u32), GFP_KERNEL);
-+	chipid_arr = kcalloc(nr_chips, sizeof(*chipid_arr), GFP_KERNEL);
- 	if (!chipid_arr)
- 		return -ENOMEM;
- 
-@@ -53,8 +53,8 @@ static int imc_get_mem_addr_nest(struct device_node *node,
- 								nr_chips))
- 		goto error;
- 
--	pmu_ptr->mem_info = kcalloc(nr_chips, sizeof(struct imc_mem_info),
--								GFP_KERNEL);
-+	pmu_ptr->mem_info = kcalloc(nr_chips, sizeof(*pmu_ptr->mem_info),
-+				    GFP_KERNEL);
- 	if (!pmu_ptr->mem_info)
- 		goto error;
- 
-@@ -88,7 +88,7 @@ static int imc_pmu_create(struct device_node *parent, int pmu_index, int domain)
- 	u32 offset;
- 
- 	/* memory for pmu */
--	pmu_ptr = kzalloc(sizeof(struct imc_pmu), GFP_KERNEL);
-+	pmu_ptr = kzalloc(sizeof(*pmu_ptr), GFP_KERNEL);
- 	if (!pmu_ptr)
- 		return -ENOMEM;
- 
-diff --git a/arch/powerpc/platforms/powernv/opal-memory-errors.c b/arch/powerpc/platforms/powernv/opal-memory-errors.c
-index 8d76c05252d1..875e80ab96d9 100644
---- a/arch/powerpc/platforms/powernv/opal-memory-errors.c
-+++ b/arch/powerpc/platforms/powernv/opal-memory-errors.c
-@@ -110,7 +110,7 @@ static int opal_memory_err_event(struct notifier_block *nb,
- 	if (!msg_node)
- 		return -ENOMEM;
- 
--	memcpy(&msg_node->msg, msg, sizeof(struct opal_msg));
-+	memcpy(&msg_node->msg, msg, sizeof(msg_node->msg));
- 
- 	spin_lock_irqsave(&opal_mem_err_lock, flags);
- 	list_add(&msg_node->list, &opal_memory_err_list);
-diff --git a/arch/powerpc/platforms/powernv/opal-psr.c b/arch/powerpc/platforms/powernv/opal-psr.c
-index 7313b7fc9071..74986b35cf77 100644
---- a/arch/powerpc/platforms/powernv/opal-psr.c
-+++ b/arch/powerpc/platforms/powernv/opal-psr.c
-@@ -136,7 +136,7 @@ void __init opal_psr_init(void)
- 		return;
- 	}
- 
--	psr_attrs = kcalloc(of_get_child_count(psr), sizeof(struct psr_attr),
-+	psr_attrs = kcalloc(of_get_child_count(psr), sizeof(*psr_attrs),
- 			    GFP_KERNEL);
- 	if (!psr_attrs)
- 		return;
-diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-index 7e5a235ebf76..541c9ea04a32 100644
---- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-+++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-@@ -166,13 +166,13 @@ void __init opal_sensor_groups_init(void)
- 		if (!nr_attrs)
- 			continue;
- 
--		sgs[i].sgattrs = kcalloc(nr_attrs, sizeof(struct sg_attr),
-+		sgs[i].sgattrs = kcalloc(nr_attrs, sizeof(*sgs[i].sgattrs),
- 					 GFP_KERNEL);
- 		if (!sgs[i].sgattrs)
- 			goto out_sgs_sgattrs;
- 
- 		sgs[i].sg.attrs = kcalloc(nr_attrs + 1,
--					  sizeof(struct attribute *),
-+					  sizeof(*sgs[i].sg.attrs),
- 					  GFP_KERNEL);
- 
- 		if (!sgs[i].sg.attrs) {
-diff --git a/arch/powerpc/platforms/powernv/opal-xscom.c b/arch/powerpc/platforms/powernv/opal-xscom.c
-index 81c0a943dea9..22d5e1110dbb 100644
---- a/arch/powerpc/platforms/powernv/opal-xscom.c
-+++ b/arch/powerpc/platforms/powernv/opal-xscom.c
-@@ -46,7 +46,7 @@ static scom_map_t opal_scom_map(struct device_node *dev, u64 reg, u64 count)
- 			__func__, dev);
- 		return SCOM_MAP_INVALID;
- 	}
--	m = kmalloc(sizeof(struct opal_scom_map), GFP_KERNEL);
-+	m = kmalloc(sizeof(*m), GFP_KERNEL);
- 	if (!m)
- 		return NULL;
- 	m->chip = be32_to_cpup(gcid);
+ static int __init
 -- 
-2.14.2
+2.14.1
 
