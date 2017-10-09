@@ -1,46 +1,64 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Mon, 23 Oct 2017 01:05:34 +0000
-Subject: Re: [PATCH 2/2] extcon: max14577: Delete an unnecessary variable initialisation in max14577_muic_set
-Message-Id: <59ED405E.1030404@samsung.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 09 Oct 2017 16:12:00 +0000
+Subject: [PATCH] IB/core: remove redundant check on prot_sg_cnt
+Message-Id: <20171009161200.4465-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <431ea2b6-5b03-3752-a9c1-a39b1a7e4921@users.sourceforge.net>
-In-Reply-To: <431ea2b6-5b03-3752-a9c1-a39b1a7e4921@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "J . Bruce Fields" <bfields@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017년 10월 23일 02:52, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Oct 2017 19:39:12 +0200
-> 
-> The variable "ret" is immediately reassigned by a following statement.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/extcon/extcon-max14577.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
-> index 3d4bf5d23236..a2b60742a228 100644
-> --- a/drivers/extcon/extcon-max14577.c
-> +++ b/drivers/extcon/extcon-max14577.c
-> @@ -204,8 +204,8 @@ static int max14577_muic_set_debounce_time(struct max14577_muic_info *info,
->  static int max14577_muic_set_path(struct max14577_muic_info *info,
->  		u8 val, bool attached)
->  {
-> -	int ret = 0;
->  	u8 ctrl1, ctrl2 = 0;
-> +	int ret;
->  
->  	/* Set open state to path before changing hw path */
->  	ret = max14577_update_reg(info->max14577->regmap,
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied it. Thanks.
+prot_sg_cnt cannot be zero as a previous check on ret (from which
+prot_sg_cnt is assigned) returns -ENOMEM if is it zero.  Since
+it cannot be zero we can simplify the code by removing the non
+-zero check on prot_sg_cnt and redundant else statement.
 
+Detected by CoverityScan, COD#1357188 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/core/rw.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
+index 6ca607e8e293..c8963e91f92a 100644
+--- a/drivers/infiniband/core/rw.c
++++ b/drivers/infiniband/core/rw.c
+@@ -384,21 +384,17 @@ int rdma_rw_ctx_signature_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
+ 	count += ret;
+ 	prev_wr = &ctx->sig->data.reg_wr.wr;
+ 
+-	if (prot_sg_cnt) {
+-		ret = rdma_rw_init_one_mr(qp, port_num, &ctx->sig->prot,
+-				prot_sg, prot_sg_cnt, 0);
+-		if (ret < 0)
+-			goto out_destroy_data_mr;
+-		count += ret;
++	ret = rdma_rw_init_one_mr(qp, port_num, &ctx->sig->prot,
++				  prot_sg, prot_sg_cnt, 0);
++	if (ret < 0)
++		goto out_destroy_data_mr;
++	count += ret;
+ 
+-		if (ctx->sig->prot.inv_wr.next)
+-			prev_wr->next = &ctx->sig->prot.inv_wr;
+-		else
+-			prev_wr->next = &ctx->sig->prot.reg_wr.wr;
+-		prev_wr = &ctx->sig->prot.reg_wr.wr;
+-	} else {
+-		ctx->sig->prot.mr = NULL;
+-	}
++	if (ctx->sig->prot.inv_wr.next)
++		prev_wr->next = &ctx->sig->prot.inv_wr;
++	else
++		prev_wr->next = &ctx->sig->prot.reg_wr.wr;
++	prev_wr = &ctx->sig->prot.reg_wr.wr;
+ 
+ 	ctx->sig->sig_mr = ib_mr_pool_get(qp, &qp->sig_mrs);
+ 	if (!ctx->sig->sig_mr) {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.1
+
