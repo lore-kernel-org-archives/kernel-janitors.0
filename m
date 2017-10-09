@@ -1,64 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 09 Oct 2017 16:12:00 +0000
-Subject: [PATCH] IB/core: remove redundant check on prot_sg_cnt
-Message-Id: <20171009161200.4465-1-colin.king@canonical.com>
+From: Doug Ledford <dledford@redhat.com>
+Date: Mon, 09 Oct 2017 17:12:31 +0000
+Subject: Re: [PATCH] IB/core: remove redundant check on prot_sg_cnt
+Message-Id: <1507569151.46071.48.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171009161200.4465-1-colin.king@canonical.com>
+In-Reply-To: <20171009161200.4465-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "J . Bruce Fields" <bfields@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, linux-rdma@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "J . Bruce Fields" <bfields@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, linux-rdma@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 2017-10-09 at 17:12 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> prot_sg_cnt cannot be zero as a previous check on ret (from which
+> prot_sg_cnt is assigned) returns -ENOMEM if is it zero.  Since
+> it cannot be zero we can simplify the code by removing the non
+> -zero check on prot_sg_cnt and redundant else statement.
+> 
+> Detected by CoverityScan, COD#1357188 ("Logically dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-prot_sg_cnt cannot be zero as a previous check on ret (from which
-prot_sg_cnt is assigned) returns -ENOMEM if is it zero.  Since
-it cannot be zero we can simplify the code by removing the non
--zero check on prot_sg_cnt and redundant else statement.
+Thanks, applied.
 
-Detected by CoverityScan, COD#1357188 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/core/rw.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-index 6ca607e8e293..c8963e91f92a 100644
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -384,21 +384,17 @@ int rdma_rw_ctx_signature_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
- 	count += ret;
- 	prev_wr = &ctx->sig->data.reg_wr.wr;
- 
--	if (prot_sg_cnt) {
--		ret = rdma_rw_init_one_mr(qp, port_num, &ctx->sig->prot,
--				prot_sg, prot_sg_cnt, 0);
--		if (ret < 0)
--			goto out_destroy_data_mr;
--		count += ret;
-+	ret = rdma_rw_init_one_mr(qp, port_num, &ctx->sig->prot,
-+				  prot_sg, prot_sg_cnt, 0);
-+	if (ret < 0)
-+		goto out_destroy_data_mr;
-+	count += ret;
- 
--		if (ctx->sig->prot.inv_wr.next)
--			prev_wr->next = &ctx->sig->prot.inv_wr;
--		else
--			prev_wr->next = &ctx->sig->prot.reg_wr.wr;
--		prev_wr = &ctx->sig->prot.reg_wr.wr;
--	} else {
--		ctx->sig->prot.mr = NULL;
--	}
-+	if (ctx->sig->prot.inv_wr.next)
-+		prev_wr->next = &ctx->sig->prot.inv_wr;
-+	else
-+		prev_wr->next = &ctx->sig->prot.reg_wr.wr;
-+	prev_wr = &ctx->sig->prot.reg_wr.wr;
- 
- 	ctx->sig->sig_mr = ib_mr_pool_get(qp, &qp->sig_mrs);
- 	if (!ctx->sig->sig_mr) {
 -- 
-2.14.1
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
