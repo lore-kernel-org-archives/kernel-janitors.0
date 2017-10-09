@@ -1,54 +1,103 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Mon, 30 Oct 2017 18:23:17 +0000
-Subject: Re: [PATCH] net: ethernet: slicoss: remove redundant initialization of idx
-Message-Id: <84600781-e88e-4d1f-5b01-7cd46b53d4ef@gmx.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 09 Oct 2017 20:49:33 +0000
+Subject: [PATCH 1/3] net/atm: Delete an error message for a failed memory allocation in five functions
+Message-Id: <5270f15b-5e97-0c3e-3e55-fbded48ae07d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171029133809.6831-1-colin.king@canonical.com>
- <20171030110449.3aea9670@cakuba.netronome.com>
-In-Reply-To: <20171030110449.3aea9670@cakuba.netronome.com>
+References: <10a92558-1105-b947-86a2-6ac763cca36d@users.sourceforge.net>
+In-Reply-To: <10a92558-1105-b947-86a2-6ac763cca36d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jakub Kicinski <kubakici@wp.pl>, Colin King <colin.king@canonical.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Mitchell Blank Jr <mitch@sfgoth.com>, Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 30.10.2017 19:04, Jakub Kicinski wrote:
-> On Sun, 29 Oct 2017 13:38:09 +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Variable idx is being initialized and later on over-written by
->> a new value in a do-loop without the initial value ever being
->> read. Hence the initializion is redundant and can be removed.
->> Cleans up clang warning:
->>
->> drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
->> stored to 'idx' during its initialization is never read
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/net/ethernet/alacritech/slicoss.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
->> index 15a8096c60df..ac8004186fa8 100644
->> --- a/drivers/net/ethernet/alacritech/slicoss.c
->> +++ b/drivers/net/ethernet/alacritech/slicoss.c
->> @@ -355,7 +355,7 @@ static void slic_xmit_complete(struct slic_device *sdev)
->>  {
->>  	struct slic_tx_queue *txq = &sdev->txq;
->>  	struct net_device *dev = sdev->netdev;
->> -	unsigned int idx = txq->done_idx;
->> +	unsigned int idx;
->>  	struct slic_tx_buffer *buff;
->>  	unsigned int frames = 0;
->>  	unsigned int bytes = 0;
-> 
-> You should probably reorder the variables now so they stay longest to
-> shortest.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 9 Oct 2017 21:34:35 +0200
 
-I agree. While the change itself is ok, it would be nice if
-we could keep the order of the variables by length. 
+Omit extra messages for a memory allocation failure in these functions.
 
-Regards,
-Lino
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/atm/lec.c         | 5 ++---
+ net/atm/mpc.c         | 8 ++------
+ net/atm/mpoa_caches.c | 8 ++------
+ 3 files changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index a3d93a1bb133..f5be0b931978 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -1553,10 +1553,9 @@ static struct lec_arp_table *make_entry(struct lec_priv *priv,
+ 	struct lec_arp_table *to_return;
+ 
+ 	to_return = kzalloc(sizeof(struct lec_arp_table), GFP_ATOMIC);
+-	if (!to_return) {
+-		pr_info("LEC: Arp entry kmalloc failed\n");
++	if (!to_return)
+ 		return NULL;
+-	}
++
+ 	ether_addr_copy(to_return->mac_addr, mac_addr);
+ 	INIT_HLIST_NODE(&to_return->next);
+ 	setup_timer(&to_return->timer, lec_arp_expire_arp,
+diff --git a/net/atm/mpc.c b/net/atm/mpc.c
+index 5677147209e8..dd57d05b5dcc 100644
+--- a/net/atm/mpc.c
++++ b/net/atm/mpc.c
+@@ -184,10 +184,8 @@ struct atm_mpoa_qos *atm_mpoa_add_qos(__be32 dst_ip, struct atm_qos *qos)
+ 	}
+ 
+ 	entry = kmalloc(sizeof(struct atm_mpoa_qos), GFP_KERNEL);
+-	if (entry = NULL) {
+-		pr_info("mpoa: out of memory\n");
++	if (!entry)
+ 		return entry;
+-	}
+ 
+ 	entry->ipaddr = dst_ip;
+ 	entry->qos = *qos;
+@@ -473,10 +471,8 @@ static const uint8_t *copy_macs(struct mpoa_client *mpc,
+ 			kfree(mpc->mps_macs);
+ 		mpc->number_of_mps_macs = 0;
+ 		mpc->mps_macs = kmalloc(num_macs * ETH_ALEN, GFP_KERNEL);
+-		if (mpc->mps_macs = NULL) {
+-			pr_info("(%s) out of mem\n", mpc->dev->name);
++		if (!mpc->mps_macs)
+ 			return NULL;
+-		}
+ 	}
+ 	ether_addr_copy(mpc->mps_macs, router_mac);
+ 	tlvs += 20; if (device_type = MPS_AND_MPC) tlvs += 20;
+diff --git a/net/atm/mpoa_caches.c b/net/atm/mpoa_caches.c
+index 4ccaa16b1eb1..7495b42d59eb 100644
+--- a/net/atm/mpoa_caches.c
++++ b/net/atm/mpoa_caches.c
+@@ -98,10 +98,8 @@ static in_cache_entry *in_cache_add_entry(__be32 dst_ip,
+ {
+ 	in_cache_entry *entry = kzalloc(sizeof(in_cache_entry), GFP_KERNEL);
+ 
+-	if (entry = NULL) {
+-		pr_info("mpoa: mpoa_caches.c: new_in_cache_entry: out of memory\n");
++	if (!entry)
+ 		return NULL;
+-	}
+ 
+ 	dprintk("adding an ingress entry, ip = %pI4\n", &dst_ip);
+ 
+@@ -460,10 +458,8 @@ static eg_cache_entry *eg_cache_add_entry(struct k_message *msg,
+ {
+ 	eg_cache_entry *entry = kzalloc(sizeof(eg_cache_entry), GFP_KERNEL);
+ 
+-	if (entry = NULL) {
+-		pr_info("out of memory\n");
++	if (!entry)
+ 		return NULL;
+-	}
+ 
+ 	dprintk("adding an egress entry, ip = %pI4, this should be our IP\n",
+ 		&msg->content.eg_info.eg_dst_ip);
+-- 
+2.14.2
+
