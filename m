@@ -1,50 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 12 Oct 2017 15:47:14 +0000
-Subject: [PATCH] agp: fix clang warning on unread variable num_segments
-Message-Id: <20171012154714.30666-1-colin.king@canonical.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Mon, 09 Oct 2017 12:44:24 +0000
+Subject: [PATCH 3.16 044/192] x86/nmi: Fix timeout test in test_nmi_ipi()
+Message-Id: <lsq.1507553064.759890887@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <lsq.1507553063.449494954@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, Dan Carpenter <dan.carpenter@oracle.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, kernel-janitors@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Don Zickus <dzickus@redhat.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+3.16.49-rc1 review patch.  If anyone has any objections, please let me know.
 
-Currently variable num_segments is being assigned but never actually
-used.  Fix this actually using it in the for-loop. Also clean up the
-code a little by assigning num_segments at declaration time.
+------------------
 
-Cleans up clang warning: Value stored to 'num_segments' is never read
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+commit c133c7615751008f6c32ccae7cdfc5ff6e989c35 upstream.
+
+We're supposed to exit the loop with "timeout" set to zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Don Zickus <dzickus@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 99e8b9ca90d6 ("x86, NMI: Add NMI IPI selftest")
+Link: http://lkml.kernel.org/r/20170619105304.GA23995@elgon.mountain
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/agp/frontend.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/kernel/nmi_selftest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
-index f6955888e676..6476beba43b0 100644
---- a/drivers/char/agp/frontend.c
-+++ b/drivers/char/agp/frontend.c
-@@ -102,16 +102,15 @@ agp_segment_priv *agp_find_seg_in_client(const struct agp_client *client,
- 					    int size, pgprot_t page_prot)
- {
- 	struct agp_segment_priv *seg;
--	int num_segments, i;
-+	int i, num_segments = client->num_segments;
- 	off_t pg_start;
- 	size_t pg_count;
+--- a/arch/x86/kernel/nmi_selftest.c
++++ b/arch/x86/kernel/nmi_selftest.c
+@@ -78,7 +78,7 @@ static void __init test_nmi_ipi(struct c
  
- 	pg_start = offset / 4096;
- 	pg_count = size / 4096;
- 	seg = *(client->segments);
--	num_segments = client->num_segments;
+ 	/* Don't wait longer than a second */
+ 	timeout = USEC_PER_SEC;
+-	while (!cpumask_empty(mask) && timeout--)
++	while (!cpumask_empty(mask) && --timeout)
+ 	        udelay(1);
  
--	for (i = 0; i < client->num_segments; i++) {
-+	for (i = 0; i < num_segments; i++) {
- 		if ((seg[i].pg_start = pg_start) &&
- 		    (seg[i].pg_count = pg_count) &&
- 		    (pgprot_val(seg[i].prot) = pgprot_val(page_prot))) {
--- 
-2.14.1
+ 	/* What happens if we timeout, do we still unregister?? */
 
