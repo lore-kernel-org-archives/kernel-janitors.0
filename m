@@ -1,51 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 15:49:21 +0000
-Subject: [PATCH 3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
-Message-Id: <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 10 Oct 2017 08:20:38 +0000
+Subject: Re: [2/2] rtlwifi: silence underflow warning
+Message-Id: <20171010082038.41B46609A1@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
-In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+References: <20170929075234.dgyuiwbowu3jq6r4@mwanda>
+In-Reply-To: <20170929075234.dgyuiwbowu3jq6r4@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 16:34:44 +0100
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-* Print a line break together with other data in a single function call.
+> My static checker complains that we have an upper bound but no lower
+> bound.  I suspect neither are really required but it doesn't hurt to add
+> a check for negatives.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
+> index c53cbf3d52bd..294a6b43d1bc 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/core.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
+> @@ -453,7 +453,8 @@ static void _rtl_add_wowlan_patterns(struct ieee80211_hw *hw,
+>  	for (i = 0; i < wow->n_patterns; i++) {
+>  		memset(&rtl_pattern, 0, sizeof(struct rtl_wow_pattern));
+>  		memset(mask, 0, MAX_WOL_BIT_MASK_SIZE);
+> -		if (patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
+> +		if (patterns[i].pattern_len < 0 ||
+> +		    patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
+>  			RT_TRACE(rtlpriv, COMP_POWER, DBG_WARNING,
+>  				 "Pattern[%d] is too long\n", i);
+>  			continue;
 
-* Adjust indentation.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+64e79426c204 rtlwifi: silence underflow warning
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index d1a7c627dbb9..79b585d46289 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -745,13 +745,12 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		if (!label)
- 			continue;
- 
--		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s",
--			chip->base + t, bank, t, label,
--			(iodir & mask) ? "in " : "out",
--			(gpio & mask) ? "hi" : "lo",
--			(gppu & mask) ? "up" : "  ");
-+		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s\n",
-+			   chip->base + t, bank, t, label,
-+			   (iodir & mask) ? "in " : "out",
-+			   (gpio & mask) ? "hi" : "lo",
-+			   (gppu & mask) ? "up" : "  ");
- 		/* NOTE:  ignoring the irq-related registers */
--		seq_puts(s, "\n");
- 	}
- unlock:
- 	mutex_unlock(&mcp->lock);
 -- 
-2.14.3
+https://patchwork.kernel.org/patch/9977201/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
