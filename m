@@ -1,54 +1,50 @@
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Date: Wed, 04 Oct 2017 20:16:52 +0000
-Subject: Re: [PATCH 1/5] cris: nand: Delete an error message for a failed memory allocation in crisv32_nand_f
-Message-Id: <e9efec69-69dd-c33f-85cf-bf5f796acdb8@gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Oct 2017 18:10:30 +0000
+Subject: [PATCH][V2] ipv6: fix incorrect bitwise operator used on rt6i_flags
+Message-Id: <20171010181030.22290-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
- <92a95fe3-5b8d-5dd9-a7bf-131a999e74c6@users.sourceforge.net>
-In-Reply-To: <92a95fe3-5b8d-5dd9-a7bf-131a999e74c6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-cris-kernel@axis.com, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/10/17 20:45, SF Markus Elfring wrote:
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+The use of the | operator always leads to true which looks rather
+suspect to me. Fix this by using & instead to just check the
+RTF_CACHE entry bit.
 
-> ---
->  arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 2 --
->  arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 2 --
->  2 files changed, 4 deletions(-)
-> 
-> diff --git a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-> index 925a98eb6d68..259aa1f46fbe 100644
-> --- a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-> +++ b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-> @@ -136,8 +136,6 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
->  	/* Allocate memory for MTD device structure and private data */
->  	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
->  	if (!wrapper) {
-> -		printk(KERN_ERR "Unable to allocate CRISv32 NAND MTD "
-> -			"device structure.\n");
->  		err = -ENOMEM;
->  		return NULL;
->  	}
-> diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-> index 53b56a429dde..1baf16ee74e8 100644
-> --- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-> +++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-> @@ -111,8 +111,6 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
->  	/* Allocate memory for MTD device structure and private data */
->  	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
->  	if (!wrapper) {
-> -		printk(KERN_ERR "Unable to allocate CRISv32 NAND MTD "
-> -			"device structure.\n");
->  		err = -ENOMEM;
->  		return NULL;
->  	}
+Detected by CoverityScan, CID#1457734, #1457747 ("Wrong operator used")
+
+Fixes: 35732d01fe31 ("ipv6: introduce a hash table to store dst cache")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/route.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 6db1541eaa7b..dd9ba1192dbc 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1425,7 +1425,7 @@ int rt6_remove_exception_rt(struct rt6_info *rt)
+ 	int err;
+ 
+ 	if (!from ||
+-	    !(rt->rt6i_flags | RTF_CACHE))
++	    !(rt->rt6i_flags & RTF_CACHE))
+ 		return -EINVAL;
+ 
+ 	if (!rcu_access_pointer(from->rt6i_exception_bucket))
+@@ -1469,7 +1469,7 @@ static void rt6_update_exception_stamp_rt(struct rt6_info *rt)
+ 	struct rt6_exception *rt6_ex;
+ 
+ 	if (!from ||
+-	    !(rt->rt6i_flags | RTF_CACHE))
++	    !(rt->rt6i_flags & RTF_CACHE))
+ 		return;
+ 
+ 	rcu_read_lock();
+-- 
+2.14.1
+
