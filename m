@@ -1,55 +1,33 @@
-From: Martin KaFai Lau <kafai@fb.com>
-Date: Tue, 10 Oct 2017 19:14:11 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 10 Oct 2017 19:24:29 +0000
 Subject: Re: [PATCH][V2] ipv6: fix incorrect bitwise operator used on rt6i_flags
-Message-Id: <20171010191411.eloa5bbifmga6not@kafai-mbp.dhcp.thefacebook.com>
+Message-Id: <20171010.122429.2055747583997527054.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171010181030.22290-1-colin.king@canonical.com>
-In-Reply-To: <20171010181030.22290-1-colin.king@canonical.com>
+        <CAC15z3jrkT6K0-FC9QLOmaZQCvEMoDZrABDJ_iGDecTYAksqAw@mail.gmail.com>
+In-Reply-To: <CAC15z3jrkT6K0-FC9QLOmaZQCvEMoDZrABDJ_iGDecTYAksqAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tracywwnj@gmail.com
+Cc: colin.king@canonical.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 10, 2017 at 06:10:30PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The use of the | operator always leads to true which looks rather
-> suspect to me. Fix this by using & instead to just check the
-> RTF_CACHE entry bit.
-> 
-> Detected by CoverityScan, CID#1457734, #1457747 ("Wrong operator used")
-> 
-> Fixes: 35732d01fe31 ("ipv6: introduce a hash table to store dst cache")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+From: Wei Wang <tracywwnj@gmail.com>
+Date: Tue, 10 Oct 2017 11:38:20 -0700
 
-> ---
->  net/ipv6/route.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On Tue, Oct 10, 2017 at 11:10 AM, Colin King <colin.king@canonical.com> wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The use of the | operator always leads to true which looks rather
+>> suspect to me. Fix this by using & instead to just check the
+>> RTF_CACHE entry bit.
+>>
+>> Detected by CoverityScan, CID#1457734, #1457747 ("Wrong operator used")
+>>
+>> Fixes: 35732d01fe31 ("ipv6: introduce a hash table to store dst cache")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
 > 
-> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-> index 6db1541eaa7b..dd9ba1192dbc 100644
-> --- a/net/ipv6/route.c
-> +++ b/net/ipv6/route.c
-> @@ -1425,7 +1425,7 @@ int rt6_remove_exception_rt(struct rt6_info *rt)
->  	int err;
->  
->  	if (!from ||
-> -	    !(rt->rt6i_flags | RTF_CACHE))
-> +	    !(rt->rt6i_flags & RTF_CACHE))
->  		return -EINVAL;
->  
->  	if (!rcu_access_pointer(from->rt6i_exception_bucket))
-> @@ -1469,7 +1469,7 @@ static void rt6_update_exception_stamp_rt(struct rt6_info *rt)
->  	struct rt6_exception *rt6_ex;
->  
->  	if (!from ||
-> -	    !(rt->rt6i_flags | RTF_CACHE))
-> +	    !(rt->rt6i_flags & RTF_CACHE))
->  		return;
->  
->  	rcu_read_lock();
-> -- 
-> 2.14.1
-> 
+> Acked-by: Wei Wang <weiwan@google.com>
+
+Applied, thanks everyone.
