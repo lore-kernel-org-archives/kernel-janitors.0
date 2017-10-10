@@ -1,188 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 08 Oct 2017 19:18:41 +0000
-Subject: [PATCH 2/2] scripts: coccinelle: api: detect identical chip data arrays
-Message-Id: <1507490321-24900-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Oct 2017 17:01:16 +0000
+Subject: [PATCH][net-next] ipv6: fix dereference of rt6_ex before null check error
+Message-Id: <20171010170116.21124-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1507490321-24900-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1507490321-24900-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This semantic patch detects duplicate arrays declared using BQ27XXX_DATA
-within a single structure.  It is currently specific to the file
-drivers/power/supply/bq27xxx_battery.c.  Nevertheless, having the script in
-the kernel will allow others to check their code if the data structures
-change in the future.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Currently rt6_ex is being dereferenced before it is null checked
+hence there is a possible null dereference bug. Fix this by only
+dereferencing rt6_ex after it has been null checked.
 
+Detected by CoverityScan, CID#1457749 ("Dereference before null check")
+
+Fixes: 81eb8447daae ("ipv6: take care of rt6_stats")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- scripts/coccinelle/api/check_bq27xxx_data.cocci |  161 ++++++++++++++++++++++++
- 1 file changed, 161 insertions(+)
+ net/ipv6/route.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/api/check_bq27xxx_data.cocci b/scripts/coccinelle/api/check_bq27xxx_data.cocci
-new file mode 100644
-index 0000000..9212b85
---- /dev/null
-+++ b/scripts/coccinelle/api/check_bq27xxx_data.cocci
-@@ -0,0 +1,161 @@
-+/// Detect BQ27XXX_DATA structures with identical registers, dm registers or
-+/// properties.
-+//# Doesn't unfold macros used in register or property fields.
-+//# Requires OCaml scripting
-+///
-+// Confidence: High
-+// Copyright: (C) 2017 Julia Lawall, Inria/LIP6, GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Requires: 1.0.7
-+// Keywords: BQ27XXX_DATA
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 606e80325b21..6db1541eaa7b 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1152,10 +1152,12 @@ static DEFINE_SPINLOCK(rt6_exception_lock);
+ static void rt6_remove_exception(struct rt6_exception_bucket *bucket,
+ 				 struct rt6_exception *rt6_ex)
+ {
+-	struct net *net = dev_net(rt6_ex->rt6i->dst.dev);
++	struct net *net;
+ 
+ 	if (!bucket || !rt6_ex)
+ 		return;
 +
-+virtual report
-+
-+@initialize:ocaml@
-+@@
-+
-+let print_report p msg +  let p = List.hd p in
-+  Printf.printf "%s:%d:%d-%d: %s" p.file p.line p.col p.col_end msg
-+
-+@str depends on report@
-+type t;
-+identifier i,i1,i2;
-+expression e1,e2;
-+@@
-+
-+t i[] = {
-+  ...,
-+  [e1] = BQ27XXX_DATA(i1,...),
-+  ...,
-+  [e2] = BQ27XXX_DATA(i2,...),
-+  ...,
-+};
-+
-+@script:ocaml tocheck@
-+i1 << str.i1;
-+i2 << str.i2;
-+i1regs; i2regs;
-+i1dmregs; i2dmregs;
-+i1props; i2props;
-+@@
-+
-+if not(i1 = i2)
-+then
-+  begin
-+    i1regs := make_ident (i1 ^ "_regs");
-+    i2regs := make_ident (i2 ^ "_regs");
-+    i1dmregs := make_ident (i1 ^ "_dm_regs");
-+    i2dmregs := make_ident (i2 ^ "_dm_regs");
-+    i1props := make_ident (i1 ^ "_props");
-+    i2props := make_ident (i2 ^ "_props")
-+  end
-+
-+(* ---------------------------------------------------------------- *)
-+
-+@getregs1@
-+typedef u8;
-+identifier tocheck.i1regs;
-+initializer list i1regs_vals;
-+position p1;
-+@@
-+
-+u8 i1regs@p1[...] = { i1regs_vals, };
-+
-+@getregs2@
-+identifier tocheck.i2regs;
-+initializer list i2regs_vals;
-+position p2;
-+@@
-+
-+u8 i2regs@p2[...] = { i2regs_vals, };
-+
-+@script:ocaml@
-+(_,i1regs_vals) << getregs1.i1regs_vals;
-+(_,i2regs_vals) << getregs2.i2regs_vals;
-+i1regs << tocheck.i1regs;
-+i2regs << tocheck.i2regs;
-+p1 << getregs1.p1;
-+p2 << getregs2.p2;
-+@@
-+
-+if i1regs < i2regs &&
-+   List.sort compare i1regs_vals = List.sort compare i2regs_vals
-+then
-+  let msg +    Printf.sprintf
-+      "WARNING %s and %s (line %d) are identical\n"
-+      i1regs i2regs (List.hd p2).line in
-+  print_report p1 msg
-+
-+(* ---------------------------------------------------------------- *)
-+
-+@getdmregs1@
-+identifier tocheck.i1dmregs;
-+initializer list i1dmregs_vals;
-+position p1;
-+@@
-+
-+struct bq27xxx_dm_reg i1dmregs@p1[] = { i1dmregs_vals, };
-+
-+@getdmregs2@
-+identifier tocheck.i2dmregs;
-+initializer list i2dmregs_vals;
-+position p2;
-+@@
-+
-+struct bq27xxx_dm_reg i2dmregs@p2[] = { i2dmregs_vals, };
-+
-+@script:ocaml@
-+(_,i1dmregs_vals) << getdmregs1.i1dmregs_vals;
-+(_,i2dmregs_vals) << getdmregs2.i2dmregs_vals;
-+i1dmregs << tocheck.i1dmregs;
-+i2dmregs << tocheck.i2dmregs;
-+p1 << getdmregs1.p1;
-+p2 << getdmregs2.p2;
-+@@
-+
-+if i1dmregs < i2dmregs &&
-+   List.sort compare i1dmregs_vals = List.sort compare i2dmregs_vals
-+then
-+  let msg +    Printf.sprintf
-+      "WARNING %s and %s (line %d) are identical\n"
-+      i1dmregs i2dmregs (List.hd p2).line in
-+  print_report p1 msg
-+
-+(* ---------------------------------------------------------------- *)
-+
-+@getprops1@
-+identifier tocheck.i1props;
-+initializer list[n1] i1props_vals;
-+position p1;
-+@@
-+
-+enum power_supply_property i1props@p1[] = { i1props_vals, };
-+
-+@getprops2@
-+identifier tocheck.i2props;
-+initializer list[n2] i2props_vals;
-+position p2;
-+@@
-+
-+enum power_supply_property i2props@p2[] = { i2props_vals, };
-+
-+@script:ocaml@
-+(_,i1props_vals) << getprops1.i1props_vals;
-+(_,i2props_vals) << getprops2.i2props_vals;
-+i1props << tocheck.i1props;
-+i2props << tocheck.i2props;
-+p1 << getprops1.p1;
-+p2 << getprops2.p2;
-+@@
-+
-+if i1props < i2props &&
-+   List.sort compare i1props_vals = List.sort compare i2props_vals
-+then
-+  let msg +    Printf.sprintf
-+      "WARNING %s and %s (line %d) are identical\n"
-+      i1props i2props (List.hd p2).line in
-+  print_report p1 msg
++	net = dev_net(rt6_ex->rt6i->dst.dev);
+ 	rt6_ex->rt6i->rt6i_node = NULL;
+ 	hlist_del_rcu(&rt6_ex->hlist);
+ 	rt6_release(rt6_ex->rt6i);
+-- 
+2.14.1
 
