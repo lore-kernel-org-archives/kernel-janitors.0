@@ -1,41 +1,23 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 14:23:24 +0000
-Subject: [PATCH] net: macb: remove redundant assignment to variable work_done
-Message-Id: <20171031142324.25740-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Oct 2017 08:29:05 +0000
+Subject: Re: ARM: s3c2410: Fix a typo in a comment line
+Message-Id: <0f6ea076-2d41-103a-b1a1-40edc38e2daf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+ <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
+ <20171004181420.lctwaocrvg6rxokk@kozik-lap>
+In-Reply-To: <20171004181420.lctwaocrvg6rxokk@kozik-lap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nicolas Ferre <nicolas.ferre@microchip.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Thanks, applied, squashed and changed commit msg.
 
-Variable work_done is set to zero and this value is never read, instead
-it is set to another value a few statements later.  Remove the redundant
-assignment. Cleans up clang warning:
+Would it be more appropriate to use a commit subject like
+“ARM: s3c241x: Fix typos in two comments” (instead of
+“ARM: s3c2410: Fix typos in a comments”)?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?idl7a7db2e4c25acf8bd8086797d39a51728139e0
 
-drivers/net/ethernet/cadence/macb_main.c:1221:2: warning: Value stored
-to 'work_done' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/cadence/macb_main.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 6df2cad61647..5dafcde67e45 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1218,8 +1218,6 @@ static int macb_poll(struct napi_struct *napi, int budget)
- 	status = macb_readl(bp, RSR);
- 	macb_writel(bp, RSR, status);
- 
--	work_done = 0;
--
- 	netdev_vdbg(bp->dev, "poll: status = %08lx, budget = %d\n",
- 		    (unsigned long)status, budget);
- 
--- 
-2.14.1
-
+Regards,
+Markus
