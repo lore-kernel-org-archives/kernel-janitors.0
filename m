@@ -1,43 +1,23 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Thu, 19 Oct 2017 12:37:30 +0000
-Subject: Re: [PATCH] perf kmem: Perform some cleanup if '--time' is given an invalid value
-Message-Id: <20171019123730.GJ3707@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Oct 2017 09:28:08 +0000
+Subject: Re: ARM: SAMSUNG: Improve a size determination in 13 functions
+Message-Id: <6d573f66-8735-f745-e0bd-27cc29880eb0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170916060936.28199-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170916060936.28199-1-christophe.jaillet@wanadoo.fr>
+References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
+ <7f196313-ad49-2cd8-e45f-be487e089547@users.sourceforge.net>
+ <20171004191102.mnswu25bjxynuh4o@kozik-lap>
+In-Reply-To: <20171004191102.mnswu25bjxynuh4o@kozik-lap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-Em Sat, Sep 16, 2017 at 08:09:36AM +0200, Christophe JAILLET escreveu:
-> If the string passed in '--time' is invalid, we must do some cleanup
-> before leaving. As in the other error handling paths of this function.
+> Thanks, applied.
 
-Thanks, applied.
+Is the chosen commit description “Simplify the size argument of kzalloc() memory allocation
+by using …” really appropriate when calls were adjusted for further two function names
+by this update suggestion?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id	e1cf829c45a2f030c7fd49533a86b0935d068a
 
-- Arnaldo
- 
-> Fixes: 2a865bd8dddd ("perf kmem: Add option to specify time window of interest")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  tools/perf/builtin-kmem.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
-> index 24ee68ecdd42..d8f25ef8157b 100644
-> --- a/tools/perf/builtin-kmem.c
-> +++ b/tools/perf/builtin-kmem.c
-> @@ -1983,7 +1983,8 @@ int cmd_kmem(int argc, const char **argv)
->  
->  	if (perf_time__parse_str(&ptime, time_str) != 0) {
->  		pr_err("Invalid time string\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto out_delete;
->  	}
->  
->  	if (!strcmp(argv[0], "stat")) {
-> -- 
-> 2.11.0
+Regards,
+Markus
