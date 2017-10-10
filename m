@@ -1,27 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 Oct 2017 17:20:30 +0000
-Subject: Re: [PATCH] net: dsa: mt7530: make functions mt7530_phy_write static
-Message-Id: <20171003.102030.1150001638629183371.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Oct 2017 14:05:48 +0000
+Subject: [PATCH] staging: wilc1000: replace redundant computations with 0
+Message-Id: <20171010140548.18016-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003104633.27151-1-colin.king@canonical.com>
-In-Reply-To: <20171003104633.27151-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com, f.fainelli@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue,  3 Oct 2017 11:46:33 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function mt7530_phy_write is local to the source and does not need to
-> be in global scope, so make it static.
-> 
-> Cleans up sparse warnings:
-> symbol 'mt7530_phy_write' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Shifting and masking strHostIfSetMulti->enabled is redundant since
+enabled is a bool and so all the shifted and masked values will be
+zero. Replace them with zero to simplify the code.
 
-Applied.
+Detected by CoverityScan, CID#1339458 ("Bad shift operation") and
+CID#1339506 ("Operands don't affect result").
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/wilc1000/host_interface.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 7b620658ec38..94477dd08c85 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -2417,9 +2417,9 @@ static void Handle_SetMulticastFilter(struct wilc_vif *vif,
+ 
+ 	pu8CurrByte = wid.val;
+ 	*pu8CurrByte++ = (strHostIfSetMulti->enabled & 0xFF);
+-	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 8) & 0xFF);
+-	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 16) & 0xFF);
+-	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 24) & 0xFF);
++	*pu8CurrByte++ = 0;
++	*pu8CurrByte++ = 0;
++	*pu8CurrByte++ = 0;
+ 
+ 	*pu8CurrByte++ = (strHostIfSetMulti->cnt & 0xFF);
+ 	*pu8CurrByte++ = ((strHostIfSetMulti->cnt >> 8) & 0xFF);
+-- 
+2.14.1
+
