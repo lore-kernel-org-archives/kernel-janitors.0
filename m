@@ -1,48 +1,42 @@
-From: Matt Fleming <matt@codeblueprint.co.uk>
-Date: Wed, 11 Oct 2017 09:34:39 +0000
-Subject: Re: ACK: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
-Message-Id: <20171011093439.GA3062@codeblueprint.co.uk>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 10 Oct 2017 13:47:33 +0000
+Subject: [PATCH] drm/i915: remove redundant check on has_aliasing_ppgtt
+Message-Id: <20171010134733.17516-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
- <20171006121939.GC3314@codeblueprint.co.uk>
- <449b17c1-2c97-fd7c-3073-5cb20e1c3672@canonical.com>
-In-Reply-To: <449b17c1-2c97-fd7c-3073-5cb20e1c3672@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ivanhu <ivan.hu@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 11 Oct, at 02:26:57PM, Ivan Hu wrote:
-> 
-> 
-> On 10/06/2017 08:19 PM, Matt Fleming wrote:
-> >On Sat, 30 Sep, at 11:17:32AM, Dan Carpenter wrote:
-> >>If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
-> >>will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
-> >>try to dereference it inside the loop and crash.
-> >>
-> >>Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
-> >>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >>
-> >>diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
-> >>index 08129b7b80ab..41c48a1e8baa 100644
-> >>--- a/drivers/firmware/efi/test/efi_test.c
-> >>+++ b/drivers/firmware/efi/test/efi_test.c
-> >>@@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
-> >>  	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
-> >>  		return -EFAULT;
-> >>+	if (qcaps.capsule_count = ULONG_MAX)
-> >>+		return -EINVAL;
-> >>+
-> >>  	capsules = kcalloc(qcaps.capsule_count + 1,
-> >>  			   sizeof(efi_capsule_header_t), GFP_KERNEL);
-> >>  	if (!capsules)
-> >
-> >This looks OK to me. Ivan?
-> >
-> 
-> 
-> Acked-by: Ivan Hu <ivan.hu@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+There is a previous check to on has_aliasing_ppgtt that returns
+0 if it is false, so it is impossible for has_aliasing_ppgtt to
+be false on the final return of function intel_sanitize_enable_ppgtt,
+so final return in the function always will return 1.  Hence the
+redundant ternary operator can be replaced with a return 1.
+
+Detected by CoverityScan, CID#1357136 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/i915_gem_gtt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
+index 4c82ceb8d318..e1a318ea4327 100644
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@ -188,7 +188,7 @@ int intel_sanitize_enable_ppgtt(struct drm_i915_private *dev_priv,
+ 			return 2;
+ 	}
+ 
+-	return has_aliasing_ppgtt ? 1 : 0;
++	return 1;
+ }
+ 
+ static int ppgtt_bind_vma(struct i915_vma *vma,
+-- 
+2.14.1
+
