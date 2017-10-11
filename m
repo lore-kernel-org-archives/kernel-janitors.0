@@ -1,28 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 13:44:31 +0000
-Subject: Re: [PATCH 4/5] wlcore: Use common error handling code in wlcore_set_beacon_template()
-Message-Id: <bc692c11-63f8-a914-8767-1fc4248faae8@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Oct 2017 09:30:10 +0000
+Subject: [PATCH][next] platform/x86: intel_cht_int33fe: make a couple of local functions static
+Message-Id: <20171011093010.17173-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
- <f50c8edf-834d-9003-5a3c-dc83ec4016ce@users.sourceforge.net>
- <CAGRGNgUEFpva3ct-idAzip97eVgoDDTeEArAPcjvf90VSORA2g@mail.gmail.com>
-In-Reply-To: <CAGRGNgUEFpva3ct-idAzip97eVgoDDTeEArAPcjvf90VSORA2g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>
-Cc: Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -4081,9 +4078,8 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
->>                                               beacon->data,
->>                                               beacon->len, 0,
->>                                               min_rate);
->> -end_bcn:
->> +free_skb:
-> 
-> Why rename the label?
+From: Colin Ian King <colin.king@canonical.com>
 
-I find it clearer according to the Linux coding style.
+The functions cht_int33fe_check_for_max17047 and cht_int33fe_find_max17047
+are local to the source and do not need to be in global scope, so make
+them static.
 
-Regards,
-Markus
+Cleans up sparse warnings:
+symbol 'cht_int33fe_check_for_max17047' was not declared. Should it be
+static?
+symbol 'cht_int33fe_find_max17047' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/intel_cht_int33fe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+index 94716b2fbc00..286c6207765d 100644
+--- a/drivers/platform/x86/intel_cht_int33fe.c
++++ b/drivers/platform/x86/intel_cht_int33fe.c
+@@ -42,7 +42,7 @@ struct cht_int33fe_data {
+  * These helpers are used to work around this by checking if an i2c-client
+  * for the max17047 has already been registered.
+  */
+-int cht_int33fe_check_for_max17047(struct device *dev, void *data)
++static int cht_int33fe_check_for_max17047(struct device *dev, void *data)
+ {
+ 	struct i2c_client **max17047 = data;
+ 	struct acpi_device *adev;
+@@ -62,7 +62,7 @@ int cht_int33fe_check_for_max17047(struct device *dev, void *data)
+ 	return 1;
+ }
+ 
+-struct i2c_client *cht_int33fe_find_max17047(void)
++static struct i2c_client *cht_int33fe_find_max17047(void)
+ {
+ 	struct i2c_client *max17047 = NULL;
+ 
+-- 
+2.14.1
+
