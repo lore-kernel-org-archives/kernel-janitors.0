@@ -1,86 +1,27 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 11 Oct 2017 13:13:10 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Oct 2017 13:54:39 +0000
 Subject: Re: Two rtlwifi drivers?
-Message-Id: <20171011131310.GF32250@kroah.com>
+Message-Id: <20171011135439.3d5zuljyd4qokftw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
  <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
  <652d42ad-a077-530b-743f-d38ddf3ff677@lwfinger.net>
  <87k202qcjr.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87k202qcjr.fsf@kamboji.qca.qualcomm.com>
+ <20171011131310.GF32250@kroah.com>
+In-Reply-To: <20171011131310.GF32250@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Dan Carpenter <dan.carpenter@oracle.com>, Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kalle Valo <kvalo@codeaurora.org>, Larry Finger <Larry.Finger@lwfinger.net>, Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 11, 2017 at 12:06:00PM +0300, Kalle Valo wrote:
-> (Sorry for taking so long with the reply, I wanted first to check what
-> the rtlwifi in staging contains.)
-> 
-> Larry Finger <Larry.Finger@lwfinger.net> writes:
-> 
-> > On 08/24/2017 07:14 AM, Kalle Valo wrote:
-> >> Dan Carpenter <dan.carpenter@oracle.com> writes:
-> >>
-> >>> Smatch is distrustful of the "capab" value and marks it as user
-> >>> controlled.  I think it actually comes from the firmware?  Anyway, I
-> >>> looked at other drivers and they added a bounds check and it seems like
-> >>> a harmless thing to have so I have added it here as well.
-> >>>
-> >>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >>>
-> >>> diff --git a/drivers/staging/rtlwifi/base.c b/drivers/staging/rtlwifi/base.c
-> >>> index f7f207cbaee3..a30b928d5ee1 100644
-> >>> --- a/drivers/staging/rtlwifi/base.c
-> >>> +++ b/drivers/staging/rtlwifi/base.c
-> >>
-> >> I'm getting slightly annoyed that we now apparently have two duplicate
-> >> rtlwifi drivers (with the same name!) and I'm being spammed by staging
-> >> patches. Was this really a smart thing to do? And what will be the
-> >> future of these two drivers?
-> >>
-> >> (Of course this is not directed to Dan, he is just fixing bugs found by
-> >> smatch, but more like a general question.)
-> >
-> > That was the decision that you and Greg made. The version in
-> > wireless-drivers needs many patches to handle the new device. The
-> > progress in applying these to wireless-drivers was very slow for many
-> > reasons. Keeping a single version of that code would have required
-> > coordination between you and Greg, which was discouraged.
-> 
-> I don't recall deciding anything, all I did was asking for more info
-> about the new code. I was against the idea since I first saw your mail
-> but I tried to be diplomatic and not shot it down immeadiately. Shows
-> that diplomacy is not really my thing...
-> 
-> We always take extra measures to avoid forking code, why is it now all
-> of sudden ok? Also this gives the wrong message to Realtek, and other
-> vendors, that they can just fork the driver and push all sort of crap to
-> staging.
-> 
-> So just to make clear to everyone: I think forking drivers like this is
-> a HORRIBLE idea and I do not want to have anything to do with that. If
-> schedule goes over quality then a much better approach is to move to the
-> whole driver to staging than to have duplicated drivers like we have
-> now.
+On Wed, Oct 11, 2017 at 03:13:10PM +0200, Greg Kroah-Hartman wrote:
+> And it seems like the company isn't willing to do the real work, so
+> dumping this in staging is the best we can do at the moment.
 
-I think it's horrid too.  But, if no one is able to do the real work
-here, we hurt users who just need to use their hardware to get things
-done.
+I'm more optimistic.  There are a lot of @realtek.com addresses in the
+CC list and that's a new thing.
 
-And it seems like the company isn't willing to do the real work, so
-dumping this in staging is the best we can do at the moment.
+regards,
+dan carpenter
 
-However, if this causes you problems, that's not good at all either.
-Getting "real" support for this hardware is key, and hopefully can
-happen somehow.  But fixing up the staging driver is almost never the
-way to do it, as you know :)
-
-So what to do?  Any ideas?  What makes your life easier?  You can just
-ignore the staging tree, as it should not affect your portion of the
-kernel at all, right?
-
-thanks,
-
-greg k-h
