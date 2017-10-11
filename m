@@ -1,28 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Oct 2017 17:54:47 +0000
-Subject: Re: [PATCH][net-next] ipv6: fix dereference of rt6_ex before null check error
-Message-Id: <20171010.105447.757260394877902006.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Oct 2017 10:56:23 +0000
+Subject: [PATCH][bpf-next] bpf: remove redundant variable old_flags
+Message-Id: <20171011105623.19998-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171010170116.21124-1-colin.king@canonical.com>
-In-Reply-To: <20171010170116.21124-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 10 Oct 2017 18:01:16 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently rt6_ex is being dereferenced before it is null checked
-> hence there is a possible null dereference bug. Fix this by only
-> dereferencing rt6_ex after it has been null checked.
-> 
-> Detected by CoverityScan, CID#1457749 ("Dereference before null check")
-> 
-> Fixes: 81eb8447daae ("ipv6: take care of rt6_stats")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable old_flags is being assigned but is never read; it is redundant
+and can be removed.
 
-Applied, thanks Colin.
+Cleans up clang warning: Value stored to 'old_flags' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/bpf/cgroup.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index e88abc0865d5..3db5a17fcfe8 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -192,7 +192,6 @@ int __cgroup_bpf_attach(struct cgroup *cgrp, struct bpf_prog *prog,
+ 	struct cgroup_subsys_state *css;
+ 	struct bpf_prog_list *pl;
+ 	bool pl_was_allocated;
+-	u32 old_flags;
+ 	int err;
+ 
+ 	if ((flags & BPF_F_ALLOW_OVERRIDE) && (flags & BPF_F_ALLOW_MULTI))
+@@ -239,7 +238,6 @@ int __cgroup_bpf_attach(struct cgroup *cgrp, struct bpf_prog *prog,
+ 		pl->prog = prog;
+ 	}
+ 
+-	old_flags = cgrp->bpf.flags[type];
+ 	cgrp->bpf.flags[type] = flags;
+ 
+ 	/* allocate and recompute effective prog arrays */
+-- 
+2.14.1
+
