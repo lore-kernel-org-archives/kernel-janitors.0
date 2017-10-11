@@ -1,30 +1,40 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Oct 2017 18:14:20 +0000
-Subject: Re: [PATCH 3/6] ARM: s3c2410: Fix a typo in a comment line
-Message-Id: <20171004181420.lctwaocrvg6rxokk@kozik-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Oct 2017 09:53:28 +0000
+Subject: [PATCH][net-next] net: mpls: make function ipgre_mpls_encap_hlen static
+Message-Id: <20171011095328.17546-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
- <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
-In-Reply-To: <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@gmail.com>, Robert Shearman <rshearma@brocade.com>, Roopa Prabhu <roopa@cumulusnetworks.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 08:00:27PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 2 Oct 2017 19:34:36 +0200
-> 
-> Adjust a word in this function description.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied, squashed and changed commit msg.
+The function ipgre_mpls_encap_hlen is local to the source and
+does not need to be in global scope, so make it static.
 
-Best regards,
-Krzysztof
+Cleans up sparse warning:
+symbol 'ipgre_mpls_encap_hlen' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/mpls/af_mpls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
+index 9745e8f69810..8ca9915befc8 100644
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -41,7 +41,7 @@ static int label_limit = (1 << 20) - 1;
+ static int ttl_max = 255;
+ 
+ #if IS_ENABLED(CONFIG_NET_IP_TUNNEL)
+-size_t ipgre_mpls_encap_hlen(struct ip_tunnel_encap *e)
++static size_t ipgre_mpls_encap_hlen(struct ip_tunnel_encap *e)
+ {
+ 	return sizeof(struct mpls_shim_hdr);
+ }
+-- 
+2.14.1
 
