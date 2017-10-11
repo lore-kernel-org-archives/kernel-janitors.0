@@ -1,51 +1,45 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Tue, 31 Oct 2017 16:55:52 +0000
-Subject: Re: [PATCH] xfs: remove redundant assignment to variable bit
-Message-Id: <20171031165552.GD4911@magnolia>
+From: ivanhu <ivan.hu@canonical.com>
+Date: Wed, 11 Oct 2017 06:26:57 +0000
+Subject: ACK: [PATCH] efi/efi_test: Prevent an Oops in efi_runtime_query_capsulecaps()
+Message-Id: <449b17c1-2c97-fd7c-3073-5cb20e1c3672@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031111350.21208-1-colin.king@canonical.com>
-In-Reply-To: <20171031111350.21208-1-colin.king@canonical.com>
+References: <20170930081732.x6g4b2mwxwt5xzql@mwanda>
+ <20171006121939.GC3314@codeblueprint.co.uk>
+In-Reply-To: <20171006121939.GC3314-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, Oct 31, 2017 at 11:13:50AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable bit is being assigned a value that is never read, hence
-> the assignment is redundant and can be removed. Cleans up clang
-> warning:
-> 
-> fs/xfs/libxfs/xfs_rtbitmap.c:675:3: warning: Value stored to
-> 'bit' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> ---
->  fs/xfs/libxfs/xfs_rtbitmap.c | 1 -
->  1 file changed, 1 deletion(-)
+On 10/06/2017 08:19 PM, Matt Fleming wrote:
+> On Sat, 30 Sep, at 11:17:32AM, Dan Carpenter wrote:
+>> If "qcaps.capsule_count" is ULONG_MAX then "qcaps.capsule_count + 1"
+>> will overflow to zero and kcalloc() will return the ZERO_SIZE_PTR.  We
+>> try to dereference it inside the loop and crash.
+>>
+>> Fixes: ff6301dabc3c ("efi: Add efi_test driver for exporting UEFI runtime service interfaces")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+>> diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
+>> index 08129b7b80ab..41c48a1e8baa 100644
+>> --- a/drivers/firmware/efi/test/efi_test.c
+>> +++ b/drivers/firmware/efi/test/efi_test.c
+>> @@ -593,6 +593,9 @@ static long efi_runtime_query_capsulecaps(unsigned long arg)
+>>   	if (copy_from_user(&qcaps, qcaps_user, sizeof(qcaps)))
+>>   		return -EFAULT;
+>>   
+>> +	if (qcaps.capsule_count = ULONG_MAX)
+>> +		return -EINVAL;
+>> +
+>>   	capsules = kcalloc(qcaps.capsule_count + 1,
+>>   			   sizeof(efi_capsule_header_t), GFP_KERNEL);
+>>   	if (!capsules)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_rtbitmap.c b/fs/xfs/libxfs/xfs_rtbitmap.c
-> index 5d4e43ef4eea..ac09c4333485 100644
-> --- a/fs/xfs/libxfs/xfs_rtbitmap.c
-> +++ b/fs/xfs/libxfs/xfs_rtbitmap.c
-> @@ -672,7 +672,6 @@ xfs_rtmodify_range(
->  		/*
->  		 * Compute a mask of relevant bits.
->  		 */
-> -		bit = 0;
->  		mask = ((xfs_rtword_t)1 << lastbit) - 1;
->  		/*
->  		 * Set/clear the active bits.
-> -- 
-> 2.14.1
+> This looks OK to me. Ivan?
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+Acked-by: Ivan Hu <ivan.hu@canonical.com>
