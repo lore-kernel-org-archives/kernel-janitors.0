@@ -1,49 +1,40 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Tue, 31 Oct 2017 00:02:13 +0000
-Subject: Re: [PATCH] drm/panel: rpi-touchscreen: propagate errors in rpi_touchscreen_i2c_read()
-Message-Id: <87d154w5fe.fsf@anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Oct 2017 10:17:57 +0000
+Subject: [PATCH][next] sctp: make array sctp_sched_ops static
+Message-Id: <20171011101757.18825-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171020002845.kar2wg7gqxg7tzqi@mwanda>
-In-Reply-To: <20171020002845.kar2wg7gqxg7tzqi@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, "David S . Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+The array sctp_sched_ops  is local to the source and
+does not need to be in global scope, so make it static.
 
-> There is one caller which checks whether rpi_touchscreen_i2c_read()
-> returns negative error codes.  Currently it can't because negative
-> error codes are truncated to u8, but that's easy to fix if we change the
-> type to int.
+Cleans up sparse warning:
+symbol 'sctp_sched_ops' was not declared. Should it be static?
 
-Reviewed and applied to -next.  Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sctp/stream_sched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-(Not to -fixes because we're late in the cycle, we don't have an
-upstream DT exposing the panel, and it seems unlikely that the error
-value here would happen to collide with one of the 2 values of a valid
-firmware revision)
+diff --git a/net/sctp/stream_sched.c b/net/sctp/stream_sched.c
+index 03513a9fa110..0b83ec51e43b 100644
+--- a/net/sctp/stream_sched.c
++++ b/net/sctp/stream_sched.c
+@@ -124,7 +124,7 @@ static struct sctp_sched_ops sctp_sched_fcfs = {
+ extern struct sctp_sched_ops sctp_sched_prio;
+ extern struct sctp_sched_ops sctp_sched_rr;
+ 
+-struct sctp_sched_ops *sctp_sched_ops[] = {
++static struct sctp_sched_ops *sctp_sched_ops[] = {
+ 	&sctp_sched_fcfs,
+ 	&sctp_sched_prio,
+ 	&sctp_sched_rr,
+-- 
+2.14.1
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAln3vYUACgkQtdYpNtH8
-nugl6BAArn/Upp45D/N82z4bCFHuLSWebeVmMP3kxJxAqfwrPwSw994O7Oj6eT+3
-H88D/bcIuB3N6jLCWMHkycv+4qFsg0596TxeUuYPkU9LYlC4lm1bk6dF+0FdNR0b
-89/Tc1GfRf3mITFsjH857aAUjRDUrW6ussOhet+1ms6K8juZ2V7NYrFdoZNEjjBj
-auAb+LACHjfApW9G2EWJsh8aAlb6aAcE7DHuimfcsUtAxBZ6D2YVkCeUlo0+iUJN
-lCa4VMJi+VcNy+amHLhc8aH55m59I3HJ5nj3AjYltFdjO/2TwpXaOwPySeGEWeBf
-937sS7szHsv2sMYRWxbTTvYnq013AnKdlwtpJ1Rzuk6aW/dGeXwg4sSiJ0nwecnl
-AeXI3v/HhKCablhMWkKnUB3nj+0tSayVR4/NfZCRWt9Xfhpb7P/3qbJhEjiMLjMg
-Qco0gZkp4C95mx+oC9S+8j8PbGid/9Gb+Mh0m/KQRrmZWCkuXo5OUbzqDWCU+Vsi
-/6Tv9JChkiuM8f3WM99o83EMXDOn+h1qlqAt+SW9ybexZf4eahzp0wYL2bLMQyG3
-Oh/24EWbTyOezx0ispDL6tCx2pCPJZZcb4mnemRTb8oLpMOrEIOuKkK8m6Bn9+41
-N4sW9TmhahfJEPScjD6cTUF2F0olQ/voXiYU0xtcYGfFAmfsMWU=
-=av0Y
------END PGP SIGNATURE-----
---=-=-=--
