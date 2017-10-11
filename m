@@ -1,68 +1,46 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Tue, 31 Oct 2017 06:53:48 +0000
-Subject: Re: [PATCH 1/2] misc: pci_endpoint_test: Prevent some integer overflows
-Message-Id: <2c5c717a-f9e8-952a-16e5-d20115561236@ti.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 11 Oct 2017 09:09:57 +0000
+Subject: [PATCH] usb: typec: wcove: fix uninitialized usbc_irq1 and usbc_irq2
+Message-Id: <20171011090957.16499-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081552.rm4tjhxcyegpg3vn@mwanda>
- <20171017185813.GH5641@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20171017185813.GH5641@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <helgaas@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Calls to regmap_read may fail with an -EINVAL return without setting
+usbc_irq1 and usbc_irq2.  The error handling clean up expects these
+to have been set (or zero on a failure) and currently may try to
+clear the wrong IRQs if the uninitalized garbage values in usbc_irq1
+or usbc_irq2 are non-zero.  The simplest fix is to ensure these
+variables are initialized to zero.
 
-On Wednesday 18 October 2017 12:28 AM, Bjorn Helgaas wrote:
-> On Sat, Sep 30, 2017 at 11:15:52AM +0300, Dan Carpenter wrote:
->> "size + max" can have an arithmetic overflow when we're allocating:
->>
->> 	orig_src_addr = dma_alloc_coherent(dev, size + alignment, ...
->>
->> I've added a few checks to prevent that.
->>
->> Fixes: 13107c60681f ("misc: pci_endpoint_test: Add support to provide aligned buffer addresses")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Both applied to pci/endpoint for v4.15, thanks!
-> 
-> Kishon, if you want to ack/nack this, I'll act accordingly.
+Detected by CoverityScan, CID#1457737 ("Uninitialized scalar variable")
 
-patch looks correct
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> 
->> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
->> index deb203026496..c0d323077ad0 100644
->> --- a/drivers/misc/pci_endpoint_test.c
->> +++ b/drivers/misc/pci_endpoint_test.c
->> @@ -226,6 +226,9 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
->>  	u32 src_crc32;
->>  	u32 dst_crc32;
->>  
->> +	if (size > SIZE_MAX - alignment)
->> +		goto err;
->> +
->>  	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
->>  					   &orig_src_phys_addr, GFP_KERNEL);
->>  	if (!orig_src_addr) {
->> @@ -311,6 +314,9 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
->>  	size_t alignment = test->alignment;
->>  	u32 crc32;
->>  
->> +	if (size > SIZE_MAX - alignment)
->> +		goto err;
->> +
->>  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
->>  				       GFP_KERNEL);
->>  	if (!orig_addr) {
->> @@ -369,6 +375,9 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
->>  	size_t alignment = test->alignment;
->>  	u32 crc32;
->>  
->> +	if (size > SIZE_MAX - alignment)
->> +		goto err;
->> +
->>  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
->>  				       GFP_KERNEL);
->>  	if (!orig_addr) {
+Fixes: 3c4fb9f16921 ("usb: typec: wcove: start using tcpm for USB PD support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/typec/typec_wcove.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/typec/typec_wcove.c b/drivers/usb/typec/typec_wcove.c
+index a47a93ad34b7..4ce30a967962 100644
+--- a/drivers/usb/typec/typec_wcove.c
++++ b/drivers/usb/typec/typec_wcove.c
+@@ -441,8 +441,8 @@ static int wcove_read_rx_buffer(struct wcove_typec *wcove, void *msg)
+ static irqreturn_t wcove_typec_irq(int irq, void *data)
+ {
+ 	struct wcove_typec *wcove = data;
+-	unsigned int usbc_irq1;
+-	unsigned int usbc_irq2;
++	unsigned int usbc_irq1 = 0;
++	unsigned int usbc_irq2 = 0;
+ 	unsigned int cc1ctrl;
+ 	int ret;
+ 
+-- 
+2.14.1
+
