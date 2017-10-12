@@ -1,44 +1,82 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Oct 2017 18:55:34 +0000
-Subject: [PATCH 1/2] powerpc-ps3: Delete an error message for a failed memory allocation in update_flash_db()
-Message-Id: <e16c8b7d-de3a-6c96-9af4-dd0551cca805@users.sourceforge.net>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Thu, 12 Oct 2017 16:59:47 +0000
+Subject: Re: [PATCH] dmaengine: imx-sdma: Report a DMA_ERROR in status if 'count' or 'dma_address' do not mat
+Message-Id: <20171012170322.GV30097@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <36a8ba41-7f1e-31f8-5d32-19e04393b181@users.sourceforge.net>
-In-Reply-To: <36a8ba41-7f1e-31f8-5d32-19e04393b181@users.sourceforge.net>
+References: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Fabio Estevam <fabio.estevam@nxp.com>, Nandor Han <nandor.han@ge.com>
+Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Oct 2017 20:00:31 +0200
+On Sun, Sep 24, 2017 at 08:26:41AM +0200, Christophe JAILLET wrote:
+> All sanity checks in this function set 'sdmac->status = DMA_ERROR' if
+> something looks wrong, except if the byte count or the address don't match
+> the bus width.
+> 
+> Fix it and report the error in status in such a case.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Untested, so please review carefuly.
+> ---
+>  drivers/dma/imx-sdma.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index a67ec1bdc4e0..f0419967eb92 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -1240,26 +1240,31 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+>  		sdmac->chn_count += count;
+>  
+>  		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES) {
+> -			ret =  -EINVAL;
+> +			ret = -EINVAL;
 
-Omit an extra message for a memory allocation failure in this function.
+this is a style fix and should not be part of this patch
 
-This issue was detected by using the Coccinelle software.
+>  			goto err_out;
+>  		}
+>  
+>  		switch (sdmac->word_size) {
+>  		case DMA_SLAVE_BUSWIDTH_4_BYTES:
+>  			bd->mode.command = 0;
+> -			if (count & 3 || sg->dma_address & 3)
+> -				return NULL;
+> +			if (count & 3 || sg->dma_address & 3) {
+> +				ret = -EINVAL;
+> +				goto err_out;
+> +			}
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/platforms/ps3/os-area.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+this looks okay, but then slave configuration comes from different path, so
+not sure if not setting was intentional or a miss. Fabio, Nandor??
 
-diff --git a/arch/powerpc/platforms/ps3/os-area.c b/arch/powerpc/platforms/ps3/os-area.c
-index 3db53e8aff92..f2a8875e25d1 100644
---- a/arch/powerpc/platforms/ps3/os-area.c
-+++ b/arch/powerpc/platforms/ps3/os-area.c
-@@ -625,10 +625,8 @@ static int update_flash_db(void)
- 	/* Read in header and db from flash. */
- 
- 	header = kmalloc(buf_len, GFP_KERNEL);
--	if (!header) {
--		pr_debug("%s: kmalloc failed\n", __func__);
-+	if (!header)
- 		return -ENOMEM;
--	}
- 
- 	count = os_area_flash_read(header, buf_len, 0);
- 	if (count < 0) {
+>  			break;
+>  		case DMA_SLAVE_BUSWIDTH_2_BYTES:
+>  			bd->mode.command = 2;
+> -			if (count & 1 || sg->dma_address & 1)
+> -				return NULL;
+> +			if (count & 1 || sg->dma_address & 1) {
+> +				ret = -EINVAL;
+> +				goto err_out;
+> +			}
+>  			break;
+>  		case DMA_SLAVE_BUSWIDTH_1_BYTE:
+>  			bd->mode.command = 1;
+>  			break;
+>  		default:
+> -			return NULL;
+> +			ret = -EINVAL;
+> +			goto err_out;
+>  		}
+>  
+>  		param = BD_DONE | BD_EXTD | BD_CONT;
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.14.2
-
+~Vinod
