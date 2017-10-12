@@ -1,49 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Oct 2017 20:15:19 +0000
-Subject: [PATCH 3/4] ARM: OMAP: Use kcalloc() in omap_system_dma_probe()
-Message-Id: <cb714a17-9400-13fe-c4b0-f99aaf2e1aed@users.sourceforge.net>
+Date: Thu, 12 Oct 2017 10:43:12 +0000
+Subject: [PATCH 04/10] staging/irda/net: Delete an unnecessary variable initialisation in irlap_recv_discover
+Message-Id: <9ef40fde-7e60-716c-8ac5-232c04fe4401@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
-In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
+References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Oct 2017 21:07:33 +0200
+Date: Wed, 11 Oct 2017 22:18:34 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+The local variable "discovery" will only be used in a single if branch
+of this function. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/plat-omap/dma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/irda/net/irlap_frame.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
-index 409e4ecaebe9..d4012d6c0dcb 100644
---- a/arch/arm/plat-omap/dma.c
-+++ b/arch/arm/plat-omap/dma.c
-@@ -1321,8 +1321,9 @@ static int omap_system_dma_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/staging/irda/net/irlap_frame.c b/drivers/staging/irda/net/irlap_frame.c
+index 94972db87951..33259ed5f3cd 100644
+--- a/drivers/staging/irda/net/irlap_frame.c
++++ b/drivers/staging/irda/net/irlap_frame.c
+@@ -481,7 +481,7 @@ static void irlap_recv_discovery_xid_cmd(struct irlap_cb *self,
+ 					 struct irlap_info *info)
+ {
+ 	struct xid_frame *xid;
+-	discovery_t *discovery = NULL;
++	discovery_t *discovery;
+ 	__u8 *discovery_info;
+ 	char *text;
  
- 	if (dma_omap2plus()) {
--		dma_linked_lch = kzalloc(sizeof(struct dma_link_info) *
--						dma_lch_count, GFP_KERNEL);
-+		dma_linked_lch = kcalloc(dma_lch_count,
-+					 sizeof(*dma_linked_lch),
-+					 GFP_KERNEL);
- 		if (!dma_linked_lch) {
- 			ret = -ENOMEM;
- 			goto exit_dma_lch_fail;
 -- 
 2.14.2
 
