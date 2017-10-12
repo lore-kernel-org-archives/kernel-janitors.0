@@ -1,64 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 14:32:55 +0000
-Subject: [PATCH] net: atheros: atl1: Use common error handling code in atl1_xmit_frame()
-Message-Id: <4b3b7535-6ea0-b4fe-404a-de800b838e4f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Oct 2017 15:36:56 +0000
+Subject: [PATCH] agp: amd64: remove redundant assignment of i = 0
+Message-Id: <20171012153656.30382-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Chris Snook <chris.snook@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Geliang Tang <geliangtang@gmail.com>, Jay Cliburn <jcliburn@gmail.com>, Philippe Reynes <tremyfr@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 16:22:30 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+The assignent of i = 0 is redundant as it is re-assigned to zero
+in the following for-loop. Clean this up by removing it.
 
-This issue was detected by using the Coccinelle software.
+Cleans up clang warning: Value stored to 'i' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/atheros/atlx/atl1.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/char/agp/amd64-agp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
-index 83d2db2abb45..030dac9c06aa 100644
---- a/drivers/net/ethernet/atheros/atlx/atl1.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl1.c
-@@ -2424,17 +2424,13 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
- 	}
+diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+index e50c29c97ca7..f54d894933a3 100644
+--- a/drivers/char/agp/amd64-agp.c
++++ b/drivers/char/agp/amd64-agp.c
+@@ -332,7 +332,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
+ 	if (!amd_nb_has_feature(AMD_NB_GART))
+ 		return -ENODEV;
  
- 	tso = atl1_tso(adapter, skb, ptpd);
--	if (tso < 0) {
--		dev_kfree_skb_any(skb);
--		return NETDEV_TX_OK;
--	}
-+	if (tso < 0)
-+		goto free_skb;
- 
- 	if (!tso) {
- 		ret_val = atl1_tx_csum(adapter, skb, ptpd);
--		if (ret_val < 0) {
--			dev_kfree_skb_any(skb);
--			return NETDEV_TX_OK;
--		}
-+		if (ret_val < 0)
-+			goto free_skb;
- 	}
- 
- 	atl1_tx_map(adapter, skb, ptpd);
-@@ -2442,6 +2438,10 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
- 	atl1_update_mailbox(adapter);
- 	mmiowb();
- 	return NETDEV_TX_OK;
-+
-+free_skb:
-+	dev_kfree_skb_any(skb);
-+	return NETDEV_TX_OK;
- }
- 
- static int atl1_rings_clean(struct napi_struct *napi, int budget)
+-	i = 0;
+ 	for (i = 0; i < amd_nb_num(); i++) {
+ 		struct pci_dev *dev = node_to_amd_nb(i)->misc;
+ 		if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
 -- 
-2.14.3
+2.14.1
 
