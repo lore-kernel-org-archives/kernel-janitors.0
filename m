@@ -1,54 +1,40 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 03 Oct 2017 08:31:45 +0000
-Subject: [PATCH] drivers/fsi: make a couple of functions static
-Message-Id: <20171003083145.24054-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Oct 2017 10:45:03 +0000
+Subject: [PATCH 05/10] staging/irda/net: Delete an unnecessary variable initialisation in irlap_recv_discover
+Message-Id: <a7e40d8e-8dc6-63d4-a637-cec895e30408@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christopher Bostic <cbostic@linux.vnet.ibm.com>, Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, Chris Bostic <cbostic@us.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 11 Oct 2017 22:20:22 +0200
 
-The functions fsi_slave_report_and_clear_errors and fsi_slave_handle_error
-are local to the source and do not need to be in global scope, so make
-them static.
+The variable "discovery" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Cleans up sparse warnings:
-symbol 'fsi_slave_report_and_clear_errors' was not declared. Should it
-be static?
-symbol 'fsi_slave_handle_error' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/fsi/fsi-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/irda/net/irlap_frame.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 4ea63d9bd131..e318bf8c623c 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -185,7 +185,7 @@ static int fsi_slave_calc_addr(struct fsi_slave *slave, uint32_t *addrp,
- 	return 0;
- }
- 
--int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
-+static int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
+diff --git a/drivers/staging/irda/net/irlap_frame.c b/drivers/staging/irda/net/irlap_frame.c
+index 33259ed5f3cd..5b8be5b9812e 100644
+--- a/drivers/staging/irda/net/irlap_frame.c
++++ b/drivers/staging/irda/net/irlap_frame.c
+@@ -408,7 +408,7 @@ static void irlap_recv_discovery_xid_rsp(struct irlap_cb *self,
+ 					 struct irlap_info *info)
  {
- 	struct fsi_master *master = slave->master;
- 	uint32_t irq, stat;
-@@ -215,8 +215,8 @@ int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
+ 	struct xid_frame *xid;
+-	discovery_t *discovery = NULL;
++	discovery_t *discovery;
+ 	__u8 *discovery_info;
+ 	char *text;
  
- static int fsi_slave_set_smode(struct fsi_master *master, int link, int id);
- 
--int fsi_slave_handle_error(struct fsi_slave *slave, bool write, uint32_t addr,
--		size_t size)
-+static int fsi_slave_handle_error(struct fsi_slave *slave, bool write,
-+				  uint32_t addr, size_t size)
- {
- 	struct fsi_master *master = slave->master;
- 	int rc, link;
 -- 
-2.14.1
+2.14.2
 
