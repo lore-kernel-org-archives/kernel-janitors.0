@@ -1,58 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Oct 2017 10:38:02 +0000
-Subject: [PATCH 00/10] staging/irda/net: Adjustments for several function implementations
-Message-Id: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+Date: Thu, 12 Oct 2017 11:17:39 +0000
+Subject: Re: [PATCH 00/10] staging/irda/net: Adjustments for several function implementations
+Message-Id: <878tggwr70.fsf@miraculix.mork.no>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net> (SF
+        Markus Elfring's message of "Thu, 12 Oct 2017 12:38:02 +0200")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Oct 2017 11:25:43 +0200
+Did you read drivers/staging/irda/TODO ?
 
-Several update suggestions were taken into account
-from static source code analysis.
+There is no need to answer that. You already have.  Thanks a lot for
+your ever lasting invaluable contributions to /dev/null.  Please
+continue.
 
-Markus Elfring (10):
-  Improve a size determination in 20 functions
-  Delete ten error messages for a failed memory allocation
-  Adjust 385 checks for null pointers
-  Delete an unnecessary variable initialisation in irlap_recv_discovery_xid_cmd()
-  Delete an unnecessary variable initialisation in irlap_recv_discovery_xid_rsp()
-  Delete an unnecessary variable initialisation in two functions
-  Delete an unnecessary variable initialisation in four functions
-  Use common error handling code in irias_new_object()
-  Combine some seq_printf() calls in two functions
-  Use seq_puts() in four functions
 
- drivers/staging/irda/net/af_irda.c            |  56 +++++----
- drivers/staging/irda/net/discovery.c          |  31 +++--
- drivers/staging/irda/net/ircomm/ircomm_core.c |  10 +-
- drivers/staging/irda/net/ircomm/ircomm_tty.c  |   4 +-
- drivers/staging/irda/net/irda_device.c        |   2 +-
- drivers/staging/irda/net/iriap.c              |  61 +++++-----
- drivers/staging/irda/net/iriap_event.c        |  34 +++---
- drivers/staging/irda/net/irias_object.c       | 116 ++++++++-----------
- drivers/staging/irda/net/irlan/irlan_common.c |   3 +-
- drivers/staging/irda/net/irlap.c              |  84 +++++++-------
- drivers/staging/irda/net/irlap_event.c        |  77 ++++++------
- drivers/staging/irda/net/irlap_frame.c        |  74 ++++++------
- drivers/staging/irda/net/irlmp.c              | 161 ++++++++++++--------------
- drivers/staging/irda/net/irlmp_event.c        |  50 ++++----
- drivers/staging/irda/net/irlmp_frame.c        |  24 ++--
- drivers/staging/irda/net/irnetlink.c          |   2 +-
- drivers/staging/irda/net/irproc.c             |   2 +-
- drivers/staging/irda/net/irqueue.c            |  32 ++---
- drivers/staging/irda/net/irsysctl.c           |   4 +-
- drivers/staging/irda/net/irttp.c              |  75 ++++++------
- drivers/staging/irda/net/parameters.c         |  12 +-
- drivers/staging/irda/net/qos.c                |  20 ++--
- drivers/staging/irda/net/timer.c              |  12 +-
- drivers/staging/irda/net/wrapper.c            |   3 +-
- 24 files changed, 450 insertions(+), 499 deletions(-)
 
--- 
-2.14.2
-
+Bj=C3=B8rn
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
