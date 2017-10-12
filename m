@@ -1,39 +1,58 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 25 Sep 2017 08:24:59 +0000
-Subject: Re: mwifiex: make const array tos_to_ac static, reduces object code size
-Message-Id: <20170925082459.B18ED60719@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Oct 2017 10:38:02 +0000
+Subject: [PATCH 00/10] staging/irda/net: Adjustments for several function implementations
+Message-Id: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170919210500.31330-1-colin.king@canonical.com>
-In-Reply-To: <20170919210500.31330-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Oct 2017 11:25:43 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the read-only const array tos_to_ac on the stack,
-> instead make it static. Makes the object code smaller by 250 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   26104	   2720	    128	  28952	   7118	wmm.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   25758	   2816	    128	  28702	   701e	wmm.o
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Several update suggestions were taken into account
+from static source code analysis.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Markus Elfring (10):
+  Improve a size determination in 20 functions
+  Delete ten error messages for a failed memory allocation
+  Adjust 385 checks for null pointers
+  Delete an unnecessary variable initialisation in irlap_recv_discovery_xid_cmd()
+  Delete an unnecessary variable initialisation in irlap_recv_discovery_xid_rsp()
+  Delete an unnecessary variable initialisation in two functions
+  Delete an unnecessary variable initialisation in four functions
+  Use common error handling code in irias_new_object()
+  Combine some seq_printf() calls in two functions
+  Use seq_puts() in four functions
 
-7dfb0ebd022b mwifiex: make const array tos_to_ac static, reduces object code size
+ drivers/staging/irda/net/af_irda.c            |  56 +++++----
+ drivers/staging/irda/net/discovery.c          |  31 +++--
+ drivers/staging/irda/net/ircomm/ircomm_core.c |  10 +-
+ drivers/staging/irda/net/ircomm/ircomm_tty.c  |   4 +-
+ drivers/staging/irda/net/irda_device.c        |   2 +-
+ drivers/staging/irda/net/iriap.c              |  61 +++++-----
+ drivers/staging/irda/net/iriap_event.c        |  34 +++---
+ drivers/staging/irda/net/irias_object.c       | 116 ++++++++-----------
+ drivers/staging/irda/net/irlan/irlan_common.c |   3 +-
+ drivers/staging/irda/net/irlap.c              |  84 +++++++-------
+ drivers/staging/irda/net/irlap_event.c        |  77 ++++++------
+ drivers/staging/irda/net/irlap_frame.c        |  74 ++++++------
+ drivers/staging/irda/net/irlmp.c              | 161 ++++++++++++--------------
+ drivers/staging/irda/net/irlmp_event.c        |  50 ++++----
+ drivers/staging/irda/net/irlmp_frame.c        |  24 ++--
+ drivers/staging/irda/net/irnetlink.c          |   2 +-
+ drivers/staging/irda/net/irproc.c             |   2 +-
+ drivers/staging/irda/net/irqueue.c            |  32 ++---
+ drivers/staging/irda/net/irsysctl.c           |   4 +-
+ drivers/staging/irda/net/irttp.c              |  75 ++++++------
+ drivers/staging/irda/net/parameters.c         |  12 +-
+ drivers/staging/irda/net/qos.c                |  20 ++--
+ drivers/staging/irda/net/timer.c              |  12 +-
+ drivers/staging/irda/net/wrapper.c            |   3 +-
+ 24 files changed, 450 insertions(+), 499 deletions(-)
 
 -- 
-https://patchwork.kernel.org/patch/9960331/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.2
 
