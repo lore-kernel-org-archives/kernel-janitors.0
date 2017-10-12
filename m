@@ -1,56 +1,43 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Mon, 23 Oct 2017 23:47:33 +0000
-Subject: [PATCH 21/24] perf script: Fix error handling path
-Message-Id: <20171023234736.5335-22-acme@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Oct 2017 17:04:56 +0000
+Subject: [PATCH] crypto: qat: remove unused and redundant pointer vf_info
+Message-Id: <20171012170456.32505-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171023234736.5335-1-acme@kernel.org>
-In-Reply-To: <20171023234736.5335-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Ahsan Atta <ahsan.atta@intel.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-If the string passed in '--time' is invalid, or if failed to set
-libtraceevent function resolver, we must do some cleanup before leaving.
-As in the other error handling paths of this function.
+The pointer vf_info is being assigned but never read, it is redundant
+and therefore can be removed.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170916062537.28921-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cleans up clang warning: Value stored to 'vf_info' is never read
+
+Fixes: ed8ccaef52fa ("crypto: qat - Add support for SRIOV")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/perf/builtin-script.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/qat/qat_common/adf_dev_mgr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 3e83f4735b21..a3add2cd7856 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3074,7 +3074,8 @@ int cmd_script(int argc, const char **argv)
- 					 machine__resolve_kernel_addr,
- 					 &session->machines.host) < 0) {
- 		pr_err("%s: failed to set libtraceevent function resolver\n", __func__);
--		return -1;
-+		err = -1;
-+		goto out_delete;
- 	}
+diff --git a/drivers/crypto/qat/qat_common/adf_dev_mgr.c b/drivers/crypto/qat/qat_common/adf_dev_mgr.c
+index 8afac52677a6..2d06409bd3c4 100644
+--- a/drivers/crypto/qat/qat_common/adf_dev_mgr.c
++++ b/drivers/crypto/qat/qat_common/adf_dev_mgr.c
+@@ -228,11 +228,8 @@ int adf_devmgr_add_dev(struct adf_accel_dev *accel_dev,
+ 		list_add_tail(&map->list, &vfs_table);
+ 	} else if (accel_dev->is_vf && pf) {
+ 		/* VF on host */
+-		struct adf_accel_vf_info *vf_info;
+ 		struct vf_id_map *map;
  
- 	if (generate_script_lang) {
-@@ -3134,7 +3135,8 @@ int cmd_script(int argc, const char **argv)
- 	/* needs to be parsed after looking up reference time */
- 	if (perf_time__parse_str(&script.ptime, script.time_str) != 0) {
- 		pr_err("Invalid time string\n");
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto out_delete;
- 	}
- 
- 	err = __cmd_script(&script);
+-		vf_info = pf->pf.vf_info + adf_get_vf_id(accel_dev);
+-
+ 		map = adf_find_vf(adf_get_vf_num(accel_dev));
+ 		if (map) {
+ 			struct vf_id_map *next;
 -- 
-2.13.6
+2.14.1
 
