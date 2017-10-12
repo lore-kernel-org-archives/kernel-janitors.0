@@ -1,31 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Oct 2017 05:27:18 +0000
-Subject: Re: [PATCH] IB/hfi1: Fix a wrapping test (make it less strict)
-Message-Id: <20171025052718.qdzakvhbjkmdyllf@mwanda>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 12 Oct 2017 16:17:07 +0000
+Subject: Re: [PATCH] video: fbdev: radeon: make const array post_divs static, reduces object code size
+Message-Id: <3245965.OqUEzHD6FT@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171013105559.tqzh6jhcnvmqhdwy@mwanda>
- <1508771116.3325.0.camel@redhat.com>
- <36cdf5bf-a28c-e853-523d-8cf0fa748a56@intel.com>
- <1508783626.3325.16.camel@redhat.com>
- <20171023190400.GA24412@obsidianresearch.com>
- <32E1700B9017364D9B60AED9960492BC3443EB1C@fmsmsx120.amr.corp.intel.com>
- <20171024200216.GA15994@obsidianresearch.com>
-In-Reply-To: <20171024200216.GA15994-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+References: <CGME20170919213206epcas2p3a2bea87468fa266cf1c94829444ab162@epcas2p3.samsung.com>
+ <20170919213201.31845-1-colin.king@canonical.com>
+In-Reply-To: <20170919213201.31845-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Cc: "Marciniszyn, Mike" <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Dalessandro, Dennis" <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Tue, Oct 24, 2017 at 02:02:16PM -0600, Jason Gunthorpe wrote:
-> On Tue, Oct 24, 2017 at 07:54:40PM +0000, Marciniszyn, Mike wrote:
+
+[ added dri-devel ML to cc: ]
+
+On Tuesday, September 19, 2017 10:32:01 PM Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> > - Change to use Jason's test from above with UINT_MAX
+> Don't populate the read-only const array post_divs on the stack,
+> nstead make it static. Makes the object code smaller by 90 bytes:
 > 
-> UINT_MAX isn't U32_MAX, is it?
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   40231	   8584	    896	  49711	   c22f	radeon_base.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   39914	   8744	    960	  49618	   c1d2	radeon_base.o
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-They are always the same.
+Are these results obtained using the same compiler as the other patches
+(gcc version 7.2.0, x86_64)?
 
-regards,
-dan carpenter
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
