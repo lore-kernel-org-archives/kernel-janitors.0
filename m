@@ -1,96 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 08:52:02 +0000
-Subject: [PATCH 3/3] drm/exynos: Fix typos in five comment lines
-Message-Id: <fe7f02cd-4424-84b3-9c9e-665a5d60e325@users.sourceforge.net>
+Date: Thu, 12 Oct 2017 10:48:03 +0000
+Subject: [PATCH 08/10] staging/irda/net: Use common error handling code in irias_new_object()
+Message-Id: <c7db5b0d-2bd4-367c-bd29-4c33155bb22d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
-In-Reply-To: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
+References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 10:20:20 +0200
+Date: Thu, 12 Oct 2017 08:52:53 +0200
 
-The script "checkpatch.pl" pointed misspelled words out.
-Thus fix the affected places.
+Add a jump target so that a bit of exception handling can be better
+reused at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_g2d.c  | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c  | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/irda/net/irias_object.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index ba5fb49c5491..08cdfe7e82a0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -841,7 +841,7 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
- 	 * Use non-continuous clock mode if the periparal wants and
- 	 * host controller supports
- 	 *
--	 * In non-continous clock mode, host controller will turn off
-+	 * In non-continuous clock mode, host controller will turn off
- 	 * the HS clock between high-speed transmissions to reduce
- 	 * power consumption.
- 	 */
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 5b18b5c5fdf2..a14738e81a5a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1437,7 +1437,7 @@ static int fimc_ippdrv_start(struct device *dev, enum drm_exynos_ipp_cmd cmd)
- 		return ret;
+diff --git a/drivers/staging/irda/net/irias_object.c b/drivers/staging/irda/net/irias_object.c
+index 4c2c65e28836..0c89800d597d 100644
+--- a/drivers/staging/irda/net/irias_object.c
++++ b/drivers/staging/irda/net/irias_object.c
+@@ -54,10 +54,9 @@ struct ias_object *irias_new_object( char *name, int id)
+ 
+ 	obj->magic = IAS_OBJECT_MAGIC;
+ 	obj->name = kstrndup(name, IAS_MAX_CLASSNAME, GFP_ATOMIC);
+-	if (!obj->name) {
+-		kfree(obj);
+-		return NULL;
+-	}
++	if (!obj->name)
++		goto free_object;
++
+ 	obj->id = id;
+ 
+ 	/* Locking notes : the attrib spinlock has lower precendence
+@@ -68,11 +67,14 @@ struct ias_object *irias_new_object( char *name, int id)
+ 		net_warn_ratelimited("%s(), Unable to allocate attribs!\n",
+ 				     __func__);
+ 		kfree(obj->name);
+-		kfree(obj);
+-		return NULL;
++		goto free_object;
  	}
  
--	/* If set ture, we can save jpeg about screen */
-+	/* If set true, we can save jpeg about screen */
- 	fimc_handle_jpeg(ctx, false);
- 	fimc_set_scaler(ctx, &ctx->sc);
+ 	return obj;
++
++free_object:
++	kfree(obj);
++	return NULL;
+ }
+ EXPORT_SYMBOL(irias_new_object);
  
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index d42ae2bc3e56..50a4c3435cd0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -594,7 +594,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
- 	/*
- 	 * Setting dma-burst to 16Word causes permanent tearing for very small
- 	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
--	 * plane size is not recommended as plane size varies alot towards the
-+	 * plane size is not recommended as plane size varies a lot towards the
- 	 * end of the screen and rapid movement causes unstable DMA, but it is
- 	 * still better to change dma-burst than displaying garbage.
- 	 */
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 2b8bf2dd6387..f4de1f3d37a3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -29,7 +29,7 @@
- #define G2D_HW_MAJOR_VER		4
- #define G2D_HW_MINOR_VER		1
- 
--/* vaild register range set from user: 0x0104 ~ 0x0880 */
-+/* valid register range set from user: 0x0104 ~ 0x0880 */
- #define G2D_VALID_START			0x0104
- #define G2D_VALID_END			0x0880
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 3edda18cc2d2..2feeba705c1f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -1747,7 +1747,7 @@ static int ipp_probe(struct platform_device *pdev)
- 		goto err_event_workq;
- 	}
- 
--	/* set sub driver informations */
-+	/* set sub driver information */
- 	subdrv = &ctx->subdrv;
- 	subdrv->dev = dev;
- 	subdrv->probe = ipp_subdrv_probe;
 -- 
 2.14.2
 
