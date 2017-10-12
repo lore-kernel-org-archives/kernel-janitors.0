@@ -1,62 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Oct 2017 10:48:03 +0000
-Subject: [PATCH 08/10] staging/irda/net: Use common error handling code in irias_new_object()
-Message-Id: <c7db5b0d-2bd4-367c-bd29-4c33155bb22d@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 12 Oct 2017 15:47:14 +0000
+Subject: [PATCH] agp: fix clang warning on unread variable num_segments
+Message-Id: <20171012154714.30666-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
-In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Oct 2017 08:52:53 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better
-reused at the end of this function.
+Currently variable num_segments is being assigned but never actually
+used.  Fix this actually using it in the for-loop. Also clean up the
+code a little by assigning num_segments at declaration time.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cleans up clang warning: Value stored to 'num_segments' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/irda/net/irias_object.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/char/agp/frontend.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/irda/net/irias_object.c b/drivers/staging/irda/net/irias_object.c
-index 4c2c65e28836..0c89800d597d 100644
---- a/drivers/staging/irda/net/irias_object.c
-+++ b/drivers/staging/irda/net/irias_object.c
-@@ -54,10 +54,9 @@ struct ias_object *irias_new_object( char *name, int id)
+diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
+index f6955888e676..6476beba43b0 100644
+--- a/drivers/char/agp/frontend.c
++++ b/drivers/char/agp/frontend.c
+@@ -102,16 +102,15 @@ agp_segment_priv *agp_find_seg_in_client(const struct agp_client *client,
+ 					    int size, pgprot_t page_prot)
+ {
+ 	struct agp_segment_priv *seg;
+-	int num_segments, i;
++	int i, num_segments = client->num_segments;
+ 	off_t pg_start;
+ 	size_t pg_count;
  
- 	obj->magic = IAS_OBJECT_MAGIC;
- 	obj->name = kstrndup(name, IAS_MAX_CLASSNAME, GFP_ATOMIC);
--	if (!obj->name) {
--		kfree(obj);
--		return NULL;
--	}
-+	if (!obj->name)
-+		goto free_object;
-+
- 	obj->id = id;
+ 	pg_start = offset / 4096;
+ 	pg_count = size / 4096;
+ 	seg = *(client->segments);
+-	num_segments = client->num_segments;
  
- 	/* Locking notes : the attrib spinlock has lower precendence
-@@ -68,11 +67,14 @@ struct ias_object *irias_new_object( char *name, int id)
- 		net_warn_ratelimited("%s(), Unable to allocate attribs!\n",
- 				     __func__);
- 		kfree(obj->name);
--		kfree(obj);
--		return NULL;
-+		goto free_object;
- 	}
- 
- 	return obj;
-+
-+free_object:
-+	kfree(obj);
-+	return NULL;
- }
- EXPORT_SYMBOL(irias_new_object);
- 
+-	for (i = 0; i < client->num_segments; i++) {
++	for (i = 0; i < num_segments; i++) {
+ 		if ((seg[i].pg_start = pg_start) &&
+ 		    (seg[i].pg_count = pg_count) &&
+ 		    (pgprot_val(seg[i].prot) = pgprot_val(page_prot))) {
 -- 
-2.14.2
+2.14.1
 
