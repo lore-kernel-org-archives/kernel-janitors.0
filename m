@@ -1,50 +1,39 @@
-From: Gary R Hook <gary.hook@amd.com>
-Date: Tue, 17 Oct 2017 22:12:12 +0000
-Subject: Re: [PATCH] crypto: ccp: remove unused variable qim
-Message-Id: <83517ed8-3dc5-4ecd-b3e1-7412e8eef472@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Oct 2017 07:01:22 +0000
+Subject: [PATCH] sched/deadline: Don't use dubious signed bitfields
+Message-Id: <20171013070121.dzcncojuj2f4utij@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171012165541.32256-1-colin.king@canonical.com>
-In-Reply-To: <20171012165541.32256-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Tom Lendacky <thomas.lendacky@amd.com>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, luca abeni <luca.abeni@santannapisa.it>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/12/2017 11:55 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable qim is assigned but never read, it is redundant and can
-> be removed.
->
-> Cleans up clang warning: Value stored to 'qim' is never read
->
-> Fixes: 4b394a232df7 ("crypto: ccp - Let a v5 CCP provide the same function as v3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It doesn't cause a run-time bug, but these bitfields should be unsigned.
+When it's signed ->dl_throttled is set to either 0 or -1, instead of
+0 and 1 as expected.  The sched.h file is included into tons of places
+so Sparse generates a flood of warnings like this:
 
-Acked-by: Gary R Hook <gary.hook@amd.com>
+./include/linux/sched.h:477:54: error: dubious one-bit signed bitfield
 
-> ---
->  drivers/crypto/ccp/ccp-dev-v5.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/crypto/ccp/ccp-dev-v5.c b/drivers/crypto/ccp/ccp-dev-v5.c
-> index 65604fc65e8f..44a4d2779b15 100644
-> --- a/drivers/crypto/ccp/ccp-dev-v5.c
-> +++ b/drivers/crypto/ccp/ccp-dev-v5.c
-> @@ -788,13 +788,12 @@ static int ccp5_init(struct ccp_device *ccp)
->  	struct ccp_cmd_queue *cmd_q;
->  	struct dma_pool *dma_pool;
->  	char dma_pool_name[MAX_DMAPOOL_NAME_LEN];
-> -	unsigned int qmr, qim, i;
-> +	unsigned int qmr, i;
->  	u64 status;
->  	u32 status_lo, status_hi;
->  	int ret;
->
->  	/* Find available queues */
-> -	qim = 0;
->  	qmr = ioread32(ccp->io_regs + Q_MASK_REG);
->  	for (i = 0; i < MAX_HW_QUEUES; i++) {
->
->
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 0f897dfc195e..105eaff8a5e7 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -474,10 +474,10 @@ struct sched_dl_entity {
+ 	 * conditions between the inactive timer handler and the wakeup
+ 	 * code.
+ 	 */
+-	int				dl_throttled      : 1;
+-	int				dl_boosted        : 1;
+-	int				dl_yielded        : 1;
+-	int				dl_non_contending : 1;
++	unsigned int			dl_throttled      : 1;
++	unsigned int			dl_boosted        : 1;
++	unsigned int			dl_yielded        : 1;
++	unsigned int			dl_non_contending : 1;
+ 
+ 	/*
+ 	 * Bandwidth enforcement timer. Each -deadline task has its
