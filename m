@@ -1,51 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Oct 2017 12:19:07 +0000
-Subject: Re: [PATCH] staging: wilc1000: replace redundant computations with 0
-Message-Id: <20171023121907.phgo4ch5ygms2uja@mwanda>
+Date: Fri, 13 Oct 2017 11:19:43 +0000
+Subject: [PATCH 1/2] mmc: meson-mx-sdio: return correct error code
+Message-Id: <20171013111943.zyp5myiwb3pp56vh@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171010140548.18016-1-colin.king@canonical.com>
-In-Reply-To: <20171010140548.18016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus-amlogic@lists.infradead.org
 
+This has a copy and paste bug so we use "host->fixed_factor_clk" which
+is a valid pointer instead of "host->cfg_div_clk" which holds the error
+code.
 
-On Tue, Oct 10, 2017 at 03:05:48PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting and masking strHostIfSetMulti->enabled is redundant since
-> enabled is a bool and so all the shifted and masked values will be
-> zero. Replace them with zero to simplify the code.
-> 
-> Detected by CoverityScan, CID#1339458 ("Bad shift operation") and
-> CID#1339506 ("Operands don't affect result").
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/wilc1000/host_interface.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-> index 7b620658ec38..94477dd08c85 100644
-> --- a/drivers/staging/wilc1000/host_interface.c
-> +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -2417,9 +2417,9 @@ static void Handle_SetMulticastFilter(struct wilc_vif *vif,
->  
->  	pu8CurrByte = wid.val;
->  	*pu8CurrByte++ = (strHostIfSetMulti->enabled & 0xFF);
-> -	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 8) & 0xFF);
-> -	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 16) & 0xFF);
-> -	*pu8CurrByte++ = ((strHostIfSetMulti->enabled >> 24) & 0xFF);
-> +	*pu8CurrByte++ = 0;
-> +	*pu8CurrByte++ = 0;
-> +	*pu8CurrByte++ = 0;
+Fixes: 0aa0fb9cd239 ("mmc: meson-mx-sdio: Add a driver for the Amlogic Meson8 and Meson8b SoCs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This is harder to understand now.  I would be better to solve this by
-declaring a struct with the right format and using cpu_to_be32().
-
-regards,
-dan carpenter
-
-
+diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
+index 19b499bbe691..dc30ed5e964b 100644
+--- a/drivers/mmc/host/meson-mx-sdio.c
++++ b/drivers/mmc/host/meson-mx-sdio.c
+@@ -621,7 +621,7 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
+ 	host->cfg_div_clk = devm_clk_register(host->controller_dev,
+ 					      &host->cfg_div.hw);
+ 	if (WARN_ON(PTR_ERR_OR_ZERO(host->cfg_div_clk)))
+-		return PTR_ERR(host->fixed_factor_clk);
++		return PTR_ERR(host->cfg_div_clk);
+ 
+ 	return 0;
+ }
