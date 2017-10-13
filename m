@@ -1,35 +1,62 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 04 Oct 2017 19:11:02 +0000
-Subject: Re: [PATCH 2/2] ARM: SAMSUNG: Improve a size determination in 13 functions
-Message-Id: <20171004191102.mnswu25bjxynuh4o@kozik-lap>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 13 Oct 2017 16:29:00 +0000
+Subject: [PATCH][net-next] cxgb4: fix missing break in switch and indent return statements
+Message-Id: <20171013162900.16911-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <75c352ad-c51e-2e63-2f93-0f14522ff09c@users.sourceforge.net>
- <7f196313-ad49-2cd8-e45f-be487e089547@users.sourceforge.net>
-In-Reply-To: <7f196313-ad49-2cd8-e45f-be487e089547@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Ganesh Goudar <ganeshgr@chelsio.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 04, 2017 at 01:12:55PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Oct 2017 09:52:33 +0200
-> 
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/plat-samsung/adc.c  |  4 ++--
->  arch/arm/plat-samsung/devs.c | 33 +++++++++++----------------------
->  2 files changed, 13 insertions(+), 24 deletions(-)
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+The break statement for the Macronix case is missing and will
+fall through to the Winbond case and re-assign the size setting.
+Fix this by adding the missing break statement.  Also correctly
+indent the return statements.
 
-Best regards,
-Krzysztof
+Detected by CoverityScan, CID#1458020 ("Missing break in switch")
+
+Fixes: 96ac18f14a5a ("cxgb4: Add support for new flash parts")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+index b3fd1f457639..fe7db70a9fa6 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -8289,7 +8289,7 @@ static int t4_get_flash_params(struct adapter *adap)
+ 		default:
+ 			dev_err(adap->pdev_dev, "Micron Flash Part has bad size, ID = %#x, Density code = %#x\n",
+ 				flashid, density);
+-		return -EINVAL;
++			return -EINVAL;
+ 		}
+ 		break;
+ 	}
+@@ -8308,8 +8308,9 @@ static int t4_get_flash_params(struct adapter *adap)
+ 		default:
+ 			dev_err(adap->pdev_dev, "Macronix Flash Part has bad size, ID = %#x, Density code = %#x\n",
+ 				flashid, density);
+-		return -EINVAL;
++			return -EINVAL;
+ 		}
++		break;
+ 	}
+ 	case 0xef: { /* Winbond */
+ 		/* This Density -> Size decoding table is taken from Winbond
+@@ -8326,7 +8327,7 @@ static int t4_get_flash_params(struct adapter *adap)
+ 		default:
+ 			dev_err(adap->pdev_dev, "Winbond Flash Part has bad size, ID = %#x, Density code = %#x\n",
+ 				flashid, density);
+-		return -EINVAL;
++			return -EINVAL;
+ 		}
+ 		break;
+ 	}
+-- 
+2.14.1
 
