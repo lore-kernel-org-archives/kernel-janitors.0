@@ -1,41 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 29 Oct 2017 13:43:39 +0000
-Subject: [PATCH][V2] bdisp: remove redundant assignment to pix
-Message-Id: <20171029134339.7101-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Oct 2017 19:06:55 +0000
+Subject: [PATCH] net/rose: Delete an error message for a failed memory allocation in rose_proto_init()
+Message-Id: <0b86508a-ed7a-0b6c-5797-f4aaedba46bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabien Dessenne <fabien.dessenne@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Oct 2017 20:57:28 +0200
 
-Pointer pix is being initialized to a value and a little later
-being assigned the same value again. Remove the initial assignment to
-avoid a duplicate assignment. Cleans up the clang warning:
+Omit an extra message for a memory allocation failure in this function.
 
-drivers/media/platform/sti/bdisp/bdisp-v4l2.c:726:26: warning: Value
-stored to 'pix' during its initialization is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/sti/bdisp/bdisp-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rose/af_rose.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-index 939da6da7644..7e9ed9c7b3e1 100644
---- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-+++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
-@@ -723,7 +723,7 @@ static int bdisp_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
- static int bdisp_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
- {
- 	struct bdisp_ctx *ctx = fh_to_ctx(fh);
--	struct v4l2_pix_format *pix = &f->fmt.pix;
-+	struct v4l2_pix_format *pix;
- 	struct bdisp_frame *frame  = ctx_get_frame(ctx, f->type);
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index 4a9729257023..ce37be0027ca 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -1529,7 +1529,6 @@ static int __init rose_proto_init(void)
  
- 	if (IS_ERR(frame)) {
+ 	dev_rose = kzalloc(rose_ndevs * sizeof(struct net_device *), GFP_KERNEL);
+ 	if (dev_rose = NULL) {
+-		printk(KERN_ERR "ROSE: rose_proto_init - unable to allocate device structure\n");
+ 		rc = -ENOMEM;
+ 		goto out_proto_unregister;
+ 	}
 -- 
-2.14.1
+2.14.2
 
