@@ -1,24 +1,40 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 25 Oct 2017 16:54:51 +0000
-Subject: Re: [PATCH 0/2] ARM-OMAP3: Fine-tuning for omap3xxx_hwmod_init()
-Message-Id: <20171025165450.GP4394@atomide.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Oct 2017 15:38:56 +0000
+Subject: [PATCH][V2] selinux: remove extraneous initialization of slots_used and max_chain_len
+Message-Id: <20171014153856.3539-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
-In-Reply-To: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-security-module@vger.kernel.org
 
-* SF Markus Elfring <elfring@users.sourceforge.net> [171020 08:17]:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Oct 2017 17:08:09 +0200
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks applying into omap-for-v4.15/coccinelle.
+Variables slots_used and max_chain_len are being initialized to zero
+twice. Remove the second set of initializations in the for loop.
+Cleans up the clang warnings:
 
-Regards,
+Value stored to 'slots_used' is never read
+Value stored to 'max_chain_len' is never read
 
-Tony
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/selinux/ss/hashtab.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
+index bef7577d1270..e0443f4afea5 100644
+--- a/security/selinux/ss/hashtab.c
++++ b/security/selinux/ss/hashtab.c
+@@ -150,7 +150,7 @@ void hashtab_stat(struct hashtab *h, struct hashtab_info *info)
+ 
+ 	slots_used = 0;
+ 	max_chain_len = 0;
+-	for (slots_used = max_chain_len = i = 0; i < h->size; i++) {
++	for (i = 0; i < h->size; i++) {
+ 		cur = h->htable[i];
+ 		if (cur) {
+ 			slots_used++;
+-- 
+2.14.1
+
