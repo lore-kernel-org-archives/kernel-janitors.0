@@ -1,33 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Oct 2017 11:05:01 +0000
-Subject: [PATCH] vfio/type1: silence integer overflow warning
-Message-Id: <20171013110500.6apnjjw67lnvhlrk@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Oct 2017 12:14:38 +0000
+Subject: [PATCH] apparmor: remove unused redundant variable stop
+Message-Id: <20171014121438.31958-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org
 
-I get a static checker warning about the potential integer overflow if
-we add "unmap->iova + unmap->size".  The integer overflow isn't really
-harmful, but we may as well fix it.  Also unmap->size gets truncated to
-size_t when we pass it to vfio_find_dma() so we could check for too high
-values of that as well.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The boolean variable 'stop' is being set but never read. This
+is a redundant variable and can be removed.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 92155cce926d..89d50aeafd71 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -767,6 +767,9 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		return -EINVAL;
- 	if (!unmap->size || unmap->size & mask)
- 		return -EINVAL;
-+	if (unmap->iova + unmap->size < unmap->iova ||
-+	    unmap->size > SIZE_MAX)
-+		return -EINVAL;
+Cleans up clang warning: Value stored to 'stop' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/lib.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index 8818621b5d95..d78da4e973d9 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -427,7 +427,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
+ 		   void (*cb)(struct audit_buffer *, void *))
+ {
+ 	int type, error;
+-	bool stop = false;
+ 	u32 denied = request & (~perms->allow | perms->deny);
  
- 	WARN_ON(mask & PAGE_MASK);
- again:
+ 	if (likely(!denied)) {
+@@ -448,8 +447,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
+ 		else
+ 			type = AUDIT_APPARMOR_DENIED;
+ 
+-		if (denied & perms->stop)
+-			stop = true;
+ 		if (denied = (denied & perms->hide))
+ 			error = -ENOENT;
+ 
+-- 
+2.14.1
+
