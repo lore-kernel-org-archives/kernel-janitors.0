@@ -1,61 +1,104 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Oct 2017 20:13:19 +0000
-Subject: [PATCH 1/4] ARM: OMAP: Delete an error message for a failed memory allocation in two functions
-Message-Id: <3c43886f-b3ad-26ce-eab3-390e7f483d08@users.sourceforge.net>
+From: Tyler Hicks <tyhicks@canonical.com>
+Date: Sat, 14 Oct 2017 01:24:09 +0000
+Subject: Re: [PATCH] eCryptfs: use after free in ecryptfs_release_messaging()
+Message-Id: <2e7b4c48-aea4-0951-1010-33380b2e6b73@canonical.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="xnqNU52rjoFjOPwgubDQt9eEVvfJGuGOk"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
-In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Oct 2017 13:10:26 +0200
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--xnqNU52rjoFjOPwgubDQt9eEVvfJGuGOk
+Content-Type: multipart/mixed; boundary="UF5AxctPbXwoDBT5LUjdQX55h5sX3Gtqn";
+ protected-headers="v1"
+From: Tyler Hicks <tyhicks@canonical.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+ Michael Halcrow <mhalcrow@us.ibm.com>
+Cc: ecryptfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Message-ID: <2e7b4c48-aea4-0951-1010-33380b2e6b73@canonical.com>
+Subject: Re: [PATCH] eCryptfs: use after free in ecryptfs_release_messaging()
+References: <20170822204128.7xhtrlpvueucbisl@mwanda>
+In-Reply-To: <20170822204128.7xhtrlpvueucbisl@mwanda>
 
-Omit extra messages for a memory allocation failure in these functions.
+--UF5AxctPbXwoDBT5LUjdQX55h5sX3Gtqn
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+Hi Dan - Thanks for the patch. I'm sorry for not getting back to you
+until now.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/plat-omap/dma.c     | 5 +----
- arch/arm/plat-omap/dmtimer.c | 4 +---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+On 08/22/2017 04:41 PM, Dan Carpenter wrote:
+> We're freeing the list iterator so we should be using the _safe()
+> version of hlist_for_each_entry().
+>=20
+> Fixes: 88b4a07e6610 ("[PATCH] eCryptfs: Public key transport mechanism"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
-index 1e460b4ee3b9..6ede0427548c 100644
---- a/arch/arm/plat-omap/dma.c
-+++ b/arch/arm/plat-omap/dma.c
-@@ -1317,11 +1317,8 @@ static int omap_system_dma_probe(struct platform_device *pdev)
- 
- 	dma_chan = devm_kcalloc(&pdev->dev, dma_lch_count,
- 				sizeof(struct omap_dma_lch), GFP_KERNEL);
--	if (!dma_chan) {
--		dev_err(&pdev->dev, "%s: kzalloc fail\n", __func__);
-+	if (!dma_chan)
- 		return -ENOMEM;
--	}
--
- 
- 	if (dma_omap2plus()) {
- 		dma_linked_lch = kzalloc(sizeof(struct dma_link_info) *
-diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
-index 7a327bd32521..446ac0e3a35a 100644
---- a/arch/arm/plat-omap/dmtimer.c
-+++ b/arch/arm/plat-omap/dmtimer.c
-@@ -858,10 +858,8 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 	}
- 
- 	timer = devm_kzalloc(dev, sizeof(struct omap_dm_timer), GFP_KERNEL);
--	if (!timer) {
--		dev_err(dev, "%s: memory alloc failed!\n", __func__);
-+	if (!timer)
- 		return  -ENOMEM;
--	}
- 
- 	timer->fclk = ERR_PTR(-ENODEV);
- 	timer->io_base = devm_ioremap_resource(dev, mem);
--- 
-2.14.2
+I think this patch is correct. I'll perform some testing and, if all
+goes well, get it in before 4.14 is released.
 
+Tyler
+
+> ---
+> It's also possible that I misunderstood this code.  Please review with
+> caution.
+>=20
+> diff --git a/fs/ecryptfs/messaging.c b/fs/ecryptfs/messaging.c
+> index 286f10b0363b..4f457d5c4933 100644
+> --- a/fs/ecryptfs/messaging.c
+> +++ b/fs/ecryptfs/messaging.c
+> @@ -442,15 +442,16 @@ void ecryptfs_release_messaging(void)
+>  	}
+>  	if (ecryptfs_daemon_hash) {
+>  		struct ecryptfs_daemon *daemon;
+> +		struct hlist_node *n;
+>  		int i;
+> =20
+>  		mutex_lock(&ecryptfs_daemon_hash_mux);
+>  		for (i =3D 0; i < (1 << ecryptfs_hash_bits); i++) {
+>  			int rc;
+> =20
+> -			hlist_for_each_entry(daemon,
+> -					     &ecryptfs_daemon_hash[i],
+> -					     euid_chain) {
+> +			hlist_for_each_entry_safe(daemon, n,
+> +						  &ecryptfs_daemon_hash[i],
+> +						  euid_chain) {
+>  				rc =3D ecryptfs_exorcise_daemon(daemon);
+>  				if (rc)
+>  					printk(KERN_ERR "%s: Error whilst "
+> --
+> To unsubscribe from this list: send the line "unsubscribe ecryptfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+
+
+
+--UF5AxctPbXwoDBT5LUjdQX55h5sX3Gtqn--
+
+--xnqNU52rjoFjOPwgubDQt9eEVvfJGuGOk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCgAGBQJZ4Wc5AAoJENaSAD2qAscKc9oP/37kR4eHGP84uTyPipmiAn4/
+rNSaCL4V1FYbvFCSpWhssZiyQPAiRh/VJ8ESVhuTRNPGPrt0PVofUBP4IKZJwV3f
+ZUmj2v2d1JCr3mAJmYUflYu93xmZ6MhGlOXxsRMHDA1KN6GRNgdka8FAnpafBDpX
+5GQ2Y4FvWcfHBECysQFkQQROIdYQnH7u7ZTvfoY8KnNTBNw1IQuS0i/7zIClWvod
+zoCx8lB7nTEVicrFWo5KXN4JlebMVFc/Rf7puc5b6R5DB7Mk+pGHLUTAskvM3GOy
+7cfuk1t1ZlfmifrM6XsgzfVuX/5S5u+moT764sqDzHvI2tQvNNz6kztm5oSUpS1D
+X5T0+/HWsdiYOLPYq5JA2j1wBwej3OX62/4cK1AnlLfLSqdn9waHQoSND4hS/JNE
+eOLHRjvjhfyCWmXvByH4COnPbqWESI0DRA1AJ691BLreGgvXqS0gpkMDUZk4RULW
+iHueRphQiJVEtybljE40gPIxH33FmPYzLjBbW7nxHssXI/CdpzFoqUELQeHKi1iE
+HabRhiNzmXQarQW55VSKYqiyzWmGu1DMVjDDdv9/ZjRtofl2nc0sIyfepYg3Un/2
+57W+qy6Ki447NVSgkKzAsTKw2GrfWgNntmGYt1SJHic6IE9CZU2FwIGux26tkB/x
+7D5ejEmsxe+FNW418UtH
+=RyQ+
+-----END PGP SIGNATURE-----
+
+--xnqNU52rjoFjOPwgubDQt9eEVvfJGuGOk--
