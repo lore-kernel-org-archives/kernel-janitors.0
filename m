@@ -1,40 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 06:08:43 +0000
-Subject: Re: extcon: max14577: Use common error handling code in max14577_muic_set_path()
-Message-Id: <d0cc81a4-6301-13ee-1589-e8a95813f106@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 14 Oct 2017 12:46:55 +0000
+Subject: [PATCH] selinux: remove redundant assignment to str
+Message-Id: <20171014124655.32438-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d08cbbf6-015a-ab76-6491-126901d1dda6@users.sourceforge.net>
- <CGME20171022175126epcas2p1a0b5b09f6294470b5c3f6c23c2a0f7e4@epcas2p1.samsung.com>
- <5cdefd84-066d-5379-43c8-76f5d3b8f7c4@users.sourceforge.net>
- <59ED3E72.7010401@samsung.com>
- <dda9c1c2-79ec-398e-40ed-a11e894e138b@users.sourceforge.net>
- <59ED83FA.5000701@samsung.com>
- <e5c5806a-4580-fe76-38e9-ccaa19c0445b@users.sourceforge.net>
- <59ED8639.7020605@samsung.com>
-In-Reply-To: <59ED8639.7020605@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chanwoo Choi <cw00.choi@samsung.com>, kernel-janitors@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org
 
->>> I think that there is any benefit of this patch.
->>> Also, as I commented, it make the code more complicated.
->>
->> We have got different software development opinions about
-> 
-> I agree absolutely. So, anyone can suggest the opinion and send patches.
-> But, all patches have to get the review from maintainer, reviewer
-> or the mailing-list developer.
+From: Colin Ian King <colin.king@canonical.com>
 
-Can an other change acceptance evolve over time?
+str is being assigned to an empty string but str is never being
+read after that, so the assignment is redundant and can be removed.
+Moving the declaration of str to a more localised block, cleans up
+clang warning: "Value stored to 'str' is never read"
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/selinux/hooks.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> (Please don't remove the part of my comment when you reply.)
-> 
->> the shown change possibilities then.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 07f35f3b4a13..3daf3369c3b4 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3177,18 +3177,17 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+ 		if (!has_cap_mac_admin(true)) {
+ 			struct audit_buffer *ab;
+ 			size_t audit_size;
+-			const char *str;
+ 
+ 			/* We strip a nul only if it is at the end, otherwise the
+ 			 * context contains a nul and we should audit that */
+ 			if (value) {
+-				str = value;
++				const char *str = value;
++
+ 				if (str[size - 1] = '\0')
+ 					audit_size = size - 1;
+ 				else
+ 					audit_size = size;
+ 			} else {
+-				str = "";
+ 				audit_size = 0;
+ 			}
+ 			ab = audit_log_start(current->audit_context, GFP_ATOMIC, AUDIT_SELINUX_ERR);
+-- 
+2.14.1
 
-Do you find similar updates more useful for any other software modules?
-
-Regards,
-Markus
