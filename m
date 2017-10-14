@@ -1,27 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Oct 2017 03:07:21 +0000
-Subject: Re: [PATCH][net-next] net: ipmr: make function ipmr_notifier_init static
-Message-Id: <20171001.040721.1898715383953902696.davem@davemloft.net>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Sat, 14 Oct 2017 01:44:02 +0000
+Subject: RE: [Intel-wired-lan] [PATCH][V3] e1000: avoid null pointer dereference    on invalid stat type
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B8C6C189D@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929133422.7846-1-colin.king@canonical.com>
-In-Reply-To: <20170929133422.7846-1-colin.king@canonical.com>
+References: <20170922171348.17630-1-colin.king@canonical.com>
+In-Reply-To: <20170922171348.17630-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 29 Sep 2017 14:34:22 +0100
-
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On Behalf
+> Of Colin King
+> Sent: Friday, September 22, 2017 10:14 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; intel-wired-
+> lan@lists.osuosl.org; netdev@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH][V3] e1000: avoid null pointer dereference
+> on invalid stat type
+> 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The function ipmr_notifier_init is local to the source and does
-> not need to be in global scope, so make it static.
+> Currently if the stat type is invalid then data[i] is being set
+> either by dereferencing a null pointer p, or it is reading from
+> an incorrect previous location if we had a valid stat type
+> previously.  Fix this by skipping over the read of p on an invalid
+> stat type.
 > 
-> Cleans up sparse warning:
-> warning: symbol 'ipmr_notifier_init' was not declared. Should it be static?
+> Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Applied, thank you.
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
