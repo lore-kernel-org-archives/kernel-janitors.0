@@ -1,26 +1,45 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 24 Oct 2017 08:07:53 +0000
-Subject: Re: [v2] axonram: Delete an unnecessary variable initialisation in axon_ram_probe()
-Message-Id: <3yLm966YSTz9sNV@ozlabs.org>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 15 Oct 2017 21:24:54 +0000
+Subject: [PATCH] ACPI / APEI: remove redundant variables len and node_len
+Message-Id: <20171015212454.16012-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <96042828-9707-8af9-664a-5c71818dd817@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kbuild test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Paul Mackerras <paulus@samba.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-09-05 at 17:11:31 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Sep 2017 18:47:02 +0200
-> 
-> The local variable "rc" will eventually be set only to an error code.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to powerpc next, thanks.
+Variables len and node_len are redundant and can be removed. Cleans
+up clang warning: node_len = GHES_ESTATUS_NODE_LEN(len);
 
-https://git.kernel.org/powerpc/c/a7cd4586210c69c19aef26f4f83d3e
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/acpi/apei/ghes.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-cheers
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 3c3a37b8503b..f2e1049232c0 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -923,7 +923,6 @@ static void ghes_print_queued_estatus(void)
+ 	struct ghes_estatus_node *estatus_node;
+ 	struct acpi_hest_generic *generic;
+ 	struct acpi_hest_generic_status *estatus;
+-	u32 len, node_len;
+ 
+ 	llnode = llist_del_all(&ghes_estatus_llist);
+ 	/*
+@@ -935,8 +934,6 @@ static void ghes_print_queued_estatus(void)
+ 		estatus_node = llist_entry(llnode, struct ghes_estatus_node,
+ 					   llnode);
+ 		estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
+-		len = cper_estatus_len(estatus);
+-		node_len = GHES_ESTATUS_NODE_LEN(len);
+ 		generic = estatus_node->generic;
+ 		ghes_print_estatus(NULL, generic, estatus);
+ 		llnode = llnode->next;
+-- 
+2.14.1
+
