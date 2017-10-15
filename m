@@ -1,45 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 15 Oct 2017 21:24:54 +0000
-Subject: [PATCH] ACPI / APEI: remove redundant variables len and node_len
-Message-Id: <20171015212454.16012-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Oct 2017 20:07:03 +0000
+Subject: [PATCH 0/3] char-bsr: Adjustments for two function implementations
+Message-Id: <ff23c201-8043-124e-88fd-25e5abd382fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Oct 2017 22:02:34 +0200
 
-Variables len and node_len are redundant and can be removed. Cleans
-up clang warning: node_len = GHES_ESTATUS_NODE_LEN(len);
+Three update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/acpi/apei/ghes.c | 3 ---
- 1 file changed, 3 deletions(-)
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation in bsr_add_node()
+  Improve a size determination in bsr_add_node()
+  Adjust one function call together with a variable assignment
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 3c3a37b8503b..f2e1049232c0 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -923,7 +923,6 @@ static void ghes_print_queued_estatus(void)
- 	struct ghes_estatus_node *estatus_node;
- 	struct acpi_hest_generic *generic;
- 	struct acpi_hest_generic_status *estatus;
--	u32 len, node_len;
- 
- 	llnode = llist_del_all(&ghes_estatus_llist);
- 	/*
-@@ -935,8 +934,6 @@ static void ghes_print_queued_estatus(void)
- 		estatus_node = llist_entry(llnode, struct ghes_estatus_node,
- 					   llnode);
- 		estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
--		len = cper_estatus_len(estatus);
--		node_len = GHES_ESTATUS_NODE_LEN(len);
- 		generic = estatus_node->generic;
- 		ghes_print_estatus(NULL, generic, estatus);
- 		llnode = llnode->next;
+ drivers/char/bsr.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
 -- 
-2.14.1
+2.14.2
 
