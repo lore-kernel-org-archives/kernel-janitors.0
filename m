@@ -1,32 +1,48 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Mon, 09 Oct 2017 17:12:31 +0000
-Subject: Re: [PATCH] IB/core: remove redundant check on prot_sg_cnt
-Message-Id: <1507569151.46071.48.camel@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 15 Oct 2017 21:06:44 +0000
+Subject: [PATCH] ALSA: pcm: remove redundant variable runtime
+Message-Id: <20171015210644.15565-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171009161200.4465-1-colin.king@canonical.com>
-In-Reply-To: <20171009161200.4465-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "J . Bruce Fields" <bfields@redhat.com>, Chuck Lever <chuck.lever@oracle.com>, linux-rdma@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-10-09 at 17:12 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> prot_sg_cnt cannot be zero as a previous check on ret (from which
-> prot_sg_cnt is assigned) returns -ENOMEM if is it zero.  Since
-> it cannot be zero we can simplify the code by removing the non
-> -zero check on prot_sg_cnt and redundant else statement.
-> 
-> Detected by CoverityScan, COD#1357188 ("Logically dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied.
+An earlier commit removed the access to variable runtime
+and we are now left with unused variable that is redundant,
+so remove it.
 
+Cleans up the clang warning: Value stored to 'runtime' is never read
+
+Fixes: e11f0f90a626 ("ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/pcm_native.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 2fec2feac387..a4d92e46c459 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -195,7 +195,6 @@ EXPORT_SYMBOL_GPL(snd_pcm_stream_unlock_irqrestore);
+ 
+ int snd_pcm_info(struct snd_pcm_substream *substream, struct snd_pcm_info *info)
+ {
+-	struct snd_pcm_runtime *runtime;
+ 	struct snd_pcm *pcm = substream->pcm;
+ 	struct snd_pcm_str *pstr = substream->pstr;
+ 
+@@ -211,7 +210,6 @@ int snd_pcm_info(struct snd_pcm_substream *substream, struct snd_pcm_info *info)
+ 	info->subdevices_count = pstr->substream_count;
+ 	info->subdevices_avail = pstr->substream_count - pstr->substream_opened;
+ 	strlcpy(info->subname, substream->name, sizeof(info->subname));
+-	runtime = substream->runtime;
+ 
+ 	return 0;
+ }
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.14.1
 
