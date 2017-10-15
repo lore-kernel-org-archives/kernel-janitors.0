@@ -1,52 +1,60 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 14:37:55 +0000
-Subject: [PATCH] net: thunderx: remove a couple of redundant assignments
-Message-Id: <20171031143755.26021-1-colin.king@canonical.com>
+From: <auli.harju@uta.fi>
+Date: Sun, 15 Oct 2017 19:40:28 +0000
+Subject: 
+Message-Id: <150809642851.31213.12363737647726608610@une.net.co>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The assignment to pointer msg is redundant as it is never read, so
-remove msg.  Also remove the first assignment to qset as this is not
-read before the next re-assignment of a new value to qset in the
-for-loop. Cleans up two clang warnings:
-
-drivers/net/ethernet/cavium/thunder/nic_main.c:589:2: warning: Value
-stored to 'msg' is never read
-drivers/net/ethernet/cavium/thunder/nic_main.c:611:2: warning: Value
-stored to 'qset' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/cavium/thunder/nic_main.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
-index fb770b0182d3..988c06a28e5e 100644
---- a/drivers/net/ethernet/cavium/thunder/nic_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
-@@ -584,9 +584,6 @@ static void nic_config_cpi(struct nicpf *nic, struct cpi_cfg_msg *cfg)
- static void nic_send_rss_size(struct nicpf *nic, int vf)
- {
- 	union nic_mbx mbx = {};
--	u64  *msg;
--
--	msg = (u64 *)&mbx;
- 
- 	mbx.rss_size.msg = NIC_MBOX_MSG_RSS_SIZE;
- 	mbx.rss_size.ind_tbl_size = nic->hw->rss_ind_tbl_size;
-@@ -608,7 +605,6 @@ static void nic_config_rss(struct nicpf *nic, struct rss_cfg_msg *cfg)
- 	rssi_base = nic->rssi_base[cfg->vf_id] + cfg->tbl_offset;
- 
- 	rssi = rssi_base;
--	qset = cfg->vf_id;
- 
- 	for (; rssi < (rssi_base + cfg->tbl_len); rssi++) {
- 		u8 svf = cfg->ind_tbl[idx] >> 3;
--- 
-2.14.1
-
+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
