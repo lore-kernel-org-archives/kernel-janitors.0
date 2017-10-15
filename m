@@ -1,26 +1,22 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Oct 2017 03:23:00 +0000
-Subject: Re: [PATCH][bpf-next] bpf: remove redundant variable old_flags
-Message-Id: <20171011.202300.1480286300516136187.davem@davemloft.net>
+From: "Jasmin J." <jasmin@anw.at>
+Date: Sun, 15 Oct 2017 13:51:07 +0000
+Subject: Re: [PATCH] media: dvb_ca_en50221: sanity check slot number from userspace
+Message-Id: <70193c32-abed-aaac-f827-1588d203e8cd@anw.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171011105623.19998-1-colin.king@canonical.com>
-In-Reply-To: <20171011105623.19998-1-colin.king@canonical.com>
+References: <20170920221959.5979-1-colin.king@canonical.com>
+In-Reply-To: <20170920221959.5979-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ralph Metzler <rjkm@metzlerbros.de>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Oct 2017 11:56:23 +0100
+Good catch!
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable old_flags is being assigned but is never read; it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning: Value stored to 'old_flags' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Seems that this bug has been in the driver forever.
+Indeed ... and I overlooked it during my recent changes to that module.
 
-Applied.
+Reviewed-by: Jasmin Jessich <jasmin@anw.at>
+
+BR,
+   Jasmin
