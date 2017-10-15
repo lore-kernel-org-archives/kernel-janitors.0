@@ -1,43 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 16 Oct 2017 19:04:50 +0000
-Subject: [PATCH 4/8] video: fbdev: au1200fb: Fix error handling path
-Message-Id: <1adea6270ddbf00b84b82b7dfe1301e61a319522.1508179264.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Oct 2017 20:09:39 +0000
+Subject: [PATCH 2/3] char/bsr: Improve a size determination in bsr_add_node()
+Message-Id: <504858bd-8add-3820-541e-a3f0aa64df65@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+References: <ff23c201-8043-124e-88fd-25e5abd382fb@users.sourceforge.net>
+In-Reply-To: <ff23c201-8043-124e-88fd-25e5abd382fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, tj@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-'au1200fb_drv_probe()' can not fail after a succesful call to
-'request_irq()'. So there is no point to call 'free_irq()' in the error
-handling path.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Oct 2017 21:25:46 +0200
 
-Moreover, the hard coded AU1200_LCD_INT looks boggus since commit
-1630d85a8312 ("au1200fb: fix hardcoded IRQ")
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-So, remove it.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/au1200fb.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/char/bsr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
-index cf54168d44dc..0d8ed0ef9183 100644
---- a/drivers/video/fbdev/au1200fb.c
-+++ b/drivers/video/fbdev/au1200fb.c
-@@ -1766,8 +1766,6 @@ static int au1200fb_drv_probe(struct platform_device *dev)
- 			fb_dealloc_cmap(&fbi->cmap);
- 		kfree(fbi->pseudo_palette);
- 	}
--	if (plane = 0)
--		free_irq(AU1200_LCD_INT, (void*)dev);
- 	return ret;
- }
+diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
+index 865eb457e539..d0597dfa4d88 100644
+--- a/drivers/char/bsr.c
++++ b/drivers/char/bsr.c
+@@ -197,8 +197,7 @@ static int bsr_add_node(struct device_node *bn)
+ 	num_bsr_devs = bsr_bytes_len / sizeof(u32);
+ 
+ 	for (i = 0 ; i < num_bsr_devs; i++) {
+-		struct bsr_dev *cur = kzalloc(sizeof(struct bsr_dev),
+-					      GFP_KERNEL);
++		struct bsr_dev *cur = kzalloc(sizeof(*cur), GFP_KERNEL);
+ 		struct resource res;
+ 		int result;
  
 -- 
-2.11.0
+2.14.2
 
