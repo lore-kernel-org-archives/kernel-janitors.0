@@ -1,28 +1,70 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 09 Oct 2017 20:20:09 +0000
-Subject: Re: [PATCH] kernel/trace: Delete five error messages for a failed memory allocation
-Message-Id: <1507580409.3552.15.camel@perches.com>
+From: Josh Boyer <jwboyer@fedoraproject.org>
+Date: Mon, 16 Oct 2017 16:37:07 +0000
+Subject: Re: [PATCH] can: check for null sk before deferencing it via the call to sock_net
+Message-Id: <CA+5PVA7fJfZmN-XLuqARGkWL6eY54HaRAj19K_Und3K7vAVfpg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c0d21fa1-a40f-92e5-821c-66e2596112c9@users.sourceforge.net>
-         <20171009161337.7c35911f@gandalf.local.home>
-In-Reply-To: <20171009161337.7c35911f@gandalf.local.home>
+References: <20170908150235.2931-1-colin.king@canonical.com> <f5ce1047-eb37-151a-c7b7-9b47b70789f7@hartkopp.net>
+In-Reply-To: <f5ce1047-eb37-151a-c7b7-9b47b70789f7@hartkopp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+To: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Colin King <colin.king@canonical.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2017-10-09 at 16:13 -0400, Steven Rostedt wrote:
-> On Sat, 7 Oct 2017 16:15:14 +0200
-> SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 7 Oct 2017 16:10:06 +0200
-> > 
-> > Omit extra messages for a memory allocation failure in these functions.
-> 
-> Does memory allocation failures have printk messages? If not, then I
-> think this is removing useful information.
+On Fri, Sep 8, 2017 at 1:46 PM, Oliver Hartkopp <socketcan@hartkopp.net> wrote:
+>
+>
+> On 09/08/2017 05:02 PM, Colin King wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The assignment of net via call sock_net will dereference sk. This
+>> is performed before a sanity null check on sk, so there could be
+>> a potential null dereference on the sock_net call if sk is null.
+>> Fix this by assigning net after the sk null check. Also replace
+>> the sk = NULL with the more usual !sk idiom.
+>>
+>> Detected by CoverityScan CID#1431862 ("Dereference before null check")
+>>
+>> Fixes: 384317ef4187 ("can: network namespace support for CAN_BCM
+>> protocol")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+>
+> Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
 
-Every k.alloc failure without __GFP_NOWARN does a dump_stack()
+I don't see this one queued up in the net or net-next trees.  Did it
+fall through the cracks or did it get queued up elsewhere?  Seems like
+it's a good candidate to get into 4.14?
 
+josh
+
+>
+>
+> Thanks Collin!
+>
+>
+>> ---
+>>   net/can/bcm.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/net/can/bcm.c b/net/can/bcm.c
+>> index 47a8748d953a..a3791674b8ce 100644
+>> --- a/net/can/bcm.c
+>> +++ b/net/can/bcm.c
+>> @@ -1493,13 +1493,14 @@ static int bcm_init(struct sock *sk)
+>>   static int bcm_release(struct socket *sock)
+>>   {
+>>         struct sock *sk = sock->sk;
+>> -       struct net *net = sock_net(sk);
+>> +       struct net *net;
+>>         struct bcm_sock *bo;
+>>         struct bcm_op *op, *next;
+>>   -     if (sk = NULL)
+>> +       if (!sk)
+>>                 return 0;
+>>   +     net = sock_net(sk);
+>>         bo = bcm_sk(sk);
+>>         /* remove bcm_ops, timer, rx_unregister(), etc. */
+>>
+>
