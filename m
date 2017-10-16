@@ -1,29 +1,27 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 16 Oct 2017 08:07:07 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 16 Oct 2017 13:03:02 +0000
 Subject: Re: Two rtlwifi drivers?
-Message-Id: <59E468AB.7010402@bfs.de>
+Message-Id: <87k1zvmeih.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
+References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
+        <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
+        <652d42ad-a077-530b-743f-d38ddf3ff677@lwfinger.net>
+        <87k202qcjr.fsf@kamboji.qca.qualcomm.com>
+        <20171011131310.GF32250@kroah.com>
+        <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com>
+        <20171012103450.GA24647@kroah.com>
+        <5B2DA6FDDF928F4E855344EE0A5C39D10581FF70@RTITMBSV07.realtek.com.tw>
+        <20171016074516.4irgvbid6p5zwqjg@mwanda>
+In-Reply-To: <20171016074516.4irgvbid6p5zwqjg@mwanda> (Dan Carpenter's message
+        of "Mon, 16 Oct 2017 10:45:16 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Pkshih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hello,
-just a general remark:
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-The discussion is useful to improve the code quality in the kernel.
-NTL i doubt that it belongs to the kernel-janitors list.
-
-please remove kernel-janitors from CC before posting.
-
-thx for doing so.
-
-re,
- wh
-
-Am 16.10.2017 09:45, schrieb Dan Carpenter:
 > On Mon, Oct 16, 2017 at 02:41:38AM +0000, Pkshih wrote:
 >> 2) The rtlwifi in staging
 >>    In staging, the module phydm v13 contains bugs, so I want to upgrade
@@ -31,18 +29,21 @@ Am 16.10.2017 09:45, schrieb Dan Carpenter:
 >>    big patch that the difference between v13 and v21, and there are 
 >>    40+ patches to support this upgrade. I have three options, and
 >>    I want to know which one is prefer.
-> 
+>
 > We can't discuss patches we haven't seend.  Please just send them right
 > away without any delay to both lists, and we can decide from there.
-> 
+>
 > 40 patches is a medium size set, patch that we are used to dealing with
 > every day.
-> 
-> regards,
-> dan carpenter
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+I review every patch I commit and 40 patches is just pure pain to dig
+through. So when submitting patches to me please keep the size more
+reasonable, like 10-12 patches per set. I think Dave also has a similar
+rule for net patches.
+
+I wrote a FAQ entry about this:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#too_many_patches
+
+-- 
+Kalle Valo
