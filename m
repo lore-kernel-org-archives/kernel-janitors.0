@@ -1,46 +1,41 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 16 Oct 2017 22:37:54 +0000
-Subject: Re: [PATCH] selinux: remove redundant assignment to len
-Message-Id: <CAHC9VhQZPeYf30o6cUr194-ttT46dZDfMDehYVExdbdEmtn_XA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Oct 2017 12:35:58 +0000
+Subject: [PATCH] ALSA: 6fire: remove unused variable card
+Message-Id: <20171016123558.12928-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171014150049.1053-1-colin.king@canonical.com>
-In-Reply-To: <20171014150049.1053-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Markus Elfring <elfring@users.sourceforge.net>, Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 14, 2017 at 11:00 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable len is being set to zero and this value is never
-> being read since len is being set to a different value just
-> a few lines later.  Remove this redundant assignment. Cleans
-> up clang warning: Value stored to 'len' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/selinux/ss/conditional.c | 1 -
->  1 file changed, 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Merged.
+The pointer card is being assigned a value but it is never used.
+Remove this redundant variable. Cleans up clang warning:
+Value stored to 'card' is never read
 
-> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-> index 771c96afe1d5..c91543a617ac 100644
-> --- a/security/selinux/ss/conditional.c
-> +++ b/security/selinux/ss/conditional.c
-> @@ -361,7 +361,6 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
->
->         *ret_list = NULL;
->
-> -       len = 0;
->         rc = next_entry(buf, fp, sizeof(u32));
->         if (rc)
->                 return rc;
-> --
-> 2.14.1
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/6fire/chip.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/sound/usb/6fire/chip.c b/sound/usb/6fire/chip.c
+index c7641cb50616..17d5e3ee6d73 100644
+--- a/sound/usb/6fire/chip.c
++++ b/sound/usb/6fire/chip.c
+@@ -174,11 +174,9 @@ static int usb6fire_chip_probe(struct usb_interface *intf,
+ static void usb6fire_chip_disconnect(struct usb_interface *intf)
+ {
+ 	struct sfire_chip *chip;
+-	struct snd_card *card;
+ 
+ 	chip = usb_get_intfdata(intf);
+ 	if (chip) { /* if !chip, fw upload has been performed */
+-		card = chip->card;
+ 		chip->intf_count--;
+ 		if (!chip->intf_count) {
+ 			mutex_lock(&register_mutex);
 -- 
-paul moore
-www.paul-moore.com
+2.14.1
+
