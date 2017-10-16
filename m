@@ -1,28 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Oct 2017 15:40:05 +0000
-Subject: [PATCH 0/2] PowerPC-Cell OProfile: Adjustments for three function implementations
-Message-Id: <596db1f4-5965-d6f8-af02-38b570b10d8a@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 13:27:57 +0000
+Subject: [PATCH] char/raw: Delete an error message for a failed memory allocation in raw_init()
+Message-Id: <e76691ba-8e80-554f-efba-9f2a448d46c2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, oprofile-list@lists.sf.net, Al Viro <viro@zeniv.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Robert Richter <rric@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Oct 2017 17:32:10 +0200
+Date: Mon, 16 Oct 2017 15:22:10 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in three functions
-  Improve a size determination in two functions
+This issue was detected by using the Coccinelle software.
 
- arch/powerpc/oprofile/cell/spu_task_sync.c | 10 +---------
- arch/powerpc/oprofile/cell/vma_map.c       |  6 ++----
- 2 files changed, 3 insertions(+), 13 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/raw.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/char/raw.c b/drivers/char/raw.c
+index 293167c6e254..fa416613e215 100644
+--- a/drivers/char/raw.c
++++ b/drivers/char/raw.c
+@@ -323,7 +323,6 @@ static int __init raw_init(void)
+ 
+ 	raw_devices = vzalloc(sizeof(struct raw_device_data) * max_raw_minors);
+ 	if (!raw_devices) {
+-		printk(KERN_ERR "Not enough memory for raw device structures\n");
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
 -- 
 2.14.2
 
