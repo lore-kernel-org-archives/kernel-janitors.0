@@ -1,47 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 20 Oct 2017 18:40:24 +0000
-Subject: [PATCH] staging: rtl8188eu: avoid a null dereference on pmlmepriv
-Message-Id: <20171020184024.8035-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 17:31:49 +0000
+Subject: [PATCH 1/4] char/tpm: Delete an error message for a failed memory allocation in tpm_ascii_bios_measu
+Message-Id: <caf93a65-469a-04f0-2e7b-5c03b43585e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gargi Sharma <gs051095@gmail.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 17:43:55 +0200
 
-There is a check on pmlmepriv before dereferencing it when
-vfree'ing pmlmepriv->free_bss_buf however the previous call
-to rtw_free_mlme_priv_ie_data deferences pmlmepriv causing
-a null pointer deference if it is null.  Avoid this by also
-calling rtw_free_mlme_priv_ie_data if the pointer is non-null.
+Omit an extra message for a memory allocation failure in this function.
 
-Detected by CoverityScan, CID#1230262 ("Dereference before null check")
-Fixes: 7b464c9fa5cc ("staging: r8188eu: Add files for new driver - part 4")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm1_eventlog.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index b15cf17f77c5..74cf99e1b732 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -106,10 +106,10 @@ void rtw_free_mlme_priv_ie_data(struct mlme_priv *pmlmepriv)
+diff --git a/drivers/char/tpm/tpm1_eventlog.c b/drivers/char/tpm/tpm1_eventlog.c
+index 9a8605e500b5..9749469cb823 100644
+--- a/drivers/char/tpm/tpm1_eventlog.c
++++ b/drivers/char/tpm/tpm1_eventlog.c
+@@ -280,11 +280,8 @@ static int tpm_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 	    (unsigned char *)(v + sizeof(struct tcpa_event));
  
- void rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
- {
--	rtw_free_mlme_priv_ie_data(pmlmepriv);
--
--	if (pmlmepriv)
-+	if (pmlmepriv) {
-+		rtw_free_mlme_priv_ie_data(pmlmepriv);
- 		vfree(pmlmepriv->free_bss_buf);
-+	}
- }
+ 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+-	if (!eventname) {
+-		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
+-		       __func__);
++	if (!eventname)
+ 		return -EFAULT;
+-	}
  
- struct wlan_network *_rtw_alloc_network(struct mlme_priv *pmlmepriv)
+ 	/* 1st: PCR */
+ 	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
 -- 
-2.14.1
+2.14.2
 
