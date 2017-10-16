@@ -1,7 +1,7 @@
 From: Darren Hart <dvhart@infradead.org>
-Date: Mon, 09 Oct 2017 18:29:00 +0000
+Date: Mon, 16 Oct 2017 21:26:25 +0000
 Subject: Re: [PATCH] platform/x86: mlx-platform: make a couple of structures static
-Message-Id: <20171009182900.GH12321@fury>
+Message-Id: <20171016212625.GB14419@fury>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171005104211.30440-1-colin.king@canonical.com>
  <CAHp75Vf8k-hmk4n86foSfSPZxVUQJmGNFkf8ExUKbF2nXaSy8A@mail.gmail.com>
@@ -27,9 +27,12 @@ On Sat, Oct 07, 2017 at 05:03:41PM +0300, Andy Shevchenko wrote:
 > Since Vadim did some rather big driver changes I would like to hear
 > from him how to proceed with this one: either I apply it now, or after
 > we get Vadim's series in.
+> 
 
-I'll be working with Vadim's series shortly and would like to take this
-after that is settled.
+I've asked Vadim to rework some of the mlx platform and hotplug patches, so I'll
+be taking this now as it is a minimal patch - this way it doesn't get lost.
+
+Thanks Colin.
 
 -- 
 Darren Hart
