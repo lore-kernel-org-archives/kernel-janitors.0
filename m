@@ -1,44 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 17:32:59 +0000
-Subject: [PATCH 2/4] char/tpm: Delete an error message for a failed memory allocation in tpm_ibmvtpm_probe()
-Message-Id: <2ed7178a-347e-7e56-4edd-977687aaad66@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 16 Oct 2017 19:04:46 +0000
+Subject: [PATCH 0/8] video: fbdev: au1200fb: Fix error handling path of 'au1200fb_drv_probe()'
+Message-Id: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 18:08:23 +0200
+This patch serie tries to fix several issues found in the error handling
+code of 'au1200fb_drv_probe()'.
+The 5 first patches fixes various issues (double free, missing error code,
+un-released resources on error, incorrect IRQ releasing and incomplete
+error handling path)
 
-Omit an extra message for a memory allocation failure in this function.
+The 3 last patches are just cleanups.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I've spilt the serie in 8 steps that look logical to me. They could
+also be merged together if preferred.
+
+
+These patches are provided as-is and ARE NOT even compile-tested (sorry in
+advance if a patch is broken) because I don't have a cross compiler for MIPS
+and won't install one.
+
+
+This serie already goes further that the fixes I usually provide, so
+please excuse me if I missed something or if it is somehow broken and/or
+incomplete.
+
 ---
- drivers/char/tpm/tpm_ibmvtpm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+V1 previously posted is patch 3/8 of this serie
 
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 25f6e2665385..b18148ef2612 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -609,10 +609,8 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 		return PTR_ERR(chip);
- 
- 	ibmvtpm = kzalloc(sizeof(struct ibmvtpm_dev), GFP_KERNEL);
--	if (!ibmvtpm) {
--		dev_err(dev, "kzalloc for ibmvtpm failed\n");
-+	if (!ibmvtpm)
- 		goto cleanup;
--	}
- 
- 	ibmvtpm->dev = dev;
- 	ibmvtpm->vdev = vio_dev;
+Christophe JAILLET (8):
+  video: fbdev: au1200fb: Fix a potential double free
+  video: fbdev: au1200fb: Return an error code if a memory allocation
+    fails
+  video: fbdev: au1200fb: Release some resources if a memory allocation
+    fails
+  video: fbdev: au1200fb: Fix error handling path
+  video: fbdev: au1200fb: Fix error handling path
+  video: fbdev: au1200fb: Remove some dead code
+  video: fbdev: au1200fb: Propagate an error code
+  video: fbdev: au1200fb: Style clean up
+
+ drivers/video/fbdev/au1200fb.c | 43 ++++++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
 -- 
-2.14.2
+2.11.0
 
