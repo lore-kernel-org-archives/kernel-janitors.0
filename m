@@ -1,31 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 10 Oct 2017 08:48:21 +0000
-Subject: Re: ARM: s3c2410: Fix a typo in a comment line
-Message-Id: <33aa2c66-622a-0d36-47b2-554dc3592b70@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Oct 2017 13:33:21 +0000
+Subject: [PATCH] tcp: cdg: make struct tcp_cdg static
+Message-Id: <20171016133321.15477-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
- <b93ca267-88d2-b68a-1570-dc8fc71f3888@users.sourceforge.net>
- <20171004181420.lctwaocrvg6rxokk@kozik-lap>
- <0f6ea076-2d41-103a-b1a1-40edc38e2daf@users.sourceforge.net>
- <CAJKOXPeujGfUt6Sw-N9kBGSyZKvpqdGu8=zoT0pSzi64ioVqOg@mail.gmail.com>
-In-Reply-To: <CAJKOXPeujGfUt6Sw-N9kBGSyZKvpqdGu8=zoT0pSzi64ioVqOg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>> Thanks, applied, squashed and changed commit msg.
->>
->> Would it be more appropriate to use a commit subject like
->> “ARM: s3c241x: Fix typos in two comments” (instead of
->> “ARM: s3c2410: Fix typos in a comments”)?
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?idl7a7db2e4c25acf8bd8086797d39a51728139e0
-> 
-> Yes, it would but patch is already applied and I prefer to avoid
-> rebasing unless really necessary.
+From: Colin Ian King <colin.king@canonical.com>
 
-I would appreciate also a corresponding correct commit message.
-Is it interesting that this change attempt seems to have caused another unwanted typo?
+The structure tcp_cdg is local to the source and
+does not need to be in global scope, so make it static.
 
-Regards,
-Markus
+Cleans up sparse warning:
+symbol 'tcp_cdg' was not declared. Should it be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/tcp_cdg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/tcp_cdg.c b/net/ipv4/tcp_cdg.c
+index 66ac69f7bd19..06fbe102a425 100644
+--- a/net/ipv4/tcp_cdg.c
++++ b/net/ipv4/tcp_cdg.c
+@@ -389,7 +389,7 @@ static void tcp_cdg_release(struct sock *sk)
+ 	kfree(ca->gradients);
+ }
+ 
+-struct tcp_congestion_ops tcp_cdg __read_mostly = {
++static struct tcp_congestion_ops tcp_cdg __read_mostly = {
+ 	.cong_avoid = tcp_cdg_cong_avoid,
+ 	.cwnd_event = tcp_cdg_cwnd_event,
+ 	.pkts_acked = tcp_cdg_acked,
+-- 
+2.14.1
+
