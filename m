@@ -1,31 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 31 Oct 2017 13:28:51 +0000
-Subject: Re: [PATCH] pinctrl: ti-iodelay: remove redundant unused variable dev
-Message-Id: <CACRpkda=VXb7R=8F-TKKOQDv4jwRsvoCXn9JQ=4foRUsszOvvQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Oct 2017 13:40:21 +0000
+Subject: [PATCH] sunrcp: make function _svc_create_xprt static
+Message-Id: <20171016134021.15702-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031112051.21451-1-colin.king@canonical.com>
-In-Reply-To: <20171031112051.21451-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "J . Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 12:20 PM, Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer dev is being assigned but is never used, hence it is
-> redundant and can be removed. Cleans up clang warnings:
->
-> drivers/pinctrl/ti/pinctrl-ti-iodelay.c:582:2: warning: Value stored
-> to 'dev' is never read
-> drivers/pinctrl/ti/pinctrl-ti-iodelay.c:701:2: warning: Value stored
-> to 'dev' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The function _svc_create_xprt is local to the source and
+does not need to be in global scope, so make it static.
 
-Patch applied.
+Cleans up sparse warning:
+symbol '_svc_create_xprt' was not declared. Should it be static?
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sunrpc/svc_xprt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index d16a8b423c20..18e87791350f 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -250,9 +250,9 @@ void svc_add_new_perm_xprt(struct svc_serv *serv, struct svc_xprt *new)
+ 	svc_xprt_received(new);
+ }
+ 
+-int _svc_create_xprt(struct svc_serv *serv, const char *xprt_name,
+-		    struct net *net, const int family,
+-		    const unsigned short port, int flags)
++static int _svc_create_xprt(struct svc_serv *serv, const char *xprt_name,
++			    struct net *net, const int family,
++			    const unsigned short port, int flags)
+ {
+ 	struct svc_xprt_class *xcl;
+ 
+-- 
+2.14.1
+
