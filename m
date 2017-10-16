@@ -1,42 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 13:40:25 +0000
-Subject: Re: [PATCH 1/5] wlcore: Use common error handling code in wlcore_nvs_cb()
-Message-Id: <0487c19a-a662-1e74-cba7-12508a0b4307@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Oct 2017 12:19:21 +0000
+Subject: [PATCH] asihpi: clean up a couple of build warnings
+Message-Id: <20171016121921.12722-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
- <7b40d50f-cdac-bd47-5070-894140f7ceb3@users.sourceforge.net>
- <CAGRGNgULQRFo7T2TKr_=xNY9csYXTnnPc4k1AjS2OQ20zg+cbA@mail.gmail.com>
-In-Reply-To: <CAGRGNgULQRFo7T2TKr_=xNY9csYXTnnPc4k1AjS2OQ20zg+cbA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>
-Cc: Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -6551,6 +6549,11 @@ static void wlcore_nvs_cb(const struct firmware *fw, void *context)
->>  out:
->>         release_firmware(fw);
->>         complete_all(&wl->nvs_loading_complete);
->> +       return;
->> +
->> +power_off:
-> 
-> Name this "out_power_off" to match the other labels.
+From: Colin Ian King <colin.king@canonical.com>
 
-Do you expect a second approach for this patch series then?
+Variable dpcm is never used and hence can be removed. Variable
+runtime is being assigned but is never read, so the assignment
+is redundant and can be removed. Cleans up two clang warnings:
 
+Value stored to 'dpcm' is never read
+Value stored to 'runtime' is never read
 
->> +       wl1271_power_off(wl);
->> +       goto out_free_nvs;
-> 
-> Why not put this in front of the out_free_nvs label?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/asihpi/asihpi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-It seems that I can not really follow this suggestion at the moment.
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index 614322171c79..720361455c60 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -573,10 +573,8 @@ static void snd_card_asihpi_pcm_int_start(struct snd_pcm_substream *substream)
+ 
+ static void snd_card_asihpi_pcm_int_stop(struct snd_pcm_substream *substream)
+ {
+-	struct snd_card_asihpi_pcm *dpcm;
+ 	struct snd_card_asihpi *card;
+ 
+-	dpcm = (struct snd_card_asihpi_pcm *)substream->runtime->private_data;
+ 	card = snd_pcm_substream_chip(substream);
+ 
+ 	hpi_handle_error(hpi_adapter_set_property(card->hpi->adapter->index,
+@@ -863,7 +861,6 @@ static void snd_card_asihpi_timer_function(struct timer_list *t)
+ 
+ 	snd_pcm_group_for_each_entry(s, substream) {
+ 		struct snd_card_asihpi_pcm *ds = s->runtime->private_data;
+-		runtime = s->runtime;
+ 
+ 		/* don't link Cap and Play */
+ 		if (substream->stream != s->stream)
+-- 
+2.14.1
 
-
-> It looks weird here.
-
-Which detail do you not like?
-
-Regards,
-Markus
