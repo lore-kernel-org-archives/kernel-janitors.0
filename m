@@ -1,43 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 16:19:21 +0000
-Subject: [PATCH] net/ncsi: Delete an error message for a failed memory allocation in ncsi_rsp_handler_gc()
-Message-Id: <dbcf6a74-ce63-8a01-615b-162ebe329c6c@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 12:20:47 +0000
+Subject: [PATCH 3/3] char/pcmcia: Adjust a null pointer check in three functions
+Message-Id: <1403a78d-8fb9-9487-d71d-e51517671153@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
+In-Reply-To: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Samuel Mendoza-Jonas <sam@mendozajonas.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 18:03:11 +0200
+Date: Mon, 16 Oct 2017 13:46:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Omit an extra message for a memory allocation failure in this function.
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/ncsi/ncsi-rsp.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/char/pcmcia/synclink_cs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index 265b9a892d41..eb3611ffbb62 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -686,11 +686,8 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
+diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
+index 6c210b5cdf69..1719d929c0e4 100644
+--- a/drivers/char/pcmcia/synclink_cs.c
++++ b/drivers/char/pcmcia/synclink_cs.c
+@@ -2644,7 +2644,7 @@ static int rx_alloc_buffers(MGSLPC_INFO *info)
+ 	info->rx_buf_count = info->rx_buf_total_size / info->rx_buf_size;
  
- 		size = sizeof(*ncf) + cnt * entry_size;
- 		ncf = kzalloc(size, GFP_ATOMIC);
--		if (!ncf) {
--			pr_warn("%s: Cannot alloc filter table (%d)\n",
--				__func__, i);
-+		if (!ncf)
- 			return -ENOMEM;
--		}
+ 	info->rx_buf = kmalloc(info->rx_buf_total_size, GFP_KERNEL);
+-	if (info->rx_buf = NULL)
++	if (!info->rx_buf)
+ 		return -ENOMEM;
  
- 		ncf->index = i;
- 		ncf->total = cnt;
+ 	/* unused flag buffer to satisfy receive_buf calling interface */
+@@ -4228,7 +4228,7 @@ static void hdlcdev_rx(MGSLPC_INFO *info, char *buf, int size)
+ 	if (debug_level >= DEBUG_LEVEL_INFO)
+ 		printk("hdlcdev_rx(%s)\n", dev->name);
+ 
+-	if (skb = NULL) {
++	if (!skb) {
+ 		printk(KERN_NOTICE "%s: can't alloc skb, dropping packet\n", dev->name);
+ 		dev->stats.rx_dropped++;
+ 		return;
+@@ -4269,7 +4269,7 @@ static int hdlcdev_init(MGSLPC_INFO *info)
+ 	/* allocate and initialize network and HDLC layer objects */
+ 
+ 	dev = alloc_hdlcdev(info);
+-	if (dev = NULL) {
++	if (!dev) {
+ 		printk(KERN_ERR "%s:hdlc device allocation failure\n", __FILE__);
+ 		return -ENOMEM;
+ 	}
 -- 
 2.14.2
 
