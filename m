@@ -1,51 +1,100 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 12 Oct 2017 10:34:50 +0000
-Subject: Re: Two rtlwifi drivers?
-Message-Id: <20171012103450.GA24647@kroah.com>
+From: Pkshih <pkshih@realtek.com>
+Date: Mon, 16 Oct 2017 02:41:38 +0000
+Subject: RE: Two rtlwifi drivers?
+Message-Id: <5B2DA6FDDF928F4E855344EE0A5C39D10581FF70@RTITMBSV07.realtek.com.tw>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
  <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
  <652d42ad-a077-530b-743f-d38ddf3ff677@lwfinger.net>
- <87k202qcjr.fsf@kamboji.qca.qualcomm.com>
- <20171011131310.GF32250@kroah.com>
- <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com>
+ <87k202qcjr.fsf@kamboji.qca.qualcomm.com> <20171011131310.GF32250@kroah.com>
+ <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com> <20171012103450.GA24647@kroah.com>
+In-Reply-To: <20171012103450.GA24647@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Dan Carpenter <dan.carpenter@oracle.com>, Ping-Ke Shih <pkshih@realtek.com>, Yan-Hsuan Chuang <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, =?big5?B?svir26vF?= <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Thu, Oct 12, 2017 at 11:38:06AM +0300, Kalle Valo wrote:
-> > So what to do?  Any ideas?  What makes your life easier?  You can just
-> > ignore the staging tree, as it should not affect your portion of the
-> > kernel at all, right?
-> 
-> Yes, I automatically ignore anything staging related. But the problem is
-> that we now have two drivers with the same name and people don't always
-> remember to prefix the patch with "staging: ". So on a bad day I might
-> accidentally apply a patch which was meant for your tree. Of course I
-> immediately revert it as soon as I, or someone else, catches that but
-> annoying still.
-
-It doesn't bother me if you apply staging patches, I can handle the
-merge issues :)
-
-> I think we have two options here:
-> 
-> 1) We set a deadline (like 12 months or something) for the
->    drivers/staging/rtlwifi and after that you refuse to take any patches
->    for it. Hopefully this makes it clear for everyone that this fork is
->    just temporary. I think Larry is trying to do this, which is great.
-
-Fine with me, if Larry is ok with it.
-
-> 2) We move the whole rtlwifi driver to staging. A very bad option but
->    still better than forking the drivers.
-
-Ick, I don't want that to have to happen, that would not be good for the
-users of other devices that the "real" rtlwifi driver supports.
-
-thanks,
-
-greg k-h
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR3JlZyBLcm9haC1IYXJ0
+bWFuIFttYWlsdG86Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmddDQo+IFNlbnQ6IFRodXJzZGF5
+LCBPY3RvYmVyIDEyLCAyMDE3IDY6MzUgUE0NCj4gVG86IEthbGxlIFZhbG8NCj4gQ2M6IExhcnJ5
+IEZpbmdlcjsgRGFuIENhcnBlbnRlcjsgUGtzaGloOyCy+Kvbq8U7IEpvaGFubmVzIEJlcmc7IFNv
+dXB0aWNrIEpvYXJkZXI7DQo+IGRldmVsQGRyaXZlcmRldi5vc3Vvc2wub3JnOyBsaW51eC13aXJl
+bGVzc0B2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogUmU6IFR3byBydGx3aWZpIGRyaXZlcnM/DQo+IA0KPiBPbiBUaHUsIE9jdCAxMiwg
+MjAxNyBhdCAxMTozODowNkFNICswMzAwLCBLYWxsZSBWYWxvIHdyb3RlOg0KPiA+ID4gU28gd2hh
+dCB0byBkbz8gIEFueSBpZGVhcz8gIFdoYXQgbWFrZXMgeW91ciBsaWZlIGVhc2llcj8gIFlvdSBj
+YW4ganVzdA0KPiA+ID4gaWdub3JlIHRoZSBzdGFnaW5nIHRyZWUsIGFzIGl0IHNob3VsZCBub3Qg
+YWZmZWN0IHlvdXIgcG9ydGlvbiBvZiB0aGUNCj4gPiA+IGtlcm5lbCBhdCBhbGwsIHJpZ2h0Pw0K
+PiA+DQo+ID4gWWVzLCBJIGF1dG9tYXRpY2FsbHkgaWdub3JlIGFueXRoaW5nIHN0YWdpbmcgcmVs
+YXRlZC4gQnV0IHRoZSBwcm9ibGVtIGlzDQo+ID4gdGhhdCB3ZSBub3cgaGF2ZSB0d28gZHJpdmVy
+cyB3aXRoIHRoZSBzYW1lIG5hbWUgYW5kIHBlb3BsZSBkb24ndCBhbHdheXMNCj4gPiByZW1lbWJl
+ciB0byBwcmVmaXggdGhlIHBhdGNoIHdpdGggInN0YWdpbmc6ICIuIFNvIG9uIGEgYmFkIGRheSBJ
+IG1pZ2h0DQo+ID4gYWNjaWRlbnRhbGx5IGFwcGx5IGEgcGF0Y2ggd2hpY2ggd2FzIG1lYW50IGZv
+ciB5b3VyIHRyZWUuIE9mIGNvdXJzZSBJDQo+ID4gaW1tZWRpYXRlbHkgcmV2ZXJ0IGl0IGFzIHNv
+b24gYXMgSSwgb3Igc29tZW9uZSBlbHNlLCBjYXRjaGVzIHRoYXQgYnV0DQo+ID4gYW5ub3lpbmcg
+c3RpbGwuDQo+IA0KPiBJdCBkb2Vzbid0IGJvdGhlciBtZSBpZiB5b3UgYXBwbHkgc3RhZ2luZyBw
+YXRjaGVzLCBJIGNhbiBoYW5kbGUgdGhlDQo+IG1lcmdlIGlzc3VlcyA6KQ0KPiANCj4gPiBJIHRo
+aW5rIHdlIGhhdmUgdHdvIG9wdGlvbnMgaGVyZToNCj4gPg0KPiA+IDEpIFdlIHNldCBhIGRlYWRs
+aW5lIChsaWtlIDEyIG1vbnRocyBvciBzb21ldGhpbmcpIGZvciB0aGUNCj4gPiAgICBkcml2ZXJz
+L3N0YWdpbmcvcnRsd2lmaSBhbmQgYWZ0ZXIgdGhhdCB5b3UgcmVmdXNlIHRvIHRha2UgYW55IHBh
+dGNoZXMNCj4gPiAgICBmb3IgaXQuIEhvcGVmdWxseSB0aGlzIG1ha2VzIGl0IGNsZWFyIGZvciBl
+dmVyeW9uZSB0aGF0IHRoaXMgZm9yayBpcw0KPiA+ICAgIGp1c3QgdGVtcG9yYXJ5LiBJIHRoaW5r
+IExhcnJ5IGlzIHRyeWluZyB0byBkbyB0aGlzLCB3aGljaCBpcyBncmVhdC4NCj4gDQo+IEZpbmUg
+d2l0aCBtZSwgaWYgTGFycnkgaXMgb2sgd2l0aCBpdC4NCj4gDQo+ID4gMikgV2UgbW92ZSB0aGUg
+d2hvbGUgcnRsd2lmaSBkcml2ZXIgdG8gc3RhZ2luZy4gQSB2ZXJ5IGJhZCBvcHRpb24gYnV0DQo+
+ID4gICAgc3RpbGwgYmV0dGVyIHRoYW4gZm9ya2luZyB0aGUgZHJpdmVycy4NCj4gDQo+IEljaywg
+SSBkb24ndCB3YW50IHRoYXQgdG8gaGF2ZSB0byBoYXBwZW4sIHRoYXQgd291bGQgbm90IGJlIGdv
+b2QgZm9yIHRoZQ0KPiB1c2VycyBvZiBvdGhlciBkZXZpY2VzIHRoYXQgdGhlICJyZWFsIiBydGx3
+aWZpIGRyaXZlciBzdXBwb3J0cy4NCj4gDQoNCkhpIExhcnJ5LCBLYWxsZSBhbmQgR2VyZywNCg0K
+VGhpcyBpcyBSZWFsdGVrIGVuZ2luZWVyLCBQSy4gSSBhcHByZWNpYXRlIHlvdXIgc3VwcG9ydCB0
+byBzdWJtaXQsIHJldmlldyANCmFuZCBtZXJnZSBwYXRjaC4gU2luY2UgSSdtIGEgTGludXggbmV3
+YmllLCBJJ2xsIGRlc2NyaWJlIHRoZSBzaXR1YXRpb24gb2YgDQpydGx3aWZpIGFuZCBuZWVkIHlv
+dXIgc3VnZ2VzdGlvbnMuDQoNCg0KMSkgTmV3IG1vZHVsZXMgaW4gcnRsd2lmaQ0KICAgV2UgYWRk
+IHR3byBtb2R1bGVzIG5hbWVkIHBoeWRtIGFuZCBoYWxtYWMsIHdoZW4gYWRkaW5nIHJ0bDg4MjJi
+ZSBpbiANCiAgIHN0YWdpbmcuIFRoZSBwaHlkbSBpcyBCQi9SRiByZWxhdGVkIG1vZHVsZSBjb250
+YWluaW5nIHRoZSBwYXJhbWV0ZXJzDQogICBhbmQgQVBJcyBvZiBCQi9SRiwgYW5kIGEgZHluYW1p
+YyBtZWNoYW5pc20gdG8gYWRhcHQgdG8gZGlmZmVyZW50DQogICBmaWVsZCBlbnZpcm9ubWVudC4g
+VGhlIGhhbG1hYyBjb25zaXN0cyBvZiBNQUMgQVBJcy4NCiAgIFRoZSB0d28gbW9kdWxlcyBhcmUg
+dXNlZCBieSBtYW55IE9Tcywgc28gJyNpZmRlZicsIENhbWVsQ2FzZSBhbmQNCiAgIHNvIG9uIGFy
+ZSBleGlzdGluZyBpbiBvcmlnaW5hbCBmaWxlcy4gSGVuY2UsIHdlIGNvbnZlcnQgdGhlbSB0byBM
+aW51eCANCiAgIGZvcm0gYnkgc2NyaXB0LCBidXQgaXQncyBub3QgcGVyZmVjdC4gRG8geW91IGhh
+dmUgc3VnZ2VzdGlvbiB0byBkZWFsDQogICB3aXRoIHRoaXMgcHJvYmxlbT8NCg0KDQoyKSBUaGUg
+cnRsd2lmaSBpbiBzdGFnaW5nDQogICBJbiBzdGFnaW5nLCB0aGUgbW9kdWxlIHBoeWRtIHYxMyBj
+b250YWlucyBidWdzLCBzbyBJIHdhbnQgdG8gdXBncmFkZQ0KICAgdG8gdjIxIChSZWFsdGVrIGlu
+dGVybmFsIHZlcnNpb24gbnVtYmVyKS4gVGhpcyB1cGdyYWRlIGNvbnRhaW5zIGENCiAgIGJpZyBw
+YXRjaCB0aGF0IHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gdjEzIGFuZCB2MjEsIGFuZCB0aGVyZSBh
+cmUgDQogICA0MCsgcGF0Y2hlcyB0byBzdXBwb3J0IHRoaXMgdXBncmFkZS4gSSBoYXZlIHRocmVl
+IG9wdGlvbnMsIGFuZA0KICAgSSB3YW50IHRvIGtub3cgd2hpY2ggb25lIGlzIHByZWZlci4NCg0K
+Mi4xKSBhcHBseSA0MCsgcGF0Y2hlcyB0byBib3RoIHN0YWdpbmcgYW5kIHdpcmVsZXNzIHRyZWUs
+IGFuZCBhcHBseQ0KICAgICB0aGUgYmlnIHBhdGNoIHRvIHN0YWdpbmcgb25seS4gQWZ0ZXIgcmV2
+aWV3aW5nLCB3ZSBtb3ZlIHRoZSBtb2R1bGUNCiAgICAgdG8gd2lyZWxlc3MgdHJlZS4NCg0KMi4y
+KSBhcHBseSA0MCsgcGF0Y2hlcyB0byB3aXJlbGVzcyB0cmVlLCBhbmQgYXBwbHkgYSBzaW5nbGUg
+YmlnZ2VyIA0KICAgICBwYXRjaCBjb250YWluaW5nIDQwKyBwYXRjaGVzIGFuZCB0aGUgYmlnIHBh
+dGNoIHRvIHN0YWdpbmcuIEkgdGhpbmsNCiAgICAgdGhpcyBjYW4gYmUgc2VlbiBhcyBhIG5ldyBk
+cml2ZXIgaW4gc3RhZ2luZy4gQWZ0ZXIgcmV2aWV3aW5nLCANCiAgICAgd2UgbW92ZSB0aGUgbW9k
+dWxlIHRvIHdpcmVsZXNzIHRyZWUuDQoNCjIuMykgZG9uJ3QgYXBwbHkgYW55dGhpbmcgdG8gc3Rh
+Z2luZy4gSnVzdCBhcHBseSA0MCsgcGF0Y2hlcyBhbmQgYWRkDQogICAgIHBoeWRtIHYyMSB0byB3
+aXJlbGVzcy4NCg0KDQozKSBDb21pbmcgZHJpdmVycyAtLSBydGw4NzIzZGUgYW5kIHJ0bDg4MjFj
+ZQ0KICAgV2UncmUgZGV2ZWxvcGluZyB0aGUgdHdvIGRyaXZlcnMsIGFuZCBydGw4NzIzZGUgYW5k
+IHJ0bDg4MjFjZSB3aWxsDQogICBiZSByZWFkeSBvbiAyMDE3UTQgYW5kIDIwMThRMSByZXNwZWN0
+aXZlbHkuIFRoZSBkcml2ZXJzIGFyZSBiYXNlZCBvbg0KICAgcnRsODgyMmJlIHRoYXQgaW4gc3Rh
+Z2luZyBub3csIHNvIHRoZSBsaW5lIG9mIGNvZGUgd2lsbCBiZSBmZXdlci4NCiAgIFRoZSBuZXcg
+ZmlsZXMgd2lsbCBiZSBhIG5ldyBJQyBmb2xkZXIgYW5kIElDIHN1cHBvcnRlZCBmaWxlcyBvZiAN
+CiAgIHRocmVlIG1vZHVsZXMgdGhhdCBidGNvZXhpc3QsIHBoeWRtIGFuZCBoYWxtYWMuIENvdWxk
+IEkgc3VibWl0DQogICB0aGVtIHRvIHdpcmxlc3MgdHJlZSB3aGVuIHRoZXkncmUgcmVhZHk/DQoN
+Cg0KNCkgQXMgS2FsbGUgbWVudGlvbmVkLCBydGx3aWZpIGNvbnRhaW5zIG1hbnkgbWFnaWMgbnVt
+YmVycywgYW5kIEkgDQogICBwbGFuIHRvIGZpeCB0aGVtIGFmdGVyIHJ0bDg3MjNkZSBhbmQgcnRs
+ODgyMWNlLiBCZWNhdXNlIHRoZSBkcml2ZXJzDQogICBhcmUgZGV2ZWxvcGluZywgdGhlIGNoYW5n
+ZXMgd2lsbCBtYWtlIHVzIGhhcmQgdG8gaW50ZWdyYXRlLiBIb3dldmVyLA0KICAgSSBkb24ndCBo
+YXZlIHBsYW4gdG8gcHJvY2VzcyB0aGUgbWFnaWMgbnVtYmVycyBpbiB0aGUgbW9kdWxlIHBoeWRt
+LA0KICAgYmVjYXVzZSB0aGUgbW9zdCBvZiBCQi9SRiByZWdpc3RlcnMgY29udGFpbiBtYW55IGZ1
+bmN0aW9ucy4gQW5kDQogICBpdCBkb2Vzbid0IGhhdmUgYSByZWdpc3RlciBuYW1lIGJ1dCBhIGJp
+dCBmaWVsZCBuYW1lIGluc3RlYWQuDQogICBPdXIgQkIgdGVhbSBndXlzIHNheSB0aGUgdXNlIG9m
+IGVudW1lcmF0aW9uIG9yIGRlZmluZWQgbmFtZSB3aWxsDQogICBiZSB1bnJlYWRhYmxlLCBhbmQg
+dGhlIG5hbWUgaXMgbWVhbmluZ2xlc3MgZm9yIG1vc3QgcGVvcGxlLg0KDQoNCk1hbnkgTGludXgg
+dXNlcnMgYXNrIExhcnJ5IGFib3V0IHRoZSBuZXcgZHJpdmVycywgYW5kIFJlYWx0ZWsgd2lsbA0K
+cHJvdmlkZSBkcml2ZXJzIGFuZCB0cnkgdG8gc3VibWl0IHRoZW0gYnkgbXlzZWxmLiBJIGhvcGUg
+dGhlIExpbnV4DQp1c2VycyBjYW4geWllbGQgdGhlIGRyaXZlcnMgYXMgc29vbiBhcyBJIGNhbi4g
+T24gdGhlIHdheSwgSSdsbCANCmF0dGVuZCBuZXRkZXYgd29ya3Nob3AgaW4gS29yZWEsIHNvIHdl
+IGNhbiBtZWV0IHRoZXJlIGlmIHlvdSBhdHRlbmQgdG9vLg0KDQoNClBLDQoNCg=
