@@ -1,64 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 09 Oct 2017 17:26:55 +0000
-Subject: [PATCH] perf/x86/intel/uncore: fix memory leaks on allocation failures
-Message-Id: <20171009172655.6132-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 16 Oct 2017 19:04:49 +0000
+Subject: [PATCH 3/8] video: fbdev: au1200fb: Release some resources if a memory allocation fails
+Message-Id: <dcbd4ba45087e3cb22bc35ee11db5eb3016573b7.1508179264.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+We should go through the error handling code instead of returning -ENOMEM
+directly.
 
-Currently if an allocation fails then the error return paths
-don't free up any currently allocated pmus[].boxes and pmus causing
-a memory leak.  Add an error clean up exit path that frees these
-objects.
-
-Detected by CoverityScan, CID#711632 ("Resource Leak")
-
-Fixes: 087bfbb03269 ("perf/x86: Add generic Intel uncore PMU support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/events/intel/uncore.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/au1200fb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 1c5390f1cf09..123685a54b2a 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -822,7 +822,7 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
- 		pmus[i].type	= type;
- 		pmus[i].boxes	= kzalloc(size, GFP_KERNEL);
- 		if (!pmus[i].boxes)
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index 7fa41026984d..cf54168d44dc 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1702,7 +1702,8 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 		if (!fbdev->fb_mem) {
+ 			print_err("fail to allocate frambuffer (size: %dK))",
+ 				  fbdev->fb_len / 1024);
 -			return -ENOMEM;
-+			goto err;
- 	}
++			ret = -ENOMEM;
++			goto failed;
+ 		}
  
- 	type->pmus = pmus;
-@@ -836,7 +836,7 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
- 		attr_group = kzalloc(sizeof(struct attribute *) * (i + 1) +
- 					sizeof(*attr_group), GFP_KERNEL);
- 		if (!attr_group)
--			return -ENOMEM;
-+			goto err;
- 
- 		attrs = (struct attribute **)(attr_group + 1);
- 		attr_group->name = "events";
-@@ -850,6 +850,12 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
- 
- 	type->pmu_group = &uncore_pmu_attr_group;
- 	return 0;
-+
-+err:
-+	for (i = 0; i < type->num_boxes; i++)
-+		kfree(pmus[i].boxes);
-+	kfree(pmus);
-+	return -ENOMEM;
- }
- 
- static int __init
+ 		/*
 -- 
-2.14.1
+2.11.0
 
