@@ -1,31 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 03 Oct 2017 20:26:18 +0000
-Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
-Message-Id: <CACRpkdaWQpjHhx+Jp5Ne-mZ110S-4iZ19TUYqwV2km0jbqTn6g@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 16 Oct 2017 19:04:50 +0000
+Subject: [PATCH 4/8] video: fbdev: au1200fb: Fix error handling path
+Message-Id: <1adea6270ddbf00b84b82b7dfe1301e61a319522.1508179264.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net> <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
-In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Sep 27, 2017 at 9:40 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+'au1200fb_drv_probe()' can not fail after a succesful call to
+'request_irq()'. So there is no point to call 'free_irq()' in the error
+handling path.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:24:43 +0200
->
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Moreover, the hard coded AU1200_LCD_INT looks boggus since commit
+1630d85a8312 ("au1200fb: fix hardcoded IRQ")
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+So, remove it.
 
-Yours,
-Linus Walleij
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/video/fbdev/au1200fb.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index cf54168d44dc..0d8ed0ef9183 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1766,8 +1766,6 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 			fb_dealloc_cmap(&fbi->cmap);
+ 		kfree(fbi->pseudo_palette);
+ 	}
+-	if (plane = 0)
+-		free_irq(AU1200_LCD_INT, (void*)dev);
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
+
