@@ -1,42 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 17:33:52 +0000
-Subject: [PATCH] netrom: Delete an error message for a failed memory allocation in nr_proto_init()
-Message-Id: <3893dae9-a84f-b58c-689d-97ab6e4782fd@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 16 Oct 2017 10:24:02 +0000
+Subject: [PATCH] netfilter: ebtables: clean up initialization of buf
+Message-Id: <20171016102402.10358-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 18:48:18 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+buf is initialized to buf_start and then set on the next statement
+to buf_start + offsets[i].  Clean this up to just initialize buf
+to buf_start + offsets[i] to clean up the clang build warning:
+"Value stored to 'buf' during its initialization is never read"
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/netrom/af_netrom.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/bridge/netfilter/ebtables.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
-index ebf16f7f9089..568d6a148bf2 100644
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -1408,10 +1408,8 @@ static int __init nr_proto_init(void)
- 	}
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 3b3dcf719e07..37817d25b63d 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2112,9 +2112,8 @@ static int size_entry_mwt(struct ebt_entry *entry, const unsigned char *base,
+ 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
+ 		struct compat_ebt_entry_mwt *match32;
+ 		unsigned int size;
+-		char *buf = buf_start;
++		char *buf = buf_start + offsets[i];
  
- 	dev_nr = kzalloc(nr_ndevs * sizeof(struct net_device *), GFP_KERNEL);
--	if (dev_nr = NULL) {
--		printk(KERN_ERR "NET/ROM: nr_proto_init - unable to allocate device array\n");
-+	if (!dev_nr)
- 		return -1;
--	}
+-		buf = buf_start + offsets[i];
+ 		if (offsets[i] > offsets[j])
+ 			return -EINVAL;
  
- 	for (i = 0; i < nr_ndevs; i++) {
- 		char name[IFNAMSIZ];
 -- 
-2.14.2
+2.14.1
 
