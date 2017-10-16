@@ -1,29 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Oct 2017 12:19:21 +0000
-Subject: [PATCH] HID: sensor: Use the correct type instead of a void pointer
-Message-Id: <20171026121921.kmyk42wo32juv6qj@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 15:06:27 +0000
+Subject: [PATCH 3/4] char/snsc: Improve a size determination in two functions
+Message-Id: <cc495147-1ae5-3479-ece0-45398a8a6d4b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
+In-Reply-To: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-It's cleaner to declare this with the correct type instead of using a
-void pointer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 16:26:09 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
-index 0bcf041368c7..4f509f13f347 100644
---- a/drivers/hid/hid-sensor-custom.c
-+++ b/drivers/hid/hid-sensor-custom.c
-@@ -485,7 +485,7 @@ static int hid_sensor_custom_add_field(struct hid_sensor_custom *sensor_inst,
- 				       struct hid_field *field)
- {
- 	struct hid_sensor_custom_field *sensor_field;
--	void *fields;
-+	struct hid_sensor_custom_field *fields;
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/snsc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/snsc.c b/drivers/char/snsc.c
+index eefc306033ab..bec3bd966b1f 100644
+--- a/drivers/char/snsc.c
++++ b/drivers/char/snsc.c
+@@ -79,7 +79,7 @@ scdrv_open(struct inode *inode, struct file *file)
+ 	scd = container_of(inode->i_cdev, struct sysctl_data_s, scd_cdev);
  
- 	fields = krealloc(sensor_inst->fields,
- 			  (sensor_inst->sensor_field_count + 1) *
+ 	/* allocate memory for subchannel data */
+-	sd = kzalloc(sizeof (struct subch_data_s), GFP_KERNEL);
++	sd = kzalloc(sizeof(*sd), GFP_KERNEL);
+ 	if (!sd)
+ 		return -ENOMEM;
+ 
+@@ -405,8 +405,7 @@ scdrv_init(void)
+ 				geo_slab(geoid));
+ 
+ 			/* allocate sysctl device data */
+-			scd = kzalloc(sizeof (struct sysctl_data_s),
+-				      GFP_KERNEL);
++			scd = kzalloc(sizeof(*scd), GFP_KERNEL);
+ 			if (!scd)
+ 				continue;
+ 
+-- 
+2.14.2
+
