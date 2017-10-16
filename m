@@ -1,7 +1,7 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 16 Oct 2017 13:03:02 +0000
+Date: Mon, 16 Oct 2017 13:07:47 +0000
 Subject: Re: Two rtlwifi drivers?
-Message-Id: <87k1zvmeih.fsf@kamboji.qca.qualcomm.com>
+Message-Id: <87fuajmeak.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
         <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
@@ -11,39 +11,35 @@ References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
         <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com>
         <20171012103450.GA24647@kroah.com>
         <5B2DA6FDDF928F4E855344EE0A5C39D10581FF70@RTITMBSV07.realtek.com.tw>
-        <20171016074516.4irgvbid6p5zwqjg@mwanda>
-In-Reply-To: <20171016074516.4irgvbid6p5zwqjg@mwanda> (Dan Carpenter's message
-        of "Mon, 16 Oct 2017 10:45:16 +0300")
+        <ed361ae7-864e-1179-c7da-3ff10f4c73e2@rempel-privat.de>
+In-Reply-To: <ed361ae7-864e-1179-c7da-3ff10f4c73e2@rempel-privat.de> (Oleksij
+        Rempel's message of "Mon, 16 Oct 2017 08:46:10 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Pkshih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Oleksij Rempel <linux@rempel-privat.de>
+Cc: Pkshih <pkshih@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@oracle.com>, =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Oleksij Rempel <linux@rempel-privat.de> writes:
 
-> On Mon, Oct 16, 2017 at 02:41:38AM +0000, Pkshih wrote:
->> 2) The rtlwifi in staging
->>    In staging, the module phydm v13 contains bugs, so I want to upgrade
->>    to v21 (Realtek internal version number). This upgrade contains a
->>    big patch that the difference between v13 and v21, and there are 
->>    40+ patches to support this upgrade. I have three options, and
->>    I want to know which one is prefer.
+>> 4) As Kalle mentioned, rtlwifi contains many magic numbers, and I 
+>>    plan to fix them after rtl8723de and rtl8821ce. Because the drivers
+>>    are developing, the changes will make us hard to integrate. However,
+>>    I don't have plan to process the magic numbers in the module phydm,
+>>    because the most of BB/RF registers contain many functions. And
+>>    it doesn't have a register name but a bit field name instead.
+>>    Our BB team guys say the use of enumeration or defined name will
+>>    be unreadable, and the name is meaningless for most people.
 >
-> We can't discuss patches we haven't seend.  Please just send them right
-> away without any delay to both lists, and we can decide from there.
->
-> 40 patches is a medium size set, patch that we are used to dealing with
-> every day.
+> Experience with ath9k driver showed, that development was kind of
+> balanced between two groups, QCA and Community (Other companies,
+> researches, education and so on.). Saying: "you will not understand it
+> any way" is nor really helpful :)
+> Please don't repeat bad experience of Broadcom.
 
-I review every patch I commit and 40 patches is just pure pain to dig
-through. So when submitting patches to me please keep the size more
-reasonable, like 10-12 patches per set. I think Dave also has a similar
-rule for net patches.
-
-I wrote a FAQ entry about this:
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#too_many_patches
+I agree with Oleksij here, but I want to still point out that there are
+cases when using magic numbers are ok, for example look at
+ar5008_initvals.h from ath9k. So it depends on case by case.
 
 -- 
 Kalle Valo
