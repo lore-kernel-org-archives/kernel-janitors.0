@@ -1,64 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 24 Oct 2017 02:29:46 +0000
-Subject: [PATCH V2] scsi: aacraid: Fix some error code
-Message-Id: <20171024022946.30223-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 17:32:59 +0000
+Subject: [PATCH 2/4] char/tpm: Delete an error message for a failed memory allocation in tpm_ibmvtpm_probe()
+Message-Id: <2ed7178a-347e-7e56-4edd-977687aaad66@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+In-Reply-To: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: aacraid@microsemi.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If 'scsi_host_alloc', 'kzalloc' or '(*aac_drivers[index].init)' fail, the
-function will return 0, because 'error' is known to be 0 at this point.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 18:08:23 +0200
 
-Return -ENOMEM in the 2 first cases and -ENODEV in the third one.
+Omit an extra message for a memory allocation failure in this function.
 
-This patch also removes a useless 'error = -ENODEV'.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V2: rebase against latest -next (20171019)
----
- drivers/scsi/aacraid/linit.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_ibmvtpm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index c9252b138c1f..7e7d9bfd2b9e 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1628,7 +1628,6 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	error = pci_enable_device(pdev);
- 	if (error)
- 		goto out;
--	error = -ENODEV;
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 25f6e2665385..b18148ef2612 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -609,10 +609,8 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 		return PTR_ERR(chip);
  
- 	if (!(aac_drivers[index].quirks & AAC_QUIRK_SRC)) {
- 		error = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-@@ -1660,6 +1659,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	pci_set_master(pdev);
+ 	ibmvtpm = kzalloc(sizeof(struct ibmvtpm_dev), GFP_KERNEL);
+-	if (!ibmvtpm) {
+-		dev_err(dev, "kzalloc for ibmvtpm failed\n");
++	if (!ibmvtpm)
+ 		goto cleanup;
+-	}
  
- 	shost = scsi_host_alloc(&aac_driver_template, sizeof(struct aac_dev));
-+	error = -ENOMEM;
- 	if (!shost)
- 		goto out_disable_pdev;
- 
-@@ -1681,6 +1681,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	INIT_LIST_HEAD(&aac->entry);
- 
- 	aac->fibs = kzalloc(sizeof(struct fib) * (shost->can_queue + AAC_NUM_MGT_FIB), GFP_KERNEL);
-+	error = -ENOMEM;
- 	if (!aac->fibs)
- 		goto out_free_host;
- 	spin_lock_init(&aac->fib_lock);
-@@ -1690,6 +1691,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	 *	Map in the registers from the adapter.
- 	 */
- 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
-+	error = -ENODEV;
- 	if ((*aac_drivers[index].init)(aac))
- 		goto out_unmap;
- 
+ 	ibmvtpm->dev = dev;
+ 	ibmvtpm->vdev = vio_dev;
 -- 
-2.14.1
+2.14.2
 
