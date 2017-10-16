@@ -1,61 +1,39 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 17:39:01 +0000
-Subject: Re: [PATCH] iio/light/max44000: Use common error handling code in max44000_probe()
-Message-Id: <20171026183901.42f44acc@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 17:30:13 +0000
+Subject: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
+Message-Id: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28854212-d360-8636-4de5-017fbee0db36@users.sourceforge.net>
-        <20171026172926.62d5ff87@archlinux>
-        <c6c5a2d0-39e6-0792-a6d3-4f2861a7eb5a@users.sourceforge.net>
-In-Reply-To: <c6c5a2d0-39e6-0792-a6d3-4f2861a7eb5a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Crestez Dan Leonard <leonard.crestez@intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 26 Oct 2017 18:50:14 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Oct 2017 19:12:34 +0200
 
-> >> @@ -596,6 +592,10 @@ static int max44000_probe(struct i2c_client *client,
-> >>  	}
-> >>  
-> >>  	return iio_device_register(indio_dev);
-> >> +
-> >> +report_failure:
-> >> +	dev_err(&client->dev, "failed to write init config: %d\n", ret);  
-> > This reduces readability of the code for a very minor gain.  
-> 
-> I got an other software development view on this aspect.
-> 
+A few update suggestions were taken into account
+from static source code analysis.
 
-Sadly I am going to put my foot down here before more time
-is wasted. I am not going to discuss it further after this email.
-(for others please see the amount of time already wasted on
-what are mostly poor code changes from Markus).
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation
+    in tpm_ascii_bios_measurements_show()
+  Delete an error message for a failed memory allocation in tpm_ibmvtpm_probe()
+  Improve a size determination in nine functions
+  Less checks in tpm_ibmvtpm_probe() after error detection
 
-> 
-> > Printing an error message is not a source of bugs  
-> 
-> I find such a general information questionable.
-> 
-> It is also possible to discover various update candidates in this software area.
-Judge each one carefully.  You need to be convincingly improving the code
-not just obeying rules blindly.
+ drivers/char/tpm/st33zp24/i2c.c      |  3 +--
+ drivers/char/tpm/st33zp24/spi.c      |  3 +--
+ drivers/char/tpm/st33zp24/st33zp24.c |  3 +--
+ drivers/char/tpm/tpm1_eventlog.c     |  5 +----
+ drivers/char/tpm/tpm_crb.c           |  2 +-
+ drivers/char/tpm/tpm_i2c_atmel.c     |  2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
+ drivers/char/tpm/tpm_ibmvtpm.c       | 23 +++++++++--------------
+ drivers/char/tpm/tpm_tis.c           |  2 +-
+ drivers/char/tpm/tpm_tis_spi.c       |  3 +--
+ 10 files changed, 18 insertions(+), 30 deletions(-)
 
-> 
-> 
-> > or similar unlike unwinding some state, so a unified path makes little sense.  
-> 
-> How does such a view fit to the section “7) Centralized exiting of functions”
-> in the document “coding-style.rst”?
-All rules in there need to be applied with care. If they make the code
-worse do not blindly apply them.
-
-> 
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.14.2
 
