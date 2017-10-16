@@ -1,17 +1,19 @@
-From: Jeff Layton <jlayton@poochiereds.net>
-Date: Mon, 16 Oct 2017 14:09:33 +0000
+From: "J . Bruce Fields" <bfields@fieldses.org>
+Date: Mon, 16 Oct 2017 18:06:42 +0000
 Subject: Re: [PATCH] sunrcp: make function _svc_create_xprt static
-Message-Id: <1508162973.5023.11.camel@poochiereds.net>
+Message-Id: <20171016180642.GA12608@fieldses.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171016134021.15702-1-colin.king@canonical.com>
 In-Reply-To: <20171016134021.15702-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, "J . Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-10-16 at 14:40 +0100, Colin King wrote:
+Thanks, applied for 4.15.--b.
+
+On Mon, Oct 16, 2017 at 02:40:21PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The function _svc_create_xprt is local to the source and
@@ -42,5 +44,5 @@ On Mon, 2017-10-16 at 14:40 +0100, Colin King wrote:
 >  {
 >  	struct svc_xprt_class *xcl;
 >  
-
-Reviewed-by: Jeff Layton <jlayton@poochiereds.net>
+> -- 
+> 2.14.1
