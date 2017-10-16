@@ -1,51 +1,55 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Tue, 31 Oct 2017 11:37:52 +0000
-Subject: Re: [PATCH][V2] net: ethernet: slicoss: remove redundant initialization of idx
-Message-Id: <66baa4b6-7588-501e-4ad7-e0617329ac4e@gmx.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 16 Oct 2017 19:04:51 +0000
+Subject: [PATCH 5/8] video: fbdev: au1200fb: Fix error handling path
+Message-Id: <1c406b36210dc5e6e4443d52a3cbc2307f7b706e.1508179264.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031100823.19733-1-colin.king@canonical.com>
-In-Reply-To: <20171031100823.19733-1-colin.king@canonical.com>
+References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 31.10.2017 11:08, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable idx is being initialized and later on over-written by
-> a new value in a do-loop without the initial value ever being
-> read. Hence the initializion is redundant and can be removed.
-> Cleans up clang warning:
-> 
-> drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
-> stored to 'idx' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/alacritech/slicoss.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
-> index 15a8096c60df..0b60921c392f 100644
-> --- a/drivers/net/ethernet/alacritech/slicoss.c
-> +++ b/drivers/net/ethernet/alacritech/slicoss.c
-> @@ -355,10 +355,10 @@ static void slic_xmit_complete(struct slic_device *sdev)
->  {
->  	struct slic_tx_queue *txq = &sdev->txq;
->  	struct net_device *dev = sdev->netdev;
-> -	unsigned int idx = txq->done_idx;
->  	struct slic_tx_buffer *buff;
->  	unsigned int frames = 0;
->  	unsigned int bytes = 0;
-> +	unsigned int idx;
->  
->  	/* Limit processing to SLIC_MAX_TX_COMPLETIONS frames to avoid that new
->  	 * completions during processing keeps the loop running endlessly.
-> 
+Rewrite the exit path based on 'au1200fb_drv_remove()'.
+We can safely iterate for all already handled planes. Even if not
+completely initialized, the functions that are called will silently accept
+the 'fb_info' structure that is passed.
 
-Acked-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+As soon as we find a NULL in the '_au1200fb_infos' array, we know that we
+have released all what we needed to release. So we can 'break'.
 
-Regards,
-Lino
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/video/fbdev/au1200fb.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index 0d8ed0ef9183..e531543bc707 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1760,11 +1760,19 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 	return 0;
+ 
+ failed:
+-	/* NOTE: This only does the current plane/window that failed; others are still active */
+-	if (fbi) {
++	for (plane = 0; plane < device_count; ++plane) {
++		fbi = _au1200fb_infos[plane];
++		if (!fbi)
++			break;
++
++		/* Clean up all probe data */
++		unregister_framebuffer(fbi);
+ 		if (fbi->cmap.len != 0)
+ 			fb_dealloc_cmap(&fbi->cmap);
+ 		kfree(fbi->pseudo_palette);
++
++		framebuffer_release(fbi);
++		_au1200fb_infos[plane] = NULL;
+ 	}
+ 	return ret;
+ }
+-- 
+2.11.0
+
