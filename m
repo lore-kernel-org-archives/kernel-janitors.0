@@ -1,41 +1,54 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 16 Oct 2017 10:24:02 +0000
-Subject: [PATCH] netfilter: ebtables: clean up initialization of buf
-Message-Id: <20171016102402.10358-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 16 Oct 2017 19:04:54 +0000
+Subject: [PATCH 8/8] video: fbdev: au1200fb: Style clean up
+Message-Id: <b794f519c83f40d08795b9745aeb311cfe649780.1508179264.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: b.zolnierkie@samsung.com, tj@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Style clean-up.
 
-buf is initialized to buf_start and then set on the next statement
-to buf_start + offsets[i].  Clean this up to just initialize buf
-to buf_start + offsets[i] to clean up the clang build warning:
-"Value stored to 'buf' during its initialization is never read"
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/bridge/netfilter/ebtables.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/fbdev/au1200fb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 3b3dcf719e07..37817d25b63d 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2112,9 +2112,8 @@ static int size_entry_mwt(struct ebt_entry *entry, const unsigned char *base,
- 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
- 		struct compat_ebt_entry_mwt *match32;
- 		unsigned int size;
--		char *buf = buf_start;
-+		char *buf = buf_start + offsets[i];
+diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
+index 687ea2a8f810..87d5a62bf6ca 100644
+--- a/drivers/video/fbdev/au1200fb.c
++++ b/drivers/video/fbdev/au1200fb.c
+@@ -1546,14 +1546,13 @@ static int au1200fb_init_fbinfo(struct au1200fb_device *fbdev)
+ 	}
  
--		buf = buf_start + offsets[i];
- 		if (offsets[i] > offsets[j])
- 			return -EINVAL;
+ 	fbi->pseudo_palette = kcalloc(16, sizeof(u32), GFP_KERNEL);
+-	if (!fbi->pseudo_palette) {
++	if (!fbi->pseudo_palette)
+ 		return -ENOMEM;
+-	}
  
+ 	ret = fb_alloc_cmap(&fbi->cmap, AU1200_LCD_NBR_PALETTE_ENTRIES, 0);
+ 	if (ret < 0) {
+ 		print_err("Fail to allocate colormap (%d entries)",
+-			   AU1200_LCD_NBR_PALETTE_ENTRIES);
++			  AU1200_LCD_NBR_PALETTE_ENTRIES);
+ 		return ret;
+ 	}
+ 
+@@ -1717,7 +1716,8 @@ static int au1200fb_drv_probe(struct platform_device *dev)
+ 		print_dbg("phys=0x%08x, size=%dK", fbdev->fb_phys, fbdev->fb_len / 1024);
+ 
+ 		/* Init FB data */
+-		if ((ret = au1200fb_init_fbinfo(fbdev)) < 0)
++		ret = au1200fb_init_fbinfo(fbdev);
++		if (ret < 0)
+ 			goto failed;
+ 
+ 		/* Register new framebuffer */
 -- 
-2.14.1
+2.11.0
 
