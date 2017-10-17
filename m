@@ -1,28 +1,25 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Thu, 05 Oct 2017 12:18:18 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 17 Oct 2017 02:41:20 +0000
 Subject: Re: [PATCH] scsi: aic7xxx: make a couple of functions static
-Message-Id: <20171005121818.onofbopdpx5ntlqr@linux-x5ow.site>
+Message-Id: <yq1shei1oof.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171005120153.32383-1-colin.king@canonical.com>
-In-Reply-To: <20171005120153.32383-1-colin.king@canonical.com>
+In-Reply-To: <20171005120153.32383-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 5 Oct 2017 13:01:53 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Colin King <colin.king@canonical.com>
 Cc: Hannes Reinecke <hare@suse.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Colin,
+
+> Functions ahc_devlimited_syncrate and ahc_linux_initialize_scsi_bus
+> are declared static in their prototypes but are missing in their
+> definitions, so add the missing static.
+
+Applied to 4.15/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
