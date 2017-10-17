@@ -1,33 +1,50 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Mon, 30 Oct 2017 13:26:16 +0000
-Subject: Re: [PATCH 2/5] wlcore: Delete an unnecessary check statement in wlcore_set_beacon_template()
-Message-Id: <CAGRGNgWFgg5oyRcgP6mp--oF6VPcD1k13SyKmmK3cc8KPC05BQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Oct 2017 12:32:17 +0000
+Subject: [PATCH 1/2 v2 net-next] thunderbolt: Fix a couple right shifting to zero bugs
+Message-Id: <20171017123217.p3ctmptbrm75ys46@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net> <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
-In-Reply-To: <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
+References: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
+In-Reply-To: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Andreas Noever <andreas.noever@gmail.com>
+Cc: Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 7:12 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 29 Oct 2017 19:45:07 +0100
->
-> A goto statement jumped to a target which followed a condition check
-> immediately without the specification of useful actions between.
-> Thus remove such unnecessary source code at the end of this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The problematic code looks like this:
 
-Looks good to me.
+	res_seq = res_hdr->xd_hdr.length_sn & TB_XDOMAIN_SN_MASK;
+	res_seq >>= TB_XDOMAIN_SN_SHIFT;
 
-Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+TB_XDOMAIN_SN_SHIFT is 27, and right shifting a u8 27 bits is always
+going to result in zero.  The fix is to declare these variables as u32.
 
--- 
-Julian Calaby
+Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I accidentally sent this through the wrong list, so I'm resending to
+    netdev.  Also Mika asked me to split it up because the Fixes tags
+    are different for these patches.
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
+index 138027537d29..ff8d91189e99 100644
+--- a/drivers/thunderbolt/xdomain.c
++++ b/drivers/thunderbolt/xdomain.c
+@@ -56,7 +56,7 @@ static bool tb_xdomain_match(const struct tb_cfg_request *req,
+ 	case TB_CFG_PKG_XDOMAIN_RESP: {
+ 		const struct tb_xdp_header *res_hdr = pkg->buffer;
+ 		const struct tb_xdp_header *req_hdr = req->request;
+-		u8 req_seq, res_seq;
++		u32 req_seq, res_seq;
+ 
+ 		if (pkg->frame.size < req->response_size / 4)
+ 			return false;
+@@ -476,7 +476,7 @@ static void tb_xdp_handle_request(struct work_struct *work)
+ 	struct tb_ctl *ctl = tb->ctl;
+ 	const uuid_t *uuid;
+ 	int ret = 0;
+-	u8 sequence;
++	u32 sequence;
+ 	u64 route;
+ 
+ 	route = ((u64)xhdr->route_hi << 32 | xhdr->route_lo) & ~BIT_ULL(63);
