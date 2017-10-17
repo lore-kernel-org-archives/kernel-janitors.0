@@ -1,31 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 31 Oct 2017 09:09:43 +0000
-Subject: Re: [PATCH] gpio-adnp: Use common error handling code in adnp_gpio_dbg_show()
-Message-Id: <CACRpkdaz3QLYmA4AkUUZ1Hr0un9a0bub1isJ24Nh_JkwR=W3Qg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 15:40:17 +0000
+Subject: [PATCH 3/3] powernv/pci: Improve a size determination in pnv_pci_init_ioda_phb()
+Message-Id: <03b68902-629e-65ab-a5e8-d90a3613f596@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
-In-Reply-To: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
+References: <549d0b6b-f875-c524-d867-742745117c1e@users.sourceforge.net>
+In-Reply-To: <549d0b6b-f875-c524-d867-742745117c1e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Russell Currey <ruscur@russell.cc>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Oct 22, 2017 at 8:27 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 17:18:10 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Oct 2017 20:21:55 +0200
->
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-That's a nice patch.
-Patch applied.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/platforms/powernv/pci-ioda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index 98d9435240f4..2febdf06a237 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -3802,7 +3802,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
+ 	phb_id = be64_to_cpup(prop64);
+ 	pr_debug("  PHB-ID  : 0x%016llx\n", phb_id);
+ 
+-	phb = memblock_virt_alloc(sizeof(struct pnv_phb), 0);
++	phb = memblock_virt_alloc(sizeof(*phb), 0);
+ 
+ 	/* Allocate PCI controller */
+ 	phb->hose = hose = pcibios_alloc_controller(np);
+-- 
+2.14.2
+
