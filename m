@@ -1,58 +1,46 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Tue, 17 Oct 2017 11:52:26 +0000
+From: Michael Ellerman <mpe@ellerman.id.au>
+Date: Tue, 17 Oct 2017 12:26:47 +0000
 Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-Message-Id: <1508241146.4234.16.camel@linux.vnet.ibm.com>
+Message-Id: <87tvyyhse0.fsf@concordia.ellerman.id.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
-         <20171017085124.pkrjzghcf5wmcydc@mwanda>
-         <alpine.DEB.2.20.1710171055100.5035@hadrien>
-         <20171017094434.csarc5fw5d32u64w@mwanda>
-         <alpine.DEB.2.20.1710171211210.5035@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1710171211210.5035@hadrien>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net> <20171016183139.otyh3m5c5yurtmow@linux.intel.com> <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com> <20171017085124.pkrjzghcf5wmcydc@mwanda> <alpine.DEB.2.20.1710171055100.5035@hadrien> <20171017094434.csarc5fw5d32u64w@mwanda>
+In-Reply-To: <20171017094434.csarc5fw5d32u64w@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?utf-8?Q?H=C3=BCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-On Tue, 2017-10-17 at 12:11 +0200, Julia Lawall wrote:
->=20
-> On Tue, 17 Oct 2017, Dan Carpenter wrote:
->=20
-> > On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
-> > >
-> > >
-> > > On Tue, 17 Oct 2017, Dan Carpenter wrote:
-> > >
-> > > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
-> > > > >
-> > > > > A minor complaint: all commits are missing "Fixes:" tag.
-> > > > >
-> > > >
-> > > > Fixes is only for bug fixes.  These don't fix any bugs.
-> > >
-> > > 0-day seems to put Fixes for everything.  Should they be removed when=
- the
-> > > old code is undesirable but doesn't actually cause a crash, eg out of=
- date
-> > > API.
-> >
-> > Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
->=20
-> OK, I will remove them from the patches that go through me where they
-> don't seem appropriate.
+> On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
+>> 
+>> 
+>> On Tue, 17 Oct 2017, Dan Carpenter wrote:
+>> 
+>> > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
+>> > >
+>> > > A minor complaint: all commits are missing "Fixes:" tag.
+>> > >
+>> >
+>> > Fixes is only for bug fixes.  These don't fix any bugs.
+>> 
+>> 0-day seems to put Fixes for everything.  Should they be removed when the
+>> old code is undesirable but doesn't actually cause a crash, eg out of date
+>> API.
+>
+> Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
 
-The "Fixes" tag is an indication that the patch should be backported.
-The requirements for what should be backported are pretty stringent.=C2=A0
+I try to use the criteria of "if someone had backported commit A, would
+they also want commit B" (where B Fixes: A).
 
-Mimi
+So it's a bit broader than just "A had a *bug*" and this is the fix.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+That's obviously still a bit of a slippery slope, but somewhat helpful I
+think. eg, pretty much no one is interested in backporting spelling
+fixes, so those aren't Fixes.
+
+And generally people aren't interested in backporting commits like these
+ones that just update coding style.
+
+cheers
