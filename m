@@ -1,42 +1,37 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 20 Oct 2017 19:33:31 +0000
-Subject: [PATCH] umh: Optimize 'proc_cap_handler()'
-Message-Id: <20171020193331.7233-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Oct 2017 12:33:01 +0000
+Subject: [PATCH 2/2 net-next] thunderbolt: Right shifting to zero bug in tbnet_handle_packet()
+Message-Id: <20171017123301.z6heqexdlo6lc52b@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
+In-Reply-To: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mcgrof@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Jamet <michael.jamet@intel.com>, Amir Levy <amir.jer.levy@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If 'write' is 0, we can avoid a call to spin_lock/spin_unlock.
+There is a problem when we do:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- kernel/umh.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+	sequence = pkg->hdr.length_sn & TBIP_HDR_SN_MASK;
+	sequence >>= TBIP_HDR_SN_SHIFT;
 
-diff --git a/kernel/umh.c b/kernel/umh.c
-index 6ff9905250ff..18e5fa4b0e71 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -537,14 +537,14 @@ static int proc_cap_handler(struct ctl_table *table, int write,
- 	/*
- 	 * Drop everything not in the new_cap (but don't add things)
- 	 */
--	spin_lock(&umh_sysctl_lock);
- 	if (write) {
-+		spin_lock(&umh_sysctl_lock);
- 		if (table->data = CAP_BSET)
- 			usermodehelper_bset = cap_intersect(usermodehelper_bset, new_cap);
- 		if (table->data = CAP_PI)
- 			usermodehelper_inheritable = cap_intersect(usermodehelper_inheritable, new_cap);
-+		spin_unlock(&umh_sysctl_lock);
- 	}
--	spin_unlock(&umh_sysctl_lock);
+TBIP_HDR_SN_SHIFT is 27, and right shifting a u8 27 bits is always
+going to result in zero.  The fix is to declare these variables as u32.
+
+Fixes: e69b6c02b4c3 ("net: Add support for networking over Thunderbolt cable")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/thunderbolt.c b/drivers/net/thunderbolt.c
+index 1a7bc0bf4598..435854688a7a 100644
+--- a/drivers/net/thunderbolt.c
++++ b/drivers/net/thunderbolt.c
+@@ -394,7 +394,7 @@ static int tbnet_handle_packet(const void *buf, size_t size, void *data)
+ 	struct tbnet *net = data;
+ 	u32 command_id;
+ 	int ret = 0;
+-	u8 sequence;
++	u32 sequence;
+ 	u64 route;
  
- 	return 0;
- }
--- 
-2.14.1
-
+ 	/* Make sure the packet is for us */
