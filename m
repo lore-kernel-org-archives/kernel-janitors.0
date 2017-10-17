@@ -1,51 +1,42 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 27 Oct 2017 22:48:10 +0000
-Subject: Re: [PATCH] input: mxs-lradc: remove redundant assignment to pointer input
-Message-Id: <20171027224810.qd7pjnmhjlnqblkk@dtor-ws>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 17 Oct 2017 14:31:51 +0000
+Subject: [PATCH] HID: hid-logitech: remove redundant assignment to pointer value
+Message-Id: <20171017143151.23056-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171027155230.12887-1-colin.king@canonical.com>
-In-Reply-To: <20171027155230.12887-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 27, 2017 at 04:52:30PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer 'input' is being initialized with ts->ts_input and this
-> value is not being read as it is updated a few lines later with the
-> return value from the call to devm_input_allocate_device. Remove the
-> redundant initialization assignment.  Cleans up clang warning:
-> 
-> drivers/input/touchscreen/mxs-lradc-ts.c:587:20: warning: Value Xi
-> stored to 'input' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+The pointer value is being assigned a value and this is never read,
+and later on it is being assigned a new value.  This the first
+assignment is redundant and can be removed and hence also the variables
+report and report_list.  Cleans up the clang warning: Value stored to
+'value' during its initialization is never read
 
-> ---
->  drivers/input/touchscreen/mxs-lradc-ts.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/mxs-lradc-ts.c b/drivers/input/touchscreen/mxs-lradc-ts.c
-> index 3707e927f770..c850b517854e 100644
-> --- a/drivers/input/touchscreen/mxs-lradc-ts.c
-> +++ b/drivers/input/touchscreen/mxs-lradc-ts.c
-> @@ -584,7 +584,7 @@ static void mxs_lradc_ts_hw_init(struct mxs_lradc_ts *ts)
->  
->  static int mxs_lradc_ts_register(struct mxs_lradc_ts *ts)
->  {
-> -	struct input_dev *input = ts->ts_input;
-> +	struct input_dev *input;
->  	struct device *dev = ts->dev;
->  
->  	input = devm_input_allocate_device(dev);
-> -- 
-> 2.14.1
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-lg4ff.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
+index 1fc12e357035..512d67e1aae3 100644
+--- a/drivers/hid/hid-lg4ff.c
++++ b/drivers/hid/hid-lg4ff.c
+@@ -474,9 +474,7 @@ static int lg4ff_play(struct input_dev *dev, void *data, struct ff_effect *effec
+ static void lg4ff_set_autocenter_default(struct input_dev *dev, u16 magnitude)
+ {
+ 	struct hid_device *hid = input_get_drvdata(dev);
+-	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
+-	struct hid_report *report = list_entry(report_list->next, struct hid_report, list);
+-	s32 *value = report->field[0]->value;
++	s32 *value;
+ 	u32 expand_a, expand_b;
+ 	struct lg4ff_device_entry *entry;
+ 	struct lg_drv_data *drv_data;
 -- 
-Dmitry
+2.14.1
+
