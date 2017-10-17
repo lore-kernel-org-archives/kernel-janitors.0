@@ -1,35 +1,60 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Mon, 09 Oct 2017 16:13:11 +0000
-Subject: Re: [PATCH] IB/rxe: check for allocation failure on elem
-Message-Id: <1507565591.46071.32.camel@redhat.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Tue, 17 Oct 2017 21:50:19 +0000
+Subject: Re: [PATCH] i2c: designware: make const array supported_speeds static to shink object code size
+Message-Id: <20171017215019.2xvl3btrxx57ckxd@ninjato>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="rtznlqrhghmoj6nw"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170908143745.2445-1-colin.king@canonical.com>
-         <20170909125607.GA22465@mtr-leonro.local>
-         <20170912144829.GR3405@mtr-leonro.local>
-         <1507554995.46071.25.camel@redhat.com>
-         <a43bfb4f-e7c3-f6be-8946-952fb2d4af14@canonical.com>
-In-Reply-To: <a43bfb4f-e7c3-f6be-8946-952fb2d4af14@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Moni Shoua <monis@mellanox.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20170921223007.21081-1-colin.king@canonical.com>
+In-Reply-To: <20170921223007.21081-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2017-10-09 at 14:18 +0100, Colin Ian King wrote:
-> On 09/10/17 14:16, Doug Ledford wrote:
-> > 
-> > 
-> > Since Colin is non-responsive in this thread, I went ahead and took
-> > his
-> > patch, but then applied a fixup of my own:
-> 
-> Sorry, I somehow missed that email. Thanks for following this up.
 
-No worries.  You're normally responsive, so that's why I said "in this
-thread" and just took care of.
+--rtznlqrhghmoj6nw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+On Thu, Sep 21, 2017 at 11:30:07PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Don't populate const array supported_speeds on the stack, instead
+> make it static.  Makes the object code smaller by 150 bytes:
+>=20
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    8474	   1440	      0	   9914	   26ba	i2c-designware-platdrv.o
+>=20
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    8324	   1440	      0	   9764	   2624	i2c-designware-platdrv.o
+>=20
+> (gcc version 7.2.0 x86_64)
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+Applied to for-next, thanks!
+
+
+--rtznlqrhghmoj6nw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnmexoACgkQFA3kzBSg
+KbZz9w/9GIw0JJv/S3R+mnvHjC4bEa3HdmgW6gjtXikM8nIOzE4qYRz4ru9sFZeg
+G9pqzJxmvi/m/m3yz2RINp6L3BrMeWSLg9pz+HQdXJbBRetShZHcfxrrS21kjEmW
+OGjUI0CfunYR5V+DA4Ucrm0kAXUPi8IfFIwsuFK3MLZJq/Bt4PKwcvs8gKek7so0
+dDLgFCi85uN8daLMdU8Ed9LqhoJBkElNulkY7Hqlk3Cy5Vh1OKDeqBmOqW0a51Dl
+Hb6X/K6UhY7IWyVxA+BCG2wTSeMnMt7wVlfpz+utQzKiavD1Yi3LOlBbNmQQHcrZ
+p1yHccaPAF1DUoxHcTcxKMn7Zg7azjCUyMI453wJA+Mz+4o+j01p30u0CfTBuDy/
+FrWv6H9V7riJK0gBkbDipPQo0YxieL67stEE/617qsPW50QfDtHfQDuHQeWa/S5J
+wzVm5WfQ+XUiqwQOh3WIe3QwVP4zHGwDRROk7vye4TIp00zqvZ9s+3g6xrjZ/ogl
+fHYcnZmoi1xPp4inkx2WXiXuryzeyMMSbJV2YAaMqGMnVSOZwgNm6J2zjiFt5Biv
+t3Ye7KFvt/CTR2kCewWJWuXjp/OWv0na16R5AlQ5Vys11abhp9aQd7Vn9KOv+xeZ
+94uTu25xz5UFG1VB7Qi0joEErwYMLN92m+/Nay7AeZ5mSLsSz6U=
+=HL32
+-----END PGP SIGNATURE-----
+
+--rtznlqrhghmoj6nw--
