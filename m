@@ -1,65 +1,28 @@
-From: "Wang, Zhi A" <zhi.a.wang@intel.com>
-Date: Tue, 24 Oct 2017 18:56:27 +0000
-Subject: RE: [PATCH] drm/i915/gvt: Use common error handling code in shadow_workload_ring_buffer()
-Message-Id: <F3B0350DF4CB6849A642218320DE483D7D669849@SHSMSX104.ccr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 18:54:12 +0000
+Subject: [PATCH 0/2] PowerPC-PS3: Adjustments for three function implementations
+Message-Id: <36a8ba41-7f1e-31f8-5d32-19e04393b181@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
-In-Reply-To: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "intel-gvt-dev@lists.freedesktop.org" <intel-gvt-dev@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-VGhhbmtzIGZvciB0aGUgcGF0Y2ghIEFjdHVhbGx5IEkgd291bGQgcHJlZmVyIHRoYXQgd2UgY2Fu
-IGhhdmUgZGlmZmVyZW50IGVycm9yIG1lc3NhZ2VzIGhlcmUuIEUuZy4gbGlrZSBjb3B5X2dtYV90
-b19odmEgZmFpbCBpbiB3aGljaCBwYXJ0IG9mIHJpbmcgYnVmZmVyLiBPciB3ZSBjYW4gZGlyZWN0
-bHkgcmVtb3ZlIHRoZSBlcnJvciBtZXNzYWdlIHNpbmNlIHVzdWFsbHkgaWYgaXQgZmFpbHMgaXQg
-bWVhbnMgYSBidWcgb2YgTVBUIG1vZHVsZSB3aGVuIEdWVC1nIGlzIGFjY2Vzc2luZyB0aGUgZ3Vl
-c3QgbWVtb3J5IGJ5IFhlbi9LVk0gZnVuY3Rpb25zIGFuZCBpdCBzaG91bGRu4oCZdCBoYXBwZW4g
-dW5sZXNzIE1QVCBtb2R1bGVzIGhhcyBhIGJ1ZywgOiggc28gSSB3aXNoIHRoZSBlcnJvciBtZXNz
-YWdlIGNhbiBiZSByZXBvcnRlZCBpbiBNUFQgbW9kdWxlLiA6KQ0KDQpUaGFua3MgZm9yIHRoZSBw
-YXRjaC4gIDopDQoNClRoYW5rcywNClpoaS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-CkZyb206IFNGIE1hcmt1cyBFbGZyaW5nIFttYWlsdG86ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3Jn
-ZS5uZXRdIA0KU2VudDogVHVlc2RheSwgT2N0b2JlciAyNCwgMjAxNyAzOjI2IFBNDQpUbzogZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgaW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZzsgaW50ZWwtZ3Z0LWRldkBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IERhdmlkIEFpcmxpZSA8
-YWlybGllZEBsaW51eC5pZT47IEphbmkgTmlrdWxhIDxqYW5pLm5pa3VsYUBsaW51eC5pbnRlbC5j
-b20+OyBKb29uYXMgTGFodGluZW4gPGpvb25hcy5sYWh0aW5lbkBsaW51eC5pbnRlbC5jb20+OyBW
-aXZpLCBSb2RyaWdvIDxyb2RyaWdvLnZpdmlAaW50ZWwuY29tPjsgWmhlbnl1IFdhbmcgPHpoZW55
-dXdAbGludXguaW50ZWwuY29tPjsgV2FuZywgWmhpIEEgPHpoaS5hLndhbmdAaW50ZWwuY29tPg0K
-Q2M6IExLTUwgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBrZXJuZWwtamFuaXRvcnNA
-dmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBbUEFUQ0hdIGRybS9pOTE1L2d2dDogVXNlIGNvbW1v
-biBlcnJvciBoYW5kbGluZyBjb2RlIGluIHNoYWRvd193b3JrbG9hZF9yaW5nX2J1ZmZlcigpDQoN
-CkZyb206IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCkRh
-dGU6IFR1ZSwgMjQgT2N0IDIwMTcgMTQ6MjA6MDYgKzAyMDANCg0KQWRkIGEganVtcCB0YXJnZXQg
-c28gdGhhdCBhIGNhbGwgb2YgdGhlIGZ1bmN0aW9uICJndnRfdmdwdV9lcnIiIGlzIHN0b3JlZCBv
-bmx5IG9uY2UgYXQgdGhlIGVuZCBvZiB0aGlzIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uLg0KUmVw
-bGFjZSB0d28gY2FsbHMgYnkgZ290byBzdGF0ZW1lbnRzLg0KDQpUaGlzIGlzc3VlIHdhcyBkZXRl
-Y3RlZCBieSB1c2luZyB0aGUgQ29jY2luZWxsZSBzb2Z0d2FyZS4NCg0KU2lnbmVkLW9mZi1ieTog
-TWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KLS0tDQogZHJp
-dmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJzZXIuYyB8IDE4ICsrKysrKysrKystLS0tLS0t
-LQ0KIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KDQpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJzZXIuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9pOTE1L2d2dC9jbWRfcGFyc2VyLmMNCmluZGV4IDJjMGNjYmI4MTdkYy4uY2Fh
-MTgxMzgwOTU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJz
-ZXIuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJzZXIuYw0KQEAgLTI2
-NDAsMTAgKzI2NDAsOSBAQCBzdGF0aWMgaW50IHNoYWRvd193b3JrbG9hZF9yaW5nX2J1ZmZlcihz
-dHJ1Y3QgaW50ZWxfdmdwdV93b3JrbG9hZCAqd29ya2xvYWQpDQogCWlmIChnbWFfaGVhZCA+IGdt
-YV90YWlsKSB7DQogCQlyZXQgPSBjb3B5X2dtYV90b19odmEodmdwdSwgdmdwdS0+Z3R0LmdndHRf
-bW0sDQogCQkJCSAgICAgIGdtYV9oZWFkLCBnbWFfdG9wLCBzaGFkb3dfcmluZ19idWZmZXJfdmEp
-Ow0KLQkJaWYgKHJldCA8IDApIHsNCi0JCQlndnRfdmdwdV9lcnIoImZhaWwgdG8gY29weSBndWVz
-dCByaW5nIGJ1ZmZlclxuIik7DQotCQkJcmV0dXJuIHJldDsNCi0JCX0NCisJCWlmIChyZXQgPCAw
-KQ0KKwkJCWdvdG8gcmVwb3J0X2ZhaWx1cmU7DQorDQogCQlzaGFkb3dfcmluZ19idWZmZXJfdmEg
-Kz0gcmV0Ow0KIAkJZ21hX2hlYWQgPSB3b3JrbG9hZC0+cmJfc3RhcnQ7DQogCX0NCkBAIC0yNjUx
-LDExICsyNjUwLDE0IEBAIHN0YXRpYyBpbnQgc2hhZG93X3dvcmtsb2FkX3JpbmdfYnVmZmVyKHN0
-cnVjdCBpbnRlbF92Z3B1X3dvcmtsb2FkICp3b3JrbG9hZCkNCiAJLyogY29weSBoZWFkIG9yIHN0
-YXJ0IDwtPiB0YWlsICovDQogCXJldCA9IGNvcHlfZ21hX3RvX2h2YSh2Z3B1LCB2Z3B1LT5ndHQu
-Z2d0dF9tbSwgZ21hX2hlYWQsIGdtYV90YWlsLA0KIAkJCQlzaGFkb3dfcmluZ19idWZmZXJfdmEp
-Ow0KLQlpZiAocmV0IDwgMCkgew0KLQkJZ3Z0X3ZncHVfZXJyKCJmYWlsIHRvIGNvcHkgZ3Vlc3Qg
-cmluZyBidWZmZXJcbiIpOw0KLQkJcmV0dXJuIHJldDsNCi0JfQ0KKwlpZiAocmV0IDwgMCkNCisJ
-CWdvdG8gcmVwb3J0X2ZhaWx1cmU7DQorDQogCXJldHVybiAwOw0KKw0KK3JlcG9ydF9mYWlsdXJl
-Og0KKwlndnRfdmdwdV9lcnIoImZhaWwgdG8gY29weSBndWVzdCByaW5nIGJ1ZmZlclxuIik7DQor
-CXJldHVybiByZXQ7DQogfQ0KIA0KIGludCBpbnRlbF9ndnRfc2Nhbl9hbmRfc2hhZG93X3Jpbmdi
-dWZmZXIoc3RydWN0IGludGVsX3ZncHVfd29ya2xvYWQgKndvcmtsb2FkKQ0KLS0NCjIuMTQuMw0K
-DQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 20:22:44 +0200
+
+Two update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in update_flash_db()
+  Improve a size determination in two functions
+
+ arch/powerpc/platforms/ps3/mm.c      | 6 ++----
+ arch/powerpc/platforms/ps3/os-area.c | 4 +---
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+-- 
+2.14.2
+
