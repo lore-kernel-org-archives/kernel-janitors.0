@@ -1,63 +1,75 @@
-From: <Alexander.Steffen@infineon.com>
-Date: Tue, 17 Oct 2017 15:22:22 +0000
-Subject: RE: [PATCH 3/4] char/tpm: Improve a size determination in nine functions
-Message-Id: <b22e3c64fde74876acacdee701a46223@infineon.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 17 Oct 2017 15:29:20 +0000
+Subject: Re: [PATCH 3/4] char/tpm: Improve a size determination in nine functions
+Message-Id: <alpine.DEB.2.20.1710171725080.5035@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-103149562-1508254160=:5035"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-         <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
-         <1508238182.16112.475.camel@linux.intel.com>
-         <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <1508244757.4234.60.camel@linux.vnet.ibm.com>
-In-Reply-To: <1508244757.4234.60.camel@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: zohar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, andriy.shevchenko@linux.intel.com, elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jarkko.sakkinen@linux.intel.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, stefanb@linux.vnet.ibm.com
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>         <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>         <1508238182.16112.475.camel@linux.intel.com>         <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>      
+   <1508244757.4234.60.camel@linux.vnet.ibm.com>         <alpine.DEB.2.20.1710171456360.5035@hadrien> <1508253453.4234.81.camel@linux.vnet.ibm.com>
+In-Reply-To: <1508253453.4234.81.camel@linux.vnet.ibm.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Alexander.Steffen@infineon.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, andriy.shevchenko@linux.intel.com, elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jarkko.sakkinen@linux.intel.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-PiBPbiBUdWUsIDIwMTctMTAtMTcgYXQgMTE6NTAgKzAwMDAsIEFsZXhhbmRlci5TdGVmZmVuQGlu
-ZmluZW9uLmNvbQ0KPiB3cm90ZToNCj4gPiA+ID4gUmVwbGFjZSB0aGUgc3BlY2lmaWNhdGlvbiBv
-ZiBkYXRhIHN0cnVjdHVyZXMgYnkgcG9pbnRlciBkZXJlZmVyZW5jZXMNCj4gPiA+ID4gYXMgdGhl
-IHBhcmFtZXRlciBmb3IgdGhlIG9wZXJhdG9yICJzaXplb2YiIHRvIG1ha2UgdGhlIGNvcnJlc3Bv
-bmRpbmcNCj4gPiA+ID4gc2l6ZQ0KPiA+ID4gPiBkZXRlcm1pbmF0aW9uIGEgYml0IHNhZmVyIGFj
-Y29yZGluZyB0byB0aGUgTGludXggY29kaW5nIHN0eWxlDQo+ID4gPiA+IGNvbnZlbnRpb24uDQo+
-ID4gPg0KPiA+ID4NCj4gPiA+IFRoaXMgcGF0Y2ggZG9lcyBvbmUgc3R5bGUgaW4gZmF2b3Igb2Yg
-dGhlIG90aGVyLg0KPiA+DQo+ID4gSSBhY3R1YWxseSBwcmVmZXIgdGhhdCBzdHlsZSwgc28gSSdk
-IHdlbGNvbWUgdGhpcyBjaGFuZ2UgOikNCj4gDQo+IFN0eWxlIGNoYW5nZXMgc2hvdWxkIGJlIHJl
-dmlld2VkIGFuZCBkb2N1bWVudGVkLCBsaWtlIGFueSBvdGhlciBjb2RlDQo+IGNoYW5nZSwgYW5k
-IGFkZGVkIHRvIERvY3VtZW50YXRpb24vcHJvY2Vzcy9jb2Rpbmctc3R5bGUucnN0IG9yIGFuDQo+
-IGVxdWl2YWxlbnQgZmlsZS4NCj4gDQo+ID4gPiBBdCB0aGUgZW5kIGl0J3MgSmFya2tvJ3MgY2Fs
-bCwgdGhvdWdoIEkgd291bGQgTkFLIHRoaXMgYXMgSSB0aGluayBzb21lDQo+ID4gPiBvbmUgYWxy
-ZWFkeSB0b2xkIHRoaXMgdG8geW91IGZvciBzb21lIG90aGVyIHNpbWlsYXIgcGF0Y2goZXMpLg0K
-PiA+ID4NCj4gPiA+DQo+ID4gPiBJIGV2ZW4gd291bGQgc3VnZ2VzdCB0byBzdG9wIGRvaW5nIHRo
-aXMgbm9pc3kgc3R1ZmYsIHdoaWNoIGtlZXBzIHBlb3BsZQ0KPiA+ID4gYnVzeSBmb3Igbm90aGlu
-Zy4NCj4gPg0KPiA+IENsZWFuaW5nIHVwIG9sZCBjb2RlIGlzIGFsc28gd29ydGggc29tZXRoaW5n
-LCBldmVuIGlmIGRvZXMgbm90DQo+ID4gY2hhbmdlIG9uZSBiaXQgaW4gdGhlIGFzc2VtYmx5IG91
-dHB1dCBpbiB0aGUgZW5kLi4uDQo+IA0KPiBXb3csIHlvdSdyZSBvcGVuaW5nIHRoZSBkb29yIHJl
-YWxseSB3aWRlIGZvciBhbGwgc29ydHMgb2YgdHJpdmlhbA0KPiBjaGFuZ2VzISDCoEhvcGUgeW91
-IGhhdmUgdGhlIHRpbWUgYW5kIGluY2xpbmF0aW9uIHRvIHJldmlldyBhbmQgY29tbWVudA0KPiBv
-biBhbGwgb2YgdGhlbS4gwqBJIGNlcnRhaW5seSBkb24ndC4NCg0KV2VsbCwgaXNuJ3QgdGhlIHBv
-aW50IG9mIHRyaXZpYWwgY2hhbmdlcyB0aGF0IHRoZXkgYXJlIHRyaXZpYWwgdG8gcmV2aWV3PyA6
-KSBGb3IgdGhpbmdzIGxpa2UgdGhhdCB0aGVyZSBpcyBwcm9iYWJseSBub3QgZXZlbiBhIG5lZWQg
-dG8gcnVuIGEgdGVzdCwgdGhvdWdoIHdpdGggc3VmZmljaWVudCBhdXRvbWF0aW9uIHRoYXQgc2hv
-dWxkIG5vdCBiZSBhIHByb2JsZW0gZWl0aGVyLg0KDQo+IFRoZXJlIGlzIGEgbWFqb3IgZGlmZmVy
-ZW5jZSBiZXR3ZWVuIGFkZGluZyB0aGVzZSBzb3J0cyBvZiBjaGVja3MgdG8NCj4gdGhlIHRvb2xz
-IGluIHRoZSBzY3JpcHRzIGRpcmVjdG9yeSBvciBldmVuIHRvIHRoZSB6ZXJvIGRheSBib3RzIHRo
-YXQNCj4gY2F0Y2ggZGlmZmVyZW50IHNvcnRzIG9mIGVycm9ycywgQkVGT1JFIGNvZGUgaXMgdXBz
-dHJlYW1lZCwgYW5kDQo+IHBhdGNoZXMgbGlrZSB0aGVzZSwgYWZ0ZXIgdGhlIGZhY3QuDQoNCkNh
-dGNoaW5nIHRob3NlIHRoaW5ncyBlYXJseSBpbiB0aGUgcHJvY2VzcyBpcyBjZXJ0YWlubHkgcHJl
-ZmVyYWJsZS4gQnV0IGF0IHNvbWUgcG9pbnQgeW91IG5lZWQgdG8gZml4IHRoZSBleGlzdGluZyBj
-b2RlLCBvciB5b3UnbGwgZW5kIHVwIHdpdGggYSBtYXNodXAgb2YgZGlmZmVyZW50IHN0eWxlcywg
-anVzdCBiZWNhdXNlIHlvdSBkaWQgbm90IHdhbnQgdG8gdG91Y2ggb2xkIGNvZGUuDQoNCj4gQWZ0
-ZXIgdGhlIGNvZGUgaGFzIGJlZW4gdXBzdHJlYW1lZCwgaXQgaXMgYSBsb3QgbW9yZSBkaWZmaWN1
-bHQgdG8NCj4ganVzdGlmeSBjaGFuZ2VzIGxpa2UgdGhpcy7CoMKgSXQgaW1wYWN0cyBib3RoIGNv
-ZGUgdGhhdCBpcyBiZWluZw0KPiBkZXZlbG9wZWQgQU5EIGJhY2twb3J0aW5nIGJ1ZyBmaXhlcy4N
-Cg0KQmFja3BvcnRpbmcgY291bGQgYmUgYW4gYXJndW1lbnQsIGJ1dCBldmVuIHRoYXQgc2hvdWxk
-IG5vdCBiZSBhbGxvd2VkIHRvIGJsb2NrIGltcHJvdmVtZW50cyBpbmRlZmluaXRlbHkuIEknZCBw
-cmVmZXIgYSB3b3JsZCBpbiB3aGljaCB0aGUgY3VycmVudCBjb2RlIGlzIG5pY2UgYW5kIGNsZWFu
-IGFuZCBlYXN5IHRvIG1haW50YWluLCB0byBhIHdvcmxkIHdoZXJlIHdlIG5ldmVyIHRvdWNoIG9s
-ZCBjb2RlIHVubGVzcyBpdCBpcyBwcm92ZW4gdG8gYmUgd3JvbmcuDQoNCkJ1dCBsb29raW5nIGF0
-IHRoZSBjb2RlIGluIHF1ZXN0aW9uLCBJIGNhbm5vdCBzZWUgaG93IHRoaXMgc2hvdWxkIGV2ZXIg
-YmUgYSBzZXJpb3VzIHByb2JsZW0uIEV2ZW4gd2hlbiBiYWNrcG9ydGluZyBhIGNoYW5nZSB0YWtl
-cyBub3cgdGVuIG1pbnV0ZXMgaW5zdGVhZCBvZiBmaXZlLCB3aGljaCBtZWFucyBpdCBpcyB0d2lj
-ZSBhcyBoYXJkLCBpdCBpcyBzdGlsbCBub3QgZGlmZmljdWx0Lg0KDQpBbGV4YW5kZXINCg=
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-103149562-1508254160=:5035
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+
+
+On Tue, 17 Oct 2017, Mimi Zohar wrote:
+
+> On Tue, 2017-10-17 at 14:58 +0200, Julia Lawall wrote:
+> >
+> > On Tue, 17 Oct 2017, Mimi Zohar wrote:
+> >
+> > > On Tue, 2017-10-17 at 11:50 +0000, Alexander.Steffen@infineon.com
+> > > wrote:
+> > > > > > Replace the specification of data structures by pointer dereferences
+> > > > > > as the parameter for the operator "sizeof" to make the corresponding
+> > > > > > size
+> > > > > > determination a bit safer according to the Linux coding style
+> > > > > > convention.
+> > > > >
+> > > > >
+> > > > > This patch does one style in favor of the other.
+> > > >
+> > > > I actually prefer that style, so I'd welcome this change :)
+> > >
+> > > Style changes should be reviewed and documented, like any other code
+> > > change, and added to Documentation/process/coding-style.rst or an
+> > > equivalent file.
+> >
+> > Actually, it has been there for many years:
+> >
+> > 14) Allocating memory
+> > ---------------------
+> > ...
+> > The preferred form for passing a size of a struct is the following:
+> >
+> > .. code-block:: c
+> >
+> > 	p = kmalloc(sizeof(*p), ...);
+> >
+> > The alternative form where struct name is spelled out hurts readability and
+> > introduces an opportunity for a bug when the pointer variable type is changed
+> > but the corresponding sizeof that is passed to a memory allocator is not.
+>
+> True, thanks for the reminder.  Is this common in new code?  Is there
+> a script/ or some other automated way of catching this usage before
+> patches are upstreamed?
+>
+> Just as you're doing here, the patch description should reference this
+> in the patch description.
+
+The comment in the documentation seems have been there since Linux 2.6.14,
+ie 2005.  The fact that a lot of code still doesn't use that style, 12
+years later, suggests that actually it is not preferred, or not preferred
+by everyone.  Perhaps the paragraph in coding style should just be
+dropped.
+
+julia
+--8323329-103149562-1508254160=:5035--
