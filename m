@@ -1,62 +1,53 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 17 Oct 2017 10:35:19 +0000
-Subject: Re: [PATCH 5/8] video: fbdev: au1200fb: Fix error handling path
-Message-Id: <59E5DCE7.202@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Oct 2017 18:41:04 +0000
+Subject: Re: char/tpm: Improve a size determination in nine functions
+Message-Id: <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr> <1c406b36210dc5e6e4443d52a3cbc2307f7b706e.1508179264.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1c406b36210dc5e6e4443d52a3cbc2307f7b706e.1508179264.git.christophe.jaillet@wanadoo.fr>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
+ <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+ <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+In-Reply-To: <1508253453.4234.81.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: b.zolnierkie@samsung.com, tj@kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-
-
-Am 16.10.2017 21:04, schrieb Christophe JAILLET:
-> Rewrite the exit path based on 'au1200fb_drv_remove()'.
-> We can safely iterate for all already handled planes. Even if not
-> completely initialized, the functions that are called will silently accept
-> the 'fb_info' structure that is passed.
+>> 	p = kmalloc(sizeof(*p), ...);
+>>
+>> The alternative form where struct name is spelled out hurts readability and
+>> introduces an opportunity for a bug when the pointer variable type is changed
+>> but the corresponding sizeof that is passed to a memory allocator is not.
 > 
-> As soon as we find a NULL in the '_au1200fb_infos' array, we know that we
-> have released all what we needed to release. So we can 'break'.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/video/fbdev/au1200fb.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
-> index 0d8ed0ef9183..e531543bc707 100644
-> --- a/drivers/video/fbdev/au1200fb.c
-> +++ b/drivers/video/fbdev/au1200fb.c
-> @@ -1760,11 +1760,19 @@ static int au1200fb_drv_probe(struct platform_device *dev)
->  	return 0;
->  
->  failed:
-> -	/* NOTE: This only does the current plane/window that failed; others are still active */
-> -	if (fbi) {
-> +	for (plane = 0; plane < device_count; ++plane) {
-> +		fbi = _au1200fb_infos[plane];
-> +		if (!fbi)
-> +			break;
-> +
-> +		/* Clean up all probe data */
-> +		unregister_framebuffer(fbi);
->  		if (fbi->cmap.len != 0)
->  			fb_dealloc_cmap(&fbi->cmap);
+> True, thanks for the reminder.
 
-While you are here ... fb_dealloc_cmap() is a collection of free's()
-the check for fbi->cmap.len can be omitted (or moved to fb_dealloc_cmap).
+Will it trigger further software development considerations (besides my contributions)?
 
-re,
- wh
 
->  		kfree(fbi->pseudo_palette);
-> +
-> +		framebuffer_release(fbi);
-> +		_au1200fb_infos[plane] = NULL;
->  	}
->  	return ret;
->  }
+> Is this common in new code?
+
+Do you start an official survey here?
+
+
+> Is there a script/ or some other automated way of catching this usage
+
+Yes. - I am using an approach for the semantic patch language.   ;-)
+
+
+> before patches are upstreamed?
+
+I imagine that a corresponding source code analysis variant could be applied
+in more cases if sufficient acceptance could be achieved.
+
+
+> Just as you're doing here, the patch description should reference this
+> in the patch description.
+
+Do you find my wording “This issue was detected by using the Coccinelle software.” insufficient?
+
+Regards,
+Markus
