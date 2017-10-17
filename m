@@ -1,56 +1,80 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Mon, 16 Oct 2017 17:32:25 +0000
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Tue, 17 Oct 2017 05:49:58 +0000
 Subject: Re: [PATCH] can: check for null sk before deferencing it via the call to sock_net
-Message-Id: <c50ebff0-233c-7dcf-1b80-19ac0369803a@hartkopp.net>
+Message-Id: <8fdd94bd-da4e-784e-3832-6c1bb5e1f432@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="kLkPTC453FQOl0tOSLf9lQ8J0w18CI4wj"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170908150235.2931-1-colin.king@canonical.com>
- <f5ce1047-eb37-151a-c7b7-9b47b70789f7@hartkopp.net>
- <CA+5PVA7fJfZmN-XLuqARGkWL6eY54HaRAj19K_Und3K7vAVfpg@mail.gmail.com>
-In-Reply-To: <CA+5PVA7fJfZmN-XLuqARGkWL6eY54HaRAj19K_Und3K7vAVfpg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Josh Boyer <jwboyer@fedoraproject.org>
-Cc: Colin King <colin.king@canonical.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20170908150235.2931-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>, Oliver Hartkopp <socketcan@hartkopp.net>, "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/16/2017 06:37 PM, Josh Boyer wrote:
-> On Fri, Sep 8, 2017 at 1:46 PM, Oliver Hartkopp <socketcan@hartkopp.net> wrote:
->>
->>
->> On 09/08/2017 05:02 PM, Colin King wrote:
->>>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The assignment of net via call sock_net will dereference sk. This
->>> is performed before a sanity null check on sk, so there could be
->>> a potential null dereference on the sock_net call if sk is null.
->>> Fix this by assigning net after the sk null check. Also replace
->>> the sk = NULL with the more usual !sk idiom.
->>>
->>> Detected by CoverityScan CID#1431862 ("Dereference before null check")
->>>
->>> Fixes: 384317ef4187 ("can: network namespace support for CAN_BCM
->>> protocol")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->>
->> Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-> 
-> I don't see this one queued up in the net or net-next trees.  Did it
-> fall through the cracks or did it get queued up elsewhere?  Seems like
-> it's a good candidate to get into 4.14?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--kLkPTC453FQOl0tOSLf9lQ8J0w18CI4wj
+Content-Type: multipart/mixed; boundary="DTmUVp86E7IrRQu3rUON4iV83LvAcU0Tu";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Colin King <colin.king@canonical.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ "David S . Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <8fdd94bd-da4e-784e-3832-6c1bb5e1f432@pengutronix.de>
+Subject: Re: [PATCH] can: check for null sk before deferencing it via the call
+ to sock_net
+References: <20170908150235.2931-1-colin.king@canonical.com>
+In-Reply-To: <20170908150235.2931-1-colin.king@canonical.com>
 
-It definitely is!
+--DTmUVp86E7IrRQu3rUON4iV83LvAcU0Tu
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Marc is our responsible guy for CAN related upstreams - but he seems to 
-be busy as I already poked him here:
+On 09/08/2017 05:02 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The assignment of net via call sock_net will dereference sk. This
+> is performed before a sanity null check on sk, so there could be
+> a potential null dereference on the sock_net call if sk is null.
+> Fix this by assigning net after the sk null check. Also replace
+> the sk =3D=3D NULL with the more usual !sk idiom.
+>=20
+> Detected by CoverityScan CID#1431862 ("Dereference before null check")
+>=20
+> Fixes: 384317ef4187 ("can: network namespace support for CAN_BCM protoc=
+ol")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-https://marc.info/?l=linux-can&m0771819505097&w=2
+Applied to can.
 
-If he doesn't send a pull request by beginning of next week, I would ask 
-Dave to grab these patches - to get them into 4.14.
+Tnx,
+Marc
 
-Best regards,
-Oliver
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
+--DTmUVp86E7IrRQu3rUON4iV83LvAcU0Tu--
+
+--kLkPTC453FQOl0tOSLf9lQ8J0w18CI4wj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAlnlmgYACgkQHv7KIOw4
+HPaRYAf+JpN6F+2pNi5nsnzqsjCdyc2Y6/tYqy+mACthmqkjAeETg3XsTRC4lq8b
+Lk1llWrAY1CkgqJEZfP5YxUkPv/SKL00AoyCRYX3mfXCuLnsLRLSa42/A23as/rA
++A/+ULdyLn+bs+6sNmRJoNuNJzxdgBR50Mbm0QKa9NcJDgGt83EY8PhUwj7j3Lp9
+MfLnKxPqe7e4EZP1zF1RaJ91s5pFXafZyExHLXRGaiiSDHJOQ8aiEPgE0V9e3pwa
+XXpISOyxQOxE/jdo+MAwxvbQ4mHO0fYbT4I+3sLj4cxlfZp7qATPIePa9rU1pf4g
+1+ZhNYPCPx/AJ4CKggtMx6Ob3QyKLg==
+=uA+7
+-----END PGP SIGNATURE-----
+
+--kLkPTC453FQOl0tOSLf9lQ8J0w18CI4wj--
