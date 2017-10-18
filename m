@@ -1,92 +1,50 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 31 Oct 2017 15:10:32 +0000
-Subject: Re: [PATCH] mmc: vub300: Use common code in __download_offload_pseudocode()
-Message-Id: <CAPDyKFp7zRLyGR4UfC8A3py8M9ZDi4nyeU8qUSg4NSrwSLh0HA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Oct 2017 07:42:46 +0000
+Subject: [PATCH] lightnvm: pblk: fix error codes in pblk_submit_read_gc()
+Message-Id: <20171018074246.nmi75jmrpuu5g74y@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7b418db1-ec35-4c85-5d06-45edde56822c@users.sourceforge.net>
- <CAPDyKFp6h_DAcDvDEMft_WApEakdPQiMw0v8t2fPVxS+H1KkOA@mail.gmail.com>
- <20171030121508.zfnsvpsrt25prhr4@mwanda> <CAPDyKFqaaX3i5wLu-aORRB765Kjac705384UM4nCbV8n1Kfc3w@mail.gmail.com>
- <20171031084552.mvvn73pfew4rebsd@mwanda>
-In-Reply-To: <20171031084552.mvvn73pfew4rebsd@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Tony Olech <tony.olech@elandigitalsystems.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Matias Bjorling <mb@lightnvm.io>, Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@cnexlabs.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 31 October 2017 at 09:45, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Mon, Oct 30, 2017 at 02:03:13PM +0100, Ulf Hansson wrote:
->> On 30 October 2017 at 13:15, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > On Mon, Oct 30, 2017 at 12:40:39PM +0100, Ulf Hansson wrote:
->> >> On 27 October 2017 at 21:31, SF Markus Elfring
->> >> <elfring@users.sourceforge.net> wrote:
->> >> > From: Markus Elfring <elfring@users.sourceforge.net>
->> >> > Date: Fri, 27 Oct 2017 21:21:40 +0200
->> >> >
->> >> > Add a jump target so that a specific string copy operation is stored
->> >> > only once at the end of this function implementation.
->> >> > Replace two calls of the function "strncpy" by goto statements.
->> >> >
->> >> > This issue was detected by using the Coccinelle software.
->> >> >
->> >> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> >>
->> >> Thanks, applied for next!
->> >>
->> >
->> > What's the advantage of this patch?  The new code seems more complicated
->> > to me and GCC automatically reuses duplicate constant strings so there
->> > is no memory savings.
->>
->> It looked to me that the error path got a bit cleaner. However, I
->> guess it's matter of taste.
->>
->> If you insist, I can drop it.
->
-> I'm on the kernel-janitors list so I am CC'd on all of Markus's patches.
-> It's not my code and I'm tired of being the anti-Markus guy so this
-> patch is fine.  Markus has a tool that finds duplicate strings and he
-> uses gotos to avoid them.  I don't think duplicate strings are a problem
-> or that it's a good idea to send over a hundred patches using this
-> method.  But many people have explained that to Markus already and
-> that's not the bigger picture which is about error handling and labels.
->
-> What I like are labels that are necessary and self explanatory.  Things
-> like "goto unlock" are a good example, because we know we need to unlock
-> and the goto tells us what the label does.  Or here is another example:
->
->         foo = alloc_foo();
->         if (!foo)
->                 return -ENOMEM;
->
->         bar = alloc_bar();
->         if (!foo) {
->                 err = -ENOMEM;
->                 goto free_foo;
->         }
->
-> From reading the code, you know that you have to free foo and the label
-> name is clear so you literally don't need to scroll down to the bottom
-> of the function when you're reading this code.  A bad label is like
-> this:
->
->         foo = alloc_foo();
->         if (!foo)
->                 goto err;
->
-> You're reading along and you're like "what happens at the err" label?
-> So then you have to scroll down to the bottom and read the code, then
-> you have to think about how the variables line up with the variables
-> in the above code, then you have to scroll back and find your place
-> again and by that point you've forgotten what you were doing when you
-> started.
+There is a missing error code if pblk_bio_map_addr() fails.  This
+function used to return NVM_IO_ERR on error and it still returns
+NVM_IO_OK (which is zero) on success, but now it returns negative error
+codes on failure.  I decided to use a standard error code and remove the
+reference to NVM_IO_OK so that no one was confused.
 
-Thanks for the details! Much appreciated!
+Fixes: d340121eb770 ("lightnvm: pblk: simplify data validity check on GC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regarding posts from Markus' I am well aware of the problems.
-
-In my case, it hasn't been much of a hurdle, I simply ignore changes
-that seems silly to me.
-
-Kind regards
-Uffe
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index ca79d8fb3e60..c26f527dbf86 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -528,7 +528,7 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
+ 	struct bio *bio;
+ 	struct nvm_rq rqd;
+ 	int data_len;
+-	int ret = NVM_IO_OK;
++	int ret;
+ 
+ 	memset(&rqd, 0, sizeof(struct nvm_rq));
+ 
+@@ -561,6 +561,7 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
+ 						PBLK_VMALLOC_META, GFP_KERNEL);
+ 	if (IS_ERR(bio)) {
+ 		pr_err("pblk: could not allocate GC bio (%lu)\n", PTR_ERR(bio));
++		ret = PTR_ERR(bio);
+ 		goto err_free_dma;
+ 	}
+ 
+@@ -595,7 +596,7 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
+ 
+ out:
+ 	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+-	return ret;
++	return 0;
+ 
+ err_free_bio:
+ 	bio_put(bio);
