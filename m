@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 18 Oct 2017 09:18:46 +0000
-Subject: Re: char-TPM: Adjustments for ten function implementations
-Message-Id: <1508318326.6806.1.camel@perches.com>
+From: <Alexander.Steffen@infineon.com>
+Date: Wed, 18 Oct 2017 09:50:46 +0000
+Subject: RE: char-TPM: Adjustments for ten function implementations
+Message-Id: <026d582729b849b780fbaa06fb8bc79e@infineon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
          <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
@@ -11,43 +11,33 @@ References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
          <1508255833.3129.33.camel@HansenPartnership.com>
          <1508280210.6530.32.camel@perches.com>
          <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
-In-Reply-To: <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
+ <1508318326.6806.1.camel@perches.com>
+In-Reply-To: <1508318326.6806.1.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: James Bottomley <James.Bottomley@HansenPartnership.comg>, Dan Carpenter <dan.carpenter@oracle.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: joe@perches.com, elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: James.Bottomley@HansenPartnership.comg, dan.carpenter@oracle.com, jarkko.sakkinen@linux.intel.com, andriy.shevchenko@linux.intel.com, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2017-10-18 at 11:00 +0200, SF Markus Elfring wrote:
-> > The printk removals do change the objects.
-> > 
-> > The value of that type of change is only for resource limited systems.
+> On Wed, 2017-10-18 at 11:00 +0200, SF Markus Elfring wrote:
+> > > The printk removals do change the objects.
+> > >
+> > > The value of that type of change is only for resource limited systems.
+> >
+> > I imagine that such small code adjustments are also useful for other
+> systems.
 > 
-> I imagine that such small code adjustments are also useful for other systems.
-
-Your imagination and mine differ.
-Where do you _think_ it matters?
-
-For instance, nothing about
-
-	sizeof(type)
-vs
-	sizeof(*ptr)
-
-makes it easier for a human to read the code.
-
-This class of change now require a syntactic parser
-to find instances of the use of type where previously
-a grep or equivalent tool worked well.
-
-> > Markus' changelogs leave much to be desired.
+> Your imagination and mine differ.
+> Where do you _think_ it matters?
 > 
-> Would you like to help more to improve the provided information
-> for the shown change patterns?
+> For instance, nothing about
+> 
+> 	sizeof(type)
+> vs
+> 	sizeof(*ptr)
+> 
+> makes it easier for a human to read the code.
 
-I've done that for you far too many times already.
+If it does not make it easier to read the code for you, then maybe you should consider that this might not be true for all humans. For me, it makes it much easier to see at a glance, that code like ptr=malloc(sizeof(*ptr)) is correct.
 
-Your changelogs need to detail _why_ something is being
-done, not describe any tool used to perform or find a
-particular instance of any change.
-
+Alexander
