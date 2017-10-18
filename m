@@ -1,64 +1,58 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 12:20:47 +0000
-Subject: [PATCH 3/3] char/pcmcia: Adjust a null pointer check in three functions
-Message-Id: <1403a78d-8fb9-9487-d71d-e51517671153@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Oct 2017 11:52:12 +0000
+Subject: [PATCH] drivers: hv: balloon: remove extraneous assignment to region_start
+Message-Id: <20171018115212.29111-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
-In-Reply-To: <5e693086-a995-81ad-4a3f-cf8ab2bac454@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "David S. Miller" <davem@davemloft.net>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Stephen Hemminger <stephen@networkplumber.org>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 13:46:00 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Colin Ian King <colin.king@canonical.com>
 
-The script “checkpatch.pl” pointed information out like the following.
+The variable region_start is assigned twice, the first value is
+never read and redundant, so can be removed.  We can clean up the
+code further by assigning rg_start directly rather than using the
+temporary variable region_start which can then be removed. Cleans
+up the clang warning:
 
-Comparison to NULL could be written !…
+drivers/hv/hv_balloon.c:976:3: warning: Value stored to 'region_start'
+is never read
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/char/pcmcia/synclink_cs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hv/hv_balloon.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
-index 6c210b5cdf69..1719d929c0e4 100644
---- a/drivers/char/pcmcia/synclink_cs.c
-+++ b/drivers/char/pcmcia/synclink_cs.c
-@@ -2644,7 +2644,7 @@ static int rx_alloc_buffers(MGSLPC_INFO *info)
- 	info->rx_buf_count = info->rx_buf_total_size / info->rx_buf_size;
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index db0e6652d7ef..54e1ab3d5bad 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -964,7 +964,6 @@ static void hot_add_req(struct work_struct *dummy)
  
- 	info->rx_buf = kmalloc(info->rx_buf_total_size, GFP_KERNEL);
--	if (info->rx_buf = NULL)
-+	if (!info->rx_buf)
- 		return -ENOMEM;
+ 	if ((rg_start = 0) && (!dm->host_specified_ha_region)) {
+ 		unsigned long region_size;
+-		unsigned long region_start;
  
- 	/* unused flag buffer to satisfy receive_buf calling interface */
-@@ -4228,7 +4228,7 @@ static void hdlcdev_rx(MGSLPC_INFO *info, char *buf, int size)
- 	if (debug_level >= DEBUG_LEVEL_INFO)
- 		printk("hdlcdev_rx(%s)\n", dev->name);
+ 		/*
+ 		 * The host has not specified the hot-add region.
+@@ -973,14 +972,11 @@ static void hot_add_req(struct work_struct *dummy)
+ 		 * that need to be hot-added while ensuring the alignment
+ 		 * and size requirements of Linux as it relates to hot-add.
+ 		 */
+-		region_start = pg_start;
+ 		region_size = (pfn_cnt / HA_CHUNK) * HA_CHUNK;
+ 		if (pfn_cnt % HA_CHUNK)
+ 			region_size += HA_CHUNK;
  
--	if (skb = NULL) {
-+	if (!skb) {
- 		printk(KERN_NOTICE "%s: can't alloc skb, dropping packet\n", dev->name);
- 		dev->stats.rx_dropped++;
- 		return;
-@@ -4269,7 +4269,7 @@ static int hdlcdev_init(MGSLPC_INFO *info)
- 	/* allocate and initialize network and HDLC layer objects */
- 
- 	dev = alloc_hdlcdev(info);
--	if (dev = NULL) {
-+	if (!dev) {
- 		printk(KERN_ERR "%s:hdlc device allocation failure\n", __FILE__);
- 		return -ENOMEM;
+-		region_start = (pg_start / HA_CHUNK) * HA_CHUNK;
+-
+-		rg_start = region_start;
++		rg_start = (pg_start / HA_CHUNK) * HA_CHUNK;
+ 		rg_sz = region_size;
  	}
+ 
 -- 
-2.14.2
+2.14.1
 
