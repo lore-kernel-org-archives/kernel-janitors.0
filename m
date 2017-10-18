@@ -1,40 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 17:54:58 +0000
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Wed, 18 Oct 2017 18:03:13 +0000
 Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-Id: <05fbc8e6-3743-f51b-21fe-73d6d1af32f7@users.sourceforge.net>
+Message-Id: <1508349793.16112.507.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
- <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
- <20171018172209.dn3jwl3juzsvkn7c@linux.intel.com>
-In-Reply-To: <20171018172209.dn3jwl3juzsvkn7c@linux.intel.com>
+References: <1508238182.16112.475.camel@linux.intel.com>
+         <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+         <1508244757.4234.60.camel@linux.vnet.ibm.com>
+         <alpine.DEB.2.20.1710171456360.5035@hadrien>
+         <1508253453.4234.81.camel@linux.vnet.ibm.com>
+         <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+         <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+         <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+         <20171018155946.e7ga7jyex6eia252@linux.intel.com>
+         <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
+         <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
+         <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
+In-Reply-To: <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-> One more word of advice: send the three as separate patches.
+On Wed, 2017-10-18 at 19:48 +0200, SF Markus Elfring wrote:
+> > For 1/4 and 2/4: explain why the message can be omitted.
 
-I do not see a need for an immediate resend at the moment.
+> > That's all.
+> 
+> I assume that there might be also some communication challenges
+> involved.
+> 
+> 
+> > 3/4: definitive NAK, too much noise compared to value.
+> 
+> I tried to reduce deviations from the Linux coding style again.
+> You do not like such an attempt for this software area so far.
 
+The problem here in a time line or what comes first. Definitely, you are
+trying to fix the code which _is_ upstream vs. the code which _might be_
+upstream (exception is drivers/staging).
 
-> My guess is that it takes a factor longer time to apply 4/4
-> than other patches because there's more limited crowd who can test it.
+Why didn't you listen to what people are telling you?
 
-This is fine for me if somebody would like to integrate
-this update suggestion at all.
+Why are you spending too much time on little sense crap instead of doing
+real fixes?
 
-
-How do you think about to separate replies better between affected
-update steps?
-
-Regards,
-Markus
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
