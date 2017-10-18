@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 18 Oct 2017 10:49:13 +0000
-Subject: Re: char-TPM: Adjustments for ten function implementations
-Message-Id: <1508323753.6806.5.camel@perches.com>
+From: <Alexander.Steffen@infineon.com>
+Date: Wed, 18 Oct 2017 11:07:35 +0000
+Subject: RE: char-TPM: Adjustments for ten function implementations
+Message-Id: <65f6b172844a47c9b0b5ca1bb7ce2ad8@infineon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
          <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
@@ -15,35 +15,35 @@ References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
          <026d582729b849b780fbaa06fb8bc79e@infineon.com>
          <alpine.DEB.2.20.1710181154390.3524@hadrien>
          <b2772ac342ca4cb19149dd2c91f26087@infineon.com>
-In-Reply-To: <b2772ac342ca4cb19149dd2c91f26087@infineon.com>
+ <1508323753.6806.5.camel@perches.com>
+In-Reply-To: <1508323753.6806.5.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander.Steffen@infineon.com, julia.lawall@lip6.fr
+To: joe@perches.com, julia.lawall@lip6.fr
 Cc: elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, James.Bottomley@HansenPartnership.com, dan.carpenter@oracle.com, jarkko.sakkinen@linux.intel.com, andriy.shevchenko@linux.intel.com, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2017-10-18 at 10:44 +0000, Alexander.Steffen@infineon.com wrote:
-> > For instance, nothing about
-> > > > 	sizeof(type)
-> > > > vs
-> > > > 	sizeof(*ptr)
-> > > > makes it easier for a human to read the code.
-> > > 
-> > > If it does not make it easier to read the code for you, then maybe you
-> > > should consider that this might not be true for all humans. For me, it
-> > > makes it much easier to see at a glance, that code like
-> > > ptr=malloc(sizeof(*ptr)) is correct.
-> > 
-> > I don't think there is a perfect solution.
+> On Wed, 2017-10-18 at 10:44 +0000, Alexander.Steffen@infineon.com wrote:
+> > > For instance, nothing about
+> > > > > 	sizeof(type)
+> > > > > vs
+> > > > > 	sizeof(*ptr)
+> > > > > makes it easier for a human to read the code.
+> > > >
+> > > > If it does not make it easier to read the code for you, then maybe you
+> > > > should consider that this might not be true for all humans. For me, it
+> > > > makes it much easier to see at a glance, that code like
+> > > > ptr=malloc(sizeof(*ptr)) is correct.
+> > >
+> > > I don't think there is a perfect solution.
+> >
+> > Maybe. But for the second variant the correctness is easier to check,
 > 
-> Maybe. But for the second variant the correctness is easier to check,
+> How often should
+> 	ptr = alloc(sizeof(*ptr))
+> be
+> 	ptr = alloc(sizeof(**ptr))
 
-How often should
-	ptr = alloc(sizeof(*ptr))
-be
-	ptr = alloc(sizeof(**ptr))
+Never? Because in that case it probably should be *ptr=alloc(sizeof(**ptr)), unless you are doing something horrible ;-)
 
->  both mentally and programmatically, because there is no need for any context (the type of ptr does not matter).
-
-Context matters.
-
+Alexander
