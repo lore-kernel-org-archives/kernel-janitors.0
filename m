@@ -1,49 +1,56 @@
-From: <Alexander.Steffen@infineon.com>
-Date: Wed, 18 Oct 2017 11:07:35 +0000
-Subject: RE: char-TPM: Adjustments for ten function implementations
-Message-Id: <65f6b172844a47c9b0b5ca1bb7ce2ad8@infineon.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 15:43:17 +0000
+Subject: Re: char-TPM: Adjustments for ten function implementations
+Message-Id: <d429115f-a54f-4307-0ee1-31058041b721@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
-         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
-         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
-         <20171017085124.pkrjzghcf5wmcydc@mwanda>
-         <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
-         <1508255833.3129.33.camel@HansenPartnership.com>
-         <1508280210.6530.32.camel@perches.com>
-         <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
-         <1508318326.6806.1.camel@perches.com>
-         <026d582729b849b780fbaa06fb8bc79e@infineon.com>
-         <alpine.DEB.2.20.1710181154390.3524@hadrien>
-         <b2772ac342ca4cb19149dd2c91f26087@infineon.com>
- <1508323753.6806.5.camel@perches.com>
-In-Reply-To: <1508323753.6806.5.camel@perches.com>
+ <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+ <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+ <2e5e24b4-ea4d-e43b-22b2-e6b65e7203d2@users.sourceforge.net>
+ <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
+In-Reply-To: <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: joe@perches.com, julia.lawall@lip6.fr
-Cc: elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, James.Bottomley@HansenPartnership.com, dan.carpenter@oracle.com, jarkko.sakkinen@linux.intel.com, andriy.shevchenko@linux.intel.com, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> On Wed, 2017-10-18 at 10:44 +0000, Alexander.Steffen@infineon.com wrote:
-> > > For instance, nothing about
-> > > > > 	sizeof(type)
-> > > > > vs
-> > > > > 	sizeof(*ptr)
-> > > > > makes it easier for a human to read the code.
-> > > >
-> > > > If it does not make it easier to read the code for you, then maybe you
-> > > > should consider that this might not be true for all humans. For me, it
-> > > > makes it much easier to see at a glance, that code like
-> > > > ptr=malloc(sizeof(*ptr)) is correct.
-> > >
-> > > I don't think there is a perfect solution.
-> >
-> > Maybe. But for the second variant the correctness is easier to check,
+>>> A minor complaint: all commits are missing "Fixes:" tag.
+>>
+>> * Do you require it to be added to the commit messages?
 > 
-> How often should
-> 	ptr = alloc(sizeof(*ptr))
-> be
-> 	ptr = alloc(sizeof(**ptr))
+> I don't require it. It's part of the development process:
+> 
+> https://www.kernel.org/doc/html/v4.12/process/submitting-patches.html
 
-Never? Because in that case it probably should be *ptr=alloc(sizeof(**ptr)), unless you are doing something horrible ;-)
+Yes. - But other contributors pointed the detail out again
+that not every change is qualified for using this tag.
 
-Alexander
+
+>> * Would you like to get a finer patch granularity then?
+> 
+> I don't understand what you are asking.
+
+If you would insist on the addition of this tag to all my commits
+for the discussed patch series, I imagine that I would need to split
+the update step “Improve a size determination in nine functions”
+into smaller parts.
+
+
+>> * Do you find any more information missing?
+> 
+> I think I already answered to this in my earlier responses
+> (commit messages).
+
+Partly.
+
+
+> I probably won't take "sizeof(*foo)" type of change even if it
+> is a recommended style if that is the only useful thing that the
+> commit does.
+
+How much do you care for the section “14) Allocating memory”
+in the document “coding-style.rst” then?
+
+Regards,
+Markus
