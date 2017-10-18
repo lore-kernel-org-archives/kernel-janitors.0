@@ -1,65 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 20:14:19 +0000
-Subject: [PATCH] irqchip: mmp: Use common error handling code in mmp2_mux_of_init()
-Message-Id: <690b6f85-80a7-4add-2106-a3df2c614cd5@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 18:11:28 +0000
+Subject: =?UTF-8?Q?Re:_char/tpm:_Delete_an_error_message_for_a_failed_memory?= =?UTF-8?B?IGFsbG9jYXRpb24gaW4g
+Message-Id: <61fa394e-05d1-5081-f8bb-3e7dcbd6ccf9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1710171456360.5035@hadrien>
+ <1508253453.4234.81.camel@linux.vnet.ibm.com>
+ <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
+ <20171018145735.lpzwakatsty7emlw@linux.intel.com>
+ <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
+ <20171018155946.e7ga7jyex6eia252@linux.intel.com>
+ <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
+ <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
+ <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
+ <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
+In-Reply-To: <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Daniel Drake <dsd@laptop.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jerry Snitselaar <jsnitsel@redhat.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 22:05:26 +0200
+>> Why did you not reply directly with this request for the update steps
+>> with the subject “Delete an error message for a failed memory allocation
+>> in tpm_…()”?
+>>
+>> https://patchwork.kernel.org/patch/10009405/
+>> https://patchwork.kernel.org/patch/10009415/
+>>
+>> I find that there can be difficulty to show an appropriate information
+>> source for the reasonable explanation of this change pattern.
+>>
+> 
+> Shouldn't this information source for the explanation be the submitter?
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+I offered a bit of information. I agree that it could become better eventually.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/irqchip/irq-mmp.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+> I'd hope they understand what it is they are submitting.
 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 25f32e1d7764..4a3dd020777f 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -438,16 +438,14 @@ static int __init mmp2_mux_of_init(struct device_node *node,
- 		return -EINVAL;
- 	}
- 	ret = of_address_to_resource(node, 0, &res);
--	if (ret < 0) {
--		pr_err("Not found reg property\n");
--		return -EINVAL;
--	}
-+	if (ret < 0)
-+		goto report_failure;
-+
- 	icu_data[i].reg_status = mmp_icu_base + res.start;
- 	ret = of_address_to_resource(node, 1, &res);
--	if (ret < 0) {
--		pr_err("Not found reg property\n");
--		return -EINVAL;
--	}
-+	if (ret < 0)
-+		goto report_failure;
-+
- 	icu_data[i].reg_mask = mmp_icu_base + res.start;
- 	icu_data[i].cascade_irq = irq_of_parse_and_map(node, 0);
- 	if (!icu_data[i].cascade_irq)
-@@ -483,6 +481,10 @@ static int __init mmp2_mux_of_init(struct device_node *node,
- 	}
- 	irq_domain_remove(icu_data[i].domain);
- 	return -EINVAL;
-+
-+report_failure:
-+	pr_err("Not found reg property\n");
-+	return -EINVAL;
- }
- IRQCHIP_DECLARE(mmp2_mux_intc, "mrvl,mmp2-mux-intc", mmp2_mux_of_init);
- #endif
--- 
-2.14.3
+I do this to some degree.   ;-)
 
+But I would appreciate if I could refer to a single Linux document
+for this change pattern around questionable error messages.
+Would a corresponding link for an accepted explanation in the documentation
+be nice in this case?
+
+Regards,
+Markus
