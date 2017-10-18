@@ -1,43 +1,44 @@
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 18 Oct 2017 15:07:54 +0000
+Date: Wed, 18 Oct 2017 15:10:10 +0000
 Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-Message-Id: <20171018150754.irqyypvbfh5vt4kv@linux.intel.com>
+Message-Id: <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
  <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
  <20171017085124.pkrjzghcf5wmcydc@mwanda>
- <alpine.DEB.2.20.1710171055100.5035@hadrien>
- <20171017094434.csarc5fw5d32u64w@mwanda>
-In-Reply-To: <20171017094434.csarc5fw5d32u64w@mwanda>
+ <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
+ <1508255833.3129.33.camel@HansenPartnership.com>
+In-Reply-To: <1508255833.3129.33.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Dan Carpenter <dan.carpenter@oracle.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 17, 2017 at 12:44:34PM +0300, Dan Carpenter wrote:
-> On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
-> > 
-> > 
-> > On Tue, 17 Oct 2017, Dan Carpenter wrote:
-> > 
-> > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
-> > > >
-> > > > A minor complaint: all commits are missing "Fixes:" tag.
-> > > >
-> > >
-> > > Fixes is only for bug fixes.  These don't fix any bugs.
-> > 
-> > 0-day seems to put Fixes for everything.  Should they be removed when the
-> > old code is undesirable but doesn't actually cause a crash, eg out of date
-> > API.
-> 
-> Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
-> 
-> regards,
-> dan carpenter
+On Tue, Oct 17, 2017 at 08:57:13AM -0700, James Bottomley wrote:
+> On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
+> > >=20
+> > > Fixes is only for bug fixes.=A0=A0These don't fix any bugs.
+> >=20
+> > How do you distinguish these in questionable source code
+> > from other error categories or software weaknesses?
+>=20
+> A style change is one that doesn't change the effect of the execution.
+> =A0These don't actually even change the assembly, so there's programmatic
+> proof they're not fixing anything.
+>=20
+> Bug means potentially user visible fault. =A0In any bug fix commit you
+> should document the fault and its effects on users so those backporting
+> can decide if they care or not.
+>=20
+> James
 
-So breaking a rule documented in the style guide is not a bug? :-)
+OK, I'll adjust my definition of a bug :-)
 
 /Jarkko
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
