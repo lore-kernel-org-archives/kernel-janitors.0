@@ -1,53 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 15:06:27 +0000
-Subject: [PATCH 3/4] char/snsc: Improve a size determination in two functions
-Message-Id: <cc495147-1ae5-3479-ece0-45398a8a6d4b@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 19:20:16 +0000
+Subject: [PATCH 0/5] PowerPC-pSeries: Adjustments for seven function implementations
+Message-Id: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
-In-Reply-To: <cbedda27-97e7-7b11-b888-39e09f7deaa1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Alex Williamson <alex.williamson@redhat.com>, Alexey Kardashevskiy <aik@ozlabs.ru>, Andrew Morton <akpm@linux-foundation.org>, Bart Van Assche <bart.vanassche@sandisk.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Doug Ledford <dledford@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Sahil Mehta <sahilmehta17@gmail.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Oct 2017 16:26:09 +0200
+Date: Wed, 18 Oct 2017 21:11:23 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (5):
+  Delete five error messages for a failed memory allocation
+  Improve nine size determinations
+  Delete an unnecessary variable initialisation in iommu_pseries_alloc_group()
+  Return directly after a failed kzalloc_node() in iommu_pseries_alloc_group()
+  Less function calls in iommu_pseries_alloc_group() after error detection
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/char/snsc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/pseries/dlpar.c     |  5 ++--
+ arch/powerpc/platforms/pseries/dtl.c       |  5 +---
+ arch/powerpc/platforms/pseries/hvcserver.c |  7 ++----
+ arch/powerpc/platforms/pseries/iommu.c     | 40 ++++++++++++------------------
+ arch/powerpc/platforms/pseries/vio.c       |  9 +++----
+ 5 files changed, 24 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/char/snsc.c b/drivers/char/snsc.c
-index eefc306033ab..bec3bd966b1f 100644
---- a/drivers/char/snsc.c
-+++ b/drivers/char/snsc.c
-@@ -79,7 +79,7 @@ scdrv_open(struct inode *inode, struct file *file)
- 	scd = container_of(inode->i_cdev, struct sysctl_data_s, scd_cdev);
- 
- 	/* allocate memory for subchannel data */
--	sd = kzalloc(sizeof (struct subch_data_s), GFP_KERNEL);
-+	sd = kzalloc(sizeof(*sd), GFP_KERNEL);
- 	if (!sd)
- 		return -ENOMEM;
- 
-@@ -405,8 +405,7 @@ scdrv_init(void)
- 				geo_slab(geoid));
- 
- 			/* allocate sysctl device data */
--			scd = kzalloc(sizeof (struct sysctl_data_s),
--				      GFP_KERNEL);
-+			scd = kzalloc(sizeof(*scd), GFP_KERNEL);
- 			if (!scd)
- 				continue;
- 
 -- 
 2.14.2
 
