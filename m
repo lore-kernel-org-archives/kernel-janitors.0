@@ -1,9 +1,10 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 18 Oct 2017 17:22:09 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 17:48:06 +0000
 Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-Id: <20171018172209.dn3jwl3juzsvkn7c@linux.intel.com>
+Message-Id: <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
+References: <1508238182.16112.475.camel@linux.intel.com>
+ <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
  <1508244757.4234.60.camel@linux.vnet.ibm.com>
  <alpine.DEB.2.20.1710171456360.5035@hadrien>
  <1508253453.4234.81.camel@linux.vnet.ibm.com>
@@ -17,36 +18,51 @@ In-Reply-To: <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-On Wed, Oct 18, 2017 at 08:18:58PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 18, 2017 at 06:43:10PM +0200, SF Markus Elfring wrote:
-> > > Commit message should just describe in plain text what you are doing
-> > 
-> > Did other contributors find the wording “Replace …”
-> > 
-> > 
-> > > and why.
-> > 
-> > and “… a bit safer according to the Linux coding style convention.”
-> > sufficient often enough already?
-> > 
-> > Which description would you find more appropriate for this change pattern?
-> > 
-> > Regards,
-> > Markus
-> 
-> For 1/4 and 2/4: explain why the message can be omitted. Remove sentence
-> about Coccinelle. That's all.
+> For 1/4 and 2/4: explain why the message can be omitted.
+
+Why did you not reply directly with this request for the update steps
+with the subject “Delete an error message for a failed memory allocation
+in tpm_…()”?
+
+https://patchwork.kernel.org/patch/10009405/
+https://patchwork.kernel.org/patch/10009415/
+
+I find that there can be difficulty to show an appropriate information
+source for the reasonable explanation of this change pattern.
+
+
+> Remove sentence about Coccinelle.
+
+I got the impression that there is a bit of value in such
+a kind of attribution.
+
+
+> That's all.
+
+I assume that there might be also some communication challenges involved.
+
+
 > 3/4: definitive NAK, too much noise compared to value.
-> 4/4: this a good commit message. Requires a Tested-by before can be
-> accepted, which I'm not able to give.
-> 
-> Hope this helps.
-> 
-> /Jarkko
 
-One more word of advice: send the three as separate patches. My guess is
-that it takes a factor longer time to apply 4/4 than other patches
-because there's more limited crowd who can test it.
+I tried to reduce deviations from the Linux coding style again.
+You do not like such an attempt for this software area so far.
+
+
+> 4/4: this a good commit message.
+
+Why did you not reply directly with this feedback for the update step
+“[PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after error detection”?
+
+https://patchwork.kernel.org/patch/10009429/
+https://lkml.kernel.org/r/<09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
+
+
+> Requires a Tested-by before can be accepted, which I'm not able to give.
+
+I am curious on how this detail will evolve.
+
+Regards,
+Markus
