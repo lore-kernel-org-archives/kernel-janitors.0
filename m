@@ -1,46 +1,40 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 24 Oct 2017 13:33:43 +0000
-Subject: Re: [PATCH] hwmon: (max6621) Inverted if condition in max6621_read()
-Message-Id: <d81a49d2-ddb5-917e-2ca3-b38e32a0ffe3@roeck-us.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 19:26:10 +0000
+Subject: [PATCH 4/5] powerpc-pseries: Return directly after a failed kzalloc_node() in iommu_pseries_alloc_gr
+Message-Id: <a824fe65-1708-16ba-68d6-df0f73e0f49a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171024094742.qpltjxlvzr25muje@mwanda>
-In-Reply-To: <20171024094742.qpltjxlvzr25muje@mwanda>
+References: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
+In-Reply-To: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jean Delvare <jdelvare@suse.com>, Vadim Pasternak <vadimp@mellanox.com>
-Cc: linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Alex Williamson <alex.williamson@redhat.com>, Alexey Kardashevskiy <aik@ozlabs.ru>, Andrew Morton <akpm@linux-foundation.org>, Bart Van Assche <bart.vanassche@sandisk.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Doug Ledford <dledford@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Sahil Mehta <sahilmehta17@gmail.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 10/24/2017 02:47 AM, Dan Carpenter wrote:
-> We intended to test for failure here but accidentally tested for
-> success.  It means that we don't set "*val" to true and it means that
-> if i2c_smbus_write_byte() does fail then we return success.
-> 
-> Fixes: e7895864b0d7 ("hwmon: (max6621) Add support for Maxim MAX6621 temperature sensor")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 20:15:32 +0200
 
-Applied to hwmon-next.
+Return directly after a call of the function "kzalloc_node" failed
+at the beginning.
 
-Thanks,
-Guenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/platforms/pseries/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> diff --git a/drivers/hwmon/max6621.c b/drivers/hwmon/max6621.c
-> index 22079ec29660..35555f0eefb9 100644
-> --- a/drivers/hwmon/max6621.c
-> +++ b/drivers/hwmon/max6621.c
-> @@ -296,7 +296,7 @@ max6621_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
->   			if (regval) {
->   				ret = i2c_smbus_write_byte(data->client,
->   						MAX6621_CLEAR_ALERT_REG);
-> -				if (!ret)
-> +				if (ret)
->   					return ret;
->   			}
->   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index b6c12b8e3ace..207ff8351af1 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -61,7 +61,7 @@ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
+ 
+ 	table_group = kzalloc_node(sizeof(*table_group), GFP_KERNEL, node);
+ 	if (!table_group)
+-		goto fail_exit;
++		return NULL;
+ 
+ 	tbl = kzalloc_node(sizeof(*tbl), GFP_KERNEL, node);
+ 	if (!tbl)
+-- 
+2.14.2
 
