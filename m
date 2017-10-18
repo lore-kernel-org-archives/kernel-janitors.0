@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 12:07:49 +0000
-Subject: Re: Adjusting further size determinations?
-Message-Id: <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Wed, 18 Oct 2017 12:58:43 +0000
+Subject: RE: Adjusting further size determinations?
+Message-Id: <063D6719AE5E284EB5DD2968C1650D6DD009ACE3@AcuExch.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
@@ -17,19 +17,22 @@ References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
  <1508322510.6806.3.camel@perches.com>
  <ab5730c4-fb69-4791-a2a6-c726493d4564@users.sourceforge.net>
  <1508327383.6806.7.camel@perches.com>
-In-Reply-To: <1508327383.6806.7.camel@perches.com>
+ <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
+In-Reply-To: <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Dan Carpenter <dan.carpenter@oracle.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: 'SF Markus Elfring' <elfring@users.sourceforge.net>, Joe Perches <joe@perches.com>, "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Stefan Berger <stefanb@linux.vnet.ibm.com>, Alexander Steffen <Alexander.Steffen@infineon.com>, Nayna Jain <nayna@linux.vnet.ibm.com>, Jerry Snitselaar <jsnitsel@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Julia Lawall <julia.lawall@lip6.fr>, Corentin Labbe <clabbe.montjoie@gmail.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?utf-8?B?UGV0ZXIgSMO8d2U=?= <PeterHuewe@gmx.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
->>>> Unpleasant consequences are possible in both cases.
->> How much do you care to reduce the failure probability further?
-> 
-> Zero.
-
-I am interested to improve the software situation a bit more here.
-
-Regards,
-Markus
+RnJvbTogU0YgTWFya3VzIEVsZnJpbmcNCj4gPj4+PiBVbnBsZWFzYW50IGNvbnNlcXVlbmNlcyBh
+cmUgcG9zc2libGUgaW4gYm90aCBjYXNlcy4NCj4gPj4gSG93IG11Y2ggZG8geW91IGNhcmUgdG8g
+cmVkdWNlIHRoZSBmYWlsdXJlIHByb2JhYmlsaXR5IGZ1cnRoZXI/DQo+ID4NCj4gPiBaZXJvLg0K
+PiANCj4gSSBhbSBpbnRlcmVzdGVkIHRvIGltcHJvdmUgdGhlIHNvZnR3YXJlIHNpdHVhdGlvbiBh
+IGJpdCBtb3JlIGhlcmUuDQoNClRoZXJlIGFyZSBwcm9iYWJseSBiZXR0ZXIgcGxhY2VzIHRvIHNw
+ZW5kIHlvdXIgdGltZSENCg0KSWYgeW91IHdhbnQgJ3NlY3VyaXR5JyBmb3Iga21hbGxvYygpIHRo
+ZW46DQoNCiNkZWZpbmUgS01BTExPQ19UWVBFKGZsYWdzKSAodHlwZSAqKWttYWxsb2Moc2l6ZW9m
+ICh0eXBlKSwgZmxhZ3MpDQojZGVmaW5lIEtNQUxMT0MocHRyLCBmbGFncykgKihwdHIpID0gS01B
+TExPQ19UWVBFKHR5cGVvZiAqKHB0ciksIGZsYWdzKQ0KDQphbmQgY2hhbmdlOg0KCXB0ciA9IGtt
+YWxsb2Moc2l6ZW9mICpwdHIsIGZsYWdzKTsNCnRvOg0KCUtNQUxMT0MoJnB0ciwgZmxhZ3MpOw0K
+DQpCdXQgaXQgaXMgYWxsIGNodXJuIGZvciBjaHVybidzIHNha2UuDQoNCglEYXZpZA0KDQo
