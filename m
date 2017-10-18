@@ -1,56 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 15:43:17 +0000
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+Date: Wed, 18 Oct 2017 18:27:45 +0000
 Subject: Re: char-TPM: Adjustments for ten function implementations
-Message-Id: <d429115f-a54f-4307-0ee1-31058041b721@users.sourceforge.net>
+Message-Id: <20171018202745.383724bc@kitsune.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
- <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <2e5e24b4-ea4d-e43b-22b2-e6b65e7203d2@users.sourceforge.net>
- <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
-In-Reply-To: <20171018150436.j2uhzxsu4ebjoz3c@linux.intel.com>
+        <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+        <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+        <20171017085124.pkrjzghcf5wmcydc@mwanda>
+        <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
+        <1508255833.3129.33.camel@HansenPartnership.com>
+        <1508280210.6530.32.camel@perches.com>
+        <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
+        <1508318326.6806.1.camel@perches.com>
+In-Reply-To: <1508318326.6806.1.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Stefan Berger <stefanb@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.vnet.ibm.com>, Jerry Snitselaar <jsnitsel@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Corentin Labbe <clabbe.montjoie@gmail.com>, James Bottomley <James.Bottomley@HansenPartnership.comg>, Paul Mackerras <paulus@samba.org>, Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>
 
->>> A minor complaint: all commits are missing "Fixes:" tag.
->>
->> * Do you require it to be added to the commit messages?
+On Wed, 18 Oct 2017 02:18:46 -0700
+Joe Perches <joe@perches.com> wrote:
+
+> On Wed, 2017-10-18 at 11:00 +0200, SF Markus Elfring wrote:
+> > > The printk removals do change the objects.
+> > > 
+> > > The value of that type of change is only for resource limited
+> > > systems.  
+> > 
+> > I imagine that such small code adjustments are also useful for
+> > other systems.  
 > 
-> I don't require it. It's part of the development process:
+> Your imagination and mine differ.
+> Where do you _think_ it matters?
 > 
-> https://www.kernel.org/doc/html/v4.12/process/submitting-patches.html
-
-Yes. - But other contributors pointed the detail out again
-that not every change is qualified for using this tag.
-
-
->> * Would you like to get a finer patch granularity then?
+> For instance, nothing about
 > 
-> I don't understand what you are asking.
-
-If you would insist on the addition of this tag to all my commits
-for the discussed patch series, I imagine that I would need to split
-the update step “Improve a size determination in nine functions”
-into smaller parts.
-
-
->> * Do you find any more information missing?
+> 	sizeof(type)
+> vs
+> 	sizeof(*ptr)
 > 
-> I think I already answered to this in my earlier responses
-> (commit messages).
+> makes it easier for a human to read the code.
+> 
 
-Partly.
+However, it makes it less error-prone to modify the code.
 
+If you do ptr = malloc(sizeof(*ptr)) and later you change the type of
+the pointer the code is still correct whereas ptr = malloc(sizeof(some
+type) no longer is.
 
-> I probably won't take "sizeof(*foo)" type of change even if it
-> is a recommended style if that is the only useful thing that the
-> commit does.
+That is the reason the source analysis tool warns about this usage and
+you do not really need any more explanation for *this* change.
 
-How much do you care for the section “14) Allocating memory”
-in the document “coding-style.rst” then?
+The others are not so clear.
 
-Regards,
-Markus
+Thanks
+
+Michal
