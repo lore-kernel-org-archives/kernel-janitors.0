@@ -1,64 +1,47 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 14 Oct 2017 13:51:54 +0000
-Subject: Re: [PATCH][next] platform/x86: intel_cht_int33fe: make a couple of local functions static
-Message-Id: <CAHp75VfPjxRpzLGrzjWR5WaTQjvpL3x7x+UGvnHz6=ZvyCgPGg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 18 Oct 2017 11:34:25 +0000
+Subject: [PATCH] ceph: remove unused and redundant variable dropping
+Message-Id: <20171018113425.28658-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171011093010.17173-1-colin.king@canonical.com>
-In-Reply-To: <20171011093010.17173-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: zyan@redhat.com, Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 11, 2017 at 12:30 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The functions cht_int33fe_check_for_max17047 and cht_int33fe_find_max17047
-> are local to the source and do not need to be in global scope, so make
-> them static.
->
-> Cleans up sparse warnings:
-> symbol 'cht_int33fe_check_for_max17047' was not declared. Should it be
-> static?
-> symbol 'cht_int33fe_find_max17047' was not declared. Should it be static?
+From: Colin Ian King <colin.king@canonical.com>
 
-Pushed to my review queue, thanks!
+Variable dropping is set but never read and hence is redundant
+and can be removed. Cleans up clang warning:
 
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/platform/x86/intel_cht_int33fe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 94716b2fbc00..286c6207765d 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -42,7 +42,7 @@ struct cht_int33fe_data {
->   * These helpers are used to work around this by checking if an i2c-client
->   * for the max17047 has already been registered.
->   */
-> -int cht_int33fe_check_for_max17047(struct device *dev, void *data)
-> +static int cht_int33fe_check_for_max17047(struct device *dev, void *data)
->  {
->         struct i2c_client **max17047 = data;
->         struct acpi_device *adev;
-> @@ -62,7 +62,7 @@ int cht_int33fe_check_for_max17047(struct device *dev, void *data)
->         return 1;
->  }
->
-> -struct i2c_client *cht_int33fe_find_max17047(void)
-> +static struct i2c_client *cht_int33fe_find_max17047(void)
->  {
->         struct i2c_client *max17047 = NULL;
->
-> --
-> 2.14.1
->
+fs/ceph/caps.c:1170:2: warning: Value stored to 'dropping' is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ceph/caps.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 157fe59fbabe..14df41e3751c 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1159,7 +1159,7 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+ 	struct ceph_inode_info *ci = cap->ci;
+ 	struct inode *inode = &ci->vfs_inode;
+ 	struct cap_msg_args arg;
+-	int held, revoking, dropping;
++	int held, revoking;
+ 	int wake = 0;
+ 	int delayed = 0;
+ 	int ret;
+@@ -1167,7 +1167,6 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+ 	held = cap->issued | cap->implemented;
+ 	revoking = cap->implemented & ~cap->issued;
+ 	retain &= ~revoking;
+-	dropping = cap->issued & ~retain;
+ 
+ 	dout("__send_cap %p cap %p session %p %s -> %s (revoking %s)\n",
+ 	     inode, cap, cap->session,
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
+
