@@ -1,69 +1,75 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 19:46:40 +0000
-Subject: [PATCH] drm/etnaviv: Improve unlocking of a mutex in etnaviv_iommu_map_gem()
-Message-Id: <5a6c753f-d822-fb9e-0ea4-054754bdf4cc@users.sourceforge.net>
+Date: Wed, 18 Oct 2017 19:27:57 +0000
+Subject: [PATCH 5/5] powerpc-pseries: Less function calls in iommu_pseries_alloc_group() after error detectio
+Message-Id: <45cdde43-075d-10c0-ab34-1ce1aa4dfa17@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
+In-Reply-To: <0d221be4-1402-0499-d95e-afa4a30e1f33@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linuxppc-dev@lists.ozlabs.org, Alex Williamson <alex.williamson@redhat.com>, Alexey Kardashevskiy <aik@ozlabs.ru>, Andrew Morton <akpm@linux-foundation.org>, Bart Van Assche <bart.vanassche@sandisk.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Doug Ledford <dledford@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Sahil Mehta <sahilmehta17@gmail.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 21:27:30 +0200
+Date: Wed, 18 Oct 2017 20:48:52 +0200
 
-Add a jump target so that a call of the function "mutex_unlock" is stored
-only once at the end of this function implementation.
-Replace three calls by goto statements.
+The kfree() function was called in up to two cases by the
+iommu_pseries_alloc_group() function during error handling
+even if the passed variable contained a null pointer.
 
-This issue was detected by using the Coccinelle software.
+* Adjust jump targets according to the Linux coding style convention.
+
+* Delete initialisations for the variables "tbl" and "tgl"
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ arch/powerpc/platforms/pseries/iommu.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-index f103e787de94..9b0d797349d4 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-@@ -221,18 +221,16 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu *mmu,
- 		if (iova < 0x80000000 - sg_dma_len(sgt->sgl)) {
- 			mapping->iova = iova;
- 			list_add_tail(&mapping->mmu_node, &mmu->mappings);
--			mutex_unlock(&mmu->lock);
--			return 0;
-+			ret = 0;
-+			goto unlock;
- 		}
- 	}
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 207ff8351af1..13b424f34039 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -56,8 +56,8 @@
+ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
+ {
+ 	struct iommu_table_group *table_group;
+-	struct iommu_table *tbl = NULL;
+-	struct iommu_table_group_link *tgl = NULL;
++	struct iommu_table *tbl;
++	struct iommu_table_group_link *tgl;
  
- 	node = &mapping->vram_node;
+ 	table_group = kzalloc_node(sizeof(*table_group), GFP_KERNEL, node);
+ 	if (!table_group)
+@@ -65,11 +65,11 @@ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
  
- 	ret = etnaviv_iommu_find_iova(mmu, node, etnaviv_obj->base.size);
--	if (ret < 0) {
--		mutex_unlock(&mmu->lock);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto unlock;
+ 	tbl = kzalloc_node(sizeof(*tbl), GFP_KERNEL, node);
+ 	if (!tbl)
+-		goto fail_exit;
++		goto free_group;
  
- 	mmu->last_iova = node->start + etnaviv_obj->base.size;
- 	mapping->iova = node->start;
-@@ -242,13 +240,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu *mmu,
- 	if (ret < 0) {
- 		drm_mm_remove_node(node);
--		mutex_unlock(&mmu->lock);
--		return ret;
-+		goto unlock;
- 	}
+ 	tgl = kzalloc_node(sizeof(*tgl), GFP_KERNEL, node);
+ 	if (!tgl)
+-		goto fail_exit;
++		goto free_table;
  
- 	list_add_tail(&mapping->mmu_node, &mmu->mappings);
- 	mmu->need_flush = true;
-+unlock:
- 	mutex_unlock(&mmu->lock);
+ 	INIT_LIST_HEAD_RCU(&tbl->it_group_list);
+ 	kref_init(&tbl->it_kref);
+@@ -80,11 +80,10 @@ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
+ 
+ 	return table_group;
+ 
+-fail_exit:
+-	kfree(tgl);
+-	kfree(table_group);
++free_table:
+ 	kfree(tbl);
 -
- 	return ret;
++free_group:
++	kfree(table_group);
+ 	return NULL;
  }
  
 -- 
