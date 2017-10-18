@@ -1,38 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Oct 2017 14:02:58 +0000
-Subject: [PATCH] fat: remove redundant assignment of 0 to slots
-Message-Id: <20171017140258.22536-1-colin.king@canonical.com>
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Date: Wed, 18 Oct 2017 03:32:52 +0000
+Subject: Re: [PATCH] fat: remove redundant assignment of 0 to slots
+Message-Id: <874lqxuo4b.fsf@mail.parknet.co.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171017140258.22536-1-colin.king@canonical.com>
+In-Reply-To: <20171017140258.22536-1-colin.king@canonical.com> (Colin King's
+        message of "Tue, 17 Oct 2017 15:02:58 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin King <colin.king@canonical.com> writes:
 
-The variable slots is being assigned a value of zero that is never
-read, slots is being updated again a few lines later. Remove this
-redundant assignment.
-Cleans clang warning: Value stored to 'slots' is never read
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable slots is being assigned a value of zero that is never
+> read, slots is being updated again a few lines later. Remove this
+> redundant assignment.
+> Cleans clang warning: Value stored to 'slots' is never read
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/fat/dir.c | 1 -
- 1 file changed, 1 deletion(-)
+Looks like good (if old gcc didn't have false positive warning).
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 81cecbe6d7cf..b833ffeee1e1 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -291,7 +291,6 @@ static int fat_parse_long(struct inode *dir, loff_t *pos,
- 		}
- 	}
- parse_long:
--	slots = 0;
- 	ds = (struct msdos_dir_slot *)*de;
- 	id = ds->id;
- 	if (!(id & 0x40))
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
+> ---
+>  fs/fat/dir.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> index 81cecbe6d7cf..b833ffeee1e1 100644
+> --- a/fs/fat/dir.c
+> +++ b/fs/fat/dir.c
+> @@ -291,7 +291,6 @@ static int fat_parse_long(struct inode *dir, loff_t *pos,
+>  		}
+>  	}
+>  parse_long:
+> -	slots = 0;
+>  	ds = (struct msdos_dir_slot *)*de;
+>  	id = ds->id;
+>  	if (!(id & 0x40))
+
 -- 
-2.14.1
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
