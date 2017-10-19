@@ -1,47 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 11:45:39 +0000
-Subject: [PATCH] rapidio: remove reundant pointer md that is assigned but never read
-Message-Id: <20171031114539.22058-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Oct 2017 20:44:48 +0000
+Subject: Re: char/tpm: Less checks in tpm_ibmvtpm_probe() after error detection
+Message-Id: <c1b3b269-46eb-7102-a281-c8f105abdf7e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
+ <09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
+ <20171019135632.4af42743@kitsune.suse.cz>
+ <20171019133646.gu7qv2tywfk4tcxj@mwanda>
+In-Reply-To: <20171019133646.gu7qv2tywfk4tcxj@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>, Logan Gunthorpe <logang@deltatee.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+>> If the code doing the allocation is changed in the future the single
+>> cleanup can stay whereas multiple labels have to be rewritten again.
+> 
+> No, they don't unless you choose bad label names.  Perhaps numbered
+> labels?  We don't get a lot of those in the kernel any more.  Label
+> name should be based on what the label does.  Often I see bad label
+> names like generic labels:
+> 
+> 	foo = kmalloc();
+> 	if (!foo)
+> 		goto out;
+> 
+> What is out going to do?  Another common anti-pattern is come-from
+> labels:
+> 
+> 	foo = kmalloc();
+> 	if (!foo)
+> 		goto kmalloc_failed;
+> 
+> Obviously, we can see from the if statement that the alloc failed and
+> you *just* know the next line is going to be is going to be:
+> 
+> 	if (invalid)
+> 		goto kmalloc_failed;
+> 
+> Which is wrong because kmalloc didn't fail...  But if the label name is
+> based on what it does then, when you add or a remove an allocation, you
+> just have to edit the one thing.
 
-Pointer md is assigned a value but it is never read, hence it is
-redundant and can be removed. Cleans up clang warning:
+Would you be interested in an update on a topic like “Source code review
+around jump label usage”?
+https://lkml.org/lkml/2015/12/11/378
 
-drivers/rapidio/devices/rio_mport_cdev.c:1071:2: warning: Value stored
-to 'md' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rapidio/devices/rio_mport_cdev.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-index dc5a33f93689..56496e636a40 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -1058,7 +1058,6 @@ static int rio_mport_transfer_ioctl(struct file *filp, void __user *arg)
- static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
- {
- 	struct mport_cdev_priv *priv;
--	struct mport_dev *md;
- 	struct rio_async_tx_wait w_param;
- 	struct mport_dma_req *req;
- 	dma_cookie_t cookie;
-@@ -1068,7 +1067,6 @@ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
- 	int ret;
- 
- 	priv = (struct mport_cdev_priv *)filp->private_data;
--	md = priv->md;
- 
- 	if (unlikely(copy_from_user(&w_param, arg, sizeof(w_param))))
- 		return -EFAULT;
--- 
-2.14.1
-
+Regards,
+Markus
