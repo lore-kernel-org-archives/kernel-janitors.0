@@ -1,55 +1,62 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 16 Oct 2017 13:22:48 +0000
-Subject: Re: Two rtlwifi drivers?
-Message-Id: <87bml7mdlj.fsf@kamboji.qca.qualcomm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 19 Oct 2017 10:58:21 +0000
+Subject: [PATCH][f2fs-next] f2fs: remove several redundant assignments
+Message-Id: <20171019105821.336-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170824100832.lcmbwcjhzwlgozeh@mwanda>
-        <87h8wxw4bq.fsf@kamboji.qca.qualcomm.com>
-        <652d42ad-a077-530b-743f-d38ddf3ff677@lwfinger.net>
-        <87k202qcjr.fsf@kamboji.qca.qualcomm.com>
-        <20171011131310.GF32250@kroah.com>
-        <87h8v4pxqp.fsf@kamboji.qca.qualcomm.com>
-        <20171012103450.GA24647@kroah.com>
-        <5B2DA6FDDF928F4E855344EE0A5C39D10581FF70@RTITMBSV07.realtek.com.tw>
-In-Reply-To: <5B2DA6FDDF928F4E855344EE0A5C39D10581FF70@RTITMBSV07.realtek.com.tw>
-        (pkshih@realtek.com's message of "Mon, 16 Oct 2017 02:41:38 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pkshih <pkshih@realtek.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@oracle.com>, =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>, Johannes Berg <johannes.berg@intel.com>, Souptick Joarder <jrdr.linux@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi PK,
+From: Colin Ian King <colin.king@canonical.com>
 
-you got good answers already so only short reply from me:
+There are several assignments to variables that are redundant
+as the values are never read when the variables are updated later
+and so the redundant statements can be safely removed.
 
-Pkshih <pkshih@realtek.com> writes:
+Cleans up clang warnings:
+fs/f2fs/segment.c:923:19: warning: Value stored to 'p' during its initialization is never read
+fs/f2fs/segment.c:2060:2: warning: Value stored to 'hint' is never read
+fs/f2fs/segment.c:2353:2: warning: Value stored to 'start_block' is never read
+fs/f2fs/segment.c:2354:2: warning: Value stored to 'end_block' is never read
 
-> 3) Coming drivers -- rtl8723de and rtl8821ce
->    We're developing the two drivers, and rtl8723de and rtl8821ce will
->    be ready on 2017Q4 and 2018Q1 respectively. The drivers are based on
->    rtl8822be that in staging now, so the line of code will be fewer.
->    The new files will be a new IC folder and IC supported files of 
->    three modules that btcoexist, phydm and halmac. Could I submit
->    them to wirless tree when they're ready?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/f2fs/segment.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-My recommendation is to avoid accumulating patches at all cost and start
-submitting them as soon as you can. This way you get patches committed
-much more smoother. So do not wait until _all_ patches are ready,
-instead start submitting patches as soon as you have _some_ patches
-ready. In other words, keep the delta between mainline and your
-not-yet-submitted patches as small as possible.
-
-And the patches don't need to be bug free as you can always fix bugs
-later. Just mention in the commit logs that this is preparation for some
-new feature and not fully tested yet. We do that all the time, for
-example Intel's iwlwifi has support for hardware which have not reached
-customers yet.
-
-> On the way, I'll attend netdev workshop in Korea, so we can meet there
-> if you attend too.
-
-I'm also attending Netdev 2.2, looking forward to meeting you there.
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bfbcff8339c5..df7af294c1e0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -920,7 +920,7 @@ static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+ 				struct rb_node *insert_parent)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+-	struct rb_node **p = &dcc->root.rb_node;
++	struct rb_node **p;
+ 	struct rb_node *parent = NULL;
+ 	struct discard_cmd *dc = NULL;
+ 
+@@ -2057,7 +2057,6 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 	}
+ 	secno = left_start;
+ skip_left:
+-	hint = secno;
+ 	segno = GET_SEG_FROM_SEC(sbi, secno);
+ 	zoneno = GET_ZONE_FROM_SEC(sbi, secno);
+ 
+@@ -2350,9 +2349,6 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+ 						GET_SEGNO(sbi, end);
+ 
+-	start_block = START_BLOCK(sbi, start_segno);
+-	end_block = START_BLOCK(sbi, end_segno + 1);
+-
+ 	cpc.reason = CP_DISCARD;
+ 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
+ 
 -- 
-Kalle Valo
+2.14.1
+
