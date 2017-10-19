@@ -1,39 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Oct 2017 15:17:31 +0000
-Subject: [PATCH 2/2] ARM: OMAP3: Delete an unnecessary variable initialisation in omap3xxx_hwmod_init()
-Message-Id: <a69f8cfb-ef9e-6af3-1cf9-013cdb517c5a@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Thu, 19 Oct 2017 12:37:30 +0000
+Subject: Re: [PATCH] perf kmem: Perform some cleanup if '--time' is given an invalid value
+Message-Id: <20171019123730.GJ3707@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
-In-Reply-To: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
+References: <20170916060936.28199-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170916060936.28199-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Oct 2017 16:37:07 +0200
+Em Sat, Sep 16, 2017 at 08:09:36AM +0200, Christophe JAILLET escreveu:
+> If the string passed in '--time' is invalid, we must do some cleanup
+> before leaving. As in the other error handling paths of this function.
 
-The local variable "bus" will eventually be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+Thanks, applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-index bb6eb1efb1b7..fd7db429e02b 100644
---- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-@@ -3148,7 +3148,7 @@ int __init omap3xxx_hwmod_init(void)
- 	int r;
- 	struct omap_hwmod_ocp_if **h = NULL, **h_gp = NULL, **h_sham = NULL;
- 	struct omap_hwmod_ocp_if **h_aes = NULL;
--	struct device_node *bus = NULL;
-+	struct device_node *bus;
- 	unsigned int rev;
+- Arnaldo
  
- 	omap_hwmod_init();
--- 
-2.14.2
-
+> Fixes: 2a865bd8dddd ("perf kmem: Add option to specify time window of interest")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  tools/perf/builtin-kmem.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+> index 24ee68ecdd42..d8f25ef8157b 100644
+> --- a/tools/perf/builtin-kmem.c
+> +++ b/tools/perf/builtin-kmem.c
+> @@ -1983,7 +1983,8 @@ int cmd_kmem(int argc, const char **argv)
+>  
+>  	if (perf_time__parse_str(&ptime, time_str) != 0) {
+>  		pr_err("Invalid time string\n");
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto out_delete;
+>  	}
+>  
+>  	if (!strcmp(argv[0], "stat")) {
+> -- 
+> 2.11.0
