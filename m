@@ -1,42 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 17 Oct 2017 14:31:51 +0000
-Subject: [PATCH] HID: hid-logitech: remove redundant assignment to pointer value
-Message-Id: <20171017143151.23056-1-colin.king@canonical.com>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Thu, 19 Oct 2017 11:53:22 +0000
+Subject: Re: [PATCH] HID: hid-logitech: remove redundant assignment to pointer value
+Message-Id: <nycvar.YFH.7.76.1710191353080.9294@jbgna.fhfr.qr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171017143151.23056-1-colin.king@canonical.com>
+In-Reply-To: <20171017143151.23056-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 17 Oct 2017, Colin King wrote:
 
-The pointer value is being assigned a value and this is never read,
-and later on it is being assigned a new value.  This the first
-assignment is redundant and can be removed and hence also the variables
-report and report_list.  Cleans up the clang warning: Value stored to
-'value' during its initialization is never read
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer value is being assigned a value and this is never read,
+> and later on it is being assigned a new value.  This the first
+> assignment is redundant and can be removed and hence also the variables
+> report and report_list.  Cleans up the clang warning: Value stored to
+> 'value' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hid/hid-lg4ff.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied to for-4.15/logitech. Thanks,
 
-diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
-index 1fc12e357035..512d67e1aae3 100644
---- a/drivers/hid/hid-lg4ff.c
-+++ b/drivers/hid/hid-lg4ff.c
-@@ -474,9 +474,7 @@ static int lg4ff_play(struct input_dev *dev, void *data, struct ff_effect *effec
- static void lg4ff_set_autocenter_default(struct input_dev *dev, u16 magnitude)
- {
- 	struct hid_device *hid = input_get_drvdata(dev);
--	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
--	struct hid_report *report = list_entry(report_list->next, struct hid_report, list);
--	s32 *value = report->field[0]->value;
-+	s32 *value;
- 	u32 expand_a, expand_b;
- 	struct lg4ff_device_entry *entry;
- 	struct lg_drv_data *drv_data;
 -- 
-2.14.1
+Jiri Kosina
+SUSE Labs
 
