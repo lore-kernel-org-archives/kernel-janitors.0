@@ -1,74 +1,75 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 18 Oct 2017 17:13:09 +0000
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Date: Thu, 19 Oct 2017 13:16:11 +0000
 Subject: Re: [PATCH 0/4] char-TPM: Adjustments for ten function implementations
-Message-Id: <20171018171309.f7idf76ccvofpnpk@linux.intel.com>
+Message-Id: <1508418971.4510.134.camel@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
- <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <20171017085124.pkrjzghcf5wmcydc@mwanda>
- <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
- <1508255833.3129.33.camel@HansenPartnership.com>
- <20171018151010.r4ojcpzs5l7rpt6r@linux.intel.com>
- <1508342988.3958.5.camel@HansenPartnership.com>
-In-Reply-To: <1508342988.3958.5.camel@HansenPartnership.com>
+         <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
+         <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
+         <20171017085124.pkrjzghcf5wmcydc@mwanda>
+         <alpine.DEB.2.20.1710171055100.5035@hadrien>
+         <20171017094434.csarc5fw5d32u64w@mwanda>
+         <alpine.DEB.2.20.1710171211210.5035@hadrien>
+         <1508241146.4234.16.camel@linux.vnet.ibm.com>
+         <87lgk9i1ni.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87lgk9i1ni.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Dan Carpenter <dan.carpenter@oracle.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Ellerman <mpe@ellerman.id.au>, Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 18, 2017 at 09:09:48AM -0700, James Bottomley wrote:
-> On Wed, 2017-10-18 at 18:10 +0300, Jarkko Sakkinen wrote:
-> > On Tue, Oct 17, 2017 at 08:57:13AM -0700, James Bottomley wrote:
-> > >=20
-> > > On Tue, 2017-10-17 at 11:25 +0200, SF Markus Elfring wrote:
-> > > >=20
-> > > > >=20
-> > > > >=20
-> > > > > Fixes is only for bug fixes.=A0=A0These don't fix any bugs.
-> > > >=20
-> > > > How do you distinguish these in questionable source code
-> > > > from other error categories or software weaknesses?
-> > >=20
-> > > A style change is one that doesn't change the effect of the
-> > > execution.
-> > > =A0These don't actually even change the assembly, so there's
-> > > programmatic
-> > > proof they're not fixing anything.
-> > >=20
-> > > Bug means potentially user visible fault. =A0In any bug fix commit
-> > > you
-> > > should document the fault and its effects on users so those
-> > > backporting
-> > > can decide if they care or not.
-> > >=20
-> > > James
-> >=20
-> > OK, I'll adjust my definition of a bug :-)
->=20
-> Subsystems are free to define bugs in any reasonable way. =A0However,
-> there are two things to note here:
->=20
->    1. The style guide is just that, a guide; it's not hard and fast rules.
->       =A0That means that violations aren't bugs in the usual sense.
->       =A0However, new code should mostly follow it and if it doesn't, the=
-re
->       should be a good reason to go against the guide which should be
->       explained in the change log.
->    2. The coding style evolves, so older drivers usually don't conform.
->       =A0Classifying coding style issues as bugs leads to tons of patches
->       "fixing" older drivers, some of which actually end up breaking the
->       drivers in subtle ways which take ages to be found (at least that's
->       what we've seen in SCSI).
->=20
-> James
+On Wed, 2017-10-18 at 14:18 +1100, Michael Ellerman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> > On Tue, 2017-10-17 at 12:11 +0200, Julia Lawall wrote:
+> >> On Tue, 17 Oct 2017, Dan Carpenter wrote:
+> >> > On Tue, Oct 17, 2017 at 10:56:42AM +0200, Julia Lawall wrote:
+> >> > > On Tue, 17 Oct 2017, Dan Carpenter wrote:
+> >> > > > On Mon, Oct 16, 2017 at 09:35:12PM +0300, Jarkko Sakkinen wrote:
+> >> > > > >
+> >> > > > > A minor complaint: all commits are missing "Fixes:" tag.
+> >> > > > >
+> >> > > >
+> >> > > > Fixes is only for bug fixes.  These don't fix any bugs.
+> >> > >
+> >> > > 0-day seems to put Fixes for everything.  Should they be removed when the
+> >> > > old code is undesirable but doesn't actually cause a crash, eg out of date
+> >> > > API.
+> >> >
+> >> > Yeah, I feel like Fixes tags don't belong for API updates and cleanups.
+> >> 
+> >> OK, I will remove them from the patches that go through me where they
+> >> don't seem appropriate.
+> >
+> > The "Fixes" tag is an indication that the patch should be backported.
+> 
+> No it's not that strong. It's an indication that the patch fixes another
+> commit, which may or may not mean it should be backported depending on
+> the preferences of the backporter. If it *does* need backporting then
+> the Fixes tag helps identify where it should go.
 
-Makes sense. Thanks for verbose explanation.
+Thank you for setting the record straight.
 
-/Jarkko
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The doco is actually pretty well worded IMO:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n183
+> 
+>   If your patch fixes a bug in a specific commit, e.g. you found an issue using
+>   ``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
+>   the SHA-1 ID, and the one line summary.
+> 
+> and:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n602
+> 
+>   A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
+>   is used to make it easy to determine where a bug originated, which can help
+>   review a bug fix. This tag also assists the stable kernel team in determining
+>   which stable kernel versions should receive your fix. This is the preferred
+>   method for indicating a bug fixed by the patch. See :ref:`describe_changes`
+>   for more details.
+> 
+> 
+> cheers
+> 
+
