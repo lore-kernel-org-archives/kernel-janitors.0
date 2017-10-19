@@ -1,45 +1,47 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 04 Oct 2017 19:15:41 +0000
-Subject: Re: [PATCH] RDMA/hns: Fix uninitialized variable in hns_roce_v2_query_qp()
-Message-Id: <1507144541.46071.2.camel@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 19 Oct 2017 13:46:22 +0000
+Subject: [PATCH] iio: adc: make array ch_to_mux static, makes object code smaller
+Message-Id: <20171019134622.31712-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003105418.jpthrfu7j7ojk5fg@mwanda>
-In-Reply-To: <20171003105418.jpthrfu7j7ojk5fg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>
-Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-10-03 at 13:54 +0300, Dan Carpenter wrote:
-> We accidentally return an uninitialized value if
-> (hr_qp->state = IB_QPS_RESET).  We should be returning success.
-> 
-> Fixes: 926a01dc000d ("RDMA/hns: Add QP operations support for hip08
-> SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Dan, I already took in another patch that solves the same issue. 
-Thanks.
+Don't populate const array ch_to_mux on the stack, instead
+make it static. Makes the object code smaller by over 200 bytes:
 
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index 4171f73bdad5..e1c59dc066c9 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -2792,7 +2792,7 @@ static int hns_roce_v2_query_qp(struct ib_qp
-> *ibqp, struct ib_qp_attr *qp_attr,
->  	struct device *dev = hr_dev->dev;
->  	int tmp_qp_state;
->  	int state;
-> -	int ret;
-> +	int ret = 0;
->  
->  	context = kzalloc(sizeof(*context), GFP_KERNEL);
->  	if (!context)
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  12663	   1648	    128	  14439	   3867	drivers/iio/adc/ti-adc12138.o
+
+After
+   text	   data	    bss	    dec	    hex	filename
+  12353	   1744	    128	  14225	   3791	drivers/iio/adc/ti-adc12138.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/ti-adc12138.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/ti-adc12138.c b/drivers/iio/adc/ti-adc12138.c
+index bf890244789a..703d68ae96b7 100644
+--- a/drivers/iio/adc/ti-adc12138.c
++++ b/drivers/iio/adc/ti-adc12138.c
+@@ -164,7 +164,7 @@ static int __adc12138_start_conv(struct adc12138 *adc,
+ 				 void *data, int len)
+ 
+ {
+-	const u8 ch_to_mux[] = { 0, 4, 1, 5, 2, 6, 3, 7 };
++	static const u8 ch_to_mux[] = { 0, 4, 1, 5, 2, 6, 3, 7 };
+ 	u8 mode = (ch_to_mux[channel->channel] << 4) |
+ 		  (channel->differential ? 0 : 0x80);
+ 
 -- 
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+2.14.1
 
