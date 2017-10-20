@@ -1,89 +1,106 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Oct 2017 20:24:48 +0000
-Subject: Re: [PATCH] crypto/s5p-sss: Use common error handling code in s5p_aes_probe()
-Message-Id: <75d2f79d-eb37-9bf6-91dd-7706c0dc2ec3@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 13:17:51 +0000
+Subject: [PATCH] ARM: mvebu: Use common error handling code in mvebu_armada_pm_init()
+Message-Id: <1c378b21-f10a-3a3a-fcee-8f0c0214a8fe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <791df15e-3a35-d270-0acf-1661bd89adad@users.sourceforge.net>
- <20171022190327.mfndyyr4b4iinv2d@kozik-lap>
-In-Reply-To: <20171022190327.mfndyyr4b4iinv2d@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Vladimir Zapolskiy <vz@mleia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sun, 22 Oct 2017 15:00:27 +0200
->>
->> Add a jump target so that a bit of exception handling can be better reused
->> at the end of this function.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/crypto/s5p-sss.c | 13 +++++++------
->>  1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
->> index 7ac657f46d15..ea59e184c199 100644
->> --- a/drivers/crypto/s5p-sss.c
->> +++ b/drivers/crypto/s5p-sss.c
->> @@ -863,16 +863,13 @@ static int s5p_aes_probe(struct platform_device *pdev)
->>  	pdata->irq_fc = platform_get_irq(pdev, 0);
->>  	if (pdata->irq_fc < 0) {
->>  		err = pdata->irq_fc;
->> -		dev_warn(dev, "feed control interrupt is not available.\n");
->> -		goto err_irq;
->> +		goto report_failure;
->>  	}
->>  	err = devm_request_threaded_irq(dev, pdata->irq_fc, NULL,
->>  					s5p_aes_interrupt, IRQF_ONESHOT,
->>  					pdev->name, pdev);
->> -	if (err < 0) {
->> -		dev_warn(dev, "feed control interrupt is not available.\n");
->> -		goto err_irq;
->> -	}
->> +	if (err < 0)
->> +		goto report_failure;
-> 
-> No, one exit path just to report error does not seem to be more readable.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 14:50:47 +0200
 
-I got an other development opinion on such an aspect.
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-> Instead, printing error after the code causing it looks to me
-> as common pattern, easy to maintain.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-mvebu/pm-board.c | 35 ++++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
-Do you care for variations in corresponding messages?
+diff --git a/arch/arm/mach-mvebu/pm-board.c b/arch/arm/mach-mvebu/pm-board.c
+index db17121d7d63..bef248c76951 100644
+--- a/arch/arm/mach-mvebu/pm-board.c
++++ b/arch/arm/mach-mvebu/pm-board.c
+@@ -81,6 +81,7 @@ static int __init mvebu_armada_pm_init(void)
+ 	struct device_node *np;
+ 	struct device_node *gpio_ctrl_np;
+ 	int ret = 0, i;
++	char *name;
+ 
+ 	if (!of_machine_is_compatible("marvell,axp-gp"))
+ 		return -ENODEV;
+@@ -90,41 +91,32 @@ static int __init mvebu_armada_pm_init(void)
+ 		return -ENODEV;
+ 
+ 	for (i = 0; i < ARMADA_PIC_NR_GPIOS; i++) {
+-		char *name;
+ 		struct of_phandle_args args;
+ 
+ 		pic_gpios[i] = of_get_named_gpio(np, "ctrl-gpios", i);
+ 		if (pic_gpios[i] < 0) {
+ 			ret = -ENODEV;
+-			goto out;
++			goto put_node;
+ 		}
+ 
+ 		name = kasprintf(GFP_KERNEL, "pic-pin%d", i);
+ 		if (!name) {
+ 			ret = -ENOMEM;
+-			goto out;
++			goto put_node;
+ 		}
+ 
+ 		ret = gpio_request(pic_gpios[i], name);
+-		if (ret < 0) {
+-			kfree(name);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto free_name;
+ 
+ 		ret = gpio_direction_output(pic_gpios[i], 0);
+-		if (ret < 0) {
+-			gpio_free(pic_gpios[i]);
+-			kfree(name);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto free_gpio;
+ 
+ 		ret = of_parse_phandle_with_fixed_args(np, "ctrl-gpios", 2,
+ 						       i, &args);
+-		if (ret < 0) {
+-			gpio_free(pic_gpios[i]);
+-			kfree(name);
+-			goto out;
+-		}
++		if (ret < 0)
++			goto free_gpio;
+ 
+ 		gpio_ctrl_np = args.np;
+ 		pic_raw_gpios[i] = args.args[0];
+@@ -135,10 +127,15 @@ static int __init mvebu_armada_pm_init(void)
+ 		return -ENOMEM;
+ 
+ 	mvebu_pm_suspend_init(mvebu_armada_pm_enter);
+-
+-out:
++put_node:
+ 	of_node_put(np);
+ 	return ret;
++
++free_gpio:
++	gpio_free(pic_gpios[i]);
++free_name:
++	kfree(name);
++	goto put_node;
+ }
+ 
+ /*
+-- 
+2.14.2
 
-
-> This patch does not bring improvement, in my opinion.
-
-How do you generally think about the possibility for a bit of code reduction?
-
-
->>  
->>  	pdata->busy = false;
->>  	pdata->dev = dev;
->> @@ -906,6 +903,10 @@ static int s5p_aes_probe(struct platform_device *pdev)
->>  	s5p_dev = NULL;
->>  
->>  	return err;
->> +
->> +report_failure:
->> +	dev_warn(dev, "feed control interrupt is not available.\n");
->> +	goto err_irq;
->>  }
->>  
->>  static int s5p_aes_remove(struct platform_device *pdev)
->> -- 
->> 2.14.2
->>
-
-
-Would you like to take another look at other adjustments in source files
-which are affected by the shown change pattern?
-
-Regards,
-Markus
