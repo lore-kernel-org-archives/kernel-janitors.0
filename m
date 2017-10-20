@@ -1,7 +1,7 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 13 Oct 2017 18:58:59 +0000
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Oct 2017 10:02:41 +0000
 Subject: Re: [PATCH 1/2] mmc: meson-mx-sdio: return correct error code
-Message-Id: <CAFBinCBE7EpGJ3LnAYd-yc+=OSxYsU-BFigugHBkrAn8S0uTPQ@mail.gmail.com>
+Message-Id: <CAPDyKFpT78pzBAArnPT=poc6Mm5kQaTgnUKA2DyR3vm1wdfpBg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171013111943.zyp5myiwb3pp56vh@mwanda>
 In-Reply-To: <20171013111943.zyp5myiwb3pp56vh@mwanda>
@@ -10,16 +10,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linus-amlogic@lists.infradead.org
 
-On Fri, Oct 13, 2017 at 1:19 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On 13 October 2017 at 13:19, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > This has a copy and paste bug so we use "host->fixed_factor_clk" which
 > is a valid pointer instead of "host->cfg_div_clk" which holds the error
 > code.
 >
 > Fixes: 0aa0fb9cd239 ("mmc: meson-mx-sdio: Add a driver for the Amlogic Meson8 and Meson8b SoCs")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-thank you for spotting and fixing this!
+Thanks, applied for next!
+
+Kind regards
+Uffe
 
 >
 > diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
@@ -35,8 +37,3 @@ thank you for spotting and fixing this!
 >
 >         return 0;
 >  }
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
