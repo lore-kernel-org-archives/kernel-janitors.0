@@ -1,7 +1,7 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 13 Oct 2017 19:02:28 +0000
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Oct 2017 10:02:46 +0000
 Subject: Re: [PATCH 2/2] mmc: meson-mx-sdio: Cleanup IS_ERR() checks
-Message-Id: <CAFBinCBz95u=DdrVF2UL0wPe2oUP2Qhz37K7MVkMUDj0jn2HmA@mail.gmail.com>
+Message-Id: <CAPDyKFrm_RmRid2hD=E2Pkf++FS2rZ30ONynVbJ6h_42xjUFqQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171013111943.zyp5myiwb3pp56vh@mwanda>
  <20171013112049.rdcdqv6ooktlv5wz@mwanda>
@@ -11,16 +11,16 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linus-amlogic@lists.infradead.org
 
-On Fri, Oct 13, 2017 at 1:20 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On 13 October 2017 at 13:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > Using PTR_ERR_OR_ZERO() instead of IS_ERR() works, but it's not how
 > you're supposed to write these conditions.
 >
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-thank you for spotting and fixing this!
-I double-checked devm_clk_register: we don't need IS_ERR_OR_NULL
-because devm_clk_register never returns NULL
+Thanks, applied for next!
+
+Kind regards
+Uffe
 
 > ---
 > I really hope it doesn't become a trend on to wrap all error checks in a
@@ -48,8 +48,3 @@ because devm_clk_register never returns NULL
 >                 return PTR_ERR(host->cfg_div_clk);
 >
 >         return 0;
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
