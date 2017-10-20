@@ -1,41 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Oct 2017 16:45:50 +0000
-Subject: [PATCH] ARM: footbridge: Delete an error message for a failed memory allocation in dc21285_setup()
-Message-Id: <a7a12144-a9fa-9c38-ff2f-c8f70ca451a1@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 15:17:31 +0000
+Subject: [PATCH 2/2] ARM: OMAP3: Delete an unnecessary variable initialisation in omap3xxx_hwmod_init()
+Message-Id: <a69f8cfb-ef9e-6af3-1cf9-013cdb517c5a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
+In-Reply-To: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Oct 2017 18:36:56 +0200
+Date: Fri, 20 Oct 2017 16:37:07 +0200
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+The local variable "bus" will eventually be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-footbridge/dc21285.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-footbridge/dc21285.c b/arch/arm/mach-footbridge/dc21285.c
-index 96a3d73ef4bf..e40c78358b16 100644
---- a/arch/arm/mach-footbridge/dc21285.c
-+++ b/arch/arm/mach-footbridge/dc21285.c
-@@ -258,10 +258,8 @@ int __init dc21285_setup(int nr, struct pci_sys_data *sys)
- 		return 0;
+diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
+index bb6eb1efb1b7..fd7db429e02b 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
+@@ -3148,7 +3148,7 @@ int __init omap3xxx_hwmod_init(void)
+ 	int r;
+ 	struct omap_hwmod_ocp_if **h = NULL, **h_gp = NULL, **h_sham = NULL;
+ 	struct omap_hwmod_ocp_if **h_aes = NULL;
+-	struct device_node *bus = NULL;
++	struct device_node *bus;
+ 	unsigned int rev;
  
- 	res = kzalloc(sizeof(struct resource) * 2, GFP_KERNEL);
--	if (!res) {
--		printk("out of memory for root bus resources");
-+	if (!res)
- 		return 0;
--	}
- 
- 	res[0].flags = IORESOURCE_MEM;
- 	res[0].name  = "Footbridge non-prefetch";
+ 	omap_hwmod_init();
 -- 
 2.14.2
 
