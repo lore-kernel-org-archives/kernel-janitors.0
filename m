@@ -1,31 +1,32 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Date: Fri, 13 Oct 2017 11:42:10 +0000
-Subject: Re: [PATCH] thunderbolt: Fix some right shifting to zero bugs
-Message-Id: <20171013114210.GE2761@lahna.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Oct 2017 00:28:45 +0000
+Subject: [PATCH] drm/panel: rpi-touchscreen: propagate errors in rpi_touchscreen_i2c_read()
+Message-Id: <20171020002845.kar2wg7gqxg7tzqi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
-In-Reply-To: <20171013112959.sc2pwazrpk7fxbtw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Eric Anholt <eric@anholt.net>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Fri, Oct 13, 2017 at 02:29:59PM +0300, Dan Carpenter wrote:
-> The problematic code looks like this:
-> 
-> 	res_seq = res_hdr->xd_hdr.length_sn & TB_XDOMAIN_SN_MASK;
-> 	res_seq >>= TB_XDOMAIN_SN_SHIFT;
-> 
-> TB_XDOMAIN_SN_SHIFT is 27, and right shifting a u8 27 bits is always
-> going to result in zero.  The fix is to declare these variables as u32.
-> 
-> Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
+There is one caller which checks whether rpi_touchscreen_i2c_read()
+returns negative error codes.  Currently it can't because negative
+error codes are truncated to u8, but that's easy to fix if we change the
+type to int.
 
-I think this requires two patches as the drivers/net/thunderbolt.c is
-added by another commit.
+Fixes: 2f733d6194bd ("drm/panel: Add support for the Raspberry Pi 7" Touchscreen.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also please CC netdev@vger.kernel.org and David Miller as the patches
-are in his net-next tree.
-
-The fixes themselves look good, though.
+diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+index 890fd6ff397c..d964d454e4ae 100644
+--- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
++++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+@@ -221,7 +221,7 @@ static struct rpi_touchscreen *panel_to_ts(struct drm_panel *panel)
+ 	return container_of(panel, struct rpi_touchscreen, base);
+ }
+ 
+-static u8 rpi_touchscreen_i2c_read(struct rpi_touchscreen *ts, u8 reg)
++static int rpi_touchscreen_i2c_read(struct rpi_touchscreen *ts, u8 reg)
+ {
+ 	return i2c_smbus_read_byte_data(ts->i2c, reg);
+ }
