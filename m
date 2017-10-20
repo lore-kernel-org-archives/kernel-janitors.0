@@ -1,72 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Oct 2017 13:20:46 +0000
-Subject: Re: [PATCH 3/4] char/tpm: Improve a size determination in nine functions
-Message-Id: <20171023132045.nsfim65xlhznbgfy@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 20 Oct 2017 07:21:03 +0000
+Subject: [PATCH] IB/qib: remove redundant setting of any in for-loop
+Message-Id: <20171020072103.10337-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <83a166af-aecc-649d-dfe3-a72245345209@users.sourceforge.net>
- <1508238182.16112.475.camel@linux.intel.com>
- <c8d37c0407a949c1abb35cfd79c17f58@infineon.com>
- <20171018144811.klfmzikibuux77pf@linux.intel.com>
- <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
-In-Reply-To: <8afa2fb8d8704aff804cd8da15e931da@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander.Steffen@infineon.com
-Cc: jarkko.sakkinen@linux.intel.com, andriy.shevchenko@linux.intel.com, elfring@users.sourceforge.net, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org, clabbe.montjoie@gmail.com, jgunthorpe@obsidianresearch.com, jsnitsel@redhat.com, kgold@linux.vnet.ibm.com, mpe@ellerman.id.au, nayna@linux.vnet.ibm.com, paulus@samba.org, PeterHuewe@gmx.de, stefanb@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Marciniszyn <infinipath@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 19, 2017 at 04:58:23PM +0000, Alexander.Steffen@infineon.com wrote:
-> > On Tue, Oct 17, 2017 at 11:50:05AM +0000, Alexander.Steffen@infineon.com
-> > wrote:
-> > > > > Replace the specification of data structures by pointer dereferences
-> > > > > as the parameter for the operator "sizeof" to make the corresponding
-> > > > > size
-> > > > > determination a bit safer according to the Linux coding style
-> > > > > convention.
-> > > >
-> > > >
-> > > > This patch does one style in favor of the other.
-> > >
-> > > I actually prefer that style, so I'd welcome this change :)
-> > >
-> > > > At the end it's Jarkko's call, though I would NAK this as I think some
-> > > > one already told this to you for some other similar patch(es).
-> > > >
-> > > >
-> > > > I even would suggest to stop doing this noisy stuff, which keeps people
-> > > > busy for nothing.
-> > >
-> > > Cleaning up old code is also worth something, even if does not change
-> > > one bit in the assembly output in the end...
-> > >
-> > > Alexander
-> > 
-> > Quite insignificant clean up it is that does more harm that gives any
-> > benefit as any new change adds debt to backporting.
-> > 
-> > Anyway, this has been a useful patch set for me in the sense that I have
-> > clearer picture now on discarding/accepting commits.
-> 
-> Indeed. I have now a better understanding for why some code looks as ugly as it does.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-These patches aren't a part of a sensible attempt to clean up the code.
+The variable all is being set but is never read after this
+hence it can be removed from the for loop initialization.
+Cleans up clang warning:
 
-The first two patches are easy to review and have a clear benefit so
-that's fine any time.
+drivers/infiniband/hw/qib/qib_file_ops.c:640:7: warning: Value
+stored to 'any' is never read
 
-Patch 3 updates the code to a new style guideline but it doesn't really
-improve readability that much.  Those sorts of patches are hard to
-review because you have to verify that the object code doesn't change.
-Plus it messes up git blame.  It's good for new code and staging, but
-for old code, it's probably only worth it if there are other patches
-which make worth the price.  You're basically applying it to make the
-patch sender happy.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/qib/qib_file_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-With patch 4, the tpm_ibmvtpm_probe() function was buggy and it's still
-buggy after the patch is applied.  It's a waste of time re-arranging the
-code if you aren't going to fix the bugs.
+diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniband/hw/qib/qib_file_ops.c
+index 2d6a191afec0..b5c2e4223ee7 100644
+--- a/drivers/infiniband/hw/qib/qib_file_ops.c
++++ b/drivers/infiniband/hw/qib/qib_file_ops.c
+@@ -637,7 +637,7 @@ static int qib_set_part_key(struct qib_ctxtdata *rcd, u16 key)
+ 		ret = -EBUSY;
+ 		goto bail;
+ 	}
+-	for (any = i = 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
++	for (i = 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+ 		if (!ppd->pkeys[i] &&
+ 		    atomic_inc_return(&ppd->pkeyrefs[i]) = 1) {
+ 			rcd->pkeys[pidx] = key;
+-- 
+2.14.1
 
-regards,
-dan carpenter
