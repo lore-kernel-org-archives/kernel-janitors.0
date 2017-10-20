@@ -1,23 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 20 Oct 2017 07:34:30 +0000
-Subject: Re: [PATCH net-next] tipc: checking for NULL instead of IS_ERR()
-Message-Id: <20171020.083430.260489693883420009.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 17:29:55 +0000
+Subject: [PATCH] um: Use common error handling code in port_listen_fd()
+Message-Id: <b16407cf-0caa-ea1d-7997-0e9a231468f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171018074825.2bi42vewrqhdbte3@mwanda>
-In-Reply-To: <20171018074825.2bi42vewrqhdbte3@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: user-mode-linux-devel@lists.sourceforge.net, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Oct 2017 10:48:25 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 19:24:39 +0200
 
-> The tipc_alloc_conn() function never returns NULL, it returns error
-> pointers, so I have fixed the check.
-> 
-> Fixes: 14c04493cb77 ("tipc: add ability to order and receive topology events in driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied, thanks Dan.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/um/drivers/port_user.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
+
+diff --git a/arch/um/drivers/port_user.c b/arch/um/drivers/port_user.c
+index 9a8e1b64c22e..8d95fa5641af 100644
+--- a/arch/um/drivers/port_user.c
++++ b/arch/um/drivers/port_user.c
+@@ -118,29 +118,24 @@ int port_listen_fd(int port)
+ 		return -errno;
+ 
+ 	arg = 1;
+-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &arg, sizeof(arg)) < 0) {
+-		err = -errno;
+-		goto out;
+-	}
++	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &arg, sizeof(arg)) < 0)
++		goto failure_indication;
+ 
+ 	addr.sin_family = AF_INET;
+ 	addr.sin_port = htons(port);
+ 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+-	if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+-		err = -errno;
+-		goto out;
+-	}
+-
+-	if (listen(fd, 1) < 0) {
+-		err = -errno;
+-		goto out;
+-	}
++	if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) < 0 ||
++	    listen(fd, 1) < 0)
++		goto failure_indication;
+ 
+ 	err = os_set_fd_block(fd, 0);
+ 	if (err < 0)
+ 		goto out;
+ 
+ 	return fd;
++
++ failure_indication:
++	err = -errno;
+  out:
+ 	close(fd);
+ 	return err;
+-- 
+2.14.2
+
