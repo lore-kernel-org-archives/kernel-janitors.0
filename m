@@ -1,24 +1,26 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 17 Oct 2017 02:44:15 +0000
-Subject: Re: [PATCH] scsi: lpfc: Fix a precedence bug in lpfc_nvme_io_cmd_wqe_cmpl()
-Message-Id: <yq1o9p61ojk.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 18:22:20 +0000
+Subject: Re: um: Use common error handling code in port_listen_fd()
+Message-Id: <92e5fe7f-9c6f-82b4-75a3-e7ec86004092@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171012203057.ixo2ds5i5ecbyv4y@mwanda>
-In-Reply-To: <20171012203057.ixo2ds5i5ecbyv4y@mwanda> (Dan Carpenter's message
-        of "Thu, 12 Oct 2017 23:30:57 +0300")
+References: <b16407cf-0caa-ea1d-7997-0e9a231468f3@users.sourceforge.net>
+ <1508522803.30181.3.camel@perches.com>
+In-Reply-To: <1508522803.30181.3.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>, user-mode-linux-devel@lists.sourceforge.net
+Cc: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+> If you are going to use multiple labels,
+> it'd be nicer to rename out: too.
 
-Dan,
+Thanks for your suggestion.
 
-> The ! has higher precedence than the & operation.  I've added
-> parenthesis so this works as intended.
+I left this place untouched because such kind of renaming seemed to be unwanted
+in some software areas for a while.
+How long should I wait for corresponding feedback before another small
+source code adjustment will be appropriate?
 
-Applied to 4.15/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
