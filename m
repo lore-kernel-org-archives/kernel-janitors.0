@@ -1,50 +1,26 @@
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
-Date: Wed, 18 Oct 2017 05:21:51 +0000
-Subject: Re: [PATCH 3/3] powernv/pci: Improve a size determination in pnv_pci_init_ioda_phb()
-Message-Id: <485415d5-1b3c-2603-89d1-0ebe0ccad274@ozlabs.ru>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 15:15:08 +0000
+Subject: [PATCH 0/2] ARM-OMAP3: Fine-tuning for omap3xxx_hwmod_init()
+Message-Id: <ad74497a-9516-8a98-8deb-e6d5b752a898@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <549d0b6b-f875-c524-d867-742745117c1e@users.sourceforge.net>
- <03b68902-629e-65ab-a5e8-d90a3613f596@users.sourceforge.net>
-In-Reply-To: <03b68902-629e-65ab-a5e8-d90a3613f596@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Russell Currey <ruscur@russell.cc>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 18/10/17 02:40, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 17 Oct 2017 17:18:10 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/platforms/powernv/pci-ioda.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index 98d9435240f4..2febdf06a237 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -3802,7 +3802,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
->  	phb_id = be64_to_cpup(prop64);
->  	pr_debug("  PHB-ID  : 0x%016llx\n", phb_id);
->  
-> -	phb = memblock_virt_alloc(sizeof(struct pnv_phb), 0);
-> +	phb = memblock_virt_alloc(sizeof(*phb), 0);
->  
->  	/* Allocate PCI controller */
->  	phb->hose = hose = pcibios_alloc_controller(np);
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Oct 2017 17:08:09 +0200
 
-Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Two update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (2):
+  Use common error handling code
+  Delete an unnecessary variable initialisation
 
+ arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 -- 
-Alexey
+2.14.2
+
