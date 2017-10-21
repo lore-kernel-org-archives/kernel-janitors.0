@@ -1,82 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sat, 21 Oct 2017 10:13:43 +0000
-Subject: Applied "ASoC: Intel: sst: remove redundant variable dma_dev_name" to the asoc tree
-Message-Id: <20171021101343.69C41440057@finisterre.ee.mobilebroadband>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 17:15:54 +0000
+Subject: [PATCH 2/3] crypto-ansi_cprng: Delete two variable assignments in get_prng_bytes()
+Message-Id: <7318b066-5233-426e-4b21-d4969b96bf67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171019123352.30294-1-colin.king@canonical.com>
-In-Reply-To: <20171019123352.30294-1-colin.king@canonical.com>
+References: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
+In-Reply-To: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 16:10:43 +0200
 
-   ASoC: Intel: sst: remove redundant variable dma_dev_name
+Adjust a jump target so that two error code assignments which are redundant
+before condition checks can be removed because the same value will be set
+as an exception handling at the end of this function.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 271ef65b5882425d500e969e875c98e47a6b0c86 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 19 Oct 2017 14:33:52 +0200
-Subject: [PATCH] ASoC: Intel: sst: remove redundant variable dma_dev_name
-
-The pointer dma_dev_name is assigned but never read, it is redundant
-and can therefore be removed.
-
-Cleans up clang warning:
-sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
-'dma_dev_name' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/common/sst-firmware.c | 2 --
- 1 file changed, 2 deletions(-)
+ crypto/ansi_cprng.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-index a086c35f91bb..79a9fdf94d38 100644
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	struct sst_pdata *sst_pdata = sst->pdata;
- 	struct sst_dma *dma;
- 	struct resource mem;
--	const char *dma_dev_name;
- 	int ret = 0;
+diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
+index 111c8982a47f..3d805bf6d0c6 100644
+--- a/crypto/ansi_cprng.c
++++ b/crypto/ansi_cprng.c
+@@ -192,19 +192,16 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
  
- 	if (sst->pdata->resindex_dma_base = -1)
-@@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	* is attached to the ADSP IP. */
- 	switch (sst->pdata->dma_engine) {
- 	case SST_DMA_TYPE_DW:
--		dma_dev_name = "dw_dmac";
- 		break;
- 	default:
- 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+ 
+ 	spin_lock_bh(&ctx->prng_lock);
+-
+-	err = -EINVAL;
+ 	if (ctx->flags & PRNG_NEED_RESET)
+-		goto unlock;
++		goto failure_indication;
+ 
+ 	/*
+ 	 * If the FIXED_SIZE flag is on, only return whole blocks of
+ 	 * pseudo random data
+ 	 */
+-	err = -EINVAL;
+ 	if (ctx->flags & PRNG_FIXED_SIZE) {
+ 		if (nbytes < DEFAULT_BLK_SZ)
+-			goto unlock;
++			goto failure_indication;
+ 		byte_count = DEFAULT_BLK_SZ;
+ 	}
+ 
+@@ -267,6 +264,7 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
+ 
+ reset_memory:
+ 	memset(buf, 0, nbytes);
++failure_indication:
+ 	err = -EINVAL;
+ 	goto unlock;
+ }
 -- 
-2.14.1
+2.14.2
 
