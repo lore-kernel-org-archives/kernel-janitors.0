@@ -1,48 +1,67 @@
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date: Wed, 18 Oct 2017 03:32:52 +0000
-Subject: Re: [PATCH] fat: remove redundant assignment of 0 to slots
-Message-Id: <874lqxuo4b.fsf@mail.parknet.co.jp>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 20:11:36 +0000
+Subject: [PATCH] tpm_i2c_nuvoton: Use common error handling code in i2c_nuvoton_send()
+Message-Id: <6d2dcc64-af7a-fb71-f863-10d30914269e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171017140258.22536-1-colin.king@canonical.com>
-In-Reply-To: <20171017140258.22536-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 17 Oct 2017 15:02:58 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Colin King <colin.king@canonical.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 22:07:39 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable slots is being assigned a value of zero that is never
-> read, slots is being updated again a few lines later. Remove this
-> redundant assignment.
-> Cleans clang warning: Value stored to 'slots' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Looks like good (if old gcc didn't have false positive warning).
+This issue was detected by using the Coccinelle software.
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/tpm/tpm_i2c_nuvoton.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-> ---
->  fs/fat/dir.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index 81cecbe6d7cf..b833ffeee1e1 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -291,7 +291,6 @@ static int fat_parse_long(struct inode *dir, loff_t *pos,
->  		}
->  	}
->  parse_long:
-> -	slots = 0;
->  	ds = (struct msdos_dir_slot *)*de;
->  	id = ds->id;
->  	if (!(id & 0x40))
-
+diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+index c6428771841f..f0037e9e2d0e 100644
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -440,15 +440,13 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	}
+ 	if (rc < 0) {
+ 		/* retries = TPM_RETRY */
+-		i2c_nuvoton_ready(chip);
+-		return rc;
++		goto write_ready;
+ 	}
+ 	/* execute the TPM command */
+ 	rc = i2c_nuvoton_write_status(client, TPM_STS_GO);
+ 	if (rc < 0) {
+ 		dev_err(dev, "%s() fail to write Go\n", __func__);
+-		i2c_nuvoton_ready(chip);
+-		return rc;
++		goto write_ready;
+ 	}
+ 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 	rc = i2c_nuvoton_wait_for_data_avail(chip,
+@@ -457,12 +455,15 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 					     &priv->read_queue);
+ 	if (rc) {
+ 		dev_err(dev, "%s() timeout command duration\n", __func__);
+-		i2c_nuvoton_ready(chip);
+-		return rc;
++		goto write_ready;
+ 	}
+ 
+ 	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
+ 	return len;
++
++write_ready:
++	i2c_nuvoton_ready(chip);
++	return rc;
+ }
+ 
+ static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.14.2
+
