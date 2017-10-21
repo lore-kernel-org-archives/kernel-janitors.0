@@ -1,48 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Oct 2017 20:42:51 +0000
-Subject: [bug report] mqprio: Introduce new hardware offload mode and shaper in mqprio
-Message-Id: <20171017204251.nwbpjuss5gcmuo7m@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Sat, 21 Oct 2017 10:13:43 +0000
+Subject: Applied "ASoC: Intel: sst: remove redundant variable dma_dev_name" to the asoc tree
+Message-Id: <20171021101343.69C41440057@finisterre.ee.mobilebroadband>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171019123352.30294-1-colin.king@canonical.com>
+In-Reply-To: <20171019123352.30294-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org@alsa-project.org
 
-Hello Amritha Nambiar,
+The patch
 
-This is a semi-automatic email about new static checker warnings.
+   ASoC: Intel: sst: remove redundant variable dma_dev_name
 
-The patch 4e8b86c06269: "mqprio: Introduce new hardware offload mode 
-and shaper in mqprio" from Sep 7, 2017, leads to the following Smatch 
-complaint:
+has been applied to the asoc tree at
 
-net/sched/sch_mqprio.c:156 mqprio_init()
-	 warn: variable dereferenced before check 'opt' (see line 145)
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-net/sched/sch_mqprio.c
-   144		int rem;
-   145		int len = nla_len(opt) - NLA_ALIGN(sizeof(*qopt));
-                          ^^^^^^^^^^^
-Patch adds new dereference.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-   146	
-   147		BUILD_BUG_ON(TC_MAX_QUEUE != TC_QOPT_MAX_QUEUE);
-   148		BUILD_BUG_ON(TC_BITMASK != TC_QOPT_BITMASK);
-   149	
-   150		if (sch->parent != TC_H_ROOT)
-   151			return -EOPNOTSUPP;
-   152	
-   153		if (!netif_is_multiqueue(dev))
-   154			return -EOPNOTSUPP;
-   155	
-   156		if (!opt || nla_len(opt) < sizeof(*qopt))
-                    ^^^^
-The old code checked for NULL.  You also might want to consider changing
-the "|| nla_len(opt) < sizeof(*qopt)" to:
-    "|| nla_len(opt) < NLA_ALIGN(sizeof(*qopt))", just for consistency.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-   157			return -EINVAL;
-   158	
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-regards,
-dan carpenter
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 271ef65b5882425d500e969e875c98e47a6b0c86 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 19 Oct 2017 14:33:52 +0200
+Subject: [PATCH] ASoC: Intel: sst: remove redundant variable dma_dev_name
+
+The pointer dma_dev_name is assigned but never read, it is redundant
+and can therefore be removed.
+
+Cleans up clang warning:
+sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
+'dma_dev_name' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/common/sst-firmware.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
+index a086c35f91bb..79a9fdf94d38 100644
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	struct sst_pdata *sst_pdata = sst->pdata;
+ 	struct sst_dma *dma;
+ 	struct resource mem;
+-	const char *dma_dev_name;
+ 	int ret = 0;
+ 
+ 	if (sst->pdata->resindex_dma_base = -1)
+@@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	* is attached to the ADSP IP. */
+ 	switch (sst->pdata->dma_engine) {
+ 	case SST_DMA_TYPE_DW:
+-		dma_dev_name = "dw_dmac";
+ 		break;
+ 	default:
+ 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+-- 
+2.14.1
+
