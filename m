@@ -1,62 +1,72 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 17:15:54 +0000
-Subject: [PATCH 2/3] crypto-ansi_cprng: Delete two variable assignments in get_prng_bytes()
-Message-Id: <7318b066-5233-426e-4b21-d4969b96bf67@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 18:55:20 +0000
+Subject: [PATCH] nbd: Use common error handling code in nbd_genl_connect()
+Message-Id: <110a7553-d57c-6a77-a9f7-fdee43a60195@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
-In-Reply-To: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
+To: linux-block@vger.kernel.org, nbd@other.debian.org, Josef Bacik <jbacik@fb.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 16:10:43 +0200
+Date: Sat, 21 Oct 2017 20:50:37 +0200
 
-Adjust a jump target so that two error code assignments which are redundant
-before condition checks can be removed because the same value will be set
-as an exception handling at the end of this function.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- crypto/ansi_cprng.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/block/nbd.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
-index 111c8982a47f..3d805bf6d0c6 100644
---- a/crypto/ansi_cprng.c
-+++ b/crypto/ansi_cprng.c
-@@ -192,19 +192,16 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
- 
- 
- 	spin_lock_bh(&ctx->prng_lock);
--
--	err = -EINVAL;
- 	if (ctx->flags & PRNG_NEED_RESET)
--		goto unlock;
-+		goto failure_indication;
- 
- 	/*
- 	 * If the FIXED_SIZE flag is on, only return whole blocks of
- 	 * pseudo random data
- 	 */
--	err = -EINVAL;
- 	if (ctx->flags & PRNG_FIXED_SIZE) {
- 		if (nbytes < DEFAULT_BLK_SZ)
--			goto unlock;
-+			goto failure_indication;
- 		byte_count = DEFAULT_BLK_SZ;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 883dfebd3014..05bd1fc70ee3 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1585,22 +1585,18 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+ 		if (ret = 0) {
+ 			int new_index;
+ 			new_index = nbd_dev_add(-1);
+-			if (new_index < 0) {
+-				mutex_unlock(&nbd_index_mutex);
+-				printk(KERN_ERR "nbd: failed to add new device\n");
+-				return ret;
+-			}
++			if (new_index < 0)
++				goto report_failure;
++
+ 			nbd = idr_find(&nbd_index_idr, new_index);
+ 		}
+ 	} else {
+ 		nbd = idr_find(&nbd_index_idr, index);
+ 		if (!nbd) {
+ 			ret = nbd_dev_add(index);
+-			if (ret < 0) {
+-				mutex_unlock(&nbd_index_mutex);
+-				printk(KERN_ERR "nbd: failed to add new device\n");
+-				return ret;
+-			}
++			if (ret < 0)
++				goto report_failure;
++
+ 			nbd = idr_find(&nbd_index_idr, index);
+ 		}
  	}
- 
-@@ -267,6 +264,7 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
- 
- reset_memory:
- 	memset(buf, 0, nbytes);
-+failure_indication:
- 	err = -EINVAL;
- 	goto unlock;
+@@ -1716,6 +1712,11 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+ 	if (put_dev)
+ 		nbd_put(nbd);
+ 	return ret;
++
++report_failure:
++	mutex_unlock(&nbd_index_mutex);
++	pr_err("nbd: failed to add new device\n");
++	return ret;
  }
+ 
+ static int nbd_genl_disconnect(struct sk_buff *skb, struct genl_info *info)
 -- 
 2.14.2
 
