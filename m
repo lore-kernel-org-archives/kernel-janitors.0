@@ -1,47 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 13:48:23 +0000
-Subject: [PATCH] power: supply: pcf50633-charger: remove redundant variable charging_start
-Message-Id: <20171031134823.24997-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 17:12:52 +0000
+Subject: [PATCH 0/3] crypto-ansi_cprng: Fine-tuning for three function implementations
+Message-Id: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 19:06:54 +0200
 
-Variable charging_start is being set but is never read, it is therefore
-redundant and can be removed. Cleans up sparse warning:
+Two update suggestions were taken into account
+from static source code analysis.
 
-drivers/power/supply/pcf50633-charger.c:61:3: warning: Value stored to
-'charging_start' is never read
+Markus Elfring (3):
+  Use common error handling code in get_prng_bytes()
+  Delete two variable assignments in get_prng_bytes()
+  Delete unnecessary blank lines
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/pcf50633-charger.c | 2 --
- 1 file changed, 2 deletions(-)
+ crypto/ansi_cprng.c | 47 ++++++++++++++++++-----------------------------
+ 1 file changed, 18 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/power/supply/pcf50633-charger.c b/drivers/power/supply/pcf50633-charger.c
-index 1ad7ccce6075..1aba14046a83 100644
---- a/drivers/power/supply/pcf50633-charger.c
-+++ b/drivers/power/supply/pcf50633-charger.c
-@@ -43,7 +43,6 @@ int pcf50633_mbc_usb_curlim_set(struct pcf50633 *pcf, int ma)
- 	struct pcf50633_mbc *mbc = platform_get_drvdata(pcf->mbc_pdev);
- 	int ret = 0;
- 	u8 bits;
--	int charging_start = 1;
- 	u8 mbcs2, chgmod;
- 	unsigned int mbcc5;
- 
-@@ -58,7 +57,6 @@ int pcf50633_mbc_usb_curlim_set(struct pcf50633 *pcf, int ma)
- 		ma = 100;
- 	} else {
- 		bits = PCF50633_MBCC7_USB_SUSPEND;
--		charging_start = 0;
- 		ma = 0;
- 	}
- 
 -- 
-2.14.1
+2.14.2
 
