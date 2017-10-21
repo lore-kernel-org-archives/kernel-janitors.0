@@ -1,40 +1,97 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 24 Oct 2017 13:55:11 +0000
-Subject: Re: [PATCH] tpm_tis_core: Use common error handling code in tpm_tis_send_data()
-Message-Id: <20171024135511.773njwnmodnewtwo@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 17:53:54 +0000
+Subject: [PATCH 1/2] crypto-testmgr: Use common error handling code in drbg_cavs_test()
+Message-Id: <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fb0a6fbb-db2f-ce3f-f1c2-02f934accc4e@users.sourceforge.net>
- <20171023134202.d6td6vvhd7pfv5ue@linux.intel.com>
- <455e93f6-c419-8318-6129-80e99fc8552f@users.sourceforge.net>
-In-Reply-To: <455e93f6-c419-8318-6129-80e99fc8552f@users.sourceforge.net>
+References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
+In-Reply-To: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 23, 2017 at 03:51:09PM +0200, SF Markus Elfring wrote:
-> >> @@ -315,6 +311,8 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
-> >>  
-> >>  	return 0;
-> >>  
-> >> +report_timeout:
-> >> +	rc = -ETIME;
-> >>  out_err:
-> >>  	tpm_tis_ready(chip);
-> >>  	return rc;
-> >> -- 
-> >> 2.14.2
-> >>
-> > 
-> > NAK. wait_for_tpm_stat() should give that error code.
-> 
-> This is a pity that you reject another bit of code reduction.
-> 
-> Regards,
-> Markus
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 19:29:11 +0200
 
-It is a pity that you continue doing this constant patch trolling.
-That is what it is.
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
-/Jarkko.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ crypto/testmgr.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index dd9c7f1c1c7b..76c5128284f8 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1914,8 +1914,8 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 	if (IS_ERR(drng)) {
+ 		printk(KERN_ERR "alg: drbg: could not allocate DRNG handle for "
+ 		       "%s\n", driver);
+-		kzfree(buf);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_buffer;
+ 	}
+ 
+ 	test_data.testentropy = &testentropy;
+@@ -1924,7 +1924,7 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 	ret = crypto_drbg_reset_test(drng, &pers, &test_data);
+ 	if (ret) {
+ 		printk(KERN_ERR "alg: drbg: Failed to reset rng\n");
+-		goto outbuf;
++		goto free_rng;
+ 	}
+ 
+ 	drbg_string_fill(&addtl, test->addtla, test->addtllen);
+@@ -1936,11 +1936,9 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 		ret = crypto_drbg_get_bytes_addtl(drng,
+ 			buf, test->expectedlen, &addtl);
+ 	}
+-	if (ret < 0) {
+-		printk(KERN_ERR "alg: drbg: could not obtain random data for "
+-		       "driver %s\n", driver);
+-		goto outbuf;
+-	}
++
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	drbg_string_fill(&addtl, test->addtlb, test->addtllen);
+ 	if (pr) {
+@@ -1951,18 +1949,21 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 		ret = crypto_drbg_get_bytes_addtl(drng,
+ 			buf, test->expectedlen, &addtl);
+ 	}
+-	if (ret < 0) {
+-		printk(KERN_ERR "alg: drbg: could not obtain random data for "
+-		       "driver %s\n", driver);
+-		goto outbuf;
+-	}
+ 
+-	ret = memcmp(test->expected, buf, test->expectedlen);
++	if (ret < 0)
++		goto report_failure;
+ 
+-outbuf:
++	ret = memcmp(test->expected, buf, test->expectedlen);
++free_rng:
+ 	crypto_free_rng(drng);
++free_buffer:
+ 	kzfree(buf);
+ 	return ret;
++
++report_failure:
++	pr_err("alg: drbg: could not obtain random data for driver %s\n",
++	       driver);
++	goto free_rng;
+ }
+ 
+ 
+-- 
+2.14.2
+
