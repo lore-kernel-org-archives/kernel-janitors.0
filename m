@@ -1,97 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 17:53:54 +0000
-Subject: [PATCH 1/2] crypto-testmgr: Use common error handling code in drbg_cavs_test()
-Message-Id: <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
+From: Stephan Mueller <smueller@chronox.de>
+Date: Sat, 21 Oct 2017 19:07:28 +0000
+Subject: Re: [PATCH 1/2] crypto-testmgr: Use common error handling code in drbg_cavs_test()
+Message-Id: <6795494.nv2bFMflat@tauon.chronox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
-In-Reply-To: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
+References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net> <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
+In-Reply-To: <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 19:29:11 +0200
+Am Samstag, 21. Oktober 2017, 19:53:54 CEST schrieb SF Markus Elfring:
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+Hi Markus,
 
-This issue was detected by using the Coccinelle software.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 21 Oct 2017 19:29:11 +0200
+> 
+> Adjust jump targets so that a bit of exception handling can be better
+> reused at the end of this function.
+> 
+> This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- crypto/testmgr.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+Thank you for this patch.
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index dd9c7f1c1c7b..76c5128284f8 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1914,8 +1914,8 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
- 	if (IS_ERR(drng)) {
- 		printk(KERN_ERR "alg: drbg: could not allocate DRNG handle for "
- 		       "%s\n", driver);
--		kzfree(buf);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_buffer;
- 	}
- 
- 	test_data.testentropy = &testentropy;
-@@ -1924,7 +1924,7 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
- 	ret = crypto_drbg_reset_test(drng, &pers, &test_data);
- 	if (ret) {
- 		printk(KERN_ERR "alg: drbg: Failed to reset rng\n");
--		goto outbuf;
-+		goto free_rng;
- 	}
- 
- 	drbg_string_fill(&addtl, test->addtla, test->addtllen);
-@@ -1936,11 +1936,9 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
- 		ret = crypto_drbg_get_bytes_addtl(drng,
- 			buf, test->expectedlen, &addtl);
- 	}
--	if (ret < 0) {
--		printk(KERN_ERR "alg: drbg: could not obtain random data for "
--		       "driver %s\n", driver);
--		goto outbuf;
--	}
-+
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	drbg_string_fill(&addtl, test->addtlb, test->addtllen);
- 	if (pr) {
-@@ -1951,18 +1949,21 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
- 		ret = crypto_drbg_get_bytes_addtl(drng,
- 			buf, test->expectedlen, &addtl);
- 	}
--	if (ret < 0) {
--		printk(KERN_ERR "alg: drbg: could not obtain random data for "
--		       "driver %s\n", driver);
--		goto outbuf;
--	}
- 
--	ret = memcmp(test->expected, buf, test->expectedlen);
-+	if (ret < 0)
-+		goto report_failure;
- 
--outbuf:
-+	ret = memcmp(test->expected, buf, test->expectedlen);
-+free_rng:
- 	crypto_free_rng(drng);
-+free_buffer:
- 	kzfree(buf);
- 	return ret;
-+
-+report_failure:
-+	pr_err("alg: drbg: could not obtain random data for driver %s\n",
-+	       driver);
-+	goto free_rng;
- }
- 
- 
--- 
-2.14.2
+> -outbuf:
+> +	ret = memcmp(test->expected, buf, test->expectedlen);
+> +free_rng:
+>  	crypto_free_rng(drng);
+> +free_buffer:
+>  	kzfree(buf);
+>  	return ret;
+> +
+> +report_failure:
+> +	pr_err("alg: drbg: could not obtain random data for driver %s\n",
+> +	       driver);
+> +	goto free_rng;
 
+Though, jumping back and forth like this with goto directives is something 
+that looks a bit strange. At least to my taste, may I suggest to have gotos 
+pointing only downwards and not up again? (Note, the same applies to the 
+ansi_cprng patch set).
+
+What about something like following:
+
+...
+    memcmp
+    goto free_rng;
+
+report_failure:
+    <failure report>
+
+free_rng:
+    <the deallocation code>
+
+Ciao
+Stephan
