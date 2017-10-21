@@ -1,31 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Oct 2017 17:56:56 +0000
-Subject: [PATCH 0/6] ARM-S3C24xx: Adjustments for four function implementations
-Message-Id: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 17:55:09 +0000
+Subject: [PATCH 2/2] crypto-testmgr: Delete an unnecessary variable initialisation in drbg_cavs_test()
+Message-Id: <9bd0533e-1bf3-a1c1-d84c-34ab4c511b78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
+In-Reply-To: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Oct 2017 19:50:05 +0200
+Date: Sat, 21 Oct 2017 19:33:45 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+The variable "ret" will eventually be set to an error code a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (6):
-  Delete an error message for a failed memory allocation in s3c2410_iotiming_get()
-  Improve a size determination in s3c2410_iotiming_get()
-  s3c2410: Fix a typo in a comment line
-  Delete an error message for a failed memory allocation in s3c2412_iotiming_get()
-  Improve a size determination in s3c2412_iotiming_get()
-  s3c2412: Fix a typo in a comment line
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ crypto/testmgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 8 +++-----
- arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 8 +++-----
- 2 files changed, 6 insertions(+), 10 deletions(-)
-
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 76c5128284f8..e46cf2c92497 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1901,7 +1901,7 @@ static int alg_test_cprng(const struct alg_test_desc *desc, const char *driver,
+ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 			  const char *driver, u32 type, u32 mask)
+ {
+-	int ret = -EAGAIN;
++	int ret;
+ 	struct crypto_rng *drng;
+ 	struct drbg_test_data test_data;
+ 	struct drbg_string addtl, pers, testentropy;
 -- 
 2.14.2
 
