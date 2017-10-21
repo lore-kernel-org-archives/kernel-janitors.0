@@ -1,42 +1,95 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 16 Oct 2017 19:04:47 +0000
-Subject: [PATCH 1/8] video: fbdev: au1200fb: Fix a potential double free
-Message-Id: <73dc8ec4bf94cb2f81ee264225ba0f509c96bebd.1508179264.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 17:17:25 +0000
+Subject: [PATCH 3/3] crypto-ansi_cprng: Delete unnecessary blank lines
+Message-Id: <7c466b3a-ca32-b946-f36e-a963c31a2320@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+References: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
+In-Reply-To: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.zolnierkie@samsung.com, tj@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-If 'fb_alloc_cmap()' fails, 'fbi->pseudo_palette' is freed and an error
-code is returned by 'au1200fb_init_fbinfo()'.
-The only caller, 'au1200fb_drv_probe()' goes to an error handling path
-where resources allocated in 'fb_alloc_cmap()' are freed.
-This leads to a double free of 'fbi->pseudo_palette'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Oct 2017 16:27:56 +0200
 
-Fix it by letting the caller free all resources in case of failure in
-'au1200fb_init_fbinfo()'.
+The script "checkpatch.pl" pointed information out like the following.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CHECK: Please don't use multiple blank lines
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/au1200fb.c | 1 -
- 1 file changed, 1 deletion(-)
+ crypto/ansi_cprng.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/video/fbdev/au1200fb.c b/drivers/video/fbdev/au1200fb.c
-index 5f04b4096c42..a5facc2ad90b 100644
---- a/drivers/video/fbdev/au1200fb.c
-+++ b/drivers/video/fbdev/au1200fb.c
-@@ -1553,7 +1553,6 @@ static int au1200fb_init_fbinfo(struct au1200fb_device *fbdev)
- 	if (fb_alloc_cmap(&fbi->cmap, AU1200_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
- 		print_err("Fail to allocate colormap (%d entries)",
- 			   AU1200_LCD_NBR_PALETTE_ENTRIES);
--		kfree(fbi->pseudo_palette);
- 		return -EFAULT;
+diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
+index 3d805bf6d0c6..b9ec1975dde7 100644
+--- a/crypto/ansi_cprng.c
++++ b/crypto/ansi_cprng.c
+@@ -40,7 +40,6 @@
+  * for implementation details
+  */
+ 
+-
+ struct prng_context {
+ 	spinlock_t prng_lock;
+ 	unsigned char rand_data[DEFAULT_BLK_SZ];
+@@ -77,8 +76,8 @@ static void xor_vectors(unsigned char *in1, unsigned char *in2,
+ 
+ 	for (i = 0; i < size; i++)
+ 		out[i] = in1[i] ^ in2[i];
+-
+ }
++
+ /*
+  * Returns DEFAULT_BLK_SZ bytes of random data per call
+  * returns 0 if generation succeeded, <0 if something went wrong
+@@ -89,7 +88,6 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
+ 	unsigned char tmp[DEFAULT_BLK_SZ];
+ 	unsigned char *output = NULL;
+ 
+-
+ 	dbgprint(KERN_CRIT "Calling _get_more_prng_bytes for context %p\n",
+ 		ctx);
+ 
+@@ -101,7 +99,6 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
+ 	 * This algorithm is a 3 stage state machine
+ 	 */
+ 	for (i = 0; i < 3; i++) {
+-
+ 		switch (i) {
+ 		case 0:
+ 			/*
+@@ -156,10 +153,8 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
+ 			break;
+ 		}
+ 
+-
+ 		/* do the encryption */
+ 		crypto_cipher_encrypt_one(ctx->tfm, output, tmp);
+-
  	}
  
+ 	/*
+@@ -190,7 +185,6 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
+ 	unsigned int byte_count = (unsigned int)nbytes;
+ 	int err;
+ 
+-
+ 	spin_lock_bh(&ctx->prng_lock);
+ 	if (ctx->flags & PRNG_NEED_RESET)
+ 		goto failure_indication;
+@@ -214,7 +208,6 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
+ 	dbgprint(KERN_CRIT "getting %d random bytes for context %p\n",
+ 		byte_count, ctx);
+ 
+-
+ remainder:
+ 	if (ctx->rand_data_valid = DEFAULT_BLK_SZ &&
+ 	    _get_more_prng_bytes(ctx, do_cont_test) < 0)
 -- 
-2.11.0
+2.14.2
 
