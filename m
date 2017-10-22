@@ -1,48 +1,79 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Oct 2017 18:47:28 +0000
-Subject: [PATCH 3/5] cris: nand: Delete a jump target in crisv32_nand_flash_probe()
-Message-Id: <c70b5a98-3c08-e926-23cf-18dea0ddeb5f@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 20:00:04 +0000
+Subject: [PATCH v2] gpu/drm/bridge/sii9234: Use common error handling code in sii9234_writebm()
+Message-Id: <2ecf0bb7-7129-40e4-cefc-0bc2d0f7ee8b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
-In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
+References: <8bb4a1d2-8876-731f-2938-8be075f4252c@users.sourceforge.net>
+In-Reply-To: <8bb4a1d2-8876-731f-2938-8be075f4252c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Archit Taneja <architt@codeaurora.org>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Oct 2017 18:55:01 +0200
+Date: Sun, 22 Oct 2017 21:50:51 +0200
 
-* Move a bit of exception handling code into an if branch
-  because the code was used only for one case before.
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
-* Delete the jump target "out_mtd" which became unnecessary
-  with this refactoring.
+  This issue was detected by using the Coccinelle software.
+
+* Adjust condition checks.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-index 3b5be9b984b4..f30579ec8ad7 100644
---- a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-+++ b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-@@ -163,13 +163,10 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
- 	/* Scan to find existence of the device */
- 	if (nand_scan(crisv32_mtd, 1)) {
- 		err = -ENXIO;
--		goto out_mtd;
-+		kfree(wrapper);
-+		return NULL;
- 	}
+v2:
+The check for a negative error code was preserved after a call
+of the function "i2c_smbus_read_byte".
+
+ drivers/gpu/drm/bridge/sii9234.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+index c77000626c22..4d8b2cc29378 100644
+--- a/drivers/gpu/drm/bridge/sii9234.c
++++ b/drivers/gpu/drm/bridge/sii9234.c
+@@ -231,30 +231,22 @@ static int sii9234_writebm(struct sii9234 *ctx, int id, int offset,
+ 		return ctx->i2c_error;
  
- 	return crisv32_mtd;
+ 	ret = i2c_smbus_write_byte(client, offset);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-		return ret;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	ret = i2c_smbus_read_byte(client);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	value = (value & mask) | (ret & ~mask);
 -
--out_mtd:
--	kfree(wrapper);
--	return NULL;
+ 	ret = i2c_smbus_write_byte_data(client, offset, value);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-	}
++	if (!ret)
++		return 0;
+ 
++report_failure:
++	dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
++		sii9234_client_name[id], offset, value);
++	ctx->i2c_error = ret;
+ 	return ret;
  }
  
 -- 
