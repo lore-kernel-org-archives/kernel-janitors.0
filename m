@@ -1,47 +1,79 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Sat, 28 Oct 2017 09:16:06 +0000
-Subject: Re: [PATCH] omapdrm: hdmi4_cec: signedness bug in hdmi4_cec_init()
-Message-Id: <c113f4c8-9bc7-16be-5749-b188f5809e0f@xs4all.nl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 17:51:17 +0000
+Subject: [PATCH 1/2] extcon: max14577: Use common error handling code in max14577_muic_set_path()
+Message-Id: <5cdefd84-066d-5379-43c8-76f5d3b8f7c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171027062705.tmmlbgerpb2v63bj@mwanda>
-In-Reply-To: <20171027062705.tmmlbgerpb2v63bj@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-On 10/27/2017 08:27 AM, Dan Carpenter wrote:
-> "ret" needs to be signed for the error handling to work.
-> 
-> Fixes: 8d7f934df8d8 ("omapdrm: hdmi4_cec: add OMAP4 HDMI CEC support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 19:33:58 +0200
 
-Oops! Not sure how that crept in.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+This issue was detected by using the Coccinelle software.
 
-Thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/extcon/extcon-max14577.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-	Hans
-
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> index d86873f2abe6..e626eddf24d5 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> @@ -352,7 +352,7 @@ int hdmi4_cec_init(struct platform_device *pdev, struct hdmi_core_data *core,
->  {
->  	const u32 caps = CEC_CAP_TRANSMIT | CEC_CAP_LOG_ADDRS |
->  			 CEC_CAP_PASSTHROUGH | CEC_CAP_RC;
-> -	unsigned int ret;
-> +	int ret;
->  
->  	core->adap = cec_allocate_adapter(&hdmi_cec_adap_ops, core,
->  		"omap4", caps, CEC_MAX_LOG_ADDRS);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
+diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
+index f6414b7fa5bc..3d4bf5d23236 100644
+--- a/drivers/extcon/extcon-max14577.c
++++ b/drivers/extcon/extcon-max14577.c
+@@ -211,10 +211,8 @@ static int max14577_muic_set_path(struct max14577_muic_info *info,
+ 	ret = max14577_update_reg(info->max14577->regmap,
+ 				MAX14577_MUIC_REG_CONTROL1,
+ 				CLEAR_IDBEN_MICEN_MASK, CTRL1_SW_OPEN);
+-	if (ret < 0) {
+-		dev_err(info->dev, "failed to update MUIC register\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	if (attached)
+ 		ctrl1 = val;
+@@ -224,10 +222,8 @@ static int max14577_muic_set_path(struct max14577_muic_info *info,
+ 	ret = max14577_update_reg(info->max14577->regmap,
+ 				MAX14577_MUIC_REG_CONTROL1,
+ 				CLEAR_IDBEN_MICEN_MASK, ctrl1);
+-	if (ret < 0) {
+-		dev_err(info->dev, "failed to update MUIC register\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	if (attached)
+ 		ctrl2 |= CTRL2_CPEN_MASK;	/* LowPwr=0, CPEn=1 */
+@@ -237,16 +233,18 @@ static int max14577_muic_set_path(struct max14577_muic_info *info,
+ 	ret = max14577_update_reg(info->max14577->regmap,
+ 			MAX14577_REG_CONTROL2,
+ 			CTRL2_LOWPWR_MASK | CTRL2_CPEN_MASK, ctrl2);
+-	if (ret < 0) {
+-		dev_err(info->dev, "failed to update MUIC register\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	dev_dbg(info->dev,
+ 		"CONTROL1 : 0x%02x, CONTROL2 : 0x%02x, state : %s\n",
+ 		ctrl1, ctrl2, attached ? "attached" : "detached");
+ 
+ 	return 0;
++
++report_failure:
++	dev_err(info->dev, "failed to update MUIC register\n");
++	return ret;
+ }
+ 
+ /*
+-- 
+2.14.2
 
