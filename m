@@ -1,44 +1,63 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Tue, 17 Oct 2017 20:47:04 +0000
-Subject: Re: [PATCH] ipmi_si: Delete an error message for a failed memory allocation in try_smi_init()
-Message-Id: <de4d7991-0b8f-4596-2e3b-0b93046dd6d1@acm.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 11:29:33 +0000
+Subject: [PATCH 1/2] xen-tpmfront: Use common error handling code in vtpm_send()
+Message-Id: <9cfcbfd0-75c3-4de5-f735-0ace23d2abcb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc91d8bf-c484-4411-f307-cadf7ad510f5@users.sourceforge.net>
-In-Reply-To: <dc91d8bf-c484-4411-f307-cadf7ad510f5@users.sourceforge.net>
+References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+In-Reply-To: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, openipmi-developer@lists.sourceforge.net
+To: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 10/15/2017 03:36 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Oct 2017 22:30:11 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 12:56:42 +0200
 
-Thanks, queued for the next release.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
--corey
+This issue was detected by using the Coccinelle software.
 
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/char/ipmi/ipmi_si_intf.c | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index 55e0c42bee4d..2aed46a6c49c 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -2095,7 +2095,6 @@ static int try_smi_init(struct smi_info *new_smi)
->   	/* Allocate the state machine's data and initialize it. */
->   	new_smi->si_sm = kmalloc(new_smi->handlers->size(), GFP_KERNEL);
->   	if (!new_smi->si_sm) {
-> -		pr_err(PFX "Could not allocate state machine memory\n");
->   		rv = -ENOMEM;
->   		goto out_err;
->   	}
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/tpm/xen-tpmfront.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 656e8af95d52..873a5631937a 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -90,10 +90,8 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 
+ 	/* Wait for completion of any existing command or cancellation */
+ 	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, chip->timeout_c,
+-			&priv->read_queue, true) < 0) {
+-		vtpm_cancel(chip);
+-		return -ETIME;
+-	}
++			      &priv->read_queue, true) < 0)
++		goto cancel_vtpm;
+ 
+ 	memcpy(offset + (u8 *)shr, buf, count);
+ 	shr->length = count;
+@@ -108,11 +106,14 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
+ 			&priv->read_queue, true) < 0) {
+ 		/* got a signal or timeout, try to cancel */
+-		vtpm_cancel(chip);
+-		return -ETIME;
++		goto cancel_vtpm;
+ 	}
+ 
+ 	return count;
++
++cancel_vtpm:
++	vtpm_cancel(chip);
++	return -ETIME;
+ }
+ 
+ static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+-- 
+2.14.2
 
