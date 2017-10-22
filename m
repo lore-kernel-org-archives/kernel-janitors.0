@@ -1,42 +1,74 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 14 Oct 2017 15:22:46 +0000
-Subject: Re: [PATCH] selinux: remove extraneous initialization of slots_used and max_chain_len
-Message-Id: <1507994566.814.17.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 19:32:46 +0000
+Subject: [PATCH] gpu/drm/bridge/sii9234: Use common error handling code in sii9234_writebm()
+Message-Id: <8bb4a1d2-8876-731f-2938-8be075f4252c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171014145224.840-1-colin.king@canonical.com>
-In-Reply-To: <20171014145224.840-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Archit Taneja <architt@codeaurora.org>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2017-10-14 at 15:52 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables slots_used and max_chain_len are being initialized to zero
-> twice. Remove the first set of initializations. Cleans up the
-> clang warnings:
-> 
-> Value stored to 'slots_used' is never read
-> Value stored to 'max_chain_len' is never read
-[]
-> diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
-[]
-> @@ -148,8 +148,6 @@ void hashtab_stat(struct hashtab *h, struct hashtab_info *info)
->  	u32 i, chain_len, slots_used, max_chain_len;
->  	struct hashtab_node *cur;
->  
-> -	slots_used = 0;
-> -	max_chain_len = 0;
->  	for (slots_used = max_chain_len = i = 0; i < h->size; i++) {
->  		cur = h->htable[i];
->  		if (cur) {
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 21:21:44 +0200
 
-I think it'd be nicer if the assignments in the loop
-were removed instead.
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
-	slots_used = 0;
-	max_chain_len = 0;
-	for (i = 0; i < h->size; i++) {
-		etc...
+  This issue was detected by using the Coccinelle software.
+
+* Adjust condition checks.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/bridge/sii9234.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+index c77000626c22..fbdacdaf485c 100644
+--- a/drivers/gpu/drm/bridge/sii9234.c
++++ b/drivers/gpu/drm/bridge/sii9234.c
+@@ -231,30 +231,22 @@ static int sii9234_writebm(struct sii9234 *ctx, int id, int offset,
+ 		return ctx->i2c_error;
+ 
+ 	ret = i2c_smbus_write_byte(client, offset);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-		return ret;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	ret = i2c_smbus_read_byte(client);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-		return ret;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	value = (value & mask) | (ret & ~mask);
+-
+ 	ret = i2c_smbus_write_byte_data(client, offset, value);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
+-			sii9234_client_name[id], offset, value);
+-		ctx->i2c_error = ret;
+-	}
++	if (!ret)
++		return 0;
+ 
++report_failure:
++	dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
++		sii9234_client_name[id], offset, value);
++	ctx->i2c_error = ret;
+ 	return ret;
+ }
+ 
+-- 
+2.14.2
 
