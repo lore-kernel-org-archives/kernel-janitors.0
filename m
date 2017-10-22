@@ -1,33 +1,75 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 16:44:23 +0000
-Subject: Re: iio/pressure/hp206c: Use common error handling code in hp206c_conv_and_read()
-Message-Id: <20171026174423.210579a6@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:40:48 +0000
+Subject: [PATCH] devfreq/exynos-bus: Use common error handling code in exynos_bus_target()
+Message-Id: <4a407cd6-020c-1750-019a-6c0ceb40e245@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bbe04556-c62c-6074-d663-884a702614f4@users.sourceforge.net>
-        <20171026172345.5a88cd73@archlinux>
-        <93642327-2a41-95ca-dd15-3d040fafe845@users.sourceforge.net>
-In-Reply-To: <93642327-2a41-95ca-dd15-3d040fafe845@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Crestez Dan Leonard <leonard.crestez@intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 26 Oct 2017 18:38:14 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 15:33:06 +0200
 
-> > The advantages of this are very limited.  
-> 
-> Would anybody like to check corresponding effects in more detail?
-No readabilty is reduced.  It is a very rare patch that is accepted
-where that is the case and the reasons have to be extremely clear
-and justified.
-> 
-> 
-> > Hence I am not going to apply it.  
-> 
-> This is a pity that you like such a kind of source code adjustment
-> not so much so far.
-> 
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/devfreq/exynos-bus.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 49f68929e024..e38d456b2d7d 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -124,34 +124,33 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+ 
+ 	if (old_freq < new_freq) {
+ 		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
++		if (ret < 0)
++			goto report_failure;
+ 	}
+ 
+ 	ret = clk_set_rate(bus->clk, new_freq);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to change clock of bus\n");
+ 		clk_set_rate(bus->clk, old_freq);
+-		goto out;
++		goto unlock;
+ 	}
+ 
+ 	if (old_freq > new_freq) {
+ 		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
++		if (ret < 0)
++			goto report_failure;
+ 	}
+ 	bus->curr_freq = new_freq;
+ 
+ 	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+ 			old_freq, new_freq, clk_get_rate(bus->clk));
+-out:
++unlock:
+ 	mutex_unlock(&bus->lock);
+-
+ 	return ret;
++
++report_failure:
++	dev_err(bus->dev, "failed to set voltage\n");
++	goto unlock;
+ }
+ 
+ static int exynos_bus_get_dev_status(struct device *dev,
+-- 
+2.14.2
 
