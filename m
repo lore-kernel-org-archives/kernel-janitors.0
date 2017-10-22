@@ -1,35 +1,27 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 27 Oct 2017 17:23:04 +0000
-Subject: Re: [PATCH] misc: bh1770glc: Use common error handling code in bh1770_power_state_store()
-Message-Id: <20171027172304.GA18401@kroah.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 11:28:14 +0000
+Subject: [PATCH 0/2] Xen vTPM frontend: Fine-tuning for vtpm_send()
+Message-Id: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <568ee0ee-8ff1-9739-fa6b-f2eeae53e11a@users.sourceforge.net>
- <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
-In-Reply-To: <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniele Nicolodi <daniele@grinta.net>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Samu Onkalo <samu.p.onkalo@nokia.com>
+To: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 27, 2017 at 11:11:13AM -0600, Daniele Nicolodi wrote:
-> On 10/27/17 10:20 AM, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Fri, 27 Oct 2017 18:00:31 +0200
-> > 
-> > Adjust jump targets so that a bit of exception handling can be better
-> > reused in an if branch of this function.
-> 
-> What is the benefit brought by this change?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:23:45 +0200
 
-Please note, you are responding to someone who lots and lots of kernel
-maintainers/developers have blacklisted, myself included.  It's just not
-worth your effort, I recommend doing the same, as I'm not applying any
-patches from this author, unless some other maintainer wants to take the
-time to validate and send them on to me.
+Two update suggestions were taken into account
+from static source code analysis.
 
-kill-files are a good thing, please use them :)
+Markus Elfring (2):
+  Use common error handling code
+  Combine two condition checks into one statement
 
-good luck!
+ drivers/char/tpm/xen-tpmfront.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-greg k-h
+-- 
+2.14.2
+
