@@ -1,22 +1,80 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Thu, 19 Oct 2017 18:55:41 +0000
-Subject: Re: [PATCH] docs: dev-tools: correct Coccinelle version number
-Message-Id: <20171019125541.0cca9032@lwn.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 18:27:00 +0000
+Subject: [PATCH] gpio-adnp: Use common error handling code in adnp_gpio_dbg_show()
+Message-Id: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1508059448-24317-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1508059448-24317-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 15 Oct 2017 11:24:08 +0200
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 20:21:55 +0200
 
-> There is no Coccinelle version 1.2.  1.0.2 must be what was intended.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied, thanks.
+This issue was detected by using the Coccinelle software.
 
-jon
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-adnp.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index 89863ea25de1..7f475eef3faa 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -192,28 +192,20 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		mutex_lock(&adnp->i2c_lock);
+ 
+ 		err = adnp_read(adnp, GPIO_DDR(adnp) + i, &ddr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_PLR(adnp) + i, &plr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_IER(adnp) + i, &ier);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_ISR(adnp) + i, &isr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		mutex_unlock(&adnp->i2c_lock);
+ 
+@@ -240,6 +232,11 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 				   direction, level, interrupt, pending);
+ 		}
+ 	}
++
++	return;
++
++unlock:
++	mutex_unlock(&adnp->i2c_lock);
+ }
+ 
+ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
+-- 
+2.14.2
+
