@@ -1,42 +1,70 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Mon, 30 Oct 2017 21:19:01 +0000
-Subject: Re: [PATCH] ravb: Use common error handling code in ravb_probe()
-Message-Id: <587725d6-2eeb-c95c-1cfe-0c6571a74c7c@cogentembedded.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 22 Oct 2017 08:28:31 +0000
+Subject: [PATCH] mtd: lpddr: Fix a potential double mutex_lock
+Message-Id: <20171022082831.26560-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
- <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
-In-Reply-To: <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Eugeniu Rosca <erosca@de.adit-jv.com>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, Masaru Nagai <masaru.nagai.vx@renesas.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Simon Horman <horms+renesas@verge.net.au>, Yuval Shaia <yuval.shaia@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 10/30/2017 11:51 PM, Sergei Shtylyov wrote:
+If 'chip->state = FL_SYNCING', we will 'goto retry' with the mutex
+'&shared->lock' already taken.
+In such a case, the 'mutex_lock' at line 927 can never succeed.
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 28 Oct 2017 19:10:08 +0200
->>
->> Add a jump target so that a bit of exception handling can be better reused
->> at the end of this function.
-> 
->     Have you actually tried to see if there's any change in the resulting 
-> object code? I've looked at ARM gcc 4.8.5's output and it didn't really change 
-> -- gcc was able to optimize these repetitive assignments pretty well...
-> 
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>   drivers/net/ethernet/renesas/ravb_main.c | 32 
->> ++++++++++++++++----------------
->>   1 file changed, 16 insertions(+), 16 deletions(-)
-> 
->     Diffstat also speaks about the futility of this patch.
+In order to avoid a deadlock, move the 'mutex_lock(&shared->lock)' at the
+very end of the block.
 
-    Ah, you've added empty lines where there was none... Please don't do this.
-I'll ACK the v2 patch, given my comments are addressed.
+This has been spotted with the following coccinelle script:
 
-[...]
+@find@
+expression x, t;
+@@
 
-MBR, Sergei
+	mutex_lock(x);
+	... when != mutex_unlock(x)
+	mutex_lock(t);
+
+@@
+expression find.t;
+expression find.x;
+@@
+
+*	mutex_lock(t);
+	... when != mutex_unlock(t)
+*	mutex_lock(x);
+
+
+Fixes: 	c68264711ca6 ("[MTD] LPDDR Command set driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Review carefuly, untested.
+---
+ drivers/mtd/lpddr/lpddr_cmds.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
+index 018c75faadb3..830dd0855ab3 100644
+--- a/drivers/mtd/lpddr/lpddr_cmds.c
++++ b/drivers/mtd/lpddr/lpddr_cmds.c
+@@ -237,7 +237,6 @@ static int get_chip(struct map_info *map, struct flchip *chip, int mode)
+ 				mutex_unlock(&contender->mutex);
+ 				return ret;
+ 			}
+-			mutex_lock(&shared->lock);
+ 
+ 			/* We should not own chip if it is already in FL_SYNCING
+ 			 * state. Put contender and retry. */
+@@ -247,6 +246,8 @@ static int get_chip(struct map_info *map, struct flchip *chip, int mode)
+ 				goto retry;
+ 			}
+ 			mutex_unlock(&contender->mutex);
++
++			mutex_lock(&shared->lock);
+ 		}
+ 
+ 		/* Check if we have suspended erase on this chip.
+-- 
+2.14.1
+
