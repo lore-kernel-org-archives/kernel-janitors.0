@@ -1,31 +1,62 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 16 Oct 2017 11:36:12 +0000
-Subject: Re: [PATCH] ALSA: pcm: remove redundant variable runtime
-Message-Id: <s5hpo9n1g0j.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:05:05 +0000
+Subject: [PATCH] crypto/s5p-sss: Use common error handling code in s5p_aes_probe()
+Message-Id: <791df15e-3a35-d270-0acf-1661bd89adad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171015210644.15565-1-colin.king@canonical.com>
-In-Reply-To: <20171015210644.15565-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 15 Oct 2017 23:06:44 +0200,
-Colin King wrote:
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> An earlier commit removed the access to variable runtime
-> and we are now left with unused variable that is redundant,
-> so remove it.
-> 
-> Cleans up the clang warning: Value stored to 'runtime' is never read
-> 
-> Fixes: e11f0f90a626 ("ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 15:00:27 +0200
 
-Applied, thanks.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-Takashi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/s5p-sss.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 7ac657f46d15..ea59e184c199 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -863,16 +863,13 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	pdata->irq_fc = platform_get_irq(pdev, 0);
+ 	if (pdata->irq_fc < 0) {
+ 		err = pdata->irq_fc;
+-		dev_warn(dev, "feed control interrupt is not available.\n");
+-		goto err_irq;
++		goto report_failure;
+ 	}
+ 	err = devm_request_threaded_irq(dev, pdata->irq_fc, NULL,
+ 					s5p_aes_interrupt, IRQF_ONESHOT,
+ 					pdev->name, pdev);
+-	if (err < 0) {
+-		dev_warn(dev, "feed control interrupt is not available.\n");
+-		goto err_irq;
+-	}
++	if (err < 0)
++		goto report_failure;
+ 
+ 	pdata->busy = false;
+ 	pdata->dev = dev;
+@@ -906,6 +903,10 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	s5p_dev = NULL;
+ 
+ 	return err;
++
++report_failure:
++	dev_warn(dev, "feed control interrupt is not available.\n");
++	goto err_irq;
+ }
+ 
+ static int s5p_aes_remove(struct platform_device *pdev)
+-- 
+2.14.2
+
