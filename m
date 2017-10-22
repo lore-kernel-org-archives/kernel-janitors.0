@@ -1,32 +1,43 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Mon, 30 Oct 2017 13:32:17 +0000
-Subject: Re: [PATCH 3/5] wlcore: Return directly after a failed ieee80211_beacon_get() in wlcore_set_beacon_t
-Message-Id: <CAGRGNgVaanuB7QhodhenQfgrUO_VbQ14T-a64GUSnyiPGA0T7A@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 11:30:46 +0000
+Subject: [PATCH 2/2] xen-tpmfront: Combine two condition checks into one statement in vtpm_send()
+Message-Id: <f1d76752-d5b4-649d-b11d-63348d439505@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net> <6ea50cb4-8871-6752-6275-50da266f0e7d@users.sourceforge.net>
-In-Reply-To: <6ea50cb4-8871-6752-6275-50da266f0e7d@users.sourceforge.net>
+References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
+In-Reply-To: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 7:13 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 29 Oct 2017 20:00:41 +0100
->
-> Return directly after a call of the function "ieee80211_beacon_get"
-> failed at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 13:15:16 +0200
 
-Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+A return was performed with the same error code after two condition checks.
+Thus use a single statement instead.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/char/tpm/xen-tpmfront.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 873a5631937a..0d02743e7a87 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -82,10 +82,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	u32 ordinal;
+ 	unsigned long duration;
+ 
+-	if (offset > PAGE_SIZE)
+-		return -EINVAL;
+-
+-	if (offset + count > PAGE_SIZE)
++	if (offset > PAGE_SIZE || offset + count > PAGE_SIZE)
+ 		return -EINVAL;
+ 
+ 	/* Wait for completion of any existing command or cancellation */
 -- 
-Julian Calaby
+2.14.2
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
