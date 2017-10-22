@@ -1,27 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 Oct 2017 03:18:41 +0000
-Subject: Re: [PATCH][next] sctp: make array sctp_sched_ops static
-Message-Id: <20171011.201841.213739155323701188.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 22 Oct 2017 11:49:45 +0000
+Subject: [PATCH] iommu/amd: remove unused variable flush_addr
+Message-Id: <20171022114945.1479-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171011101757.18825-1-colin.king@canonical.com>
-In-Reply-To: <20171011101757.18825-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 11 Oct 2017 11:17:57 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array sctp_sched_ops  is local to the source and
-> does not need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'sctp_sched_ops' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable flush_addr is being assigned but is never read; it
+is redundant and can be removed. Cleans up the clang warning:
 
-Applied.
+drivers/iommu/amd_iommu.c:2388:2: warning: Value stored to 'flush_addr'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iommu/amd_iommu.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 5a72f40d6532..a99d41fc3a1d 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2382,11 +2382,9 @@ static void __unmap_single(struct dma_ops_domain *dma_dom,
+ 			   size_t size,
+ 			   int dir)
+ {
+-	dma_addr_t flush_addr;
+ 	dma_addr_t i, start;
+ 	unsigned int pages;
+ 
+-	flush_addr = dma_addr;
+ 	pages = iommu_num_pages(dma_addr, size, PAGE_SIZE);
+ 	dma_addr &= PAGE_MASK;
+ 	start = dma_addr;
+-- 
+2.14.1
+
