@@ -1,75 +1,50 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 23 Oct 2017 13:38:13 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 13:46:52 +0000
 Subject: Re: [PATCH] tpm_i2c_nuvoton: Use common error handling code in i2c_nuvoton_send()
-Message-Id: <20171023133813.3xflw4k2npydp26c@linux.intel.com>
+Message-Id: <65bebe74-587b-eb5f-44f3-2e354fd2b82d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6d2dcc64-af7a-fb71-f863-10d30914269e@users.sourceforge.net>
-In-Reply-To: <6d2dcc64-af7a-fb71-f863-10d30914269e@users.sourceforge.net>
+ <20171023133813.3xflw4k2npydp26c@linux.intel.com>
+In-Reply-To: <20171023133813.3xflw4k2npydp26c@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, linux-integrity@vger.kernel.org
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Oct 21, 2017 at 10:11:36PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Oct 2017 22:07:39 +0200
+>> @@ -457,12 +455,15 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>>  					     &priv->read_queue);
+>>  	if (rc) {
+>>  		dev_err(dev, "%s() timeout command duration\n", __func__);
+>> -		i2c_nuvoton_ready(chip);
+>> -		return rc;
+>> +		goto write_ready;
+>>  	}
+>>  
+>>  	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
+>>  	return len;
+>> +
+>> +write_ready:
+>> +	i2c_nuvoton_ready(chip);
+>> +	return rc;
+>>  }
+>>  
+>>  static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
+>> -- 
+>> 2.14.2
+>>
 > 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/char/tpm/tpm_i2c_nuvoton.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> index c6428771841f..f0037e9e2d0e 100644
-> --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> @@ -440,15 +440,13 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  	}
->  	if (rc < 0) {
->  		/* retries = TPM_RETRY */
-> -		i2c_nuvoton_ready(chip);
-> -		return rc;
-> +		goto write_ready;
->  	}
->  	/* execute the TPM command */
->  	rc = i2c_nuvoton_write_status(client, TPM_STS_GO);
->  	if (rc < 0) {
->  		dev_err(dev, "%s() fail to write Go\n", __func__);
-> -		i2c_nuvoton_ready(chip);
-> -		return rc;
-> +		goto write_ready;
->  	}
->  	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
->  	rc = i2c_nuvoton_wait_for_data_avail(chip,
-> @@ -457,12 +455,15 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
->  					     &priv->read_queue);
->  	if (rc) {
->  		dev_err(dev, "%s() timeout command duration\n", __func__);
-> -		i2c_nuvoton_ready(chip);
-> -		return rc;
-> +		goto write_ready;
->  	}
->  
->  	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
->  	return len;
-> +
-> +write_ready:
-> +	i2c_nuvoton_ready(chip);
-> +	return rc;
->  }
->  
->  static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
-> -- 
-> 2.14.2
-> 
+> Setting the commandReady bit gives means to abort the command.
+> Setting the bit is not the end goal.
 
-Setting the commandReady bit gives means to abort the command. Setting
-the bit is not the end goal. Use something like err_cancel instead.
+Does your constructive feedback mean that there are any more implementation details
+to consider besides the suggested code layout adjustment?
 
-/Jarkko
+
+> Use something like err_cancel instead.
+
+I am unsure about this suggestion. Will a simple replacement be sufficient
+at the end?
+
+Regards,
+Markus
