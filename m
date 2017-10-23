@@ -1,17 +1,18 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 18 Oct 2017 22:54:31 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Oct 2017 12:19:07 +0000
 Subject: Re: [PATCH] staging: wilc1000: replace redundant computations with 0
-Message-Id: <1508367271.6806.25.camel@perches.com>
+Message-Id: <20171023121907.phgo4ch5ygms2uja@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171010140548.18016-1-colin.king@canonical.com>
 In-Reply-To: <20171010140548.18016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna <ganesh.krishna@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2017-10-10 at 15:05 +0100, Colin King wrote:
+
+On Tue, Oct 10, 2017 at 03:05:48PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Shifting and masking strHostIfSetMulti->enabled is redundant since
@@ -41,13 +42,10 @@ On Tue, 2017-10-10 at 15:05 +0100, Colin King wrote:
 > +	*pu8CurrByte++ = 0;
 > +	*pu8CurrByte++ = 0;
 
-This might be more an indication of another defect
+This is harder to understand now.  I would be better to solve this by
+declaring a struct with the right format and using cpu_to_be32().
 
-Perhaps this is just supposed to be
+regards,
+dan carpenter
 
-	*pu8CurrByte++ = strHostIfSetMulti->enabled;
 
-without the three byte sets to zero after that.
-
->  	*pu8CurrByte++ = (strHostIfSetMulti->cnt & 0xFF);
->  	*pu8CurrByte++ = ((strHostIfSetMulti->cnt >> 8) & 0xFF);
