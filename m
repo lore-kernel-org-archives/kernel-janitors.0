@@ -1,38 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 09:17:51 +0000
+Date: Mon, 23 Oct 2017 12:04:36 +0000
 Subject: Re: um: Use common error handling code in port_listen_fd()
-Message-Id: <64ed8a02-3158-38b7-b795-efdc7f63e7e5@users.sourceforge.net>
+Message-Id: <843eaa51-d340-7d3e-dcd1-014e18d43f60@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <b16407cf-0caa-ea1d-7997-0e9a231468f3@users.sourceforge.net>
- <20171023084800.p26qcpb7iqyqrz4v@mwanda>
- <e248c905-eb76-d9bd-6e10-92be8b200590@users.sourceforge.net>
- <20171023091024.yxfva5p63zodj6bp@mwanda>
-In-Reply-To: <20171023091024.yxfva5p63zodj6bp@mwanda>
+ <20171023084800.p26qcpb7iqyqrz4v@mwanda> <20171023102821.GA238@x4>
+In-Reply-To: <20171023102821.GA238@x4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, user-mode-linux-devel@lists.sourceforge.net
-Cc: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Markus Trippelsdorf <markus@trippelsdorf.de>, user-mode-linux-devel@lists.sourceforge.net
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>, user-mode-linux-user@lists.sourceforge.net, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
 
->> Could you become used to the proposed control flow structure
->> in the affected function?
->>
-> 
-> No.  Don't do this.
+> He just keeps sending these crap patches without listening to anybody,
 
-Thanks for your information.
+I am listening. - But this does not automatically mean that we come to
+the same thoughts and conclusions on some topics.
 
 
-> It's pointless obfuscation.
+> thereby wasting valuable developer time.
 
-I disagree for this view.
+There are also contributors who respond in a positive way
+(while you might not like a specific change so far).
 
 
->> There are some challenges around change acceptance as usual.
-> 
-> Yeah.  I knew it was pointless to ask you to stop this...  :(
+> Even browsing LKML is no fun anymore,
 
-The mixture of agreements and disagreements will evolve over time, won't they?
+It can be very challenging as the communication traffic is evolving.
+
+
+> because his endless mindless patch series drags everything down qualitywise.
+
+This is a pity that you interpret my different contributions
+into such a direction.
+
+
+> David, would it be possible to simply ban him (SF Markus Elfring)
+> from vger.kernel.org?
+
+Do you really prefer censorship over free speech in this case?
 
 Regards,
 Markus
