@@ -1,48 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 17:39:21 +0000
-Subject: Re: dmaengine: ioat: Use common error handling code in ioat_xor_val_self_test()
-Message-Id: <ef4d8039-6d5c-5d31-515b-eda9f05faff6@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 19:46:40 +0000
+Subject: [PATCH] drm/etnaviv: Improve unlocking of a mutex in etnaviv_iommu_map_gem()
+Message-Id: <5a6c753f-d822-fb9e-0ea4-054754bdf4cc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b28f440e-6d11-d37e-e5de-e6dfd6bce2e9@users.sourceforge.net>
- <20171023072745.nh2mrwez2to6nst4@mwanda>
- <3e96d66a-de9c-5b2b-5646-84037a3935f7@intel.com>
- <20171023165617.GK936@localhost>
-In-Reply-To: <20171023165617.GK936@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Vinod Koul <vinod.koul@intel.com>, Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, "Williams, Dan J" <dan.j.williams@intel.com>, Geliang Tang <geliangtang@gmail.com>, Krister Johansen <kjlx@templeofstupid.com>, Pan Bian <bianpan2016@163.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Chris Wilson <chris@chris-wilson.co.uk>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> I agree with Dan. I'm ok with not accepting this patch.
-> 
-> And I have no intention to :)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 21:27:30 +0200
 
-This is a pity.
+Add a jump target so that a call of the function "mutex_unlock" is stored
+only once at the end of this function implementation.
+Replace three calls by goto statements.
 
+This issue was detected by using the Coccinelle software.
 
-> At least they should explain why or how it help,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Do you see useful consequences (like a bit less memory requirements)
-if the assignment statement “err = -ENODEV” will be stored only once
-behind the jump label “failure_indication” in the suggested update
-for the implementation of the function “ioat_xor_val_self_test”
-(instead of being duplicated several times)?
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+index f103e787de94..9b0d797349d4 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+@@ -221,18 +221,16 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu *mmu,
+ 		if (iova < 0x80000000 - sg_dma_len(sgt->sgl)) {
+ 			mapping->iova = iova;
+ 			list_add_tail(&mapping->mmu_node, &mmu->mappings);
+-			mutex_unlock(&mmu->lock);
+-			return 0;
++			ret = 0;
++			goto unlock;
+ 		}
+ 	}
+ 
+ 	node = &mapping->vram_node;
+ 
+ 	ret = etnaviv_iommu_find_iova(mmu, node, etnaviv_obj->base.size);
+-	if (ret < 0) {
+-		mutex_unlock(&mmu->lock);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	mmu->last_iova = node->start + etnaviv_obj->base.size;
+ 	mapping->iova = node->start;
+@@ -242,13 +240,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu *mmu,
+ 	if (ret < 0) {
+ 		drm_mm_remove_node(node);
+-		mutex_unlock(&mmu->lock);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	list_add_tail(&mapping->mmu_node, &mmu->mappings);
+ 	mmu->need_flush = true;
++unlock:
+ 	mutex_unlock(&mmu->lock);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.14.2
 
-
-> give the Coccinelle scripts..
-
-How can they matter for a better understanding of the concrete
-source code adjustment?
-
-
-> But sadly that is not done ...
-
-I did not include a link for special background information explicitly.
-But how do you think about corresponding details from discussions
-on a topic like “Comparing statement lists with SmPL”?
-
-https://systeme.lip6.fr/pipermail/cocci/2017-August/004388.html
-
-Regards,
-Markus
