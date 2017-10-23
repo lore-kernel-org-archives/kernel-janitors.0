@@ -1,87 +1,56 @@
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Sat, 14 Oct 2017 01:29:42 +0000
-Subject: Re: [PATCH 0/3] eCryptfs: Adjustments for several function implementations
-Message-Id: <66a69c57-4dff-bed7-75e8-2ebb92f20909@canonical.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Ov4WWWjSgSW6mm1b0lKD8BP50r4agkujA"
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Mon, 23 Oct 2017 23:47:33 +0000
+Subject: [PATCH 21/24] perf script: Fix error handling path
+Message-Id: <20171023234736.5335-22-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
-In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, ecryptfs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20171023234736.5335-1-acme@kernel.org>
+In-Reply-To: <20171023234736.5335-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Ov4WWWjSgSW6mm1b0lKD8BP50r4agkujA
-Content-Type: multipart/mixed; boundary="UBcVc1NFnnhKc91KDtf49M2bfwBP31rSg";
- protected-headers="v1"
-From: Tyler Hicks <tyhicks@canonical.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
- ecryptfs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <66a69c57-4dff-bed7-75e8-2ebb92f20909@canonical.com>
-Subject: Re: [PATCH 0/3] eCryptfs: Adjustments for several function
- implementations
-References: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
-In-Reply-To: <56e0a575-2a9e-120f-6a22-96d9fa4b151e@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---UBcVc1NFnnhKc91KDtf49M2bfwBP31rSg
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+If the string passed in '--time' is invalid, or if failed to set
+libtraceevent function resolver, we must do some cleanup before leaving.
+As in the other error handling paths of this function.
 
-On 08/19/2017 12:54 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 19 Aug 2017 18:15:14 +0200
->=20
-> Some update suggestions were taken into account
-> from static source code analysis.
->=20
-> Markus Elfring (3):
->   Delete 21 error messages for a failed memory allocation
->   Return an error code only as a constant in ecryptfs_add_global_auth_t=
-ok()
->   Adjust four checks for null pointers
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20170916062537.28921-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-script.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Hello! I'm sorry for just now getting to these patches. All three look
-fine to me. I'll get them into 4.15.
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 3e83f4735b21..a3add2cd7856 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3074,7 +3074,8 @@ int cmd_script(int argc, const char **argv)
+ 					 machine__resolve_kernel_addr,
+ 					 &session->machines.host) < 0) {
+ 		pr_err("%s: failed to set libtraceevent function resolver\n", __func__);
+-		return -1;
++		err = -1;
++		goto out_delete;
+ 	}
+ 
+ 	if (generate_script_lang) {
+@@ -3134,7 +3135,8 @@ int cmd_script(int argc, const char **argv)
+ 	/* needs to be parsed after looking up reference time */
+ 	if (perf_time__parse_str(&script.ptime, script.time_str) != 0) {
+ 		pr_err("Invalid time string\n");
+-		return -EINVAL;
++		err = -EINVAL;
++		goto out_delete;
+ 	}
+ 
+ 	err = __cmd_script(&script);
+-- 
+2.13.6
 
-Tyler
-
->=20
->  fs/ecryptfs/crypto.c    | 22 +++-------------------
->  fs/ecryptfs/inode.c     |  3 ---
->  fs/ecryptfs/keystore.c  | 46 +++++++++++------------------------------=
------
->  fs/ecryptfs/messaging.c |  6 ------
->  fs/ecryptfs/miscdev.c   |  6 +-----
->  fs/ecryptfs/mmap.c      |  2 --
->  6 files changed, 15 insertions(+), 70 deletions(-)
->=20
-
-
-
---UBcVc1NFnnhKc91KDtf49M2bfwBP31rSg--
-
---Ov4WWWjSgSW6mm1b0lKD8BP50r4agkujA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCgAGBQJZ4WiGAAoJENaSAD2qAscKq1cP/2uPMyQ+2FoI84hohQlNHu5b
-IObzjYhzOPu5NQDMaJi7l652bo27RhbAiMDHc6/uJBBItNt5Tdn1VCsee6XwP8Ur
-uN/wZjn7K+FXFrj1HKVQPqdYcXVoG3x7srrrZ1caKJaOIKLBo0aZ1WhnOR7QpeRc
-2+hCpW3rxnuuqEuYZyXC3KCGjuuaAoUoTQa3WNWBjgBNxJFjM8vBZUEDRdxVYB0m
-0KyYNjZ0ybIQaJQ0zL16pHufF6+m7c3XfB26znYldXzy9jJkny37u8IaBxAlVOF/
-qgliWI2lkKKUWxfBu+TjYLoLGsmfO7J9uwEosS3fJtEBYP0xdaOVp3VHxIOVNmQf
-LyE0iwwUJd0tNe7eKdxIn7hNVONtZhG+j6XsesoNF+/yTYYdmfe4+flr1SSSsB/u
-QsPaMLK0T3muBe3+Vg5Qz52h2+o16RS/x8xDiqFlc49ch9CyqkmTqApSsZpOZh3E
-PBdplqKQIsSB/D6VwpQbTBVu/iKj2CKGPXFJo4SnkSLvtfSGIaS+JbNVT5mjta8W
-kZranCXCCq15wHMqYckt0a+sYGLw46d7omhiMxh44nSUxQ2u8xz9j91IGPJDJKD8
-25JuOmXZzztPTne0BqjGUadoTQJsihkz0p/mIqKFjPkdsoghP70ks9hGT+26LZ3S
-1/FqjCMQkJhfWYkjYuzA
-=/yJ7
------END PGP SIGNATURE-----
-
---Ov4WWWjSgSW6mm1b0lKD8BP50r4agkujA--
