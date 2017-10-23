@@ -1,16 +1,16 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sun, 22 Oct 2017 19:01:41 +0000
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Date: Mon, 23 Oct 2017 01:05:34 +0000
 Subject: Re: [PATCH 2/2] extcon: max14577: Delete an unnecessary variable initialisation in max14577_muic_set
-Message-Id: <20171022190141.hml3egv6miokft7w@kozik-lap>
+Message-Id: <59ED405E.1030404@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <431ea2b6-5b03-3752-a9c1-a39b1a7e4921@users.sourceforge.net>
 In-Reply-To: <431ea2b6-5b03-3752-a9c1-a39b1a7e4921@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 22, 2017 at 07:52:18PM +0200, SF Markus Elfring wrote:
+On 2017년 10월 23일 02:52, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sun, 22 Oct 2017 19:39:12 +0200
 > 
@@ -22,12 +22,25 @@ On Sun, Oct 22, 2017 at 07:52:18PM +0200, SF Markus Elfring wrote:
 >  drivers/extcon/extcon-max14577.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
+> index 3d4bf5d23236..a2b60742a228 100644
+> --- a/drivers/extcon/extcon-max14577.c
+> +++ b/drivers/extcon/extcon-max14577.c
+> @@ -204,8 +204,8 @@ static int max14577_muic_set_debounce_time(struct max14577_muic_info *info,
+>  static int max14577_muic_set_path(struct max14577_muic_info *info,
+>  		u8 val, bool attached)
+>  {
+> -	int ret = 0;
+>  	u8 ctrl1, ctrl2 = 0;
+> +	int ret;
+>  
+>  	/* Set open state to path before changing hw path */
+>  	ret = max14577_update_reg(info->max14577->regmap,
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Applied it. Thanks.
 
-This should be also sent to linux-kernel@vger.kernel.org - the mailing
-list for this subsysten.
-
-Best regards,
-Krzysztof
-
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
