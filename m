@@ -1,27 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 13:58:09 +0000
-Subject: [PATCH 0/2] GPU-DRM-i915-DP: Fine-tuning for two function implementations
-Message-Id: <668a4b56-091d-d4e7-2204-daaec6675e11@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Mon, 23 Oct 2017 23:47:34 +0000
+Subject: [PATCH 22/24] perf kmem: Perform some cleanup if '--time' is given an invalid value
+Message-Id: <20171023234736.5335-23-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171023234736.5335-1-acme@kernel.org>
+In-Reply-To: <20171023234736.5335-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 15:54:32 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Two update suggestions were taken into account
-from static source code analysis.
+If the string passed in '--time' is invalid, we must do some cleanup
+before leaving. As in the other error handling paths of this function.
 
-Markus Elfring (2):
-  Delete an unnecessary goto statement in intel_dp_sink_crc()
-  Use common error handling code in intel_dp_sink_crc_stop()
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 2a865bd8dddd ("perf kmem: Add option to specify time window of interest")
+Link: http://lkml.kernel.org/r/20170916060936.28199-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-kmem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/i915/intel_dp.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
-
+diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+index 24ee68ecdd42..d8f25ef8157b 100644
+--- a/tools/perf/builtin-kmem.c
++++ b/tools/perf/builtin-kmem.c
+@@ -1983,7 +1983,8 @@ int cmd_kmem(int argc, const char **argv)
+ 
+ 	if (perf_time__parse_str(&ptime, time_str) != 0) {
+ 		pr_err("Invalid time string\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_delete;
+ 	}
+ 
+ 	if (!strcmp(argv[0], "stat")) {
 -- 
-2.14.3
+2.13.6
 
