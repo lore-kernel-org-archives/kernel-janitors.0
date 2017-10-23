@@ -1,29 +1,25 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Oct 2017 19:34:32 +0000
-Subject: [PATCH 0/2] PowerPC-Cell platform: Adjustments for four function implementations
-Message-Id: <db9efaf4-f3d7-d5dc-b0b2-f20e418fa3c8@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 09:10:29 +0000
+Subject: Re: ARM: mvebu: Use common error handling code in mvebu_armada_pm_init()
+Message-Id: <44577789-a2e8-4c1a-9abc-a34a17ae2e22@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1c378b21-f10a-3a3a-fcee-8f0c0214a8fe@users.sourceforge.net>
+ <20171023085718.lga7auriq7paw2hv@mwanda>
+In-Reply-To: <20171023085718.lga7auriq7paw2hv@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Oct 2017 21:25:43 +0200
+> The error handling in mvebu_armada_pm_init() is incomplete
 
-Two update suggestions were taken into account
-from static source code analysis.
+How would you like to extend it?
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in three functions
-  Improve a size determination in three functions
 
- arch/powerpc/platforms/cell/axon_msi.c          |  7 ++-----
- arch/powerpc/platforms/cell/spider-pci.c        | 11 +++--------
- arch/powerpc/platforms/cell/spufs/lscsa_alloc.c |  2 +-
- 3 files changed, 6 insertions(+), 14 deletions(-)
+> and this patch just smudges it around without fixing anything.
 
--- 
-2.14.2
+How does this kind of feedback fit to information from the section
+“7) Centralized exiting of functions” in the document “coding-style.rst”?
 
+Regards,
+Markus
