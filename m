@@ -1,83 +1,26 @@
-From: Dmitry Kalinkin <dmitry.kalinkin@gmail.com>
-Date: Sun, 01 Oct 2017 15:19:20 +0000
-Subject: Re: [PATCH] vme: Fix integer overflow checking in vme_check_window()
-Message-Id: <234C5902-7086-4941-9895-50A21470A85A@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Oct 2017 05:53:07 +0000
+Subject: Re: devfreq/exynos-bus: Use common error handling code in exynos_bus_target()
+Message-Id: <e84ea128-d69e-7c77-db3a-44622457f347@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930112741.6wmswvk25j7o44ui@mwanda>
-In-Reply-To: <20170930112741.6wmswvk25j7o44ui@mwanda>
+References: <CGME20171022134057epcas4p43e6f37b8994c28f6ef240536349811a8@epcas4p4.samsung.com>
+ <4a407cd6-020c-1750-019a-6c0ceb40e245@users.sourceforge.net>
+ <59ED4313.701@samsung.com>
+In-Reply-To: <59ED4313.701@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Martyn Welch <martyn@welchs.me.uk>, Manohar Vanga <manohar.vanga@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+
+> As I already commented on your other patch related to extcon-max14577,
+> this patch might remove the redundant error message.
+
+I hope that more software improvements can be achieved in this design direction.
 
 
-> On 30 Sep 2017, at 07:27, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> The controversial part of this patch is that I've changed it so we now
-> prevent integer overflows for VME_USER types and before we didn't.  I
-> view it as kernel-hardening.  I looked at a couple places that used
-> VME_USER types and they seemed pretty suspicious so I'm pretty sure
-> preventing overflows here is a good idea.
-> 
-> The most common problem which this function is for cases like VME_A16
-> where we don't put an upper bound on "size" so you could have "size" set
-> to U64_MAX and a valid vme_base would overflow the "vme_base + size"
-> into the valid range as well.
-> 
-> In the VME_A64 case, the integer overflow checking doesn't work because
-> "U64_MAX + 1" has an integer overflow and it's just a complicated way of
-> saying zero.  That VME_A64 case is sort of interesting as well because
-> there is a VME_A64_MAX define which is set to "U64_MAX + 1".  The
-> compiler will never let anyone use it since it can't be stored in a u64
-> variable...  With my patch it's now limited to just U64_MAX.
-> 
-> Anyway, I put one integer overflow check at the start of the function
-> and deleted all existing checks.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Dmitry Kalinkin <dmitry.kalinkin@gmail.com>
-> 
-> diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
-> index 6a3ead42aba8..5b4c898d7509 100644
-> --- a/drivers/vme/vme.c
-> +++ b/drivers/vme/vme.c
-> @@ -208,29 +208,27 @@ int vme_check_window(u32 aspace, unsigned long long vme_base,
-> {
-> 	int retval = 0;
-> 
-> +	if (vme_base + size < size)
-> +		return -EINVAL;
-> +
-> 	switch (aspace) {
-> 	case VME_A16:
-> -		if (((vme_base + size) > VME_A16_MAX) ||
-> -				(vme_base > VME_A16_MAX))
-> +		if (vme_base + size > VME_A16_MAX)
-> 			retval = -EFAULT;
-> 		break;
-> 	case VME_A24:
-> -		if (((vme_base + size) > VME_A24_MAX) ||
-> -				(vme_base > VME_A24_MAX))
-> +		if (vme_base + size > VME_A24_MAX)
-> 			retval = -EFAULT;
-> 		break;
-> 	case VME_A32:
-> -		if (((vme_base + size) > VME_A32_MAX) ||
-> -				(vme_base > VME_A32_MAX))
-> +		if (vme_base + size > VME_A32_MAX)
-> 			retval = -EFAULT;
-> 		break;
-> 	case VME_A64:
-> -		if ((size != 0) && (vme_base > U64_MAX + 1 - size))
-> -			retval = -EFAULT;
-> +		/* The VME_A64_MAX limit is actually U64_MAX + 1 */
-> 		break;
-> 	case VME_CRCSR:
-> -		if (((vme_base + size) > VME_CRCSR_MAX) ||
-> -				(vme_base > VME_CRCSR_MAX))
-> +		if (vme_base + size > VME_CRCSR_MAX)
-> 			retval = -EFAULT;
-> 		break;
-> 	case VME_USER1:
+> But, it makes the code more complicated in side of readability. I prefer existing code.
 
+I prefer to avoid duplicated code a bit more.
+
+Regards,
+Markus
