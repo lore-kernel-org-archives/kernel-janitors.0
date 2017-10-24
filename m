@@ -1,60 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 08:49:52 +0000
-Subject: [PATCH 1/3] drm/exynos/dsi: Use common error handling code in exynos_dsi_enable()
-Message-Id: <9028478a-a00d-6fcd-0286-b8daefa8c912@users.sourceforge.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 24 Oct 2017 08:51:09 +0000
+Subject: Re: [PATCH 1/3] drm/exynos/dsi: Use common error handling code in exynos_dsi_enable()
+Message-Id: <CAJKOXPc_QQ-QKkPWQoxj0LjeJsG2BjhP6X0X9m8YQEo=qTnOvg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
-In-Reply-To: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
+ <9028478a-a00d-6fcd-0286-b8daefa8c912@users.sourceforge.net>
+In-Reply-To: <9028478a-a00d-6fcd-0286-b8daefa8c912@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 09:32:18 +0200
+On Tue, Oct 24, 2017 at 10:49 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 24 Oct 2017 09:32:18 +0200
+>
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 7904ffa9abfb..ba5fb49c5491 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1389,8 +1389,7 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+>         ret = drm_panel_prepare(dsi->panel);
+>         if (ret < 0) {
+>                 dsi->state &= ~DSIM_STATE_ENABLED;
+> -               pm_runtime_put_sync(dsi->dev);
+> -               return;
+> +               goto put_sync;
+>         }
+>
+>         exynos_dsi_set_display_mode(dsi);
+> @@ -1401,11 +1400,14 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+>                 dsi->state &= ~DSIM_STATE_ENABLED;
+>                 exynos_dsi_set_display_enable(dsi, false);
+>                 drm_panel_unprepare(dsi->panel);
+> -               pm_runtime_put_sync(dsi->dev);
+> -               return;
+> +               goto put_sync;
+>         }
+>
+>         dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+> +       return;
+> +
+> +put_sync:
+> +       pm_runtime_put_sync(dsi->dev);
+>  }
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+No, this does not simplify the code. Stop using coccinelle.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 7904ffa9abfb..ba5fb49c5491 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1389,8 +1389,7 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
- 	ret = drm_panel_prepare(dsi->panel);
- 	if (ret < 0) {
- 		dsi->state &= ~DSIM_STATE_ENABLED;
--		pm_runtime_put_sync(dsi->dev);
--		return;
-+		goto put_sync;
- 	}
- 
- 	exynos_dsi_set_display_mode(dsi);
-@@ -1401,11 +1400,14 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
- 		dsi->state &= ~DSIM_STATE_ENABLED;
- 		exynos_dsi_set_display_enable(dsi, false);
- 		drm_panel_unprepare(dsi->panel);
--		pm_runtime_put_sync(dsi->dev);
--		return;
-+		goto put_sync;
- 	}
- 
- 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
-+	return;
-+
-+put_sync:
-+	pm_runtime_put_sync(dsi->dev);
- }
- 
- static void exynos_dsi_disable(struct drm_encoder *encoder)
--- 
-2.14.2
-
+BR,
+Krzysztof
