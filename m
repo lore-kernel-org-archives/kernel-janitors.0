@@ -1,49 +1,26 @@
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Date: Thu, 05 Oct 2017 19:05:53 +0000
-Subject: Re: [PATCH] powerpc/perf/hv-24x7: Delete an error message for a failed memory allocation in create_e
-Message-Id: <87mv555sa6.fsf@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 13:17:47 +0000
+Subject: Re: drm/i915/gvt: Use common error handling code in shadow_workload_ring_buffer()
+Message-Id: <636f6272-9074-53dc-2c90-cbb4a7cd0901@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <427d4a01-e0ec-9a52-46cb-685c43962a96@users.sourceforge.net>
-In-Reply-To: <427d4a01-e0ec-9a52-46cb-685c43962a96@users.sourceforge.net>
+References: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
+ <87efpsiu7r.fsf@intel.com>
+In-Reply-To: <87efpsiu7r.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+>> Add a jump target so that a call of the function "gvt_vgpu_err" is stored
+>> only once at the end of this function implementation.
+>> Replace two calls by goto statements.
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+> I don't think this is an issue or an improvement.
 
-Thanks, Markus.
+Do you care for the detail how often an error message is stored in the code?
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Oct 2017 18:02:05 +0200
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/perf/hv-24x7.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/powerpc/perf/hv-24x7.c b/arch/powerpc/perf/hv-24x7.c
-> index 9c88b82f6229..f21f30aaf9bd 100644
-> --- a/arch/powerpc/perf/hv-24x7.c
-> +++ b/arch/powerpc/perf/hv-24x7.c
-> @@ -766,7 +766,6 @@ static int create_events_from_catalog(struct attribute ***events_,
->  	 */
->  	event_data = vmalloc(event_data_bytes);
->  	if (!event_data) {
-> -		pr_err("could not allocate event data\n");
->  		ret = -ENOMEM;
->  		goto e_free;
->  	}
-
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com> 
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Regards,
+Markus
