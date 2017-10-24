@@ -1,56 +1,70 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Date: Thu, 05 Oct 2017 15:31:18 +0000
-Subject: Re: [PATCH 0/5] CRIS v32: Adjustments for crisv32_nand_flash_probe()
-Message-Id: <87bmllhard.fsf@free-electrons.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 16:01:21 +0000
+Subject: [PATCH 1/2] drm/rcar-du: Use common error handling code in rcar_du_encoders_init()
+Message-Id: <9fafa688-f699-c587-ef77-840efa71bf76@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
-In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net> (SF
-        Markus Elfring's message of "Wed, 4 Oct 2017 20:43:52 +0200")
+References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
+In-Reply-To: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 17:16:09 +0200
+
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 566d1a948c8f..d2c80cc9f8ee 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -377,10 +377,8 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
+ 		int ret;
  
- On mer., oct. 04 2017, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Oct 2017 20:33:20 +0200
->
-> A few update suggestions were taken into account
-> from static source code analysis.
-
-If you plan to send a v2 could you remove me from the CC.
-
-I know that ./scripts/get_maintainer.pl added my name but I am not
-related at all to this code. I just gave my acked-by for a part of patch
-which modified in the same time the file I care and many other files.
-
-Thanks,
-
-Greogry
-
-
->
-> Markus Elfring (5):
->   Delete an error message for a failed memory allocation
->   Improve a size determination
->   Delete a jump target
->   Delete an unnecessary local variable
->   Split a condition check
->
->  arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 17 ++++----------
->  arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 31 ++++++++++++--------------
->  2 files changed, 18 insertions(+), 30 deletions(-)
->
-> -- 
-> 2.14.2
->
-
+ 		ret = of_graph_parse_endpoint(ep_node, &ep);
+-		if (ret < 0) {
+-			of_node_put(ep_node);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto put_node;
+ 
+ 		/* Find the output route corresponding to the port number. */
+ 		for (i = 0; i < RCAR_DU_OUTPUT_MAX; ++i) {
+@@ -401,10 +399,8 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
+ 		/* Process the output pipeline. */
+ 		ret = rcar_du_encoders_init_one(rcdu, output, &ep);
+ 		if (ret < 0) {
+-			if (ret = -EPROBE_DEFER) {
+-				of_node_put(ep_node);
+-				return ret;
+-			}
++			if (ret = -EPROBE_DEFER)
++				goto put_node;
+ 
+ 			continue;
+ 		}
+@@ -413,6 +409,10 @@ static int rcar_du_encoders_init(struct rcar_du_device *rcdu)
+ 	}
+ 
+ 	return num_encoders;
++
++put_node:
++	of_node_put(ep_node);
++	return ret;
+ }
+ 
+ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.14.3
+
