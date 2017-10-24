@@ -1,42 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Oct 2017 18:04:17 +0000
-Subject: Re: misc: bh1770glc: Use common error handling code in bh1770_power_state_store()
-Message-Id: <8e931bdb-5327-000e-3167-6634ce349f73@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Tue, 24 Oct 2017 08:07:53 +0000
+Subject: Re: [v2] axonram: Delete an unnecessary variable initialisation in axon_ram_probe()
+Message-Id: <3yLm966YSTz9sNV@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <568ee0ee-8ff1-9739-fa6b-f2eeae53e11a@users.sourceforge.net>
- <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
-In-Reply-To: <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
+In-Reply-To: <96042828-9707-8af9-664a-5c71818dd817@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Daniele Nicolodi <daniele@grinta.net>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Samu Onkalo <samu.p.onkalo@nokia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, kbuild test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jan Kara <jack@suse.cz>, Jens Axboe <axboe@fb.com>, Dan Williams <dan.j.williams@intel.com>, Paul Mackerras <paulus@samba.org>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>
 
->> Adjust jump targets so that a bit of exception handling can be better
->> reused in an if branch of this function.
+On Tue, 2017-09-05 at 17:11:31 UTC, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 5 Sep 2017 18:47:02 +0200
 > 
-> What is the benefit brought by this change?
+> The local variable "rc" will eventually be set only to an error code.
+> Thus omit the explicit initialisation at the beginning.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Will you notice that the object code size can be a bit smaller
-because the call of the function “pm_runtime_put” is specified at
-two places in the implementation in comparison to three places before?
+Applied to powerpc next, thanks.
 
+https://git.kernel.org/powerpc/c/a7cd4586210c69c19aef26f4f83d3e
 
-> Anyhow, are you seriously suggesting adding a goto to a label define
-> within a if block?
-
-Yes. - For this update suggestion.
-
-
-> Is this somehow an Halloween related joke?
-
-I hope not.
-
-Another software design approach would be to move two statements from
-the affected if branch to the end of this function. Such an adjustment
-would have the consequence that the statement “goto unlock” will be
-transformed into a jump to a backward target.
-Would you prefer such an implementation variant instead?
-
-Regards,
-Markus
+cheers
