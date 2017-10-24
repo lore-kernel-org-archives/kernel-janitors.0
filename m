@@ -1,49 +1,148 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 04 Oct 2017 08:59:50 +0000
-Subject: Re: [PATCH] mmc: dw_mmc-k3: make array hs_timing_cfg static
-Message-Id: <CAPDyKFqdGAcyTytiQHAwDu0NAkF1HMq1-KMzB0e51uTv-YQAZg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 20:10:13 +0000
+Subject: [PATCH] hwmon/amc6821: Use common error handling code in amc6821_init_client()
+Message-Id: <8cc80503-aa2b-bb5e-ab40-fa31b401b6a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171003095654.25802-1-colin.king@canonical.com>
-In-Reply-To: <20171003095654.25802-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 3 October 2017 at 11:56, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The array hs_timing_cfg is local to the source and does not need to
-> be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> symbol 'hs_timing_cfg' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 22:04:20 +0200
 
-Thanks, applied for next!
+* Add two jump targets so that a bit of exception handling can be better
+  reused at the end of this function.
 
-Kind regards
-Uffe
+  This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/mmc/host/dw_mmc-k3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
-> index 64cda84b2302..73fd75c3c824 100644
-> --- a/drivers/mmc/host/dw_mmc-k3.c
-> +++ b/drivers/mmc/host/dw_mmc-k3.c
-> @@ -75,7 +75,7 @@ struct hs_timing {
->         u32 smpl_phase_min;
->  };
->
-> -struct hs_timing hs_timing_cfg[TIMING_MODE][TIMING_CFG_NUM] = {
-> +static struct hs_timing hs_timing_cfg[TIMING_MODE][TIMING_CFG_NUM] = {
->         { /* reserved */ },
->         { /* SD */
->                 {7, 0, 15, 15,},  /* 0: LEGACY 400k */
-> --
-> 2.14.1
->
+* Delete the local variable "err" which became unnecessary
+  with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hwmon/amc6821.c | 77 ++++++++++++++++++-------------------------------
+ 1 file changed, 28 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+index 46b4e35fd555..5c067de3fdcf 100644
+--- a/drivers/hwmon/amc6821.c
++++ b/drivers/hwmon/amc6821.c
+@@ -885,70 +885,42 @@ static int amc6821_detect(
+ static int amc6821_init_client(struct i2c_client *client)
+ {
+ 	int config;
+-	int err = -EIO;
+ 
+ 	if (init) {
+ 		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF4);
+-
+-		if (config < 0) {
+-				dev_err(&client->dev,
+-			"Error reading configuration register, aborting.\n");
+-				return err;
+-		}
++		if (config < 0)
++			goto report_read_failure;
+ 
+ 		config |= AMC6821_CONF4_MODE;
+-
+ 		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF4,
+-				config)) {
+-			dev_err(&client->dev,
+-			"Configuration register write error, aborting.\n");
+-			return err;
+-		}
++					      config))
++			goto report_write_failure;
+ 
+ 		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF3);
+-
+-		if (config < 0) {
+-			dev_err(&client->dev,
+-			"Error reading configuration register, aborting.\n");
+-			return err;
+-		}
++		if (config < 0)
++			goto report_read_failure;
+ 
+ 		dev_info(&client->dev, "Revision %d\n", config & 0x0f);
+ 
+ 		config &= ~AMC6821_CONF3_THERM_FAN_EN;
+-
+ 		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF3,
+-				config)) {
+-			dev_err(&client->dev,
+-			"Configuration register write error, aborting.\n");
+-			return err;
+-		}
++					      config))
++			goto report_write_failure;
+ 
+ 		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF2);
+-
+-		if (config < 0) {
+-			dev_err(&client->dev,
+-			"Error reading configuration register, aborting.\n");
+-			return err;
+-		}
++		if (config < 0)
++			goto report_read_failure;
+ 
+ 		config &= ~AMC6821_CONF2_RTFIE;
+ 		config &= ~AMC6821_CONF2_LTOIE;
+ 		config &= ~AMC6821_CONF2_RTOIE;
+-		if (i2c_smbus_write_byte_data(client,
+-				AMC6821_REG_CONF2, config)) {
+-			dev_err(&client->dev,
+-			"Configuration register write error, aborting.\n");
+-			return err;
+-		}
++		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF2,
++					      config))
++			goto report_write_failure;
+ 
+ 		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
+-
+-		if (config < 0) {
+-			dev_err(&client->dev,
+-			"Error reading configuration register, aborting.\n");
+-			return err;
+-		}
++		if (config < 0)
++			goto report_read_failure;
+ 
+ 		config &= ~AMC6821_CONF1_THERMOVIE;
+ 		config &= ~AMC6821_CONF1_FANIE;
+@@ -958,14 +930,21 @@ static int amc6821_init_client(struct i2c_client *client)
+ 		else
+ 			config &= ~AMC6821_CONF1_PWMINV;
+ 
+-		if (i2c_smbus_write_byte_data(
+-				client, AMC6821_REG_CONF1, config)) {
+-			dev_err(&client->dev,
+-			"Configuration register write error, aborting.\n");
+-			return err;
+-		}
++		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF1,
++					      config))
++			goto report_write_failure;
+ 	}
+ 	return 0;
++
++report_read_failure:
++	dev_err(&client->dev,
++		"Error reading configuration register, aborting.\n");
++	return -EIO;
++
++report_write_failure:
++	dev_err(&client->dev,
++		"Configuration register write error, aborting.\n");
++	return -EIO;
+ }
+ 
+ static int amc6821_probe(struct i2c_client *client,
+-- 
+2.14.3
+
