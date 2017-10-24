@@ -1,95 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 17:17:25 +0000
-Subject: [PATCH 3/3] crypto-ansi_cprng: Delete unnecessary blank lines
-Message-Id: <7c466b3a-ca32-b946-f36e-a963c31a2320@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 13:59:17 +0000
+Subject: [PATCH 1/2] drm/i915/dp: Delete an unnecessary goto statement in intel_dp_sink_crc()
+Message-Id: <bd6fe3e9-25fd-ccf7-c586-7ccfe6c99e5a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
-In-Reply-To: <d284473a-b968-2b3e-9147-1c8598a26f7c@users.sourceforge.net>
+References: <668a4b56-091d-d4e7-2204-daaec6675e11@users.sourceforge.net>
+In-Reply-To: <668a4b56-091d-d4e7-2204-daaec6675e11@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 16:27:56 +0200
+Date: Tue, 24 Oct 2017 15:15:20 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+A jump was specified for a location which was directly behind.
+Thus remove such an unnecessary goto statement.
 
-CHECK: Please don't use multiple blank lines
-
-Thus fix the affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- crypto/ansi_cprng.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/gpu/drm/i915/intel_dp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
-index 3d805bf6d0c6..b9ec1975dde7 100644
---- a/crypto/ansi_cprng.c
-+++ b/crypto/ansi_cprng.c
-@@ -40,7 +40,6 @@
-  * for implementation details
-  */
- 
--
- struct prng_context {
- 	spinlock_t prng_lock;
- 	unsigned char rand_data[DEFAULT_BLK_SZ];
-@@ -77,8 +76,8 @@ static void xor_vectors(unsigned char *in1, unsigned char *in2,
- 
- 	for (i = 0; i < size; i++)
- 		out[i] = in1[i] ^ in2[i];
--
- }
-+
- /*
-  * Returns DEFAULT_BLK_SZ bytes of random data per call
-  * returns 0 if generation succeeded, <0 if something went wrong
-@@ -89,7 +88,6 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
- 	unsigned char tmp[DEFAULT_BLK_SZ];
- 	unsigned char *output = NULL;
- 
--
- 	dbgprint(KERN_CRIT "Calling _get_more_prng_bytes for context %p\n",
- 		ctx);
- 
-@@ -101,7 +99,6 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
- 	 * This algorithm is a 3 stage state machine
- 	 */
- 	for (i = 0; i < 3; i++) {
--
- 		switch (i) {
- 		case 0:
- 			/*
-@@ -156,10 +153,8 @@ static int _get_more_prng_bytes(struct prng_context *ctx, int cont_test)
- 			break;
- 		}
- 
--
- 		/* do the encryption */
- 		crypto_cipher_encrypt_one(ctx->tfm, output, tmp);
--
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index ca48bce23a6f..342f1a1fa085 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -3994,10 +3994,8 @@ int intel_dp_sink_crc(struct intel_dp *intel_dp, u8 *crc)
+ 		goto stop;
  	}
  
- 	/*
-@@ -190,7 +185,6 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
- 	unsigned int byte_count = (unsigned int)nbytes;
- 	int err;
+-	if (drm_dp_dpcd_read(&intel_dp->aux, DP_TEST_CRC_R_CR, crc, 6) < 0) {
++	if (drm_dp_dpcd_read(&intel_dp->aux, DP_TEST_CRC_R_CR, crc, 6) < 0)
+ 		ret = -EIO;
+-		goto stop;
+-	}
  
--
- 	spin_lock_bh(&ctx->prng_lock);
- 	if (ctx->flags & PRNG_NEED_RESET)
- 		goto failure_indication;
-@@ -214,7 +208,6 @@ static int get_prng_bytes(char *buf, size_t nbytes, struct prng_context *ctx,
- 	dbgprint(KERN_CRIT "getting %d random bytes for context %p\n",
- 		byte_count, ctx);
- 
--
- remainder:
- 	if (ctx->rand_data_valid = DEFAULT_BLK_SZ &&
- 	    _get_more_prng_bytes(ctx, do_cont_test) < 0)
+ stop:
+ 	intel_dp_sink_crc_stop(intel_dp);
 -- 
-2.14.2
+2.14.3
 
