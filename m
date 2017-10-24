@@ -1,73 +1,60 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Thu, 19 Oct 2017 12:16:49 +0000
-Subject: Re: char/tpm: Improve a size determination in nine functions
-Message-Id: <20171019121649.cl3ppzem2scdxthm@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 08:49:52 +0000
+Subject: [PATCH 1/3] drm/exynos/dsi: Use common error handling code in exynos_dsi_enable()
+Message-Id: <9028478a-a00d-6fcd-0286-b8daefa8c912@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
- <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
- <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
-In-Reply-To: <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
+References: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
+In-Reply-To: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jerry Snitselaar <jsnitsel@redhat.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 18, 2017 at 07:48:06PM +0200, SF Markus Elfring wrote:
-> > For 1/4 and 2/4: explain why the message can be omitted.
-> 
-> Why did you not reply directly with this request for the update steps
-> with the subject “Delete an error message for a failed memory allocation
-> in tpm_…()”?
-> 
-> https://patchwork.kernel.org/patch/10009405/
-> https://patchwork.kernel.org/patch/10009415/
-> 
-> I find that there can be difficulty to show an appropriate information
-> source for the reasonable explanation of this change pattern.
-> 
-> 
-> > Remove sentence about Coccinelle.
-> 
-> I got the impression that there is a bit of value in such
-> a kind of attribution.
-> 
-> 
-> > That's all.
-> 
-> I assume that there might be also some communication challenges involved.
-> 
-> 
-> > 3/4: definitive NAK, too much noise compared to value.
-> 
-> I tried to reduce deviations from the Linux coding style again.
-> You do not like such an attempt for this software area so far.
-> 
-> 
-> > 4/4: this a good commit message.
-> 
-> Why did you not reply directly with this feedback for the update step
-> “[PATCH 4/4] char/tpm: Less checks in tpm_ibmvtpm_probe() after error detection”?
-> 
-> https://patchwork.kernel.org/patch/10009429/
-> https://lkml.kernel.org/r/<09a2c3a1-1b10-507d-a866-258b570f6da1@users.sourceforge.net>
-> 
-> 
-> > Requires a Tested-by before can be accepted, which I'm not able to give.
-> 
-> I am curious on how this detail will evolve.
-> 
-> Regards,
-> Markus
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 09:32:18 +0200
 
-I've given clear enough instructions what to do with the commits. This
-is the point where I stop caring about this mail thread. Thank you.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-/Jarkko
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 7904ffa9abfb..ba5fb49c5491 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1389,8 +1389,7 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 	ret = drm_panel_prepare(dsi->panel);
+ 	if (ret < 0) {
+ 		dsi->state &= ~DSIM_STATE_ENABLED;
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++		goto put_sync;
+ 	}
+ 
+ 	exynos_dsi_set_display_mode(dsi);
+@@ -1401,11 +1400,14 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 		dsi->state &= ~DSIM_STATE_ENABLED;
+ 		exynos_dsi_set_display_enable(dsi, false);
+ 		drm_panel_unprepare(dsi->panel);
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++		goto put_sync;
+ 	}
+ 
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
++	return;
++
++put_sync:
++	pm_runtime_put_sync(dsi->dev);
+ }
+ 
+ static void exynos_dsi_disable(struct drm_encoder *encoder)
+-- 
+2.14.2
+
