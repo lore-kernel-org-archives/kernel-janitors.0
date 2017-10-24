@@ -1,24 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 06:03:13 +0000
-Subject: Re: hwmon/amc6821: Use common error handling code in amc6821_init_client()
-Message-Id: <482baa1b-ea2d-76db-3aee-719b6645156c@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 17:35:23 +0000
+Subject: [PATCH 2/2] drm/tegra: Use an error code directly in tegra_output_probe()
+Message-Id: <b42b5119-55af-88b2-055b-ce5d6a25a8d8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cc80503-aa2b-bb5e-ab40-fa31b401b6a2@users.sourceforge.net>
- <20171024201812.GA5769@roeck-us.net>
-In-Reply-To: <20171024201812.GA5769@roeck-us.net>
+References: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
+In-Reply-To: <bfac49e0-8948-e62f-1876-567605f1e2c8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Nack; I am not a friend of that much verboseness to start with,
-> and I don't think the patch improves readability.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 19:21:24 +0200
 
-* Do you care to avoid code duplication for two error messages in this use case?
+Return the code "-EPROBE_DEFER" directly in one if branch
+without assigning it to the local variable "err" before.
 
-* How do you think about to return a single error code directly
-  without using an intermediate variable?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tegra/output.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 1e0915e213b4..a9b458f22de6 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -115,9 +115,8 @@ int tegra_output_probe(struct tegra_output *output)
+ 	if (ddc) {
+ 		output->ddc = of_find_i2c_adapter_by_node(ddc);
+ 		if (!output->ddc) {
+-			err = -EPROBE_DEFER;
+ 			of_node_put(ddc);
+-			return err;
++			return -EPROBE_DEFER;
+ 		}
+ 
+ 		of_node_put(ddc);
+-- 
+2.14.3
+
