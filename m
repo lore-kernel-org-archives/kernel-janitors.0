@@ -1,40 +1,96 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Oct 2017 20:16:45 +0000
-Subject: [PATCH 4/4] ARM: OMAP: Fix typos in two comment lines in _omap_dm_timer_request()
-Message-Id: <fba4ace8-a277-fb08-7a6b-89d518ada080@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 08:52:02 +0000
+Subject: [PATCH 3/3] drm/exynos: Fix typos in five comment lines
+Message-Id: <fe7f02cd-4424-84b3-9c9e-665a5d60e325@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
-In-Reply-To: <b196ffac-4bd1-4465-cee9-e46b7405633d@users.sourceforge.net>
+References: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
+In-Reply-To: <7d4cdb43-432c-c67a-5d3f-c37bd604f539@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Oct 2017 21:24:00 +0200
+Date: Tue, 24 Oct 2017 10:20:20 +0200
 
-Adjust three words in this description.
+The script "checkpatch.pl" pointed misspelled words out.
+Thus fix the affected places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/plat-omap/dmtimer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c  | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c  | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
-index 14779d6f425d..d443e481c3e9 100644
---- a/arch/arm/plat-omap/dmtimer.c
-+++ b/arch/arm/plat-omap/dmtimer.c
-@@ -254,8 +254,8 @@ static struct omap_dm_timer *_omap_dm_timer_request(int req_type, void *data)
- 			if (cap = (t->capability & cap)) {
- 				/*
- 				 * If timer is not NULL, we have already found
--				 * one timer but it was not an exact match
--				 * because it had more capabilites that what
-+				 * one timer. But it was not an exact match
-+				 * because it had more capabilities than what
- 				 * was required. Therefore, unreserve the last
- 				 * timer found and see if this one is a better
- 				 * match.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index ba5fb49c5491..08cdfe7e82a0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -841,7 +841,7 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 	 * Use non-continuous clock mode if the periparal wants and
+ 	 * host controller supports
+ 	 *
+-	 * In non-continous clock mode, host controller will turn off
++	 * In non-continuous clock mode, host controller will turn off
+ 	 * the HS clock between high-speed transmissions to reduce
+ 	 * power consumption.
+ 	 */
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 5b18b5c5fdf2..a14738e81a5a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1437,7 +1437,7 @@ static int fimc_ippdrv_start(struct device *dev, enum drm_exynos_ipp_cmd cmd)
+ 		return ret;
+ 	}
+ 
+-	/* If set ture, we can save jpeg about screen */
++	/* If set true, we can save jpeg about screen */
+ 	fimc_handle_jpeg(ctx, false);
+ 	fimc_set_scaler(ctx, &ctx->sc);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index d42ae2bc3e56..50a4c3435cd0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -594,7 +594,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 	/*
+ 	 * Setting dma-burst to 16Word causes permanent tearing for very small
+ 	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
+-	 * plane size is not recommended as plane size varies alot towards the
++	 * plane size is not recommended as plane size varies a lot towards the
+ 	 * end of the screen and rapid movement causes unstable DMA, but it is
+ 	 * still better to change dma-burst than displaying garbage.
+ 	 */
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 2b8bf2dd6387..f4de1f3d37a3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -29,7 +29,7 @@
+ #define G2D_HW_MAJOR_VER		4
+ #define G2D_HW_MINOR_VER		1
+ 
+-/* vaild register range set from user: 0x0104 ~ 0x0880 */
++/* valid register range set from user: 0x0104 ~ 0x0880 */
+ #define G2D_VALID_START			0x0104
+ #define G2D_VALID_END			0x0880
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index 3edda18cc2d2..2feeba705c1f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -1747,7 +1747,7 @@ static int ipp_probe(struct platform_device *pdev)
+ 		goto err_event_workq;
+ 	}
+ 
+-	/* set sub driver informations */
++	/* set sub driver information */
+ 	subdrv = &ctx->subdrv;
+ 	subdrv->dev = dev;
+ 	subdrv->probe = ipp_subdrv_probe;
 -- 
 2.14.2
 
