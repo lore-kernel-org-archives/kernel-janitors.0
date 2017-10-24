@@ -1,50 +1,46 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Date: Tue, 24 Oct 2017 10:03:56 +0000
-Subject: RE: [PATCH] hwmon: (max6621) Inverted if condition in max6621_read()
-Message-Id: <AM4PR05MB3330A4D411AD889C3E4AA581A2470@AM4PR05MB3330.eurprd05.prod.outlook.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Tue, 24 Oct 2017 13:33:43 +0000
+Subject: Re: [PATCH] hwmon: (max6621) Inverted if condition in max6621_read()
+Message-Id: <d81a49d2-ddb5-917e-2ca3-b38e32a0ffe3@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171024094742.qpltjxlvzr25muje@mwanda>
 In-Reply-To: <20171024094742.qpltjxlvzr25muje@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jean Delvare <jdelvare@suse.com>, Vadim Pasternak <vadimp@mellanox.com>
+Cc: linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Tuesday, October 24, 2017 12:48 PM
-> To: Jean Delvare <jdelvare@suse.com>; Vadim Pasternak
-> <vadimp@mellanox.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>; linux-hwmon@vger.kernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: [PATCH] hwmon: (max6621) Inverted if condition in max6621_read()
+On 10/24/2017 02:47 AM, Dan Carpenter wrote:
+> We intended to test for failure here but accidentally tested for
+> success.  It means that we don't set "*val" to true and it means that
+> if i2c_smbus_write_byte() does fail then we return success.
 > 
-> We intended to test for failure here but accidentally tested for success.  It
-> means that we don't set "*val" to true and it means that if
-> i2c_smbus_write_byte() does fail then we return success.
-> 
-> Fixes: e7895864b0d7 ("hwmon: (max6621) Add support for Maxim MAX6621
-> temperature sensor")
+> Fixes: e7895864b0d7 ("hwmon: (max6621) Add support for Maxim MAX6621 temperature sensor")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Vadim Pasternak <vadimp@mellanox.com>
+Applied to hwmon-next.
+
+Thanks,
+Guenter
 
 > 
-> diff --git a/drivers/hwmon/max6621.c b/drivers/hwmon/max6621.c index
-> 22079ec29660..35555f0eefb9 100644
+> diff --git a/drivers/hwmon/max6621.c b/drivers/hwmon/max6621.c
+> index 22079ec29660..35555f0eefb9 100644
 > --- a/drivers/hwmon/max6621.c
 > +++ b/drivers/hwmon/max6621.c
-> @@ -296,7 +296,7 @@ max6621_read(struct device *dev, enum
-> hwmon_sensor_types type, u32 attr,
->  			if (regval) {
->  				ret = i2c_smbus_write_byte(data->client,
-> 
-> 	MAX6621_CLEAR_ALERT_REG);
+> @@ -296,7 +296,7 @@ max6621_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+>   			if (regval) {
+>   				ret = i2c_smbus_write_byte(data->client,
+>   						MAX6621_CLEAR_ALERT_REG);
 > -				if (!ret)
 > +				if (ret)
->  					return ret;
->  			}
+>   					return ret;
+>   			}
+>   
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
+
