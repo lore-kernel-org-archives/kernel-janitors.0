@@ -1,38 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 19:06:55 +0000
-Subject: [PATCH] net/rose: Delete an error message for a failed memory allocation in rose_proto_init()
-Message-Id: <0b86508a-ed7a-0b6c-5797-f4aaedba46bf@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 24 Oct 2017 02:29:46 +0000
+Subject: [PATCH V2] scsi: aacraid: Fix some error code
+Message-Id: <20171024022946.30223-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-hams@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: aacraid@microsemi.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Oct 2017 20:57:28 +0200
+If 'scsi_host_alloc', 'kzalloc' or '(*aac_drivers[index].init)' fail, the
+function will return 0, because 'error' is known to be 0 at this point.
 
-Omit an extra message for a memory allocation failure in this function.
+Return -ENOMEM in the 2 first cases and -ENODEV in the third one.
 
-This issue was detected by using the Coccinelle software.
+This patch also removes a useless 'error = -ENODEV'.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/rose/af_rose.c | 1 -
- 1 file changed, 1 deletion(-)
+V2: rebase against latest -next (20171019)
+---
+ drivers/scsi/aacraid/linit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-index 4a9729257023..ce37be0027ca 100644
---- a/net/rose/af_rose.c
-+++ b/net/rose/af_rose.c
-@@ -1529,7 +1529,6 @@ static int __init rose_proto_init(void)
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index c9252b138c1f..7e7d9bfd2b9e 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1628,7 +1628,6 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	error = pci_enable_device(pdev);
+ 	if (error)
+ 		goto out;
+-	error = -ENODEV;
  
- 	dev_rose = kzalloc(rose_ndevs * sizeof(struct net_device *), GFP_KERNEL);
- 	if (dev_rose = NULL) {
--		printk(KERN_ERR "ROSE: rose_proto_init - unable to allocate device structure\n");
- 		rc = -ENOMEM;
- 		goto out_proto_unregister;
- 	}
+ 	if (!(aac_drivers[index].quirks & AAC_QUIRK_SRC)) {
+ 		error = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+@@ -1660,6 +1659,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	pci_set_master(pdev);
+ 
+ 	shost = scsi_host_alloc(&aac_driver_template, sizeof(struct aac_dev));
++	error = -ENOMEM;
+ 	if (!shost)
+ 		goto out_disable_pdev;
+ 
+@@ -1681,6 +1681,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	INIT_LIST_HEAD(&aac->entry);
+ 
+ 	aac->fibs = kzalloc(sizeof(struct fib) * (shost->can_queue + AAC_NUM_MGT_FIB), GFP_KERNEL);
++	error = -ENOMEM;
+ 	if (!aac->fibs)
+ 		goto out_free_host;
+ 	spin_lock_init(&aac->fib_lock);
+@@ -1690,6 +1691,7 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	 *	Map in the registers from the adapter.
+ 	 */
+ 	aac->base_size = AAC_MIN_FOOTPRINT_SIZE;
++	error = -ENODEV;
+ 	if ((*aac_drivers[index].init)(aac))
+ 		goto out_unmap;
+ 
 -- 
-2.14.2
+2.14.1
 
