@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 24 Oct 2017 14:56:11 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Oct 2017 15:01:53 +0000
 Subject: Re: drm/i915/gvt: Use common error handling code in shadow_workload_ring_buffer()
-Message-Id: <1508856971.1955.13.camel@perches.com>
+Message-Id: <9cab8303-6141-3f8b-5f2e-9ba0e9f34c1d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
  <87efpsiu7r.fsf@intel.com>
@@ -10,15 +10,21 @@ References: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
  <20171024142615.t3y5atz6nulkq55h@mwanda>
  <1508856148.1955.12.camel@perches.com>
  <d92e1137-3d4c-8735-ceb4-4664a5803cdf@users.sourceforge.net>
-In-Reply-To: <d92e1137-3d4c-8735-ceb4-4664a5803cdf@users.sourceforge.net>
+ <1508856971.1955.13.camel@perches.com>
+In-Reply-To: <1508856971.1955.13.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org
+To: Joe Perches <joe@perches.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org
 Cc: Garry Hurley <garry.hurley.jr@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-On Tue, 2017-10-24 at 16:51 +0200, SF Markus Elfring wrote:
-> Do you prefer to delegate the proposed software refactoring
-> only to a corresponding optimiser?
+>> Do you prefer to delegate the proposed software refactoring
+>> only to a corresponding optimiser?
+> 
+> yes.
 
-yes.
+Will any applications around the semantic patch language
+(Coccinelle software) fit also in the preferred tool category?
+
+Regards,
+Markus
