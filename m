@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Oct 2017 14:40:10 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 24 Oct 2017 14:42:28 +0000
 Subject: Re: drm/i915/gvt: Use common error handling code in shadow_workload_ring_buffer()
-Message-Id: <22f5cdc7-fb58-1d62-0d5e-a3465297bb00@users.sourceforge.net>
+Message-Id: <1508856148.1955.12.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f563de94-afaa-ecde-2907-d6baaad65939@users.sourceforge.net>
  <87efpsiu7r.fsf@intel.com>
@@ -12,33 +12,25 @@ In-Reply-To: <20171024142615.t3y5atz6nulkq55h@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org
-Cc: Garry Hurley <garry.hurley.jr@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Garry Hurley <garry.hurley.jr@gmail.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gvt-dev@lists.freedesktop.org, SF Markus Elfring <elfring@users.sourceforge.net>
 
-> This isn't the case here.
+On Tue, 2017-10-24 at 17:26 +0300, Dan Carpenter wrote:
+> The point of unwind code is to undo what was done earlier.  If a
+> function allocates a list of things, using standard unwind style makes
+> it simpler, safer and more readable.
+> 
+> This isn't the case here.  Instead of making the code more readable,
+> we're making it more convoluted.  It's just that two out of three error
+> messages happened to be the same and Markus wants to save a bit of
+> memory by using the same string.  The memory savings is not so big that
+> it's worth making the code less readable.
 
-I find your view interesting for further clarification somehow.
+I agree with Dan.
 
+It doesn't save any real memory either as the compiler/linker
+reuses the repeated string.
 
-> Instead of making the code more readable, we're making it more convoluted.
-
-Can the shown software refactoring usually help here?
-
-
-> It's just that two out of three error messages happened to be the same
-
-This is true.
-
-
-> and Markus wants to save a bit of memory by using the same string.
-
-And also the same executable code (besides an identical error message).
-
-
-> The memory savings is not so big that it's worth making the code less readable.
-
-How does such a feedback fit to information for the deletion of questionable
-messages at other source code places?
-
-Regards,
-Markus
+It might, depending on the compiler, save a few bytes of
+object code as the compiler may not optimize the repeated
+call away though.  But a good compiler could do that too.
