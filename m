@@ -1,28 +1,107 @@
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-Date: Thu, 12 Oct 2017 11:17:39 +0000
-Subject: Re: [PATCH 00/10] staging/irda/net: Adjustments for several function implementations
-Message-Id: <878tggwr70.fsf@miraculix.mork.no>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 18:55:23 +0000
+Subject: [PATCH] iio/accel/stk8312: Improve unlocking of a mutex in two functions
+Message-Id: <ae9d7e7f-541e-ce0c-1d41-6b9793c98f78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
-In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net> (SF
-        Markus Elfring's message of "Thu, 12 Oct 2017 12:38:02 +0200")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-iio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Did you read drivers/staging/irda/TODO ?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 20:46:18 +0200
 
-There is no need to answer that. You already have.  Thanks a lot for
-your ever lasting invaluable contributions to /dev/null.  Please
-continue.
+* Adjust jump targets so that a call of the function "mutex_unlock"
+  is mostly stored at the end of these function implementations.
 
+* Replace four calls by goto statements.
 
+* Adjust condition checks.
 
-Bj=C3=B8rn
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/accel/stk8312.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/iio/accel/stk8312.c b/drivers/iio/accel/stk8312.c
+index cacc0da2f874..5275ab886e39 100644
+--- a/drivers/iio/accel/stk8312.c
++++ b/drivers/iio/accel/stk8312.c
+@@ -344,24 +344,24 @@ static int stk8312_read_raw(struct iio_dev *indio_dev,
+ 			return -EBUSY;
+ 		mutex_lock(&data->lock);
+ 		ret = stk8312_set_mode(data, data->mode | STK8312_MODE_ACTIVE);
+-		if (ret < 0) {
+-			mutex_unlock(&data->lock);
+-			return ret;
+-		}
++		if (ret)
++			goto unlock;
++
+ 		ret = stk8312_read_accel(data, chan->address);
+ 		if (ret < 0) {
+ 			stk8312_set_mode(data,
+ 					 data->mode & (~STK8312_MODE_ACTIVE));
+-			mutex_unlock(&data->lock);
+-			return ret;
++			goto unlock;
+ 		}
+ 		*val = sign_extend32(ret, 7);
+ 		ret = stk8312_set_mode(data,
+ 				       data->mode & (~STK8312_MODE_ACTIVE));
++unlock:
+ 		mutex_unlock(&data->lock);
+-		if (ret < 0)
+-			return ret;
+-		return IIO_VAL_INT;
++		if (!ret)
++			ret = IIO_VAL_INT;
++
++		return ret;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = stk8312_scale_table[data->range - 1][0];
+ 		*val2 = stk8312_scale_table[data->range - 1][1];
+@@ -444,17 +444,15 @@ static irqreturn_t stk8312_trigger_handler(int irq, void *p)
+ 						    data->buffer);
+ 		if (ret < STK8312_ALL_CHANNEL_SIZE) {
+ 			dev_err(&data->client->dev, "register read failed\n");
+-			mutex_unlock(&data->lock);
+-			goto err;
++			goto unlock_after_failure;
+ 		}
+ 	} else {
+ 		for_each_set_bit(bit, indio_dev->active_scan_mask,
+ 				 indio_dev->masklength) {
+ 			ret = stk8312_read_accel(data, bit);
+-			if (ret < 0) {
+-				mutex_unlock(&data->lock);
+-				goto err;
+-			}
++			if (ret < 0)
++				goto unlock_after_failure;
++
+ 			data->buffer[i++] = ret;
+ 		}
+ 	}
+@@ -462,10 +460,13 @@ static irqreturn_t stk8312_trigger_handler(int irq, void *p)
+ 
+ 	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
+ 					   pf->timestamp);
+-err:
++notify_trigger:
+ 	iio_trigger_notify_done(indio_dev->trig);
+-
+ 	return IRQ_HANDLED;
++
++unlock_after_failure:
++	mutex_unlock(&data->lock);
++	goto notify_trigger;
+ }
+ 
+ static irqreturn_t stk8312_data_rdy_trig_poll(int irq, void *private)
+-- 
+2.14.3
+
