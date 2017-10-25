@@ -1,75 +1,86 @@
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
-Date: Wed, 18 Oct 2017 05:24:51 +0000
-Subject: Re: [PATCH 2/3] powernv/pci: Use common code in pnv_ioda_pick_m64_pe()
-Message-Id: <6c6611ec-bd22-593c-3cca-106374cf2320@ozlabs.ru>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 13:05:52 +0000
+Subject: [PATCH] I2C-S3C2410: Use common error handling code in s3c24xx_i2c_probe()
+Message-Id: <32c82282-ee0a-137f-4913-310b194b60f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <549d0b6b-f875-c524-d867-742745117c1e@users.sourceforge.net>
- <84df26ea-74a3-14e5-9f13-a35486e9a95d@users.sourceforge.net>
-In-Reply-To: <84df26ea-74a3-14e5-9f13-a35486e9a95d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Russell Currey <ruscur@russell.cc>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 18/10/17 02:39, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 17 Oct 2017 17:07:54 +0200
-> 
-> Add a jump target so that a bit of code can be better reused
-> at the end of this function.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 15:00:35 +0200
 
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Rather than moving bits around, I'd rather allocate pe_alloc on stack and
-ditch kfree() at all. I'll make a patch for this.
+This issue was detected by using the Coccinelle software.
 
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/platforms/powernv/pci-ioda.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index 17c0330bb059..98d9435240f4 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -364,21 +364,20 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
->  	/* Figure out reserved PE numbers by the PE */
->  	pnv_ioda_reserve_m64_pe(bus, pe_alloc, all);
->  
-> +	master_pe = NULL;
-> +
->  	/*
->  	 * the current bus might not own M64 window and that's all
->  	 * contributed by its child buses. For the case, we needn't
->  	 * pick M64 dependent PE#.
->  	 */
-> -	if (bitmap_empty(pe_alloc, phb->ioda.total_pe_num)) {
-> -		kfree(pe_alloc);
-> -		return NULL;
-> -	}
-> +	if (bitmap_empty(pe_alloc, phb->ioda.total_pe_num))
-> +		goto free_pe;
->  
->  	/*
->  	 * Figure out the master PE and put all slave PEs to master
->  	 * PE's list to form compound PE.
->  	 */
-> -	master_pe = NULL;
->  	i = -1;
->  	while ((i = find_next_bit(pe_alloc, phb->ioda.total_pe_num, i + 1)) <
->  		phb->ioda.total_pe_num) {
-> @@ -416,6 +415,7 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
->  		}
->  	}
->  
-> +free_pe:
->  	kfree(pe_alloc);
->  	return master_pe;
->  }
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 5d97510ee48b..304a6d492c8c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1168,8 +1168,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	clk_disable(i2c->clk);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "I2C controller init failed\n");
+-		clk_unprepare(i2c->clk);
+-		return ret;
++		goto unprepare_clock;
+ 	}
+ 
+ 	/*
+@@ -1180,24 +1179,21 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		i2c->irq = ret = platform_get_irq(pdev, 0);
+ 		if (ret <= 0) {
+ 			dev_err(&pdev->dev, "cannot find IRQ\n");
+-			clk_unprepare(i2c->clk);
+-			return ret;
++			goto unprepare_clock;
+ 		}
+ 
+ 		ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq,
+ 				       0, dev_name(&pdev->dev), i2c);
+ 		if (ret != 0) {
+ 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-			clk_unprepare(i2c->clk);
+-			return ret;
++			goto unprepare_clock;
+ 		}
+ 	}
+ 
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
+-		clk_unprepare(i2c->clk);
+-		return ret;
++		goto unprepare_clock;
+ 	}
+ 
+ 	/*
+@@ -1217,12 +1213,15 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	if (ret < 0) {
+ 		pm_runtime_disable(&pdev->dev);
+ 		s3c24xx_i2c_deregister_cpufreq(i2c);
+-		clk_unprepare(i2c->clk);
+-		return ret;
++		goto unprepare_clock;
+ 	}
+ 
+ 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+ 	return 0;
++
++unprepare_clock:
++	clk_unprepare(i2c->clk);
++	return ret;
+ }
+ 
+ static int s3c24xx_i2c_remove(struct platform_device *pdev)
 -- 
-Alexey
+2.14.3
+
