@@ -1,60 +1,67 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 27 Oct 2017 20:15:08 +0000
-Subject: Re: [04/11] i2c: mpc: use of_property_read_bool
-Message-Id: <20171027201508.2jtjou6jpx5nt5ta@ninjato>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="y5nr4xtarz375zrl"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 20:17:29 +0000
+Subject: [PATCH 2/2] iio/accel/stk8ba50: Improve unlocking of a mutex in stk8ba50_read_raw()
+Message-Id: <8e9436af-440e-b4a8-5024-1f2a51c41b6b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+In-Reply-To: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 22:00:42 +0200
 
---y5nr4xtarz375zrl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adjust jump targets so that a call of the function "mutex_unlock" is stored
+only once in a case branch of this function implementation.
+Replace two calls by goto statements.
 
-On Fri, Aug 05, 2016 at 10:56:44AM +0200, Julia Lawall wrote:
-> Use of_property_read_bool to check for the existence of a property.
->=20
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> expression e1,e2;
-> statement S2,S1;
-> @@
-> -       if (of_get_property(e1,e2,NULL))
-> +       if (of_property_read_bool(e1,e2))
->         S1 else S2
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
-Shortened commit message and applied to for-next, thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/accel/stk8ba50.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/iio/accel/stk8ba50.c b/drivers/iio/accel/stk8ba50.c
+index afe90567ad37..ffc26b5d1fad 100644
+--- a/drivers/iio/accel/stk8ba50.c
++++ b/drivers/iio/accel/stk8ba50.c
+@@ -221,20 +221,24 @@ static int stk8ba50_read_raw(struct iio_dev *indio_dev,
+ 			return -EBUSY;
+ 		mutex_lock(&data->lock);
+ 		ret = stk8ba50_set_power(data, STK8BA50_MODE_NORMAL);
+-		if (ret < 0) {
+-			mutex_unlock(&data->lock);
+-			return -EINVAL;
+-		}
++		if (ret < 0)
++			goto e_inval;
++
+ 		ret = stk8ba50_read_accel(data, chan->address);
+ 		if (ret < 0) {
+ 			stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
+-			mutex_unlock(&data->lock);
+-			return -EINVAL;
++e_inval:
++			ret = -EINVAL;
++			goto unlock;
+ 		}
+ 		*val = sign_extend32(ret >> STK8BA50_DATA_SHIFT, 9);
+-		stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
++		ret = stk8ba50_set_power(data, STK8BA50_MODE_SUSPEND);
++unlock:
+ 		mutex_unlock(&data->lock);
+-		return IIO_VAL_INT;
++		if (ret >= 0)
++			ret = IIO_VAL_INT;
++
++		return ret;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = 0;
+ 		*val2 = stk8ba50_scale_table[data->range].scale_val;
+-- 
+2.14.3
 
---y5nr4xtarz375zrl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnzk8sACgkQFA3kzBSg
-KbYceQ/+JUaFSM8fJ28983lSevVKeQkThavq3mFhrkzs9o1DL2EzCbO1iCWV2e1c
-sRVBwa3HTwIrLOFLVeEAPNelFNVQ8Mzdo67xXAunza9C8+hm3dlIQmHRld4FMRns
-xXmQPlkKh3x6/Ehqb9uT9yvdWFCIVXV1ShJFiO/ewWKreUOXa4QKbvXy6GfgZlCz
-MDmITbRYavf74W/l1yp5rTdMpNsCnXn68rQNKvwOBWTx4UPd6S6k6+gAhxADm6lQ
-CyK0/fhG6urC5U6Wp/mBz/lcBp6nKJ9G5V+Bxk/rNVvFi0Ie/HXT8KRay8SBMwL4
-3lxfIkisckDvjBRmsl1LHBDAl+N9jv+eZNwelixiJQ2k2YsNgE7zA2EsagnrjuKm
-luFEpRoiR+dTuSZMkZP7iLqND3z5COhcVdpevsJfCdlj9U5QYUc2jovmUPVofR3j
-2+fuQAYcBopDtc+ZkM3bjFt8NhXS+jrweEs78HH4jelUq7pbwQZrH2oJDWUaYtjo
-mYMHCxz5ffdMuDhRwFGvaLYgH/En+2kz2COOtcWi06T9rjDLVdLlIoDVr6xK7C1/
-r7CaBhDHRyx7kAGJLqklC+OEebDTjDyCfdk+rxyvqJ3qF5YWzbFusThFzDFcjzpv
-jTO/me1RKtCaW+mEKHPNnxA6z6eYb1MvfRJOoggoHVHbyans67g=
-=T+QM
------END PGP SIGNATURE-----
-
---y5nr4xtarz375zrl--
