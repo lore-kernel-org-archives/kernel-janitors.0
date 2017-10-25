@@ -1,65 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Oct 2017 12:16:53 +0000
-Subject: [PATCH] crypto-ccp: Use common error handling code in sp_get_irqs()
-Message-Id: <0abcf065-56e9-dd3c-e210-0b0c21828a84@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 20:15:02 +0000
+Subject: [PATCH 0/2] iio/accel/stk8ba50: Fine-tuning for two function implementations
+Message-Id: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gary Hook <gary.hook@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, Tom Lendacky <thomas.lendacky@amd.com>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Oct 2017 14:10:33 +0200
+Date: Wed, 25 Oct 2017 22:10:12 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Use common error handling code in stk8ba50_probe()
+  Improve unlocking of a mutex in stk8ba50_read_raw()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/ccp/sp-platform.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/iio/accel/stk8ba50.c | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/crypto/ccp/sp-platform.c b/drivers/crypto/ccp/sp-platform.c
-index 71734f254fd1..7d7670c7484a 100644
---- a/drivers/crypto/ccp/sp-platform.c
-+++ b/drivers/crypto/ccp/sp-platform.c
-@@ -78,25 +78,25 @@ static int sp_get_irqs(struct sp_device *sp)
- 	sp_platform->irq_count = count;
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_notice(dev, "unable to get IRQ (%d)\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_failure;
- 
- 	sp->psp_irq = ret;
- 	if (count = 1) {
- 		sp->ccp_irq = ret;
- 	} else {
- 		ret = platform_get_irq(pdev, 1);
--		if (ret < 0) {
--			dev_notice(dev, "unable to get IRQ (%d)\n", ret);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto report_failure;
- 
- 		sp->ccp_irq = ret;
- 	}
- 
- 	return 0;
-+
-+report_failure:
-+	dev_notice(dev, "unable to get IRQ (%d)\n", ret);
-+	return ret;
- }
- 
- static int sp_platform_probe(struct platform_device *pdev)
 -- 
-2.14.2
+2.14.3
 
