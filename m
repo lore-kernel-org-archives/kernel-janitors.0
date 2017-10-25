@@ -1,23 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 06 Oct 2017 04:29:36 +0000
-Subject: Re: [PATCH net] selftests/net: rxtimestamp: Fix an off by one
-Message-Id: <20171005.212936.1533429317037705562.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 11:40:55 +0000
+Subject: [PATCH] I2C-PIIX4: Use common error handling code in piix4_probe()
+Message-Id: <be36ce5f-9e75-6c05-86a2-ea8368f09dc1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171005125347.otplfss4mo7hfopv@mwanda>
-In-Reply-To: <20171005125347.otplfss4mo7hfopv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: shuah@kernel.org, maloney@google.com, willemb@google.com, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 5 Oct 2017 15:53:47 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 13:30:18 +0200
 
-> The > should be >= so that we don't write one element beyond the end of
-> the array.
-> 
-> Fixes: 16e781224198 ("selftests/net: Add a test to validate behavior of rx timestamps")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/busses/i2c-piix4.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+index 0ecdb47a23ab..22cc56e9f304 100644
+--- a/drivers/i2c/busses/i2c-piix4.c
++++ b/drivers/i2c/busses/i2c-piix4.c
+@@ -780,20 +780,16 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 		/* base address location etc changed in SB800 */
+ 		retval = piix4_setup_sb800(dev, id, 0);
+-		if (retval < 0) {
+-			release_region(SB800_PIIX4_SMB_IDX, 2);
+-			return retval;
+-		}
++		if (retval < 0)
++			goto release_region;
+ 
+ 		/*
+ 		 * Try to register multiplexed main SMBus adapter,
+ 		 * give up if we can't
+ 		 */
+ 		retval = piix4_add_adapters_sb800(dev, retval);
+-		if (retval < 0) {
+-			release_region(SB800_PIIX4_SMB_IDX, 2);
+-			return retval;
+-		}
++		if (retval < 0)
++			goto release_region;
+ 	} else {
+ 		retval = piix4_setup(dev, id);
+ 		if (retval < 0)
+@@ -833,6 +829,10 @@ static int piix4_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	}
+ 
+ 	return 0;
++
++release_region:
++	release_region(SB800_PIIX4_SMB_IDX, 2);
++	return retval;
+ }
+ 
+ static void piix4_adap_remove(struct i2c_adapter *adap)
+-- 
+2.14.3
+
