@@ -1,31 +1,28 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 31 Oct 2017 16:35:02 +0000
-Subject: Re: [PATCH] Sony-laptop: Use common error handling code in sony_nc_setup_rfkill()
-Message-Id: <CAHp75VeDYakxD_g+N0RcmXFmGR3Du+p2yRaTiYhNxgr+0SQ9og@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 07:39:39 +0000
+Subject: Re: Unicode characters in commit messages?
+Message-Id: <4d93d77b-57f7-fac2-a6aa-314d05778e2d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
- <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com> <dadb7068-e4ed-b91d-ce31-aca2d6afd9f3@users.sourceforge.net>
-In-Reply-To: <dadb7068-e4ed-b91d-ce31-aca2d6afd9f3@users.sourceforge.net>
+References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
+ <2dd8c930-77e8-a2ee-6356-fc9c1d21384d@users.sourceforge.net>
+ <20171025060209.pqtyqk4weduvmzxj@mwanda>
+ <2d491a67-184a-c03f-e6ee-da88066e97f0@users.sourceforge.net>
+ <20171025073250.i6v6jwijbkmybmtk@mwanda>
+In-Reply-To: <20171025073250.i6v6jwijbkmybmtk@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 4:24 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> Apparently this patch done without reading the actual code.
->
-> I performed another simple software refactoring.
+>> Would you like to support Unicode characters there?
+> 
+> Multiple people have answered this question already and I have answered
+> it multiple times.
 
-Which is _useless_ per se by the reasons you had been told already
-_several_ times about.
+I found the corresponding feedback not sufficient so far to reach
+a final consensus.
+Will this topic evolve any further?
 
-Either you do a real fix (propagate correct error codes to upper
-layers), or just don't bother at all.
-
->> NAK.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Markus
