@@ -1,50 +1,67 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 30 Oct 2017 08:28:58 +0000
-Subject: Re: [PATCH] ubi: fastmap: clean up the initialization of pointer p
-Message-Id: <20171030092858.11100194@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 09:52:28 +0000
+Subject: [PATCH] I2C-Octeon: Use common error handling code in octeon_i2c_probe()
+Message-Id: <73affb84-9cdd-9f5c-b96a-5a392739e789@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171029131426.6205-1-colin.king@canonical.com>
-In-Reply-To: <20171029131426.6205-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org, David Daney <david.daney@cavium.com>, Jan Glauber <jglauber@cavium.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 29 Oct 2017 13:14:26 +0000
-Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Oct 2017 11:45:48 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer p is being initialized with one value and a few lines
-> later being set to a newer replacement value. Clean up the code by
-> using the latter assignment to p as the initial value. Cleans up
-> clang warning:
-> 
-> drivers/mtd/ubi/fastmap.c:217:19: warning: Value stored to 'p'
-> during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add a jump target so that a specific error message is stored only once
+at the end of this function implementation.
+Replace two calls of the function "dev_err" by goto statements.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+This issue was detected by using the Coccinelle software.
 
-> ---
->  drivers/mtd/ubi/fastmap.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
-> index 5a832bc79b1b..9be4b94e83ad 100644
-> --- a/drivers/mtd/ubi/fastmap.c
-> +++ b/drivers/mtd/ubi/fastmap.c
-> @@ -214,9 +214,8 @@ static void assign_aeb_to_av(struct ubi_attach_info *ai,
->  			     struct ubi_ainf_volume *av)
->  {
->  	struct ubi_ainf_peb *tmp_aeb;
-> -	struct rb_node **p = &ai->volumes.rb_node, *parent = NULL;
-> +	struct rb_node **p = &av->root.rb_node, *parent = NULL;
->  
-> -	p = &av->root.rb_node;
->  	while (*p) {
->  		parent = *p;
->  
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/busses/i2c-octeon-platdrv.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-octeon-platdrv.c b/drivers/i2c/busses/i2c-octeon-platdrv.c
+index 64bda83e65ac..ac8a1099c523 100644
+--- a/drivers/i2c/busses/i2c-octeon-platdrv.c
++++ b/drivers/i2c/busses/i2c-octeon-platdrv.c
+@@ -207,10 +207,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
+ 		result = devm_request_irq(&pdev->dev, i2c->hlc_irq,
+ 					  octeon_i2c_hlc_isr78, 0,
+ 					  DRV_NAME, i2c);
+-		if (result < 0) {
+-			dev_err(i2c->dev, "failed to attach interrupt\n");
+-			goto out;
+-		}
++		if (result < 0)
++			goto report_failure;
+ 	} else {
+ 		i2c->int_enable = octeon_i2c_int_enable;
+ 		i2c->int_disable = octeon_i2c_int_disable;
+@@ -220,10 +218,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
+ 
+ 	result = devm_request_irq(&pdev->dev, i2c->irq,
+ 				  octeon_i2c_isr, 0, DRV_NAME, i2c);
+-	if (result < 0) {
+-		dev_err(i2c->dev, "failed to attach interrupt\n");
+-		goto out;
+-	}
++	if (result < 0)
++		goto report_failure;
+ 
+ 	if (OCTEON_IS_MODEL(OCTEON_CN38XX))
+ 		i2c->broken_irq_check = true;
+@@ -251,6 +247,8 @@ static int octeon_i2c_probe(struct platform_device *pdev)
+ 	dev_info(i2c->dev, "probed\n");
+ 	return 0;
+ 
++report_failure:
++	dev_err(i2c->dev, "failed to attach interrupt\n");
+ out:
+ 	return result;
+ };
+-- 
+2.14.3
 
