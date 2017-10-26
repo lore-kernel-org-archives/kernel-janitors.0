@@ -1,42 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Oct 2017 18:03:25 +0000
-Subject: [PATCH 5/6] ARM: s3c24xx: Improve a size determination in s3c2412_iotiming_get()
-Message-Id: <28b8f35c-bed7-564f-9519-6d08e9c4edf9@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 05:00:36 +0000
+Subject: Re: I2C-Octeon: Use common error handling code in octeon_i2c_probe()
+Message-Id: <20e16385-afab-1d3d-b682-04589568850e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
-In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
+References: <73affb84-9cdd-9f5c-b96a-5a392739e789@users.sourceforge.net>
+ <77df0e64-bf30-b6d0-b28b-ddb3c0574dfe@caviumnetworks.com>
+In-Reply-To: <77df0e64-bf30-b6d0-b28b-ddb3c0574dfe@caviumnetworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: David Daney <ddaney@caviumnetworks.com>, David Daney <david.daney@cavium.com>, linux-i2c@vger.kernel.org
+Cc: Jan Glauber <jglauber@cavium.com>, Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Oct 2017 19:38:42 +0200
+> NAK.  We don't need any more Markus Elfring spam.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Why do you not like another update suggestion for this use case?
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> Add a jump target so that a specific error message is stored only once
+>> at the end of this function implementation.
+> 
+> Please read C standard about duplicate literal strings to see
+> why this is a completely misleading and false statement.
 
-diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-index f09d5d5ea7ed..01bcd7d5dac7 100644
---- a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-@@ -242,7 +242,7 @@ int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
- 		if (!bank_is_io(bank, bankcfg))
- 			continue;
- 
--		bt = kzalloc(sizeof(struct s3c2412_iobank_timing), GFP_KERNEL);
-+		bt = kzalloc(sizeof(*bt), GFP_KERNEL);
- 		if (!bt)
- 			return -ENOMEM;
- 
--- 
-2.14.2
+* I proposed to adjust the position for one function call, didn't I?
 
+* Do you care for a bit of code reduction?
+
+* Do you prefer to use an optimisation option like “-fmerge-constants”
+  (instead of integrating the shown small change)?
+
+Regards,
+Markus
