@@ -1,50 +1,73 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 18:11:28 +0000
-Subject: =?UTF-8?Q?Re:_char/tpm:_Delete_an_error_message_for_a_failed_memory?= =?UTF-8?B?IGFsbG9jYXRpb24gaW4g
-Message-Id: <61fa394e-05d1-5081-f8bb-3e7dcbd6ccf9@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 20:40:04 +0000
+Subject: [PATCH] isdn_ppp: Use common error handling code in isdn_ppp_receive()
+Message-Id: <d4bf9f0e-7d68-d10a-aa0c-d6b6fa131183@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1508244757.4234.60.camel@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1710171456360.5035@hadrien>
- <1508253453.4234.81.camel@linux.vnet.ibm.com>
- <9689f036-ba9f-d23b-cf89-c289bc308771@users.sourceforge.net>
- <20171018145735.lpzwakatsty7emlw@linux.intel.com>
- <351cf78a-14f6-c6e7-2902-048e7dc57a14@users.sourceforge.net>
- <20171018155946.e7ga7jyex6eia252@linux.intel.com>
- <55d76224-3019-6614-70ce-ba260bbcd54f@users.sourceforge.net>
- <20171018171858.3lcfr2kcp53fngwv@linux.intel.com>
- <e9638486-7e59-1c5a-87ae-ca0f1fbbd021@users.sourceforge.net>
- <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
-In-Reply-To: <20171018175412.mlj2yvyjmvmfdxzd@rhwork>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jerry Snitselaar <jsnitsel@redhat.com>, linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Julia Lawall <julia.lawall@lip6.fr>, Alexander Steffen <Alexander.Steffen@infineon.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nayna Jain <nayna@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Stefan Berger <stefanb@linux.vnet.ibm.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, Geliang Tang <geliangtang@gmail.com>, Johannes Berg <johannes.berg@intel.com>, Karsten Keil <isdn@linux-pingi.de>, Meng Xu <mengxu.gatech@gmail.com>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> Why did you not reply directly with this request for the update steps
->> with the subject “Delete an error message for a failed memory allocation
->> in tpm_…()”?
->>
->> https://patchwork.kernel.org/patch/10009405/
->> https://patchwork.kernel.org/patch/10009415/
->>
->> I find that there can be difficulty to show an appropriate information
->> source for the reasonable explanation of this change pattern.
->>
-> 
-> Shouldn't this information source for the explanation be the submitter?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 22:30:50 +0200
 
-I offered a bit of information. I agree that it could become better eventually.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-> I'd hope they understand what it is they are submitting.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/i4l/isdn_ppp.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-I do this to some degree.   ;-)
+diff --git a/drivers/isdn/i4l/isdn_ppp.c b/drivers/isdn/i4l/isdn_ppp.c
+index cd2b3c69771a..e3348fdde32a 100644
+--- a/drivers/isdn/i4l/isdn_ppp.c
++++ b/drivers/isdn/i4l/isdn_ppp.c
+@@ -1017,8 +1017,7 @@ void isdn_ppp_receive(isdn_net_dev *net_dev, isdn_net_local *lp, struct sk_buff
+ 	if (slot < 0 || slot >= ISDN_MAX_CHANNELS) {
+ 		printk(KERN_ERR "isdn_ppp_receive: lp->ppp_slot(%d)\n",
+ 		       lp->ppp_slot);
+-		kfree_skb(skb);
+-		return;
++		goto free_skb;
+ 	}
+ 	is = ippp_table[slot];
+ 
+@@ -1028,15 +1027,12 @@ void isdn_ppp_receive(isdn_net_dev *net_dev, isdn_net_local *lp, struct sk_buff
+ 		isdn_ppp_frame_log("receive", skb->data, skb->len, 32, is->unit, lp->ppp_slot);
+ 	}
+ 
+-	if (isdn_ppp_skip_ac(is, skb) < 0) {
+-		kfree_skb(skb);
+-		return;
+-	}
++	if (isdn_ppp_skip_ac(is, skb) < 0)
++		goto free_skb;
++
+ 	proto = isdn_ppp_strip_proto(skb);
+-	if (proto < 0) {
+-		kfree_skb(skb);
+-		return;
+-	}
++	if (proto < 0)
++		goto free_skb;
+ 
+ #ifdef CONFIG_ISDN_MPP
+ 	if (is->compflags & SC_LINK_DECOMP_ON) {
+@@ -1053,6 +1049,10 @@ void isdn_ppp_receive(isdn_net_dev *net_dev, isdn_net_local *lp, struct sk_buff
+ 	}
+ #endif
+ 	isdn_ppp_push_higher(net_dev, lp, skb, proto);
++	return;
++
++free_skb:
++	kfree_skb(skb);
+ }
+ 
+ /*
+-- 
+2.14.3
 
-But I would appreciate if I could refer to a single Linux document
-for this change pattern around questionable error messages.
-Would a corresponding link for an accepted explanation in the documentation
-be nice in this case?
-
-Regards,
-Markus
