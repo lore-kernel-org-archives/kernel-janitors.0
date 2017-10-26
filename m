@@ -1,40 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 10:19:42 +0000
-Subject: [PATCH] [media] pt3: remove redundant assignment to mask
-Message-Id: <20171031101942.19923-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Oct 2017 12:19:21 +0000
+Subject: [PATCH] HID: sensor: Use the correct type instead of a void pointer
+Message-Id: <20171026121921.kmyk42wo32juv6qj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+It's cleaner to declare this with the correct type instead of using a
+void pointer.
 
-Variable mask is being set to 0x80 and then set to this value again
-in the following for-loop. Remove the extraneous first setting of mask.
-Cleans up clang warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-drivers/media/pci/pt3/pt3_i2c.c:88:2: warning: Value stored to 'mask'
-is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/pt3/pt3_i2c.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/media/pci/pt3/pt3_i2c.c b/drivers/media/pci/pt3/pt3_i2c.c
-index ec6a8a2e4744..b66138c7b364 100644
---- a/drivers/media/pci/pt3/pt3_i2c.c
-+++ b/drivers/media/pci/pt3/pt3_i2c.c
-@@ -85,7 +85,6 @@ static void put_byte_write(struct pt3_i2cbuf *cbuf, u8 val)
+diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
+index 0bcf041368c7..4f509f13f347 100644
+--- a/drivers/hid/hid-sensor-custom.c
++++ b/drivers/hid/hid-sensor-custom.c
+@@ -485,7 +485,7 @@ static int hid_sensor_custom_add_field(struct hid_sensor_custom *sensor_inst,
+ 				       struct hid_field *field)
  {
- 	u8 mask;
+ 	struct hid_sensor_custom_field *sensor_field;
+-	void *fields;
++	struct hid_sensor_custom_field *fields;
  
--	mask = 0x80;
- 	for (mask = 0x80; mask > 0; mask >>= 1)
- 		cmdbuf_add(cbuf, (val & mask) ? I_DATA_H_NOP : I_DATA_L_NOP);
- 	cmdbuf_add(cbuf, I_DATA_H_ACK0);
--- 
-2.14.1
-
+ 	fields = krealloc(sensor_inst->fields,
+ 			  (sensor_inst->sensor_field_count + 1) *
