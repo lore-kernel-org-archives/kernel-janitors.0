@@ -1,29 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Oct 2017 17:32:15 +0000
-Subject: Re: [PATCH] cxgb4vf: make a couple of functions static
-Message-Id: <20171004.103215.1424926789610505281.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 15:00:07 +0000
+Subject: [PATCH] iio/proximity/srf08: Improve unlocking of a mutex in srf08_read_ranging()
+Message-Id: <62f61dbd-b106-1d3f-fb75-3fa87251e6ef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171004132037.6409-1-colin.king@canonical.com>
-In-Reply-To: <20171004132037.6409-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: leedom@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-iio@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  4 Oct 2017 14:20:37 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 16:51:08 +0200
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The functions t4vf_link_down_rc_str and t4vf_handle_get_port_info are
-> local to the source and do not need to be in global scope, so make
-> them static.
-> 
-> Cleans up sparse warnings:
-> symbol 't4vf_link_down_rc_str' was not declared. Should it be static?
-> symbol 't4vf_handle_get_port_info' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add a jump target so that a call of the function "mutex_unlock" is stored
+only once at the end of this function implementation.
+Replace two calls by goto statements.
 
-Applied to net-next, thanks.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/proximity/srf08.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iio/proximity/srf08.c b/drivers/iio/proximity/srf08.c
+index f2bf783f829a..85957550195b 100644
+--- a/drivers/iio/proximity/srf08.c
++++ b/drivers/iio/proximity/srf08.c
+@@ -135,8 +135,7 @@ static int srf08_read_ranging(struct srf08_data *data)
+ 			SRF08_WRITE_COMMAND, SRF08_CMD_RANGING_CM);
+ 	if (ret < 0) {
+ 		dev_err(&client->dev, "write command - err: %d\n", ret);
+-		mutex_unlock(&data->lock);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	/*
+@@ -163,20 +162,17 @@ static int srf08_read_ranging(struct srf08_data *data)
+ 
+ 	if (ret >= 255 || ret <= 0) {
+ 		dev_err(&client->dev, "device not ready\n");
+-		mutex_unlock(&data->lock);
+-		return -EIO;
++		ret = -EIO;
++		goto unlock;
+ 	}
+ 
+ 	ret = i2c_smbus_read_word_swapped(data->client,
+ 						SRF08_READ_ECHO_1_HIGH);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(&client->dev, "cannot read distance: ret=%d\n", ret);
+-		mutex_unlock(&data->lock);
+-		return ret;
+-	}
+ 
++unlock:
+ 	mutex_unlock(&data->lock);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.14.3
+
