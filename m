@@ -1,56 +1,98 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Thu, 19 Oct 2017 16:33:29 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: sst: remove redundant variable dma_dev_name
-Message-Id: <2e0d8b0e-a778-a2c5-45a2-dbef62d40a8b@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 08:00:21 +0000
+Subject: [PATCH] iio/light/gp2ap020a00f: Use common error handling code in gp2ap020a00f_adjust_lux_mode()
+Message-Id: <06da0424-1ec9-209e-a433-48288c49132b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171019123352.30294-1-colin.king@canonical.com>
-In-Reply-To: <20171019123352.30294-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 09:50:21 +0200
 
+* Add jump targets so that two error messages are stored only once
+  at the end of this function implementation.
 
-On 10/19/2017 07:33 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer dma_dev_name is assigned but never read, it is redundant
-> and can therefore be removed.
->
-> Cleans up clang warning:
-> sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
-> 'dma_dev_name' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Adjust condition checks.
 
-Indeed this has been unused since at least 2015...
-FWIW
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+This issue was detected by using the Coccinelle software.
 
-> ---
->   sound/soc/intel/common/sst-firmware.c | 2 --
->   1 file changed, 2 deletions(-)
->
-> diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-> index a086c35f91bb..79a9fdf94d38 100644
-> --- a/sound/soc/intel/common/sst-firmware.c
-> +++ b/sound/soc/intel/common/sst-firmware.c
-> @@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
->   	struct sst_pdata *sst_pdata = sst->pdata;
->   	struct sst_dma *dma;
->   	struct resource mem;
-> -	const char *dma_dev_name;
->   	int ret = 0;
->   
->   	if (sst->pdata->resindex_dma_base = -1)
-> @@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
->   	* is attached to the ADSP IP. */
->   	switch (sst->pdata->dma_engine) {
->   	case SST_DMA_TYPE_DW:
-> -		dma_dev_name = "dw_dmac";
->   		break;
->   	default:
->   		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/light/gp2ap020a00f.c | 37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
+index 44b13fbcd093..ae29bce660ac 100644
+--- a/drivers/iio/light/gp2ap020a00f.c
++++ b/drivers/iio/light/gp2ap020a00f.c
+@@ -741,19 +741,13 @@ static bool gp2ap020a00f_adjust_lux_mode(struct gp2ap020a00f_data *data,
+ 		 */
+ 		err =  gp2ap020a00f_write_event_threshold(data,
+ 					GP2AP020A00F_THRESH_TH, false);
+-		if (err < 0) {
+-			dev_err(&data->client->dev,
+-				"Clearing als threshold register failed.\n");
+-			return false;
+-		}
++		if (err)
++			goto report_clearing_failure;
+ 
+ 		err =  gp2ap020a00f_write_event_threshold(data,
+ 					GP2AP020A00F_THRESH_TL, false);
+-		if (err < 0) {
+-			dev_err(&data->client->dev,
+-				"Clearing als threshold register failed.\n");
+-			return false;
+-		}
++		if (err)
++			goto report_clearing_failure;
+ 
+ 		/* Change lux mode */
+ 		err = regmap_update_bits(data->regmap,
+@@ -793,27 +787,30 @@ static bool gp2ap020a00f_adjust_lux_mode(struct gp2ap020a00f_data *data,
+ 		if (test_bit(GP2AP020A00F_FLAG_ALS_RISING_EV, &data->flags)) {
+ 			err =  gp2ap020a00f_write_event_threshold(data,
+ 					GP2AP020A00F_THRESH_TH, true);
+-			if (err < 0) {
+-				dev_err(&data->client->dev,
+-				"Adjusting als threshold value failed.\n");
+-				return false;
+-			}
++			if (err)
++				goto report_adjustment_failure;
+ 		}
+ 
+ 		if (test_bit(GP2AP020A00F_FLAG_ALS_FALLING_EV, &data->flags)) {
+ 			err =  gp2ap020a00f_write_event_threshold(data,
+ 					GP2AP020A00F_THRESH_TL, true);
+-			if (err < 0) {
+-				dev_err(&data->client->dev,
+-				"Adjusting als threshold value failed.\n");
+-				return false;
+-			}
++			if (err)
++				goto report_adjustment_failure;
+ 		}
+ 
+ 		return true;
+ 	}
+ 
+ 	return false;
++
++report_clearing_failure:
++	dev_err(&data->client->dev,
++		"Clearing als threshold register failed.\n");
++	return false;
++
++report_adjustment_failure:
++	dev_err(&data->client->dev, "Adjusting als threshold value failed.\n");
++	return false;
+ }
+ 
+ static void gp2ap020a00f_output_to_lux(struct gp2ap020a00f_data *data,
+-- 
+2.14.3
 
