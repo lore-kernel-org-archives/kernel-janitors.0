@@ -1,81 +1,83 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Oct 2017 08:45:27 +0000
-Subject: Re: [PATCH] gpu/drm/bridge/sii9234: Use common error handling code in sii9234_writebm()
-Message-Id: <54f4eff0-e7bb-214b-980e-208587850037@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 14:23:45 +0000
+Subject: [PATCH] iio/pressure/mpl3115: Improve unlocking of a mutex in mpl3115_trigger_handler()
+Message-Id: <b93264eb-3d22-46dc-fe0a-538fbe9e600f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8bb4a1d2-8876-731f-2938-8be075f4252c@users.sourceforge.net>
- <20171023071859.m55dgxzooje4i35e@mwanda>
-In-Reply-To: <20171023071859.m55dgxzooje4i35e@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, dri-devel@lists.freedesktop.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Archit Taneja <architt@codeaurora.org>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maciej Purski <m.purski@samsung.com>, Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Peter Rosin <peda@axentia.se>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>  	ret =3D i2c_smbus_write_byte_data(client, offset, value);
->> -	if (ret < 0) {
->> -		dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
->> -			sii9234_client_name[id], offset, value);
->> -		ctx->i2c_error =3D ret;
->> -	}
->> +	if (!ret)
->> +		return 0;
->=20
-> Ugh.  No.  Don't do success handling on the last if statement.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 16:10:46 +0200
 
-I find my approach useful in this case.
+Adjust jump targets so that a call of the function "mutex_unlock" is stored
+at the end of this function implementation.
+Replace three calls by goto statements.
 
+This issue was detected by using the Coccinelle software.
 
-> Also while I personally prefer testing for non-zero,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/pressure/mpl3115.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-I got used to this checking style to some degree.
+diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
+index 7537547fb7ee..f39e6f42a9c0 100644
+--- a/drivers/iio/pressure/mpl3115.c
++++ b/drivers/iio/pressure/mpl3115.c
+@@ -152,38 +152,36 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void *p)
+ 
+ 	mutex_lock(&data->lock);
+ 	ret = mpl3115_request(data);
+-	if (ret < 0) {
+-		mutex_unlock(&data->lock);
+-		goto done;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	memset(buffer, 0, sizeof(buffer));
+ 	if (test_bit(0, indio_dev->active_scan_mask)) {
+ 		ret = i2c_smbus_read_i2c_block_data(data->client,
+ 			MPL3115_OUT_PRESS, 3, &buffer[pos]);
+-		if (ret < 0) {
+-			mutex_unlock(&data->lock);
+-			goto done;
+-		}
++		if (ret < 0)
++			goto unlock;
++
+ 		pos += 4;
+ 	}
+ 
+ 	if (test_bit(1, indio_dev->active_scan_mask)) {
+ 		ret = i2c_smbus_read_i2c_block_data(data->client,
+ 			MPL3115_OUT_TEMP, 2, &buffer[pos]);
+-		if (ret < 0) {
+-			mutex_unlock(&data->lock);
+-			goto done;
+-		}
++		if (ret < 0)
++			goto unlock;
+ 	}
+ 	mutex_unlock(&data->lock);
+ 
+ 	iio_push_to_buffers_with_timestamp(indio_dev, buffer,
+ 		iio_get_time_ns(indio_dev));
+-
+-done:
++notify_trigger:
+ 	iio_trigger_notify_done(indio_dev->trig);
+ 	return IRQ_HANDLED;
++
++unlock:
++	mutex_unlock(&data->lock);
++	goto notify_trigger;
+ }
+ 
+ static const struct iio_chan_spec mpl3115_channels[] = {
+-- 
+2.14.3
 
-
-> the ALSA people got annoyed at you for changing tests for < 0
-
-It seems that involved software developers have got special preferences the=
-re.
-
-
-> but you're doing it again.
-
-I dared to propose such an adjustment once more.
-Would you like discuss corresponding reasons any further?
-
-
-> And it introduces a bug,
-
-Unfortunately, a hiccup in my software development attention =E2=80=A6
-
-
-> although I see now that you fixed it in v2.
-
-Thanks that you noticed also this small update.
-
-https://patchwork.kernel.org/patch/10021767/
-https://lkml.kernel.org/r/<2ecf0bb7-7129-40e4-cefc-0bc2d0f7ee8b@users.sourc=
-eforge.net>
-
-
-> I can't get excited about these sort of risky low value patches.
-
-I try again to point special software improvement opportunities out.
-
-
->> +report_failure:
->> +	dev_err(ctx->dev, "writebm: %4s[0x%02x] <- 0x%02x\n",
->> +		sii9234_client_name[id], offset, value);
->> +	ctx->i2c_error =3D ret;
->>  	return ret;
->>  }
-
-How do you think about to move this source code to the end of
-this function implementation?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
