@@ -1,40 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 16:50:14 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Thu, 26 Oct 2017 17:39:01 +0000
 Subject: Re: [PATCH] iio/light/max44000: Use common error handling code in max44000_probe()
-Message-Id: <c6c5a2d0-39e6-0792-a6d3-4f2861a7eb5a@users.sourceforge.net>
+Message-Id: <20171026183901.42f44acc@archlinux>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <28854212-d360-8636-4de5-017fbee0db36@users.sourceforge.net>
- <20171026172926.62d5ff87@archlinux>
-In-Reply-To: <20171026172926.62d5ff87@archlinux>
+        <20171026172926.62d5ff87@archlinux>
+        <c6c5a2d0-39e6-0792-a6d3-4f2861a7eb5a@users.sourceforge.net>
+In-Reply-To: <c6c5a2d0-39e6-0792-a6d3-4f2861a7eb5a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Crestez Dan Leonard <leonard.crestez@intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-iio@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Crestez Dan Leonard <leonard.crestez@intel.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> @@ -596,6 +592,10 @@ static int max44000_probe(struct i2c_client *client,
->>  	}
->>  
->>  	return iio_device_register(indio_dev);
->> +
->> +report_failure:
->> +	dev_err(&client->dev, "failed to write init config: %d\n", ret);
-> This reduces readability of the code for a very minor gain.
+On Thu, 26 Oct 2017 18:50:14 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 
-I got an other software development view on this aspect.
+> >> @@ -596,6 +592,10 @@ static int max44000_probe(struct i2c_client *client,
+> >>  	}
+> >>  
+> >>  	return iio_device_register(indio_dev);
+> >> +
+> >> +report_failure:
+> >> +	dev_err(&client->dev, "failed to write init config: %d\n", ret);  
+> > This reduces readability of the code for a very minor gain.  
+> 
+> I got an other software development view on this aspect.
+> 
 
+Sadly I am going to put my foot down here before more time
+is wasted. I am not going to discuss it further after this email.
+(for others please see the amount of time already wasted on
+what are mostly poor code changes from Markus).
 
-> Printing an error message is not a source of bugs
+> 
+> > Printing an error message is not a source of bugs  
+> 
+> I find such a general information questionable.
+> 
+> It is also possible to discover various update candidates in this software area.
+Judge each one carefully.  You need to be convincingly improving the code
+not just obeying rules blindly.
 
-I find such a general information questionable.
+> 
+> 
+> > or similar unlike unwinding some state, so a unified path makes little sense.  
+> 
+> How does such a view fit to the section “7) Centralized exiting of functions”
+> in the document “coding-style.rst”?
+All rules in there need to be applied with care. If they make the code
+worse do not blindly apply them.
 
-It is also possible to discover various update candidates in this software area.
+> 
+> Regards,
+> Markus
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-
-> or similar unlike unwinding some state, so a unified path makes little sense.
-
-How does such a view fit to the section “7) Centralized exiting of functions”
-in the document “coding-style.rst”?
-
-Regards,
-Markus
