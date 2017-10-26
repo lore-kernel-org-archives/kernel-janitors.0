@@ -1,56 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 02 Oct 2017 10:22:42 +0000
-Subject: [bug report] mlxsw: spectrum: Add the multicast routing offloading logic
-Message-Id: <20171002102242.wikad4uo3fgs6y5t@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 20:14:19 +0000
+Subject: [PATCH] irqchip: mmp: Use common error handling code in mmp2_mux_of_init()
+Message-Id: <690b6f85-80a7-4add-2106-a3df2c614cd5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Daniel Drake <dsd@laptop.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hello Yotam Gigi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 22:05:26 +0200
 
-The patch c011ec1bbfd6: "mlxsw: spectrum: Add the multicast routing
-offloading logic" from Sep 27, 2017, leads to the following static
-checker warning:
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-	drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c:948 mlxsw_sp_mr_route_stats_update()
-	error: uninitialized symbol 'packets'.
+This issue was detected by using the Coccinelle software.
 
-	drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c:951 mlxsw_sp_mr_route_stats_update()
-	error: uninitialized symbol 'bytes'.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/irqchip/irq-mmp.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-drivers/net/ethernet/mellanox/mlxsw/spectrum_mr.c
-   934  static void mlxsw_sp_mr_route_stats_update(struct mlxsw_sp *mlxsw_sp,
-   935                                             struct mlxsw_sp_mr_route *mr_route)
-   936  {
-   937          struct mlxsw_sp_mr *mr = mlxsw_sp->mr;
-   938          u64 packets, bytes;
-                    ^^^^^^^^^^^^^^
-   939  
-   940          if (mr_route->route_action = MLXSW_SP_MR_ROUTE_ACTION_TRAP)
-   941                  return;
-   942  
-   943          mr->mr_ops->route_stats(mlxsw_sp, mr_route->route_priv, &packets,
-                ^^^^^^^^^^^^^^^^^^^^^^^
-The static checker is complaining because they don't get initialized on
-the error path.
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index 25f32e1d7764..4a3dd020777f 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -438,16 +438,14 @@ static int __init mmp2_mux_of_init(struct device_node *node,
+ 		return -EINVAL;
+ 	}
+ 	ret = of_address_to_resource(node, 0, &res);
+-	if (ret < 0) {
+-		pr_err("Not found reg property\n");
+-		return -EINVAL;
+-	}
++	if (ret < 0)
++		goto report_failure;
++
+ 	icu_data[i].reg_status = mmp_icu_base + res.start;
+ 	ret = of_address_to_resource(node, 1, &res);
+-	if (ret < 0) {
+-		pr_err("Not found reg property\n");
+-		return -EINVAL;
+-	}
++	if (ret < 0)
++		goto report_failure;
++
+ 	icu_data[i].reg_mask = mmp_icu_base + res.start;
+ 	icu_data[i].cascade_irq = irq_of_parse_and_map(node, 0);
+ 	if (!icu_data[i].cascade_irq)
+@@ -483,6 +481,10 @@ static int __init mmp2_mux_of_init(struct device_node *node,
+ 	}
+ 	irq_domain_remove(icu_data[i].domain);
+ 	return -EINVAL;
++
++report_failure:
++	pr_err("Not found reg property\n");
++	return -EINVAL;
+ }
+ IRQCHIP_DECLARE(mmp2_mux_intc, "mrvl,mmp2-mux-intc", mmp2_mux_of_init);
+ #endif
+-- 
+2.14.3
 
-   944                                  &bytes);
-   945  
-   946          switch (mr_route->mr_table->proto) {
-   947          case MLXSW_SP_L3_PROTO_IPV4:
-   948                  if (mr_route->mfc4->mfc_un.res.pkt != packets)
-   949                          mr_route->mfc4->mfc_un.res.lastuse = jiffies;
-   950                  mr_route->mfc4->mfc_un.res.pkt = packets;
-   951                  mr_route->mfc4->mfc_un.res.bytes = bytes;
-   952                  break;
-   953          case MLXSW_SP_L3_PROTO_IPV6:
-   954                  /* fall through */
-   955          default:
-   956                  WARN_ON_ONCE(1);
-   957          }
-   958  }
-
-regards,
-dan carpenter
