@@ -1,31 +1,66 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Sun, 08 Oct 2017 14:21:56 +0000
-Subject: Re: [PATCH 0/2] lib: Adjustments for 11 function implementations
-Message-Id: <1507472516.16112.328.camel@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 06:08:49 +0000
+Subject: [PATCH] iio/adc/palmas: Use common error handling code in palmas_gpadc_calibrate()
+Message-Id: <0ae3662d-6a74-622c-0423-e8552ea79bca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9a81d82d-fb1b-38d3-1dbf-31e6bf4ff677@users.sourceforge.net>
-	<20171008084224.GA12482@lst.de>
-In-Reply-To: <20171008084224.GA12482-jcswGhMUV9g@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "Luis R. Rodriguez" <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kasan-dev-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Alexander Potapenko <glider-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Daniel Mentz <danielmentz-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Mathieu Desnoyers <mathieu.desnoyers-vg+e7yoeK/dWk0Htik3J/w@public.gmane.org>, Andrey Ryabinin <aryabinin-5HdwGun5lf+gSpxsJD1C4w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: linux-iio@vger.kernel.org, Alison Schofield <amsfield22@gmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 2017-10-08 at 10:42 +0200, Christoph Hellwig wrote:
-> Please stop sending this crap.  It's a move from one preference to
-> another slightly different one.  You are free to apply your preference
-> if you do a major overhaul of some code (subject to maintainer
-> approval),
-> but without that they simply are churn.
-> 
-> NAK for both patches.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 07:58:03 +0200
 
-While patch 1 might have some sense, second one is matter of taste which
-is dependent to maintainer/trends/weather on Mars.
+* Add a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
 
-So, +1 to Christoph's opinion.
+* Adjust condition checks.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/adc/palmas_gpadc.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+index 69b9affeef1e..5e6566692d46 100644
+--- a/drivers/iio/adc/palmas_gpadc.c
++++ b/drivers/iio/adc/palmas_gpadc.c
+@@ -304,17 +304,13 @@ static int palmas_gpadc_calibrate(struct palmas_gpadc *adc, int adc_chan)
+ 
+ 	ret = palmas_read(adc->palmas, PALMAS_TRIM_GPADC_BASE,
+ 				adc->adc_info[adc_chan].trim1_reg, &d1);
+-	if (ret < 0) {
+-		dev_err(adc->dev, "TRIM read failed: %d\n", ret);
+-		goto scrub;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	ret = palmas_read(adc->palmas, PALMAS_TRIM_GPADC_BASE,
+ 				adc->adc_info[adc_chan].trim2_reg, &d2);
+-	if (ret < 0) {
+-		dev_err(adc->dev, "TRIM read failed: %d\n", ret);
+-		goto scrub;
+-	}
++	if (ret)
++		goto report_failure;
+ 
+ 	/* gain error calculation */
+ 	k = (1000 + (1000 * (d2 - d1)) / (x2 - x1));
+@@ -329,6 +325,10 @@ static int palmas_gpadc_calibrate(struct palmas_gpadc *adc, int adc_chan)
+ 
+ scrub:
+ 	return ret;
++
++report_failure:
++	dev_err(adc->dev, "TRIM read failed: %d\n", ret);
++	goto scrub;
+ }
+ 
+ static int palmas_gpadc_start_conversion(struct palmas_gpadc *adc, int adc_chan)
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.3
+
