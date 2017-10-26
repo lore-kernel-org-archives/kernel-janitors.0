@@ -1,30 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Oct 2017 07:54:41 +0000
-Subject: [PATCH] platform/chrome: cros_ec: Array underflow in show_ec_version()
-Message-Id: <20171018075441.bmqnqj77kwczznwo@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Oct 2017 17:09:09 +0000
+Subject: Re: iio/accel/stk8ba50: Use common error handling code in stk8ba50_probe()
+Message-Id: <c7ee7221-3feb-1e6c-5e57-abec8c350330@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
+ <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
+ <20171026174200.5c00b06d@archlinux>
+In-Reply-To: <20171026174200.5c00b06d@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benson Leung <bleung@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-msg->data[] is a zero size array so we're putting the NUL terminator one
-character before the start of the array.
+> Again, a general kernel development rule is to float only one
+> patch of a given type until you have had feedback on it.
 
-Fixes: a841178445bb ("mfd: cros_ec: Use a zero-length array for command data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Some update suggestions according also to this general source code
+transformation pattern were already integrated in other software areas.
 
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 0fd88eb03d39..8a8e2a101ad0 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -175,7 +175,7 @@ static ssize_t show_ec_version(struct device *dev,
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Build info:    EC error %d\n", msg->result);
- 	else {
--		msg->data[sizeof(msg->data) - 1] = '\0';
-+		msg->data[EC_HOST_PARAM_SIZE - 1] = '\0';
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Build info:    %s\n", msg->data);
- 	}
+
+> These backwards goto cases are sufficiently different from your earlier
+> patch that got reviews that,
+
+They are required if you would ever like to support software refactorings
+in directions which I propose occasionally.
+
+
+> at most, you should have sent one to the list and then given time
+> for it to be properly reviewed (up to a week on IIO list typically).
+
+Did I present my ideas a bit too quick in this case?
+
+Regards,
+Markus
