@@ -1,68 +1,35 @@
-From: Daniele Nicolodi <daniele@grinta.net>
-Date: Fri, 27 Oct 2017 17:11:13 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 27 Oct 2017 17:23:04 +0000
 Subject: Re: [PATCH] misc: bh1770glc: Use common error handling code in bh1770_power_state_store()
-Message-Id: <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
+Message-Id: <20171027172304.GA18401@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <568ee0ee-8ff1-9739-fa6b-f2eeae53e11a@users.sourceforge.net>
-In-Reply-To: <568ee0ee-8ff1-9739-fa6b-f2eeae53e11a@users.sourceforge.net>
+ <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
+In-Reply-To: <9c0b957a-93b5-39c9-f9bd-cb754d009d62@grinta.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Samu Onkalo <samu.p.onkalo@nokia.com>
+To: Daniele Nicolodi <daniele@grinta.net>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Samu Onkalo <samu.p.onkalo@nokia.com>
 
-On 10/27/17 10:20 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 27 Oct 2017 18:00:31 +0200
+On Fri, Oct 27, 2017 at 11:11:13AM -0600, Daniele Nicolodi wrote:
+> On 10/27/17 10:20 AM, SF Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Fri, 27 Oct 2017 18:00:31 +0200
+> > 
+> > Adjust jump targets so that a bit of exception handling can be better
+> > reused in an if branch of this function.
 > 
-> Adjust jump targets so that a bit of exception handling can be better
-> reused in an if branch of this function.
+> What is the benefit brought by this change?
 
-What is the benefit brought by this change?
+Please note, you are responding to someone who lots and lots of kernel
+maintainers/developers have blacklisted, myself included.  It's just not
+worth your effort, I recommend doing the same, as I'm not applying any
+patches from this author, unless some other maintainer wants to take the
+time to validate and send them on to me.
 
-Anyhow, are you seriously suggesting adding a goto to a label define
-within a if block?  Is this somehow an Halloween related joke?
+kill-files are a good thing, please use them :)
 
+good luck!
 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/misc/bh1770glc.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/misc/bh1770glc.c b/drivers/misc/bh1770glc.c
-> index 9c62bf064f77..c4c108ed88b0 100644
-> --- a/drivers/misc/bh1770glc.c
-> +++ b/drivers/misc/bh1770glc.c
-> @@ -660,15 +660,14 @@ static ssize_t bh1770_power_state_store(struct device *dev,
->  		pm_runtime_get_sync(dev);
->  
->  		ret = bh1770_lux_rate(chip, chip->lux_rate_index);
-> -		if (ret < 0) {
-> -			pm_runtime_put(dev);
-> -			goto leave;
-> -		}
-> +		if (ret < 0)
-> +			goto put_runtime;
->  
->  		ret = bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
->  		if (ret < 0) {
-> +put_runtime:
->  			pm_runtime_put(dev);
-> -			goto leave;
-> +			goto unlock;
->  		}
->  
->  		/* This causes interrupt after the next measurement cycle */
-> @@ -681,7 +680,7 @@ static ssize_t bh1770_power_state_store(struct device *dev,
->  		pm_runtime_put(dev);
->  	}
->  	ret = count;
-> -leave:
-> +unlock:
->  	mutex_unlock(&chip->mutex);
->  	return ret;
->  }
-> 
-
+greg k-h
