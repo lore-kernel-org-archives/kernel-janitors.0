@@ -1,45 +1,60 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 10 Oct 2017 08:20:38 +0000
-Subject: Re: [2/2] rtlwifi: silence underflow warning
-Message-Id: <20171010082038.41B46609A1@smtp.codeaurora.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Fri, 27 Oct 2017 20:15:08 +0000
+Subject: Re: [04/11] i2c: mpc: use of_property_read_bool
+Message-Id: <20171027201508.2jtjou6jpx5nt5ta@ninjato>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="y5nr4xtarz375zrl"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170929075234.dgyuiwbowu3jq6r4@mwanda>
-In-Reply-To: <20170929075234.dgyuiwbowu3jq6r4@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> My static checker complains that we have an upper bound but no lower
-> bound.  I suspect neither are really required but it doesn't hurt to add
-> a check for negatives.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
-> index c53cbf3d52bd..294a6b43d1bc 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/core.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-> @@ -453,7 +453,8 @@ static void _rtl_add_wowlan_patterns(struct ieee80211_hw *hw,
->  	for (i = 0; i < wow->n_patterns; i++) {
->  		memset(&rtl_pattern, 0, sizeof(struct rtl_wow_pattern));
->  		memset(mask, 0, MAX_WOL_BIT_MASK_SIZE);
-> -		if (patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
-> +		if (patterns[i].pattern_len < 0 ||
-> +		    patterns[i].pattern_len > MAX_WOL_PATTERN_SIZE) {
->  			RT_TRACE(rtlpriv, COMP_POWER, DBG_WARNING,
->  				 "Pattern[%d] is too long\n", i);
->  			continue;
+--y5nr4xtarz375zrl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied to wireless-drivers-next.git, thanks.
+On Fri, Aug 05, 2016 at 10:56:44AM +0200, Julia Lawall wrote:
+> Use of_property_read_bool to check for the existence of a property.
+>=20
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> expression e1,e2;
+> statement S2,S1;
+> @@
+> -       if (of_get_property(e1,e2,NULL))
+> +       if (of_property_read_bool(e1,e2))
+>         S1 else S2
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-64e79426c204 rtlwifi: silence underflow warning
+Shortened commit message and applied to for-next, thanks!
 
--- 
-https://patchwork.kernel.org/patch/9977201/
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+--y5nr4xtarz375zrl
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnzk8sACgkQFA3kzBSg
+KbYceQ/+JUaFSM8fJ28983lSevVKeQkThavq3mFhrkzs9o1DL2EzCbO1iCWV2e1c
+sRVBwa3HTwIrLOFLVeEAPNelFNVQ8Mzdo67xXAunza9C8+hm3dlIQmHRld4FMRns
+xXmQPlkKh3x6/Ehqb9uT9yvdWFCIVXV1ShJFiO/ewWKreUOXa4QKbvXy6GfgZlCz
+MDmITbRYavf74W/l1yp5rTdMpNsCnXn68rQNKvwOBWTx4UPd6S6k6+gAhxADm6lQ
+CyK0/fhG6urC5U6Wp/mBz/lcBp6nKJ9G5V+Bxk/rNVvFi0Ie/HXT8KRay8SBMwL4
+3lxfIkisckDvjBRmsl1LHBDAl+N9jv+eZNwelixiJQ2k2YsNgE7zA2EsagnrjuKm
+luFEpRoiR+dTuSZMkZP7iLqND3z5COhcVdpevsJfCdlj9U5QYUc2jovmUPVofR3j
+2+fuQAYcBopDtc+ZkM3bjFt8NhXS+jrweEs78HH4jelUq7pbwQZrH2oJDWUaYtjo
+mYMHCxz5ffdMuDhRwFGvaLYgH/En+2kz2COOtcWi06T9rjDLVdLlIoDVr6xK7C1/
+r7CaBhDHRyx7kAGJLqklC+OEebDTjDyCfdk+rxyvqJ3qF5YWzbFusThFzDFcjzpv
+jTO/me1RKtCaW+mEKHPNnxA6z6eYb1MvfRJOoggoHVHbyans67g=
+=T+QM
+-----END PGP SIGNATURE-----
+
+--y5nr4xtarz375zrl--
