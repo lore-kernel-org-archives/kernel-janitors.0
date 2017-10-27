@@ -1,35 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Oct 2017 07:34:18 +0000
+From: Leon Romanovsky <leon@kernel.org>
+Date: Fri, 27 Oct 2017 19:36:01 +0000
 Subject: Re: IB/mlx4: Use common error handling code in __mlx4_ib_create_flow()
-Message-Id: <0c92fc8e-ecb8-c7ed-0b4c-721752297222@users.sourceforge.net>
+Message-Id: <20171027193601.GI16127@mtr-leonro.local>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="vDpvzslK0qRw06MN"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0bcea3cf-91e3-01d5-8d80-34cd6b611fb1@users.sourceforge.net>
  <70843f43-03c5-8295-643a-4f228ff2e907@intel.com>
-In-Reply-To: <70843f43-03c5-8295-643a-4f228ff2e907@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dennis Dalessandro <dennis.dalessandro@intel.com>, linux-rdma@vger.kernel.org
-Cc: Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Leon Romanovsky <leon@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-
->> Add a jump target so that a bit of exception handling can be better reused
->> at the end of this function.
-> 
-> I'm not sure this is that big of a win.
-
-Such a view is appropriate because I proposed just another small adjustment
-for this source code place.
+ <0c92fc8e-ecb8-c7ed-0b4c-721752297222@users.sourceforge.net>
+In-Reply-To: <0c92fc8e-ecb8-c7ed-0b4c-721752297222-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 
-> I mean you aren't really making the code any smaller
+--vDpvzslK0qRw06MN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Would anybody like to check corresponding effects in more detail
-after a specific function call was replaced by a goto statement?
+On Fri, Oct 27, 2017 at 09:34:18AM +0200, SF Markus Elfring wrote:
+> >> Add a jump target so that a bit of exception handling can be better reused
+> >> at the end of this function.
+> >
+> > I'm not sure this is that big of a win.
+>
+> Such a view is appropriate because I proposed just another small adjustment
+> for this source code place.
+>
+>
+> > I mean you aren't really making the code any smaller
+>
+> Would anybody like to check corresponding effects in more detail
+> after a specific function call was replaced by a goto statement?
 
+You are supposed to do it and not "anybody".
 
-> and it's not making it any easier to read really.
+>
+>
+> > and it's not making it any easier to read really.
+>
+> Is the code readability still good enough there?
+>
+> Regards,
+> Markus
 
-Is the code readability still good enough there?
+--vDpvzslK0qRw06MN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Markus
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlnziqEACgkQ5GN7iDZy
+WKdWTA/+MMsKqNd77Wykm8CMkNYUVweMSGCNOvJV1p32uNEbDBzb70kydAgqeHjn
+/v+J/7Z1C81Du6KxmHAgdeUrH8D7fU0rG56Re1dY8YstC+NJ3nYPpRN4/frByirx
+60NCZN3JmeiVw4T5FftNGPYI27kSS0s2rF49wzP9zvM/4151DmL4xffMffw6rIsH
+dHhx3BPBCLvNUGPnXTQLUQpfTsFREfBMnCKPi0ivc1iaSKI8MZz9eHfdJ2W2EpEH
+w3Yb+qrGHmTb+xuMPiammJnqSa4K8zFr5M8dAhHQ3bJSZ3/b7r0QvAuuy3YsCBa7
+Zx5Igi8EAuYRhTDZMzhKlat2ujITzEgQK+9FAyNyyemUch3Z20TZZkLS86/5JCaX
+McwPW0Wj0yCr4yywQBPOOnUJs6CQIRv31jOr+fMIVXeVVSc5U0f148z4c643sgrF
+xCdDZuwzcsL56ruaHcdrsxiYQmxku+MxRq6rFtPKIpnobXyzePz94Ns98bbME1WP
+cHqGzWuT9AohpBe1DnVkuBoPkUcfcaN9xIpqbAZ8r8ockE9da/qC9iLmk/BcV2Co
+4AzAW+9YMCvxaHzqTUeaS1JxmuV7pTNdUFTlS3a5JHixzcq7vgH7nqzPtbUZOI7J
+c7IwpL2KpMcnFFlWwhFEhCb+9yHvkZXE3ieLX2w/Pb/TL2Pd1+M=
+=kX59
+-----END PGP SIGNATURE-----
+
+--vDpvzslK0qRw06MN--
