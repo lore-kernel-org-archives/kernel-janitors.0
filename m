@@ -1,69 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 10:15:08 +0000
-Subject: [PATCH] smsc95xx: Use common error handling code in smsc95xx_write_eeprom()
-Message-Id: <fa1658cc-4363-f07f-864b-6d87dc2b656c@users.sourceforge.net>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Fri, 27 Oct 2017 20:08:23 +0000
+Subject: Re: [PATCH] i2c: imx: Remove a useless test in 'i2c_imx_init_recovery_info()'
+Message-Id: <20171027200823.eeltypcwwyuuuvgi@ninjato>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="t5dogecywoc46qvw"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20170806234953.30682-1-christophe.jaillet@wanadoo.fr>
+ <20170807063617.5wr4i7b7k72uyrit@pengutronix.de>
+ <9279b880-558a-17fb-404c-98012bb0f9f1@wanadoo.fr>
+ <20170808081501.jxhid5rgfeqpshfw@pengutronix.de>
+In-Reply-To: <20170808081501.jxhid5rgfeqpshfw@pengutronix.de>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 11:08:34 +0100
 
-Add a jump target so that a specific error message is stored only once
-at the end of this function implementation.
-Replace two calls of the function "netdev_warn" by goto statements.
+--t5dogecywoc46qvw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Tue, Aug 08, 2017 at 10:15:01AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> On Tue, Aug 08, 2017 at 09:40:59AM +0200, Christophe JAILLET wrote:
+> > Le 07/08/2017 =C3=A0 08:36, Uwe Kleine-K=C3=B6nig a =C3=A9crit :
+> > > On Mon, Aug 07, 2017 at 01:49:53AM +0200, Christophe JAILLET wrote:
+> > > > 'devm_pinctrl_get()' never returns NULL, so this test can be simpli=
+fied.
+> > > That's wrong. If CONFIG_PINCTRL is disabled devm_pinctrl_get returns
+> > > NULL. But I think this shouldn't be considered an error, so your chan=
+ge
+> > > is right, just the commit log is not.
+> > With that said, in fact, I think that the test is correct as is.
+> > If CONFIG_PINCTRL is disabled, we will display an info about a missing
+> > functionality, but would still continue normally without it (i.e. return
+> > PTR_ERR(NULL) =3D 0 =3D success), as stated in the comment in front of
+> > 'i2c_imx_init_recovery_info':
+> >     "These alternative pinmux settings can be described in the device t=
+ree
+> > by
+> >      a separate pinctrl state "gpio". If this is missing this is not a =
+big
+> >      problem, the only implication is that we can't do bus recovery."
+> >=20
+> > So, I won't propose any v2 patch with an updated commit log.
+> > Feel free to update it yourself and apply it if you don't share my anal=
+ysis
+> > above.
+>=20
+> Then the only issue (maybe?) is that the driver makes use of
+> PTR_ERR(NULL) =3D=3D 0 which I'm not sure is explicitly allowed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/usb/smsc95xx.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+I'll drop this patch for now. If somebody wants this applied, please
+send a V2 with the issues here addressed.
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 309b88acd3d0..6a82e8055e9d 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -399,10 +399,8 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
- 	/* Issue write/erase enable command */
- 	val = E2P_CMD_BUSY_ | E2P_CMD_EWEN_;
- 	ret = smsc95xx_write_reg(dev, E2P_CMD, val);
--	if (ret < 0) {
--		netdev_warn(dev->net, "Error writing E2P_DATA\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto report_write_failure;
- 
- 	ret = smsc95xx_wait_eeprom(dev);
- 	if (ret < 0)
-@@ -413,10 +411,8 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
- 		/* Fill data register */
- 		val = data[i];
- 		ret = smsc95xx_write_reg(dev, E2P_DATA, val);
--		if (ret < 0) {
--			netdev_warn(dev->net, "Error writing E2P_DATA\n");
--			return ret;
--		}
-+		if (ret < 0)
-+			goto report_write_failure;
- 
- 		/* Send "write" command */
- 		val = E2P_CMD_BUSY_ | E2P_CMD_WRITE_ | (offset & E2P_CMD_ADDR_);
-@@ -434,6 +430,10 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
- 	}
- 
- 	return 0;
-+
-+report_write_failure:
-+	netdev_warn(dev->net, "Error writing E2P_DATA\n");
-+	return ret;
- }
- 
- static int __must_check smsc95xx_write_reg_async(struct usbnet *dev, u16 index,
--- 
-2.14.3
 
+--t5dogecywoc46qvw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnzkjcACgkQFA3kzBSg
+KbYRJxAAnJHNGenCeS+tQEvHaYULeWVCI9eHNlde/6nD3d3haKZ2hMp0yJOwoX5e
+xLLxJBThW1rigjEEvWdwNsq2M8RZlmZSxcNq2upKzlOe6WXDTU6dzw0shaeHDrJM
+Gy08KfOe+M8EuBzkCZwOoZU4/XpXdBMytmc2Sa4wgIJ56jyTtFOxpgOH6YGxFdzd
+7bhkMppK4SS3ndJxpMm9E80xN4iY+unxGB1ArRUhnKJdSyrcSglQ5o+jEMIYyN9b
+58AYghHR/ViYNx93DnRlHvJc3bG1KayM5oxp4QakOZgCAGMQ6MA+tiLR2OS/d6EQ
+q5YwetKMEaAQKPHQtJEXaRAbux4Flg4ZcoBEPFae2EsRDTBaa3cpYHs4+FBSyk8v
+LXldG0fjwJT0PULf2jg3QoKj7GxZ1bcMqhaJKgnzxXkNSn5fG44MVGjhNJbQUDxp
+qxh4zBBCKTVTUNYKDZJNMJ6WT8Bek2IwTieQqYxLha1UlFubcpWeYHtokvri8y9G
+hknjQytgaWl1rKyKTdYEJmZS3nQwXuxd6BfuL3ZlME9EDU8i7HMzItDdjxq0Wu+U
+n8sRNEmkgZikd4JU18b4w7cxi09hatBQKKoDhMc1S8G3bP6Ylrxr57+16iNmu2HE
+MBqE+qGzQPXWYg1vGpfSe1asL4l0CDFyIC8erByuWUd3TQAXBIQ=
+=d7tW
+-----END PGP SIGNATURE-----
+
+--t5dogecywoc46qvw--
