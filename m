@@ -1,82 +1,40 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 16:18:31 +0000
-Subject: Re: [PATCH] iio/proximity/srf08: Improve unlocking of a mutex in srf08_read_ranging()
-Message-Id: <20171026171831.3e8018d2@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 10:15:54 +0000
+Subject: Re: iio/accel/stk8312: Improve unlocking of a mutex in two functions
+Message-Id: <c2620449-b80a-f0ef-c0d2-92d0c7fb4906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <62f61dbd-b106-1d3f-fb75-3fa87251e6ef@users.sourceforge.net>
-In-Reply-To: <62f61dbd-b106-1d3f-fb75-3fa87251e6ef@users.sourceforge.net>
+References: <ae9d7e7f-541e-ce0c-1d41-6b9793c98f78@users.sourceforge.net>
+ <20171026170913.5ff10718@archlinux>
+In-Reply-To: <20171026170913.5ff10718@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 26 Oct 2017 17:00:07 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+> In the second case, the jump backwards just makes the code harder
+> to read than it currently is.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Oct 2017 16:51:08 +0200
-> 
-> Add a jump target so that a call of the function "mutex_unlock" is stored
-> only once at the end of this function implementation.
-> Replace two calls by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Maybe =E2=80=A6
 
-This simple case is a reasonable change.  A few minor points though.
-Firstly, for a given subsystem please look at other patches to identify
-the standard formatting used in patch titles.
+But I proposed an other source code layout for useful reasons.
 
-Secondly make sure you don't make unconnected changes.  Here there
-is a whitespace change that should not be here.
 
-Jonathan
-> ---
->  drivers/iio/proximity/srf08.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/srf08.c b/drivers/iio/proximity/srf08.c
-> index f2bf783f829a..85957550195b 100644
-> --- a/drivers/iio/proximity/srf08.c
-> +++ b/drivers/iio/proximity/srf08.c
-> @@ -135,8 +135,7 @@ static int srf08_read_ranging(struct srf08_data *data)
->  			SRF08_WRITE_COMMAND, SRF08_CMD_RANGING_CM);
->  	if (ret < 0) {
->  		dev_err(&client->dev, "write command - err: %d\n", ret);
-> -		mutex_unlock(&data->lock);
-> -		return ret;
-> +		goto unlock;
->  	}
->  
->  	/*
-> @@ -163,20 +162,17 @@ static int srf08_read_ranging(struct srf08_data *data)
->  
->  	if (ret >= 255 || ret <= 0) {
->  		dev_err(&client->dev, "device not ready\n");
-> -		mutex_unlock(&data->lock);
-> -		return -EIO;
-> +		ret = -EIO;
-> +		goto unlock;
->  	}
->  
->  	ret = i2c_smbus_read_word_swapped(data->client,
->  						SRF08_READ_ECHO_1_HIGH);
-> -	if (ret < 0) {
-> +	if (ret < 0)
->  		dev_err(&client->dev, "cannot read distance: ret=%d\n", ret);
-> -		mutex_unlock(&data->lock);
-> -		return ret;
-> -	}
->  
-> +unlock:
->  	mutex_unlock(&data->lock);
-> -
+> There is no firm rule about error handling in one place.
 
-Please don't make unconnected white space changes.
+There are some design options available.
 
->  	return ret;
->  }
->  
 
+> If it leads to more complex flow as here, don't do it.
+
+I would appreciate to clarify such a view a bit more.
+How would you like to achieve a complete and efficient
+exception handling in shown places?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
