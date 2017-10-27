@@ -1,61 +1,66 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Oct 2017 13:50:04 +0000
-Subject: Re: Adjusting further size determinations?
-Message-Id: <d9315154-ce60-2cdb-eb27-ac7e89916f30@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 17:17:24 +0000
+Subject: [PATCH] mmc: tmio: Use common error handling code in tmio_mmc_host_probe()
+Message-Id: <7fdea92c-2ca7-8911-28da-4388103e1b04@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1d3516a2-a8e6-9e95-d438-f115fac84c7f@users.sourceforge.net>
- <20171016183139.otyh3m5c5yurtmow@linux.intel.com>
- <20171016183512.3bz6x4b6lbhpbkje@linux.intel.com>
- <20171017085124.pkrjzghcf5wmcydc@mwanda>
- <f9b35a67-bd7f-b140-bdc1-cb4886a6b1ea@users.sourceforge.net>
- <1508255833.3129.33.camel@HansenPartnership.com>
- <1508280210.6530.32.camel@perches.com>
- <bf7fc26c-bdc9-c752-72c7-f44c22f4a328@users.sourceforge.net>
- <1508318326.6806.1.camel@perches.com>
- <026d582729b849b780fbaa06fb8bc79e@infineon.com>
- <alpine.DEB.2.20.1710181154390.3524@hadrien>
- <1508322510.6806.3.camel@perches.com>
- <ab5730c4-fb69-4791-a2a6-c726493d4564@users.sourceforge.net>
- <1508327383.6806.7.camel@perches.com>
- <0fc1f522-8772-d859-a9b0-cb3b6931c862@users.sourceforge.net>
- <063D6719AE5E284EB5DD2968C1650D6DD009ACE3@AcuExch.aculab.com>
- <alpine.DEB.2.20.1710181531130.15834@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1710181531130.15834@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia.lawall@lip6.fr>, "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Cc: David Laight <David.Laight@ACULAB.COM>, Joe Perches <joe@perches.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Stefan Berger <stefanb@linux.vnet.ibm.com>, Alexander Steffen <Alexander.Steffen@infineon.com>, Nayna Jain <nayna@linux.vnet.ibm.com>, Jerry Snitselaar <jsnitsel@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Corentin Labbe <clabbe.montjoie@gmail.com>, Kenneth Goldman <kgold@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?Q?Peter_H=c3=bcwe?= <PeterHuewe@gmx.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> If you want 'security' for kmalloc() then:
->>
->> #define KMALLOC_TYPE(flags) (type *)kmalloc(sizeof (type), flags)
->> #define KMALLOC(ptr, flags) *(ptr) =3D KMALLOC_TYPE(typeof *(ptr), flags)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 19:09:17 +0200
 
-Such an approach might help.
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
+* Adjust condition checks.
 
->> and change:
->> 	ptr =3D kmalloc(sizeof *ptr, flags);
->> to:
->> 	KMALLOC(&ptr, flags);
->>
->> But it is all churn for churn's sake.
->=20
-> Please don't.
+This issue was detected by using the Coccinelle software.
 
-Interesting =E2=80=A6
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index a7293e186e03..2e85d4048cec 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1286,23 +1286,24 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = mmc_add_host(mmc);
+-	if (ret < 0) {
+-		tmio_mmc_host_remove(_host);
+-		return ret;
+-	}
++	if (ret)
++		goto remove_host;
+ 
+ 	dev_pm_qos_expose_latency_limit(&pdev->dev, 100);
+ 
+ 	if (pdata->flags & TMIO_MMC_USE_GPIO_CD) {
+ 		ret = mmc_gpio_request_cd(mmc, pdata->cd_gpio, 0);
+-		if (ret < 0) {
+-			tmio_mmc_host_remove(_host);
+-			return ret;
+-		}
++		if (ret)
++			goto remove_host;
++
+ 		mmc_gpiod_request_cd_irq(mmc);
+ 	}
+ 
+ 	return 0;
++
++remove_host:
++	tmio_mmc_host_remove(_host);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(tmio_mmc_host_probe);
+ 
+-- 
+2.14.3
 
-> Coccinelle won't find real problems with kmalloc any more if this is done.
-
-The corresponding source code analysis will become different
-(or more challenging) then. Are you still looking for related solutions?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
