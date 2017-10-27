@@ -1,49 +1,42 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 24 Oct 2017 13:56:22 +0000
-Subject: Re: [PATCH 1/2] xen-tpmfront: Use common error handling code in vtpm_send()
-Message-Id: <20171024135622.uswu3apuj23njbna@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Oct 2017 15:52:30 +0000
+Subject: [PATCH] input: mxs-lradc: remove redundant assignment to pointer input
+Message-Id: <20171027155230.12887-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
- <9cfcbfd0-75c3-4de5-f735-0ace23d2abcb@users.sourceforge.net>
- <20171023134257.txnpbg5c5z7uaquf@linux.intel.com>
- <f68ee5b6-2da1-e3c8-4d0d-f13a0563385e@users.sourceforge.net>
-In-Reply-To: <f68ee5b6-2da1-e3c8-4d0d-f13a0563385e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 23, 2017 at 03:57:30PM +0200, SF Markus Elfring wrote:
-> >> @@ -108,11 +106,14 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >>  	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
-> >>  			&priv->read_queue, true) < 0) {
-> >>  		/* got a signal or timeout, try to cancel */
-> >> -		vtpm_cancel(chip);
-> >> -		return -ETIME;
-> >> +		goto cancel_vtpm;
-> >>  	}
-> >>  
-> >>  	return count;
-> >> +
-> >> +cancel_vtpm:
-> >> +	vtpm_cancel(chip);
-> >> +	return -ETIME;
-> >>  }
-> >>  
-> >>  static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> >> -- 
-> >> 2.14.2
-> >>
-> > 
-> > NAK
-> 
-> Do you need any more facts to show the influence of the proposed small code reduction?
-> 
-> Regards,
-> Markus
+From: Colin Ian King <colin.king@canonical.com>
 
-Already explained when I reviewed another patch dealing with
--ETIME.
+The pointer 'input' is being initialized with ts->ts_input and this
+value is not being read as it is updated a few lines later with the
+return value from the call to devm_input_allocate_device. Remove the
+redundant initialization assignment.  Cleans up clang warning:
 
-/Jarkko
+drivers/input/touchscreen/mxs-lradc-ts.c:587:20: warning: Value Xi
+stored to 'input' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/touchscreen/mxs-lradc-ts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/mxs-lradc-ts.c b/drivers/input/touchscreen/mxs-lradc-ts.c
+index 3707e927f770..c850b517854e 100644
+--- a/drivers/input/touchscreen/mxs-lradc-ts.c
++++ b/drivers/input/touchscreen/mxs-lradc-ts.c
+@@ -584,7 +584,7 @@ static void mxs_lradc_ts_hw_init(struct mxs_lradc_ts *ts)
+ 
+ static int mxs_lradc_ts_register(struct mxs_lradc_ts *ts)
+ {
+-	struct input_dev *input = ts->ts_input;
++	struct input_dev *input;
+ 	struct device *dev = ts->dev;
+ 
+ 	input = devm_input_allocate_device(dev);
+-- 
+2.14.1
+
