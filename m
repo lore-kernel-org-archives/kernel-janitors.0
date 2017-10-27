@@ -1,20 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Oct 2017 14:37:34 +0000
-Subject: Re: I2C-PIIX4: Use common error handling code in piix4_probe()
-Message-Id: <2ad22677-86b2-72eb-b2d8-939da749a6cf@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 27 Oct 2017 15:59:06 +0000
+Subject: [PATCH] md: remove redundant variable q
+Message-Id: <20171027155906.13126-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be36ce5f-9e75-6c05-86a2-ea8368f09dc1@users.sourceforge.net>
- <1508942027.5353.9.camel@suse.de>
-In-Reply-To: <1508942027.5353.9.camel@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> I'm no longer taking patches from you.
+From: Colin Ian King <colin.king@canonical.com>
 
-Why do you not like another update suggestion for this use case?
+The pointer q is assigned but never read; it is redundant and can
+be removed.  Cleans up clang warning:
 
-Regards,
-Markus
+drivers/md/md-multipath.c:260:4: warning: Value stored to 'q' is
+never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/md-multipath.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/md/md-multipath.c b/drivers/md/md-multipath.c
+index 5c70176fa24d..e40065bdbfc8 100644
+--- a/drivers/md/md-multipath.c
++++ b/drivers/md/md-multipath.c
+@@ -243,7 +243,6 @@ static void print_multipath_conf (struct mpconf *conf)
+ static int multipath_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+ {
+ 	struct mpconf *conf = mddev->private;
+-	struct request_queue *q;
+ 	int err = -EEXIST;
+ 	int path;
+ 	struct multipath_info *p;
+@@ -257,7 +256,6 @@ static int multipath_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+ 
+ 	for (path = first; path <= last; path++)
+ 		if ((p=conf->multipaths+path)->rdev = NULL) {
+-			q = rdev->bdev->bd_disk->queue;
+ 			disk_stack_limits(mddev->gendisk, rdev->bdev,
+ 					  rdev->data_offset << 9);
+ 
+-- 
+2.14.1
+
