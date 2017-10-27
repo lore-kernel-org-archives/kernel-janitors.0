@@ -1,40 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 17:55:09 +0000
-Subject: [PATCH 2/2] crypto-testmgr: Delete an unnecessary variable initialisation in drbg_cavs_test()
-Message-Id: <9bd0533e-1bf3-a1c1-d84c-34ab4c511b78@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 13:12:23 +0000
+Subject: Re: iio/light/gp2ap020a00f: Use common error handling code in gp2ap020a00f_adjust_lux_mode()
+Message-Id: <ffaa6d77-4bcc-10f4-6c1d-6c53fee158ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
-In-Reply-To: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net>
+References: <06da0424-1ec9-209e-a433-48288c49132b@users.sourceforge.net>
+ <20171026173113.371995f3@archlinux>
+In-Reply-To: <20171026173113.371995f3@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Oct 2017 19:33:45 +0200
+> Same issue - readability is worse
 
-The variable "ret" will eventually be set to an error code a bit later.
-Thus omit the explicit initialisation at the beginning.
+An alternative opinion triggered the development also of this update suggestion.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- crypto/testmgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 76c5128284f8..e46cf2c92497 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1901,7 +1901,7 @@ static int alg_test_cprng(const struct alg_test_desc *desc, const char *driver,
- static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
- 			  const char *driver, u32 type, u32 mask)
- {
--	int ret = -EAGAIN;
-+	int ret;
- 	struct crypto_rng *drng;
- 	struct drbg_test_data test_data;
- 	struct drbg_string addtl, pers, testentropy;
--- 
-2.14.2
+> than without the patch so it is always going to be rejected.
 
+Corresponding clarification might be needed if the change (in a direction
+I propose here) will become desirable.
+Can it make sense to concentrate a bit of error reporting at the end
+of such a function?
+
+Regards,
+Markus
