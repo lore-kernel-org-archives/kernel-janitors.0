@@ -1,38 +1,88 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 08 Oct 2017 10:49:26 +0000
-Subject: Re: [PATCH 2/2] lib: Improve a size determination in seven functions
-Message-Id: <CAMuHMdWfhccS-SUXDQETse+MnzDVk1r6cOkxJxbFWzV7Xmt0ng@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 15:37:27 +0000
+Subject: [PATCH] mfd: ab8500-debugfs: Use common error handling code in ab8500_print_modem_registers()
+Message-Id: <7af3098c-21fd-aa16-237f-0359d312cac7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9a81d82d-fb1b-38d3-1dbf-31e6bf4ff677@users.sourceforge.net> <3a32f0e7-75a2-857e-c63c-10d4b5942622@users.sourceforge.net>
-In-Reply-To: <3a32f0e7-75a2-857e-c63c-10d4b5942622@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: iommu@lists.linux-foundation.org, kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Daniel Mentz <danielmentz@google.com>, Dmitry Vyukov <dvyukov@google.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Philipp Reisner <philipp.reisner@linbit.com>, Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Oct 7, 2017 at 7:50 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 7 Oct 2017 19:19:45 +0200
->
-> Replace the specification of data structures by pointer dereferences
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 17:20:45 +0200
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Add jump targets so that two error messages are stored only once
+at the end of this function implementation.
 
-Gr{oetje,eeting}s,
+This issue was detected by using the Coccinelle software.
 
-                        Geert
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/ab8500-debugfs.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
+index c1c815241e02..37f39b2a1aa1 100644
+--- a/drivers/mfd/ab8500-debugfs.c
++++ b/drivers/mfd/ab8500-debugfs.c
+@@ -1620,18 +1620,15 @@ static int ab8500_print_modem_registers(struct seq_file *s, void *p)
+ 
+ 	err = abx500_get_register_interruptible(dev,
+ 		AB8500_REGU_CTRL1, AB8500_SUPPLY_CONTROL_REG, &orig_value);
+-	if (err < 0) {
+-		dev_err(dev, "ab->read fail %d\n", err);
+-		return err;
+-	}
++	if (err < 0)
++		goto report_read_failure;
++
+ 	/* Config 1 will allow APE side to read SIM registers */
+ 	err = abx500_set_register_interruptible(dev,
+ 		AB8500_REGU_CTRL1, AB8500_SUPPLY_CONTROL_REG,
+ 		AB8500_SUPPLY_CONTROL_CONFIG_1);
+-	if (err < 0) {
+-		dev_err(dev, "ab->write fail %d\n", err);
+-		return err;
+-	}
++	if (err < 0)
++		goto report_write_failure;
+ 
+ 	seq_printf(s, " bank 0x%02X:\n", bank);
+ 
+@@ -1641,19 +1638,25 @@ static int ab8500_print_modem_registers(struct seq_file *s, void *p)
+ 	for (reg = AB8500_FIRST_SIM_REG; reg <= last_sim_reg; reg++) {
+ 		err = abx500_get_register_interruptible(dev,
+ 			bank, reg, &value);
+-		if (err < 0) {
+-			dev_err(dev, "ab->read fail %d\n", err);
+-			return err;
+-		}
++		if (err < 0)
++			goto report_read_failure;
++
+ 		seq_printf(s, "  [0x%02X/0x%02X]: 0x%02X\n", bank, reg, value);
+ 	}
+ 	err = abx500_set_register_interruptible(dev,
+ 		AB8500_REGU_CTRL1, AB8500_SUPPLY_CONTROL_REG, orig_value);
+-	if (err < 0) {
+-		dev_err(dev, "ab->write fail %d\n", err);
+-		return err;
+-	}
++	if (err < 0)
++		goto report_write_failure;
++
+ 	return 0;
++
++report_read_failure:
++	dev_err(dev, "ab->read fail %d\n", err);
++	return err;
++
++report_write_failure:
++	dev_err(dev, "ab->write fail %d\n", err);
++	return err;
+ }
+ 
+ static int ab8500_modem_open(struct inode *inode, struct file *file)
+-- 
+2.14.3
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
