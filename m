@@ -1,51 +1,60 @@
-From: Michael Ira Krufky <mkrufky@linuxtv.org>
-Date: Tue, 31 Oct 2017 15:39:56 +0000
-Subject: Re: [PATCH] [media] mxl111sf: remove redundant assignment to index
-Message-Id: <CAOcJUbypnurqiwO0wZvaDVNLRij+_hsEiJ4eKG7G0b1-LqmEMw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 16:20:02 +0000
+Subject: [PATCH] misc: bh1770glc: Use common error handling code in bh1770_power_state_store()
+Message-Id: <568ee0ee-8ff1-9739-fa6b-f2eeae53e11a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171029125058.5588-1-colin.king@canonical.com>
-In-Reply-To: <20171029125058.5588-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Samu Onkalo <samu.p.onkalo@nokia.com>
 
-On Sun, Oct 29, 2017 at 8:50 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable index is set to zero and then set to zero again
-> a few lines later in a for loop initialization. Remove the
-> redundant setting of index to zero. Cleans up the clang
-> warning:
->
-> drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c:519:3: warning: Value
-> stored to 'index' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 27 Oct 2017 18:00:31 +0200
 
-Reviewed-by: Michael Ira Krufky <mkrufky@linuxtv.org>
+Adjust jump targets so that a bit of exception handling can be better
+reused in an if branch of this function.
 
+This issue was detected by using the Coccinelle software.
 
-Thanks for the patch!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/bh1770glc.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/misc/bh1770glc.c b/drivers/misc/bh1770glc.c
+index 9c62bf064f77..c4c108ed88b0 100644
+--- a/drivers/misc/bh1770glc.c
++++ b/drivers/misc/bh1770glc.c
+@@ -660,15 +660,14 @@ static ssize_t bh1770_power_state_store(struct device *dev,
+ 		pm_runtime_get_sync(dev);
+ 
+ 		ret = bh1770_lux_rate(chip, chip->lux_rate_index);
+-		if (ret < 0) {
+-			pm_runtime_put(dev);
+-			goto leave;
+-		}
++		if (ret < 0)
++			goto put_runtime;
+ 
+ 		ret = bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
+ 		if (ret < 0) {
++put_runtime:
+ 			pm_runtime_put(dev);
+-			goto leave;
++			goto unlock;
+ 		}
+ 
+ 		/* This causes interrupt after the next measurement cycle */
+@@ -681,7 +680,7 @@ static ssize_t bh1770_power_state_store(struct device *dev,
+ 		pm_runtime_put(dev);
+ 	}
+ 	ret = count;
+-leave:
++unlock:
+ 	mutex_unlock(&chip->mutex);
+ 	return ret;
+ }
+-- 
+2.14.3
 
-> ---
->  drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-> index 0eb33e043079..a221bb8a12b4 100644
-> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-> @@ -516,7 +516,6 @@ static int mxl111sf_i2c_hw_xfer_msg(struct mxl111sf_state *state,
->                    data required to program */
->                 block_len = (msg->len / 8);
->                 left_over_len = (msg->len % 8);
-> -               index = 0;
->
->                 mxl_i2c("block_len %d, left_over_len %d",
->                         block_len, left_over_len);
-> --
-> 2.14.1
->
