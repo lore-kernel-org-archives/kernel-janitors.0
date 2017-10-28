@@ -1,25 +1,91 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 24 Oct 2017 08:09:03 +0000
-Subject: Re: [3/3] powerpc-opal: Fix a typo in a comment line of two file headers
-Message-Id: <3yLmBS1WHnz9s9Y@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 18:20:08 +0000
+Subject: [PATCH] netcp_core: Use common error handling code in netcp_create_interface()
+Message-Id: <b60510b7-3b1c-bb20-64d6-75b211df500e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <57c47bff-63a2-62c1-2708-c351c2182304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linuxppc-dev@lists.ozlabs.org, Anju T Sudhakar <anju@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Bhumika Goyal <bhumirks@gmail.com>, Corentin Labbe <clabbe.montjoie@gmail.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, Neelesh Gupta <neelegup@linux.vnet.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>, Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: netdev@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, Wingman Kwok <w-kwok2@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 2017-10-17 at 12:14:00 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 17 Oct 2017 13:31:42 +0200
-> 
-> Fix a word in these descriptions.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 20:11:02 +0200
 
-Applied to powerpc next, thanks.
+Add a jump target so that a specific error code assignment is stored
+only once at the end of this function implementation.
+Replace five assignments by goto statements.
 
-https://git.kernel.org/powerpc/c/c28237f1d4ed2c9022f9eed656ecf3
+This issue was detected by using the Coccinelle software.
 
-cheers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/ti/netcp_core.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index 437d36289786..8fb17df6daa8 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -2009,8 +2009,7 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 	if (efuse_mac) {
+ 		if (of_address_to_resource(node, NETCP_EFUSE_REG_INDEX, &res)) {
+ 			dev_err(dev, "could not find efuse-mac reg resource\n");
+-			ret = -ENODEV;
+-			goto quit;
++			goto failure_indication;
+ 		}
+ 		size = resource_size(&res);
+ 
+@@ -2049,8 +2048,7 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 				      &netcp->dma_chan_name);
+ 	if (ret < 0) {
+ 		dev_err(dev, "missing \"rx-channel\" parameter\n");
+-		ret = -ENODEV;
+-		goto quit;
++		goto failure_indication;
+ 	}
+ 
+ 	ret = of_property_read_u32(node_interface, "rx-queue",
+@@ -2071,8 +2069,7 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 	ret = of_property_read_u32_array(node_interface, "rx-pool", temp, 2);
+ 	if (ret < 0) {
+ 		dev_err(dev, "missing \"rx-pool\" parameter\n");
+-		ret = -ENODEV;
+-		goto quit;
++		goto failure_indication;
+ 	}
+ 	netcp->rx_pool_size = temp[0];
+ 	netcp->rx_pool_region_id = temp[1];
+@@ -2080,8 +2077,7 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 	ret = of_property_read_u32_array(node_interface, "tx-pool", temp, 2);
+ 	if (ret < 0) {
+ 		dev_err(dev, "missing \"tx-pool\" parameter\n");
+-		ret = -ENODEV;
+-		goto quit;
++		goto failure_indication;
+ 	}
+ 	netcp->tx_pool_size = temp[0];
+ 	netcp->tx_pool_region_id = temp[1];
+@@ -2089,8 +2085,7 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 	if (netcp->tx_pool_size < MAX_SKB_FRAGS) {
+ 		dev_err(dev, "tx-pool size too small, must be atleast(%ld)\n",
+ 			MAX_SKB_FRAGS);
+-		ret = -ENODEV;
+-		goto quit;
++		goto failure_indication;
+ 	}
+ 
+ 	ret = of_property_read_u32(node_interface, "tx-completion-queue",
+@@ -2113,6 +2108,8 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+ 	list_add_tail(&netcp->interface_list, &netcp_device->interface_head);
+ 	return 0;
+ 
++failure_indication:
++	ret = -ENODEV;
+ quit:
+ 	free_netdev(ndev);
+ 	return ret;
+-- 
+2.14.3
+
