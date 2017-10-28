@@ -1,57 +1,138 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Oct 2017 18:46:15 +0000
-Subject: [PATCH 2/5] cris: nand: Improve a size determination in crisv32_nand_flash_probe()
-Message-Id: <c2a6e5a5-0120-d16f-d809-8d5a67fba413@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 16:23:09 +0000
+Subject: [PATCH] forcedeth: Use common error handling code in two functions
+Message-Id: <bf6da649-44e9-4a3b-8cfd-2603b826257f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
-In-Reply-To: <cd84411c-d202-70d6-dec2-c02bedaf3594@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cris-kernel@axis.com, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Krzysztof Halasa <khalasa@piap.pl>, Mikael Starvik <starvik@axis.com>, Neil Armstrong <narmstrong@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Philippe Reynes <tremyfr@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Zhu Yanjun <yanjun.zhu@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Oct 2017 18:00:33 +0200
+Date: Sat, 28 Oct 2017 18:15:44 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/cris/arch-v32/drivers/mach-a3/nandflash.c | 2 +-
- arch/cris/arch-v32/drivers/mach-fs/nandflash.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/nvidia/forcedeth.c | 42 ++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-index 259aa1f46fbe..3b5be9b984b4 100644
---- a/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-+++ b/arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-@@ -134,7 +134,7 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
- 	REG_WR(pio, regi_pio, rw_oe, oe);
+diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
+index a235e8881af9..08dc2e8e5878 100644
+--- a/drivers/net/ethernet/nvidia/forcedeth.c
++++ b/drivers/net/ethernet/nvidia/forcedeth.c
+@@ -2827,10 +2827,8 @@ static int nv_rx_process(struct net_device *dev, int limit)
+ 				if (unlikely(flags & NV_RX_ERROR)) {
+ 					if ((flags & NV_RX_ERROR_MASK) = NV_RX_ERROR4) {
+ 						len = nv_getlen(dev, skb->data, len);
+-						if (len < 0) {
+-							dev_kfree_skb(skb);
+-							goto next_pkt;
+-						}
++						if (len < 0)
++							goto next_free_skb;
+ 					}
+ 					/* framing errors are soft errors */
+ 					else if ((flags & NV_RX_ERROR_MASK) = NV_RX_FRAMINGERR) {
+@@ -2844,13 +2842,12 @@ static int nv_rx_process(struct net_device *dev, int limit)
+ 							np->stat_rx_missed_errors++;
+ 							u64_stats_update_end(&np->swstats_rx_syncp);
+ 						}
+-						dev_kfree_skb(skb);
+-						goto next_pkt;
++
++						goto next_free_skb;
+ 					}
+ 				}
+ 			} else {
+-				dev_kfree_skb(skb);
+-				goto next_pkt;
++				goto next_free_skb;
+ 			}
+ 		} else {
+ 			if (likely(flags & NV_RX2_DESCRIPTORVALID)) {
+@@ -2858,10 +2855,8 @@ static int nv_rx_process(struct net_device *dev, int limit)
+ 				if (unlikely(flags & NV_RX2_ERROR)) {
+ 					if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_ERROR4) {
+ 						len = nv_getlen(dev, skb->data, len);
+-						if (len < 0) {
+-							dev_kfree_skb(skb);
+-							goto next_pkt;
+-						}
++						if (len < 0)
++							goto next_free_skb;
+ 					}
+ 					/* framing errors are soft errors */
+ 					else if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_FRAMINGERR) {
+@@ -2870,16 +2865,14 @@ static int nv_rx_process(struct net_device *dev, int limit)
+ 					}
+ 					/* the rest are hard errors */
+ 					else {
+-						dev_kfree_skb(skb);
+-						goto next_pkt;
++						goto next_free_skb;
+ 					}
+ 				}
+ 				if (((flags & NV_RX2_CHECKSUMMASK) = NV_RX2_CHECKSUM_IP_TCP) || /*ip and tcp */
+ 				    ((flags & NV_RX2_CHECKSUMMASK) = NV_RX2_CHECKSUM_IP_UDP))   /*ip and udp */
+ 					skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 			} else {
+-				dev_kfree_skb(skb);
+-				goto next_pkt;
++				goto next_free_skb;
+ 			}
+ 		}
+ 		/* got a valid packet - forward it to the network core */
+@@ -2900,6 +2893,10 @@ static int nv_rx_process(struct net_device *dev, int limit)
+ 	}
  
- 	/* Allocate memory for MTD device structure and private data */
--	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
-+	wrapper = kzalloc(sizeof(*wrapper), GFP_KERNEL);
- 	if (!wrapper) {
- 		err = -ENOMEM;
- 		return NULL;
-diff --git a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-index 1baf16ee74e8..5dfd72a89b8a 100644
---- a/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-+++ b/arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-@@ -109,7 +109,7 @@ struct mtd_info *__init crisv32_nand_flash_probe(void)
- 	int err = 0;
+ 	return rx_work;
++
++next_free_skb:
++	dev_kfree_skb(skb);
++	goto next_pkt;
+ }
  
- 	/* Allocate memory for MTD device structure and private data */
--	wrapper = kzalloc(sizeof(struct mtd_info_wrapper), GFP_KERNEL);
-+	wrapper = kzalloc(sizeof(*wrapper), GFP_KERNEL);
- 	if (!wrapper) {
- 		err = -ENOMEM;
- 		return NULL;
+ static int nv_rx_process_optimized(struct net_device *dev, int limit)
+@@ -2932,10 +2929,8 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
+ 			if (unlikely(flags & NV_RX2_ERROR)) {
+ 				if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_ERROR4) {
+ 					len = nv_getlen(dev, skb->data, len);
+-					if (len < 0) {
+-						dev_kfree_skb(skb);
+-						goto next_pkt;
+-					}
++					if (len < 0)
++						goto next_free_skb;
+ 				}
+ 				/* framing errors are soft errors */
+ 				else if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_FRAMINGERR) {
+@@ -2944,8 +2939,7 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
+ 				}
+ 				/* the rest are hard errors */
+ 				else {
+-					dev_kfree_skb(skb);
+-					goto next_pkt;
++					goto next_free_skb;
+ 				}
+ 			}
+ 
+@@ -2989,6 +2983,10 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
+ 	}
+ 
+ 	return rx_work;
++
++next_free_skb:
++	dev_kfree_skb(skb);
++	goto next_pkt;
+ }
+ 
+ static void set_bufsize(struct net_device *dev)
 -- 
-2.14.2
+2.14.3
 
