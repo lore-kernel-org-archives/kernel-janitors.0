@@ -1,45 +1,89 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 10 Oct 2017 04:18:25 +0000
-Subject: Re: [PATCH 1/3] net/atm: Delete an error message for a failed memory allocation in five functions
-Message-Id: <1507609105.3552.18.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 15:18:56 +0000
+Subject: [PATCH] nfp: Improve unlocking of a mutex in area_cache_get()
+Message-Id: <b543c761-6931-ad0a-f12c-c2152c7bcd72@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <10a92558-1105-b947-86a2-6ac763cca36d@users.sourceforge.net>
-         <5270f15b-5e97-0c3e-3e55-fbded48ae07d@users.sourceforge.net>
-In-Reply-To: <5270f15b-5e97-0c3e-3e55-fbded48ae07d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Augusto Mecking Caringi <augustocaringi@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, "David S. Miller" <davem@davemloft.net>, David Windsor <dwindsor@gmail.com>, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Jarod Wilson <jarod@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Kees Cook <keescook@chromium.org>, Mitchell Blank Jr <mitch@sfgoth.com>, Roopa Prabhu <roopa@cumulusnetworks.com>
+To: netdev@vger.kernel.org, oss-drivers@netronome.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <jakub.kicinski@netronome.com>, Simon Horman <simon.horman@netronome.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 2017-10-09 at 22:49 +0200, SF Markus Elfring wrote:
-> Omit extra messages for a memory allocation failure in these functions.
-[]
-> diff --git a/net/atm/mpc.c b/net/atm/mpc.c
-> @@ -184,10 +184,8 @@ struct atm_mpoa_qos *atm_mpoa_add_qos(__be32 dst_ip, struct atm_qos *qos)
->  	}
->  
->  	entry = kmalloc(sizeof(struct atm_mpoa_qos), GFP_KERNEL);
-> -	if (entry = NULL) {
-> -		pr_info("mpoa: out of memory\n");
-> +	if (!entry)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 17:12:10 +0200
 
-Unspecified change.  Make sure your changelog is comprehensive.
+Add a jump target so that a call of the function "mutex_unlock" is stored
+only once at the end of this function implementation.
+Replace four calls by goto statements.
 
->  		return entry;
-> -	}
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ .../ethernet/netronome/nfp/nfpcore/nfp_cppcore.c   | 28 ++++++++++------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_cppcore.c b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_cppcore.c
+index 04dd5758ecf5..e864793b7ca0 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_cppcore.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_cppcore.c
+@@ -822,10 +822,8 @@ area_cache_get(struct nfp_cpp *cpp, u32 id,
  
->  	entry->ipaddr = dst_ip;
->  	entry->qos = *qos;
-> @@ -473,10 +471,8 @@ static const uint8_t *copy_macs(struct mpoa_client *mpc,
->  			kfree(mpc->mps_macs);
->  		mpc->number_of_mps_macs = 0;
->  		mpc->mps_macs = kmalloc(num_macs * ETH_ALEN, GFP_KERNEL);
-> -		if (mpc->mps_macs = NULL) {
-> -			pr_info("(%s) out of mem\n", mpc->dev->name);
-> +		if (!mpc->mps_macs)
->  			return NULL;
-
-etc...
+ 	mutex_lock(&cpp->area_cache_mutex);
+ 
+-	if (list_empty(&cpp->area_cache_list)) {
+-		mutex_unlock(&cpp->area_cache_mutex);
+-		return NULL;
+-	}
++	if (list_empty(&cpp->area_cache_list))
++		goto unlock;
+ 
+ 	addr += *offset;
+ 
+@@ -843,10 +841,8 @@ area_cache_get(struct nfp_cpp *cpp, u32 id,
+ 
+ 	/* Can we fit in the cache entry? */
+ 	if (round_down(addr + length - 1, cache->size) !-	    round_down(addr, cache->size)) {
+-		mutex_unlock(&cpp->area_cache_mutex);
+-		return NULL;
+-	}
++	    round_down(addr, cache->size))
++		goto unlock;
+ 
+ 	/* If id != 0, we will need to release it */
+ 	if (cache->id) {
+@@ -863,23 +859,23 @@ area_cache_get(struct nfp_cpp *cpp, u32 id,
+ 	if (cpp->op->area_init) {
+ 		err = cpp->op->area_init(cache->area,
+ 					 id, cache->addr, cache->size);
+-		if (err < 0) {
+-			mutex_unlock(&cpp->area_cache_mutex);
+-			return NULL;
+-		}
++		if (err < 0)
++			goto unlock;
+ 	}
+ 
+ 	/* Attempt to acquire */
+ 	err = nfp_cpp_area_acquire(cache->area);
+-	if (err < 0) {
+-		mutex_unlock(&cpp->area_cache_mutex);
+-		return NULL;
+-	}
++	if (err < 0)
++		goto unlock;
+ 
+ exit:
+ 	/* Adjust offset */
+ 	*offset = addr - cache->addr;
+ 	return cache;
++
++unlock:
++	mutex_unlock(&cpp->area_cache_mutex);
++	return NULL;
+ }
+ 
+ static void
+-- 
+2.14.3
 
