@@ -1,82 +1,48 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Sat, 28 Oct 2017 06:48:16 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 08:23:02 +0000
 Subject: Re: [PATCH] can: Use common error handling code in vxcan_newlink()
-Message-Id: <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
+Message-Id: <d3bdd3c0-5a03-dd59-07ca-94b126c67f75@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
-In-Reply-To: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
+ <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
+In-Reply-To: <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, Wolfgang Grandegger <wg@grandegger.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Wolfgang Grandegger <wg@grandegger.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+>> @@ -227,10 +227,8 @@ static int vxcan_newlink(struct net *net, struct net_device *dev,
+>>       netif_carrier_off(peer);
+>>         err = rtnl_configure_link(peer, ifmp);
+>> -    if (err < 0) {
+>> -        unregister_netdevice(peer);
+>> -        return err;
+>> -    }
+>> +    if (err)
+>> +        goto unregister_network_device;
+> 
+> You are changing semantic in the if-statement here.
 
-On 10/27/2017 10:30 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 27 Oct 2017 22:22:24 +0200
-> 
-> * Add a jump target so that a bit of exception handling can be better
->    reused at the end of this function.
-> 
-> * Adjust two condition checks.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/can/vxcan.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/can/vxcan.c b/drivers/net/can/vxcan.c
-> index 8404e8852a0f..97f250cbc4ff 100644
-> --- a/drivers/net/can/vxcan.c
-> +++ b/drivers/net/can/vxcan.c
-> @@ -227,10 +227,8 @@ static int vxcan_newlink(struct net *net, struct net_device *dev,
->   	netif_carrier_off(peer);
->   
->   	err = rtnl_configure_link(peer, ifmp);
-> -	if (err < 0) {
-> -		unregister_netdevice(peer);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto unregister_network_device;
+I got an other software development opinion for this implementation detail.
 
-You are changing semantic in the if-statement here.
+http://elixir.free-electrons.com/linux/v4.14-rc6/source/net/core/rtnetlink.c#L2393
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/net/core/rtnetlink.c?id6ef71cae353f88fd6e095e2aaa3e5953af1685d#n2513
 
-I would be fine with the patch if you revert that if-statement as I 
-would like to stay on the behavior from veth.c in veth_newlink().
+The success predicate for the function “rtnl_configure_link” is that
+the return value is zero. I would prefer to treat other values as
+an error code then.
+
+
+> I would be fine with the patch
+
+Thanks for a bit of change acceptance.
+
+
+> if you revert that if-statement as I would like to stay on the behavior
+> from veth.c in veth_newlink().
+
+Will another bit of clarification be useful around the usage of error predicates?
 
 Regards,
-Oliver
-
->   
->   	/* register first device */
->   	if (tb[IFLA_IFNAME])
-> @@ -239,10 +237,8 @@ static int vxcan_newlink(struct net *net, struct net_device *dev,
->   		snprintf(dev->name, IFNAMSIZ, DRV_NAME "%%d");
->   
->   	err = register_netdevice(dev);
-> -	if (err < 0) {
-> -		unregister_netdevice(peer);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto unregister_network_device;
->   
->   	netif_carrier_off(dev);
->   
-> @@ -254,6 +250,10 @@ static int vxcan_newlink(struct net *net, struct net_device *dev,
->   	rcu_assign_pointer(priv->peer, dev);
->   
->   	return 0;
-> +
-> +unregister_network_device:
-> +	unregister_netdevice(peer);
-> +	return err;
->   }
->   
->   static void vxcan_dellink(struct net_device *dev, struct list_head *head)
-> 
+Markus
