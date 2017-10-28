@@ -1,40 +1,70 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Date: Thu, 05 Oct 2017 15:05:17 +0000
-Subject: Re: [PATCH] arm64: mm: Clarify a printk in data_abort_decode()
-Message-Id: <20171005150517.kshu2ftduw5rpg4d@armageddon.cambridge.arm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 20:56:31 +0000
+Subject: [PATCH] lan78xx: Use common error handling code in lan78xx_phy_init()
+Message-Id: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171005125914.34uc5qq5titpq6zi@mwanda>
- <20171005130436.GB5235@leverpostej>
-In-Reply-To: <20171005130436.GB5235@leverpostej>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com, Woojung Huh <woojung.huh@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 05, 2017 at 02:04:36PM +0100, Mark Rutland wrote:
-> On Thu, Oct 05, 2017 at 03:59:14PM +0300, Dan Carpenter wrote:
-> > The 0x in front of a base 10 number is misleading so I removed it.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > index 89993c4be1be..a5382e90418c 100644
-> > --- a/arch/arm64/mm/fault.c
-> > +++ b/arch/arm64/mm/fault.c
-> > @@ -97,7 +97,7 @@ static void data_abort_decode(unsigned int esr)
-> >  			 (esr & ESR_ELx_SF) >> ESR_ELx_SF_SHIFT,
-> >  			 (esr & ESR_ELx_AR) >> ESR_ELx_AR_SHIFT);
-> >  	} else {
-> > -		pr_alert("  ISV = 0, ISS = 0x%08lu\n", esr & ESR_ELx_ISS_MASK);
-> > +		pr_alert("  ISV = 0, ISS = %08lu\n", esr & ESR_ELx_ISS_MASK);
-> 
-> A fix has already been queued [0,1], ensuring this is printed as hex.
-> 
-> Catalin, I see that hasn't been pushed out to the arm64 fixes/core
-> branch. Is that deliberate?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 28 Oct 2017 22:42:52 +0200
 
-No. Only that my tests took about a day to complete. I'll push the
-patches out today.
+* Add a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
 
+* Replace two calls of the function "netdev_err" by goto statements.
+
+* Adjust two condition checks.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/usb/lan78xx.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 0161f77641fa..ff07e20621e3 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2030,17 +2030,15 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 		/* external PHY fixup for KSZ9031RNX */
+ 		ret = phy_register_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0,
+ 						 ksz9031rnx_fixup);
+-		if (ret < 0) {
+-			netdev_err(dev->net, "fail to register fixup\n");
+-			return ret;
+-		}
++		if (ret)
++			goto report_fixup_failure;
++
+ 		/* external PHY fixup for LAN8835 */
+ 		ret = phy_register_fixup_for_uid(PHY_LAN8835, 0xfffffff0,
+ 						 lan8835_fixup);
+-		if (ret < 0) {
+-			netdev_err(dev->net, "fail to register fixup\n");
+-			return ret;
+-		}
++		if (ret)
++			goto report_fixup_failure;
++
+ 		/* add more external PHY fixup here if needed */
+ 
+ 		phydev->is_internal = false;
+@@ -2093,6 +2091,10 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
+ 
+ 	return ret;
++
++report_fixup_failure:
++	netdev_err(dev->net, "fail to register fixup\n");
++	return ret;
+ }
+ 
+ static int lan78xx_set_rx_max_frame_length(struct lan78xx_net *dev, int size)
 -- 
-Catalin
+2.14.3
+
