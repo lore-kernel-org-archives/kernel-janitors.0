@@ -1,33 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Oct 2017 19:24:29 +0000
-Subject: Re: [PATCH][V2] ipv6: fix incorrect bitwise operator used on rt6i_flags
-Message-Id: <20171010.122429.2055747583997527054.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:38:09 +0000
+Subject: [PATCH] net: ethernet: slicoss: remove redundant initialization of idx
+Message-Id: <20171029133809.6831-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171010181030.22290-1-colin.king@canonical.com>
-        <CAC15z3jrkT6K0-FC9QLOmaZQCvEMoDZrABDJ_iGDecTYAksqAw@mail.gmail.com>
-In-Reply-To: <CAC15z3jrkT6K0-FC9QLOmaZQCvEMoDZrABDJ_iGDecTYAksqAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tracywwnj@gmail.com
-Cc: colin.king@canonical.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Wei Wang <tracywwnj@gmail.com>
-Date: Tue, 10 Oct 2017 11:38:20 -0700
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Tue, Oct 10, 2017 at 11:10 AM, Colin King <colin.king@canonical.com> wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The use of the | operator always leads to true which looks rather
->> suspect to me. Fix this by using & instead to just check the
->> RTF_CACHE entry bit.
->>
->> Detected by CoverityScan, CID#1457734, #1457747 ("Wrong operator used")
->>
->> Fixes: 35732d01fe31 ("ipv6: introduce a hash table to store dst cache")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
-> 
-> Acked-by: Wei Wang <weiwan@google.com>
+Variable idx is being initialized and later on over-written by
+a new value in a do-loop without the initial value ever being
+read. Hence the initializion is redundant and can be removed.
+Cleans up clang warning:
 
-Applied, thanks everyone.
+drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
+stored to 'idx' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/alacritech/slicoss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
+index 15a8096c60df..ac8004186fa8 100644
+--- a/drivers/net/ethernet/alacritech/slicoss.c
++++ b/drivers/net/ethernet/alacritech/slicoss.c
+@@ -355,7 +355,7 @@ static void slic_xmit_complete(struct slic_device *sdev)
+ {
+ 	struct slic_tx_queue *txq = &sdev->txq;
+ 	struct net_device *dev = sdev->netdev;
+-	unsigned int idx = txq->done_idx;
++	unsigned int idx;
+ 	struct slic_tx_buffer *buff;
+ 	unsigned int frames = 0;
+ 	unsigned int bytes = 0;
+-- 
+2.14.1
+
