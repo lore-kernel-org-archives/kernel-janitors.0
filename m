@@ -1,41 +1,42 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 02 Oct 2017 14:40:33 +0000
-Subject: [PATCH] ACPI / sysfs: make function param_set_trace_method_name static
-Message-Id: <20171002144033.26965-1-colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 12:58:51 +0000
+Subject: [PATCH] mfd: ti_am335x_tscadc: remove redundant assignment to node
+Message-Id: <20171029125851.5727-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The function param_set_trace_method_name is local to the source and does
-not need to be in global scope, so make it static.
+Node is being initialized a value that is never read, it is
+being written over a few statements into the function with
+the return value from call to of_get_child_by_name. Hence
+this initialization can be removed. Cleans up clang warning:
 
-Cleans up sparse warning:
-symbol 'param_set_trace_method_name' was not declared. Should it be static?
+drivers/mfd/ti_am335x_tscadc.c:127:22: warning: Value stored
+to 'node' during its initialization is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/acpi/sysfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mfd/ti_am335x_tscadc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-index 78a5a23010ab..ca80e13aeeb1 100644
---- a/drivers/acpi/sysfs.c
-+++ b/drivers/acpi/sysfs.c
-@@ -168,7 +168,8 @@ module_param_cb(debug_level, &param_ops_debug_level, &acpi_dbg_level, 0644);
- 
- static char trace_method_name[1024];
- 
--int param_set_trace_method_name(const char *val, const struct kernel_param *kp)
-+static int param_set_trace_method_name(const char *val,
-+				       const struct kernel_param *kp)
- {
- 	u32 saved_flags = 0;
- 	bool is_abs_path = true;
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 0f3fab47fe48..3cd958a31f36 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -124,7 +124,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 	struct ti_tscadc_dev	*tscadc;
+ 	struct resource		*res;
+ 	struct clk		*clk;
+-	struct device_node	*node = pdev->dev.of_node;
++	struct device_node	*node;
+ 	struct mfd_cell		*cell;
+ 	struct property         *prop;
+ 	const __be32            *cur;
 -- 
 2.14.1
 
