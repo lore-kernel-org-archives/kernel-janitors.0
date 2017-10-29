@@ -1,24 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Oct 2017 05:57:43 +0000
-Subject: Re: [PATCH] net: hns3: Fix an error handling path in 'hclge_rss_init_hw()'
-Message-Id: <20171001.225743.584554872378988701.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 12:50:58 +0000
+Subject: [PATCH] [media] mxl111sf: remove redundant assignment to index
+Message-Id: <20171029125058.5588-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930053434.4558-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170930053434.4558-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, linyunsheng@huawei.com, lipeng321@huawei.com, colin.king@canonical.com, arnd@arndb.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Krufky <mkrufky@linuxtv.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 30 Sep 2017 07:34:34 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-> If this sanity check fails, we must free 'rss_indir'. Otherwise there is a
-> memory leak.
-> 'goto err' as done in the other error handling paths to fix it.
-> 
-> Fixes: 46a3df9f9718 ("net: hns3: Fix for setting rss_size incorrectly")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Variable index is set to zero and then set to zero again
+a few lines later in a for loop initialization. Remove the
+redundant setting of index to zero. Cleans up the clang
+warning:
 
-Applied.
+drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c:519:3: warning: Value
+stored to 'index' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
+index 0eb33e043079..a221bb8a12b4 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
+@@ -516,7 +516,6 @@ static int mxl111sf_i2c_hw_xfer_msg(struct mxl111sf_state *state,
+ 		   data required to program */
+ 		block_len = (msg->len / 8);
+ 		left_over_len = (msg->len % 8);
+-		index = 0;
+ 
+ 		mxl_i2c("block_len %d, left_over_len %d",
+ 			block_len, left_over_len);
+-- 
+2.14.1
+
