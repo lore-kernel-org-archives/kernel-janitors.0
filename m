@@ -1,86 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 29 Oct 2017 11:06:08 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 12:03:41 +0000
 Subject: Re: [PATCH] sr9800: Use common error handling code in sr9800_phy_powerup()
-Message-Id: <CAMuHMdU6K+KPZvsStfwPev9Z5v1RRYAwLr04FHjmeC=VUEMC+Q@mail.gmail.com>
+Message-Id: <0600e4f9-dd53-158c-556b-8a87dfc928e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <10f2b5a4-1dbd-2c4f-caaa-4225dff35296@users.sourceforge.net>
-In-Reply-To: <10f2b5a4-1dbd-2c4f-caaa-4225dff35296@users.sourceforge.net>
+ <CAMuHMdU6K+KPZvsStfwPev9Z5v1RRYAwLr04FHjmeC=VUEMC+Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdU6K+KPZvsStfwPev9Z5v1RRYAwLr04FHjmeC=VUEMC+Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Greg Ungerer <gerg@linux-m68k.org>, Liu Junliang <liujunliang_ljl@163.com>, Philippe Reynes <tremyfr@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Geert Uytterhoeven <geert@linux-m68k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-usb@vger.kernel.org
+Cc: =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Greg Ungerer <gerg@linux-m68k.org>, Liu Junliang <liujunliang_ljl@163.com>, Philippe Reynes <tremyfr@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+>> @@ -700,10 +700,9 @@ static int sr9800_phy_powerup(struct usbnet *dev)
+>>
+>>         /* set the embedded Ethernet PHY in power-up state */
+>>         ret = sr_sw_reset(dev, SR_SWRESET_IPRL);
+>> -       if (ret < 0) {
+>> -               netdev_err(dev->net, "Failed to reset PHY: %d\n", ret);
+>> -               return ret;
+>> -       }
+>> +       if (ret < 0)
+>> +               goto report_reset_failure;
+> 
+> So now I have to look below to see what error handling it does...
 
-On Sun, Oct 29, 2017 at 11:45 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 29 Oct 2017 11:33:14 +0100
->
-> Add a jump target so that a specific error message is stored only once
-> at the end of this function implementation.
-> Replace two calls of the function "netdev_err" by goto statements.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/usb/sr9800.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
-> index 9277a0f228df..79cfa72c68ba 100644
-> --- a/drivers/net/usb/sr9800.c
-> +++ b/drivers/net/usb/sr9800.c
-> @@ -700,10 +700,9 @@ static int sr9800_phy_powerup(struct usbnet *dev)
->
->         /* set the embedded Ethernet PHY in power-up state */
->         ret = sr_sw_reset(dev, SR_SWRESET_IPRL);
-> -       if (ret < 0) {
-> -               netdev_err(dev->net, "Failed to reset PHY: %d\n", ret);
-> -               return ret;
-> -       }
-> +       if (ret < 0)
-> +               goto report_reset_failure;
+Yes. - Can this be an usual consequence if you apply information from
+the section “7) Centralized exiting of functions” in the document
+“coding-style.rst” a bit more?
 
-So now I have to look below to see what error handling it does...
-Hence I prefer the original version, which had _less_ lines of code...
 
-> +
->         msleep(600);
->
->         /* set the embedded Ethernet PHY in reset state */
-> @@ -716,12 +715,14 @@ static int sr9800_phy_powerup(struct usbnet *dev)
->
->         /* set the embedded Ethernet PHY in power-up state */
->         ret = sr_sw_reset(dev, SR_SWRESET_IPRL);
-> -       if (ret < 0) {
-> -               netdev_err(dev->net, "Failed to reset PHY: %d\n", ret);
 
-Gcc is smart enough to optimize away the second identical string printed.
+> Hence I prefer the original version, which had _less_ lines of code...
 
-> -               return ret;
-> -       }
-> +       if (ret < 0)
-> +               goto report_reset_failure;
->
->         return 0;
-> +
-> +report_reset_failure:
-> +       netdev_err(dev->net, "Failed to reset PHY: %d\n", ret);
-> +       return ret;
->  }
->
->  static int sr9800_bind(struct usbnet *dev, struct usb_interface *intf)
+My update suggestion is only one line “bigger” in this case, isn't it?
 
-Gr{oetje,eeting}s,
+I propose an other source code layout so that a bit smaller executable
+object code could be achieved.
+Do find such a software design direction feasible?
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Markus
