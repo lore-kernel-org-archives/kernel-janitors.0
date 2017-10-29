@@ -1,78 +1,44 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Mon, 30 Oct 2017 13:40:20 +0000
-Subject: Re: [PATCH 5/5] wlcore: Use common error handling code in wl1271_op_suspend()
-Message-Id: <CAGRGNgUt05VmCEAiZwv4y7bQz_X_8F39irsQhgfJJh+dapYEZw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:14:26 +0000
+Subject: [PATCH] ubi: fastmap: clean up the initialization of pointer p
+Message-Id: <20171029131426.6205-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net> <5c4844e8-b519-888d-c772-4f925a4f2a66@users.sourceforge.net>
-In-Reply-To: <5c4844e8-b519-888d-c772-4f925a4f2a66@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Oct 30, 2017 at 7:16 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 29 Oct 2017 20:36:39 +0100
->
-> Add a jump target so that a specific error message is stored only once
-> at the end of this function implementation.
-> Replace two calls of the macro "wl1271_warning" by goto statements.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The pointer p is being initialized with one value and a few lines
+later being set to a newer replacement value. Clean up the code by
+using the latter assignment to p as the initial value. Cleans up
+clang warning:
 
-This patch is bogus, moving error messages around like this is just bizarre.
+drivers/mtd/ubi/fastmap.c:217:19: warning: Value stored to 'p'
+during its initialization is never read
 
-These are both reporting different failures, so the error messages
-should be different.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/ubi/fastmap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->  drivers/net/wireless/ti/wlcore/main.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-> index 12a9d6509382..a110f61110d5 100644
-> --- a/drivers/net/wireless/ti/wlcore/main.c
-> +++ b/drivers/net/wireless/ti/wlcore/main.c
-> @@ -1732,8 +1732,7 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
->                 ret = wl1271_configure_suspend(wl, wlvif, wow);
->                 if (ret < 0) {
->                         mutex_unlock(&wl->mutex);
-> -                       wl1271_warning("couldn't prepare device to suspend");
-
-"couldn't configure device for suspend"?
-
-> -                       return ret;
-> +                       goto report_preparation_failure;
->                 }
->         }
->
-> @@ -1752,10 +1751,8 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
->         wl1271_ps_elp_sleep(wl);
->         mutex_unlock(&wl->mutex);
->
-> -       if (ret < 0) {
-> -               wl1271_warning("couldn't prepare device to suspend");
-
-"couldn't enable power saving"?
-
-> -               return ret;
-> -       }
-> +       if (ret < 0)
-> +               goto report_preparation_failure;
->
->         /* flush any remaining work */
->         wl1271_debug(DEBUG_MAC80211, "flushing remaining works");
-
-Thanks,
-
+diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
+index 5a832bc79b1b..9be4b94e83ad 100644
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -214,9 +214,8 @@ static void assign_aeb_to_av(struct ubi_attach_info *ai,
+ 			     struct ubi_ainf_volume *av)
+ {
+ 	struct ubi_ainf_peb *tmp_aeb;
+-	struct rb_node **p = &ai->volumes.rb_node, *parent = NULL;
++	struct rb_node **p = &av->root.rb_node, *parent = NULL;
+ 
+-	p = &av->root.rb_node;
+ 	while (*p) {
+ 		parent = *p;
+ 
 -- 
-Julian Calaby
+2.14.1
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
