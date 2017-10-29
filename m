@@ -1,60 +1,64 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 24 Oct 2017 13:52:49 +0000
-Subject: Re: [PATCH 2/2] xen-tpmfront: Combine two condition checks into one statement in vtpm_send()
-Message-Id: <20171024135249.jfyiipxejwv7sxsl@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 20:11:39 +0000
+Subject: [PATCH 1/5] wlcore: Use common error handling code in wlcore_nvs_cb()
+Message-Id: <7b40d50f-cdac-bd47-5070-894140f7ceb3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
- <f1d76752-d5b4-649d-b11d-63348d439505@users.sourceforge.net>
- <20171023134401.n5mx6f6gjfhxtnxu@linux.intel.com>
-In-Reply-To: <20171023134401.n5mx6f6gjfhxtnxu@linux.intel.com>
+References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
+In-Reply-To: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 23, 2017 at 03:44:01PM +0200, Jarkko Sakkinen wrote:
-> On Sun, Oct 22, 2017 at 01:30:46PM +0200, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 22 Oct 2017 13:15:16 +0200
-> > 
-> > A return was performed with the same error code after two condition checks.
-> > Thus use a single statement instead.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/char/tpm/xen-tpmfront.c | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> > index 873a5631937a..0d02743e7a87 100644
-> > --- a/drivers/char/tpm/xen-tpmfront.c
-> > +++ b/drivers/char/tpm/xen-tpmfront.c
-> > @@ -82,10 +82,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >  	u32 ordinal;
-> >  	unsigned long duration;
-> >  
-> > -	if (offset > PAGE_SIZE)
-> > -		return -EINVAL;
-> > -
-> > -	if (offset + count > PAGE_SIZE)
-> > +	if (offset > PAGE_SIZE || offset + count > PAGE_SIZE)
-> >  		return -EINVAL;
-> >  
-> >  	/* Wait for completion of any existing command or cancellation */
-> > -- 
-> > 2.14.2
-> > 
-> 
-> This is fine.
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> /Jarkko
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 18:38:04 +0100
 
-Anyway I NAK it because it is really a change of insignificant value.
-Just adds cruft to the kernel release.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-I would be fine if someone did this as part of something significant.
+This issue was detected by using the Coccinelle software.
 
-/Jarkko
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ti/wlcore/main.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index c346c021b999..48380d48ef09 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -6496,16 +6496,14 @@ static void wlcore_nvs_cb(const struct firmware *fw, void *context)
+ 	ret = wl12xx_get_hw_info(wl);
+ 	if (ret < 0) {
+ 		wl1271_error("couldn't get hw info");
+-		wl1271_power_off(wl);
+-		goto out_free_nvs;
++		goto power_off;
+ 	}
+ 
+ 	ret = request_threaded_irq(wl->irq, hardirq_fn, wlcore_irq,
+ 				   wl->irq_flags, pdev->name, wl);
+ 	if (ret < 0) {
+ 		wl1271_error("interrupt configuration failed");
+-		wl1271_power_off(wl);
+-		goto out_free_nvs;
++		goto power_off;
+ 	}
+ 
+ #ifdef CONFIG_PM
+@@ -6551,6 +6549,11 @@ static void wlcore_nvs_cb(const struct firmware *fw, void *context)
+ out:
+ 	release_firmware(fw);
+ 	complete_all(&wl->nvs_loading_complete);
++	return;
++
++power_off:
++	wl1271_power_off(wl);
++	goto out_free_nvs;
+ }
+ 
+ int wlcore_probe(struct wl1271 *wl, struct platform_device *pdev)
+-- 
+2.14.3
+
