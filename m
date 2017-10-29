@@ -1,89 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 15:47:55 +0000
-Subject: [PATCH 2/3] pinctrl: mcp23s08: Use common error handling code in mcp23s08_dbg_show()
-Message-Id: <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 10:15:08 +0000
+Subject: [PATCH] smsc95xx: Use common error handling code in smsc95xx_write_eeprom()
+Message-Id: <fa1658cc-4363-f07f-864b-6d87dc2b656c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
-In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com, Steve Glendinning <steve.glendinning@shawell.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 16:26:09 +0100
+Date: Sun, 29 Oct 2017 11:08:34 +0100
 
-* The script "checkpatch.pl" pointed information out like the following.
+Add a jump target so that a specific error message is stored only once
+at the end of this function implementation.
+Replace two calls of the function "netdev_warn" by goto statements.
 
-  WARNING: Prefer seq_puts to seq_printf
-
-  Thus fix the affected source code places.
-
-* Adjust jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/net/usb/smsc95xx.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 919eb7268331..d1a7c627dbb9 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -723,25 +723,20 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	mutex_lock(&mcp->lock);
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 309b88acd3d0..6a82e8055e9d 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -399,10 +399,8 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
+ 	/* Issue write/erase enable command */
+ 	val = E2P_CMD_BUSY_ | E2P_CMD_EWEN_;
+ 	ret = smsc95xx_write_reg(dev, E2P_CMD, val);
+-	if (ret < 0) {
+-		netdev_warn(dev->net, "Error writing E2P_DATA\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_write_failure;
  
- 	t = __check_mcp23s08_reg_cache(mcp);
--	if (t) {
--		seq_printf(s, " I/O Error\n");
--		goto done;
--	}
-+	if (t)
-+		goto report_failure;
-+
- 	t = mcp_read(mcp, MCP_IODIR, &iodir);
--	if (t) {
--		seq_printf(s, " I/O Error\n");
--		goto done;
--	}
-+	if (t)
-+		goto report_failure;
-+
- 	t = mcp_read(mcp, MCP_GPIO, &gpio);
--	if (t) {
--		seq_printf(s, " I/O Error\n");
--		goto done;
--	}
-+	if (t)
-+		goto report_failure;
-+
- 	t = mcp_read(mcp, MCP_GPPU, &gppu);
--	if (t) {
--		seq_printf(s, " I/O Error\n");
--		goto done;
--	}
-+	if (t)
-+		goto report_failure;
+ 	ret = smsc95xx_wait_eeprom(dev);
+ 	if (ret < 0)
+@@ -413,10 +411,8 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
+ 		/* Fill data register */
+ 		val = data[i];
+ 		ret = smsc95xx_write_reg(dev, E2P_DATA, val);
+-		if (ret < 0) {
+-			netdev_warn(dev->net, "Error writing E2P_DATA\n");
+-			return ret;
+-		}
++		if (ret < 0)
++			goto report_write_failure;
  
- 	for (t = 0, mask = BIT(0); t < chip->ngpio; t++, mask <<= 1) {
- 		const char *label;
-@@ -758,8 +753,13 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		/* NOTE:  ignoring the irq-related registers */
- 		seq_puts(s, "\n");
+ 		/* Send "write" command */
+ 		val = E2P_CMD_BUSY_ | E2P_CMD_WRITE_ | (offset & E2P_CMD_ADDR_);
+@@ -434,6 +430,10 @@ static int smsc95xx_write_eeprom(struct usbnet *dev, u32 offset, u32 length,
  	}
--done:
-+unlock:
- 	mutex_unlock(&mcp->lock);
-+	return;
+ 
+ 	return 0;
 +
-+report_failure:
-+	seq_puts(s, " I/O Error\n");
-+	goto unlock;
++report_write_failure:
++	netdev_warn(dev->net, "Error writing E2P_DATA\n");
++	return ret;
  }
  
- #else
+ static int __must_check smsc95xx_write_reg_async(struct usbnet *dev, u16 index,
 -- 
 2.14.3
 
