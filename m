@@ -1,63 +1,42 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Thu, 26 Oct 2017 14:50:12 +0000
-Subject: Re: [PATCH] iio/light/opt3001: Use common error handling code in opt3001_get_lux()
-Message-Id: <20171026145012.vnev4ivbxdk3ak5e@piout.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 20:12:41 +0000
+Subject: [PATCH 2/5] wlcore: Delete an unnecessary check statement in wlcore_set_beacon_template()
+Message-Id: <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c0b3ce73-db0d-c481-51be-2047b07c9f63@users.sourceforge.net>
- <20171026134852.bprrrv3htfyryyy4@piout.net>
- <20171026140743.wfstmoy3lbolm7xv@mwanda>
-In-Reply-To: <20171026140743.wfstmoy3lbolm7xv@mwanda>
+References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
+In-Reply-To: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-iio@vger.kernel.org, Andreas Dannenberg <dannenberg@ti.com>, Felipe Balbi <balbi@ti.com>, Hartmut Knaack <knaack.h@gmx.de>, Javier Martinez Canillas <javier@osg.samsung.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 26/10/2017 at 17:07:43 +0300, Dan Carpenter wrote:
-> On Thu, Oct 26, 2017 at 03:48:52PM +0200, Alexandre Belloni wrote:
-> > On 26/10/2017 at 14:17:30 +0200, SF Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Thu, 26 Oct 2017 14:06:49 +0200
-> > > 
-> > > * Add jump targets so that two error messages are stored only once
-> > >   at the end of this function implementation.
-> > > 
-> > > * Adjust condition checks.
-> > > 
-> > > * Replace string literals by references to two global constant variables
-> > >   in eight functions.
-> > > 
-> > > This issue was detected by using the Coccinelle software.
-> > > 
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > ---
-> > >  drivers/iio/light/opt3001.c | 88 +++++++++++++++++++--------------------------
-> > >  1 file changed, 36 insertions(+), 52 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
-> > > index 54d88b60e303..23d7d4e6ae61 100644
-> > > --- a/drivers/iio/light/opt3001.c
-> > > +++ b/drivers/iio/light/opt3001.c
-> > > @@ -77,6 +77,9 @@
-> > >  #define OPT3001_RESULT_READY_SHORT	150
-> > >  #define OPT3001_RESULT_READY_LONG	1000
-> > >  
-> > > +static char const read_failure[] = "failed to read register %02x\n";
-> > > +static char const write_failure[] = "failed to write register %02x\n";
-> > > +
-> > 
-> > If you are going to do that
-> 
-> The answer to that question is we're not going to do that...  Please
-> stop taking bad ideas and making them even more complicated and worse.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 19:45:07 +0100
 
-I just wanted to know how far he was able to push his reasoning. And
-hopefully waste a bit of his time.
+A goto statement jumped to a target which followed a condition check
+immediately without the specification of useful actions between.
+Thus remove such unnecessary source code at the end of this function.
 
-I don't expect anyone to take patches from Markus seriously.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ti/wlcore/main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index 48380d48ef09..efea811c1c83 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -4085,9 +4085,6 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
+ 					      min_rate);
+ end_bcn:
+ 	dev_kfree_skb(beacon);
+-	if (ret < 0)
+-		goto out;
+-
+ out:
+ 	return ret;
+ }
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.14.3
+
