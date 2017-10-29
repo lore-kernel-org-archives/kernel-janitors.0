@@ -1,49 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Oct 2017 16:08:15 +0000
-Subject: [PATCH] memstick: remove redundant pointer data
-Message-Id: <20171027160815.13421-1-colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:06:07 +0000
+Subject: [PATCH] [media] gspca: remove redundant assignment to variable j
+Message-Id: <20171029130607.6062-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Dubov <oakad@yahoo.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer 'data' is assigned but never read; it is redundant and can
-be removed.  Cleans up clang warning:
+Variable j is being set to zero before a loop and also
+immediately inside the loop and is not used after the loop.
+Hence the first assignment is redundant and can be removed.
+Cleans up clang warning:
 
-drivers/memstick/host/tifm_ms.c:266:2: warning: Value stored to 'data'
-is never read
+drivers/media/usb/gspca/gspca.c:1078:2: warning: Value stored
+to 'j' is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/memstick/host/tifm_ms.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/media/usb/gspca/gspca.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/memstick/host/tifm_ms.c b/drivers/memstick/host/tifm_ms.c
-index 7bafa72f8f57..54c0029a529d 100644
---- a/drivers/memstick/host/tifm_ms.c
-+++ b/drivers/memstick/host/tifm_ms.c
-@@ -254,7 +254,6 @@ static unsigned int tifm_ms_transfer_data(struct tifm_ms *host)
- static int tifm_ms_issue_cmd(struct tifm_ms *host)
- {
- 	struct tifm_dev *sock = host->dev;
--	unsigned char *data;
- 	unsigned int data_len, cmd, sys_param;
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index 0f141762abf1..961343873fd0 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -1075,7 +1075,6 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
  
- 	host->cmd_flags = 0;
-@@ -262,9 +261,6 @@ static int tifm_ms_issue_cmd(struct tifm_ms *host)
- 	host->io_pos = 0;
- 	host->io_word = 0;
- 	host->cmd_flags = 0;
--
--	data = host->req->data;
--
- 	host->use_dma = !no_dma;
- 
- 	if (host->req->long_data) {
+ 	/* give an index to each format */
+ 	index = 0;
+-	j = 0;
+ 	for (i = gspca_dev->cam.nmodes; --i >= 0; ) {
+ 		fmt_tb[index] = gspca_dev->cam.cam_mode[i].pixelformat;
+ 		j = 0;
 -- 
 2.14.1
 
