@@ -1,76 +1,38 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 26 Oct 2017 04:02:43 +0000
-Subject: Re: [PATCH] Coccinelle: make DEBUG_FILE option more useful
-Message-Id: <alpine.DEB.2.20.1710260601520.17107@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 29 Oct 2017 18:19:22 +0000
+Subject: Re: drm/rcar-du: Use common error handling code in rcar_du_encoders_init()
+Message-Id: <3b553cd9-f923-7e45-70b8-008d3b78b202@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1508061353-24744-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAK7LNAQMTptVYLu10uF+85OsuANbC7Fo0heD4t1ybpUE6Yh-gQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQMTptVYLu10uF+85OsuANbC7Fo0heD4t1ybpUE6Yh-gQ@mail.gmail.com>
+References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
+ <9fafa688-f699-c587-ef77-840efa71bf76@users.sourceforge.net>
+ <87tvyke8g2.fsf@intel.com> <1864580.oVLIQZJ4NS@avalon>
+In-Reply-To: <1864580.oVLIQZJ4NS@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+> Just for the record, I've been bitten in the past by applying one of Markus' 
+> patches that seemed to make sense, only to discover later that it introduced a 
+> security hole.
+
+How do you think about to take another look at the circumstances
+under which a questionable commit happened in the referenced case?
+
+A few glitches occur occasionally. They can be fixed by appropriate collaboration.
 
 
+> I now drop his patches altogether, so could you please keep an eye open
+> to make sure none of them touching the rcar-du driver will be applied
+> through drm-misc ?
 
-On Thu, 26 Oct 2017, Masahiro Yamada wrote:
+I hope that you can become interested in a more constructive software development
+dialogue (also with me) again.
 
-> Hi Julia,
->
->
-> 2017-10-15 18:55 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> > Make coccicheck checked for the existence of DEBUG_FILE on each semantic
-> > patch, and bailed if it already existed.  This meant that DEBUG_FILE was
-> > useless for checking more than one semantic patch at a time.  Now the check
-> > is moved to the start of make coccicheck, and the 2> is changed to a 2>> to
-> > append to the file on each semantic patch.  Furthermore, the spatch command
-> > that is run for each semantic patch is also added to the DEBUG_FILE, to
-> > make clear what each stdout trace corresponds to.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
->
-> I think this is a good improvement,
-> and looks almost good to me.
->
-> Just one nit.
->
->
-> >
-> >  }
-> >
-> > +if [ "$DEBUG_FILE" != "/dev/null" -a "$DEBUG_FILE" != "" ]; then
-> > +       if [ -f $DEBUG_FILE ]; then
-> > +               echo "Debug file $DEBUG_FILE exists, bailing"
-> > +               exit
-> > +       fi
-> > +       touch $DEBUG_FILE
->
-> I think this "touch" is redundant.
->
-> If the DEBUG_FILE does not exist, 2>> will automatically create it.
+* Can additional ideas be taken into account here?
 
-Thanks very much for the feedback.  I will resubmit.
+* Will any other contributor pick related update suggestions up?
 
-julia
-
-
->
->
->
->
-> > +else
-> > +       DEBUG_FILE="/dev/null"
-> > +fi
-> > +
-> >  if [ "$COCCI" = "" ] ; then
-> >      for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
-> >         coccinelle $f
-> >
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
->
+Regards,
+Markus
