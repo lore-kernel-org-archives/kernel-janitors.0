@@ -1,46 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Sat, 14 Oct 2017 12:14:38 +0000
-Subject: [PATCH] apparmor: remove unused redundant variable stop
-Message-Id: <20171014121438.31958-1-colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:43:39 +0000
+Subject: [PATCH][V2] bdisp: remove redundant assignment to pix
+Message-Id: <20171029134339.7101-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org
+To: Fabien Dessenne <fabien.dessenne@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The boolean variable 'stop' is being set but never read. This
-is a redundant variable and can be removed.
+Pointer pix is being initialized to a value and a little later
+being assigned the same value again. Remove the initial assignment to
+avoid a duplicate assignment. Cleans up the clang warning:
 
-Cleans up clang warning: Value stored to 'stop' is never read
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c:726:26: warning: Value
+stored to 'pix' during its initialization is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- security/apparmor/lib.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 8818621b5d95..d78da4e973d9 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -427,7 +427,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
- 		   void (*cb)(struct audit_buffer *, void *))
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+index 939da6da7644..7e9ed9c7b3e1 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -723,7 +723,7 @@ static int bdisp_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ static int bdisp_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
  {
- 	int type, error;
--	bool stop = false;
- 	u32 denied = request & (~perms->allow | perms->deny);
+ 	struct bdisp_ctx *ctx = fh_to_ctx(fh);
+-	struct v4l2_pix_format *pix = &f->fmt.pix;
++	struct v4l2_pix_format *pix;
+ 	struct bdisp_frame *frame  = ctx_get_frame(ctx, f->type);
  
- 	if (likely(!denied)) {
-@@ -448,8 +447,6 @@ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
- 		else
- 			type = AUDIT_APPARMOR_DENIED;
- 
--		if (denied & perms->stop)
--			stop = true;
- 		if (denied = (denied & perms->hide))
- 			error = -ENOENT;
- 
+ 	if (IS_ERR(frame)) {
 -- 
 2.14.1
 
