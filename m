@@ -1,31 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 08:47:27 +0000
-Subject: Re: IB/mlx4: Use common error handling code in __mlx4_ib_create_flow()
-Message-Id: <afbd8b62-012e-9350-7786-70bed05e58a6@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:21:05 +0000
+Subject: [PATCH] [media] bdisp: remove redundant assignment to pix
+Message-Id: <20171029132105.6444-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0bcea3cf-91e3-01d5-8d80-34cd6b611fb1@users.sourceforge.net>
- <70843f43-03c5-8295-643a-4f228ff2e907@intel.com>
- <0c92fc8e-ecb8-c7ed-0b4c-721752297222@users.sourceforge.net>
- <20171027193601.GI16127@mtr-leonro.local>
- <e2febce9-4b80-a40e-024e-5c24964301ac@users.sourceforge.net>
- <20171030083402.GV16127@mtr-leonro.local>
-In-Reply-To: <20171030083402.GV16127@mtr-leonro.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leon Romanovsky <leon@kernel.org>, Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org
-Cc: Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Fabien Dessenne <fabien.dessenne@st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Do you find the following details useful for further clarification?
-> 
-> Almost, you should compare sizes of mlx4_ib.ko and not drivers/infiniband/hw/mlx4/main.o.
+From: Colin Ian King <colin.king@canonical.com>
 
-text: -32
-data: 0
-bss:  0
+Pointer pix is being initialized to a value and a little later
+being assigned the same value again. Remove the redundant second
+duplicate assignment. Cleans up the clang warning:
 
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c:726:26: warning: Value
+stored to 'pix' during its initialization is never read
 
-The determined difference is the same finally.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+index 939da6da7644..14e99aeae140 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -731,7 +731,6 @@ static int bdisp_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
+ 		return PTR_ERR(frame);
+ 	}
+ 
+-	pix = &f->fmt.pix;
+ 	pix->width = frame->width;
+ 	pix->height = frame->height;
+ 	pix->pixelformat = frame->fmt->pixelformat;
+-- 
+2.14.1
+
