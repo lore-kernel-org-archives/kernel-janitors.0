@@ -1,91 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 17:19:19 +0000
-Subject: [PATCH] ravb: Use common error handling code in ravb_probe()
-Message-Id: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 29 Oct 2017 11:00:34 +0000
+Subject: Re: [PATCH] ravb: Use common error handling code in ravb_probe()
+Message-Id: <CAMuHMdXEWpryexcrN7OYcsGfyE3Y_-7Ej2CfgvYgUbZFTTHEWg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
+In-Reply-To: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Eugeniu Rosca <erosca@de.adit-jv.com>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, Masaru Nagai <masaru.nagai.vx@renesas.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms+renesas@verge.net.au>, Yuval Shaia <yuval.shaia@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Eugeniu Rosca <erosca@de.adit-jv.com>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, Masaru Nagai <masaru.nagai.vx@renesas.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms+renesas@verge.net.au>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 19:10:08 +0200
+Hi Markus,
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+On Sat, Oct 28, 2017 at 7:19 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 28 Oct 2017 19:10:08 +0200
+>
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index a8822a756e08..62dbdf7de6cd 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -2069,10 +2069,9 @@ static int ravb_probe(struct platform_device *pdev)
+>                 irq = platform_get_irq_byname(pdev, "ch22");
+>         else
+>                 irq = platform_get_irq(pdev, 0);
+> -       if (irq < 0) {
+> -               error = irq;
+> -               goto out_release;
+> -       }
+> +       if (irq < 0)
+> +               goto failure_indication;
 
-This issue was detected by using the Coccinelle software.
+IMHO, it's really confusing that "irq" contains the error code, not "error".
+Especially when jumping to a meaningless label named "failure_indication"
+("irq_failure" would be more intuitive).
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+So I prefer the original code, regardless of the label name.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index a8822a756e08..62dbdf7de6cd 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2069,10 +2069,9 @@ static int ravb_probe(struct platform_device *pdev)
- 		irq = platform_get_irq_byname(pdev, "ch22");
- 	else
- 		irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		error = irq;
--		goto out_release;
--	}
-+	if (irq < 0)
-+		goto failure_indication;
-+
- 	ndev->irq = irq;
- 
- 	SET_NETDEV_DEV(ndev, &pdev->dev);
-@@ -2101,25 +2100,22 @@ static int ravb_probe(struct platform_device *pdev)
- 
- 	if (chip_id = RCAR_GEN3) {
- 		irq = platform_get_irq_byname(pdev, "ch24");
--		if (irq < 0) {
--			error = irq;
--			goto out_release;
--		}
-+		if (irq < 0)
-+			goto failure_indication;
-+
- 		priv->emac_irq = irq;
- 		for (i = 0; i < NUM_RX_QUEUE; i++) {
- 			irq = platform_get_irq_byname(pdev, ravb_rx_irqs[i]);
--			if (irq < 0) {
--				error = irq;
--				goto out_release;
--			}
-+			if (irq < 0)
-+				goto failure_indication;
-+
- 			priv->rx_irqs[i] = irq;
- 		}
- 		for (i = 0; i < NUM_TX_QUEUE; i++) {
- 			irq = platform_get_irq_byname(pdev, ravb_tx_irqs[i]);
--			if (irq < 0) {
--				error = irq;
--				goto out_release;
--			}
-+			if (irq < 0)
-+				goto failure_indication;
-+
- 			priv->tx_irqs[i] = irq;
- 		}
- 	}
-@@ -2226,6 +2222,10 @@ static int ravb_probe(struct platform_device *pdev)
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	return error;
-+
-+failure_indication:
-+	error = irq;
-+	goto out_release;
- }
- 
- static int ravb_remove(struct platform_device *pdev)
--- 
-2.14.3
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
