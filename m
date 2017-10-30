@@ -1,42 +1,68 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Oct 2017 13:43:27 +0000
-Subject: Re: [PATCH] iio/adc/palmas: Use common error handling code in palmas_gpadc_calibrate()
-Message-Id: <bcd5b722-fe10-8ea0-0f90-662cb414b4c0@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 20:15:21 +0000
+Subject: [PATCH] Sony-laptop: Use common error handling code in sony_nc_setup_rfkill()
+Message-Id: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ae3662d-6a74-622c-0423-e8552ea79bca@users.sourceforge.net>
- <20171026173314.0bd5fd27@archlinux>
-In-Reply-To: <20171026173314.0bd5fd27@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: Alison Schofield <amsfield22@gmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Mattia Dongili <malattia@linux.it>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> @@ -329,6 +325,10 @@ static int palmas_gpadc_calibrate(struct palmas_gpadc *adc, int adc_chan)
->>  
->>  scrub:
->>  	return ret;
->> +
->> +report_failure:
-> 
-> This makes for complex code flow where it is not needed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 21:10:49 +0100
 
-The shown code layout would be required in the suggested software design direction.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
+This issue was detected by using the Coccinelle software.
 
-> As such I am not going to even think about taking this sort of patch.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/platform/x86/sony-laptop.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-It might take more time until similar situations will be reconsidered.
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index a16cea2be9c3..3ab6e41a8ed6 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1660,18 +1660,16 @@ static int sony_nc_setup_rfkill(struct acpi_device *device,
+ 	if (!rfk)
+ 		return -ENOMEM;
+ 
+-	if (sony_call_snc_handle(sony_rfkill_handle, 0x200, &result) < 0) {
+-		rfkill_destroy(rfk);
+-		return -1;
+-	}
++	if (sony_call_snc_handle(sony_rfkill_handle, 0x200, &result) < 0)
++		goto destroy_rfk;
++
+ 	hwblock = !(result & 0x1);
+ 
+ 	if (sony_call_snc_handle(sony_rfkill_handle,
+-				sony_rfkill_address[nc_type],
+-				&result) < 0) {
+-		rfkill_destroy(rfk);
+-		return -1;
+-	}
++				 sony_rfkill_address[nc_type],
++				 &result) < 0)
++		goto destroy_rfk;
++
+ 	swblock = !(result & 0x2);
+ 
+ 	rfkill_init_sw_state(rfk, swblock);
+@@ -1684,6 +1682,10 @@ static int sony_nc_setup_rfkill(struct acpi_device *device,
+ 	}
+ 	sony_rfkill_devices[nc_type] = rfk;
+ 	return err;
++
++destroy_rfk:
++	rfkill_destroy(rfk);
++	return -1;
+ }
+ 
+ static void sony_nc_rfkill_update(void)
+-- 
+2.14.3
 
-
->> +	dev_err(adc->dev, "TRIM read failed: %d\n", ret);
->> +	goto scrub;
->>  }
->>  
->>  static int palmas_gpadc_start_conversion(struct palmas_gpadc *adc, int adc_chan)
-
-Do any other contributors find a bit of code reduction desirable for this
-software module?
-
-Regards,
-Markus
