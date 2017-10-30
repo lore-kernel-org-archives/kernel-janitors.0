@@ -1,19 +1,17 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Mon, 30 Oct 2017 17:36:00 +0000
+From: Jakub Kicinski <kubakici@wp.pl>
+Date: Mon, 30 Oct 2017 18:04:49 +0000
 Subject: Re: [PATCH] net: ethernet: slicoss: remove redundant initialization of idx
-Message-Id: <3d566098-10dd-a9db-4d50-8fffebc71b92@gmx.de>
+Message-Id: <20171030110449.3aea9670@cakuba.netronome.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171029133809.6831-1-colin.king@canonical.com>
 In-Reply-To: <20171029133809.6831-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Lino Sanfilippo <LinoSanfilippo@gmx.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
-
-On 29.10.2017 14:38, Colin King wrote:
+On Sun, 29 Oct 2017 13:38:09 +0000, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Variable idx is being initialized and later on over-written by
@@ -42,9 +40,6 @@ On 29.10.2017 14:38, Colin King wrote:
 >  	struct slic_tx_buffer *buff;
 >  	unsigned int frames = 0;
 >  	unsigned int bytes = 0;
-> 
 
-Acked-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-
-Regards,
-Lino
+You should probably reorder the variables now so they stay longest to
+shortest.
