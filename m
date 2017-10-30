@@ -1,37 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 Oct 2017 12:16:43 +0000
-Subject: Re: [PATCH] usb: max3421: unlock on error in max3421_hub_control()
-Message-Id: <20171027121643.2ep2fryouzkrffjl@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 18:36:40 +0000
+Subject: [PATCH] pinctrl: sirf: Use common error handling code in sirfsoc_dt_node_to_map()
+Message-Id: <80911d4b-d819-335c-106e-70d7672e645b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171027062620.emm5wwdv73kjjpvl@mwanda>
-In-Reply-To: <20171027062620.emm5wwdv73kjjpvl@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Oct 27, 2017 at 02:08:38PM +0200, Jules Maselbas wrote:
-> 
-> > On Fri, Oct 27, 2017 at 11:06:36AM +0200, Jules Maselbas wrote:
-> >> Hi,
-> >> 
-> >> > We can't return directly in max3421_hub_control(), we have to unlock
-> >> > first.
-> >> Yes you are right.
-> >> I think testing if pdata is null is not necessary as driver_probe will fail if
-> >> the device do not have a platform_data.
-> >> 
-> > 
-> > In that case, let's drop my patch.  Could you send a patch for which
-> > removes the NULL check and add a Reported-by: for me?
-> It is already in the v2 (and v3) of my initial patch.
-> https://www.spinics.net/lists/devicetree/msg199901.html
-> 
-> Should I make a brand new patch (not another version)?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 19:26:56 +0100
 
-Yeah.  Greg never rebases once the tree has been shared with the public
-so you'll need to send a new patch instead of a v3.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index d64add0b84cc..5ec2f37f5180 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -89,16 +89,12 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* calculate number of maps required */
+ 	for_each_child_of_node(np_config, np) {
+ 		ret = of_property_read_string(np, "sirf,function", &function);
+-		if (ret < 0) {
+-			of_node_put(np);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto put_node;
+ 
+ 		ret = of_property_count_strings(np, "sirf,pins");
+-		if (ret < 0) {
+-			of_node_put(np);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto put_node;
+ 
+ 		count += ret;
+ 	}
+@@ -125,6 +121,10 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	*num_maps = count;
+ 
+ 	return 0;
++
++put_node:
++	of_node_put(np);
++	return ret;
+ }
+ 
+ static void sirfsoc_dt_free_map(struct pinctrl_dev *pctldev,
+-- 
+2.14.3
 
