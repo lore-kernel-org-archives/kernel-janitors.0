@@ -1,59 +1,64 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Mon, 30 Oct 2017 20:51:09 +0000
+Date: Mon, 30 Oct 2017 21:08:44 +0000
 Subject: Re: [PATCH] ravb: Use common error handling code in ravb_probe()
-Message-Id: <b45f9416-5b89-17e3-df0b-905dd01d5342@cogentembedded.com>
+Message-Id: <161f4ef9-89b7-bfad-89e7-06bdeeb9ac31@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
-In-Reply-To: <2839c3c2-0116-7549-6ff4-a49eb0a52298@users.sourceforge.net>
+ <CAMuHMdXEWpryexcrN7OYcsGfyE3Y_-7Ej2CfgvYgUbZFTTHEWg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXEWpryexcrN7OYcsGfyE3Y_-7Ej2CfgvYgUbZFTTHEWg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Eugeniu Rosca <erosca@de.adit-jv.com>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, Masaru Nagai <masaru.nagai.vx@renesas.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Simon Horman <horms+renesas@verge.net.au>, Yuval Shaia <yuval.shaia@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Eugeniu Rosca <erosca@de.adit-jv.com>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, Masaru Nagai <masaru.nagai.vx@renesas.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Simon Horman <horms+renesas@verge.net.au>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hello!
+On 10/29/2017 02:00 PM, Geert Uytterhoeven wrote:
 
-On 10/28/2017 08:19 PM, SF Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 28 Oct 2017 19:10:08 +0200
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 28 Oct 2017 19:10:08 +0200
+>>
+>> Add a jump target so that a bit of exception handling can be better reused
+>> at the end of this function.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>   drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
+>>   1 file changed, 16 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index a8822a756e08..62dbdf7de6cd 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -2069,10 +2069,9 @@ static int ravb_probe(struct platform_device *pdev)
+>>                  irq = platform_get_irq_byname(pdev, "ch22");
+>>          else
+>>                  irq = platform_get_irq(pdev, 0);
+>> -       if (irq < 0) {
+>> -               error = irq;
+>> -               goto out_release;
+>> -       }
+>> +       if (irq < 0)
+>> +               goto failure_indication;
 > 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
+> IMHO, it's really confusing that "irq" contains the error code, not "error".
 
-    Have you actually tried to see if there's any change in the resulting 
-object code? I've looked at ARM gcc 4.8.5's output and it didn't really change 
--- gcc was able to optimize these repetitive assignments pretty well...
+    I think it would have been equally confusing if 'error' was assigned to 
+'ndev->irq', etc. It's just the duality of the result of these functions that 
+makes them confusing...
 
-> This issue was detected by using the Coccinelle software.
+> Especially when jumping to a meaningless label named "failure_indication"
+> ("irq_failure" would be more intuitive).
+
+    Yeah, the label sucks. :-)
+
+> So I prefer the original code, regardless of the label name.
+
+    On the 2nd thought, the patch can be fixed up and then merged.
+
+> Gr{oetje,eeting}s,
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/ethernet/renesas/ravb_main.c | 32 ++++++++++++++++----------------
->   1 file changed, 16 insertions(+), 16 deletions(-)
-
-    Diffstat also speaks about the futility of this patch.
-
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index a8822a756e08..62dbdf7de6cd 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-
-> @@ -2226,6 +2222,10 @@ static int ravb_probe(struct platform_device *pdev)
->   	pm_runtime_put(&pdev->dev);
->   	pm_runtime_disable(&pdev->dev);
->   	return error;
-> +
-> +failure_indication:
-
-    Pretty poor label name -- I would've preferred 'no_irq' or smth...
-
-> +	error = irq;
-> +	goto out_release;
-
-    The only good thing is that looking at the assembly, I was able to figure 
-out that 'ndev' check at 'out_release' is futile... :-)
-
-[...]
+>                          Geert
 
 MBR, Sergei
