@@ -1,36 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 17:09:09 +0000
-Subject: Re: iio/accel/stk8ba50: Use common error handling code in stk8ba50_probe()
-Message-Id: <c7ee7221-3feb-1e6c-5e57-abec8c350330@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 15:45:31 +0000
+Subject: [PATCH 0/3] pinctrl-mcp23s08: Fine-tuning for two function implementations
+Message-Id: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5ab7e200-2dea-63e2-06db-0e185f563d16@users.sourceforge.net>
- <0f26a13b-7bbf-525b-a864-8aa8e13c3aef@users.sourceforge.net>
- <20171026174200.5c00b06d@archlinux>
-In-Reply-To: <20171026174200.5c00b06d@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Again, a general kernel development rule is to float only one
-> patch of a given type until you have had feedback on it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 16:40:20 +0100
 
-Some update suggestions according also to this general source code
-transformation pattern were already integrated in other software areas.
+Three update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (3):
+  Improve unlocking of a mutex in mcp23s08_irq()
+  Use common error handling code in mcp23s08_dbg_show()
+  Combine two function calls in mcp23s08_dbg_show()
 
-> These backwards goto cases are sufficiently different from your earlier
-> patch that got reviews that,
+ drivers/pinctrl/pinctrl-mcp23s08.c | 80 ++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 43 deletions(-)
 
-They are required if you would ever like to support software refactorings
-in directions which I propose occasionally.
+-- 
+2.14.3
 
-
-> at most, you should have sent one to the list and then given time
-> for it to be properly reviewed (up to a week on IIO list typically).
-
-Did I present my ideas a bit too quick in this case?
-
-Regards,
-Markus
