@@ -1,102 +1,71 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 26 Oct 2017 16:21:18 +0000
-Subject: Re: [PATCH] iio/pressure/mpl3115: Improve unlocking of a mutex in mpl3115_trigger_handler()
-Message-Id: <20171026172118.6343072c@archlinux>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 09:16:22 +0000
+Subject: Re: Adjustments for a lot of function implementations
+Message-Id: <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b93264eb-3d22-46dc-fe0a-538fbe9e600f@users.sourceforge.net>
-In-Reply-To: <b93264eb-3d22-46dc-fe0a-538fbe9e600f@users.sourceforge.net>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+ <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
+In-Reply-To: <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Peter Rosin <peda@axentia.se>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, Vaibhav Hiremath <hvaibhav@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 26 Oct 2017 16:23:45 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+> While we do not mind cleanup patches, the way you post them (one fix per file)
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Oct 2017 16:10:46 +0200
-> 
-> Adjust jump targets so that a call of the function "mutex_unlock" is stored
-> at the end of this function implementation.
-> Replace three calls by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
+I find it safer in this way  while I was browsing through the landscape of Linux
+software components.
 
-Markus,
 
-I would suggest only sending on patch like this out at a time in order
-to see if there are issues with the approach before you waste your time
-generating lots of them.
+> is really annoying and takes us too much time to review.
 
-This has the same issue as in one of the earlier patches.  The resulting
-code is harder to read offsetting any gains by unlocking in one place.
+It is just the case that there are so many remaining open issues.
 
-Jonathan
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/iio/pressure/mpl3115.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
-> index 7537547fb7ee..f39e6f42a9c0 100644
-> --- a/drivers/iio/pressure/mpl3115.c
-> +++ b/drivers/iio/pressure/mpl3115.c
-> @@ -152,38 +152,36 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void *p)
->  
->  	mutex_lock(&data->lock);
->  	ret = mpl3115_request(data);
-> -	if (ret < 0) {
-> -		mutex_unlock(&data->lock);
-> -		goto done;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->  
->  	memset(buffer, 0, sizeof(buffer));
->  	if (test_bit(0, indio_dev->active_scan_mask)) {
->  		ret = i2c_smbus_read_i2c_block_data(data->client,
->  			MPL3115_OUT_PRESS, 3, &buffer[pos]);
-> -		if (ret < 0) {
-> -			mutex_unlock(&data->lock);
-> -			goto done;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
-> +
->  		pos += 4;
->  	}
->  
->  	if (test_bit(1, indio_dev->active_scan_mask)) {
->  		ret = i2c_smbus_read_i2c_block_data(data->client,
->  			MPL3115_OUT_TEMP, 2, &buffer[pos]);
-> -		if (ret < 0) {
-> -			mutex_unlock(&data->lock);
-> -			goto done;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
->  	}
->  	mutex_unlock(&data->lock);
->  
->  	iio_push_to_buffers_with_timestamp(indio_dev, buffer,
->  		iio_get_time_ns(indio_dev));
-> -
-> -done:
-> +notify_trigger:
->  	iio_trigger_notify_done(indio_dev->trig);
->  	return IRQ_HANDLED;
-> +
-> +unlock:
+> I'll take the "Fix a possible null pointer" patch since it is an actual bug fix,
 
-Absolutely not.  This is much less readable than the original.
+Thanks for a bit of change acceptance.
 
-> +	mutex_unlock(&data->lock);
-> +	goto notify_trigger;
 
->  }
->  
->  static const struct iio_chan_spec mpl3115_channels[] = {
+> but will reject the others, not just this driver but all of them that are currently
+> pending in our patchwork (https://patchwork.linuxtv.org).
 
+Will any chances evolve to integrate 146 patches in any other combination?
+
+
+> Feel free to repost, but only if you organize the patch as either fixing the same type of
+> issue for a whole subdirectory (media/usb, media/pci, etc)
+
+Can we achieve an agreement on the shown change patterns?
+
+Is a consensus possible for involved update candidates?
+
+
+> or fixing all issues for a single driver.
+
+I find that I did this already.
+
+
+> Actual bug fixes (like the null pointer patch in this series) can still be posted as
+> separate patches, but cleanups shouldn't.
+
+I got an other software development opinion.
+
+
+> Just so you know, I'll reject any future patch series that do not follow these rules.
+> Just use common sense when posting these things in the future.
+
+Do we need to try any additional communication tools out?
+
+
+> I would also suggest that your time might be spent more productively if you would
+> work on some more useful projects.
+
+I hope that various change possibilities (from my selection) will become useful
+for more Linux users.
+How will the clarification evolve further?
+
+
+Regards,
+Markus
