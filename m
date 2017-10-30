@@ -1,63 +1,91 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 19:50:28 +0000
-Subject: [PATCH] Input-max8925_onkey: Use common error handling code in max8925_onkey_probe()
-Message-Id: <f4c45d10-d69b-58ec-5ac2-1946481000dd@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 15:46:39 +0000
+Subject: [PATCH 1/3] pinctrl: mcp23s08: Improve unlocking of a mutex in mcp23s08_irq()
+Message-Id: <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 21:40:51 +0200
+Date: Mon, 30 Oct 2017 16:03:12 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only twice in this function implementation.
+
+* Replace five calls by goto statements.
+
+* Adjust five condition checks.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/misc/max8925_onkey.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/input/misc/max8925_onkey.c b/drivers/input/misc/max8925_onkey.c
-index 7c49b8d23894..b60b8c2b5acf 100644
---- a/drivers/input/misc/max8925_onkey.c
-+++ b/drivers/input/misc/max8925_onkey.c
-@@ -71,16 +71,12 @@ static int max8925_onkey_probe(struct platform_device *pdev)
- 	int irq[2], error;
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 3e40d4245512..919eb7268331 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -457,31 +457,22 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 		defval_changed, gpio_set;
  
- 	irq[0] = platform_get_irq(pdev, 0);
--	if (irq[0] < 0) {
--		dev_err(&pdev->dev, "No IRQ resource!\n");
--		return -EINVAL;
+ 	mutex_lock(&mcp->lock);
+-	if (mcp_read(mcp, MCP_INTF, &intf) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
 -	}
-+	if (irq[0] < 0)
-+		goto report_failure;
++	if (mcp_read(mcp, MCP_INTF, &intf))
++		goto unlock;
  
- 	irq[1] = platform_get_irq(pdev, 1);
--	if (irq[1] < 0) {
--		dev_err(&pdev->dev, "No IRQ resource!\n");
--		return -EINVAL;
+-	if (mcp_read(mcp, MCP_INTCAP, &intcap) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
 -	}
-+	if (irq[1] < 0)
-+		goto report_failure;
++	if (mcp_read(mcp, MCP_INTCAP, &intcap))
++		goto unlock;
  
- 	info = devm_kzalloc(&pdev->dev, sizeof(struct max8925_onkey_info),
- 			    GFP_KERNEL);
-@@ -131,6 +127,10 @@ static int max8925_onkey_probe(struct platform_device *pdev)
- 	device_init_wakeup(&pdev->dev, 1);
+-	if (mcp_read(mcp, MCP_INTCON, &intcon) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_INTCON, &intcon))
++		goto unlock;
  
- 	return 0;
+-	if (mcp_read(mcp, MCP_DEFVAL, &defval) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_DEFVAL, &defval))
++		goto unlock;
+ 
+ 	/* This clears the interrupt(configurable on S18) */
+-	if (mcp_read(mcp, MCP_GPIO, &gpio) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_GPIO, &gpio))
++		goto unlock;
 +
-+report_failure:
-+	dev_err(&pdev->dev, "No IRQ resource!\n");
-+	return -EINVAL;
+ 	gpio_orig = mcp->cached_gpio;
+ 	mcp->cached_gpio = gpio;
+ 	mutex_unlock(&mcp->lock);
+@@ -543,6 +534,10 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	}
+ 
+ 	return IRQ_HANDLED;
++
++unlock:
++	mutex_unlock(&mcp->lock);
++	return IRQ_HANDLED;
  }
  
- static int __maybe_unused max8925_onkey_suspend(struct device *dev)
+ static void mcp23s08_irq_mask(struct irq_data *data)
 -- 
 2.14.3
 
