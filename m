@@ -1,42 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Oct 2017 20:09:39 +0000
-Subject: [PATCH 2/3] char/bsr: Improve a size determination in bsr_add_node()
-Message-Id: <504858bd-8add-3820-541e-a3f0aa64df65@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 20:50:10 +0000
+Subject: [PATCH] bq2415x_charger: Use common error handling code in bq2415x_timer_work()
+Message-Id: <48b34d35-8c41-d25b-0cb7-6257b37c5a44@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ff23c201-8043-124e-88fd-25e5abd382fb@users.sourceforge.net>
-In-Reply-To: <ff23c201-8043-124e-88fd-25e5abd382fb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-pm@vger.kernel.org, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Oct 2017 21:25:46 +0200
+Date: Mon, 30 Oct 2017 21:45:09 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/bsr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/power/supply/bq2415x_charger.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
-index 865eb457e539..d0597dfa4d88 100644
---- a/drivers/char/bsr.c
-+++ b/drivers/char/bsr.c
-@@ -197,8 +197,7 @@ static int bsr_add_node(struct device_node *bn)
- 	num_bsr_devs = bsr_bytes_len / sizeof(u32);
+diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
+index c4770a94cc8e..8385e02e1634 100644
+--- a/drivers/power/supply/bq2415x_charger.c
++++ b/drivers/power/supply/bq2415x_charger.c
+@@ -914,16 +914,12 @@ static void bq2415x_timer_work(struct work_struct *work)
+ 	}
  
- 	for (i = 0 ; i < num_bsr_devs; i++) {
--		struct bsr_dev *cur = kzalloc(sizeof(struct bsr_dev),
--					      GFP_KERNEL);
-+		struct bsr_dev *cur = kzalloc(sizeof(*cur), GFP_KERNEL);
- 		struct resource res;
- 		int result;
+ 	boost = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_STATUS);
+-	if (boost < 0) {
+-		bq2415x_timer_error(bq, "Unknown error");
+-		return;
+-	}
++	if (boost < 0)
++		goto report_timer_error;
  
+ 	error = bq2415x_exec_command(bq, BQ2415X_FAULT_STATUS);
+-	if (error < 0) {
+-		bq2415x_timer_error(bq, "Unknown error");
+-		return;
+-	}
++	if (error < 0)
++		goto report_timer_error;
+ 
+ 	if (boost) {
+ 		switch (error) {
+@@ -992,6 +988,10 @@ static void bq2415x_timer_work(struct work_struct *work)
+ 	}
+ 
+ 	schedule_delayed_work(&bq->work, BQ2415X_TIMER_TIMEOUT * HZ);
++	return;
++
++report_timer_error:
++	bq2415x_timer_error(bq, "Unknown error");
+ }
+ 
+ /**** power supply interface code ****/
 -- 
-2.14.2
+2.14.3
 
