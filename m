@@ -1,40 +1,89 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 12 Oct 2017 10:43:12 +0000
-Subject: [PATCH 04/10] staging/irda/net: Delete an unnecessary variable initialisation in irlap_recv_discover
-Message-Id: <9ef40fde-7e60-716c-8ac5-232c04fe4401@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 15:47:55 +0000
+Subject: [PATCH 2/3] pinctrl: mcp23s08: Use common error handling code in mcp23s08_dbg_show()
+Message-Id: <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
-In-Reply-To: <8152401b-d68d-c4fe-2619-82a09e0c52ec@users.sourceforge.net>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Corentin Labbe <clabbe.montjoie@gmail.com>, David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, Georgiana Chelu <georgiana.chelu93@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Samuel Ortiz <samuel@sortiz.org>, Srishti Sharma <srishtishar@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Yuan Linyu <Linyu.Yuan@alcatel-sbell.com.cn>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Oct 2017 22:18:34 +0200
+Date: Mon, 30 Oct 2017 16:26:09 +0100
 
-The local variable "discovery" will only be used in a single if branch
-of this function. Thus omit the explicit initialisation at the beginning.
+* The script "checkpatch.pl" pointed information out like the following.
+
+  WARNING: Prefer seq_puts to seq_printf
+
+  Thus fix the affected source code places.
+
+* Adjust jump targets so that a bit of exception handling can be better
+  reused at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/irda/net/irlap_frame.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/irda/net/irlap_frame.c b/drivers/staging/irda/net/irlap_frame.c
-index 94972db87951..33259ed5f3cd 100644
---- a/drivers/staging/irda/net/irlap_frame.c
-+++ b/drivers/staging/irda/net/irlap_frame.c
-@@ -481,7 +481,7 @@ static void irlap_recv_discovery_xid_cmd(struct irlap_cb *self,
- 					 struct irlap_info *info)
- {
- 	struct xid_frame *xid;
--	discovery_t *discovery = NULL;
-+	discovery_t *discovery;
- 	__u8 *discovery_info;
- 	char *text;
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 919eb7268331..d1a7c627dbb9 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -723,25 +723,20 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 	mutex_lock(&mcp->lock);
  
+ 	t = __check_mcp23s08_reg_cache(mcp);
+-	if (t) {
+-		seq_printf(s, " I/O Error\n");
+-		goto done;
+-	}
++	if (t)
++		goto report_failure;
++
+ 	t = mcp_read(mcp, MCP_IODIR, &iodir);
+-	if (t) {
+-		seq_printf(s, " I/O Error\n");
+-		goto done;
+-	}
++	if (t)
++		goto report_failure;
++
+ 	t = mcp_read(mcp, MCP_GPIO, &gpio);
+-	if (t) {
+-		seq_printf(s, " I/O Error\n");
+-		goto done;
+-	}
++	if (t)
++		goto report_failure;
++
+ 	t = mcp_read(mcp, MCP_GPPU, &gppu);
+-	if (t) {
+-		seq_printf(s, " I/O Error\n");
+-		goto done;
+-	}
++	if (t)
++		goto report_failure;
+ 
+ 	for (t = 0, mask = BIT(0); t < chip->ngpio; t++, mask <<= 1) {
+ 		const char *label;
+@@ -758,8 +753,13 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		/* NOTE:  ignoring the irq-related registers */
+ 		seq_puts(s, "\n");
+ 	}
+-done:
++unlock:
+ 	mutex_unlock(&mcp->lock);
++	return;
++
++report_failure:
++	seq_puts(s, " I/O Error\n");
++	goto unlock;
+ }
+ 
+ #else
 -- 
-2.14.2
+2.14.3
 
