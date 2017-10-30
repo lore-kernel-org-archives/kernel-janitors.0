@@ -1,138 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 16:23:09 +0000
-Subject: [PATCH] forcedeth: Use common error handling code in two functions
-Message-Id: <bf6da649-44e9-4a3b-8cfd-2603b826257f@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 15:49:21 +0000
+Subject: [PATCH 3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
+Message-Id: <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Philippe Reynes <tremyfr@gmail.com>, Stephen Hemminger <stephen@networkplumber.org>, Zhu Yanjun <yanjun.zhu@oracle.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 18:15:44 +0200
+Date: Mon, 30 Oct 2017 16:34:44 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of these functions.
+* Print a line break together with other data in a single function call.
 
-This issue was detected by using the Coccinelle software.
+* Adjust indentation.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/nvidia/forcedeth.c | 42 ++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
-index a235e8881af9..08dc2e8e5878 100644
---- a/drivers/net/ethernet/nvidia/forcedeth.c
-+++ b/drivers/net/ethernet/nvidia/forcedeth.c
-@@ -2827,10 +2827,8 @@ static int nv_rx_process(struct net_device *dev, int limit)
- 				if (unlikely(flags & NV_RX_ERROR)) {
- 					if ((flags & NV_RX_ERROR_MASK) = NV_RX_ERROR4) {
- 						len = nv_getlen(dev, skb->data, len);
--						if (len < 0) {
--							dev_kfree_skb(skb);
--							goto next_pkt;
--						}
-+						if (len < 0)
-+							goto next_free_skb;
- 					}
- 					/* framing errors are soft errors */
- 					else if ((flags & NV_RX_ERROR_MASK) = NV_RX_FRAMINGERR) {
-@@ -2844,13 +2842,12 @@ static int nv_rx_process(struct net_device *dev, int limit)
- 							np->stat_rx_missed_errors++;
- 							u64_stats_update_end(&np->swstats_rx_syncp);
- 						}
--						dev_kfree_skb(skb);
--						goto next_pkt;
-+
-+						goto next_free_skb;
- 					}
- 				}
- 			} else {
--				dev_kfree_skb(skb);
--				goto next_pkt;
-+				goto next_free_skb;
- 			}
- 		} else {
- 			if (likely(flags & NV_RX2_DESCRIPTORVALID)) {
-@@ -2858,10 +2855,8 @@ static int nv_rx_process(struct net_device *dev, int limit)
- 				if (unlikely(flags & NV_RX2_ERROR)) {
- 					if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_ERROR4) {
- 						len = nv_getlen(dev, skb->data, len);
--						if (len < 0) {
--							dev_kfree_skb(skb);
--							goto next_pkt;
--						}
-+						if (len < 0)
-+							goto next_free_skb;
- 					}
- 					/* framing errors are soft errors */
- 					else if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_FRAMINGERR) {
-@@ -2870,16 +2865,14 @@ static int nv_rx_process(struct net_device *dev, int limit)
- 					}
- 					/* the rest are hard errors */
- 					else {
--						dev_kfree_skb(skb);
--						goto next_pkt;
-+						goto next_free_skb;
- 					}
- 				}
- 				if (((flags & NV_RX2_CHECKSUMMASK) = NV_RX2_CHECKSUM_IP_TCP) || /*ip and tcp */
- 				    ((flags & NV_RX2_CHECKSUMMASK) = NV_RX2_CHECKSUM_IP_UDP))   /*ip and udp */
- 					skb->ip_summed = CHECKSUM_UNNECESSARY;
- 			} else {
--				dev_kfree_skb(skb);
--				goto next_pkt;
-+				goto next_free_skb;
- 			}
- 		}
- 		/* got a valid packet - forward it to the network core */
-@@ -2900,6 +2893,10 @@ static int nv_rx_process(struct net_device *dev, int limit)
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index d1a7c627dbb9..79b585d46289 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -745,13 +745,12 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		if (!label)
+ 			continue;
+ 
+-		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s",
+-			chip->base + t, bank, t, label,
+-			(iodir & mask) ? "in " : "out",
+-			(gpio & mask) ? "hi" : "lo",
+-			(gppu & mask) ? "up" : "  ");
++		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s\n",
++			   chip->base + t, bank, t, label,
++			   (iodir & mask) ? "in " : "out",
++			   (gpio & mask) ? "hi" : "lo",
++			   (gppu & mask) ? "up" : "  ");
+ 		/* NOTE:  ignoring the irq-related registers */
+-		seq_puts(s, "\n");
  	}
- 
- 	return rx_work;
-+
-+next_free_skb:
-+	dev_kfree_skb(skb);
-+	goto next_pkt;
- }
- 
- static int nv_rx_process_optimized(struct net_device *dev, int limit)
-@@ -2932,10 +2929,8 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
- 			if (unlikely(flags & NV_RX2_ERROR)) {
- 				if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_ERROR4) {
- 					len = nv_getlen(dev, skb->data, len);
--					if (len < 0) {
--						dev_kfree_skb(skb);
--						goto next_pkt;
--					}
-+					if (len < 0)
-+						goto next_free_skb;
- 				}
- 				/* framing errors are soft errors */
- 				else if ((flags & NV_RX2_ERROR_MASK) = NV_RX2_FRAMINGERR) {
-@@ -2944,8 +2939,7 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
- 				}
- 				/* the rest are hard errors */
- 				else {
--					dev_kfree_skb(skb);
--					goto next_pkt;
-+					goto next_free_skb;
- 				}
- 			}
- 
-@@ -2989,6 +2983,10 @@ static int nv_rx_process_optimized(struct net_device *dev, int limit)
- 	}
- 
- 	return rx_work;
-+
-+next_free_skb:
-+	dev_kfree_skb(skb);
-+	goto next_pkt;
- }
- 
- static void set_bufsize(struct net_device *dev)
+ unlock:
+ 	mutex_unlock(&mcp->lock);
 -- 
 2.14.3
 
