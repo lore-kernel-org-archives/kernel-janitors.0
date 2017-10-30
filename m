@@ -1,42 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 20:12:41 +0000
-Subject: [PATCH 2/5] wlcore: Delete an unnecessary check statement in wlcore_set_beacon_template()
-Message-Id: <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Mon, 30 Oct 2017 13:26:16 +0000
+Subject: Re: [PATCH 2/5] wlcore: Delete an unnecessary check statement in wlcore_set_beacon_template()
+Message-Id: <CAGRGNgWFgg5oyRcgP6mp--oF6VPcD1k13SyKmmK3cc8KPC05BQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
-In-Reply-To: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
+References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net> <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
+In-Reply-To: <ccb3f6ab-3c39-9c34-518f-f7f36615930b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 19:45:07 +0100
+On Mon, Oct 30, 2017 at 7:12 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 29 Oct 2017 19:45:07 +0100
+>
+> A goto statement jumped to a target which followed a condition check
+> immediately without the specification of useful actions between.
+> Thus remove such unnecessary source code at the end of this function.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-A goto statement jumped to a target which followed a condition check
-immediately without the specification of useful actions between.
-Thus remove such unnecessary source code at the end of this function.
+Looks good to me.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/ti/wlcore/main.c | 3 ---
- 1 file changed, 3 deletions(-)
+Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
 
-diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-index 48380d48ef09..efea811c1c83 100644
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -4085,9 +4085,6 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
- 					      min_rate);
- end_bcn:
- 	dev_kfree_skb(beacon);
--	if (ret < 0)
--		goto out;
--
- out:
- 	return ret;
- }
 -- 
-2.14.3
+Julian Calaby
 
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
