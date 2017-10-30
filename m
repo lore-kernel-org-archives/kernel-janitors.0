@@ -1,70 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 20:56:31 +0000
-Subject: [PATCH] lan78xx: Use common error handling code in lan78xx_phy_init()
-Message-Id: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
+From: <Woojung.Huh@microchip.com>
+Date: Mon, 30 Oct 2017 14:32:59 +0000
+Subject: RE: [PATCH] lan78xx: Use common error handling code in lan78xx_phy_init()
+Message-Id: <9235D6609DB808459E95D78E17F2E43D40B9D816@CHN-SV-EXMX02.mchp-main.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
+In-Reply-To: <1aa46505-686c-8e92-78a8-b2a562ccbb9d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com, Woojung Huh <woojung.huh@microchip.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: elfring@users.sourceforge.net, netdev@vger.kernel.org, linux-usb@vger.kernel.org, UNGLinuxDriver@microchip.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 22:42:52 +0200
-
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
-
-* Replace two calls of the function "netdev_err" by goto statements.
-
-* Adjust two condition checks.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/usb/lan78xx.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 0161f77641fa..ff07e20621e3 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2030,17 +2030,15 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 		/* external PHY fixup for KSZ9031RNX */
- 		ret = phy_register_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0,
- 						 ksz9031rnx_fixup);
--		if (ret < 0) {
--			netdev_err(dev->net, "fail to register fixup\n");
--			return ret;
--		}
-+		if (ret)
-+			goto report_fixup_failure;
-+
- 		/* external PHY fixup for LAN8835 */
- 		ret = phy_register_fixup_for_uid(PHY_LAN8835, 0xfffffff0,
- 						 lan8835_fixup);
--		if (ret < 0) {
--			netdev_err(dev->net, "fail to register fixup\n");
--			return ret;
--		}
-+		if (ret)
-+			goto report_fixup_failure;
-+
- 		/* add more external PHY fixup here if needed */
- 
- 		phydev->is_internal = false;
-@@ -2093,6 +2091,10 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
- 
- 	return ret;
-+
-+report_fixup_failure:
-+	netdev_err(dev->net, "fail to register fixup\n");
-+	return ret;
- }
- 
- static int lan78xx_set_rx_max_frame_length(struct lan78xx_net *dev, int size)
--- 
-2.14.3
-
+PiBGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBbbWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9y
+Z2UubmV0XQ0KPiBTZW50OiBTYXR1cmRheSwgT2N0b2JlciAyOCwgMjAxNyA0OjU3IFBNDQo+IFRv
+OiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBVTkdM
+aW51eERyaXZlcjsNCj4gV29vanVuZyBIdWggLSBDMjE2OTkNCj4gQ2M6IExLTUw7IGtlcm5lbC1q
+YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBsYW43OHh4OiBVc2Ug
+Y29tbW9uIGVycm9yIGhhbmRsaW5nIGNvZGUgaW4NCj4gbGFuNzh4eF9waHlfaW5pdCgpDQo+IA0K
+PiBGcm9tOiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+DQo+
+IERhdGU6IFNhdCwgMjggT2N0IDIwMTcgMjI6NDI6NTIgKzAyMDANCj4gDQo+ICogQWRkIGEganVt
+cCB0YXJnZXQgc28gdGhhdCBhIHNwZWNpZmljIGVycm9yIG1lc3NhZ2UgaXMgc3RvcmVkIG9ubHkg
+b25jZQ0KPiAgIGF0IHRoZSBlbmQgb2YgdGhpcyBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvbi4NCj4g
+DQo+ICogUmVwbGFjZSB0d28gY2FsbHMgb2YgdGhlIGZ1bmN0aW9uICJuZXRkZXZfZXJyIiBieSBn
+b3RvIHN0YXRlbWVudHMuDQo+IA0KPiAqIEFkanVzdCB0d28gY29uZGl0aW9uIGNoZWNrcy4NCj4g
+DQo+IFRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNvZnR3
+YXJlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMu
+c291cmNlZm9yZ2UubmV0Pg0KPiAtLS0NCg0KUmV2aWV3ZWQtYnk6IFdvb2p1bmcgSHVoIDxXb29q
+dW5nLkh1aEBtaWNyb2NoaXAuY29tPg0K
