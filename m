@@ -1,54 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 28 Oct 2017 07:39:44 +0000
+Date: Mon, 30 Oct 2017 08:04:36 +0000
 Subject: Re: IB/mlx4: Use common error handling code in __mlx4_ib_create_flow()
-Message-Id: <cd1c87f8-84f5-ccff-2bf3-9c46de3c0f5e@users.sourceforge.net>
+Message-Id: <e2febce9-4b80-a40e-024e-5c24964301ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0bcea3cf-91e3-01d5-8d80-34cd6b611fb1@users.sourceforge.net>
- <20171027193902.GJ16127@mtr-leonro.local>
- <5cc2ecf7-cc6e-76e0-c73b-08ce717fef83@users.sourceforge.net>
- <7c5a7827-209c-9bb7-5b77-ac62d3d54604@intel.com>
-In-Reply-To: <7c5a7827-209c-9bb7-5b77-ac62d3d54604@intel.com>
+ <70843f43-03c5-8295-643a-4f228ff2e907@intel.com>
+ <0c92fc8e-ecb8-c7ed-0b4c-721752297222@users.sourceforge.net>
+ <20171027193601.GI16127@mtr-leonro.local>
+In-Reply-To: <20171027193601.GI16127-U/DQcQFIOTAAJjI8aNfphQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: Dennis Dalessandro <dennis.dalessandro@intel.com>, linux-rdma@vger.kernel.org
-Cc: Leon Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Yishai Hadas <yishaih@mellanox.com>, Yuval Shaia <yuval.shaia@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Yuval Shaia <yuval.shaia-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
->> I guess that the shown change possibility can reduce the object code size
->> for the affected function.
+>>> I mean you aren't really making the code any smaller
+>>
+>> Would anybody like to check corresponding effects in more detail
+>> after a specific function call was replaced by a goto statement?
+>=20
+> You are supposed to do it and not "anybody".
+
+I can offer another bit of information for this software development discus=
+sion.
+
+The following build settings were active in my =93Makefile=94 for this Linu=
+x test case.
+
 =85
-> You guess?
-
-I am convinced somehow!
-
-=20
-> Well perhaps you should find out for certain.
-
-I am trying to point another general implementation detail out:
-A jump to an existing call of a function like =93mlx4_free_cmd_mailbox=94
-can be useful if you would like to optimise also this software for
-smaller code size.
-
-Are you looking for an information source which you would trust
-more (than me)?
+HOSTCFLAGS   =3D -Wall -Wmissing-prototypes -Wstrict-prototypes -O0 -fomit-=
+frame-pointer -std=3Dgnu89
+=85
 
 
-> Is it an appreciable impact?
+The affected source file can be compiled for the processor architecture =93=
+x86_64=94
+by a tool like =93GCC 6.4.1+r251631-1.3=94 from the software distribution
+=93openSUSE Tumbleweed=94 with the following command example.
 
-I hope so.
+my_cc=3D/usr/bin/gcc-6 \
+&& my_module=3Ddrivers/infiniband/hw/mlx4/main.o \
+&& git checkout next-20171009 \
+&& make -j4 CC=3D"${my_cc}" HOSTCC=3D"${my_cc}" allmodconfig "${my_module}"=
+ \
+&& size "${my_module}" \
+&& git checkout next_fine-tuning_in_mlx4_1 \
+&& make -j4 CC=3D"${my_cc}" HOSTCC=3D"${my_cc}" allmodconfig "${my_module}"=
+ \
+&& size "${my_module}"
 
-But I showed only the replacement of two function calls here.
-I am curious if you care for a small effect at a special place.
 
-A similar refactoring can have a bigger influence in other
-software modules, can't it?
+Do you find the following details useful for further clarification?
 
-
-There might be an other useful side effect. My concrete proposal
-can be questionable as usual.
-It seems that the software development attention was increased
-a bit so that contributors started thinking about the relevance
-of the error code =93-EINVAL=94 at another source code place again.
+text: -32
+data: 0
+bss:  0
 
 Regards,
 Markus
