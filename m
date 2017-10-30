@@ -1,79 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 20:14:30 +0000
-Subject: [PATCH 4/5] wlcore: Use common error handling code in wlcore_set_beacon_template()
-Message-Id: <f50c8edf-834d-9003-5a3c-dc83ec4016ce@users.sourceforge.net>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Mon, 30 Oct 2017 13:33:51 +0000
+Subject: Re: [PATCH 4/5] wlcore: Use common error handling code in wlcore_set_beacon_template()
+Message-Id: <CAGRGNgUEFpva3ct-idAzip97eVgoDDTeEArAPcjvf90VSORA2g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
-In-Reply-To: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net>
+References: <dc2b8a7c-b4a9-2f92-12b4-a1d0d6911d7c@users.sourceforge.net> <f50c8edf-834d-9003-5a3c-dc83ec4016ce@users.sourceforge.net>
+In-Reply-To: <f50c8edf-834d-9003-5a3c-dc83ec4016ce@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>, Eyal Reizer <eyalr@ti.com>, Iain Hunter <drhunter95@gmail.com>, James Minor <james.minor@ni.com>, Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Maxim Altshul <maxim.altshul@ti.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 29 Oct 2017 20:16:22 +0100
+Hi Markus,
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+On Mon, Oct 30, 2017 at 7:14 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 29 Oct 2017 20:16:22 +0100
+>
+> Adjust jump targets so that a bit of exception handling can be better
+> reused at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/ti/wlcore/main.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+However,
 
-diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-index 0365b5e40a8d..12a9d6509382 100644
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -4024,10 +4024,9 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
- 	wl1271_debug(DEBUG_MASTER, "beacon updated");
- 
- 	ret = wl1271_ssid_set(wlvif, beacon, ieoffset);
--	if (ret < 0) {
--		dev_kfree_skb(beacon);
--		goto out;
--	}
-+	if (ret < 0)
-+		goto free_skb;
-+
- 	min_rate = wl1271_tx_min_rate_get(wl, wlvif->basic_rate_set);
- 	tmpl_id = is_ap ? CMD_TEMPL_AP_BEACON :
- 		CMD_TEMPL_BEACON;
-@@ -4035,10 +4034,8 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
- 				      beacon->data,
- 				      beacon->len, 0,
- 				      min_rate);
--	if (ret < 0) {
--		dev_kfree_skb(beacon);
--		goto out;
--	}
-+	if (ret < 0)
-+		goto free_skb;
- 
- 	wlvif->wmm_enabled  		cfg80211_find_vendor_ie(WLAN_OUI_MICROSOFT,
-@@ -4051,7 +4048,7 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
- 	 * by usermode, don't use the beacon data.
- 	 */
- 	if (test_bit(WLVIF_FLAG_AP_PROBE_RESP_SET, &wlvif->flags))
--		goto end_bcn;
-+		goto free_skb;
- 
- 	/* remove TIM ie from probe response */
- 	wl12xx_remove_ie(beacon, WLAN_EID_TIM, ieoffset);
-@@ -4081,9 +4078,8 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
- 					      beacon->data,
- 					      beacon->len, 0,
- 					      min_rate);
--end_bcn:
-+free_skb:
- 	dev_kfree_skb(beacon);
--out:
- 	return ret;
- }
- 
+> ---
+>  drivers/net/wireless/ti/wlcore/main.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+> index 0365b5e40a8d..12a9d6509382 100644
+> --- a/drivers/net/wireless/ti/wlcore/main.c
+> +++ b/drivers/net/wireless/ti/wlcore/main.c
+> @@ -4081,9 +4078,8 @@ static int wlcore_set_beacon_template(struct wl1271 *wl,
+>                                               beacon->data,
+>                                               beacon->len, 0,
+>                                               min_rate);
+> -end_bcn:
+> +free_skb:
+
+Why rename the label?
+
+Thanks,
+
 -- 
-2.14.3
+Julian Calaby
 
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
