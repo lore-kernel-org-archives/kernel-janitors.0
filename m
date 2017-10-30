@@ -1,40 +1,94 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Oct 2017 07:32:50 +0000
-Subject: Re: drm/rcar-du: Adjust 14 checks for null pointers
-Message-Id: <20171025073250.i6v6jwijbkmybmtk@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 17:51:19 +0000
+Subject: [PATCH] pinctrl: pistachio: Use common error handling code in pistachio_gpio_register()
+Message-Id: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7d5e68c7-2d64-0131-1a08-eeb4e03cc113@users.sourceforge.net>
- <2dd8c930-77e8-a2ee-6356-fc9c1d21384d@users.sourceforge.net>
- <20171025060209.pqtyqk4weduvmzxj@mwanda>
- <2d491a67-184a-c03f-e6ee-da88066e97f0@users.sourceforge.net>
-In-Reply-To: <2d491a67-184a-c03f-e6ee-da88066e97f0@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-gpio@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Damien Horsley <Damien.Horsley@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
 
-On Wed, Oct 25, 2017 at 08:44:38AM +0200, SF Markus Elfring wrote:
-> >> The script “checkpatch.pl” pointed information out like the following.
-> >>
-> >> Comparison to NULL could be written !…
-> >>
-> >> Thus fix the affected source code places.
-> >>
-> > 
-> > This one is fine
-> 
-> This kind of feedback is nice.
-> 
-> 
-> > except for the commit message.
-> 
-> Would you like to support Unicode characters there?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 18:40:10 +0100
 
-Multiple people have answered this question already and I have answered
-it multiple times.
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-pistachio.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+index 55375b1b3cc8..b314eb61bf35 100644
+--- a/drivers/pinctrl/pinctrl-pistachio.c
++++ b/drivers/pinctrl/pinctrl-pistachio.c
+@@ -1362,21 +1362,21 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (!child) {
+ 			dev_err(pctl->dev, "No node for bank %u\n", i);
+ 			ret = -ENODEV;
+-			goto err;
++			goto remove_chips;
+ 		}
+ 
+ 		if (!of_find_property(child, "gpio-controller", NULL)) {
+ 			dev_err(pctl->dev,
+ 				"No gpio-controller property for bank %u\n", i);
+ 			ret = -ENODEV;
+-			goto err;
++			goto remove_chips;
+ 		}
+ 
+ 		irq = irq_of_parse_and_map(child, 0);
+ 		if (irq < 0) {
+ 			dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
+ 			ret = irq;
+-			goto err;
++			goto remove_chips;
+ 		}
+ 
+ 		bank = &pctl->gpio_banks[i];
+@@ -1389,7 +1389,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (ret < 0) {
+ 			dev_err(pctl->dev, "Failed to add GPIO chip %u: %d\n",
+ 				i, ret);
+-			goto err;
++			goto remove_chips;
+ 		}
+ 
+ 		ret = gpiochip_irqchip_add(&bank->gpio_chip, &bank->irq_chip,
+@@ -1397,8 +1397,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (ret < 0) {
+ 			dev_err(pctl->dev, "Failed to add IRQ chip %u: %d\n",
+ 				i, ret);
+-			gpiochip_remove(&bank->gpio_chip);
+-			goto err;
++			goto remove_chip;
+ 		}
+ 		gpiochip_set_chained_irqchip(&bank->gpio_chip, &bank->irq_chip,
+ 					     irq, pistachio_gpio_irq_handler);
+@@ -1409,13 +1408,15 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (ret < 0) {
+ 			dev_err(pctl->dev, "Failed to add GPIO range %u: %d\n",
+ 				i, ret);
+-			gpiochip_remove(&bank->gpio_chip);
+-			goto err;
++			goto remove_chip;
+ 		}
+ 	}
+ 
+ 	return 0;
+-err:
++
++remove_chip:
++	gpiochip_remove(&bank->gpio_chip);
++remove_chips:
+ 	for (; i > 0; i--) {
+ 		bank = &pctl->gpio_banks[i - 1];
+ 		gpiochip_remove(&bank->gpio_chip);
+-- 
+2.14.3
 
