@@ -1,29 +1,47 @@
-From: Jean Delvare <jdelvare@suse.de>
-Date: Wed, 25 Oct 2017 14:33:47 +0000
-Subject: Re: [PATCH] I2C-PIIX4: Use common error handling code in piix4_probe()
-Message-Id: <1508942027.5353.9.camel@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 12:01:47 +0000
+Subject: [PATCH] net: hso: remove redundant unused variable dev
+Message-Id: <20171031120147.22348-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be36ce5f-9e75-6c05-86a2-ea8368f09dc1@users.sourceforge.net>
-In-Reply-To: <be36ce5f-9e75-6c05-86a2-ea8368f09dc1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On mer., 2017-10-25 at 13:40 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Oct 2017 13:30:18 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm no longer taking patches from you.
+The pointer dev is being assigned but is never used, hence it is
+redundant and can be removed. Cleans up clang warning:
 
+drivers/net/usb/hso.c:2280:2: warning: Value stored to 'dev' is
+never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/usb/hso.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index d7a3379ea668..42d7edcc3106 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2263,7 +2263,6 @@ static void hso_serial_common_free(struct hso_serial *serial)
+ static int hso_serial_common_create(struct hso_serial *serial, int num_urbs,
+ 				    int rx_size, int tx_size)
+ {
+-	struct device *dev;
+ 	int minor;
+ 	int i;
+ 
+@@ -2277,7 +2276,6 @@ static int hso_serial_common_create(struct hso_serial *serial, int num_urbs,
+ 	serial->parent->dev = tty_port_register_device_attr(&serial->port,
+ 			tty_drv, minor, &serial->parent->interface->dev,
+ 			serial->parent, hso_serial_dev_groups);
+-	dev = serial->parent->dev;
+ 
+ 	/* fill in specific data for later use */
+ 	serial->minor = minor;
 -- 
-Jean Delvare
-SUSE L3 Support
+2.14.1
+
