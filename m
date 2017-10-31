@@ -1,49 +1,41 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 12 Oct 2017 16:30:32 +0000
-Subject: Re: [PATCH] video: fbdev: radeon: make const array post_divs static, reduces object code size
-Message-Id: <3309966.vVeY8tZnvB@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 14:23:24 +0000
+Subject: [PATCH] net: macb: remove redundant assignment to variable work_done
+Message-Id: <20171031142324.25740-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20170919213206epcas2p3a2bea87468fa266cf1c94829444ab162@epcas2p3.samsung.com>
- <3245965.OqUEzHD6FT@amdc3058>
- <268158e3-00d6-b9c3-34a4-e8ce8e464276@canonical.com>
-In-Reply-To: <268158e3-00d6-b9c3-34a4-e8ce8e464276@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday, October 12, 2017 05:17:49 PM Colin Ian King wrote:
-> On 12/10/17 17:17, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > [ added dri-devel ML to cc: ]
-> > 
-> > On Tuesday, September 19, 2017 10:32:01 PM Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> Don't populate the read-only const array post_divs on the stack,
-> >> nstead make it static. Makes the object code smaller by 90 bytes:
-> >>
-> >> Before:
-> >>    text	   data	    bss	    dec	    hex	filename
-> >>   40231	   8584	    896	  49711	   c22f	radeon_base.o
-> >>
-> >> After:
-> >>    text	   data	    bss	    dec	    hex	filename
-> >>   39914	   8744	    960	  49618	   c1d2	radeon_base.o
-> >>
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Are these results obtained using the same compiler as the other patches
-> > (gcc version 7.2.0, x86_64)?
-> 
-> Yes, I forgot to annotate it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.15 (with updated patch description), thanks.
+Variable work_done is set to zero and this value is never read, instead
+it is set to another value a few statements later.  Remove the redundant
+assignment. Cleans up clang warning:
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+drivers/net/ethernet/cadence/macb_main.c:1221:2: warning: Value stored
+to 'work_done' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 6df2cad61647..5dafcde67e45 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1218,8 +1218,6 @@ static int macb_poll(struct napi_struct *napi, int budget)
+ 	status = macb_readl(bp, RSR);
+ 	macb_writel(bp, RSR, status);
+ 
+-	work_done = 0;
+-
+ 	netdev_vdbg(bp->dev, "poll: status = %08lx, budget = %d\n",
+ 		    (unsigned long)status, budget);
+ 
+-- 
+2.14.1
 
