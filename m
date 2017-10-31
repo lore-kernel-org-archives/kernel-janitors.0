@@ -1,28 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 15:45:31 +0000
-Subject: [PATCH 0/3] pinctrl-mcp23s08: Fine-tuning for two function implementations
-Message-Id: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 13:48:23 +0000
+Subject: [PATCH] power: supply: pcf50633-charger: remove redundant variable charging_start
+Message-Id: <20171031134823.24997-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 16:40:20 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Variable charging_start is being set but is never read, it is therefore
+redundant and can be removed. Cleans up sparse warning:
 
-Markus Elfring (3):
-  Improve unlocking of a mutex in mcp23s08_irq()
-  Use common error handling code in mcp23s08_dbg_show()
-  Combine two function calls in mcp23s08_dbg_show()
+drivers/power/supply/pcf50633-charger.c:61:3: warning: Value stored to
+'charging_start' is never read
 
- drivers/pinctrl/pinctrl-mcp23s08.c | 80 ++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 43 deletions(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/power/supply/pcf50633-charger.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/power/supply/pcf50633-charger.c b/drivers/power/supply/pcf50633-charger.c
+index 1ad7ccce6075..1aba14046a83 100644
+--- a/drivers/power/supply/pcf50633-charger.c
++++ b/drivers/power/supply/pcf50633-charger.c
+@@ -43,7 +43,6 @@ int pcf50633_mbc_usb_curlim_set(struct pcf50633 *pcf, int ma)
+ 	struct pcf50633_mbc *mbc = platform_get_drvdata(pcf->mbc_pdev);
+ 	int ret = 0;
+ 	u8 bits;
+-	int charging_start = 1;
+ 	u8 mbcs2, chgmod;
+ 	unsigned int mbcc5;
+ 
+@@ -58,7 +57,6 @@ int pcf50633_mbc_usb_curlim_set(struct pcf50633 *pcf, int ma)
+ 		ma = 100;
+ 	} else {
+ 		bits = PCF50633_MBCC7_USB_SUSPEND;
+-		charging_start = 0;
+ 		ma = 0;
+ 	}
+ 
 -- 
-2.14.3
+2.14.1
 
