@@ -1,45 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 10:08:23 +0000
-Subject: [PATCH][V2] net: ethernet: slicoss: remove redundant initialization of idx
-Message-Id: <20171031100823.19733-1-colin.king@canonical.com>
+From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Date: Tue, 31 Oct 2017 11:37:52 +0000
+Subject: Re: [PATCH][V2] net: ethernet: slicoss: remove redundant initialization of idx
+Message-Id: <66baa4b6-7588-501e-4ad7-e0617329ac4e@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171031100823.19733-1-colin.king@canonical.com>
+In-Reply-To: <20171031100823.19733-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lino Sanfilippo <LinoSanfilippo@gmx.de>, netdev@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 31.10.2017 11:08, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable idx is being initialized and later on over-written by
+> a new value in a do-loop without the initial value ever being
+> read. Hence the initializion is redundant and can be removed.
+> Cleans up clang warning:
+> 
+> drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
+> stored to 'idx' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/alacritech/slicoss.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
+> index 15a8096c60df..0b60921c392f 100644
+> --- a/drivers/net/ethernet/alacritech/slicoss.c
+> +++ b/drivers/net/ethernet/alacritech/slicoss.c
+> @@ -355,10 +355,10 @@ static void slic_xmit_complete(struct slic_device *sdev)
+>  {
+>  	struct slic_tx_queue *txq = &sdev->txq;
+>  	struct net_device *dev = sdev->netdev;
+> -	unsigned int idx = txq->done_idx;
+>  	struct slic_tx_buffer *buff;
+>  	unsigned int frames = 0;
+>  	unsigned int bytes = 0;
+> +	unsigned int idx;
+>  
+>  	/* Limit processing to SLIC_MAX_TX_COMPLETIONS frames to avoid that new
+>  	 * completions during processing keeps the loop running endlessly.
+> 
 
-Variable idx is being initialized and later on over-written by
-a new value in a do-loop without the initial value ever being
-read. Hence the initializion is redundant and can be removed.
-Cleans up clang warning:
+Acked-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
 
-drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
-stored to 'idx' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/alacritech/slicoss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
-index 15a8096c60df..0b60921c392f 100644
---- a/drivers/net/ethernet/alacritech/slicoss.c
-+++ b/drivers/net/ethernet/alacritech/slicoss.c
-@@ -355,10 +355,10 @@ static void slic_xmit_complete(struct slic_device *sdev)
- {
- 	struct slic_tx_queue *txq = &sdev->txq;
- 	struct net_device *dev = sdev->netdev;
--	unsigned int idx = txq->done_idx;
- 	struct slic_tx_buffer *buff;
- 	unsigned int frames = 0;
- 	unsigned int bytes = 0;
-+	unsigned int idx;
- 
- 	/* Limit processing to SLIC_MAX_TX_COMPLETIONS frames to avoid that new
- 	 * completions during processing keeps the loop running endlessly.
--- 
-2.14.1
-
+Regards,
+Lino
