@@ -1,38 +1,89 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Oct 2017 12:37:04 +0000
-Subject: Re: iio/accel/stk8312: Improve unlocking of a mutex in two functions
-Message-Id: <82e2fde9-2b35-be54-4614-977fc2894da1@users.sourceforge.net>
+Date: Tue, 31 Oct 2017 09:15:38 +0000
+Subject: Re: mmc: vub300: Use common code in __download_offload_pseudocode()
+Message-Id: <b809399c-6bd0-5a39-d2b9-442f7d008e72@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ae9d7e7f-541e-ce0c-1d41-6b9793c98f78@users.sourceforge.net>
- <20171026170913.5ff10718@archlinux>
- <c2620449-b80a-f0ef-c0d2-92d0c7fb4906@users.sourceforge.net>
- <alpine.DEB.2.20.1710271254570.17368@vps.pmeerw.net>
-In-Reply-To: <alpine.DEB.2.20.1710271254570.17368@vps.pmeerw.net>
+References: <7b418db1-ec35-4c85-5d06-45edde56822c@users.sourceforge.net>
+ <CAPDyKFp6h_DAcDvDEMft_WApEakdPQiMw0v8t2fPVxS+H1KkOA@mail.gmail.com>
+ <20171030121508.zfnsvpsrt25prhr4@mwanda>
+ <CAPDyKFqaaX3i5wLu-aORRB765Kjac705384UM4nCbV8n1Kfc3w@mail.gmail.com>
+ <20171031084552.mvvn73pfew4rebsd@mwanda>
+In-Reply-To: <20171031084552.mvvn73pfew4rebsd@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Tony Olech <tony.olech@elandigitalsystems.com>, LKML <linux-kernel@vger.kernel.org>
 
->> But I proposed an other source code layout for useful reasons.
-> 
-> I think there is a (hidden) cost of having pure cleanup patches:
-> they make backporting fixes harder (across the cleanup)
+>>> What's the advantage of this patch?  The new code seems more complicated
+>>> to me and GCC automatically reuses duplicate constant strings so there
+>>> is no memory savings.
+>>
+>> It looked to me that the error path got a bit cleaner. However, I
+>> guess it's matter of taste.
+>>
+>> If you insist, I can drop it.
+>=20
+> I'm on the kernel-janitors list so I am CC'd on all of Markus's patches.
 
-There the usual software development consequences to consider
-if you dare to change the source code at all.
+Do you want that I omit this address from the list of recipients?
 
 
-> stylistic changes must have a clear benefit, readability is subjective, 
-> consistency per se doesn't buy anything
+> It's not my code and I'm tired of being the anti-Markus guy
 
-There are also different opinions involved.
+Interesting =E2=80=A6
+
+But I got the impression that this special relationship resulted
+also in a few useful side effects.
 
 
-> the discussion how code should be written in the first place is separate
-> from the discussion what is worth fixing up lateron (IMHO)
+> so this patch is fine.
 
-Are you looking for a corresponding agreement?
+Thanks for another bit of acceptance.
+
+
+> Markus has a tool that finds duplicate strings and he uses gotos
+> to avoid them.
+
+Yes. - The script which I am using for the semantic patch language
+(Coccinelle software) can not only find this implementation detail
+but also duplicate source code generally to some degree.
+
+
+> I don't think duplicate strings are a problem
+
+They can become an issue for further considerations if inappropriate
+error messages were used for example.
+
+There are more statement combinations which can be improved a bit more.
+
+
+> or that it's a good idea to send over a hundred patches using this method.
+
+The change acceptance is varying as usual.
+
+
+> But many people have explained that to Markus already
+
+I hope that my contributions can improve the affected software in some area=
+s.
+
+
+> and that's not the bigger picture which is about error handling and label=
+s.
+> What I like are labels that are necessary and self explanatory.
+
+It seems that this is a topic where you got strong opinions about.
+
+
+> You're reading along and you're like "what happens at the err" label?
+
+Would you accept any further adjustments around questionable jump targets?
 
 Regards,
 Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
