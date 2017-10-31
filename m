@@ -1,38 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Oct 2017 18:04:40 +0000
-Subject: [PATCH 6/6] ARM: s3c2412: Fix a typo in a comment line
-Message-Id: <e2567b9e-d556-bac2-a810-ca478f4398bd@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 11:45:39 +0000
+Subject: [PATCH] rapidio: remove reundant pointer md that is assigned but never read
+Message-Id: <20171031114539.22058-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
-In-Reply-To: <d2ae00c8-da57-9ffc-3692-67ed6daa95e0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>, Logan Gunthorpe <logang@deltatee.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Oct 2017 19:41:10 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Adjust a word in this function description.
+Pointer md is assigned a value but it is never read, hence it is
+redundant and can be removed. Cleans up clang warning:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+drivers/rapidio/devices/rio_mport_cdev.c:1071:2: warning: Value stored
+to 'md' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/arm/mach-s3c24xx/iotiming-s3c2412.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-index 01bcd7d5dac7..c5b12f6b02b5 100644
---- a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
-@@ -35,7 +35,7 @@
- #define print_ns(x) ((x) / 10), ((x) % 10)
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index dc5a33f93689..56496e636a40 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -1058,7 +1058,6 @@ static int rio_mport_transfer_ioctl(struct file *filp, void __user *arg)
+ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+ {
+ 	struct mport_cdev_priv *priv;
+-	struct mport_dev *md;
+ 	struct rio_async_tx_wait w_param;
+ 	struct mport_dma_req *req;
+ 	dma_cookie_t cookie;
+@@ -1068,7 +1067,6 @@ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+ 	int ret;
  
- /**
-- * s3c2412_print_timing - print timing infromation via printk.
-+ * s3c2412_print_timing - print timing information via printk.
-  * @pfx: The prefix to print each line with.
-  * @iot: The IO timing information
-  */
+ 	priv = (struct mport_cdev_priv *)filp->private_data;
+-	md = priv->md;
+ 
+ 	if (unlikely(copy_from_user(&w_param, arg, sizeof(w_param))))
+ 		return -EFAULT;
 -- 
-2.14.2
+2.14.1
 
