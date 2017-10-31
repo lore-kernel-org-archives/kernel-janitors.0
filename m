@@ -1,47 +1,31 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 12:01:47 +0000
-Subject: [PATCH] net: hso: remove redundant unused variable dev
-Message-Id: <20171031120147.22348-1-colin.king@canonical.com>
+From: Johan Hovold <johan@kernel.org>
+Date: Tue, 31 Oct 2017 13:22:44 +0000
+Subject: Re: [PATCH] net: hso: remove redundant unused variable dev
+Message-Id: <20171031132244.GP7223@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171031120147.22348-1-colin.king@canonical.com>
+In-Reply-To: <20171031120147.22348-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S . Miller" <davem@davemloft.net>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Oct 31, 2017 at 12:01:47PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer dev is being assigned but is never used, hence it is
+> redundant and can be removed. Cleans up clang warning:
+> 
+> drivers/net/usb/hso.c:2280:2: warning: Value stored to 'dev' is
+> never read
 
-The pointer dev is being assigned but is never used, hence it is
-redundant and can be removed. Cleans up clang warning:
+You could also have mentioned that it was a leftover since commit
+4134069f3ea6 ("hso: Use static attribute groups for sysfs entry").
 
-drivers/net/usb/hso.c:2280:2: warning: Value stored to 'dev' is
-never read
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/usb/hso.c | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-index d7a3379ea668..42d7edcc3106 100644
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2263,7 +2263,6 @@ static void hso_serial_common_free(struct hso_serial *serial)
- static int hso_serial_common_create(struct hso_serial *serial, int num_urbs,
- 				    int rx_size, int tx_size)
- {
--	struct device *dev;
- 	int minor;
- 	int i;
- 
-@@ -2277,7 +2276,6 @@ static int hso_serial_common_create(struct hso_serial *serial, int num_urbs,
- 	serial->parent->dev = tty_port_register_device_attr(&serial->port,
- 			tty_drv, minor, &serial->parent->interface->dev,
- 			serial->parent, hso_serial_dev_groups);
--	dev = serial->parent->dev;
- 
- 	/* fill in specific data for later use */
- 	serial->minor = minor;
--- 
-2.14.1
-
+Thanks,
+Johan
