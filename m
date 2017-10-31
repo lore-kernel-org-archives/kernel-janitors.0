@@ -1,41 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 29 Oct 2017 13:06:07 +0000
-Subject: [PATCH] [media] gspca: remove redundant assignment to variable j
-Message-Id: <20171029130607.6062-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 31 Oct 2017 16:56:21 +0000
+Subject: Re: Sony-laptop: Use common error handling code in sony_nc_setup_rfkill()
+Message-Id: <136e2b05-a601-f8de-dd84-d72b765ea4df@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
+ <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+ <dadb7068-e4ed-b91d-ce31-aca2d6afd9f3@users.sourceforge.net>
+ <CAHp75VeDYakxD_g+N0RcmXFmGR3Du+p2yRaTiYhNxgr+0SQ9og@mail.gmail.com>
+In-Reply-To: <CAHp75VeDYakxD_g+N0RcmXFmGR3Du+p2yRaTiYhNxgr+0SQ9og@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+>> I performed another simple software refactoring.
+> 
+> Which is _useless_ per se
 
-Variable j is being set to zero before a loop and also
-immediately inside the loop and is not used after the loop.
-Hence the first assignment is redundant and can be removed.
-Cleans up clang warning:
+I disagree in this case because the goal of a refactoring should be
+to adjust something in a desired direction without changing
+the provided functionality.
 
-drivers/media/usb/gspca/gspca.c:1078:2: warning: Value stored
-to 'j' is never read
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/gspca/gspca.c | 1 -
- 1 file changed, 1 deletion(-)
+> by the reasons you had been told already _several_ times about.
 
-diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
-index 0f141762abf1..961343873fd0 100644
---- a/drivers/media/usb/gspca/gspca.c
-+++ b/drivers/media/usb/gspca/gspca.c
-@@ -1075,7 +1075,6 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
- 
- 	/* give an index to each format */
- 	index = 0;
--	j = 0;
- 	for (i = gspca_dev->cam.nmodes; --i >= 0; ) {
- 		fmt_tb[index] = gspca_dev->cam.cam_mode[i].pixelformat;
- 		j = 0;
--- 
-2.14.1
+There can be other reasons why you do not like a concrete change.
 
+
+> Either you do a real fix (propagate correct error codes
+> to upper layers), or just don't bother at all.
+
+Have the involved contributors any preferences on organisation
+of corresponding update steps?
+
+* Correct exception handling first and then apply the shown
+  source code reduction again.
+
+* Combine better exception handling with smaller code
+  in one patch.
+
+* Addition of the tag “Fixes” in the commit message?
+
+Regards,
+Markus
