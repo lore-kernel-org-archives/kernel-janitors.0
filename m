@@ -1,45 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Oct 2017 20:51:13 +0000
-Subject: [PATCH 1/2] powermac: Delete an error message for a failed memory allocation in kw_i2c_host_init()
-Message-Id: <5dc8fe2f-0459-faff-585f-a92137115895@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 14:37:55 +0000
+Subject: [PATCH] net: thunderx: remove a couple of redundant assignments
+Message-Id: <20171031143755.26021-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5188c0b3-476a-6a14-bab5-052ad0f4dae0@users.sourceforge.net>
-In-Reply-To: <5188c0b3-476a-6a14-bab5-052ad0f4dae0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Oct 2017 22:30:29 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The assignment to pointer msg is redundant as it is never read, so
+remove msg.  Also remove the first assignment to qset as this is not
+read before the next re-assignment of a new value to qset in the
+for-loop. Cleans up two clang warnings:
 
-This issue was detected by using the Coccinelle software.
+drivers/net/ethernet/cavium/thunder/nic_main.c:589:2: warning: Value
+stored to 'msg' is never read
+drivers/net/ethernet/cavium/thunder/nic_main.c:611:2: warning: Value
+stored to 'qset' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/powerpc/platforms/powermac/low_i2c.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/cavium/thunder/nic_main.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powermac/low_i2c.c b/arch/powerpc/platforms/powermac/low_i2c.c
-index 70183eb3d5c8..ecd166b5549b 100644
---- a/arch/powerpc/platforms/powermac/low_i2c.c
-+++ b/arch/powerpc/platforms/powermac/low_i2c.c
-@@ -493,11 +493,8 @@ static struct pmac_i2c_host_kw *__init kw_i2c_host_init(struct device_node *np)
- 	u32			steps;
+diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
+index fb770b0182d3..988c06a28e5e 100644
+--- a/drivers/net/ethernet/cavium/thunder/nic_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
+@@ -584,9 +584,6 @@ static void nic_config_cpi(struct nicpf *nic, struct cpi_cfg_msg *cfg)
+ static void nic_send_rss_size(struct nicpf *nic, int vf)
+ {
+ 	union nic_mbx mbx = {};
+-	u64  *msg;
+-
+-	msg = (u64 *)&mbx;
  
- 	host = kzalloc(sizeof(struct pmac_i2c_host_kw), GFP_KERNEL);
--	if (host = NULL) {
--		printk(KERN_ERR "low_i2c: Can't allocate host for %pOF\n",
--		       np);
-+	if (!host)
- 		return NULL;
--	}
+ 	mbx.rss_size.msg = NIC_MBOX_MSG_RSS_SIZE;
+ 	mbx.rss_size.ind_tbl_size = nic->hw->rss_ind_tbl_size;
+@@ -608,7 +605,6 @@ static void nic_config_rss(struct nicpf *nic, struct rss_cfg_msg *cfg)
+ 	rssi_base = nic->rssi_base[cfg->vf_id] + cfg->tbl_offset;
  
- 	/* Apple is kind enough to provide a valid AAPL,address property
- 	 * on all i2c keywest nodes so far ... we would have to fallback
+ 	rssi = rssi_base;
+-	qset = cfg->vf_id;
+ 
+ 	for (; rssi < (rssi_base + cfg->tbl_len); rssi++) {
+ 		u8 svf = cfg->ind_tbl[idx] >> 3;
 -- 
-2.14.2
+2.14.1
 
