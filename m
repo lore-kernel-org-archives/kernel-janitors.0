@@ -1,49 +1,33 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 11:03:18 +0000
-Subject: [PATCH] platform: x86: dell-smo8800: remove redundant assignments to byte_data
-Message-Id: <20171031110318.20985-1-colin.king@canonical.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 31 Oct 2017 13:47:58 +0000
+Subject: Re: [PATCH] platform: x86: dell-smo8800: remove redundant assignments to byte_data
+Message-Id: <CAHp75Vec3Hjd_keMid-x6ub5ZJqUmq1nUFiHPsxuWt8V+vzrnQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171031110318.20985-1-colin.king@canonical.com>
+In-Reply-To: <20171031110318.20985-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Oct 31, 2017 at 1:03 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variable byte_data is being initialized and re-assigned with values that
+> are never read. Remove these as these redundant assignments. Cleans up
+> clang warning:
+>
+> drivers/platform/x86/dell-smo8800.c:106:2: warning: Value stored to 'byte_data'
+> is never read
 
-Variable byte_data is being initialized and re-assigned with values that
-are never read. Remove these as these redundant assignments. Cleans up
-clang warning:
+Thanks for the patch.
 
-drivers/platform/x86/dell-smo8800.c:106:2: warning: Value stored to 'byte_data'
-is never read
+As I read a code it was from the beginning like this. I dunno what was
+a motivation of this pieces, thus I would like to hear Pali.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/platform/x86/dell-smo8800.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Per se patch looks pretty much good to me.
 
-diff --git a/drivers/platform/x86/dell-smo8800.c b/drivers/platform/x86/dell-smo8800.c
-index 37e646034ef8..1d87237bc731 100644
---- a/drivers/platform/x86/dell-smo8800.c
-+++ b/drivers/platform/x86/dell-smo8800.c
-@@ -90,7 +90,7 @@ static ssize_t smo8800_misc_read(struct file *file, char __user *buf,
- 					 struct smo8800_device, miscdev);
- 
- 	u32 data = 0;
--	unsigned char byte_data = 0;
-+	unsigned char byte_data;
- 	ssize_t retval = 1;
- 
- 	if (count < 1)
-@@ -103,7 +103,6 @@ static ssize_t smo8800_misc_read(struct file *file, char __user *buf,
- 	if (retval)
- 		return retval;
- 
--	byte_data = 1;
- 	retval = 1;
- 
- 	if (data < 255)
 -- 
-2.14.1
-
+With Best Regards,
+Andy Shevchenko
