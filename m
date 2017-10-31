@@ -1,34 +1,45 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 23 Oct 2017 13:42:31 +0000
-Subject: Re: [PATCH 0/2] Xen vTPM frontend: Fine-tuning for vtpm_send()
-Message-Id: <20171023134231.ndvk5upc5qyeubk6@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 10:08:23 +0000
+Subject: [PATCH][V2] net: ethernet: slicoss: remove redundant initialization of idx
+Message-Id: <20171031100823.19733-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
-In-Reply-To: <cf592c7d-8fbc-833b-fa1a-ff9e91c3734c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-integrity@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 22, 2017 at 01:28:14PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Oct 2017 13:23:45 +0200
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (2):
->   Use common error handling code
->   Combine two condition checks into one statement
-> 
->  drivers/char/tpm/xen-tpmfront.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> -- 
-> 2.14.2
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Useless cover letter. Two separate unrelated patches.
+Variable idx is being initialized and later on over-written by
+a new value in a do-loop without the initial value ever being
+read. Hence the initializion is redundant and can be removed.
+Cleans up clang warning:
 
-/Jarkko
+drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
+stored to 'idx' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/alacritech/slicoss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/alacritech/slicoss.c b/drivers/net/ethernet/alacritech/slicoss.c
+index 15a8096c60df..0b60921c392f 100644
+--- a/drivers/net/ethernet/alacritech/slicoss.c
++++ b/drivers/net/ethernet/alacritech/slicoss.c
+@@ -355,10 +355,10 @@ static void slic_xmit_complete(struct slic_device *sdev)
+ {
+ 	struct slic_tx_queue *txq = &sdev->txq;
+ 	struct net_device *dev = sdev->netdev;
+-	unsigned int idx = txq->done_idx;
+ 	struct slic_tx_buffer *buff;
+ 	unsigned int frames = 0;
+ 	unsigned int bytes = 0;
++	unsigned int idx;
+ 
+ 	/* Limit processing to SLIC_MAX_TX_COMPLETIONS frames to avoid that new
+ 	 * completions during processing keeps the loop running endlessly.
+-- 
+2.14.1
+
