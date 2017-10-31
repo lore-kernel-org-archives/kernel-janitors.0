@@ -1,39 +1,58 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 10 Oct 2017 14:36:16 +0000
-Subject: Re: [PATCH] drm/i915: remove redundant check on has_aliasing_ppgtt
-Message-Id: <107fa0b9-11ac-11cc-f6e8-35640430bd6f@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 11:20:51 +0000
+Subject: [PATCH] pinctrl: ti-iodelay: remove redundant unused variable dev
+Message-Id: <20171031112051.21451-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171010134733.17516-1-colin.king@canonical.com>
- <1507646100.7677.24.camel@linux.intel.com>
-In-Reply-To: <1507646100.7677.24.camel@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/10/17 15:35, Joonas Lahtinen wrote:
-> On Tue, 2017-10-10 at 14:47 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is a previous check to on has_aliasing_ppgtt that returns
->> 0 if it is false, so it is impossible for has_aliasing_ppgtt to
->> be false on the final return of function intel_sanitize_enable_ppgtt,
->> so final return in the function always will return 1.  Hence the
->> redundant ternary operator can be replaced with a return 1.
->>
->> Detected by CoverityScan, CID#1357136 ("Logically dead code")
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Thanks, I took it a few steps further and removed the variable
-> altogether. I Cc'd you on the patch.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yep, it's an improvement on my fix. Thanks for sorting that out.
+The pointer dev is being assigned but is never used, hence it is
+redundant and can be removed. Cleans up clang warnings:
 
-Colin
+drivers/pinctrl/ti/pinctrl-ti-iodelay.c:582:2: warning: Value stored
+to 'dev' is never read
+drivers/pinctrl/ti/pinctrl-ti-iodelay.c:701:2: warning: Value stored
+to 'dev' is never read
 
-> 
-> Regards, Joonas
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 5c1b6325d80d..a8a6510183b6 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -575,11 +575,9 @@ static int ti_iodelay_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 					unsigned long *config)
+ {
+ 	struct ti_iodelay_device *iod;
+-	struct device *dev;
+ 	struct ti_iodelay_pingroup *group;
+ 
+ 	iod = pinctrl_dev_get_drvdata(pctldev);
+-	dev = iod->dev;
+ 	group = ti_iodelay_get_pingroup(iod, selector);
+ 
+ 	if (!group)
+@@ -693,12 +691,10 @@ static void ti_iodelay_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 					      unsigned int selector)
+ {
+ 	struct ti_iodelay_device *iod;
+-	struct device *dev;
+ 	struct ti_iodelay_pingroup *group;
+ 	int i;
+ 
+ 	iod = pinctrl_dev_get_drvdata(pctldev);
+-	dev = iod->dev;
+ 	group = ti_iodelay_get_pingroup(iod, selector);
+ 	if (!group)
+ 		return;
+-- 
+2.14.1
 
