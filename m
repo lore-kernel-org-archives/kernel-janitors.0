@@ -1,84 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 31 Oct 2017 09:15:38 +0000
+Date: Tue, 31 Oct 2017 15:42:30 +0000
 Subject: Re: mmc: vub300: Use common code in __download_offload_pseudocode()
-Message-Id: <b809399c-6bd0-5a39-d2b9-442f7d008e72@users.sourceforge.net>
+Message-Id: <ff32476e-f60f-a672-0e82-c5e69b5ed812@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <7b418db1-ec35-4c85-5d06-45edde56822c@users.sourceforge.net>
  <CAPDyKFp6h_DAcDvDEMft_WApEakdPQiMw0v8t2fPVxS+H1KkOA@mail.gmail.com>
  <20171030121508.zfnsvpsrt25prhr4@mwanda>
  <CAPDyKFqaaX3i5wLu-aORRB765Kjac705384UM4nCbV8n1Kfc3w@mail.gmail.com>
  <20171031084552.mvvn73pfew4rebsd@mwanda>
-In-Reply-To: <20171031084552.mvvn73pfew4rebsd@mwanda>
+ <CAPDyKFp7zRLyGR4UfC8A3py8M9ZDi4nyeU8qUSg4NSrwSLh0HA@mail.gmail.com>
+In-Reply-To: <CAPDyKFp7zRLyGR4UfC8A3py8M9ZDi4nyeU8qUSg4NSrwSLh0HA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Tony Olech <tony.olech@elandigitalsystems.com>, LKML <linux-kernel@vger.kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Tony Olech <tony.olech@elandigitalsystems.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>> What's the advantage of this patch?  The new code seems more complicated
->>> to me and GCC automatically reuses duplicate constant strings so there
->>> is no memory savings.
->>
->> It looked to me that the error path got a bit cleaner. However, I
->> guess it's matter of taste.
->>
->> If you insist, I can drop it.
->=20
-> I'm on the kernel-janitors list so I am CC'd on all of Markus's patches.
-
-Do you want that I omit this address from the list of recipients?
-
-
-> It's not my code and I'm tired of being the anti-Markus guy
+> Regarding posts from Markus' I am well aware of the problems.
 
 Interesting =E2=80=A6
 
-But I got the impression that this special relationship resulted
-also in a few useful side effects.
 
+> In my case, it hasn't been much of a hurdle, I simply ignore changes
+> that seems silly to me.
 
-> so this patch is fine.
+* How often did this happen so far?
 
-Thanks for another bit of acceptance.
-
-
-> Markus has a tool that finds duplicate strings and he uses gotos
-> to avoid them.
-
-Yes. - The script which I am using for the semantic patch language
-(Coccinelle software) can not only find this implementation detail
-but also duplicate source code generally to some degree.
-
-
-> I don't think duplicate strings are a problem
-
-They can become an issue for further considerations if inappropriate
-error messages were used for example.
-
-There are more statement combinations which can be improved a bit more.
-
-
-> or that it's a good idea to send over a hundred patches using this method.
-
-The change acceptance is varying as usual.
-
-
-> But many people have explained that to Markus already
-
-I hope that my contributions can improve the affected software in some area=
-s.
-
-
-> and that's not the bigger picture which is about error handling and label=
-s.
-> What I like are labels that are necessary and self explanatory.
-
-It seems that this is a topic where you got strong opinions about.
-
-
-> You're reading along and you're like "what happens at the err" label?
-
-Would you accept any further adjustments around questionable jump targets?
+* Are any update suggestions left over where a constructive feedback
+  will make sense?
 
 Regards,
 Markus
