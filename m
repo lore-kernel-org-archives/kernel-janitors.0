@@ -1,82 +1,48 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Thu, 12 Oct 2017 16:59:47 +0000
-Subject: Re: [PATCH] dmaengine: imx-sdma: Report a DMA_ERROR in status if 'count' or 'dma_address' do not mat
-Message-Id: <20171012170322.GV30097@localhost>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 10:27:47 +0000
+Subject: [PATCH] platform/chrome: cros_ec_lpc: remove redundant pointer request
+Message-Id: <20171031102747.20154-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170924062641.30187-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Fabio Estevam <fabio.estevam@nxp.com>, Nandor Han <nandor.han@ge.com>
-Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Sep 24, 2017 at 08:26:41AM +0200, Christophe JAILLET wrote:
-> All sanity checks in this function set 'sdmac->status = DMA_ERROR' if
-> something looks wrong, except if the byte count or the address don't match
-> the bus width.
-> 
-> Fix it and report the error in status in such a case.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Untested, so please review carefuly.
-> ---
->  drivers/dma/imx-sdma.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index a67ec1bdc4e0..f0419967eb92 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -1240,26 +1240,31 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  		sdmac->chn_count += count;
->  
->  		if (sdmac->word_size > DMA_SLAVE_BUSWIDTH_4_BYTES) {
-> -			ret =  -EINVAL;
-> +			ret = -EINVAL;
+From: Colin Ian King <colin.king@canonical.com>
 
-this is a style fix and should not be part of this patch
+Pointer request is being assigned but never used, so remove it. Cleans
+up the clang warning:
 
->  			goto err_out;
->  		}
->  
->  		switch (sdmac->word_size) {
->  		case DMA_SLAVE_BUSWIDTH_4_BYTES:
->  			bd->mode.command = 0;
-> -			if (count & 3 || sg->dma_address & 3)
-> -				return NULL;
-> +			if (count & 3 || sg->dma_address & 3) {
-> +				ret = -EINVAL;
-> +				goto err_out;
-> +			}
+drivers/platform/chrome/cros_ec_lpc.c:68:2: warning: Value stored to
+'request' is never read
 
-this looks okay, but then slave configuration comes from different path, so
-not sure if not setting was intentional or a miss. Fabio, Nandor??
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/chrome/cros_ec_lpc.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
->  			break;
->  		case DMA_SLAVE_BUSWIDTH_2_BYTES:
->  			bd->mode.command = 2;
-> -			if (count & 1 || sg->dma_address & 1)
-> -				return NULL;
-> +			if (count & 1 || sg->dma_address & 1) {
-> +				ret = -EINVAL;
-> +				goto err_out;
-> +			}
->  			break;
->  		case DMA_SLAVE_BUSWIDTH_1_BYTE:
->  			bd->mode.command = 1;
->  			break;
->  		default:
-> -			return NULL;
-> +			ret = -EINVAL;
-> +			goto err_out;
->  		}
->  
->  		param = BD_DONE | BD_EXTD | BD_CONT;
-> -- 
-> 2.11.0
-> 
-
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 1baf720faf69..87e9747d229a 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -54,7 +54,6 @@ static int ec_response_timed_out(void)
+ static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
+ 				struct cros_ec_command *msg)
+ {
+-	struct ec_host_request *request;
+ 	struct ec_host_response response;
+ 	u8 sum;
+ 	int ret = 0;
+@@ -65,8 +64,6 @@ static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
+ 	/* Write buffer */
+ 	cros_ec_lpc_write_bytes(EC_LPC_ADDR_HOST_PACKET, ret, ec->dout);
+ 
+-	request = (struct ec_host_request *)ec->dout;
+-
+ 	/* Here we go */
+ 	sum = EC_COMMAND_PROTOCOL_3;
+ 	cros_ec_lpc_write_bytes(EC_LPC_ADDR_HOST_CMD, 1, &sum);
 -- 
-~Vinod
+2.14.1
+
