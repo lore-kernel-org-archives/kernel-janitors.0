@@ -1,59 +1,49 @@
-From: Stephan Mueller <smueller@chronox.de>
-Date: Sat, 21 Oct 2017 19:07:28 +0000
-Subject: Re: [PATCH 1/2] crypto-testmgr: Use common error handling code in drbg_cavs_test()
-Message-Id: <6795494.nv2bFMflat@tauon.chronox.de>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 11:03:18 +0000
+Subject: [PATCH] platform: x86: dell-smo8800: remove redundant assignments to byte_data
+Message-Id: <20171031110318.20985-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7c2b4df8-a04b-cacd-13ba-4d9afb346263@users.sourceforge.net> <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
-In-Reply-To: <7aa0ec0b-c00e-44c0-1c07-6bd87e2b6c47@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Samstag, 21. Oktober 2017, 19:53:54 CEST schrieb SF Markus Elfring:
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus,
+Variable byte_data is being initialized and re-assigned with values that
+are never read. Remove these as these redundant assignments. Cleans up
+clang warning:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Oct 2017 19:29:11 +0200
-> 
-> Adjust jump targets so that a bit of exception handling can be better
-> reused at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
+drivers/platform/x86/dell-smo8800.c:106:2: warning: Value stored to 'byte_data'
+is never read
 
-Thank you for this patch.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/platform/x86/dell-smo8800.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> -outbuf:
-> +	ret = memcmp(test->expected, buf, test->expectedlen);
-> +free_rng:
->  	crypto_free_rng(drng);
-> +free_buffer:
->  	kzfree(buf);
->  	return ret;
-> +
-> +report_failure:
-> +	pr_err("alg: drbg: could not obtain random data for driver %s\n",
-> +	       driver);
-> +	goto free_rng;
+diff --git a/drivers/platform/x86/dell-smo8800.c b/drivers/platform/x86/dell-smo8800.c
+index 37e646034ef8..1d87237bc731 100644
+--- a/drivers/platform/x86/dell-smo8800.c
++++ b/drivers/platform/x86/dell-smo8800.c
+@@ -90,7 +90,7 @@ static ssize_t smo8800_misc_read(struct file *file, char __user *buf,
+ 					 struct smo8800_device, miscdev);
+ 
+ 	u32 data = 0;
+-	unsigned char byte_data = 0;
++	unsigned char byte_data;
+ 	ssize_t retval = 1;
+ 
+ 	if (count < 1)
+@@ -103,7 +103,6 @@ static ssize_t smo8800_misc_read(struct file *file, char __user *buf,
+ 	if (retval)
+ 		return retval;
+ 
+-	byte_data = 1;
+ 	retval = 1;
+ 
+ 	if (data < 255)
+-- 
+2.14.1
 
-Though, jumping back and forth like this with goto directives is something 
-that looks a bit strange. At least to my taste, may I suggest to have gotos 
-pointing only downwards and not up again? (Note, the same applies to the 
-ansi_cprng patch set).
-
-What about something like following:
-
-...
-    memcmp
-    goto free_rng;
-
-report_failure:
-    <failure report>
-
-free_rng:
-    <the deallocation code>
-
-Ciao
-Stephan
