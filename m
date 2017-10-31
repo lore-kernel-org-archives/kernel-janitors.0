@@ -1,80 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 18:55:54 +0000
-Subject: [PATCH] Input-as5011: Use common error handling code in as5011_configure_chip()
-Message-Id: <18c826ed-c587-927b-87a7-9180215e60d9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 10:40:00 +0000
+Subject: [PATCH] power: supply: generic-adc-battery: remove redundant variable pdata
+Message-Id: <20171031104000.20384-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Fabien Marteau <fabien.marteau@armadeus.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Oct 2017 20:48:49 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a specific error message is stored only once
-at the end of this function implementation.
-Replace four calls of the function "dev_err" by goto statements.
+Pointer pdata is assigned but never used, so remove it. Cleans up the
+clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/power/supply/generic-adc-battery.c:211:2: warning: Value
+stored to 'pdata' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/input/joystick/as5011.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/power/supply/generic-adc-battery.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/input/joystick/as5011.c b/drivers/input/joystick/as5011.c
-index 005d852a06e9..1858ebec020a 100644
---- a/drivers/input/joystick/as5011.c
-+++ b/drivers/input/joystick/as5011.c
-@@ -192,28 +192,20 @@ static int as5011_configure_chip(struct as5011_device *as5011,
+diff --git a/drivers/power/supply/generic-adc-battery.c b/drivers/power/supply/generic-adc-battery.c
+index 37e523374fe0..28dc056eaafa 100644
+--- a/drivers/power/supply/generic-adc-battery.c
++++ b/drivers/power/supply/generic-adc-battery.c
+@@ -201,14 +201,12 @@ static int gab_get_property(struct power_supply *psy,
+ static void gab_work(struct work_struct *work)
+ {
+ 	struct gab *adc_bat;
+-	struct gab_platform_data *pdata;
+ 	struct delayed_work *delayed_work;
+ 	bool is_plugged;
+ 	int status;
  
- 	/* write threshold */
- 	error = as5011_i2c_write(client, AS5011_XP, plat_dat->xp);
--	if (error < 0) {
--		dev_err(&client->dev, "Can't write threshold\n");
--		return error;
--	}
-+	if (error < 0)
-+		goto report_write_failure;
+ 	delayed_work = to_delayed_work(work);
+ 	adc_bat = container_of(delayed_work, struct gab, bat_work);
+-	pdata = adc_bat->pdata;
+ 	status = adc_bat->status;
  
- 	error = as5011_i2c_write(client, AS5011_XN, plat_dat->xn);
--	if (error < 0) {
--		dev_err(&client->dev, "Can't write threshold\n");
--		return error;
--	}
-+	if (error < 0)
-+		goto report_write_failure;
- 
- 	error = as5011_i2c_write(client, AS5011_YP, plat_dat->yp);
--	if (error < 0) {
--		dev_err(&client->dev, "Can't write threshold\n");
--		return error;
--	}
-+	if (error < 0)
-+		goto report_write_failure;
- 
- 	error = as5011_i2c_write(client, AS5011_YN, plat_dat->yn);
--	if (error < 0) {
--		dev_err(&client->dev, "Can't write threshold\n");
--		return error;
--	}
-+	if (error < 0)
-+		goto report_write_failure;
- 
- 	/* to free irq gpio in chip */
- 	error = as5011_i2c_read(client, AS5011_X_RES_INT, &value);
-@@ -223,6 +215,10 @@ static int as5011_configure_chip(struct as5011_device *as5011,
- 	}
- 
- 	return 0;
-+
-+report_write_failure:
-+	dev_err(&client->dev, "Can't write threshold\n");
-+	return error;
- }
- 
- static int as5011_probe(struct i2c_client *client,
+ 	is_plugged = power_supply_am_i_supplied(adc_bat->psy);
 -- 
-2.14.3
+2.14.1
 
