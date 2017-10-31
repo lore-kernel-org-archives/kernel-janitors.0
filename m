@@ -1,32 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Oct 2017 06:06:20 +0000
-Subject: Re: [PATCH][next] mlxsw: spectrum: fix uninitialized value in err
-Message-Id: <20171001.230620.73466517361012407.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 11:13:50 +0000
+Subject: [PATCH] xfs: remove redundant assignment to variable bit
+Message-Id: <20171031111350.21208-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171001162735.8091-1-colin.king@canonical.com>
-In-Reply-To: <20171001162735.8091-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Sun,  1 Oct 2017 17:27:35 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the unlikely event that mfc->mfc_un.res.ttls[i] is 255 for all
-> values of i from 0 to MAXIVS-1, the err is not set at all and hence
-> has a garbage value on the error return at the end of the function,
-> so initialize it to 0.  Also, the error return check on err and goto
-> to err: inside the for loop makes it impossible for err to be zero
-> at the end of the for loop, so we can remove the redundant err check
-> at the end of the loop.
-> 
-> Detected by CoverityScan CID#1457207 ("Unitialized scalar value")
-> 
-> Fixes: c011ec1bbfd6 ("mlxsw: spectrum: Add the multicast routing offloading logic")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable bit is being assigned a value that is never read, hence
+the assignment is redundant and can be removed. Cleans up clang
+warning:
 
-Applied.
+fs/xfs/libxfs/xfs_rtbitmap.c:675:3: warning: Value stored to
+'bit' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/libxfs/xfs_rtbitmap.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/xfs/libxfs/xfs_rtbitmap.c b/fs/xfs/libxfs/xfs_rtbitmap.c
+index 5d4e43ef4eea..ac09c4333485 100644
+--- a/fs/xfs/libxfs/xfs_rtbitmap.c
++++ b/fs/xfs/libxfs/xfs_rtbitmap.c
+@@ -672,7 +672,6 @@ xfs_rtmodify_range(
+ 		/*
+ 		 * Compute a mask of relevant bits.
+ 		 */
+-		bit = 0;
+ 		mask = ((xfs_rtword_t)1 << lastbit) - 1;
+ 		/*
+ 		 * Set/clear the active bits.
+-- 
+2.14.1
+
