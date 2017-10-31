@@ -1,143 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Oct 2017 16:14:11 +0000
-Subject: [PATCH] ia64/kernel/ptrace: Use common error handling code in two functions
-Message-Id: <48f0efa9-ae84-c338-3f07-1f39fc3ad6a6@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 31 Oct 2017 14:02:49 +0000
+Subject: [PATCH] staging: android: ion: remove redundant variable table
+Message-Id: <20171031140249.25280-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Oleg Nesterov <oleg@redhat.com>, Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Riley Andrews <riandrews@android.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Oct 2017 18:00:52 +0200
+From: Colin Ian King <colin.king@canonical.com>
 
-* Add a jump target so that a bit of exception handling can be better
-  reused at the end of these functions.
+Variable table is being set but is never read, it is therefore
+redundant and can be removed. Cleans up clang warning:
 
-  This issue was detected by using the Coccinelle software.
+drivers/staging/android/ion/ion.c:112:2: warning: Value stored to 'table' is never read
 
-* Adjust the indentation for six if statements.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/ia64/kernel/ptrace.c | 63 +++++++++++++++++++++++++----------------------
- 1 file changed, 33 insertions(+), 30 deletions(-)
+ drivers/staging/android/ion/ion.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/ia64/kernel/ptrace.c b/arch/ia64/kernel/ptrace.c
-index 3f8293378a83..447e3f353014 100644
---- a/arch/ia64/kernel/ptrace.c
-+++ b/arch/ia64/kernel/ptrace.c
-@@ -1537,11 +1537,10 @@ void do_gpregs_get(struct unw_frame_info *info, void *arg)
- 			 (dst->pos + dst->count) : ELF_GR_OFFSET(16);
- 		for (i = dst->pos; i < min_copy; i += sizeof(elf_greg_t),
- 				index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 0) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 0)
-+			    < 0)
-+				goto e_io;
-+
- 		dst->ret = user_regset_copyout(&dst->pos, &dst->count,
- 				&dst->u.get.kbuf, &dst->u.get.ubuf, tmp,
- 				ELF_GR_OFFSET(1), ELF_GR_OFFSET(16));
-@@ -1566,11 +1565,10 @@ void do_gpregs_get(struct unw_frame_info *info, void *arg)
- 			 (dst->pos + dst->count) : ELF_CR_IIP_OFFSET;
- 		for (i = dst->pos; i < min_copy; i += sizeof(elf_greg_t),
- 				index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 0) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 0)
-+			    < 0)
-+				goto e_io;
-+
- 		dst->ret = user_regset_copyout(&dst->pos, &dst->count,
- 				&dst->u.get.kbuf, &dst->u.get.ubuf, tmp,
- 				ELF_NAT_OFFSET, ELF_CR_IIP_OFFSET);
-@@ -1587,15 +1585,19 @@ void do_gpregs_get(struct unw_frame_info *info, void *arg)
- 			 (dst->pos + dst->count) : ELF_AR_END_OFFSET;
- 		for (i = dst->pos; i < min_copy; i += sizeof(elf_greg_t),
- 				index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 0) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 0)
-+			    < 0)
-+				goto e_io;
-+
- 		dst->ret = user_regset_copyout(&dst->pos, &dst->count,
- 				&dst->u.get.kbuf, &dst->u.get.ubuf, tmp,
- 				ELF_CR_IIP_OFFSET, ELF_AR_END_OFFSET);
- 	}
-+
-+	return;
-+
-+e_io:
-+	dst->ret = -EIO;
- }
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 93e2c90fa77d..a7d9b0e98572 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -81,7 +81,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+ 					    unsigned long flags)
+ {
+ 	struct ion_buffer *buffer;
+-	struct sg_table *table;
+ 	int ret;
  
- void do_gpregs_set(struct unw_frame_info *info, void *arg)
-@@ -1628,11 +1630,10 @@ void do_gpregs_set(struct unw_frame_info *info, void *arg)
- 		if (dst->ret)
- 			return;
- 		for ( ; i < dst->pos; i += sizeof(elf_greg_t), index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 1) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 1)
-+			    < 0)
-+				goto e_io;
-+
- 		if (dst->count = 0)
- 			return;
+ 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
+@@ -109,7 +108,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+ 		goto err1;
  	}
-@@ -1657,11 +1658,10 @@ void do_gpregs_set(struct unw_frame_info *info, void *arg)
- 		if (dst->ret)
- 			return;
- 		for (; i < dst->pos; i += sizeof(elf_greg_t), index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 1) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 1)
-+			    < 0)
-+				goto e_io;
-+
- 		if (dst->count = 0)
- 			return;
- 	}
-@@ -1678,12 +1678,15 @@ void do_gpregs_set(struct unw_frame_info *info, void *arg)
- 		if (dst->ret)
- 			return;
- 		for ( ; i < dst->pos; i += sizeof(elf_greg_t), index++)
--			if (access_elf_reg(dst->target, info, i,
--						&tmp[index], 1) < 0) {
--				dst->ret = -EIO;
--				return;
--			}
-+			if (access_elf_reg(dst->target, info, i, &tmp[index], 1)
-+			    < 0)
-+				goto e_io;
- 	}
-+
-+	return;
-+
-+e_io:
-+	dst->ret = -EIO;
- }
  
- #define ELF_FP_OFFSET(i)	(i * sizeof(elf_fpreg_t))
+-	table = buffer->sg_table;
+ 	buffer->dev = dev;
+ 	buffer->size = len;
+ 
 -- 
-2.14.2
+2.14.1
 
