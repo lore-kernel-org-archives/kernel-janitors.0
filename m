@@ -1,30 +1,28 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:58:47 +0000
-Subject: Re: [PATCH 1/2] clk-xgene: Delete an error message for a failed memory allocation in two functions
-Message-Id: <20171114015847.GK11955@codeaurora.org>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 01 Nov 2017 03:10:04 +0000
+Subject: Re: [PATCH] mkiss: remove redundant assignment of len to ax->mtu
+Message-Id: <20171101.121004.1862713849418258600.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
- <2a6fb281-932f-e043-f084-355a3020411a@users.sourceforge.net>
-In-Reply-To: <2a6fb281-932f-e043-f084-355a3020411a@users.sourceforge.net>
+References: <20171029133025.6665-1-colin.king@canonical.com>
+In-Reply-To: <20171029133025.6665-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: colin.king@canonical.com
+Cc: thomas@osterried.de, stephen@networkplumber.org, johannes.berg@intel.com, ralf@linux-mips.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 21:19:19 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 29 Oct 2017 13:30:25 +0000
 
-Applied to clk-next
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable len is being assigned a value that is never read,
+> hence the assignment is redundant and can be removed. Cleans
+> up clang warning:
+> 
+> drivers/net/hamradio/mkiss.c:443:3: warning: Value stored to
+> 'len' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied.
