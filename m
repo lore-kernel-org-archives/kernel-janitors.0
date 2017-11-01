@@ -1,71 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 12:46:35 +0000
-Subject: [PATCH] kvm_main: Use common error handling code in kvm_dev_ioctl_create_vm()
-Message-Id: <46892736-f9a1-cd30-0968-80c0cf41c3ee@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 09:41:18 +0000
+Subject: [PATCH] thermal: bxt: remove redundant variable trip
+Message-Id: <20171101094118.16916-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 13:40:17 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Variable trip is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/thermal/intel_bxt_pmic_thermal.c:204:4: warning: Value stored
+to 'trip' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- virt/kvm/kvm_main.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/thermal/intel_bxt_pmic_thermal.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 39e4db469f2e..c84341c79955 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3155,21 +3155,18 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
- 		return PTR_ERR(kvm);
- #ifdef CONFIG_KVM_MMIO
- 	r = kvm_coalesced_mmio_init(kvm);
--	if (r < 0) {
--		kvm_put_kvm(kvm);
--		return r;
--	}
-+	if (r < 0)
-+		goto put_kvm;
- #endif
- 	r = get_unused_fd_flags(O_CLOEXEC);
--	if (r < 0) {
--		kvm_put_kvm(kvm);
--		return r;
--	}
-+	if (r < 0)
-+		goto put_kvm;
-+
- 	file = anon_inode_getfile("kvm-vm", &kvm_vm_fops, kvm, O_RDWR);
- 	if (IS_ERR(file)) {
- 		put_unused_fd(r);
--		kvm_put_kvm(kvm);
--		return PTR_ERR(file);
-+		r = PTR_ERR(file);
-+		goto put_kvm;
- 	}
+diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c b/drivers/thermal/intel_bxt_pmic_thermal.c
+index ef6b32242ccb..94cfd0064c43 100644
+--- a/drivers/thermal/intel_bxt_pmic_thermal.c
++++ b/drivers/thermal/intel_bxt_pmic_thermal.c
+@@ -166,7 +166,7 @@ static irqreturn_t pmic_thermal_irq_handler(int irq, void *data)
+ 	struct pmic_thermal_data *td;
+ 	struct intel_soc_pmic *pmic;
+ 	struct regmap *regmap;
+-	u8 reg_val, mask, irq_stat, trip;
++	u8 reg_val, mask, irq_stat;
+ 	u16 reg, evt_stat_reg;
+ 	int i, j, ret;
  
- 	/*
-@@ -3187,6 +3184,10 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+@@ -201,7 +201,6 @@ static irqreturn_t pmic_thermal_irq_handler(int irq, void *data)
+ 			if (regmap_read(regmap, evt_stat_reg, &ret))
+ 				return IRQ_HANDLED;
  
- 	fd_install(r, file);
- 	return r;
-+
-+put_kvm:
-+	kvm_put_kvm(kvm);
-+	return r;
- }
- 
- static long kvm_dev_ioctl(struct file *filp,
+-			trip = td->maps[i].trip_config[j].trip_num;
+ 			tzd = thermal_zone_get_zone_by_name(td->maps[i].handle);
+ 			if (!IS_ERR(tzd))
+ 				thermal_zone_device_update(tzd,
 -- 
-2.15.0
+2.14.1
 
