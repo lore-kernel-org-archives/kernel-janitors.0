@@ -1,47 +1,66 @@
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Date: Mon, 27 Nov 2017 07:25:51 +0000
-Subject: Re: [PATCH] s390/drivers: use setup_timer instead of init_timer
-Message-Id: <53a7d0e2-93f6-e69e-ef49-57d3a46714c5@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 01 Nov 2017 18:46:45 +0000
+Subject: [PATCH v2 1/3] Sony-laptop: Fix exception handling in sony_nc_setup_rfkill()
+Message-Id: <354baacc-58dd-7012-de2c-11042604826e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171124125007.30704-1-colin.king@canonical.com>
-In-Reply-To: <20171124125007.30704-1-colin.king@canonical.com>
+References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
+ <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+ <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
+In-Reply-To: <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
 
-On 11/24/2017 01:50 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Use setup_timer function instead of initializing timer with the
-> function and data fields.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/s390/net/fsm.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/s390/net/fsm.c b/drivers/s390/net/fsm.c
-> index 8c14c6c3ad3d..16b81be1f07a 100644
-> --- a/drivers/s390/net/fsm.c
-> +++ b/drivers/s390/net/fsm.c
-> @@ -142,13 +142,11 @@ void
->  fsm_settimer(fsm_instance *fi, fsm_timer *this)
->  {
->  	this->fi = fi;
-> -	this->tl.function = (void *)fsm_expire_timer;
-> -	this->tl.data = (long)this;
->  #if FSM_TIMER_DEBUG
->  	printk(KERN_DEBUG "fsm(%s): Create timer %p\n", fi->name,
->  	       this);
->  #endif
-> -	init_timer(&this->tl);
-> +	setup_timer(&this->tl, (void *)fsm_expire_timer, (long)this);
->  }
-> 
->  void
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 1 Nov 2017 18:42:45 +0100
 
-Thanks Colin, but looks like Kees beat you to it in Linus' tree.
+Source code review for a specific software refactoring showed the need
+for another correction because the error code "-1" was returned so far
+if a call of the function "sony_call_snc_handle" failed here.
+Thus assign the return value from these two function calls also to
+the variable "err" and provide it in case of a failure.
+
+Fixes: d6f15ed876b83a1a0eba1d0473eef58acc95444a ("sony-laptop: use soft rfkill status stored in hw")
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Link: https://lkml.org/lkml/2017/10/31/463
+Link: https://lkml.kernel.org/r/<CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/platform/x86/sony-laptop.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index a16cea2be9c3..4332cc982ce0 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1660,17 +1660,19 @@ static int sony_nc_setup_rfkill(struct acpi_device *device,
+ 	if (!rfk)
+ 		return -ENOMEM;
+ 
+-	if (sony_call_snc_handle(sony_rfkill_handle, 0x200, &result) < 0) {
++	err = sony_call_snc_handle(sony_rfkill_handle, 0x200, &result);
++	if (err < 0) {
+ 		rfkill_destroy(rfk);
+-		return -1;
++		return err;
+ 	}
+ 	hwblock = !(result & 0x1);
+ 
+-	if (sony_call_snc_handle(sony_rfkill_handle,
+-				sony_rfkill_address[nc_type],
+-				&result) < 0) {
++	err = sony_call_snc_handle(sony_rfkill_handle,
++				   sony_rfkill_address[nc_type],
++				   &result);
++	if (err < 0) {
+ 		rfkill_destroy(rfk);
+-		return -1;
++		return err;
+ 	}
+ 	swblock = !(result & 0x2);
+ 
+-- 
+2.14.3
 
