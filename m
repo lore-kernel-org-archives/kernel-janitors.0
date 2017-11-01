@@ -1,42 +1,40 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Fri, 24 Nov 2017 11:44:52 +0000
-Subject: RE: [PATCH 1/3] ASoC: da7218: Delete two error messages for a failed memory allocation in da7218_of_
-Message-Id: <2E89032DDAA8B9408CB92943514A0337014C1B11AC@SW-EX-MBX01.diasemi.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 08:49:45 +0000
+Subject: [PATCH] wan: wanxl: remove redundant assignment to stat
+Message-Id: <20171101084945.14653-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
- <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
-In-Reply-To: <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Krzysztof Halasa <khc@pm.waw.pl>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-T24gMjMgTm92ZW1iZXIgMjAxNyAyMDowNSwgU0YgTWFya3VzIEVsZnJpbmcgd3JvdGU6DQoNCj4g
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
-YXRlOiBUaHUsIDIzIE5vdiAyMDE3IDIwOjQyOjIwICswMTAwDQo+IA0KPiBPbWl0IGV4dHJhIG1l
-c3NhZ2VzIGZvciBhIG1lbW9yeSBhbGxvY2F0aW9uIGZhaWx1cmUgaW4gdGhpcyBmdW5jdGlvbi4N
-Cj4gDQo+IFRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5nIHRoZSBDb2NjaW5lbGxlIHNv
-ZnR3YXJlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNl
-cnMuc291cmNlZm9yZ2UubmV0Pg0KDQpBY2tlZC1ieTogQWRhbSBUaG9tc29uIDxBZGFtLlRob21z
-b24uT3BlbnNvdXJjZUBkaWFzZW1pLmNvbT4NCg0KPiAtLS0NCj4gIHNvdW5kL3NvYy9jb2RlY3Mv
-ZGE3MjE4LmMgfCA2ICstLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA1
-IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy9jb2RlY3MvZGE3MjE4
-LmMgYi9zb3VuZC9zb2MvY29kZWNzL2RhNzIxOC5jDQo+IGluZGV4IDU2NTY0Y2U5MGNiNi4uMjVh
-Yjc0NDNkODAzIDEwMDY0NA0KPiAtLS0gYS9zb3VuZC9zb2MvY29kZWNzL2RhNzIxOC5jDQo+ICsr
-KyBiL3NvdW5kL3NvYy9jb2RlY3MvZGE3MjE4LmMNCj4gQEAgLTI0NTUsMTAgKzI0NTUsOCBAQCBz
-dGF0aWMgc3RydWN0IGRhNzIxOF9wZGF0YSAqZGE3MjE4X29mX3RvX3BkYXRhKHN0cnVjdA0KPiBz
-bmRfc29jX2NvZGVjICpjb2RlYykNCj4gIAl1MzIgb2ZfdmFsMzI7DQo+IA0KPiAgCXBkYXRhID0g
-ZGV2bV9remFsbG9jKGNvZGVjLT5kZXYsIHNpemVvZigqcGRhdGEpLCBHRlBfS0VSTkVMKTsNCj4g
-LQlpZiAoIXBkYXRhKSB7DQo+IC0JCWRldl93YXJuKGNvZGVjLT5kZXYsICJGYWlsZWQgdG8gYWxs
-b2NhdGUgbWVtb3J5IGZvciBwZGF0YVxuIik7DQo+ICsJaWYgKCFwZGF0YSkNCj4gIAkJcmV0dXJu
-IE5VTEw7DQo+IC0JfQ0KPiANCj4gIAlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJkbGcs
-bWljYmlhczEtbHZsLW1pbGxpdm9sdCIsICZvZl92YWwzMikgPj0gMCkNCj4gIAkJcGRhdGEtPm1p
-Y2JpYXMxX2x2bCA9IGRhNzIxOF9vZl9taWNiaWFzX2x2bChjb2RlYywgb2ZfdmFsMzIpOw0KPiBA
-QCAtMjUyNyw4ICsyNTI1LDYgQEAgc3RhdGljIHN0cnVjdCBkYTcyMThfcGRhdGEgKmRhNzIxOF9v
-Zl90b19wZGF0YShzdHJ1Y3QNCj4gc25kX3NvY19jb2RlYyAqY29kZWMpDQo+ICAJCWhwbGRldF9w
-ZGF0YSA9IGRldm1fa3phbGxvYyhjb2RlYy0+ZGV2LCBzaXplb2YoKmhwbGRldF9wZGF0YSksDQo+
-ICAJCQkJCSAgICBHRlBfS0VSTkVMKTsNCj4gIAkJaWYgKCFocGxkZXRfcGRhdGEpIHsNCj4gLQkJ
-CWRldl93YXJuKGNvZGVjLT5kZXYsDQo+IC0JCQkJICJGYWlsZWQgdG8gYWxsb2NhdGUgbWVtb3J5
-IGZvciBocGxkZXQgcGRhdGFcbiIpOw0KPiAgCQkJb2Zfbm9kZV9wdXQoaHBsZGV0X25wKTsNCj4g
-IAkJCXJldHVybiBwZGF0YTsNCj4gIAkJfQ0KPiAtLQ0KPiAyLjE1LjANCg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+stat set to zero and the value is never read, instead stat is
+set again in the do-loop. Hence the setting to zero is redundant
+and can be removed. Cleans up clang warning:
+
+drivers/net/wan/wanxl.c:737:2: warning: Value stored to 'stat'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wan/wanxl.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wan/wanxl.c b/drivers/net/wan/wanxl.c
+index 0c7317520ed3..d573a57bc301 100644
+--- a/drivers/net/wan/wanxl.c
++++ b/drivers/net/wan/wanxl.c
+@@ -734,7 +734,6 @@ static int wanxl_pci_init_one(struct pci_dev *pdev,
+ 		return -ENODEV;
+ 	}
+ 
+-	stat = 0;
+ 	timeout = jiffies + 5 * HZ;
+ 	do {
+ 		if ((stat = readl(card->plx + PLX_MAILBOX_5)) != 0)
+-- 
+2.14.1
+
