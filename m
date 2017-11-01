@@ -1,74 +1,214 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 11:12:13 +0000
-Subject: [PATCH 2/3] ALSA: rawmidi: Use common error handling code in snd_rawmidi_new()
-Message-Id: <4f75ca87-05bb-d32c-0691-4b7d7a8ad3da@users.sourceforge.net>
+Date: Wed, 01 Nov 2017 10:03:51 +0000
+Subject: [PATCH] pm2301_charger: Use common error handling code in three functions
+Message-Id: <c9e362be-6937-45af-f597-6d085b39c02d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d4c89bda-5091-2d3c-ded1-ba2c3b061ff6@users.sourceforge.net>
-In-Reply-To: <d4c89bda-5091-2d3c-ded1-ba2c3b061ff6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Fabian Frederick <fabf@skynet.be>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 11:36:25 +0100
+Date: Wed, 1 Nov 2017 10:56:29 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+* Add jump targets so that two error messages are stored only once
+  at the end of these function implementations.
+
+* Replace ten calls of the function "dev_err" by goto statements.
+
+* Adjust 12 condition checks.
+
+* Replace string literals by references to two global constant variables
+  in five functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/core/rawmidi.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ drivers/power/supply/pm2301_charger.c | 94 ++++++++++++++++++-----------------
+ 1 file changed, 48 insertions(+), 46 deletions(-)
 
-diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
-index c17f173150e9..34686000ecce 100644
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -1560,10 +1560,8 @@ int snd_rawmidi_new(struct snd_card *card, char *id, int device,
- 					 ->streams[SNDRV_RAWMIDI_STREAM_INPUT],
- 					 SNDRV_RAWMIDI_STREAM_INPUT,
- 					 input_count);
--	if (err < 0) {
--		snd_rawmidi_free(rmidi);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_midi;
+diff --git a/drivers/power/supply/pm2301_charger.c b/drivers/power/supply/pm2301_charger.c
+index 78561b6884fc..3c9c0fe87246 100644
+--- a/drivers/power/supply/pm2301_charger.c
++++ b/drivers/power/supply/pm2301_charger.c
+@@ -112,6 +112,9 @@ static const struct i2c_device_id pm2xxx_ident[] = {
+ 	{ }
+ };
  
- 	err  	    snd_rawmidi_alloc_substreams(rmidi,
-@@ -1571,19 +1569,20 @@ int snd_rawmidi_new(struct snd_card *card, char *id, int device,
- 					 ->streams[SNDRV_RAWMIDI_STREAM_OUTPUT],
- 					 SNDRV_RAWMIDI_STREAM_OUTPUT,
- 					 output_count);
--	if (err < 0) {
--		snd_rawmidi_free(rmidi);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_midi;
- 
- 	err = snd_device_new(card, SNDRV_DEV_RAWMIDI, rmidi, &ops);
--	if (err < 0) {
--		snd_rawmidi_free(rmidi);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_midi;
++static char const read_failure[] = "%s pm2xxx read failed\n";
++static char const write_failure[] = "%s pm2xxx write failed\n";
 +
- 	if (rrawmidi)
- 		*rrawmidi = rmidi;
+ static void set_lpn_pin(struct pm2xxx_charger *pm2)
+ {
+ 	if (!pm2->ac.charger_connected && gpio_is_valid(pm2->lpn_pin)) {
+@@ -181,20 +184,20 @@ static int pm2xxx_charging_disable_mngt(struct pm2xxx_charger *pm2)
+ 
+ 	/* Disable SW EOC ctrl */
+ 	ret = pm2xxx_reg_write(pm2, PM2XXX_SW_CTRL_REG, PM2XXX_SWCTRL_HW);
+-	if (ret < 0) {
+-		dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-		return ret;
+-	}
++	if (ret)
++		goto report_write_failure;
+ 
+ 	/* Disable charging */
+ 	ret = pm2xxx_reg_write(pm2, PM2XXX_BATT_CTRL_REG2,
+ 			(PM2XXX_CH_AUTO_RESUME_DIS | PM2XXX_CHARGER_DIS));
+-	if (ret < 0) {
+-		dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-		return ret;
+-	}
++	if (ret)
++		goto report_write_failure;
+ 
  	return 0;
 +
-+free_midi:
-+	snd_rawmidi_free(rmidi);
-+	return err;
++report_write_failure:
++	dev_err(pm2->dev, write_failure, __func__);
++	return ret;
  }
- EXPORT_SYMBOL(snd_rawmidi_new);
  
+ static int pm2xxx_charger_batt_therm_mngt(struct pm2xxx_charger *pm2, int val)
+@@ -244,10 +247,9 @@ static int pm2xxx_charger_vbat_lsig_mngt(struct pm2xxx_charger *pm2, int val)
+ 		/* Enable SW EOC ctrl */
+ 		ret = pm2xxx_reg_write(pm2, PM2XXX_SW_CTRL_REG,
+ 							PM2XXX_SWCTRL_SW);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-			return ret;
+-		}
++		if (ret)
++			goto report_write_failure;
++
+ 		break;
+ 
+ 	case PM2XXX_INT1_ITVBATLOWF:
+@@ -255,10 +257,9 @@ static int pm2xxx_charger_vbat_lsig_mngt(struct pm2xxx_charger *pm2, int val)
+ 		/* Disable SW EOC ctrl */
+ 		ret = pm2xxx_reg_write(pm2, PM2XXX_SW_CTRL_REG,
+ 							PM2XXX_SWCTRL_HW);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-			return ret;
+-		}
++		if (ret)
++			goto report_write_failure;
++
+ 		break;
+ 
+ 	default:
+@@ -266,6 +267,10 @@ static int pm2xxx_charger_vbat_lsig_mngt(struct pm2xxx_charger *pm2, int val)
+ 	}
+ 
+ 	return 0;
++
++report_write_failure:
++	dev_err(pm2->dev, write_failure, __func__);
++	return ret;
+ }
+ 
+ static int pm2xxx_charger_bat_disc_mngt(struct pm2xxx_charger *pm2, int val)
+@@ -513,8 +518,8 @@ static int pm2xxx_charger_get_ac_cv(struct pm2xxx_charger *pm2)
+ 	if (pm2->ac.charger_connected && pm2->ac.charger_online) {
+ 
+ 		ret = pm2xxx_reg_read(pm2, PM2XXX_SRCE_REG_INT4, &val);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx read failed\n", __func__);
++		if (ret) {
++			dev_err(pm2->dev, read_failure, __func__);
+ 			goto out;
+ 		}
+ 
+@@ -748,45 +753,34 @@ static int pm2xxx_charger_ac_en(struct ux500_charger *charger,
+ 		}
+ 
+ 		ret = pm2xxx_reg_read(pm2, PM2XXX_BATT_CTRL_REG8, &val);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx read failed\n", __func__);
+-			goto error_occured;
+-		}
++		if (ret)
++			goto report_read_failure;
++
+ 		val &= ~PM2XXX_CH_VOLT_MASK;
+ 		val |= volt_index;
+ 		ret = pm2xxx_reg_write(pm2, PM2XXX_BATT_CTRL_REG8, val);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-			goto error_occured;
+-		}
++		if (ret)
++			goto report_write_failure;
+ 
+ 		ret = pm2xxx_reg_read(pm2, PM2XXX_BATT_CTRL_REG6, &val);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx read failed\n", __func__);
+-			goto error_occured;
+-		}
++		if (ret)
++			goto report_read_failure;
++
+ 		val &= ~PM2XXX_DIR_CH_CC_CURRENT_MASK;
+ 		val |= curr_index;
+ 		ret = pm2xxx_reg_write(pm2, PM2XXX_BATT_CTRL_REG6, val);
+-		if (ret < 0) {
+-			dev_err(pm2->dev, "%s pm2xxx write failed\n", __func__);
+-			goto error_occured;
+-		}
++		if (ret)
++			goto report_write_failure;
+ 
+ 		if (!pm2->bat->enable_overshoot) {
+ 			ret = pm2xxx_reg_read(pm2, PM2XXX_LED_CTRL_REG, &val);
+-			if (ret < 0) {
+-				dev_err(pm2->dev, "%s pm2xxx read failed\n",
+-								__func__);
+-				goto error_occured;
+-			}
++			if (ret)
++				goto report_read_failure;
++
+ 			val |= PM2XXX_ANTI_OVERSHOOT_EN;
+ 			ret = pm2xxx_reg_write(pm2, PM2XXX_LED_CTRL_REG, val);
+-			if (ret < 0) {
+-				dev_err(pm2->dev, "%s pm2xxx write failed\n",
+-								__func__);
+-				goto error_occured;
+-			}
++			if (ret)
++				goto report_write_failure;
+ 		}
+ 
+ 		ret = pm2xxx_charging_enable_mngt(pm2);
+@@ -820,6 +814,14 @@ static int pm2xxx_charger_ac_en(struct ux500_charger *charger,
+ 
+ error_occured:
+ 	return ret;
++
++report_read_failure:
++	dev_err(pm2->dev, read_failure, __func__);
++	return ret;
++
++report_write_failure:
++	dev_err(pm2->dev, write_failure, __func__);
++	return ret;
+ }
+ 
+ static int pm2xxx_charger_watchdog_kick(struct ux500_charger *charger)
+@@ -884,8 +886,8 @@ static void pm2xxx_charger_check_main_thermal_prot_work(
+ 
+ 	/* Check if die temp warning is still active */
+ 	ret = pm2xxx_reg_read(pm2, PM2XXX_SRCE_REG_INT5, &val);
+-	if (ret < 0) {
+-		dev_err(pm2->dev, "%s pm2xxx read failed\n", __func__);
++	if (ret) {
++		dev_err(pm2->dev, read_failure, __func__);
+ 		return;
+ 	}
+ 	if (val & (PM2XXX_INT5_S_ITTHERMALWARNINGRISE
 -- 
-2.15.0
+2.14.3
 
