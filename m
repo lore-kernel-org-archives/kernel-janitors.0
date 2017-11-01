@@ -1,35 +1,45 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 20 Nov 2017 16:11:22 +0000
-Subject: [PATCH] misc/mic/scif: remove redundant assignment of dst_local to itself
-Message-Id: <20171120161122.5295-1-colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 09:26:22 +0000
+Subject: [PATCH] iwlegacy: remove redundant pointer sta_priv
+Message-Id: <20171101092622.16625-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>, =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+To: Stanislaw Gruszka <sgruszka@redhat.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The assignment of dst_local to itself is redundant and can be removed.
+Pointer sta_priv is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
+
+drivers/net/wireless/intel/iwlegacy/4965-rs.c:2163:2: warning: Value
+stored to 'sta_priv' is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/mic/scif/scif_dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/intel/iwlegacy/4965-rs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
-index 63d6246d6dff..1c42f09eccdf 100644
---- a/drivers/misc/mic/scif/scif_dma.c
-+++ b/drivers/misc/mic/scif/scif_dma.c
-@@ -1571,7 +1571,6 @@ static int scif_rma_list_dma_copy_wrapper(struct scif_endpt *epd,
- 	src_local = work->src_window->type = SCIF_WINDOW_SELF;
- 	dst_local = work->dst_window->type = SCIF_WINDOW_SELF;
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-rs.c b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+index c055f6da11c6..365a4187fc37 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+@@ -2154,13 +2154,11 @@ il4965_rs_initialize_lq(struct il_priv *il, struct ieee80211_conf *conf,
+ 	u8 use_green;
+ 	u8 active_tbl = 0;
+ 	u8 valid_tx_ant;
+-	struct il_station_priv *sta_priv;
  
--	dst_local = dst_local;
- 	/* Allocate dma_completion cb */
- 	comp_cb = kzalloc(sizeof(*comp_cb), GFP_KERNEL);
- 	if (!comp_cb)
+ 	if (!sta || !lq_sta)
+ 		return;
+ 
+ 	use_green = il4965_rs_use_green(il, sta);
+-	sta_priv = (void *)sta->drv_priv;
+ 
+ 	i = lq_sta->last_txrate_idx;
+ 
 -- 
 2.14.1
 
