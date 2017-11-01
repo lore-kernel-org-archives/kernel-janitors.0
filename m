@@ -1,23 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Nov 2017 13:01:28 +0000
-Subject: Re: [PATCH net-next] liquidio: Missing error code in liquidio_init_nic_module()
-Message-Id: <20171114.220128.1580138309209764002.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 01 Nov 2017 19:37:11 +0000
+Subject: Re: [v2] can: Use common error handling code in vxcan_newlink()
+Message-Id: <2346609d-85f6-6eec-e492-d15ba1b6489a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114061417.ejguuk3tef3lq4r5@mwanda>
-In-Reply-To: <20171114061417.ejguuk3tef3lq4r5@mwanda>
+References: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
+ <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
+ <d3bdd3c0-5a03-dd59-07ca-94b126c67f75@users.sourceforge.net>
+ <264b3c2b-8354-5769-639c-ac8d2fcbe630@hartkopp.net>
+ <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
+ <08fd31d5-8677-81e7-65d6-40d501017db6@hartkopp.net>
+In-Reply-To: <08fd31d5-8677-81e7-65d6-40d501017db6@hartkopp.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: derek.chickles@caviumnetworks.com, vijaya.guvva@cavium.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Nov 2017 09:14:17 +0300
+> Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
 
-> We accidentally return success if lio_vf_rep_modinit() fails instead of
-> propogating the error code.
+Thanks for another positive feedback.
+
+
+> Again: Posting such a patch on linux-can@vger.kernel.org is ENOUGH!
+
+I was informed in an other way for Linux software patches.
+
+
+> No need to cross post such a patch additionally on
 > 
-> Fixes: e20f469660ad ("liquidio: synchronize VF representor names with NIC firmware")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> netdev@vger.kernel.org
+> linux-kernel@vger.kernel.org
 
-Applied.
+These addresses were suggested (or recommended?) by the script “get_maintainer.pl”.
+
+
+> kernel-janitors@vger.kernel.org
+
+I tend to add this address also for my update suggestions.
+
+
+> and to each of the maintainers
+…
+> We all subscribed the mailing list and listen to it.
+
+This is generally fine. - But I do not know how long such subscriptions
+will be active.
+
+
+> That's the intention of a mailing list ...
+
+I know …
+
+
+> Cross posting is not appreciated in the community.
+
+How does this view fit to the information in the section “5) Select
+the recipients for your patch” from the document “submitting-patches.rst”?
+
+Regards,
+Markus
