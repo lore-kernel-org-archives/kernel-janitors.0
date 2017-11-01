@@ -1,29 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 20:17:43 +0000
-Subject: [PATCH 0/4] ALSA SoC PCM: Fine-tuning for some function implementations
-Message-Id: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 10:49:23 +0000
+Subject: [PATCH] serial: core: remove redundant assignment to port
+Message-Id: <20171101104923.18439-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 21:12:34 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+The final assignment to port is never read, hence it is redundant
+and can be removed. Also move the declaration of port to a more
+local scope.  Cleans up clang warning:
 
-Markus Elfring (4):
-  Improve unlocking of a mutex in soc_dpcm_runtime_update()
-  Add some blank lines for better code readability
-  Add some spaces for better code readability
-  Improve a size determination in dpcm_be_connect()
+drivers/tty/serial/serial_core.c:1498:2: warning: Value stored
+to 'port' is never read
 
- sound/soc/soc-pcm.c | 60 ++++++++++++++++++++++++++++++++---------------------
- 1 file changed, 36 insertions(+), 24 deletions(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/serial/serial_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index f4e6c8662987..cdac01fe11ca 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1482,10 +1482,10 @@ static void uart_set_termios(struct tty_struct *tty,
+ static void uart_close(struct tty_struct *tty, struct file *filp)
+ {
+ 	struct uart_state *state = tty->driver_data;
+-	struct tty_port *port;
+ 
+ 	if (!state) {
+ 		struct uart_driver *drv = tty->driver->driver_state;
++		struct tty_port *port;
+ 
+ 		state = drv->state + tty->index;
+ 		port = &state->port;
+@@ -1495,7 +1495,6 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
+ 		return;
+ 	}
+ 
+-	port = &state->port;
+ 	pr_debug("uart_close(%d) called\n", tty->index);
+ 
+ 	tty_port_close(tty->port, tty, filp);
 -- 
-2.15.0
+2.14.1
 
