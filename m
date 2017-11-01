@@ -1,42 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 12:19:17 +0000
-Subject: [PATCH] video: sh_mobile_meram: Delete an error message for a failed memory allocation in sh_mobile_
-Message-Id: <1feb3cf8-77e6-367e-5f5c-23fdd96339ec@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 10:01:22 +0000
+Subject: [PATCH] USB: c67x00: remove redundant pointer urbp
+Message-Id: <20171101100122.17311-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 13:08:43 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Pointer urbp is assigned but is never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/usb/c67x00/c67x00-sched.c:975:2: warning: Value stored to 'urbp'
+is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/sh_mobile_meram.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/c67x00/c67x00-sched.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/sh_mobile_meram.c b/drivers/video/fbdev/sh_mobile_meram.c
-index baadfb207b2e..b5a6735aeb87 100644
---- a/drivers/video/fbdev/sh_mobile_meram.c
-+++ b/drivers/video/fbdev/sh_mobile_meram.c
-@@ -644,10 +644,8 @@ static int sh_mobile_meram_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/usb/c67x00/c67x00-sched.c b/drivers/usb/c67x00/c67x00-sched.c
+index 7311ed61e99a..0b68cd6874d2 100644
+--- a/drivers/usb/c67x00/c67x00-sched.c
++++ b/drivers/usb/c67x00/c67x00-sched.c
+@@ -966,13 +966,11 @@ static void c67x00_handle_successful_td(struct c67x00_hcd *c67x00,
+ static void c67x00_handle_isoc(struct c67x00_hcd *c67x00, struct c67x00_td *td)
+ {
+ 	struct urb *urb = td->urb;
+-	struct c67x00_urb_priv *urbp;
+ 	int cnt;
  
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "cannot allocate device data\n");
-+	if (!priv)
- 		return -ENOMEM;
--	}
+ 	if (!urb)
+ 		return;
  
- 	/* Initialize private data. */
- 	mutex_init(&priv->lock);
+-	urbp = urb->hcpriv;
+ 	cnt = td->privdata;
+ 
+ 	if (td->status & TD_ERROR_MASK)
 -- 
-2.15.0
+2.14.1
 
