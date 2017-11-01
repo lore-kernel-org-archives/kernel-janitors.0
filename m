@@ -1,27 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 19:06:56 +0000
-Subject: Re: Adjustments for a lot of function implementations
-Message-Id: <f3ad7c9a-db9d-7e73-312e-eee04fddd036@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 01 Nov 2017 09:09:13 +0000
+Subject: [PATCH] liquidio: remove redundant setting of inst_processed to zero
+Message-Id: <20171101090913.16215-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
- <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
- <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
- <alpine.DEB.2.20.1710301745530.2160@hadrien>
- <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
- <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
- <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
-In-Reply-To: <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> ??? I did that: either one patch per directory with the same type of change,
-> or one patch per driver combining all the changes for that driver.
+From: Colin Ian King <colin.king@canonical.com>
 
-Would you like to answer my still remaining questions in any more
-constructive ways?
+The zero value assigned to inst_processed at the end of each
+iteration of the do-while loop is overwritten on the next iteration
+and hence it is a redundant assignment and can be removed. Cleans
+up clang warning:
 
-Regards,
-Markus
+drivers/net/ethernet/cavium/liquidio/request_manager.c:480:3:
+warning: Value stored to 'inst_processed' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/cavium/liquidio/request_manager.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+index 1e0fbce86d60..11aaa35e45ab 100644
+--- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
++++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+@@ -477,8 +477,6 @@ octeon_flush_iq(struct octeon_device *oct, struct octeon_instr_queue *iq,
+ 		}
+ 
+ 		tot_inst_processed += inst_processed;
+-		inst_processed = 0;
+-
+ 	} while (tot_inst_processed < napi_budget);
+ 
+ 	if (napi_budget && (tot_inst_processed >= napi_budget))
+-- 
+2.14.1
+
