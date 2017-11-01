@@ -1,50 +1,42 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Thu, 09 Nov 2017 09:16:15 +0000
-Subject: Re: [PATCH] extcon: max8997: Delete an unnecessary variable initialisation in max8997_muic_set_path(
-Message-Id: <5A041CDF.1030504@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 01 Nov 2017 18:47:57 +0000
+Subject: [PATCH v2 2/3] Sony-laptop: Delete an unnecessary variable initialisation in sony_nc_setup_rfkill()
+Message-Id: <3bc1148d-01e1-11fe-1594-1c7ffd83600f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171109090556epcas1p265558b4f87c887533655517a23e59e21@epcas1p2.samsung.com>
-        <e24dddc4-6be6-0ffd-ca58-979fa91b77c6@users.sourceforge.net>
-In-Reply-To: <e24dddc4-6be6-0ffd-ca58-979fa91b77c6@users.sourceforge.net>
+References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
+ <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+ <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
+In-Reply-To: <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 1 Nov 2017 19:00:59 +0100
 
-On 2017년 11월 09일 18:05, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 9 Nov 2017 10:00:08 +0100
-> 
-> The variable "ret" will be set to an appropriate value a bit later.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/extcon/extcon-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-> index 8152790d72e1..9f30f4929b72 100644
-> --- a/drivers/extcon/extcon-max8997.c
-> +++ b/drivers/extcon/extcon-max8997.c
-> @@ -204,7 +204,7 @@ static int max8997_muic_set_debounce_time(struct max8997_muic_info *info,
->  static int max8997_muic_set_path(struct max8997_muic_info *info,
->  		u8 val, bool attached)
->  {
-> -	int ret = 0;
-> +	int ret;
->  	u8 ctrl1, ctrl2 = 0;
->  
->  	if (attached)
-> 
+The local variable "err" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Applied it.
-But, it will be merged to v4.16-rc1.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/platform/x86/sony-laptop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index 4332cc982ce0..62aa2c37b8d2 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1627,7 +1627,7 @@ static const struct rfkill_ops sony_rfkill_ops = {
+ static int sony_nc_setup_rfkill(struct acpi_device *device,
+ 				enum sony_nc_rfkill nc_type)
+ {
+-	int err = 0;
++	int err;
+ 	struct rfkill *rfk;
+ 	enum rfkill_type type;
+ 	const char *name;
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.3
+
