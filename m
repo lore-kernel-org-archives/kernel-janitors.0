@@ -1,23 +1,21 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Nov 2017 13:00:47 +0000
-Subject: Re: [PATCH net-next] xdp: sample: Missing curly braces in read_route()
-Message-Id: <20171114.220047.264915982235633364.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Nov 2017 10:33:35 +0000
+Subject: Re: [PATCH] pinctrl: sirf: Use common error handling code in sirfsoc_dt_node_to_map()
+Message-Id: <20171101103335.y5t7id3okn55r6a2@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114061202.bzxl6fhw3bdmqp7h@mwanda>
-In-Reply-To: <20171114061202.bzxl6fhw3bdmqp7h@mwanda>
+References: <80911d4b-d819-335c-106e-70d7672e645b@users.sourceforge.net>
+ <CAMuHMdXSVXZNW7a-xf_zyCW-j_KVQbRBdrt8q-SNjGChuDU-bw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXSVXZNW7a-xf_zyCW-j_KVQbRBdrt8q-SNjGChuDU-bw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ast@kernel.org, Christina.Jacob@cavium.com, daniel@iogearbox.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Nov 2017 09:12:03 +0300
+Really, the of_node_put() is connected to the loop and not the function
+so the original code is the right way to do it.  Otherwise if we added
+more error handling to the function then normal kernel error handling
+wouldn't work naturally.
 
-> The assert statement is supposed to be part of the else branch but the
-> curly braces were accidentally left off.
-> 
-> Fixes: 3e29cd0e6563 ("xdp: Sample xdp program implementing ip forward")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+regards,
+dan carpenter
 
-Applied.
