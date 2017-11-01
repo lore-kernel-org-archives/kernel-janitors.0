@@ -1,86 +1,198 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:42 +0000
-Subject: Applied "ASoC: cs42l56: Improve two size determinations in cs42l56_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOXG-0007NP-J5@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 01 Nov 2017 15:41:05 +0000
+Subject: [PATCH v2 2/2] drm/rcar-du: Adjust 14 checks for null pointers
+Message-Id: <ea48baba-9874-a4d5-185f-1b8fb98feb73@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8c36fc94-1f7d-5d22-7d3a-f2f6117199aa@users.sourceforge.net>
-In-Reply-To: <8c36fc94-1f7d-5d22-7d3a-f2f6117199aa@users.sourceforge.net>
+References: <201710262044.165nsaJp%fengguang.wu@intel.com>
+ <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
+In-Reply-To: <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
+To: kbuild test robot <lkp@intel.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kbuild-all@01.org
 
-The patch
-
-   ASoC: cs42l56: Improve two size determinations in cs42l56_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e8d8b98c0a6edab5d6cc0292e1ed603d8d4ff5b6 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 09:33:15 +0100
-Subject: [PATCH] ASoC: cs42l56: Improve two size determinations in
- cs42l56_i2c_probe()
+Date: Wed, 1 Nov 2017 16:00:46 +0100
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !...
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42l56.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index 13ee46217d78..fd7b8d32c2b2 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1190,9 +1190,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int alpha_rev, metal_rev;
- 	unsigned int reg;
+v2:
+The commit message was written only with ASCII characters.
+
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 6 +++---
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c   | 6 +++---
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c     | 6 +++---
+ 8 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 301ea1a8018e..67567af6e348 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -410,7 +410,7 @@ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc)
+ 	rcrtc->event = NULL;
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
  
--	cs42l56 = devm_kzalloc(&i2c_client->dev,
--			       sizeof(struct cs42l56_private),
--			       GFP_KERNEL);
-+	cs42l56 = devm_kzalloc(&i2c_client->dev, sizeof(*cs42l56), GFP_KERNEL);
- 	if (cs42l56 = NULL)
+-	if (event = NULL)
++	if (!event)
+ 		return;
+ 
+ 	spin_lock_irqsave(&dev->event_lock, flags);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index d2f29e6b1112..cf80476783bf 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -318,7 +318,7 @@ static int rcar_du_probe(struct platform_device *pdev)
+ 
+ 	/* Allocate and initialize the R-Car device structure. */
+ 	rcdu = devm_kzalloc(&pdev->dev, sizeof(*rcdu), GFP_KERNEL);
+-	if (rcdu = NULL)
++	if (!rcdu)
  		return -ENOMEM;
- 	cs42l56->dev = &i2c_client->dev;
-@@ -1207,8 +1205,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs42l56->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				     sizeof(struct cs42l56_platform_data),
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
- 				     GFP_KERNEL);
- 		if (!pdata)
+ 
+ 	rcdu->dev = &pdev->dev;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index ba8d2804c1d1..8a9f7fa69ecc 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -166,7 +166,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	int ret;
+ 
+ 	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
+-	if (renc = NULL)
++	if (!renc)
+ 		return -ENOMEM;
+ 
+ 	renc->output = output;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index b6b341164aab..c15aa38fe308 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -181,7 +181,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+ 	unsigned int i;
+ 
+ 	format = rcar_du_format_info(mode_cmd->pixel_format);
+-	if (format = NULL) {
++	if (!format) {
+ 		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
+ 			mode_cmd->pixel_format);
+ 		return ERR_PTR(-EINVAL);
+@@ -419,7 +419,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
+ {
+ 	rcdu->props.alpha  		drm_property_create_range(rcdu->ddev, 0, "alpha", 0, 255);
+-	if (rcdu->props.alpha = NULL)
++	if (!rcdu->props.alpha)
+ 		return -ENOMEM;
+ 
+ 	/*
+@@ -430,7 +430,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
+ 	rcdu->props.colorkey  		drm_property_create_range(rcdu->ddev, 0, "colorkey",
+ 					  0, 0x01ffffff);
+-	if (rcdu->props.colorkey = NULL)
++	if (!rcdu->props.colorkey)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+index b373ad48ef5f..189e71b3d5d4 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+@@ -63,7 +63,7 @@ int rcar_du_lvds_connector_init(struct rcar_du_device *rcdu,
+ 	int ret;
+ 
+ 	rcon = devm_kzalloc(rcdu->dev, sizeof(*rcon), GFP_KERNEL);
+-	if (rcon = NULL)
++	if (!rcon)
+ 		return -ENOMEM;
+ 
+ 	connector = &rcon->connector;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+index 12d22f3db1af..ab2576e5d700 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+@@ -253,7 +253,7 @@ int rcar_du_lvdsenc_init(struct rcar_du_device *rcdu)
+ 
+ 	for (i = 0; i < rcdu->info->num_lvds; ++i) {
+ 		lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
+-		if (lvds = NULL)
++		if (!lvds)
  			return -ENOMEM;
+ 
+ 		lvds->dev = rcdu;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index 61833cc1c699..f48a990214ed 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -584,7 +584,7 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+ 	}
+ 
+ 	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format = NULL) {
++	if (!rstate->format) {
+ 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+ 			state->fb->format->format);
+ 		return -EINVAL;
+@@ -637,7 +637,7 @@ rcar_du_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 
+ 	state = to_rcar_plane_state(plane->state);
+ 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
+-	if (copy = NULL)
++	if (!copy)
+ 		return NULL;
+ 
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
+@@ -662,7 +662,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
+ 	}
+ 
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+-	if (state = NULL)
++	if (!state)
+ 		return;
+ 
+ 	state->hwindex = -1;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 2c96147bc444..e8e261362d9a 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -283,7 +283,7 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
+ 	}
+ 
+ 	rstate->format = rcar_du_format_info(state->fb->format->format);
+-	if (rstate->format = NULL) {
++	if (!rstate->format) {
+ 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
+ 			state->fb->format->format);
+ 		return -EINVAL;
+@@ -323,7 +323,7 @@ rcar_du_vsp_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 
+ 	state = to_rcar_vsp_plane_state(plane->state);
+ 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
+-	if (copy = NULL)
++	if (!copy)
+ 		return NULL;
+ 
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
+@@ -348,7 +348,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
+ 	}
+ 
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+-	if (state = NULL)
++	if (!state)
+ 		return;
+ 
+ 	state->alpha = 255;
 -- 
-2.15.0
+2.14.3
 
