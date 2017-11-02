@@ -1,36 +1,77 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Fri, 24 Nov 2017 11:49:08 +0000
-Subject: RE: [PATCH 2/2] ASoC: da7213: Improve a size determination in da7213_i2c_probe()
-Message-Id: <2E89032DDAA8B9408CB92943514A0337014C1B11B9@SW-EX-MBX01.diasemi.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Nov 2017 13:00:10 +0000
+Subject: [PATCH v2] PCI: rcar: Use common error handling code in rcar_pcie_enable_msi()
+Message-Id: <a55409b0-9839-d9b5-5c90-606c22d0c58b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
- <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
-In-Reply-To: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
+References: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
+ <20171101081831.ssnuqp5b75lbfu5p@verge.net.au>
+ <7047eb7a-cf93-6a56-08db-a5e8bedbfc57@users.sourceforge.net>
+ <20171102081239.bzaunax3uotejqja@verge.net.au>
+In-Reply-To: <20171102081239.bzaunax3uotejqja@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-T24gMjMgTm92ZW1iZXIgMjAxNyAxNzozNCwgU0YgTWFya3VzIEVsZnJpbmcgd3JvdGU6DQoNCj4g
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
-YXRlOiBUaHUsIDIzIE5vdiAyMDE3IDE4OjE1OjMwICswMTAwDQo+IA0KPiBSZXBsYWNlIHRoZSBz
-cGVjaWZpY2F0aW9uIG9mIGEgZGF0YSBzdHJ1Y3R1cmUgYnkgYSBwb2ludGVyIGRlcmVmZXJlbmNl
-DQo+IGFzIHRoZSBwYXJhbWV0ZXIgZm9yIHRoZSBvcGVyYXRvciAic2l6ZW9mIiB0byBtYWtlIHRo
-ZSBjb3JyZXNwb25kaW5nIHNpemUNCj4gZGV0ZXJtaW5hdGlvbiBhIGJpdCBzYWZlciBhY2NvcmRp
-bmcgdG8gdGhlIExpbnV4IGNvZGluZyBzdHlsZSBjb252ZW50aW9uLg0KPiANCj4gVGhpcyBpc3N1
-ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVsbGUgc29mdHdhcmUuDQo+IA0KPiBT
-aWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5u
-ZXQ+DQoNCkFja2VkLWJ5OiBBZGFtIFRob21zb24gPEFkYW0uVGhvbXNvbi5PcGVuc291cmNlQGRp
-YXNlbWkuY29tPg0KDQo+IC0tLQ0KPiAgc291bmQvc29jL2NvZGVjcy9kYTcyMTMuYyB8IDMgKy0t
-DQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25zKC0pDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2NvZGVjcy9kYTcyMTMuYyBiL3NvdW5kL3NvYy9jb2Rl
-Y3MvZGE3MjEzLmMNCj4gaW5kZXggZDFiNzdhMGUzYjc0Li5iMmI0ZTkwZmMwMmEgMTAwNjQ0DQo+
-IC0tLSBhL3NvdW5kL3NvYy9jb2RlY3MvZGE3MjEzLmMNCj4gKysrIGIvc291bmQvc29jL2NvZGVj
-cy9kYTcyMTMuYw0KPiBAQCAtMTg1Myw4ICsxODUzLDcgQEAgc3RhdGljIGludCBkYTcyMTNfaTJj
-X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICppMmMsDQo+ICAJc3RydWN0IGRhNzIxM19wcml2ICpk
-YTcyMTM7DQo+ICAJaW50IHJldDsNCj4gDQo+IC0JZGE3MjEzID0gZGV2bV9remFsbG9jKCZpMmMt
-PmRldiwgc2l6ZW9mKHN0cnVjdCBkYTcyMTNfcHJpdiksDQo+IC0JCQkgICAgICBHRlBfS0VSTkVM
-KTsNCj4gKwlkYTcyMTMgPSBkZXZtX2t6YWxsb2MoJmkyYy0+ZGV2LCBzaXplb2YoKmRhNzIxMyks
-IEdGUF9LRVJORUwpOw0KPiAgCWlmICghZGE3MjEzKQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4g
-DQo+IC0tDQo+IDIuMTUuMA0KDQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Nov 2017 13:35:17 +0100
+
+* Adjust a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
+
+* Replace two calls of the function "dev_err" by goto statements.
+
+This issue was detected by using the Coccinelle software.
+
+Link: https://lkml.org/lkml/2017/11/2/140
+Link: https://lkml.kernel.org/r/<20171102081239.bzaunax3uotejqja@verge.net.au>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2:
+An other jump label was requested by Simon Horman.
+
+ drivers/pci/host/pcie-rcar.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 12796eccb2be..f3c1ffdf8072 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -873,18 +873,14 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 	err = devm_request_irq(dev, msi->irq1, rcar_pcie_msi_irq,
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_irq_chip.name, pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
+-		goto err;
+-	}
++	if (err < 0)
++		goto err_remove_domain;
+ 
+ 	err = devm_request_irq(dev, msi->irq2, rcar_pcie_msi_irq,
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_irq_chip.name, pcie);
+-	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
+-		goto err;
+-	}
++	if (err < 0)
++		goto err_remove_domain;
+ 
+ 	/* setup MSI data target */
+ 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+@@ -898,7 +894,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 
+ 	return 0;
+ 
+-err:
++err_remove_domain:
++	dev_err(dev, "failed to request IRQ: %d\n", err);
+ 	irq_domain_remove(msi->domain);
+ 	return err;
+ }
+-- 
+2.15.0
+
