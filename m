@@ -1,56 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 21:28:31 +0000
-Subject: [PATCH 5/5] radeon_backlight: Delete a jump target in radeonfb_bl_init()
-Message-Id: <3b2295cf-59c8-b5af-25e5-c1d075093e19@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 18:48:12 +0000
+Subject: [PATCH] drm/nouveau/bios: make const arrays hwsq_signature and edid_sig static
+Message-Id: <20171102184812.15263-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
-In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 22:03:03 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* Replace a goto statement by a direct call of the function "kfree"
-  in an if branch.
+Don't populate arrays hwsq_signature and edid_sig on the stack but
+instead make them static. Makes the object code smaller by over 190
+bytes:
 
-* Delete the jump label "error" which became unnecessary with
-  this refactoring.
+Before:
+   text    data     bss     dec     hex filename
+  35676    3312      64   39052    988c nouveau_bios.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+After:
+   text    data     bss     dec     hex filename
+  35319    3472      64   38855    97c7 nouveau_bios.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/aty/radeon_backlight.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_bios.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
-index 7f7ed6f72ddb..3c5b8291e773 100644
---- a/drivers/video/fbdev/aty/radeon_backlight.c
-+++ b/drivers/video/fbdev/aty/radeon_backlight.c
-@@ -157,7 +157,8 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
- 	if (IS_ERR(bd)) {
- 		rinfo->info->bl_dev = NULL;
- 		printk("radeonfb: Backlight registration failed\n");
--		goto error;
-+		kfree(pdata);
-+		return;
- 	}
+diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
+index dd6fba55ad5d..18c5f5874239 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_bios.c
++++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
+@@ -1964,7 +1964,7 @@ static int load_nv17_hw_sequencer_ucode(struct drm_device *dev,
+ 	 * The microcode entries are found by the "HWSQ" signature.
+ 	 */
  
- 	pdata->rinfo = rinfo;
-@@ -188,11 +189,6 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
- 	backlight_update_status(bd);
+-	const uint8_t hwsq_signature[] = { 'H', 'W', 'S', 'Q' };
++	static const uint8_t hwsq_signature[] = { 'H', 'W', 'S', 'Q' };
+ 	const int sz = sizeof(hwsq_signature);
+ 	int hwsq_offset;
  
- 	printk("radeonfb: Backlight initialized (%s)\n", name);
--
--	return;
--
--error:
--	kfree(pdata);
- }
- 
- void radeonfb_bl_exit(struct radeonfb_info *rinfo)
+@@ -1980,7 +1980,7 @@ uint8_t *nouveau_bios_embedded_edid(struct drm_device *dev)
+ {
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nvbios *bios = &drm->vbios;
+-	const uint8_t edid_sig[] = {
++	static const uint8_t edid_sig[] = {
+ 			0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
+ 	uint16_t offset = 0;
+ 	uint16_t newoffset;
 -- 
-2.15.0
+2.14.1
 
