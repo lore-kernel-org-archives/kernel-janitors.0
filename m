@@ -1,36 +1,60 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Nov 2017 10:10:44 +0000
-Subject: [PATCH] USB: gadget: udc: fix spelling mistake "unexpect" -> "unexpected"
-Message-Id: <20171124101044.26554-1-colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 10:11:53 +0000
+Subject: [PATCH 7/7] tm6000: fix spelling mistake: "synchronuously" -> "synchronously"
+Message-Id: <20171102101153.18225-7-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171102101153.18225-1-colin.king@canonical.com>
+In-Reply-To: <20171102101153.18225-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Li Yang <leoyang.li@nxp.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trival fix to spelling mistake in ERR message
+Trivial fix to spelling mistake in error message text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/tm6000/tm6000-dvb.c   | 4 ++--
+ drivers/media/usb/tm6000/tm6000-video.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
-index d606d4f13098..e5b4ee96c4bf 100644
---- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -1543,7 +1543,7 @@ static void ep0_req_complete(struct fsl_udc *udc, struct fsl_ep *ep0,
- 		udc->ep0_state = WAIT_FOR_SETUP;
+diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
+index 2bc584f75f87..c811fc6cf48a 100644
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -45,10 +45,10 @@ static inline void print_err_status(struct tm6000_core *dev,
+ 
+ 	switch (status) {
+ 	case -ENOENT:
+-		errmsg = "unlinked synchronuously";
++		errmsg = "unlinked synchronously";
  		break;
- 	case WAIT_FOR_SETUP:
--		ERR("Unexpect ep0 packets\n");
-+		ERR("Unexpected ep0 packets\n");
+ 	case -ECONNRESET:
+-		errmsg = "unlinked asynchronuously";
++		errmsg = "unlinked asynchronously";
  		break;
- 	default:
- 		ep0stall(udc);
+ 	case -ENOSR:
+ 		errmsg = "Buffer error (overrun)";
+diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
+index 0d45f35e1697..9fa25de6b5a9 100644
+--- a/drivers/media/usb/tm6000/tm6000-video.c
++++ b/drivers/media/usb/tm6000/tm6000-video.c
+@@ -342,10 +342,10 @@ static inline void print_err_status(struct tm6000_core *dev,
+ 
+ 	switch (status) {
+ 	case -ENOENT:
+-		errmsg = "unlinked synchronuously";
++		errmsg = "unlinked synchronously";
+ 		break;
+ 	case -ECONNRESET:
+-		errmsg = "unlinked asynchronuously";
++		errmsg = "unlinked asynchronously";
+ 		break;
+ 	case -ENOSR:
+ 		errmsg = "Buffer error (overrun)";
 -- 
 2.14.1
 
