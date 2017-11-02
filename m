@@ -1,36 +1,24 @@
-From: raitosyo@gmail.com
-Date: Tue, 21 Nov 2017 04:27:12 +0000
-Subject: [PATCH] power: supply: charger-manager: Fix typo in condition
-Message-Id: <20171121042712.3035-1-raitosyo@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Nov 2017 10:30:22 +0000
+Subject: Checking the description for aac_comm_init()
+Message-Id: <d9d819d6-221b-d085-d5dc-a0b7425acf80@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: sre@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: aacraid@microsemi.com, linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Ryosuke Saito <raitosyo@gmail.com>
-
-Should be discharging_max_duration_ms, not charging_max_duration_ms.
-
-Signed-off-by: Ryosuke Saito <raitosyo@gmail.com>
----
- drivers/power/supply/charger-manager.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
-index 6502fa7..1de4b44 100644
---- a/drivers/power/supply/charger-manager.c
-+++ b/drivers/power/supply/charger-manager.c
-@@ -578,7 +578,7 @@ static int check_charging_duration(struct charger_manager *cm)
- 	} else if (is_ext_pwr_online(cm) && !cm->charger_enabled) {
- 		duration = curr - cm->charging_end_time;
- 
--		if (duration > desc->charging_max_duration_ms &&
-+		if (duration > desc->discharging_max_duration_ms &&
- 				is_ext_pwr_online(cm)) {
- 			dev_info(cm->dev, "Discharging duration exceed %ums\n",
- 				 desc->discharging_max_duration_ms);
--- 
-2.9.5
-
+SGVsbG8sCgpJIGhhdmUgdGFrZW4gYW5vdGhlciBsb29rIGFsc28gYXQgdGhlIGltcGxlbWVudGF0
+aW9uIG9mIHRoZQpmdW5jdGlvbiDigJxhYWNfY29tbV9pbml04oCdLgoKaHR0cDovL2VsaXhpci5m
+cmVlLWVsZWN0cm9ucy5jb20vbGludXgvdjQuMTQtcmM3L3NvdXJjZS9kcml2ZXJzL3Njc2kvYWFj
+cmFpZC9jb21taW5pdC5jI0wzMzMKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4
+L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVlL2RyaXZlcnMvc2NzaS9hYWNyYWlk
+L2NvbW1pbml0LmM/aWT6ODc4NWU4NjJlZjY0NGY3NDI1NThmMWE4YzkxZWNhNmYzZjAwMDQjbjM0
+NQoKQ2FuIGl0IGJlIHRoYXQgdGhlIGRlc2NyaXB0aW9uIGZvciB0aGUgcG9zc2libGUgcmV0dXJu
+IHZhbHVlcyBpcyBxdWVzdGlvbmFibGUKaW4gdGhlIGNvcnJlc3BvbmRpbmcgY29tbWVudCBibG9j
+ayBhdCB0aGUgbW9tZW50PwoKUmVnYXJkcywKTWFya3VzCi0tClRvIHVuc3Vic2NyaWJlIGZyb20g
+dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGlu
+CnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUg
+bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
+aHRtbA==
