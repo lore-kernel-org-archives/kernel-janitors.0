@@ -1,53 +1,75 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 17:16:59 +0000
-Subject: [PATCH] [media] cx88: make const arrays default_addr_list and pvr2000_addr_list static
-Message-Id: <20171102171659.13315-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Nov 2017 21:18:13 +0000
+Subject: [PATCH] staging: fbtft: fb_ra8875: Use common error handling code in write_reg8_bus8()
+Message-Id: <47dd8732-253b-a640-1c73-2bfe626037b3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Nov 2017 22:12:58 +0100
 
-Don't populate arrays default_addr_list and pvr2000_addr_list on the
-stack but instead make them static. Makes the object code smaller by
-over 340 bytes:
+* Add a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  12520	   2800	     64	  15384	   3c18	drivers/media/pci/cx88/cx88-input.o
+* Replace two calls of the function "dev_err" by goto statements.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  12142	   2832	     64	  15038	   3abe	drivers/media/pci/cx88/cx88-input.o
+This issue was detected by using the Coccinelle software.
 
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/cx88/cx88-input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/fbtft/fb_ra8875.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
-index e02449bf2041..4e9953e61a12 100644
---- a/drivers/media/pci/cx88/cx88-input.c
-+++ b/drivers/media/pci/cx88/cx88-input.c
-@@ -593,11 +593,11 @@ static int get_key_pvr2000(struct IR_i2c *ir, enum rc_proto *protocol,
- void cx88_i2c_init_ir(struct cx88_core *core)
- {
- 	struct i2c_board_info info;
--	const unsigned short default_addr_list[] = {
-+	static const unsigned short default_addr_list[] = {
- 		0x18, 0x6b, 0x71,
- 		I2C_CLIENT_END
- 	};
--	const unsigned short pvr2000_addr_list[] = {
-+	static const unsigned short pvr2000_addr_list[] = {
- 		0x18, 0x1a,
- 		I2C_CLIENT_END
- 	};
+diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
+index 6d1cad85957b..6a94b5810a31 100644
+--- a/drivers/staging/fbtft/fb_ra8875.c
++++ b/drivers/staging/fbtft/fb_ra8875.c
+@@ -218,12 +218,9 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+ 	*buf++ = 0x80;
+ 	*buf = (u8)va_arg(args, unsigned int);
+ 	ret = par->fbtftops.write(par, par->buf, 2);
+-	if (ret < 0) {
+-		va_end(args);
+-		dev_err(par->info->device, "write() failed and returned %dn",
+-			ret);
+-		return;
+-	}
++	if (ret < 0)
++		goto end_va;
++
+ 	len--;
+ 
+ 	udelay(100);
+@@ -236,18 +233,19 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+ 			*buf++ = (u8)va_arg(args, unsigned int);
+ 
+ 		ret = par->fbtftops.write(par, par->buf, len + 1);
+-		if (ret < 0) {
+-			va_end(args);
+-			dev_err(par->info->device,
+-				"write() failed and returned %dn", ret);
+-			return;
+-		}
++		if (ret < 0)
++			goto end_va;
+ 	}
+ 	va_end(args);
+ 
+ 	/* restore user spi-speed */
+ 	par->fbtftops.write = fbtft_write_spi;
+ 	udelay(100);
++	return;
++
++end_va:
++	va_end(args);
++	dev_err(par->info->device, "write() failed and returned %dn", ret);
+ }
+ 
+ static int write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
 -- 
-2.14.1
+2.15.0
 
