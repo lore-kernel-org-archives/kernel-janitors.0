@@ -1,57 +1,47 @@
-From: Andrea Adami <andrea.adami@gmail.com>
-Date: Fri, 10 Nov 2017 16:35:13 +0000
-Subject: Re: [PATCH][V2] mtd: sharpslpart: fix overflow on block_adr calculation
-Message-Id: <CAAQYJAuVYbbg5SyD8ZkANZ201atZATkgF07CfwPet+7SbXXuPQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 15:53:25 +0000
+Subject: [PATCH] usb: gadget: udc: renesas_usb3: make const array max_packet_array static
+Message-Id: <20171102155325.24137-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171108161323.30662-1-colin.king@canonical.com>
-In-Reply-To: <20171108161323.30662-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 8, 2017 at 5:13 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Multiplying block_num and mtd->erasesize may potentially overflow
-> as they are both unsigned ints and so the multiplication is evaluated
-> in unsigned int arithmetic.  Cast block_adr to off_t to ensure
-> multiplication is off_t sized to avoid any potential overflow.
->
-> Detected by CoverityScan, CID#1461264 ("Unintentional integer overflow")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mtd/parsers/sharpslpart.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mtd/parsers/sharpslpart.c b/drivers/mtd/parsers/sharpslpart.c
-> index 5fe0079ea5ed..0ddb79ac390d 100644
-> --- a/drivers/mtd/parsers/sharpslpart.c
-> +++ b/drivers/mtd/parsers/sharpslpart.c
-> @@ -192,7 +192,7 @@ static int sharpsl_nand_init_ftl(struct mtd_info *mtd, struct sharpsl_ftl *ftl)
->
->         /* create physical-logical table */
->         for (block_num = 0; block_num < phymax; block_num++) {
-> -               block_adr = block_num * mtd->erasesize;
-> +               block_adr = (loff_t)block_num * mtd->erasesize;
->
->                 if (mtd_block_isbad(mtd, block_adr))
->                         continue;
-> @@ -244,7 +244,7 @@ static int sharpsl_nand_read_laddr(struct mtd_info *mtd,
->                 return -EINVAL;
->
->         block_num = ftl->log2phy[log_num];
-> -       block_adr = block_num * mtd->erasesize;
-> +       block_adr = (loff_t)block_num * mtd->erasesize;
->         block_ofs = mtd_mod_by_eb((u32)from, mtd);
->
->         err = mtd_read(mtd, block_adr + block_ofs, len, &retlen, buf);
-> --
-> 2.14.1
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for spotting this,
+Don't populate the const array max_packet_array on the stack, instead make
+it static. Makes the object code smaller by over 90 bytes:
 
-Acked-by: Andrea Adami <andrea.adami@gmail.com>
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  34337	   5612	    128	  40077	   9c8d	renesas_usb3.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  34149	   5708	    128	  39985	   9c31	renesas_usb3.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/renesas_usb3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index ed84f5158a38..cb461b8f4509 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2058,7 +2058,7 @@ static u32 usb3_calc_rammap_val(struct renesas_usb3_ep *usb3_ep,
+ 				const struct usb_endpoint_descriptor *desc)
+ {
+ 	int i;
+-	const u32 max_packet_array[] = {8, 16, 32, 64, 512};
++	static const u32 max_packet_array[] = {8, 16, 32, 64, 512};
+ 	u32 mpkt = PN_RAMMAP_MPKT(1024);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(max_packet_array); i++) {
+-- 
+2.14.1
+
