@@ -1,51 +1,60 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 06 Nov 2017 10:39:07 +0000
-Subject: Re: powerpc/perf: Fix a sizeof() typo so we allocate less memory
-Message-Id: <87a7zzbsj8.fsf@concordia.ellerman.id.au>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 14:01:44 +0000
+Subject: [PATCH] tty: max3100: remove unused variable rts and remove unused assignment
+Message-Id: <20171102140144.21514-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171104075136.nujqcprikcevsfwv@mwanda>
-In-Reply-To: <20171104075136.nujqcprikcevsfwv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Cc: Paul Mackerras <paulus@samba.org>, Madhavan Srinivasan <maddy@linux.vnet.ibm.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> We're allocating the size of the struct which is 32 bytes when we should
-> be allocating sizeof(void *) which is 4 or 8 bytes depending on the
-> architecture.
->
-> Fixes: 885dcd709ba9 ("powerpc/perf: Add nest IMC PMU support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable rts is being assigned but it is never read, hence it can be
+removed.  The assignment to param_new to zero is redundant as it is
+being updates a few statements later, so remove this redundant
+assignment. Cleans up two clang warnings:
 
-Thanks.
+drivers/tty/serial/max3100.c:277:3: warning: Value stored to 'rts'
+is never read
+drivers/tty/serial/max3100.c:439:2: warning: Value stored to 'param_new'
+is never read
 
-I think your patch is right, but the code would be much simpler if we
-actually did just allocate an array of struct imc_events, rather than an
-array of pointers to structs.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/serial/max3100.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Some of the cleanup code is written as if that is already the case, ie.
-it frees the pmu->events array, but not the things the array points to.
-So there's a memory leak there too.
+diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
+index b6b3453e8c1f..f691f3cdb5b1 100644
+--- a/drivers/tty/serial/max3100.c
++++ b/drivers/tty/serial/max3100.c
+@@ -263,7 +263,7 @@ static void max3100_work(struct work_struct *w)
+ 	struct max3100_port *s = container_of(w, struct max3100_port, work);
+ 	int rxchars;
+ 	u16 tx, rx;
+-	int conf, cconf, rts, crts;
++	int conf, cconf, crts;
+ 	struct circ_buf *xmit = &s->port.state->xmit;
+ 
+ 	dev_dbg(&s->spi->dev, "%s\n", __func__);
+@@ -274,7 +274,6 @@ static void max3100_work(struct work_struct *w)
+ 		conf = s->conf;
+ 		cconf = s->conf_commit;
+ 		s->conf_commit = 0;
+-		rts = s->rts;
+ 		crts = s->rts_commit;
+ 		s->rts_commit = 0;
+ 		spin_unlock(&s->conf_lock);
+@@ -436,7 +435,6 @@ max3100_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	dev_dbg(&s->spi->dev, "%s\n", __func__);
+ 
+ 	cflag = termios->c_cflag;
+-	param_new = 0;
+ 	param_mask = 0;
+ 
+ 	baud = tty_termios_baud_rate(termios);
+-- 
+2.14.1
 
-Anju, Maddy, can one of you rework the code to just use an array of
-structs? Basically imc_parse_event() wouldn't allocate a struct, we
-would pass it a pointer to a slot in the array.
-
-cheers
-
-> diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
-> index 88126245881b..91c90ddab807 100644
-> --- a/arch/powerpc/perf/imc-pmu.c
-> +++ b/arch/powerpc/perf/imc-pmu.c
-> @@ -210,7 +210,7 @@ static int update_events_in_group(struct device_node *node, struct imc_pmu *pmu)
->  	of_property_read_u32(node, "reg", &base_reg);
->  
->  	/* Allocate memory for the events */
-> -	pmu->events = kcalloc(ct, sizeof(struct imc_events), GFP_KERNEL);
-> +	pmu->events = kcalloc(ct, sizeof(*pmu->events), GFP_KERNEL);
->  	if (!pmu->events)
->  		return -ENOMEM;
->  
