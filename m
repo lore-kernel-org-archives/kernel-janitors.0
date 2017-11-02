@@ -1,63 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:51:13 +0000
-Subject: [PATCH 2/4] video: udlfb: Return an error code only as a constant in dlfb_realloc_framebuffer()
-Message-Id: <65441eb1-3a22-27ad-b9af-03111855a6e6@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 16:49:08 +0000
+Subject: [PATCH] media: drxd: make const array fastIncrDecLUT static
+Message-Id: <20171102164908.12651-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
-In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 21:22:25 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* Return an error code without storing it in an intermediate variable.
+Don't populate array fastIncrDecLUT on the stack but instead make it
+static. Makes the object code smaller by over 360 bytes:
 
-* Delete the label "error" and local variable "retval"
-  which became unnecessary with this refactoring.
+   text	   data	    bss	    dec	    hex	filename
+  32680	    944	     64	  33688	   8398	drxd_hard.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   text	   data	    bss	    dec	    hex	filename
+  32223	   1040	     64	  33327	   822f	drxd_hard.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/udlfb.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/media/dvb-frontends/drxd_hard.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index 77633c58bb9b..cb2d59ca67a4 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1159,7 +1159,6 @@ static struct fb_ops dlfb_ops = {
-  */
- static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
- {
--	int retval = -ENOMEM;
- 	int old_len = info->fix.smem_len;
- 	int new_len;
- 	unsigned char *old_fb = info->screen_base;
-@@ -1176,7 +1175,7 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
- 		 */
- 		new_fb = vmalloc(new_len);
- 		if (!new_fb)
--			goto error;
-+			return -ENOMEM;
- 
- 		if (info->screen_base) {
- 			memcpy(new_fb, old_fb, old_len);
-@@ -1203,11 +1202,7 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
- 			dev->backing_buffer = new_back;
- 		}
- 	}
--
--	retval = 0;
--
--error:
--	return retval;
-+	return 0;
- }
- 
- /*
+diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
+index 3bdf9b1f4e7c..0696bc62dcc9 100644
+--- a/drivers/media/dvb-frontends/drxd_hard.c
++++ b/drivers/media/dvb-frontends/drxd_hard.c
+@@ -640,7 +640,7 @@ static int SetCfgIfAgc(struct drxd_state *state, struct SCfgAgc *cfg)
+ 				const u16 maxRur = 8;
+ 				static const u16 slowIncrDecLUT[] = {
+ 					3, 4, 4, 5, 6 };
+-				const u16 fastIncrDecLUT[] = {
++				static const u16 fastIncrDecLUT[] = {
+ 					14, 15, 15, 16,
+ 					17, 18, 18, 19,
+ 					20, 21, 22, 23,
 -- 
-2.15.0
+2.14.1
 
