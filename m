@@ -1,28 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 20:41:43 +0000
-Subject: [PATCH 0/2] video/fbdev/mmp: Adjustments for two function implementations
-Message-Id: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 10:11:52 +0000
+Subject: [PATCH 6/7] stk1160: fix spelling mistake: "synchronuously" -> "synchronously"
+Message-Id: <20171102101153.18225-6-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171102101153.18225-1-colin.king@canonical.com>
+In-Reply-To: <20171102101153.18225-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 21:38:42 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Trivial fix to spelling mistake in error message text
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in path_init()
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/stk1160/stk1160-video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/video/fbdev/mmp/fb/mmpfb.c    | 5 ++---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 8 +++-----
- 2 files changed, 5 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/media/usb/stk1160/stk1160-video.c b/drivers/media/usb/stk1160/stk1160-video.c
+index ce8ebbe395a6..423c03a0638d 100644
+--- a/drivers/media/usb/stk1160/stk1160-video.c
++++ b/drivers/media/usb/stk1160/stk1160-video.c
+@@ -38,10 +38,10 @@ static inline void print_err_status(struct stk1160 *dev,
+ 
+ 	switch (status) {
+ 	case -ENOENT:
+-		errmsg = "unlinked synchronuously";
++		errmsg = "unlinked synchronously";
+ 		break;
+ 	case -ECONNRESET:
+-		errmsg = "unlinked asynchronuously";
++		errmsg = "unlinked asynchronously";
+ 		break;
+ 	case -ENOSR:
+ 		errmsg = "Buffer error (overrun)";
 -- 
-2.15.0
+2.14.1
 
