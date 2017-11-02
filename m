@@ -1,38 +1,73 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Nov 2017 14:57:21 +0000
-Subject: [PATCH] fs/9p: remove unnecessary cast on return from kmem_cache_alloc
-Message-Id: <20171115145721.16357-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 Nov 2017 13:21:11 +0000
+Subject: Applied "spi: orion: remove redundant assignment of status to zero" to the spi tree
+Message-Id: <E1eAFQl-0005xp-IX@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171102121625.20387-1-colin.king@canonical.com>
+In-Reply-To: <20171102121625.20387-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
 
+The patch
+
+   spi: orion: remove redundant assignment of status to zero
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f747c3104efd1e21528d368910afd978fbcd6a78 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 2 Nov 2017 12:16:25 +0000
+Subject: [PATCH] spi: orion: remove redundant assignment of status to zero
 
-The cast on the return from kmem_cache_alloc is unnecessary and can
-be removed.
+The assignment of status to zero is never read, status is either
+updated in the next iteration of the of the loop or several
+lines after the end of the loop.  Remove it, cleans up clang warning:
+
+drivers/spi/spi-orion.c:674:4: warning: Value stored to 'status'
+is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/spi/spi-orion.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index bdabb2765d1b..6c4baeb257b7 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
- {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
- 		return NULL;
- #ifdef CONFIG_9P_FSCACHE
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index 4b6dd73b80da..8974bb340b3a 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -671,7 +671,6 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev,
+ 				"%pOF has no valid 'reg' property (%d)\n",
+ 				np, status);
+-			status = 0;
+ 			continue;
+ 		}
+ 
 -- 
-2.14.1
+2.15.0
 
