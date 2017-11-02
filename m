@@ -1,30 +1,35 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Wed, 15 Nov 2017 07:23:51 +0000
-Subject: Re: [PATCH] remoteproc: qcom: Fix error handling paths in order to avoid memory leaks
-Message-Id: <20171115072351.GC22677@builder>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 09:27:37 +0000
+Subject: [PATCH] ARM: meson: fix spelling mistake: "Couln't" -> "Couldn't"
+Message-Id: <20171102092737.16957-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171115065835.14525-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171115065835.14525-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linus-amlogic@lists.infradead.org
 
-On Tue 14 Nov 22:58 PST 2017, Christophe JAILLET wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> In case of error returned by 'q6v5_xfer_mem_ownership', we must free
-> some resources before returning.
-> 
-> In 'q6v5_mpss_init_image()', add a new label to undo a previous
-> 'dma_alloc_attrs()'.
-> In 'q6v5_mpss_load()', re-use the already existing error handling code to
-> undo a previous 'request_firmware()', as already done in the other error
-> handling paths of the function.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Trivial fix to spelling mistake in pr_err error message
 
-Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/arm/mach-meson/platsmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/arch/arm/mach-meson/platsmp.c b/arch/arm/mach-meson/platsmp.c
+index 2555f9056a33..cad7ee8f0d6b 100644
+--- a/arch/arm/mach-meson/platsmp.c
++++ b/arch/arm/mach-meson/platsmp.c
+@@ -102,7 +102,7 @@ static void __init meson_smp_prepare_cpus(const char *scu_compatible,
+ 
+ 	scu_base = of_iomap(node, 0);
+ 	if (!scu_base) {
+-		pr_err("Couln't map SCU registers\n");
++		pr_err("Couldn't map SCU registers\n");
+ 		return;
+ 	}
+ 
+-- 
+2.14.1
+
