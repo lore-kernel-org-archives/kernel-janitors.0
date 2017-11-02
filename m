@@ -1,42 +1,36 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 14:32:14 +0000
-Subject: NAK: [PATCH] usb: gadget: pxa27x: Remove redundant assignment to is_short
-Message-Id: <1721c589-d8db-7c45-dc4a-bd77122d1ece@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 09:33:45 +0000
+Subject: [PATCH] drm/msm: fix spelling mistake: "ringubffer" -> "ringbuffer"
+Message-Id: <20171102093345.17133-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107143125.5548-1-colin.king@canonical.com>
-In-Reply-To: <20171107143125.5548-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 07/11/17 14:31, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable is set to zero but this value is never read as it is
-> overwritten with a new value later on, hence it is a redundant
-> assignment and can be removed. Cleans up clang warning:
-> 
-> drivers/usb/gadget/udc/pxa27x_udc.c:1141:2: warning: Value stored
-> to 'dev' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/gadget/udc/pxa27x_udc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
-> index 14606f340325..e3d362cc47db 100644
-> --- a/drivers/usb/gadget/udc/pxa27x_udc.c
-> +++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-> @@ -984,8 +984,6 @@ static int write_fifo(struct pxa_ep *ep, struct pxa27x_request *req)
->  
->  	max = ep->fifo_size;
->  	do {
-> -		is_short = 0;
-> -
->  		udccsr = udc_ep_readl(ep, UDCCSR);
->  		if (udccsr & UDCCSR_PC) {
->  			ep_vdbg(ep, "Clearing Transmit Complete, udccsr=%x\n",
-> 
-Ignore this, sorry. It's wrong
+From: Colin Ian King <colin.king@canonical.com>
+
+Trivial fix to spelling mistake in DRM_DEV_ERROR error message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index e2ffecce59a3..2f0610f8fc8d 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -461,7 +461,7 @@ void adreno_wait_ring(struct msm_ringbuffer *ring, uint32_t ndwords)
+ {
+ 	if (spin_until(ring_freewords(ring) >= ndwords))
+ 		DRM_DEV_ERROR(ring->gpu->dev->dev,
+-			"timeout waiting for space in ringubffer %d\n",
++			"timeout waiting for space in ringbuffer %d\n",
+ 			ring->id);
+ }
+ 
+-- 
+2.14.1
+
