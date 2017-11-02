@@ -1,50 +1,96 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 21 Nov 2017 10:31:30 +0000
-Subject: Re: [PATCH] omapdrm: hdmi4_cec: fix unsigned int comparison with less than zero
-Message-Id: <5bbb40cc-fcdf-0514-7dd1-c4a1074c977f@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Nov 2017 19:40:12 +0000
+Subject: [PATCH] staging: comedi: usbduxfast: Improve unlocking of a mutex in usbduxfast_ai_insn_read()
+Message-Id: <b0acc12a-e48c-d51a-f7e3-606e66e6fe7b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171117184956.3092-1-colin.king@canonical.com>
-In-Reply-To: <20171117184956.3092-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Colin,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Nov 2017 20:30:31 +0100
 
-On 17/11/17 20:49, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The two comparisons of the unsigned int ret for -ve error returns is
-> always false because ret is unsigned. Fix this by making ret a signed
-> int.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> index d86873f2abe6..e626eddf24d5 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
-> @@ -352,7 +352,7 @@ int hdmi4_cec_init(struct platform_device *pdev, struct hdmi_core_data *core,
->  {
->  	const u32 caps = CEC_CAP_TRANSMIT | CEC_CAP_LOG_ADDRS |
->  			 CEC_CAP_PASSTHROUGH | CEC_CAP_RC;
-> -	unsigned int ret;
-> +	int ret;
->  
->  	core->adap = cec_allocate_adapter(&hdmi_cec_adap_ops, core,
->  		"omap4", caps, CEC_MAX_LOG_ADDRS);
-> 
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only twice in this function implementation.
 
-Thanks. There was an earlier patch from Dan Carpenter for this, which I
-have applied.
+* Replace five calls by goto statements.
 
- Tomi
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/comedi/drivers/usbduxfast.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
+index 608403c7586b..e5884faf7275 100644
+--- a/drivers/staging/comedi/drivers/usbduxfast.c
++++ b/drivers/staging/comedi/drivers/usbduxfast.c
+@@ -777,8 +777,8 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+ 	if (devpriv->ai_cmd_running) {
+ 		dev_err(dev->class_dev,
+ 			"ai_insn_read not possible, async cmd is running\n");
+-		mutex_unlock(&devpriv->mut);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto unlock;
+ 	}
+ 
+ 	/* set command for the first channel */
+@@ -798,10 +798,8 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+ 	usbduxfast_cmd_data(dev, 6, 0x01, 0x00, rngmask, 0x00);
+ 
+ 	ret = usbduxfast_send_cmd(dev, SENDADCOMMANDS);
+-	if (ret < 0) {
+-		mutex_unlock(&devpriv->mut);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	for (i = 0; i < PACKETS_TO_IGNORE; i++) {
+ 		ret = usb_bulk_msg(usb, usb_rcvbulkpipe(usb, BULKINEP),
+@@ -809,8 +807,7 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+ 				   &actual_length, 10000);
+ 		if (ret < 0) {
+ 			dev_err(dev->class_dev, "insn timeout, no data\n");
+-			mutex_unlock(&devpriv->mut);
+-			return ret;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -820,14 +817,13 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+ 				   &actual_length, 10000);
+ 		if (ret < 0) {
+ 			dev_err(dev->class_dev, "insn data error: %d\n", ret);
+-			mutex_unlock(&devpriv->mut);
+-			return ret;
++			goto unlock;
+ 		}
+ 		n = actual_length / sizeof(u16);
+ 		if ((n % 16) != 0) {
+ 			dev_err(dev->class_dev, "insn data packet corrupted\n");
+-			mutex_unlock(&devpriv->mut);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto unlock;
+ 		}
+ 		for (j = chan; (j < n) && (i < insn->n); j = j + 16) {
+ 			data[i] = ((u16 *)(devpriv->inbuf))[j];
+@@ -838,6 +834,10 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+ 	mutex_unlock(&devpriv->mut);
+ 
+ 	return insn->n;
++
++unlock:
++	mutex_unlock(&devpriv->mut);
++	return ret;
+ }
+ 
+ static int usbduxfast_upload_firmware(struct comedi_device *dev,
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.15.0
+
