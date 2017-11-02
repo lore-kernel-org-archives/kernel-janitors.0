@@ -1,34 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Nov 2017 12:51:35 +0000
-Subject: Re: [PATCH 1/3] pinctrl: mcp23s08: Improve unlocking of a mutex in mcp23s08_irq()
-Message-Id: <CACRpkdYBawKHhD833zzhJktv8Ub07=JUW9oCFpvptWzJCL+D-g@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 02 Nov 2017 13:45:11 +0000
+Subject: [PATCH] staging: rtlwifi: remove unused pointer hw
+Message-Id: <20171102134511.21259-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
-In-Reply-To: <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 4:46 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 30 Oct 2017 16:03:12 +0100
->
-> * Add a jump target so that a call of the function "mutex_unlock" is stored
->   only twice in this function implementation.
->
-> * Replace five calls by goto statements.
->
-> * Adjust five condition checks.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Pointer hw is not being used and hence can be removed. Cleans up
+warning:
 
-Nice, patch applied.
+drivers/staging/rtlwifi/base.c:2167:23: warning: unused variable
+‘hw’ [-Wunused-variable]
 
-Yours,
-Linus Walleij
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtlwifi/base.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/rtlwifi/base.c b/drivers/staging/rtlwifi/base.c
+index 2c693c7aa9d5..c947def37d31 100644
+--- a/drivers/staging/rtlwifi/base.c
++++ b/drivers/staging/rtlwifi/base.c
+@@ -2164,7 +2164,6 @@ void rtl_watchdog_wq_callback(void *data)
+ void rtl_watch_dog_timer_callback(struct timer_list *t)
+ {
+ 	struct rtl_priv *rtlpriv = from_timer(rtlpriv, t, works.watchdog_timer);
+-	struct ieee80211_hw *hw = rtlpriv->hw;
+ 
+ 	queue_delayed_work(rtlpriv->works.rtl_wq,
+ 			   &rtlpriv->works.watchdog_wq, 0);
+-- 
+2.14.1
+
