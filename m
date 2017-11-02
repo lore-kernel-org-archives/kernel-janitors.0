@@ -1,48 +1,29 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Tue, 07 Nov 2017 17:39:58 +0000
-Subject: Re: [PATCH] usb: host: fix incorrect updating of offset
-Message-Id: <Pine.LNX.4.44L0.1711071239370.1395-100000@iolanthe.rowland.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Thu, 02 Nov 2017 08:19:41 +0000
+Subject: Re: [PATCH] clk/tegra: Delete an error message for a failed memory allocation in three functions
+Message-Id: <20171102081941.GO11011@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20171107164504.5920-1-colin.king@canonical.com>
-References: <20171107164504.5920-1-colin.king@canonical.com>
-In-Reply-To: <20171107164504.5920-1-colin.king@canonical.com>
+References: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
+In-Reply-To: <9cc51853-c393-91e6-45d8-6516dde90366@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 7 Nov 2017, Colin King wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 18:40:34 +0200
 > 
-> The variable temp is incorrectly being updated, instead it should
-> be offset otherwise the loop just reads the same capability value
-> and loops forever.  Thanks to Alan Stern for pointing out the
-> correct fix to my original fix.  Fix also cleans up clang warning:
+> Omit extra messages for a memory allocation failure in these functions.
 > 
-> drivers/usb/host/ehci-dbg.c:840:4: warning: Value stored to 'temp'
-> is never read
+> This issue was detected by using the Coccinelle software.
 > 
-> Fixes: d49d43174400 ("USB: misc ehci updates")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/usb/host/ehci-dbg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ehci-dbg.c b/drivers/usb/host/ehci-dbg.c
-> index 7fb21d01b3d0..3bd0b2273171 100644
-> --- a/drivers/usb/host/ehci-dbg.c
-> +++ b/drivers/usb/host/ehci-dbg.c
-> @@ -838,7 +838,7 @@ static ssize_t fill_registers_buffer(struct debug_buffer *buf)
->  			default:		/* unknown */
->  				break;
->  			}
-> -			temp = (cap >> 8) & 0xff;
-> +			offset = (cap >> 8) & 0xff;
->  		}
->  	}
->  #endif
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Applied to clk-next
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
