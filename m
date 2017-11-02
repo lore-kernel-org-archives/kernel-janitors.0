@@ -1,64 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Nov 2017 09:01:00 +0000
-Subject: [bug report] crypto: chelsio - Move DMA un/mapping to chcr from lld cxgb4 driver
-Message-Id: <20171108090100.dkk6wps55mmw2e3r@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Nov 2017 07:58:09 +0000
+Subject: [PATCH 0/3] regulator-core: Fine-tuning for nine function implementations
+Message-Id: <471498fb-58af-46d4-2150-614c0f9cdc22@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hello Harsh Jain,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Nov 2017 08:54:32 +0100
 
-The patch 2f47d5804311: "crypto: chelsio - Move DMA un/mapping to
-chcr from lld cxgb4 driver" from Oct 8, 2017, leads to the following
-static checker warning:
+Three update suggestions were taken into account
+from static source code analysis.
 
-	drivers/crypto/chelsio/chcr_algo.c:1138 chcr_handle_cipher_resp()
-	warn: inconsistent indenting
+Markus Elfring (3):
+  Use common error handling code in regulator_resolve_supply()
+  Improve a size determination in four functions
+  Adjust 18 checks for null pointers
 
-drivers/crypto/chelsio/chcr_algo.c
-  1126          if (unlikely(cxgb4_is_crypto_q_full(u_ctx->lldi.ports[0],
-  1127                                              c_ctx(tfm)->tx_qidx))) {
-  1128                  if (!(req->base.flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
-  1129                          err = -EBUSY;
-  1130                          goto unmap;
-  1131                  }
-  1132  
-  1133          }
-  1134          if (!reqctx->imm) {
-                                  ^
-indent block starts here.
+ drivers/regulator/core.c | 60 ++++++++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
-  1135                  bytes = chcr_sg_ent_in_wr(reqctx->srcsg, reqctx->dstsg, 1,
-  1136                                            SPACE_LEFT(ablkctx->enckey_len),
-  1137                                            reqctx->src_ofst, reqctx->dst_ofst);
-  1138          if ((bytes + reqctx->processed) >= req->nbytes)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-not indented far enough.  Or should the close curly brace be moved?
+-- 
+2.14.3
 
-  1139                  bytes  = req->nbytes - reqctx->processed;
-  1140          else
-  1141                  bytes = ROUND_16(bytes);
-  1142          } else {
-  1143                  /*CTR mode counter overfloa*/
-  1144                  bytes  = req->nbytes - reqctx->processed;
-  1145          }
-  1146          dma_sync_single_for_cpu(&ULD_CTX(c_ctx(tfm))->lldi.pdev->dev,
-  1147                                  reqctx->iv_dma, IV, DMA_BIDIRECTIONAL);
-  1148          err = chcr_update_cipher_iv(req, fw6_pld, reqctx->iv);
-  1149          dma_sync_single_for_device(&ULD_CTX(c_ctx(tfm))->lldi.pdev->dev,
-  1150                                     reqctx->iv_dma, IV, DMA_BIDIRECTIONAL);
-  1151          if (err)
-  1152                  goto unmap;
-  1153  
-
-See also:
-
-drivers/crypto/chelsio/chcr_algo.c:689 chcr_sg_ent_in_wr() warn: inconsistent indenting
-drivers/crypto/chelsio/chcr_algo.c:1242 process_cipher() warn: inconsistent indenting
-drivers/crypto/chelsio/chcr_algo.c:2401 chcr_add_hash_src_ent() warn: inconsistent indenting
-drivers/crypto/chelsio/chcr_algo.c:2401 chcr_add_hash_src_ent() warn: inconsistent indenting
-
-regards,
-dan carpenter
