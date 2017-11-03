@@ -1,57 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 19:58:28 +0000
-Subject: [PATCH 2/2] ASoC: cs35l32: Improve two size determinations in cs35l32_i2c_probe()
-Message-Id: <521550ca-c13e-e647-5bbe-d8b172a6445b@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 03 Nov 2017 18:50:46 +0000
+Subject: Applied "spi: sh-msiof: remove redundant pointer dev" to the spi tree
+Message-Id: <E1eAh3G-0005rO-5K@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
-In-Reply-To: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
+References: <20171103135829.8697-1-colin.king@canonical.com>
+In-Reply-To: <20171103135829.8697-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 20:40:47 +0100
+The patch
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+   spi: sh-msiof: remove redundant pointer dev
 
-This issue was detected by using the Coccinelle software.
+has been applied to the spi tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6ae6678344af52cf1c05475ff3ec2f43b8b532ef Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 3 Nov 2017 13:58:29 +0000
+Subject: [PATCH] spi: sh-msiof: remove redundant pointer dev
+
+The pointer dev is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
+
+drivers/spi/spi-sh-msiof.c:1198:2: warning: Value stored to 'dev'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs35l32.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l32.c b/sound/soc/codecs/cs35l32.c
-index e41d8ebe6eea..bc3a72e4c4ed 100644
---- a/sound/soc/codecs/cs35l32.c
-+++ b/sound/soc/codecs/cs35l32.c
-@@ -355,9 +355,7 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int devid = 0;
- 	unsigned int reg;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 2c5ea4c57508..66043611e86d 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1190,12 +1190,10 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
+ static void sh_msiof_release_dma(struct sh_msiof_spi_priv *p)
+ {
+ 	struct spi_master *master = p->master;
+-	struct device *dev;
  
--
--	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs35l32_private),
--			       GFP_KERNEL);
-+	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(*cs35l32), GFP_KERNEL);
- 	if (!cs35l32)
- 		return -ENOMEM;
+ 	if (!master->dma_tx)
+ 		return;
  
-@@ -373,9 +371,8 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs35l32->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				     sizeof(struct cs35l32_platform_data),
--				GFP_KERNEL);
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
-+				     GFP_KERNEL);
- 		if (!pdata)
- 			return -ENOMEM;
- 
+-	dev = &p->pdev->dev;
+ 	dma_unmap_single(master->dma_rx->device->dev, p->rx_dma_addr,
+ 			 PAGE_SIZE, DMA_FROM_DEVICE);
+ 	dma_unmap_single(master->dma_tx->device->dev, p->tx_dma_addr,
 -- 
 2.15.0
 
