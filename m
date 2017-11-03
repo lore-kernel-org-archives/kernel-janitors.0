@@ -1,76 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 07:59:31 +0000
-Subject: [PATCH 1/3] regulator/core: Use common error handling code in regulator_resolve_supply()
-Message-Id: <61939d80-851f-601a-d5df-1278abede5c3@users.sourceforge.net>
+Date: Fri, 03 Nov 2017 19:10:17 +0000
+Subject: [PATCH] staging/rts5208/rtsx: Improve unlocking of a mutex in rtsx_resume()
+Message-Id: <cfaa3d72-4d96-590c-cd69-662476611874@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <471498fb-58af-46d4-2150-614c0f9cdc22@users.sourceforge.net>
-In-Reply-To: <471498fb-58af-46d4-2150-614c0f9cdc22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: devel@driverdev.osuosl.org, Colin Ian King <colin.king@canonical.com>, Gaurav Pathak <gauravpathak129@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinecke <hare@suse.de>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 1 Nov 2017 22:20:13 +0100
+Date: Fri, 3 Nov 2017 20:02:22 +0100
 
-* Add a jump target so that a bit of exception handling can be better
-  reused at the end of this function.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only twice in this function implementation.
 
-* Adjust two condition checks.
+* Replace two calls by goto statements.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/regulator/core.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/rts5208/rtsx.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index b64b7916507f..14fdf2f17a62 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1554,23 +1554,19 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 	 */
- 	if (r->dev.parent && r->dev.parent != rdev->dev.parent) {
- 		if (!device_is_bound(r->dev.parent)) {
--			put_device(&r->dev);
--			return -EPROBE_DEFER;
-+			ret = -EPROBE_DEFER;
-+			goto put_device;
- 		}
+diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+index 89e2cfe7d1cc..14022a76ecfb 100644
+--- a/drivers/staging/rts5208/rtsx.c
++++ b/drivers/staging/rts5208/rtsx.c
+@@ -349,9 +349,7 @@ static int rtsx_resume(struct pci_dev *pci)
+ 		dev_err(&dev->pci->dev,
+ 			"%s: pci_enable_device failed, disabling device\n",
+ 			CR_DRIVER_NAME);
+-		/* unlock the device pointers */
+-		mutex_unlock(&dev->dev_mutex);
+-		return -EIO;
++		goto unlock;
+ 	}
+ 	pci_set_master(pci);
+ 
+@@ -360,11 +358,8 @@ static int rtsx_resume(struct pci_dev *pci)
+ 			chip->msi_en = 0;
  	}
  
- 	/* Recursively resolve the supply of the supply */
- 	ret = regulator_resolve_supply(r);
--	if (ret < 0) {
--		put_device(&r->dev);
--		return ret;
+-	if (rtsx_acquire_irq(dev) < 0) {
+-		/* unlock the device pointers */
+-		mutex_unlock(&dev->dev_mutex);
+-		return -EIO;
 -	}
-+	if (ret)
-+		goto put_device;
++	if (rtsx_acquire_irq(dev) < 0)
++		goto unlock;
  
- 	ret = set_supply(rdev, r);
--	if (ret < 0) {
--		put_device(&r->dev);
--		return ret;
--	}
-+	if (ret)
-+		goto put_device;
- 
- 	/* Cascade always-on state to supply */
- 	if (_regulator_is_enabled(rdev)) {
-@@ -1583,6 +1579,10 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 	}
+ 	rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, 0x00);
+ 	rtsx_init_chip(chip);
+@@ -373,6 +368,10 @@ static int rtsx_resume(struct pci_dev *pci)
+ 	mutex_unlock(&dev->dev_mutex);
  
  	return 0;
 +
-+put_device:
-+	put_device(&r->dev);
-+	return ret;
++unlock:
++	mutex_unlock(&dev->dev_mutex);
++	return -EIO;
  }
+ #endif /* CONFIG_PM */
  
- /* Internal regulator request function */
 -- 
-2.14.3
+2.15.0
 
