@@ -1,64 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 20:42:49 +0000
-Subject: [PATCH 1/2] video: fbdev-MMP: Delete an error message for a failed memory allocation in two function
-Message-Id: <9aa9c376-22a3-f682-d9a4-5ee95cfd75a0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 13:58:29 +0000
+Subject: [PATCH] spi: sh-msiof: remove redundant pointer dev
+Message-Id: <20171103135829.8697-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
-In-Reply-To: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 21:16:30 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in these functions.
+The pointer dev is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/spi/spi-sh-msiof.c:1198:2: warning: Value stored to 'dev'
+is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/mmp/fb/mmpfb.c    | 5 ++---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 6 ++----
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/mmp/fb/mmpfb.c b/drivers/video/fbdev/mmp/fb/mmpfb.c
-index 92279e02dd94..292b3e403044 100644
---- a/drivers/video/fbdev/mmp/fb/mmpfb.c
-+++ b/drivers/video/fbdev/mmp/fb/mmpfb.c
-@@ -495,10 +495,9 @@ static int modes_setup(struct mmpfb_info *fbi)
- 	/* put videomode list to info structure */
- 	videomodes = kzalloc(sizeof(struct fb_videomode) * videomode_num,
- 			GFP_KERNEL);
--	if (!videomodes) {
--		dev_err(fbi->dev, "can't malloc video modes\n");
-+	if (!videomodes)
- 		return -ENOMEM;
--	}
-+
- 	for (i = 0; i < videomode_num; i++)
- 		mmpmode_to_fbmode(&videomodes[i], &mmp_modes[i]);
- 	fb_videomode_to_modelist(videomodes, videomode_num, &info->modelist);
-diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-index b6f83d5df9fd..9f912ea0bfce 100644
---- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-+++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-@@ -407,11 +407,9 @@ static int path_init(struct mmphw_path_plat *path_plat,
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 94d15ef0e4e6..fcd261f98b9f 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1190,12 +1190,10 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
+ static void sh_msiof_release_dma(struct sh_msiof_spi_priv *p)
+ {
+ 	struct spi_master *master = p->master;
+-	struct device *dev;
  
- 	/* init driver data */
- 	path_info = kzalloc(sizeof(struct mmp_path_info), GFP_KERNEL);
--	if (!path_info) {
--		dev_err(ctrl->dev, "%s: unable to alloc path_info for %s\n",
--				__func__, config->name);
-+	if (!path_info)
- 		return 0;
--	}
-+
- 	path_info->name = config->name;
- 	path_info->id = path_plat->id;
- 	path_info->dev = ctrl->dev;
+ 	if (!master->dma_tx)
+ 		return;
+ 
+-	dev = &p->pdev->dev;
+ 	dma_unmap_single(master->dma_rx->device->dev, p->rx_dma_addr,
+ 			 PAGE_SIZE, DMA_FROM_DEVICE);
+ 	dma_unmap_single(master->dma_tx->device->dev, p->tx_dma_addr,
 -- 
-2.15.0
+2.14.1
 
