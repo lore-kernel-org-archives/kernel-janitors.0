@@ -1,24 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 10:30:22 +0000
-Subject: Checking the description for aac_comm_init()
-Message-Id: <d9d819d6-221b-d085-d5dc-a0b7425acf80@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 13:17:51 +0000
+Subject: [PATCH] staging: fbtft: remove redundant initialization of buf
+Message-Id: <20171103131751.7833-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: aacraid@microsemi.com, linux-scsi@vger.kernel.org, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGVsbG8sCgpJIGhhdmUgdGFrZW4gYW5vdGhlciBsb29rIGFsc28gYXQgdGhlIGltcGxlbWVudGF0
-aW9uIG9mIHRoZQpmdW5jdGlvbiDigJxhYWNfY29tbV9pbml04oCdLgoKaHR0cDovL2VsaXhpci5m
-cmVlLWVsZWN0cm9ucy5jb20vbGludXgvdjQuMTQtcmM3L3NvdXJjZS9kcml2ZXJzL3Njc2kvYWFj
-cmFpZC9jb21taW5pdC5jI0wzMzMKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4
-L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVlL2RyaXZlcnMvc2NzaS9hYWNyYWlk
-L2NvbW1pbml0LmM/aWT6ODc4NWU4NjJlZjY0NGY3NDI1NThmMWE4YzkxZWNhNmYzZjAwMDQjbjM0
-NQoKQ2FuIGl0IGJlIHRoYXQgdGhlIGRlc2NyaXB0aW9uIGZvciB0aGUgcG9zc2libGUgcmV0dXJu
-IHZhbHVlcyBpcyBxdWVzdGlvbmFibGUKaW4gdGhlIGNvcnJlc3BvbmRpbmcgY29tbWVudCBibG9j
-ayBhdCB0aGUgbW9tZW50PwoKUmVnYXJkcywKTWFya3VzCi0tClRvIHVuc3Vic2NyaWJlIGZyb20g
-dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGlu
-CnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUg
-bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
-aHRtbA==
+From: Colin Ian King <colin.king@canonical.com>
+
+The pointer buf is being set on each iteration of a for-loop and
+so the initialization of buf at declaration time is redundant and
+can be removed.  Cleans up clang warning:
+
+drivers/staging/fbtft/fb_uc1701.c:130:6: warning: Value stored
+to 'buf' during its initialization is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/fbtft/fb_uc1701.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/fbtft/fb_uc1701.c b/drivers/staging/fbtft/fb_uc1701.c
+index b78045fe5393..78899a172c7e 100644
+--- a/drivers/staging/fbtft/fb_uc1701.c
++++ b/drivers/staging/fbtft/fb_uc1701.c
+@@ -127,7 +127,7 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
+ static int write_vmem(struct fbtft_par *par, size_t offset, size_t len)
+ {
+ 	u16 *vmem16 = (u16 *)par->info->screen_buffer;
+-	u8 *buf = par->txbuf.buf;
++	u8 *buf;
+ 	int x, y, i;
+ 	int ret = 0;
+ 
+-- 
+2.14.1
+
