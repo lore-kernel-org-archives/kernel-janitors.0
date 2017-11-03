@@ -1,39 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 20:10:56 +0000
-Subject: [PATCH] selftests: posix_timers: Make signal handling safer
-Message-Id: <7ba0d855-8b55-cb38-2740-c2a3495f3083@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 03 Nov 2017 18:50:58 +0000
+Subject: Applied "spi: s3c64xx: remove redundant pointer sci" to the spi tree
+Message-Id: <E1eAh3S-0005u1-W6@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20171103133525.8173-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 20:56:51 +0100
+The patch
 
-Use the data type "sig_atomic_t" for the variable "done"
-so that it can be safely modified by a signal handler.
+   spi: s3c64xx: remove redundant pointer sci
 
-Fixes: 0bc4b0cf15708fca04095232c4e448634e94d029 ("selftests: add basic posix timers selftests")
+has been applied to the spi tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 4132b8b9107badf75bf30c8b4b3ac2cebd03389d Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 3 Nov 2017 13:35:25 +0000
+Subject: [PATCH] spi: s3c64xx: remove redundant pointer sci
+
+The pointer sci is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
+
+drivers/spi/spi-s3c64xx.c:791:2: warning: Value stored to 'sci' is
+never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/timers/posix_timers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-s3c64xx.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-index 15cf56d32155..d64732c8b69a 100644
---- a/tools/testing/selftests/timers/posix_timers.c
-+++ b/tools/testing/selftests/timers/posix_timers.c
-@@ -20,7 +20,7 @@
- #define DELAY 2
- #define USECS_PER_SEC 1000000
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b392cca8fa4f..de7df20f8712 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -752,7 +752,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ {
+ 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+ 	struct s3c64xx_spi_driver_data *sdd;
+-	struct s3c64xx_spi_info *sci;
+ 	int err;
  
--static volatile int done;
-+static sig_atomic_t done;
+ 	sdd = spi_master_get_devdata(spi->master);
+@@ -788,8 +787,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 		spi_set_ctldata(spi, cs);
+ 	}
  
- /* Busy loop in userspace to elapse ITIMER_VIRTUAL */
- static void user_loop(void)
+-	sci = sdd->cntrlr_info;
+-
+ 	pm_runtime_get_sync(&sdd->pdev->dev);
+ 
+ 	/* Check if we can provide the requested rate */
 -- 
 2.15.0
 
