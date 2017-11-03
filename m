@@ -1,29 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 09:46:10 +0000
-Subject: [PATCH 0/4] ALSA-Riptide: Fine-tuning for seven function implementations
-Message-Id: <0eef2699-f28a-c1e0-9351-268b5eb7e0c1@users.sourceforge.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 03 Nov 2017 14:22:58 +0000
+Subject: Re: [PATCH] crypto: cavium: clean up clang warning on unread variable offset
+Message-Id: <20171103142258.GE9011@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171012164406.31934-1-colin.king@canonical.com>
+In-Reply-To: <20171012164406.31934-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Srikanth Jampala <Jampala.Srikanth@cavium.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 10:32:23 +0100
+On Thu, Oct 12, 2017 at 05:44:06PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable offset is being assigned and not being used; it should
+> be passed as the 2nd argument to call to function nitrox_write_csr
+> but has been omitted. Fix this.
+> 
+> Cleans up clang warning: Value stored to 'offset' is never read
+> 
+> Fixes: 14fa93cdcd9b ("crypto: cavium - Add support for CNN55XX adapters.")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (4):
-  Adjust 13 function calls together with a variable assignment
-  Delete an unnecessary variable initialisation in snd_riptide_proc_read()
-  Reduce the scope for two variables in snd_riptide_proc_read()
-  Use common error handling code in snd_riptide_create()
-
- sound/pci/riptide/riptide.c | 78 ++++++++++++++++++++++++++-------------------
- 1 file changed, 46 insertions(+), 32 deletions(-)
-
+Patch applied.  Thanks.
 -- 
-2.15.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
