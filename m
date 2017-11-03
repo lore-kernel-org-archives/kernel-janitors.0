@@ -1,18 +1,16 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 17:45:39 +0000
-Subject: [PATCH 2/3] ALSA: ens1370: Use common error handling code in snd_audiopci_probe()
-Message-Id: <528a9443-b098-4815-6996-83524286e55c@users.sourceforge.net>
+Date: Fri, 03 Nov 2017 09:54:38 +0000
+Subject: [PATCH] staging/media/davinci_vpfe: Use common error handling code in vpfe_attach_irq()
+Message-Id: <47780e02-1fcd-dfc7-c7d7-65d32f6652e4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8bcf1ada-f44c-cb83-0890-adc8ae8edda0@users.sourceforge.net>
-In-Reply-To: <8bcf1ada-f44c-cb83-0890-adc8ae8edda0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: devel@driverdev.osuosl.org, linux-media@vger.kernel.org, Derek Robson <robsonde@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Simran Singhal <singhalsimran0@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 18:15:36 +0100
+Date: Fri, 3 Nov 2017 10:45:31 +0100
 
 Add a jump target so that a bit of exception handling can be better reused
 at the end of this function.
@@ -21,92 +19,40 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/ens1370.c | 49 +++++++++++++++++++++----------------------------
- 1 file changed, 21 insertions(+), 28 deletions(-)
+ drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/pci/ens1370.c b/sound/pci/ens1370.c
-index 7cd7cacdcc28..55c5173036d3 100644
---- a/sound/pci/ens1370.c
-+++ b/sound/pci/ens1370.c
-@@ -2414,42 +2414,33 @@ static int snd_audiopci_probe(struct pci_dev *pci,
- 		return err;
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+index bffe2153b910..80297d2df31d 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+@@ -309,8 +309,7 @@ static int vpfe_attach_irq(struct vpfe_device *vpfe_dev)
+ 	if (ret < 0) {
+ 		v4l2_err(&vpfe_dev->v4l2_dev,
+ 			"Error: requesting VINT1 interrupt\n");
+-		free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
+-		return ret;
++		goto free_irq;
+ 	}
  
- 	err = snd_ensoniq_create(card, pci, &ensoniq);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	card->private_data = ensoniq;
+ 	ret = request_irq(vpfe_dev->imp_dma_irq, vpfe_imp_dma_isr,
+@@ -319,11 +318,14 @@ static int vpfe_attach_irq(struct vpfe_device *vpfe_dev)
+ 		v4l2_err(&vpfe_dev->v4l2_dev,
+ 			 "Error: requesting IMP IRQ interrupt\n");
+ 		free_irq(vpfe_dev->ccdc_irq1, vpfe_dev);
+-		free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
+-		return ret;
++		goto free_irq;
+ 	}
  
- 	pcm_devs[0] = 0; pcm_devs[1] = 1;
- #ifdef CHIP1370
- 	err = snd_ensoniq_1370_mixer(ensoniq);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- #endif
- #ifdef CHIP1371
- 	err = snd_ensoniq_1371_mixer(ensoniq, spdif[dev], lineio[dev]);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- #endif
- 	err = snd_ensoniq_pcm(ensoniq, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_ensoniq_pcm2(ensoniq, 1);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_ensoniq_midi(ensoniq, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	snd_ensoniq_create_gameport(ensoniq, dev);
- 
-@@ -2463,14 +2454,16 @@ static int snd_audiopci_probe(struct pci_dev *pci,
- 		ensoniq->irq);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	pci_set_drvdata(pci, card);
- 	dev++;
  	return 0;
 +
-+free_card:
-+	snd_card_free(card);
-+	return err;
++free_irq:
++	free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
++	return ret;
  }
  
- static void snd_audiopci_remove(struct pci_dev *pci)
+ /*
 -- 
 2.15.0
 
