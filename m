@@ -1,50 +1,54 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 03 Nov 2017 12:02:37 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 03 Nov 2017 13:23:45 +0000
 Subject: Re: [PATCH v2 0/3] Sony-laptop: Adjustments for sony_nc_setup_rfkill()
-Message-Id: <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com>
+Message-Id: <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
- <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com> <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
-In-Reply-To: <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
+ <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+ <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
+ <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com>
+In-Reply-To: <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Platform Driver <platform-driver-x86@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
 
-On Wed, Nov 1, 2017 at 8:45 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 1 Nov 2017 19:34:56 +0100
->
-> Three update suggestions were taken into account
-> from static source code analysis.
+> I have applied first two,
 
-I have applied first two, the last one is subject to discuss a necessity of it.
-
-So, if Darren on my side than we won't apply it, if he opposes, I
-would hear an argument why we might need it.
-
->
-> Markus Elfring (3):
->   Fix exception handling
->   Delete an unnecessary variable initialisation
->   Use common error handling code
-> ---
->
-> v2:
-> Two additional suggestions were taken into account from a corresponding
-> source code review.
->
->  drivers/platform/x86/sony-laptop.c | 33 ++++++++++++++++++---------------
->  1 file changed, 18 insertions(+), 15 deletions(-)
->
-> --
-> 2.14.3
->
+Thanks for another change acceptance.
 
 
+> the last one is subject to discuss a necessity of it.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I can offer another bit of information for this software development discussion.
+
+The following build settings were active in my “Makefile” for this Linux test case.
+
+…
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O0 -fomit-frame-pointer -std=gnu89
+…
+
+
+The affected source file can be compiled for the processor architecture “x86_64”
+by a tool like “GCC 6.4.1+r251631-1.3” from the software distribution
+“openSUSE Tumbleweed” with the following command example.
+
+my_cc=/usr/bin/gcc-6 \
+&& my_module=drivers/platform/x86/sony-laptop.ko \
+&& git checkout ':/^Sony-laptop: Delete an unnecessary variable initialisation in sony_nc_setup_rfkill' \
+&& make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
+&& size "${my_module}" \
+&& git checkout ':/^Sony-laptop: Use common error handling code in sony_nc_setup_rfkill' \
+&& make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
+&& size "${my_module}"
+
+
+Do you find the following details useful for further clarification?
+
+text: -32
+data: 0
+bss:  0
+
+Regards,
+Markus
