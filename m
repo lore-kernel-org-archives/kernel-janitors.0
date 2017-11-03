@@ -1,42 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 19:53:02 +0000
-Subject: [PATCH] video/fbdev/vt8500lcdfb: Delete an error message for a failed memory allocation in vt8500lcd
-Message-Id: <d229eccd-ab20-d594-caa1-55fb464357ac@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 13:35:25 +0000
+Subject: [PATCH] spi: s3c64xx: remove redundant pointer sci
+Message-Id: <20171103133525.8173-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tony Prisk <linux@prisktech.co.nz>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:42:08 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+The pointer sci is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/spi/spi-s3c64xx.c:791:2: warning: Value stored to 'sci' is
+never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/vt8500lcdfb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/video/fbdev/vt8500lcdfb.c b/drivers/video/fbdev/vt8500lcdfb.c
-index 1a1176bf0906..5c5cd2923041 100644
---- a/drivers/video/fbdev/vt8500lcdfb.c
-+++ b/drivers/video/fbdev/vt8500lcdfb.c
-@@ -289,10 +289,8 @@ static int vt8500lcd_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b392cca8fa4f..de7df20f8712 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -752,7 +752,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ {
+ 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+ 	struct s3c64xx_spi_driver_data *sdd;
+-	struct s3c64xx_spi_info *sci;
+ 	int err;
  
- 	fbi = devm_kzalloc(&pdev->dev, sizeof(struct vt8500lcd_info)
- 			+ sizeof(u32) * 16, GFP_KERNEL);
--	if (!fbi) {
--		dev_err(&pdev->dev, "Failed to initialize framebuffer device\n");
-+	if (!fbi)
- 		return -ENOMEM;
--	}
+ 	sdd = spi_master_get_devdata(spi->master);
+@@ -788,8 +787,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 		spi_set_ctldata(spi, cs);
+ 	}
  
- 	strcpy(fbi->fb.fix.id, "VT8500 LCD");
+-	sci = sdd->cntrlr_info;
+-
+ 	pm_runtime_get_sync(&sdd->pdev->dev);
  
+ 	/* Check if we can provide the requested rate */
 -- 
-2.15.0
+2.14.1
 
