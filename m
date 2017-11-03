@@ -1,60 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 18:55:25 +0000
-Subject: Re: [PATCH] selftest: sync: Use common error handling code in sync_file_info()
-Message-Id: <29abb1d8-95dd-fdf3-cecb-40d6c035508c@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 06:58:27 +0000
+Subject: [PATCH] media: v4l: async: fix return of unitialized variable ret
+Message-Id: <20171103065827.25988-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <219c366b-d753-e65b-b021-6d4a584588d0@users.sourceforge.net>
- <3a27095e-84ad-6e93-bae5-3b242a042238@kernel.org>
-In-Reply-To: <3a27095e-84ad-6e93-bae5-3b242a042238@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hans.verkuil@cisco.com>, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Sebastian Reichel <sre@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Add a jump target so that a bit of exception handling can be better reused
->> at the end of this function.
->>
->> This issue was detected by using the Coccinelle software.
-> 
-> I would like to see the Coccinelle log included in the commit log
+From: Colin Ian King <colin.king@canonical.com>
 
-I guess that I can not append the kind of report you might be looking for
-so far. This small update suggestion is just another result from one
-of my evolving scripts for the semantic patch language.
+A shadow declaration of variable ret is being assigned a return error
+status and this value is being lost when the error exit goto's jump
+out of the local scope. This leads to an uninitalized error return value
+in the outer scope being returned. Fix this by removing the inner scoped
+declaration of variable ret.
 
-It was discussed under the topic “Comparing statement lists with SmPL”
-to some degree.
-https://systeme.lip6.fr/pipermail/cocci/2017-August/004388.html
+Detected by CoverityScan, CID#1460380 ("Uninitialized scalar variable")
 
+Fixes: fb45f436b818 ("media: v4l: async: Fix notifier complete callback error handling")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/v4l2-core/v4l2-async.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->> @@ -104,22 +102,23 @@ static struct sync_file_info *sync_file_info(int fd)
->>  		info->num_fences = num_fences;
->>  
->>  		fence_info = calloc(num_fences, sizeof(*fence_info));
->> -		if (!fence_info) {
->> -			free(info);
->> -			return NULL;
->> -		}
->> +		if (!fence_info)
->> +			goto free_info;
->>  
->>  		info->sync_fence_info = (uint64_t)fence_info;
->>  
->>  		err = ioctl(fd, SYNC_IOC_FILE_INFO, info);
->>  		if (err < 0) {
->>  			free(fence_info);
-> 
-> Why not add a free_fence_info to make it consistent?
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 49f7eccc76db..7020b2e6d158 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -550,7 +550,6 @@ int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+ 		struct v4l2_device *v4l2_dev  			v4l2_async_notifier_find_v4l2_dev(notifier);
+ 		struct v4l2_async_subdev *asd;
+-		int ret;
+ 
+ 		if (!v4l2_dev)
+ 			continue;
+-- 
+2.14.1
 
-It did not add another jump label because it would be used only once
-for this if branch (according to your enquiry).
-
-
->> -			free(info);
->> -			return NULL;
->> +			goto free_info;
-
-Do you expect a second update approach for this source code place?
-
-Regards,
-Markus
