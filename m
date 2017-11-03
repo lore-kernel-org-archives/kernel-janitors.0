@@ -1,99 +1,40 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 03 Nov 2017 14:14:12 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 03 Nov 2017 16:39:21 +0000
 Subject: Re: [PATCH] staging: comedi: usbduxfast: Improve unlocking of a mutex in usbduxfast_ai_insn_read()
-Message-Id: <20171103141412.GA5094@kroah.com>
+Message-Id: <1d91cb37-4b7d-3b2e-bc20-1bcd70f19c4b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <b0acc12a-e48c-d51a-f7e3-606e66e6fe7b@users.sourceforge.net>
  <faf75ea4-e1cf-1959-2705-7da1d49bddde@mev.co.uk>
 In-Reply-To: <faf75ea4-e1cf-1959-2705-7da1d49bddde@mev.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, H Hartley Sweeten <hsweeten@visionengravers.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ian Abbott <abbotti@mev.co.uk>, devel@driverdev.osuosl.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 03, 2017 at 02:00:18PM +0000, Ian Abbott wrote:
-> On 02/11/17 19:40, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Thu, 2 Nov 2017 20:30:31 +0100
-> > 
-> > * Add a jump target so that a call of the function "mutex_unlock" is stored
-> >    only twice in this function implementation.
-> > 
-> > * Replace five calls by goto statements.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >   drivers/staging/comedi/drivers/usbduxfast.c | 24 ++++++++++++------------
-> >   1 file changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
-> > index 608403c7586b..e5884faf7275 100644
-> > --- a/drivers/staging/comedi/drivers/usbduxfast.c
-> > +++ b/drivers/staging/comedi/drivers/usbduxfast.c
-> > @@ -777,8 +777,8 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
-> >   	if (devpriv->ai_cmd_running) {
-> >   		dev_err(dev->class_dev,
-> >   			"ai_insn_read not possible, async cmd is running\n");
-> > -		mutex_unlock(&devpriv->mut);
-> > -		return -EBUSY;
-> > +		ret = -EBUSY;
-> > +		goto unlock;
-> >   	}
-> >   	/* set command for the first channel */
-> > @@ -798,10 +798,8 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
-> >   	usbduxfast_cmd_data(dev, 6, 0x01, 0x00, rngmask, 0x00);
-> >   	ret = usbduxfast_send_cmd(dev, SENDADCOMMANDS);
-> > -	if (ret < 0) {
-> > -		mutex_unlock(&devpriv->mut);
-> > -		return ret;
-> > -	}
-> > +	if (ret < 0)
-> > +		goto unlock;
-> >   	for (i = 0; i < PACKETS_TO_IGNORE; i++) {
-> >   		ret = usb_bulk_msg(usb, usb_rcvbulkpipe(usb, BULKINEP),
-> > @@ -809,8 +807,7 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
-> >   				   &actual_length, 10000);
-> >   		if (ret < 0) {
-> >   			dev_err(dev->class_dev, "insn timeout, no data\n");
-> > -			mutex_unlock(&devpriv->mut);
-> > -			return ret;
-> > +			goto unlock;
-> >   		}
-> >   	}
-> > @@ -820,14 +817,13 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
-> >   				   &actual_length, 10000);
-> >   		if (ret < 0) {
-> >   			dev_err(dev->class_dev, "insn data error: %d\n", ret);
-> > -			mutex_unlock(&devpriv->mut);
-> > -			return ret;
-> > +			goto unlock;
-> >   		}
-> >   		n = actual_length / sizeof(u16);
-> >   		if ((n % 16) != 0) {
-> >   			dev_err(dev->class_dev, "insn data packet corrupted\n");
-> > -			mutex_unlock(&devpriv->mut);
-> > -			return -EINVAL;
-> > +			ret = -EINVAL;
-> > +			goto unlock;
-> >   		}
-> >   		for (j = chan; (j < n) && (i < insn->n); j = j + 16) {
-> >   			data[i] = ((u16 *)(devpriv->inbuf))[j];
-> > @@ -838,6 +834,10 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
-> >   	mutex_unlock(&devpriv->mut);
-> >   	return insn->n;
+>> @@ -838,6 +834,10 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
+>>       mutex_unlock(&devpriv->mut);
+>>         return insn->n;
 > 
-> Minor niggle: You could also remove that call to mutex_unlock() by replacing
-> the above three lines with:
+> Minor niggle: You could also remove that call to mutex_unlock() by replacing the above three lines with:
 > 
-> 	ret = insn->n;
+>     ret = insn->n;
 > 
 > which will fall through to the 'unlock:' label below.
 
-FYI, you are responding to someone who is on my blacklist and I never
-accept patches from.  I wouldn't waste my time reviewing any patches
-from them, sorry.
+Thanks for your suggestion.
 
-greg k-h
+Such a software refactoring is also possible if a corresponding
+consensus could be achieved.
+* Can such a change mean that the lock scope will be extended
+  for both use cases (successful and failed function execution)?
+
+* How much does this implementation matter for you?
+
+* Would you like to achieve a small reduction of the object code there?
+
+* How do you think about consequences from special communication settings
+  by a well-known maintainer for my update suggestions?
+
+Regards,
+Markus
