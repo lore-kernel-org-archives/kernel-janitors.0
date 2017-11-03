@@ -1,33 +1,47 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 09 Nov 2017 15:45:52 +0000
-Subject: Re: [PATCH] video/fbdev/dnfb: Use common error handling code in dnfb_probe()
-Message-Id: <10508179.6F5ylYl9eO@amdc3058>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 08:42:02 +0000
+Subject: [PATCH] xen/pvcalls: fix unsigned less than zero error check
+Message-Id: <20171103084202.27790-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171105144325epcas2p2768d40aa015f0c2e9254b38d8f0f0eb9@epcas2p2.samsung.com>
- <af7afaa3-5467-32c3-9e80-a6c9eb220205@users.sourceforge.net>
-In-Reply-To: <af7afaa3-5467-32c3-9e80-a6c9eb220205@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sunday, November 05, 2017 03:43:05 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 Nov 2017 14:54:52 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.15, thanks.
+The check on bedata->ref is never true because ref is an unsigned
+integer. Fix this by assigning signed int ret to the return of the
+call to gnttab_claim_grant_reference so the -ve return can be checked.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Detected by CoverityScan, CID#1460358 ("Unsigned compared against 0")
+
+Fixes: 219681909913 ("xen/pvcalls: connect to the backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/xen/pvcalls-front.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 0c1ec6894cc4..de8a470351a5 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -1186,11 +1186,10 @@ static int pvcalls_front_probe(struct xenbus_device *dev,
+ 	ret = gnttab_alloc_grant_references(1, &gref_head);
+ 	if (ret < 0)
+ 		goto error;
+-	bedata->ref = gnttab_claim_grant_reference(&gref_head);
+-	if (bedata->ref < 0) {
+-		ret = bedata->ref;
++	ret = gnttab_claim_grant_reference(&gref_head);
++	if (ret < 0)
+ 		goto error;
+-	}
++	bedata->ref = ret;
+ 	gnttab_grant_foreign_access_ref(bedata->ref, dev->otherend_id,
+ 					virt_to_gfn((void *)sring), 0);
+ 
+-- 
+2.14.1
 
