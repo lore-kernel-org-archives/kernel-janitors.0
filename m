@@ -1,38 +1,29 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 06 Nov 2017 21:53:29 +0000
-Subject: [PATCH 1/4] fsl/fman: Remove a useless call to 'dev_set_drvdata()'
-Message-Id: <eb2c7fea4ceaba4344b33d93493be98e1dc5dcf0.1510003551.git.christophe.jaillet@wanadoo.fr>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 03 Nov 2017 14:23:21 +0000
+Subject: Re: [PATCH] crypto: qat: remove unused and redundant pointer vf_info
+Message-Id: <20171103142321.GG9011@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
+References: <20171012170456.32505-1-colin.king@canonical.com>
+In-Reply-To: <20171012170456.32505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: madalin.bucur@nxp.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Colin King <colin.king@canonical.com>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, "David S . Miller" <davem@davemloft.net>, Ahsan Atta <ahsan.atta@intel.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit c6e26ea8c893 ("dpaa_eth: change device used") has removed usage of
-'dev_set_drvdata()' in the 'mac_probe() function.
+On Thu, Oct 12, 2017 at 06:04:56PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer vf_info is being assigned but never read, it is redundant
+> and therefore can be removed.
+> 
+> Cleans up clang warning: Value stored to 'vf_info' is never read
+> 
+> Fixes: ed8ccaef52fa ("crypto: qat - Add support for SRIOV")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This call should also be axed.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/freescale/fman/mac.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 1d6da1ea7bfb..c27667a005f7 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -713,7 +713,6 @@ static int mac_probe(struct platform_device *_of_dev)
- 		__devm_release_region(dev, fman_get_mem_region(priv->fman),
- 				      res.start, res.end + 1 - res.start);
- 		devm_kfree(dev, mac_dev);
--		dev_set_drvdata(dev, NULL);
- 		return -ENODEV;
- 	}
- 
+Patch applied.  Thanks.
 -- 
-2.14.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
