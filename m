@@ -1,58 +1,48 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 25 Nov 2017 16:44:19 +0000
-Subject: Re: [PATCH] iio: accel: remove redundant pointer pdata
-Message-Id: <20171125164419.65e41413@archlinux>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 03 Nov 2017 12:37:16 +0000
+Subject: Re: [PATCH] platform: x86: dell-smo8800: remove redundant assignments to byte_data
+Message-Id: <CAHp75VdLwN2p5grNY--VzuPOp64aS70uqWdmPWA2-63We+yP_Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171122143211.30651-1-colin.king@canonical.com>
-In-Reply-To: <20171122143211.30651-1-colin.king@canonical.com>
+References: <20171031110318.20985-1-colin.king@canonical.com>
+ <CAHp75Vec3Hjd_keMid-x6ub5ZJqUmq1nUFiHPsxuWt8V+vzrnQ@mail.gmail.com>
+ <20171031135548.u5vtsxj7hbnuioz3@pali> <CAHp75VfAzk4n1HQETp+r5KGE5B_HmQ0JcsOwesvowuvt=wju5g@mail.gmail.com>
+ <20171031141351.yrjhwweubwxptb4j@pali> <CAHp75Ve852xEsng4cCxznGpkt+P0pnCTX1k9qmVkkZPU3FskOA@mail.gmail.com>
+ <20171031184123.ssv5yolajiv7u7gj@pali>
+In-Reply-To: <20171031184123.ssv5yolajiv7u7gj@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Colin King <colin.king@canonical.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, 22 Nov 2017 14:32:11 +0000
-Colin King <colin.king@canonical.com> wrote:
+On Tue, Oct 31, 2017 at 8:41 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Tuesday 31 October 2017 20:08:45 Andy Shevchenko wrote:
+>> On Tue, Oct 31, 2017 at 4:13 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>> > On Tuesday 31 October 2017 16:07:25 Andy Shevchenko wrote:
+>> >> On Tue, Oct 31, 2017 at 3:55 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>> >> > On Tuesday 31 October 2017 15:47:58 Andy Shevchenko wrote:
+>> >> >> On Tue, Oct 31, 2017 at 1:03 PM, Colin King <colin.king@canonical.com> wrote:
+>>
+>> >> OK, though it doesn't clarify the intention of the byte_data
+>> >> (useless?) assignments.
+>> >
+>> > Probably similar code pattern exists in that lis3lv* driver...
+>>
+>> So, it seems to me OK to apply the patch. No objections?
+>
+> No objections, you can add my:
+>
+> Acked-by: Pali Rohár <pali.rohar@gmail.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer pdata is being assigned but it is never being used, hence
-> it is redundant and can be removed. Cleans up clang warning:
-> 
-> drivers/iio/accel/st_accel_core.c:952:3: warning: Value stored to 'pdata'
-> is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied to the togreg branch of iio.git and pushed out as testing.
+Applied to my review and testing queue, thanks!
 
-Thanks,
+>
+> --
+> Pali Rohár
+> pali.rohar@gmail.com
 
-Jonathan
 
-> ---
->  drivers/iio/accel/st_accel_core.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
-> index 460aa58e0159..6fe995cf16a6 100644
-> --- a/drivers/iio/accel/st_accel_core.c
-> +++ b/drivers/iio/accel/st_accel_core.c
-> @@ -920,8 +920,6 @@ static const struct iio_trigger_ops st_accel_trigger_ops = {
->  int st_accel_common_probe(struct iio_dev *indio_dev)
->  {
->  	struct st_sensor_data *adata = iio_priv(indio_dev);
-> -	struct st_sensors_platform_data *pdata > -		(struct st_sensors_platform_data *)adata->dev->platform_data;
->  	int irq = adata->get_irq_data_ready(indio_dev);
->  	int err;
->  
-> @@ -948,9 +946,6 @@ int st_accel_common_probe(struct iio_dev *indio_dev)
->  					&adata->sensor_settings->fs.fs_avl[0];
->  	adata->odr = adata->sensor_settings->odr.odr_avl[0].hz;
->  
-> -	if (!pdata)
-> -		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
-> -
->  	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
->  	if (err < 0)
->  		goto st_accel_power_off;
 
+-- 
+With Best Regards,
+Andy Shevchenko
