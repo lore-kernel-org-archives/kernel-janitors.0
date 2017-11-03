@@ -1,28 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 07:58:09 +0000
-Subject: [PATCH 0/3] regulator-core: Fine-tuning for nine function implementations
-Message-Id: <471498fb-58af-46d4-2150-614c0f9cdc22@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 06:41:06 +0000
+Subject: [PATCH] media: imx274: fix missing return assignment from call to imx274_mode_regs
+Message-Id: <20171103064106.25593-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Leon Luo <leonl@leopardimaging.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Nov 2017 08:54:32 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+The variable ret is being checked for failure however it is not being set
+from the return status from the call to imx274_mode_regs. Currently ret is
+alwayus zero and the check is redundant. Fix this by assigning it.
 
-Markus Elfring (3):
-  Use common error handling code in regulator_resolve_supply()
-  Improve a size determination in four functions
-  Adjust 18 checks for null pointers
+Detected by CoverityScan, CID#1460278 ("Logically dead code")
 
- drivers/regulator/core.c | 60 ++++++++++++++++++++++++------------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+Fixes: 0985dd306f72 ("media: imx274: V4l2 driver for Sony imx274 CMOS sensor")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/i2c/imx274.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index ab6a5f31da74..800b9bf9cdd3 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -1059,7 +1059,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+ 
+ 	if (on) {
+ 		/* load mode registers */
+-		imx274_mode_regs(imx274, imx274->mode_index);
++		ret = imx274_mode_regs(imx274, imx274->mode_index);
+ 		if (ret)
+ 			goto fail;
+ 
 -- 
-2.14.3
+2.14.1
 
