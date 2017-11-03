@@ -1,29 +1,42 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:29 +0000
-Subject: Re: [PATCH 1/2] clk/ux500: Delete an error message for a failed memory allocation in three functions
-Message-Id: <20171114015929.GR11955@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 03 Nov 2017 09:20:47 +0000
+Subject: [PATCH] xen/pvcalls: remove redundant check for irq >= 0
+Message-Id: <20171103092047.28421-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
- <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
-In-Reply-To: <db799483-7084-8e93-2bfe-2da0e426d08b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 20:23:58 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+This is a moot point, but irq is always less than zero at the label
+out_error, so the check for irq >= 0 is redundant and can be removed.
 
+Detected by CoverityScan, CID#1460371 ("Logically dead code")
+
+Fixes: cb1c7d9bbc87 ("xen/pvcalls: implement connect command")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/xen/pvcalls-front.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index de8a470351a5..b08569998046 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -351,9 +351,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ 	return 0;
+ 
+ out_error:
+-	if (irq >= 0)
+-		unbind_from_irqhandler(irq, map);
+-	else if (*evtchn >= 0)
++	if (*evtchn >= 0)
+ 		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+ 	kfree(map->active.data.in);
+ 	kfree(map->active.ring);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
+
