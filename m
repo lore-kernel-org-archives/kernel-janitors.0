@@ -1,29 +1,99 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 02 Nov 2017 06:54:02 +0000
-Subject: Re: [PATCH] liquidio: remove redundant setting of inst_processed to zero
-Message-Id: <20171102.155402.2303424878123786750.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 03 Nov 2017 21:33:08 +0000
+Subject: [PATCH] iSCSI-target: Use common error handling code in iscsi_decode_text_input()
+Message-Id: <d36d5072-3e35-da39-bc0f-af15deb630a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171101090913.16215-1-colin.king@canonical.com>
-In-Reply-To: <20171101090913.16215-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: derek.chickles@caviumnetworks.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  1 Nov 2017 09:09:13 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 3 Nov 2017 22:20:38 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The zero value assigned to inst_processed at the end of each
-> iteration of the do-while loop is overwritten on the next iteration
-> and hence it is a redundant assignment and can be removed. Cleans
-> up clang warning:
-> 
-> drivers/net/ethernet/cavium/liquidio/request_manager.c:480:3:
-> warning: Value stored to 'inst_processed' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Applied.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_parameters.c | 39 ++++++++++++--------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index caab1045742d..29a37b242d30 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -1380,10 +1380,8 @@ int iscsi_decode_text_input(
+ 		char *key, *value;
+ 		struct iscsi_param *param;
+ 
+-		if (iscsi_extract_key_value(start, &key, &value) < 0) {
+-			kfree(tmpbuf);
+-			return -1;
+-		}
++		if (iscsi_extract_key_value(start, &key, &value) < 0)
++			goto free_buffer;
+ 
+ 		pr_debug("Got key: %s=%s\n", key, value);
+ 
+@@ -1396,38 +1394,37 @@ int iscsi_decode_text_input(
+ 
+ 		param = iscsi_check_key(key, phase, sender, param_list);
+ 		if (!param) {
+-			if (iscsi_add_notunderstood_response(key,
+-					value, param_list) < 0) {
+-				kfree(tmpbuf);
+-				return -1;
+-			}
++			if (iscsi_add_notunderstood_response(key, value,
++							     param_list) < 0)
++				goto free_buffer;
++
+ 			start += strlen(key) + strlen(value) + 2;
+ 			continue;
+ 		}
+-		if (iscsi_check_value(param, value) < 0) {
+-			kfree(tmpbuf);
+-			return -1;
+-		}
++		if (iscsi_check_value(param, value) < 0)
++			goto free_buffer;
+ 
+ 		start += strlen(key) + strlen(value) + 2;
+ 
+ 		if (IS_PSTATE_PROPOSER(param)) {
+-			if (iscsi_check_proposer_state(param, value) < 0) {
+-				kfree(tmpbuf);
+-				return -1;
+-			}
++			if (iscsi_check_proposer_state(param, value) < 0)
++				goto free_buffer;
++
+ 			SET_PSTATE_RESPONSE_GOT(param);
+ 		} else {
+-			if (iscsi_check_acceptor_state(param, value, conn) < 0) {
+-				kfree(tmpbuf);
+-				return -1;
+-			}
++			if (iscsi_check_acceptor_state(param, value, conn) < 0)
++				goto free_buffer;
++
+ 			SET_PSTATE_ACCEPTOR(param);
+ 		}
+ 	}
+ 
+ 	kfree(tmpbuf);
+ 	return 0;
++
++free_buffer:
++	kfree(tmpbuf);
++	return -1;
+ }
+ 
+ int iscsi_encode_text_output(
+-- 
+2.15.0
+
