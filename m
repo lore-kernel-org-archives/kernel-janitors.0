@@ -1,42 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 08 Nov 2017 15:46:49 +0000
-Subject: [PATCH][mtd-next] mtd: sharpslpart: fix overflow on block_adr calculation
-Message-Id: <20171108154649.30096-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 13:18:59 +0000
+Subject: [PATCH 4/4] target: Delete an error message for a failed memory allocation in two functions
+Message-Id: <e6282832-737d-f3a5-bb1a-70fc53c58451@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
+In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Andrea Adami <andrea.adami@gmail.com>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Nov 2017 13:43:22 +0100
 
-Multiplying block_num and mtd->erasesize may potentially overflow
-as they are both unsigned ints and so the multiplication is evaluated
-in unsigned int arithmetic .  Cast block_adr to off_t to ensure
-multiplication is off_t sized to avoid any potential overflow.
+Omit an extra message for a memory allocation failure in these functions.
 
-Detected by CoverityScan, CID#1461264 ("Unintentional integer overflow")
+This issue was detected by using the Coccinelle software.
 
-Fixes: fff1e32a50c0 ("mtd: sharpslpart: Add sharpslpart partition parser")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/parsers/sharpslpart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_xcopy.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mtd/parsers/sharpslpart.c b/drivers/mtd/parsers/sharpslpart.c
-index 5fe0079ea5ed..b1d97aa3bac4 100644
---- a/drivers/mtd/parsers/sharpslpart.c
-+++ b/drivers/mtd/parsers/sharpslpart.c
-@@ -244,7 +244,7 @@ static int sharpsl_nand_read_laddr(struct mtd_info *mtd,
- 		return -EINVAL;
+diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
+index 1519e399392b..c2b3d3158208 100644
+--- a/drivers/target/target_core_xcopy.c
++++ b/drivers/target/target_core_xcopy.c
+@@ -681,10 +681,9 @@ static int target_xcopy_read_source(
+ 	bool remote_port = (xop->op_origin = XCOL_DEST_RECV_OP);
  
- 	block_num = ftl->log2phy[log_num];
--	block_adr = block_num * mtd->erasesize;
-+	block_adr = (loff_t)block_num * mtd->erasesize;
- 	block_ofs = mtd_mod_by_eb((u32)from, mtd);
+ 	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
+-	if (!xpt_cmd) {
+-		pr_err("Unable to allocate xcopy_pt_cmd\n");
++	if (!xpt_cmd)
+ 		return -ENOMEM;
+-	}
++
+ 	init_completion(&xpt_cmd->xpt_passthrough_sem);
+ 	se_cmd = &xpt_cmd->se_cmd;
  
- 	err = mtd_read(mtd, block_adr + block_ofs, len, &retlen, buf);
+@@ -743,10 +742,9 @@ static int target_xcopy_write_destination(
+ 	bool remote_port = (xop->op_origin = XCOL_SOURCE_RECV_OP);
+ 
+ 	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
+-	if (!xpt_cmd) {
+-		pr_err("Unable to allocate xcopy_pt_cmd\n");
++	if (!xpt_cmd)
+ 		return -ENOMEM;
+-	}
++
+ 	init_completion(&xpt_cmd->xpt_passthrough_sem);
+ 	se_cmd = &xpt_cmd->se_cmd;
+ 
 -- 
-2.14.1
+2.15.0
 
