@@ -1,37 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Nov 2017 13:54:57 +0000
-Subject: Re: Sony-laptop: Adjustments for sony_nc_setup_rfkill()
-Message-Id: <8295246e-d800-521a-445c-007dc9f02208@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 04 Nov 2017 19:37:59 +0000
+Subject: [PATCH] rtlwifi: remove redundant initialization to cfg_cmd
+Message-Id: <20171104193759.919-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
- <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
- <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
- <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com>
- <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
- <CAHp75VeyLnKG43g0LiDqirkehH4bLK7x216NV1+C8Oktp7D5UQ@mail.gmail.com>
- <2c1996c5-0833-dcd3-c747-62eca46a433d@users.sourceforge.net>
- <CAHp75VcU2+cbWDkt+6gd9+bHjxDpA-hA5KuQNVCn-AJr1SLANQ@mail.gmail.com>
- <570d906c-5391-b7b4-6f4c-6709634ce3bb@users.sourceforge.net>
- <CAHp75VcPkob0x54UUPnebp1TUC9UenR_+jv2PkNKZ3TKsLtEcQ@mail.gmail.com>
-In-Reply-To: <CAHp75VcPkob0x54UUPnebp1TUC9UenR_+jv2PkNKZ3TKsLtEcQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, platform-driver-x86@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> First two already applied.
+From: Colin Ian King <colin.king@canonical.com>
 
-This is nice.
+cfg_cmd is initialized to zero and this value is never read, instead
+it is over-written in the start of a do-while loop. Remove the
+redundant initialization. Cleans up clang warning:
 
+drivers/net/wireless/realtek/rtlwifi/core.c:1750:22: warning: Value
+stored to 'cfg_cmd' during its initialization is never read
 
-> So, the third patch is in question, please resend it with asked commit
-> message update.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I find such a resend questionable at the moment.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
+index 1147327e6f52..7a17cc20c57e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/core.c
++++ b/drivers/net/wireless/realtek/rtlwifi/core.c
+@@ -1748,7 +1748,7 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
+ 			      u8 faversion, u8 interface_type,
+ 			      struct wlan_pwr_cfg pwrcfgcmd[])
+ {
+-	struct wlan_pwr_cfg cfg_cmd = {0};
++	struct wlan_pwr_cfg cfg_cmd;
+ 	bool polling_bit = false;
+ 	u32 ary_idx = 0;
+ 	u8 value = 0;
+-- 
+2.14.1
 
-Which details do you expect from the software “scripts/bloat-o-meter”
-more than I provided for the discussed Linux module already?
-
-Regards,
-Markus
