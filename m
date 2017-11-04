@@ -1,47 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 17:26:48 +0000
-Subject: [PATCH] [media] au0828: make const array addr_list static
-Message-Id: <20171102172648.13780-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 21:08:04 +0000
+Subject: [PATCH] usb: gadget: bcm63xx_udc: Use common error handling code in bcm63xx_udc_probe()
+Message-Id: <73cacf30-3380-0a77-559c-1ad824fb88eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Nov 2017 22:02:46 +0100
 
-Don't populate array addr_list on the stack but instead make it
-static. Makes the object code smaller by over 360 bytes:
+Add a jump target so that a specific error message is stored only once
+at the end of this function implementation.
+Replace two calls of the function "dev_err" by goto statements.
 
-Before:
-   text    data     bss     dec     hex filename
-   8036    1488     192    9716    25f4 au0828-input.o
+This issue was detected by using the Coccinelle software.
 
-After:
-   text    data     bss     dec     hex filename
-   7696    1488     192    9376    24a0 au0828-input.o
-
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/au0828/au0828-input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/bcm63xx_udc.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-input.c b/drivers/media/usb/au0828/au0828-input.c
-index 7996eb83a54e..af68afe085b5 100644
---- a/drivers/media/usb/au0828/au0828-input.c
-+++ b/drivers/media/usb/au0828/au0828-input.c
-@@ -269,7 +269,7 @@ static void au0828_rc_stop(struct rc_dev *rc)
- static int au0828_probe_i2c_ir(struct au0828_dev *dev)
- {
- 	int i = 0;
--	const unsigned short addr_list[] = {
-+	static const unsigned short addr_list[] = {
- 		 0x47, I2C_CLIENT_END
- 	};
+diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
+index f78503203f42..e3caae9c1ea9 100644
+--- a/drivers/usb/gadget/udc/bcm63xx_udc.c
++++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
+@@ -2389,10 +2389,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
+ 		goto out_uninit;
+ 	}
+ 	if (devm_request_irq(dev, irq, &bcm63xx_udc_ctrl_isr, 0,
+-			     dev_name(dev), udc) < 0) {
+-		dev_err(dev, "error requesting IRQ #%d\n", irq);
+-		goto out_uninit;
+-	}
++			     dev_name(dev), udc) < 0)
++		goto report_request_failure;
  
+ 	/* IRQ resources #1-6: data interrupts for IUDMA channels 0-5 */
+ 	for (i = 0; i < BCM63XX_NUM_IUDMA; i++) {
+@@ -2402,10 +2400,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
+ 			goto out_uninit;
+ 		}
+ 		if (devm_request_irq(dev, irq, &bcm63xx_udc_data_isr, 0,
+-				     dev_name(dev), &udc->iudma[i]) < 0) {
+-			dev_err(dev, "error requesting IRQ #%d\n", irq);
+-			goto out_uninit;
+-		}
++				     dev_name(dev), &udc->iudma[i]) < 0)
++			goto report_request_failure;
+ 	}
+ 
+ 	bcm63xx_udc_init_debugfs(udc);
+@@ -2417,6 +2413,10 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
+ out_uninit:
+ 	bcm63xx_uninit_udc_hw(udc);
+ 	return rc;
++
++report_request_failure:
++	dev_err(dev, "error requesting IRQ #%d\n", irq);
++	goto out_uninit;
+ }
+ 
+ /**
 -- 
-2.14.1
+2.15.0
 
