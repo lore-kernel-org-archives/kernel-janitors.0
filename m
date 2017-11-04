@@ -1,67 +1,113 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 05 Nov 2017 13:24:19 +0000
-Subject: Re: [PATCH v2 0/3] Sony-laptop: Adjustments for sony_nc_setup_rfkill()
-Message-Id: <CAHp75VeyLnKG43g0LiDqirkehH4bLK7x216NV1+C8Oktp7D5UQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 20:12:04 +0000
+Subject: [PATCH] USB: core: Improve unlocking of a mutex in two functions
+Message-Id: <0ff5f74e-ae23-5c97-8998-0e598ceae96b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
- <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
- <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
- <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com> <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
-In-Reply-To: <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Darren Hart <dvhart@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Eugene Korenevsky <ekorenevsky@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jaejoong Kim <climbbb.kim@gmail.com>, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 3, 2017 at 3:23 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> I have applied first two,
->
-> Thanks for another change acceptance.
->
->
->> the last one is subject to discuss a necessity of it.
->
-> I can offer another bit of information for this software development discussion.
->
-> The following build settings were active in my “Makefile” for this Linux test case.
->
-> …
-> HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O0 -fomit-frame-pointer -std=gnu89
-> …
->
->
-> The affected source file can be compiled for the processor architecture “x86_64”
-> by a tool like “GCC 6.4.1+r251631-1.3” from the software distribution
-> “openSUSE Tumbleweed” with the following command example.
->
-> my_cc=/usr/bin/gcc-6 \
-> && my_module=drivers/platform/x86/sony-laptop.ko \
-> && git checkout ':/^Sony-laptop: Delete an unnecessary variable initialisation in sony_nc_setup_rfkill' \
-> && make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-> && size "${my_module}" \
-> && git checkout ':/^Sony-laptop: Use common error handling code in sony_nc_setup_rfkill' \
-> && make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-> && size "${my_module}"
->
->
-> Do you find the following details useful for further clarification?
->
-> text: -32
-> data: 0
-> bss:  0
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Nov 2017 21:00:46 +0100
 
-...but kernel is compiled with -O2 which, I suppose, will eliminate
-these repeats.
+* Add jump targets so that a call of the function "mutex_unlock" is stored
+  only twice in these function implementations.
 
-So, the main question is "WHY" you are doing this change.
+* Replace five calls by goto statements.
 
-I didn't find any convinced explanation (yet?).
+This issue was detected by using the Coccinelle software.
 
-As an example, I would understand it if the consequent patch will
-bring locking to the function.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/usb/core/hub.c     |  8 ++++----
+ drivers/usb/core/message.c | 18 ++++++++++--------
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 196a0a5540ed..8f3067c2015c 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5518,8 +5518,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+ 		dev_warn(&udev->dev,
+ 				"Busted HC?  Not enough HCD resources for "
+ 				"old configuration.\n");
+-		mutex_unlock(hcd->bandwidth_mutex);
+-		goto re_enumerate;
++		goto unlock;
+ 	}
+ 	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
+ 			USB_REQ_SET_CONFIGURATION, 0,
+@@ -5529,8 +5528,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+ 		dev_err(&udev->dev,
+ 			"can't restore configuration #%d (error=%d)\n",
+ 			udev->actconfig->desc.bConfigurationValue, ret);
+-		mutex_unlock(hcd->bandwidth_mutex);
+-		goto re_enumerate;
++		goto unlock;
+ 	}
+ 	mutex_unlock(hcd->bandwidth_mutex);
+ 	usb_set_device_state(udev, USB_STATE_CONFIGURED);
+@@ -5583,6 +5581,8 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+ 	udev->bos = bos;
+ 	return 0;
+ 
++unlock:
++	mutex_unlock(hcd->bandwidth_mutex);
+ re_enumerate:
+ 	usb_release_bos_descriptor(udev);
+ 	udev->bos = bos;
+diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+index 371a07d874a3..fe8e36cc7def 100644
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1321,8 +1321,8 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+ 	 */
+ 	if (usb_disable_lpm(dev)) {
+ 		dev_err(&iface->dev, "%s Failed to disable LPM\n.", __func__);
+-		mutex_unlock(hcd->bandwidth_mutex);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto unlock;
+ 	}
+ 	/* Changing alt-setting also frees any allocated streams */
+ 	for (i = 0; i < iface->cur_altsetting->desc.bNumEndpoints; i++)
+@@ -1332,9 +1332,7 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+ 	if (ret < 0) {
+ 		dev_info(&dev->dev, "Not enough bandwidth for altsetting %d\n",
+ 				alternate);
+-		usb_enable_lpm(dev);
+-		mutex_unlock(hcd->bandwidth_mutex);
+-		return ret;
++		goto enable_lpm;
+ 	}
+ 
+ 	if (dev->quirks & USB_QUIRK_NO_SET_INTF)
+@@ -1355,9 +1353,7 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+ 	} else if (ret < 0) {
+ 		/* Re-instate the old alt setting */
+ 		usb_hcd_alloc_bandwidth(dev, NULL, alt, iface->cur_altsetting);
+-		usb_enable_lpm(dev);
+-		mutex_unlock(hcd->bandwidth_mutex);
+-		return ret;
++		goto enable_lpm;
+ 	}
+ 	mutex_unlock(hcd->bandwidth_mutex);
+ 
+@@ -1413,6 +1409,12 @@ int usb_set_interface(struct usb_device *dev, int interface, int alternate)
+ 		create_intf_ep_devs(iface);
+ 	}
+ 	return 0;
++
++enable_lpm:
++	usb_enable_lpm(dev);
++unlock:
++	mutex_unlock(hcd->bandwidth_mutex);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(usb_set_interface);
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.15.0
+
