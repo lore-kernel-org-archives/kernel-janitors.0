@@ -1,73 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 21:30:31 +0000
-Subject: [PATCH] staging: fbtft: fb_ssd1331: Use common error handling code in write_reg8_bus8()
-Message-Id: <233f4d2c-e099-e097-5484-7df2770d076f@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 13:17:45 +0000
+Subject: [PATCH 3/4] target: Improve a size determination in three functions
+Message-Id: <a708f62c-6a03-9a10-e9e1-0a72e8953652@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
+In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Nov 2017 22:27:13 +0100
+Date: Sat, 4 Nov 2017 13:35:08 +0100
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
-
-* Replace two calls of the function "dev_err" by goto statements.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/fbtft/fb_ssd1331.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/target/target_core_xcopy.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_ssd1331.c b/drivers/staging/fbtft/fb_ssd1331.c
-index 9aa9864fcf30..b3a8f2668951 100644
---- a/drivers/staging/fbtft/fb_ssd1331.c
-+++ b/drivers/staging/fbtft/fb_ssd1331.c
-@@ -76,12 +76,9 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
- 	if (par->gpio.dc != -1)
- 		gpio_set_value(par->gpio.dc, 0);
- 	ret = par->fbtftops.write(par, par->buf, sizeof(u8));
--	if (ret < 0) {
--		va_end(args);
--		dev_err(par->info->device,
--			"write() failed and returned %d\n", ret);
--		return;
--	}
-+	if (ret < 0)
-+		goto end_va;
-+
- 	len--;
+diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
+index 46cac36014df..1519e399392b 100644
+--- a/drivers/target/target_core_xcopy.c
++++ b/drivers/target/target_core_xcopy.c
+@@ -680,7 +680,7 @@ static int target_xcopy_read_source(
+ 	unsigned char cdb[16];
+ 	bool remote_port = (xop->op_origin = XCOL_DEST_RECV_OP);
  
- 	if (len) {
-@@ -89,16 +86,17 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
- 		while (i--)
- 			*buf++ = (u8)va_arg(args, unsigned int);
- 		ret = par->fbtftops.write(par, par->buf, len * (sizeof(u8)));
--		if (ret < 0) {
--			va_end(args);
--			dev_err(par->info->device,
--				"write() failed and returned %d\n", ret);
--			return;
--		}
-+		if (ret < 0)
-+			goto end_va;
+-	xpt_cmd = kzalloc(sizeof(struct xcopy_pt_cmd), GFP_KERNEL);
++	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
+ 	if (!xpt_cmd) {
+ 		pr_err("Unable to allocate xcopy_pt_cmd\n");
+ 		return -ENOMEM;
+@@ -742,7 +742,7 @@ static int target_xcopy_write_destination(
+ 	unsigned char cdb[16];
+ 	bool remote_port = (xop->op_origin = XCOL_SOURCE_RECV_OP);
+ 
+-	xpt_cmd = kzalloc(sizeof(struct xcopy_pt_cmd), GFP_KERNEL);
++	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
+ 	if (!xpt_cmd) {
+ 		pr_err("Unable to allocate xcopy_pt_cmd\n");
+ 		return -ENOMEM;
+@@ -1010,7 +1010,7 @@ sense_reason_t target_do_xcopy(struct se_cmd *se_cmd)
+ 		return TCM_PARAMETER_LIST_LENGTH_ERROR;
  	}
- 	if (par->gpio.dc != -1)
- 		gpio_set_value(par->gpio.dc, 1);
- 	va_end(args);
-+	return;
-+
-+end_va:
-+	va_end(args);
-+	dev_err(par->info->device, "write() failed and returned %d\n", ret);
- }
  
- /*
+-	xop = kzalloc(sizeof(struct xcopy_op), GFP_KERNEL);
++	xop = kzalloc(sizeof(*xop), GFP_KERNEL);
+ 	if (!xop)
+ 		goto err;
+ 	xop->xop_se_cmd = se_cmd;
 -- 
 2.15.0
 
