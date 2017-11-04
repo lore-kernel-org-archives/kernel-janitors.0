@@ -1,43 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 21:25:38 +0000
-Subject: [PATCH 2/5] radeon_backlight: Improve a size determination in radeonfb_bl_init()
-Message-Id: <a1b1f11e-082e-841a-565e-bcf67f5cf15f@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 13:16:36 +0000
+Subject: [PATCH 2/4] target: Combine two condition checks into one statement in target_xcopy_do_work()
+Message-Id: <09a6b5ba-70b7-ba4d-ad4f-6450c9da6208@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
-In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
+References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
+In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 21:30:06 +0100
+Date: Sat, 4 Nov 2017 13:26:46 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
+The same label was used by goto statements after two condition checks.
+Thus use a single statement instead.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/aty/radeon_backlight.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_xcopy.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
-index ce5b22d710b3..78c36c8d5e57 100644
---- a/drivers/video/fbdev/aty/radeon_backlight.c
-+++ b/drivers/video/fbdev/aty/radeon_backlight.c
-@@ -143,7 +143,7 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
- 		return;
- #endif
+diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
+index b06877c57765..46cac36014df 100644
+--- a/drivers/target/target_core_xcopy.c
++++ b/drivers/target/target_core_xcopy.c
+@@ -802,10 +802,8 @@ static void target_xcopy_do_work(struct work_struct *work)
+ 	int rc = 0;
+ 	unsigned short nolb, cur_nolb, max_nolb, copied_nolb = 0;
  
--	pdata = kmalloc(sizeof(struct radeon_bl_privdata), GFP_KERNEL);
-+	pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		goto error;
+-	if (target_parse_xcopy_cmd(xop) != TCM_NO_SENSE)
+-		goto err_free_xop;
+-
+-	if (WARN_ON_ONCE(!xop->src_dev) || WARN_ON_ONCE(!xop->dst_dev))
++	if (target_parse_xcopy_cmd(xop) != TCM_NO_SENSE ||
++	    WARN_ON_ONCE(!xop->src_dev) || WARN_ON_ONCE(!xop->dst_dev))
+ 		goto err_free_xop;
  
+ 	src_dev = xop->src_dev;
 -- 
 2.15.0
 
