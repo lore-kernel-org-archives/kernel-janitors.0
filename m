@@ -1,38 +1,29 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sun, 19 Nov 2017 21:17:19 +0000
-Subject: [PATCH] arm: dma-mapping: use vma_pages helper function
-Message-Id: <20171119211719.16859-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 04 Nov 2017 13:14:07 +0000
+Subject: [PATCH 0/4] target: Adjustments for four function implementations
+Message-Id: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Nov 2017 14:09:09 +0100
 
-Use the vma_pages helper function on vma instead of an explicit
-calculation.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Found by coccinelle spatch "api/vma_pages.cocci"
+Markus Elfring (4):
+  Use common error handling code in three functions
+  Combine two condition checks into one statement in target_xcopy_do_work()
+  Improve a size determination in three functions
+  Delete an error message for a failed memory allocation in two functions
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/arm/mm/dma-mapping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_xcopy.c | 69 ++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 36 deletions(-)
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index ada8eb206a90..ec0f277d1d4d 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -831,7 +831,7 @@ static int __arm_dma_mmap(struct device *dev, struct vm_area_struct *vma,
- 		 unsigned long attrs)
- {
- 	int ret;
--	unsigned long nr_vma_pages = (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
-+	unsigned long nr_vma_pages = vma_pages(vma);
- 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	unsigned long pfn = dma_to_pfn(dev, dma_addr);
- 	unsigned long off = vma->vm_pgoff;
 -- 
-2.14.1
+2.15.0
 
