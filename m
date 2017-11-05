@@ -1,48 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Nov 2017 09:41:18 +0000
-Subject: [PATCH] thermal: bxt: remove redundant variable trip
-Message-Id: <20171101094118.16916-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 05 Nov 2017 09:33:15 +0000
+Subject: Re: USB: core: Improve unlocking of a mutex in two functions
+Message-Id: <73765f7c-57b6-9ade-bca3-4d65b30f2d5d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0ff5f74e-ae23-5c97-8998-0e598ceae96b@users.sourceforge.net>
+ <CAMuHMdUXn4YVPBFCoqmwcdU7eTWO5jy2ZXZQaAxPi1P5bM4q2A@mail.gmail.com>
+ <20171105073013.GA1431@kroah.com>
+In-Reply-To: <20171105073013.GA1431@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alan Stern <stern@rowland.harvard.edu>, Eugene Korenevsky <ekorenevsky@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jaejoong Kim <climbbb.kim@gmail.com>, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Variable trip is assigned but never read, hence it is redundant
-and can be removed. Cleans up clang warning:
-
-drivers/thermal/intel_bxt_pmic_thermal.c:204:4: warning: Value stored
-to 'trip' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/thermal/intel_bxt_pmic_thermal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c b/drivers/thermal/intel_bxt_pmic_thermal.c
-index ef6b32242ccb..94cfd0064c43 100644
---- a/drivers/thermal/intel_bxt_pmic_thermal.c
-+++ b/drivers/thermal/intel_bxt_pmic_thermal.c
-@@ -166,7 +166,7 @@ static irqreturn_t pmic_thermal_irq_handler(int irq, void *data)
- 	struct pmic_thermal_data *td;
- 	struct intel_soc_pmic *pmic;
- 	struct regmap *regmap;
--	u8 reg_val, mask, irq_stat, trip;
-+	u8 reg_val, mask, irq_stat;
- 	u16 reg, evt_stat_reg;
- 	int i, j, ret;
- 
-@@ -201,7 +201,6 @@ static irqreturn_t pmic_thermal_irq_handler(int irq, void *data)
- 			if (regmap_read(regmap, evt_stat_reg, &ret))
- 				return IRQ_HANDLED;
- 
--			trip = td->maps[i].trip_config[j].trip_num;
- 			tzd = thermal_zone_get_zone_by_name(td->maps[i].handle);
- 			if (!IS_ERR(tzd))
- 				thermal_zone_device_update(tzd,
--- 
-2.14.1
-
+PiBEb24ndCB3b3JyeSwgb3Igd2FzdGUgeW91ciB0aW1lLCBJIGRvbid0IHRha2UgcGF0Y2hlcyBm
+cm9tIHRoaXMgYXV0aG9yCj4gYXMgdGhleSBhcmUgaW4gbXkgYmxhY2tsaXN0LgoKSSBhbSBjdXJp
+b3VzIGlmIG91ciBkaWFsb2d1ZSBjYW4gYmVjb21lIG1vcmUgY29uc3RydWN0aXZlIGFnYWluLiDw
+n4yICgoKSSBjYW4gb2ZmZXIgYW5vdGhlciBiaXQgb2YgaW5mb3JtYXRpb24gZm9yIHRoaXMgc29m
+dHdhcmUgZGV2ZWxvcG1lbnQgZGlzY3Vzc2lvbi4g8J+SrQoKVGhlIGFmZmVjdGVkIHNvdXJjZSBm
+aWxlcyBjYW4gYmUgY29tcGlsZWQgZm9yIHRoZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4
+Nl82NOKAnQpieSBhIHRvb2wgbGlrZSDigJxHQ0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0
+aGUgc29mdHdhcmUgZGlzdHJpYnV0aW9uCuKAnG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0
+aGUgZm9sbG93aW5nIGNvbW1hbmQgZXhhbXBsZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYg
+bXlfbW9kdWxlMT1kcml2ZXJzL3VzYi9jb3JlL2h1Yi5vIFwKJiYgbXlfbW9kdWxlMj1kcml2ZXJz
+L3VzYi9jb3JlL21lc3NhZ2UubyBcCiYmIGdpdCBjaGVja291dCBuZXh0LTIwMTcxMTAyIFwKJiYg
+bWFrZSAtajQgQ0M9IiR7bXlfY2N9IiBIT1NUQ0M9IiR7bXlfY2N9IiBhbGxtb2Rjb25maWcgIiR7
+bXlfbW9kdWxlMX0iICIke215X21vZHVsZTJ9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlMX0iICIk
+e215X21vZHVsZTJ9IiBcCiYmIGdpdCBjaGVja291dCAnOi9eVVNCOiBjb3JlOiBJbXByb3ZlIHVu
+bG9ja2luZyBvZiBhIG11dGV4IGluIHR3byBmdW5jdGlvbnMnIFwKJiYgbWFrZSAtajQgQ0M9IiR7
+bXlfY2N9IiBIT1NUQ0M9IiR7bXlfY2N9IiBhbGxtb2Rjb25maWcgIiR7bXlfbW9kdWxlMX0iICIk
+e215X21vZHVsZTJ9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlMX0iICIke215X21vZHVsZTJ9IgoK
+CvCflK4gRG8geW91IGZpbmQgdGhlIGZvbGxvd2luZyBkaWZmZXJlbmNlcyB1c2VmdWwgZm9yIGZ1
+cnRoZXIgY2xhcmlmaWNhdGlvbj8KCuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKV
+kOKVkOKVkOKVkOKVkOKVkOKVlwrilZEgbW9kdWxlICDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWq4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSBodWIgICAgIOKU
+giAtMTYgIOKVkQrilZEgbWVzc2FnZSDilIIgLTQ4ICDilZEK4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWdCgoKUmVnYXJkcywKTWFya3VzCi0tClRv
+IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBr
+ZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdl
+ci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5v
+cmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
