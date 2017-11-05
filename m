@@ -1,58 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 03 Nov 2017 09:54:38 +0000
-Subject: [PATCH] staging/media/davinci_vpfe: Use common error handling code in vpfe_attach_irq()
-Message-Id: <47780e02-1fcd-dfc7-c7d7-65d32f6652e4@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 05 Nov 2017 13:04:29 +0000
+Subject: [PATCH] i40e: remove redundant initialization of read_size
+Message-Id: <20171105130429.6399-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, linux-media@vger.kernel.org, Derek Robson <robsonde@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Simran Singhal <singhalsimran0@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 3 Nov 2017 10:45:31 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Variable read_size is initialized and this value is never read, it is
+instead set inside the do-loop, hence the intialization is redundant
+and can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/net/ethernet/intel/i40e/i40e_nvm.c:390:6: warning: Value stored
+to 'read_size' during its initialization is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_nvm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-index bffe2153b910..80297d2df31d 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-@@ -309,8 +309,7 @@ static int vpfe_attach_irq(struct vpfe_device *vpfe_dev)
- 	if (ret < 0) {
- 		v4l2_err(&vpfe_dev->v4l2_dev,
- 			"Error: requesting VINT1 interrupt\n");
--		free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
--		return ret;
-+		goto free_irq;
- 	}
- 
- 	ret = request_irq(vpfe_dev->imp_dma_irq, vpfe_imp_dma_isr,
-@@ -319,11 +318,14 @@ static int vpfe_attach_irq(struct vpfe_device *vpfe_dev)
- 		v4l2_err(&vpfe_dev->v4l2_dev,
- 			 "Error: requesting IMP IRQ interrupt\n");
- 		free_irq(vpfe_dev->ccdc_irq1, vpfe_dev);
--		free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
--		return ret;
-+		goto free_irq;
- 	}
- 
- 	return 0;
-+
-+free_irq:
-+	free_irq(vpfe_dev->ccdc_irq0, vpfe_dev);
-+	return ret;
- }
- 
- /*
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_nvm.c b/drivers/net/ethernet/intel/i40e/i40e_nvm.c
+index 0ccab0a5d717..8f444a40c3f9 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_nvm.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_nvm.c
+@@ -387,7 +387,7 @@ static i40e_status i40e_read_nvm_buffer_aq(struct i40e_hw *hw, u16 offset,
+ 					   u16 *words, u16 *data)
+ {
+ 	i40e_status ret_code;
+-	u16 read_size = *words;
++	u16 read_size;
+ 	bool last_cmd = false;
+ 	u16 words_read = 0;
+ 	u16 i = 0;
 -- 
-2.15.0
+2.14.1
 
