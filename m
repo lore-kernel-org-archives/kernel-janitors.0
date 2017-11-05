@@ -1,23 +1,62 @@
-From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Date: Tue, 14 Nov 2017 21:40:00 +0000
-Subject: RE: [PATCH] IB/qib: remove redundant setting of any in for-loop
-Message-Id: <32E1700B9017364D9B60AED9960492BC62686F29@fmsmsx120.amr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 05 Nov 2017 14:43:05 +0000
+Subject: [PATCH] video/fbdev/dnfb: Use common error handling code in dnfb_probe()
+Message-Id: <af7afaa3-5467-32c3-9e80-a6c9eb220205@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171020072103.10337-1-colin.king@canonical.com>
-         <1508484951.6806.46.camel@perches.com> <1510336823.3735.4.camel@redhat.com>
-         <32E1700B9017364D9B60AED9960492BC626823A0@fmsmsx120.amr.corp.intel.com>
- <1510609978.3735.43.camel@redhat.com>
-In-Reply-To: <1510609978.3735.43.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Joe Perches <joe@perches.com>, Colin King <colin.king@canonical.com>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Dalessandro, Dennis" <dennis.dalessandro@intel.com>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-PiA+IERvdWcsICBkbyB5b3Ugd2FudCBhIHRlc3RlZCBwYXRjaCBmcm9tIG1lPw0KPiANCj4gUHJl
-ZmVyYWJseSwgeWVzIDotKQ0KPiANCg0KVGhlc2UgcGF0Y2hlcyBhcmUgaW4gYSB0d28gcGF0Y2gg
-c2VyaWVzOg0KaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtcmRtYSZtPTE1MTA2OTQ5NzUwNjky
-MyZ3PTINCg0KVGhlIGZpcnN0IGlzIENvbGluJ3Mgd2FybmluZyBmaXggYW5kIHRoZSBzZWNvbmQg
-aXMgSm9lJ3MgY2xlYW51cC4NCg0KTXkgdmFsdWUgYWRkIGlzIHRoZSB0ZXN0aW5nLiAgOikNCg0K
-VGhleSBwYXNzIG91ciBwc20gdGVzdGluZy4NCg0KVGhhbmtzIGZvciB0aGUgcGF0Y2hlcyENCg0K
-TWlrZQ0K
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Nov 2017 14:54:52 +0100
+
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/dnfb.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/video/fbdev/dnfb.c b/drivers/video/fbdev/dnfb.c
+index 09415009d797..5505fa00c634 100644
+--- a/drivers/video/fbdev/dnfb.c
++++ b/drivers/video/fbdev/dnfb.c
+@@ -242,16 +242,13 @@ static int dnfb_probe(struct platform_device *dev)
+ 	info->screen_base = (u_char *) info->fix.smem_start;
+ 
+ 	err = fb_alloc_cmap(&info->cmap, 2, 0);
+-	if (err < 0) {
+-		framebuffer_release(info);
+-		return err;
+-	}
++	if (err < 0)
++		goto release_framebuffer;
+ 
+ 	err = register_framebuffer(info);
+ 	if (err < 0) {
+ 		fb_dealloc_cmap(&info->cmap);
+-		framebuffer_release(info);
+-		return err;
++		goto release_framebuffer;
+ 	}
+ 	platform_set_drvdata(dev, info);
+ 
+@@ -265,6 +262,10 @@ static int dnfb_probe(struct platform_device *dev)
+ 
+ 	printk("apollo frame buffer alive and kicking !\n");
+ 	return err;
++
++release_framebuffer:
++	framebuffer_release(info);
++	return err;
+ }
+ 
+ static struct platform_driver dnfb_driver = {
+-- 
+2.15.0
+
