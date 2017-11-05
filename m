@@ -1,72 +1,45 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Tue, 14 Nov 2017 19:40:14 +0000
-Subject: Re: [PATCH][net-next] tcp: remove the now redundant non-null check on tskb
-Message-Id: <1510688414.2849.179.camel@edumazet-glaptop3.roam.corp.google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 05 Nov 2017 14:20:09 +0000
+Subject: Re: Sony-laptop: Adjustments for sony_nc_setup_rfkill()
+Message-Id: <2c1996c5-0833-dcd3-c747-62eca46a433d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114184144.11239-1-colin.king@canonical.com>
-In-Reply-To: <20171114184144.11239-1-colin.king@canonical.com>
+References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
+ <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
+ <17ee534c-9fe6-19c4-0522-76cd3cbe5f88@users.sourceforge.net>
+ <CAHp75VfaWLSwzLpnWHj0sD9ZVVbSCi+ya_+PESXjU2FbHefE0Q@mail.gmail.com>
+ <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
+ <CAHp75VeyLnKG43g0LiDqirkehH4bLK7x216NV1+C8Oktp7D5UQ@mail.gmail.com>
+In-Reply-To: <CAHp75VeyLnKG43g0LiDqirkehH4bLK7x216NV1+C8Oktp7D5UQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, platform-driver-x86@vger.kernel.org
+Cc: Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
 
-On Tue, 2017-11-14 at 18:41 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+>> Do you find the following details useful for further clarification?
+>>
+>> text: -32
+>> data: 0
+>> bss:  0
 > 
-> The non-null check on tskb is redundant as it is in an else
-> section of a check on tskb where tskb is always null. Remove
-> the redundant if statement and the label coalesce.
+> ...but kernel is compiled with -O2 which,
+
+Did you try to compare results for my update suggestion also with
+the default build configuration?
+
+
+> I suppose, will eliminate these repeats.
+
+My build results did not fit to your expectations.
+
+
+> So, the main question is "WHY" you are doing this change.
 > 
-> Detected by CoverityScan, CID#1457751 ("Logically dead code")
-> 
-> Fixes: 75c119afe14f ("tcp: implement rb-tree based retransmit queue")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  net/ipv4/tcp_output.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> index 071bdd34f8eb..b58c986b2b27 100644
-> --- a/net/ipv4/tcp_output.c
-> +++ b/net/ipv4/tcp_output.c
-> @@ -3053,7 +3053,6 @@ void tcp_send_fin(struct sock *sk)
->  		tskb = skb_rb_last(&sk->tcp_rtx_queue);
->  
->  	if (tskb) {
-> -coalesce:
->  		TCP_SKB_CB(tskb)->tcp_flags |= TCPHDR_FIN;
->  		TCP_SKB_CB(tskb)->end_seq++;
->  		tp->write_seq++;
-> @@ -3069,11 +3068,8 @@ void tcp_send_fin(struct sock *sk)
->  		}
->  	} else {
->  		skb = alloc_skb_fclone(MAX_TCP_HEADER, sk->sk_allocation);
-> -		if (unlikely(!skb)) {
-> -			if (tskb)
-> -				goto coalesce;
-> +		if (unlikely(!skb))
->  			return;
-> -		}
->  		INIT_LIST_HEAD(&skb->tcp_tsorted_anchor);
->  		skb_reserve(skb, MAX_TCP_HEADER);
->  		sk_forced_mem_schedule(sk, skb->truesize);
+> I didn't find any convinced explanation (yet?).
 
-Hmm... I would rather try to use skb_rb_last(), because
-alloc_skb_fclone() might fail even if tcp_under_memory_pressure() is
-false.
+Do you find a reduction of 32 bytes for the object code not interesting
+enough just by achieving such a small effect because of the replacement
+of three function calls “rfkill_destroy” with goto statements?
 
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 76dbe884f2469660028684a46fc19afa000a1353..eea017b8a8918815226fd1412c0a7b8e484aeca8 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -3070,6 +3070,7 @@ void tcp_send_fin(struct sock *sk)
- 	} else {
- 		skb = alloc_skb_fclone(MAX_TCP_HEADER, sk->sk_allocation);
- 		if (unlikely(!skb)) {
-+			tskb = skb_rb_last(&sk->tcp_rtx_queue);
- 			if (tskb)
- 				goto coalesce;
- 			return;
-
-
+Regards,
+Markus
