@@ -1,28 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 11 Nov 2017 10:13:54 +0000
-Subject: Re: [PATCH] qlge: remove duplicated assignment to mbcp
-Message-Id: <20171111.191354.1268716566266491493.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Nov 2017 11:44:22 +0000
+Subject: [PATCH] drm/amd/display: remove some unneeded code
+Message-Id: <20171106114422.sd5zoah6k6eaww4e@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171109075215.2666-1-colin.king@canonical.com>
-In-Reply-To: <20171109075215.2666-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: harish.patil@cavium.com, manish.chopra@cavium.com, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+Cc: Charlene Liu <charlene.liu-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Dmytro Laktyushkin <Dmytro.Laktyushkin-5C7GfCeVMHo@public.gmane.org>, Vitaly Prosyak <vitaly.prosyak-5C7GfCeVMHo@public.gmane.org>, Yongqiang Sun <yongqiang.sun-5C7GfCeVMHo@public.gmane.org>, Tony Cheng <tony.cheng-5C7GfCeVMHo@public.gmane.org>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  9 Nov 2017 07:52:15 +0000
+We assign "v_init = asic_blank_start;" a few lines earlier so there is
+no need to do it again inside the if statements.  Also "v_init" is
+unsigned so it can't be less than zero.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The assignment to mbcp is identical to the initiatialized value assigned
-> to mbcp at declaration time a few lines earlier, hence we can remove the
-> second redundant assignment.  Cleans up clang warning:
-> 
-> drivers/net/ethernet/qlogic/qlge/qlge_mpi.c:209:22: warning:
-> Value stored to 'mbcp' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_timing_generator.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_timing_generator.c
+index 1994865d4351..c7333cdf1802 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_timing_generator.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_timing_generator.c
+@@ -236,13 +236,10 @@ static void tgn10_program_timing(
+ 	if (tg->dlg_otg_param.signal = SIGNAL_TYPE_DISPLAY_PORT ||
+ 		tg->dlg_otg_param.signal = SIGNAL_TYPE_DISPLAY_PORT_MST ||
+ 		tg->dlg_otg_param.signal = SIGNAL_TYPE_EDP) {
+-		v_init = asic_blank_start;
+ 		start_point = 1;
+ 		if (patched_crtc_timing.flags.INTERLACE = 1)
+ 			field_num = 1;
+ 	}
+-	if (v_init < 0)
+-		v_init = 0;
+ 	v_fp2 = 0;
+ 	if (tg->dlg_otg_param.vstartup_start > asic_blank_end)
+ 		v_fp2 = tg->dlg_otg_param.vstartup_start > asic_blank_end;
