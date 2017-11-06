@@ -1,160 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 21:02:05 +0000
-Subject: [PATCH] ALSA: echoaudio: Use common error handling code in two functions
-Message-Id: <1780a481-5400-16db-8f09-26a4b6127c90@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Nov 2017 21:53:30 +0000
+Subject: [PATCH 2/4] fsl/fman: Remove some useless code
+Message-Id: <54631ca4ec7d1bdb02f98851adac81fc548240e0.1510003551.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: madalin.bucur@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 21:57:57 +0100
+There is no need to release explicitly some devm_ allocated resources.
+If the 'mac_probe()' probe function fails, they will be released
+automatically, as already done in the other error handling paths of
+this function.
 
-* Add jump targets so that a bit of exception handling can be better reused
-  at the end of these functions.
+Also goto '_return_of_get_parent' as in the other error handling paths.
+This is useless (priv->fixed_link is NULL at this point), but at least
+it is consistent.
 
-  This issue was detected by using the Coccinelle software.
-
-* The script "checkpatch.pl" pointed information out like the following.
-
-  ERROR: do not use assignment in if condition
-
-  Thus fix six affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/pci/echoaudio/echoaudio.c | 55 ++++++++++++++++++++++-------------------
- 1 file changed, 30 insertions(+), 25 deletions(-)
+ drivers/net/ethernet/freescale/fman/mac.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-index d68f99e076a8..ae58c48aaaf9 100644
---- a/sound/pci/echoaudio/echoaudio.c
-+++ b/sound/pci/echoaudio/echoaudio.c
-@@ -1913,7 +1913,8 @@ static int snd_echo_create(struct snd_card *card,
- 
- 	pci_write_config_byte(pci, PCI_LATENCY_TIMER, 0xC0);
- 
--	if ((err = pci_enable_device(pci)) < 0)
-+	err = pci_enable_device(pci);
-+	if (err < 0)
- 		return err;
- 	pci_set_master(pci);
- 
-@@ -1945,11 +1946,11 @@ static int snd_echo_create(struct snd_card *card,
- 	if (sz > PAGE_SIZE)
- 		sz = PAGE_SIZE;		/* We map only the required part */
- 
--	if ((chip->iores = request_mem_region(chip->dsp_registers_phys, sz,
--					      ECHOCARD_NAME)) = NULL) {
-+	chip->iores = request_mem_region(chip->dsp_registers_phys, sz,
-+					 ECHOCARD_NAME);
-+	if (!chip->iores) {
- 		dev_err(chip->card->dev, "cannot get memory region\n");
--		snd_echo_free(chip);
--		return -EBUSY;
-+		goto e_busy;
- 	}
- 	chip->dsp_registers = (volatile u32 __iomem *)
- 		ioremap_nocache(chip->dsp_registers_phys, sz);
-@@ -1957,8 +1958,7 @@ static int snd_echo_create(struct snd_card *card,
- 	if (request_irq(pci->irq, snd_echo_interrupt, IRQF_SHARED,
- 			KBUILD_MODNAME, chip)) {
- 		dev_err(chip->card->dev, "cannot grab irq\n");
--		snd_echo_free(chip);
--		return -EBUSY;
-+		goto e_busy;
- 	}
- 	chip->irq = pci->irq;
- 	dev_dbg(card->dev, "pci=%p irq=%d subdev=%04x Init hardware...\n",
-@@ -1970,8 +1970,8 @@ static int snd_echo_create(struct snd_card *card,
- 				sizeof(struct comm_page),
- 				&chip->commpage_dma_buf) < 0) {
- 		dev_err(chip->card->dev, "cannot allocate the comm page\n");
--		snd_echo_free(chip);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto free_sound_chip;
- 	}
- 	chip->comm_page_phys = chip->commpage_dma_buf.addr;
- 	chip->comm_page = (struct comm_page *)chip->commpage_dma_buf.area;
-@@ -1981,17 +1981,22 @@ static int snd_echo_create(struct snd_card *card,
- 		err = set_mixer_defaults(chip);
- 	if (err < 0) {
- 		dev_err(card->dev, "init_hw err=%d\n", err);
--		snd_echo_free(chip);
--		return err;
-+		goto free_sound_chip;
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index c27667a005f7..ca12e28129ed 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -709,11 +709,8 @@ static int mac_probe(struct platform_device *_of_dev)
  	}
  
--	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
--		snd_echo_free(chip);
--		return err;
--	}
-+	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
-+	if (err < 0)
-+		goto free_sound_chip;
-+
- 	*rchip = chip;
- 	/* Init done ! */
- 	return 0;
-+
-+e_busy:
-+	err = -EBUSY;
-+free_sound_chip:
-+	snd_echo_free(chip);
-+	return err;
- }
- 
- 
-@@ -2020,10 +2025,9 @@ static int snd_echo_probe(struct pci_dev *pci,
- 		return err;
- 
- 	chip = NULL;	/* Tells snd_echo_create to allocate chip */
--	if ((err = snd_echo_create(card, pci, &chip)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_echo_create(card, pci, &chip);
-+	if (err < 0)
-+		goto free_card;
- 
- 	strcpy(card->driver, "Echo_" ECHOCARD_NAME);
- 	strcpy(card->shortname, chip->card_name);
-@@ -2036,18 +2040,18 @@ static int snd_echo_probe(struct pci_dev *pci,
- 		card->shortname, pci_id->subdevice & 0x000f, dsp,
- 		chip->dsp_registers_phys, chip->irq);
- 
--	if ((err = snd_echo_new_pcm(chip)) < 0) {
-+	err = snd_echo_new_pcm(chip);
-+	if (err < 0) {
- 		dev_err(chip->card->dev, "new pcm error %d\n", err);
--		snd_card_free(card);
--		return err;
-+		goto free_card;
+ 	if (!of_device_is_available(mac_node)) {
+-		devm_iounmap(dev, priv->vaddr);
+-		__devm_release_region(dev, fman_get_mem_region(priv->fman),
+-				      res.start, res.end + 1 - res.start);
+-		devm_kfree(dev, mac_dev);
+-		return -ENODEV;
++		err = -ENODEV;
++		goto _return_of_get_parent;
  	}
  
- #ifdef ECHOCARD_HAS_MIDI
- 	if (chip->has_midi) {	/* Some Mia's do not have midi */
--		if ((err = snd_echo_midi_create(card, chip)) < 0) {
-+		err = snd_echo_midi_create(card, chip);
-+		if (err < 0) {
- 			dev_err(chip->card->dev, "new midi error %d\n", err);
--			snd_card_free(card);
--			return err;
-+			goto free_card;
- 		}
- 	}
- #endif
-@@ -2152,6 +2156,7 @@ static int snd_echo_probe(struct pci_dev *pci,
- 
- ctl_error:
- 	dev_err(card->dev, "new control error %d\n", err);
-+free_card:
- 	snd_card_free(card);
- 	return err;
- }
+ 	/* Get the cell-index */
 -- 
-2.15.0
+2.14.1
 
