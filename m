@@ -1,27 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 21:24:46 +0000
-Subject: [PATCH 0/2] ALSA: pcxhr: Fine-tuning for three function implementations
-Message-Id: <c110ba76-d99d-9f80-d927-14d437115004@users.sourceforge.net>
+Date: Mon, 06 Nov 2017 21:11:06 +0000
+Subject: Re: iSCSI-target: Use common error handling code in iscsi_decode_text_input()
+Message-Id: <49e62625-8c1d-5bbe-2ddd-e25e117754db@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d36d5072-3e35-da39-bc0f-af15deb630a8@users.sourceforge.net>
+ <20171106162549.5b2511db@alans-desktop>
+In-Reply-To: <20171106162549.5b2511db@alans-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Cc: Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 22:20:02 +0100
+>> Add a jump target so that a bit of exception handling can be better reused
+>> at the end of this function.
+> 
+> Why not look at what the C compiler generates before making the code
+> less readable ?
 
-Two update suggestions were taken into account
-from static source code analysis.
+* Does the adjusted source code layout fit to information from the section
+  “7) Centralized exiting of functions” in the document “coding-style.rst”?
 
-Markus Elfring (2):
-  Adjust six function calls together with a variable assignment
-  Use common error handling code in pcxhr_probe()
+* Would you find a reduction of 16 bytes for the object code useful for
+  the affected function implementation?
 
- sound/pci/pcxhr/pcxhr.c | 82 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 44 insertions(+), 38 deletions(-)
-
--- 
-2.15.0
-
+Regards,
+Markus
