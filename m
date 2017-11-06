@@ -1,47 +1,26 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 17 Nov 2017 15:54:01 +0000
-Subject: Re: [PATCH] staging: rtl8822be: fix missing null check on dev_alloc_skb return
-Message-Id: <9787e83a-1b4a-cd80-4f2d-bfbe031056db@lwfinger.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 06 Nov 2017 09:00:25 +0000
+Subject: Re: video: atmel_lcdfb: Use common error handling code in atmel_lcdfb_of_init()
+Message-Id: <5e11db02-618e-ac60-921f-2971458a4484@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171117145055.30430-1-colin.king@canonical.com>
-In-Reply-To: <20171117145055.30430-1-colin.king@canonical.com>
+References: <2db677d2-ad4e-1f79-344b-dfa38ce948c9@users.sourceforge.net>
+ <5477205e-2067-de4f-8736-71a2c9dc1653@microchip.com>
+ <20171106085329.szz2ocu5d2iurlov@mwanda>
+In-Reply-To: <20171106085329.szz2ocu5d2iurlov@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 11/17/2017 08:50 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+>> If you want to lower the size of strings in this driver, you can do it,
+>> but not like this.
 > 
-> dev_alloc_skb can potentially return NULL, so add a null check to
-> avoid a null pointer dereference on skb
+> Just so we're clear, GCC already detects and combines it when you use
+> the same string constant twice.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Do you distinguish between merging of constants and the combination
+of statements for such an use case?
 
-Larry
-
-> 
-> Detected by CoverityScan, CID#1454558 ("Dereference on null return")
-> 
-> Fixes: 7e5b796cde7e ("staging: r8822be: Add the driver code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/rtlwifi/rtl8822be/fw.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
-> index f45487122517..483ea85943c3 100644
-> --- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-> +++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-> @@ -464,6 +464,8 @@ bool rtl8822b_halmac_cb_write_data_rsvd_page(struct rtl_priv *rtlpriv, u8 *buf,
->   	int count;
->   
->   	skb = dev_alloc_skb(size);
-> +	if (!skb)
-> +		return false;
->   	memcpy((u8 *)skb_put(skb, size), buf, size);
->   
->   	if (!_rtl8822be_send_bcn_or_cmd_packet(rtlpriv->hw, skb, BEACON_QUEUE))
-> 
-
+Regards,
+Markus
