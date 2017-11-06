@@ -1,28 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 17:56:58 +0000
-Subject: [PATCH 0/3] video/fbdev/au1100fb: Adjustments for au1100fb_drv_probe()
-Message-Id: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Nov 2017 10:42:09 +0000
+Subject: [PATCH] metag: fix spelling mistake: "segement" -> "segment"
+Message-Id: <20171106104209.25369-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: James Hogan <jhogan@kernel.org>, Ingo Molnar <mingo@kernel.org>, linux-metag@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 18:53:21 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Three update suggestions were taken into account
-from static source code analysis.
+Trivial fix to spelling mistake in pr_info message
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
-  Delete an unnecessary variable initialisation
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/metag/kernel/process.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/video/fbdev/au1100fb.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
+diff --git a/arch/metag/kernel/process.c b/arch/metag/kernel/process.c
+index bde9c938bd4a..aaa7a9467ed6 100644
+--- a/arch/metag/kernel/process.c
++++ b/arch/metag/kernel/process.c
+@@ -394,7 +394,7 @@ static unsigned long elf_vm_mmap(struct file *filep, unsigned long addr,
+ 		return map_addr;
+ 
+ 	if ((type & MAP_FIXED) && map_addr != addr) {
+-		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already\n",
++		pr_info("Uhuuh, elf segment at %p requested but the memory is mapped already\n",
+ 				(void*)addr);
+ 		return -EAGAIN;
+ 	}
 -- 
-2.15.0
+2.14.1
 
