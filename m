@@ -1,88 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:54:13 +0000
-Subject: Applied "ASoC: wm8903: Improve two size determinations in wm8903_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOXl-0007VV-Aq@debutante>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Nov 2017 21:53:32 +0000
+Subject: [PATCH 4/4] fsl/fman: Remove a useless 'dev_err()' call
+Message-Id: <a96033164bfced51ea1c13a37bd314f49f0def86.1510003551.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <013d9ad7-a8ff-6fad-ba82-40e68cf0a601@users.sourceforge.net>
-In-Reply-To: <013d9ad7-a8ff-6fad-ba82-40e68cf0a601@users.sourceforge.net>
+References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: madalin.bucur@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The patch
+Memory allocation functions already display some informaton in case of
+memory allocation failure. There is no need to add an extra 'dev_err' here.
 
-   ASoC: wm8903: Improve two size determinations in wm8903_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 017b9b35cb107c0aeaad2ad770460c49e3f71395 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 10:40:43 +0100
-Subject: [PATCH] ASoC: wm8903: Improve two size determinations in
- wm8903_i2c_probe()
-
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/wm8903.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/freescale/fman/mac.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index 51eb7d61d446..cba90f21161f 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -1995,8 +1995,7 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
- 	unsigned int val, irq_pol;
- 	int ret, i;
- 
--	wm8903 = devm_kzalloc(&i2c->dev,  sizeof(struct wm8903_priv),
--			      GFP_KERNEL);
-+	wm8903 = devm_kzalloc(&i2c->dev, sizeof(*wm8903), GFP_KERNEL);
- 	if (wm8903 = NULL)
- 		return -ENOMEM;
- 
-@@ -2017,9 +2016,8 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
- 	if (pdata) {
- 		wm8903->pdata = pdata;
- 	} else {
--		wm8903->pdata = devm_kzalloc(&i2c->dev,
--					sizeof(struct wm8903_platform_data),
--					GFP_KERNEL);
-+		wm8903->pdata = devm_kzalloc(&i2c->dev, sizeof(*wm8903->pdata),
-+					     GFP_KERNEL);
- 		if (!wm8903->pdata)
- 			return -ENOMEM;
- 
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 86c1e69f44d6..88c0a0636b44 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -615,7 +615,6 @@ static int mac_probe(struct platform_device *_of_dev)
+ 	mac_dev = devm_kzalloc(dev, sizeof(*mac_dev), GFP_KERNEL);
+ 	if (!mac_dev) {
+ 		err = -ENOMEM;
+-		dev_err(dev, "devm_kzalloc() = %d\n", err);
+ 		goto _return;
+ 	}
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
 -- 
-2.15.0
+2.14.1
 
