@@ -1,69 +1,41 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 08 Nov 2017 20:37:48 +0000
-Subject: Re: [PATCH 1/2] drm/amdgpu: potential uninitialized variable in amdgpu_vce_ring_parse_cs()
-Message-Id: <CADnq5_NUoGKfhTrQ41_G+_JBk6rOumTR=PN83b9D3m5PnrXQ4Q@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Nov 2017 15:04:54 +0000
+Subject: [PATCH] rtnetlink: fix missing size for IFLA_IF_NETNSID
+Message-Id: <20171106150454.9623-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170930081328.kher7yumqzi2vsrg@mwanda> <0b5a4cef-085d-bbeb-e673-79f8163a2e34@amd.com>
- <CAD=4a=XLYh2Er1sKvt7MBrNCsqC_F037Ttrfyxv4aW58JW+pKg@mail.gmail.com>
-In-Reply-To: <CAD=4a=XLYh2Er1sKvt7MBrNCsqC_F037Ttrfyxv4aW58JW+pKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Ernst_Sj=C3=B6strand?= <ernstp@gmail.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Leo Liu <leo.liu@amd.com>, kernel-janitors@vger.kernel.org, amd-gfx mailing list <amd-gfx@lists.freedesktop.org>, Chris Wilson <chris@chris-wilson.co.uk>, Junwei Zhang <Jerry.Zhang@amd.com>, Xiangliang Yu <Xiangliang.Yu@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Frank Min <Frank.Min@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@gmail.com>, Jiri Benc <jbenc@redhat.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 8, 2017 at 2:53 PM, Ernst Sjöstrand <ernstp@gmail.com> wrote:
-> Can't find these anywhere yet, errors still there.
->
-> https://patchwork.freedesktop.org/series/31220/
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks for the reminder.
+The size for IFLA_IF_NETNSID is missing from the size calculation
+because the proceeding semicolon was not removed. Fix this by removing
+the semicolon.
 
-Alex
+Detected by CoverityScan, CID#1461135 ("Structurally dead code")
 
->
-> Regards
-> //Ernst
->
-> 2017-09-30 10:25 GMT+02:00 Christian König <christian.koenig@amd.com>:
->> Am 30.09.2017 um 10:13 schrieb Dan Carpenter:
->>>
->>> We shifted some code around in commit 9cca0b8e5df0 ("drm/amdgpu: move
->>> amdgpu_cs_sysvm_access_required into find_mapping") and now my static
->>> checker complains that "r" might not be initialized at the end of the
->>> function.  I've reviewed the code, and that seems possible, but it's
->>> also possible I may have missed something.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->>
->> Good catches, Reviewed-by: Christian König <christian.koenig@amd.com> for
->> both patches.
->>
->>
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>> index b46280c1279f..2918de2f39ec 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>> @@ -648,7 +648,7 @@ int amdgpu_vce_ring_parse_cs(struct amdgpu_cs_parser
->>> *p, uint32_t ib_idx)
->>>         uint32_t allocated = 0;
->>>         uint32_t tmp, handle = 0;
->>>         uint32_t *size = &tmp;
->>> -       int i, r, idx = 0;
->>> +       int i, r = 0, idx = 0;
->>>         p->job->vm = NULL;
->>>         ib->gpu_addr = amdgpu_sa_bo_gpu_addr(ib->sa_bo);
->>
->>
->>
->> _______________________________________________
->> amd-gfx mailing list
->> amd-gfx@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Fixes: 79e1ad148c84 ("rtnetlink: use netnsid to query interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/core/rtnetlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index dc5ad84ac096..dabba2a91fc8 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -920,7 +920,7 @@ static noinline size_t if_nlmsg_size(const struct net_device *dev,
+ 	       + rtnl_xdp_size() /* IFLA_XDP */
+ 	       + nla_total_size(4)  /* IFLA_EVENT */
+ 	       + nla_total_size(4)  /* IFLA_NEW_NETNSID */
+-	       + nla_total_size(1); /* IFLA_PROTO_DOWN */
++	       + nla_total_size(1)  /* IFLA_PROTO_DOWN */
+ 	       + nla_total_size(4)  /* IFLA_IF_NETNSID */
+ 	       + 0;
+ }
+-- 
+2.14.1
+
