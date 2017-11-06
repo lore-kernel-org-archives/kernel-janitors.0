@@ -1,31 +1,41 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Fri, 24 Nov 2017 08:34:57 +0000
-Subject: Re: [PATCH 4/4] ASoC: wm2000: Improve a size determination in wm2000_i2c_probe()
-Message-Id: <20171124083457.ezopgjiowejhklhi@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Nov 2017 17:53:53 +0000
+Subject: [PATCH] block: avoid null pointer dereference on null disk
+Message-Id: <20171106175353.20199-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd76c876-81a5-3cf6-e7d9-52037729fb98@users.sourceforge.net>
- <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
-In-Reply-To: <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 08:40:22AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 24 Nov 2017 08:18:14 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+It is possible that the pointer disk can be null and hence
+we can get a null pointer deference when accessing disk->flags.
+Add a null pointer check to avoid the dereference.
 
-Thanks,
-Charles
+Detected by CoverityScan, CID#1461133 ("Explicit null dereferenced")
+
+Fixes: 8ddcd653257c ("block: introduce GENHD_FL_HIDDEN")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/genhd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/genhd.c b/block/genhd.c
+index d85dcc701d76..42908a7186cd 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -798,7 +798,7 @@ struct gendisk *get_gendisk(dev_t devt, int *partno)
+ 		spin_unlock_bh(&ext_devt_lock);
+ 	}
+ 
+-	if (unlikely(disk->flags & GENHD_FL_HIDDEN)) {
++	if (disk && unlikely(disk->flags & GENHD_FL_HIDDEN)) {
+ 		put_disk(disk);
+ 		disk = NULL;
+ 	}
+-- 
+2.14.1
+
