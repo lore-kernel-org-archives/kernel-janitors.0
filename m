@@ -1,47 +1,63 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 06 Nov 2017 14:24:50 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 06 Nov 2017 15:08:08 +0000
 Subject: Re: [PATCH] btrfs/volumes: Improve unlocking of a mutex in __btrfs_balance()
-Message-Id: <20171106142450.GF28789@twin.jikos.cz>
+Message-Id: <26ba6f26-7132-282b-7b90-3b691a704e4c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d7bcebed-b68f-6137-24df-9332ef1de802@users.sourceforge.net>
-In-Reply-To: <d7bcebed-b68f-6137-24df-9332ef1de802@users.sourceforge.net>
+ <20171106142450.GF28789@twin.jikos.cz>
+In-Reply-To: <20171106142450.GF28789@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Cc: dsterba@suse.cz, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 06, 2017 at 09:04:37AM +0100, SF Markus Elfring wrote:
-> 
-> * Adjust jump targets so that a call of the function "mutex_unlock"
->   can be better reused for error cases at the end of this function.
-> 
-> * Replace three calls by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> @@ -3682,7 +3678,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
->  		counting = false;
->  		goto again;
->  	}
-> -error:
-> +free_path:
->  	btrfs_free_path(path);
->  	if (enospc_errors) {
->  		btrfs_info(fs_info, "%d enospc errors during balance",
-> @@ -3692,6 +3688,10 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
->  	}
->  
->  	return ret;
-> +
-> +unlock:
-> +	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
-> +	goto free_path;
->  }
+>> @@ -3682,7 +3678,7 @@ static int __btrfs_balance(struct btrfs_fs_info *f=
+s_info)
+>>  		counting =3D false;
+>>  		goto again;
+>>  	}
+>> -error:
+>> +free_path:
+>>  	btrfs_free_path(path);
+>>  	if (enospc_errors) {
+>>  		btrfs_info(fs_info, "%d enospc errors during balance",
+>> @@ -3692,6 +3688,10 @@ static int __btrfs_balance(struct btrfs_fs_info *=
+fs_info)
+>>  	}
+>> =20
+>>  	return ret;
+>> +
+>> +unlock:
+>> +	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
+>> +	goto free_path;
+>>  }
+>=20
+> This is also an anti-pattern,
 
-This is also an anti-pattern, the label followed by a goto jumping back
-to the exit/cleanup block, right at the end of a function. I've sent
-some patches in the past to clean that up and don't want to reintroduce
-it.
+I got an other software development opinion for this use case.
+
+
+> the label followed by a goto jumping back to the exit/cleanup block,
+> right at the end of a function.
+
+I find that this way can be useful for efficient exception handling.
+
+
+> I've sent some patches in the past to clean that up
+
+Interesting =E2=80=A6
+
+
+> and don't want to reintroduce it.
+
+Would you like to reconsider this view if the object code size
+could be reduced a bit for the affected function implementation?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
