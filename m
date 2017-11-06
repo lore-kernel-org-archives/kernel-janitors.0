@@ -1,44 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 27 Nov 2017 16:19:09 +0000
-Subject: [PATCH] tools lib traceevent: fix an incorrect comparison with the literal "s64"
-Message-Id: <20171127161909.15565-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Nov 2017 21:53:29 +0000
+Subject: [PATCH 1/4] fsl/fman: Remove a useless call to 'dev_set_drvdata()'
+Message-Id: <eb2c7fea4ceaba4344b33d93493be98e1dc5dcf0.1510003551.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaldo Carvalho de Melo <acme@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, "David S . Miller" <davem@davemloft.net>, Daniel Borkmann <daniel@iogearbox.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: madalin.bucur@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit c6e26ea8c893 ("dpaa_eth: change device used") has removed usage of
+'dev_set_drvdata()' in the 'mac_probe() function.
 
-I believe the comparison of the string 'type' with the literal string
-"s64" is currently incorrect, it is missing a = 0 comparison as per
-the other comparisons.
+This call should also be axed.
 
-Detected by cppcheck:
-tools/lib/traceevent/event-parse.c:2209: (warning) The comparison
-operator in 'strcmp(type,"s64") != 0' should maybe be '=' instead,
-currently the expression 'strcmp(type,"u64") = 0' is redundant.
-
-Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fman/mac.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 7ce724fc0544..82b6c64c5b39 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -2206,7 +2206,7 @@ eval_type_str(unsigned long long val, const char *type, int pointer)
- 		return val & 0xffffffff;
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 1d6da1ea7bfb..c27667a005f7 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -713,7 +713,6 @@ static int mac_probe(struct platform_device *_of_dev)
+ 		__devm_release_region(dev, fman_get_mem_region(priv->fman),
+ 				      res.start, res.end + 1 - res.start);
+ 		devm_kfree(dev, mac_dev);
+-		dev_set_drvdata(dev, NULL);
+ 		return -ENODEV;
+ 	}
  
- 	if (strcmp(type, "u64") = 0 ||
--	    strcmp(type, "s64"))
-+	    strcmp(type, "s64") = 0)
- 		return val;
- 
- 	if (strcmp(type, "s8") = 0)
 -- 
 2.14.1
 
