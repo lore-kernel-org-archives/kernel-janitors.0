@@ -1,41 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 06 Nov 2017 07:07:33 +0000
-Subject: [PATCH] drm/amd/display: small cleanup in destruct()
-Message-Id: <20171106070733.owgzad3bpuabfkkk@mwanda>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Date: Mon, 06 Nov 2017 08:44:14 +0000
+Subject: Re: [PATCH] drm/amd/display: small cleanup in destruct()
+Message-Id: <031c92ca-86b0-718d-bf93-18d50db00ce9@amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e32e3d91-bfdf-5c4b-afb2-2472efeb1079@amd.com>
-In-Reply-To: <e32e3d91-bfdf-5c4b-afb2-2472efeb1079@amd.com>
+References: <20171106070733.owgzad3bpuabfkkk@mwanda>
+In-Reply-To: <20171106070733.owgzad3bpuabfkkk@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Tony Cheng <tony.cheng@amd.com>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, Hersen Wu <hersenxs.wu@amd.com>, Dave Airlie <airlied@redhat.com>, Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Harry Wentland <harry.wentland-5C7GfCeVMHo@public.gmane.org>
+Cc: Andrey Grodzovsky <Andrey.Grodzovsky-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Dmytro Laktyushkin <Dmytro.Laktyushkin-5C7GfCeVMHo@public.gmane.org>, Hersen Wu <hersenxs.wu-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tony Cheng <tony.cheng-5C7GfCeVMHo@public.gmane.org>
 
-Static analysis tools get annoyed that we don't indent this if
-statement.  Actually, the if statement isn't required because kfree()
-can handle NULL pointers just fine.  The DCE110STRENC_FROM_STRENC()
-macro is a wrapper around container_of() but it's basically a no-op or a
-cast.  Anyway, it's not really appropriate here so it should be removed
-as well.
+Am 06.11.2017 um 08:07 schrieb Dan Carpenter:
+> Static analysis tools get annoyed that we don't indent this if
+> statement.  Actually, the if statement isn't required because kfree()
+> can handle NULL pointers just fine.  The DCE110STRENC_FROM_STRENC()
+> macro is a wrapper around container_of() but it's basically a no-op or a
+> cast.  Anyway, it's not really appropriate here so it should be removed
+> as well.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: in v1 I just added a tab
+Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-index d911590d08bc..4c4bd72d4e40 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
-@@ -725,10 +725,8 @@ static void destruct(struct dcn10_resource_pool *pool)
- 		}
- 	}
- 
--	for (i = 0; i < pool->base.stream_enc_count; i++) {
--		if (pool->base.stream_enc[i] != NULL)
--		kfree(DCE110STRENC_FROM_STRENC(pool->base.stream_enc[i]));
--	}
-+	for (i = 0; i < pool->base.stream_enc_count; i++)
-+		kfree(pool->base.stream_enc[i]);
- 
- 	for (i = 0; i < pool->base.audio_count; i++) {
- 		if (pool->base.audios[i])
+> ---
+> v2: in v1 I just added a tab
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c b/driv=
+ers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
+> index d911590d08bc..4c4bd72d4e40 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
+> @@ -725,10 +725,8 @@ static void destruct(struct dcn10_resource_pool *poo=
+l)
+>   		}
+>   	}
+>  =20
+> -	for (i =3D 0; i < pool->base.stream_enc_count; i++) {
+> -		if (pool->base.stream_enc[i] !=3D NULL)
+> -		kfree(DCE110STRENC_FROM_STRENC(pool->base.stream_enc[i]));
+> -	}
+> +	for (i =3D 0; i < pool->base.stream_enc_count; i++)
+> +		kfree(pool->base.stream_enc[i]);
+>  =20
+>   	for (i =3D 0; i < pool->base.audio_count; i++) {
+>   		if (pool->base.audios[i])
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
