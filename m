@@ -1,61 +1,139 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Wed, 08 Nov 2017 11:04:18 +0000
-Subject: Re: [PATCH] staging: comedi: usbdux: remove redundant initialization of val
-Message-Id: <0d7da92b-bcf7-2e1e-af62-cf715327e2ed@mev.co.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 06 Nov 2017 08:04:37 +0000
+Subject: [PATCH] btrfs/volumes: Improve unlocking of a mutex in __btrfs_balance()
+Message-Id: <d7bcebed-b68f-6137-24df-9332ef1de802@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107190724.8075-1-colin.king@canonical.com>
-In-Reply-To: <20171107190724.8075-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Josef Bacik <jbacik@fb.com>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 07/11/17 19:07, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The early initialization of val is redundant as the value is never
-> read and is updated inside a for-loop. Remove the initialization
-> and move the declaration and initialization to the for-loop scope.
-> Cleans up clang warning:
-> 
-> drivers/staging/comedi/drivers/usbdux.c:812:15: warning: Value stored
-> to 'val' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/usbdux.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-> index f4f05d29d30d..ede064b47aac 100644
-> --- a/drivers/staging/comedi/drivers/usbdux.c
-> +++ b/drivers/staging/comedi/drivers/usbdux.c
-> @@ -809,7 +809,6 @@ static int usbdux_ao_insn_write(struct comedi_device *dev,
->   {
->   	struct usbdux_private *devpriv = dev->private;
->   	unsigned int chan = CR_CHAN(insn->chanspec);
-> -	unsigned int val = s->readback[chan];
->   	__le16 *p = (__le16 *)&devpriv->dux_commands[2];
->   	int ret = -EBUSY;
->   	int i;
-> @@ -825,7 +824,7 @@ static int usbdux_ao_insn_write(struct comedi_device *dev,
->   	devpriv->dux_commands[4] = chan << 6;
->   
->   	for (i = 0; i < insn->n; i++) {
-> -		val = data[i];
-> +		unsigned int val = data[i];
->   
->   		/* one 16 bit value */
->   		*p = cpu_to_le16(val);
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 Nov 2017 22:03:22 +0100
 
-Thanks for catching that.  It looks like it has been redundant since 
-commit 65a847477f63 ("staging: comedi: usbdux: use comedi_subdevice 
-'readback'").
+* Adjust jump targets so that a call of the function "mutex_unlock"
+  can be better reused for error cases at the end of this function.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+* Replace three calls by goto statements.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/btrfs/volumes.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index ea8b20839ac0..3bc430623849 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -3497,7 +3497,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		if (ret) {
+ 			/* btrfs_shrink_device never returns ret > 0 */
+ 			WARN_ON(ret > 0);
+-			goto error;
++			goto free_path;
+ 		}
+ 
+ 		trans = btrfs_start_transaction(dev_root, 0);
+@@ -3507,7 +3507,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		 "resize: unable to start transaction after shrinking device %s (error %d), old size %llu, new size %llu",
+ 					  rcu_str_deref(device->name), ret,
+ 					  old_size, old_size - size_to_free);
+-			goto error;
++			goto free_path;
+ 		}
+ 
+ 		ret = btrfs_grow_device(trans, device, old_size);
+@@ -3519,7 +3519,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		 "resize: unable to grow device after shrinking device %s (error %d), old size %llu, new size %llu",
+ 					  rcu_str_deref(device->name), ret,
+ 					  old_size, old_size - size_to_free);
+-			goto error;
++			goto free_path;
+ 		}
+ 
+ 		btrfs_end_transaction(trans);
+@@ -3529,7 +3529,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 	path = btrfs_alloc_path();
+ 	if (!path) {
+ 		ret = -ENOMEM;
+-		goto error;
++		goto free_path;
+ 	}
+ 
+ 	/* zero out stat counters */
+@@ -3554,15 +3554,13 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		if ((!counting && atomic_read(&fs_info->balance_pause_req)) ||
+ 		    atomic_read(&fs_info->balance_cancel_req)) {
+ 			ret = -ECANCELED;
+-			goto error;
++			goto free_path;
+ 		}
+ 
+ 		mutex_lock(&fs_info->delete_unused_bgs_mutex);
+ 		ret = btrfs_search_slot(NULL, chunk_root, &key, path, 0, 0);
+-		if (ret < 0) {
+-			mutex_unlock(&fs_info->delete_unused_bgs_mutex);
+-			goto error;
+-		}
++		if (ret < 0)
++			goto unlock;
+ 
+ 		/*
+ 		 * this shouldn't happen, it means the last relocate
+@@ -3645,25 +3643,23 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		    !chunk_reserved && !bytes_used) {
+ 			trans = btrfs_start_transaction(chunk_root, 0);
+ 			if (IS_ERR(trans)) {
+-				mutex_unlock(&fs_info->delete_unused_bgs_mutex);
+ 				ret = PTR_ERR(trans);
+-				goto error;
++				goto unlock;
+ 			}
+ 
+ 			ret = btrfs_force_chunk_alloc(trans, fs_info,
+ 						      BTRFS_BLOCK_GROUP_DATA);
+ 			btrfs_end_transaction(trans);
+-			if (ret < 0) {
+-				mutex_unlock(&fs_info->delete_unused_bgs_mutex);
+-				goto error;
+-			}
++			if (ret < 0)
++				goto unlock;
++
+ 			chunk_reserved = 1;
+ 		}
+ 
+ 		ret = btrfs_relocate_chunk(fs_info, found_key.offset);
+ 		mutex_unlock(&fs_info->delete_unused_bgs_mutex);
+ 		if (ret && ret != -ENOSPC)
+-			goto error;
++			goto free_path;
+ 		if (ret = -ENOSPC) {
+ 			enospc_errors++;
+ 		} else {
+@@ -3682,7 +3678,7 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 		counting = false;
+ 		goto again;
+ 	}
+-error:
++free_path:
+ 	btrfs_free_path(path);
+ 	if (enospc_errors) {
+ 		btrfs_info(fs_info, "%d enospc errors during balance",
+@@ -3692,6 +3688,10 @@ static int __btrfs_balance(struct btrfs_fs_info *fs_info)
+ 	}
+ 
+ 	return ret;
++
++unlock:
++	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
++	goto free_path;
+ }
+ 
+ /**
 -- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
+2.15.0
+
