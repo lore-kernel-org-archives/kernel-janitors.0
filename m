@@ -1,23 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 06 Nov 2017 08:53:29 +0000
-Subject: Re: [PATCH] video: atmel_lcdfb: Use common error handling code in atmel_lcdfb_of_init()
-Message-Id: <20171106085329.szz2ocu5d2iurlov@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Nov 2017 21:53:28 +0000
+Subject: [PATCH 0/4] fsl/fman: Fix some error handling code in mac_probe
+Message-Id: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2db677d2-ad4e-1f79-344b-dfa38ce948c9@users.sourceforge.net>
- <5477205e-2067-de4f-8736-71a2c9dc1653@microchip.com>
-In-Reply-To: <5477205e-2067-de4f-8736-71a2c9dc1653@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, SF Markus Elfring <elfring@users.sourceforge.net>
+To: madalin.bucur@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Nov 06, 2017 at 09:40:19AM +0100, Nicolas Ferre wrote:
-> If you want to lower the size of strings in this driver, you can do it,
-> but not like this.
+Commit c6e26ea8c893 ("dpaa_eth: change device used") generated some
+conflicts in my patches waiting for submission. So I took a closer look at
+it.
 
-Just so we're clear, GCC already detects and combines it when you use
-the same string constant twice.
 
-regards,
-dan carpenter
+So here is a serie of 4 patches.
+
+The 1st one is just about a spurious call to 'dev_set_drvdata()', which is
+done in only 1 error handling path in the function.
+
+The 2nd one removes some devm_iounmap/release/kfree functions which look
+useless to me.
+
+The 3rd one fixes a missing of_node_put.
+
+The 4th one is just cosmetic and removes a useless message.
+
+
+Christophe JAILLET (4):
+  fsl/fman: Remove a useless call to 'dev_set_drvdata()'
+  fsl/fman: Remove some useless code
+  fsl/fman: Add a missing 'of_node_put()' call in an error handling path
+  fsl/fman: Remove a useless 'dev_err()' call
+
+ drivers/net/ethernet/freescale/fman/mac.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+-- 
+2.14.1
+
