@@ -1,28 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 06 Nov 2017 21:11:06 +0000
-Subject: Re: iSCSI-target: Use common error handling code in iscsi_decode_text_input()
-Message-Id: <49e62625-8c1d-5bbe-2ddd-e25e117754db@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Nov 2017 11:48:43 +0000
+Subject: [PATCH] lightnvm: pblk: remove some unnecessary NULL checks
+Message-Id: <20171106114843.7rs6myhgxgij3jh7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d36d5072-3e35-da39-bc0f-af15deb630a8@users.sourceforge.net>
- <20171106162549.5b2511db@alans-desktop>
-In-Reply-To: <20171106162549.5b2511db@alans-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Cc: Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matias Bjorling <mb@lightnvm.io>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Add a jump target so that a bit of exception handling can be better reused
->> at the end of this function.
-> 
-> Why not look at what the C compiler generates before making the code
-> less readable ?
+Smatch complains that flush_workqueue() dereferences the work queue
+pointer but then we check if it's NULL on the next line when it's too
+late.  These NULL checks can be removed because the module won't load if
+we can't allocate the work queues.
 
-* Does the adjusted source code layout fit to information from the section
-  “7) Centralized exiting of functions” in the document “coding-style.rst”?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-* Would you find a reduction of 16 bytes for the object code useful for
-  the affected function implementation?
-
-Regards,
-Markus
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index 00d5698d64a9..aaba2049a135 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -669,12 +669,10 @@ void pblk_gc_exit(struct pblk *pblk)
+ 		kthread_stop(gc->gc_reader_ts);
+ 
+ 	flush_workqueue(gc->gc_reader_wq);
+-	if (gc->gc_reader_wq)
+-		destroy_workqueue(gc->gc_reader_wq);
++	destroy_workqueue(gc->gc_reader_wq);
+ 
+ 	flush_workqueue(gc->gc_line_reader_wq);
+-	if (gc->gc_line_reader_wq)
+-		destroy_workqueue(gc->gc_line_reader_wq);
++	destroy_workqueue(gc->gc_line_reader_wq);
+ 
+ 	if (gc->gc_writer_ts)
+ 		kthread_stop(gc->gc_writer_ts);
