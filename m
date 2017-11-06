@@ -1,58 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Nov 2017 13:18:59 +0000
-Subject: [PATCH 4/4] target: Delete an error message for a failed memory allocation in two functions
-Message-Id: <e6282832-737d-f3a5-bb1a-70fc53c58451@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 06 Nov 2017 21:53:31 +0000
+Subject: [PATCH 3/4] fsl/fman: Add a missing 'of_node_put()' call in an error handling path
+Message-Id: <410c7999411773529e5c020bc19c24ae8d78b91c.1510003551.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
-In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
+References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: madalin.bucur@nxp.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Nov 2017 13:43:22 +0100
+If 'of_phy_find_device()' fails, we must undo the previous 'of_node_get()'
+call, as done the the following error handling code.
 
-Omit an extra message for a memory allocation failure in these functions.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/target/target_core_xcopy.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/freescale/fman/mac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
-index 1519e399392b..c2b3d3158208 100644
---- a/drivers/target/target_core_xcopy.c
-+++ b/drivers/target/target_core_xcopy.c
-@@ -681,10 +681,9 @@ static int target_xcopy_read_source(
- 	bool remote_port = (xop->op_origin = XCOL_DEST_RECV_OP);
- 
- 	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
--	if (!xpt_cmd) {
--		pr_err("Unable to allocate xcopy_pt_cmd\n");
-+	if (!xpt_cmd)
- 		return -ENOMEM;
--	}
-+
- 	init_completion(&xpt_cmd->xpt_passthrough_sem);
- 	se_cmd = &xpt_cmd->se_cmd;
- 
-@@ -743,10 +742,9 @@ static int target_xcopy_write_destination(
- 	bool remote_port = (xop->op_origin = XCOL_SOURCE_RECV_OP);
- 
- 	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
--	if (!xpt_cmd) {
--		pr_err("Unable to allocate xcopy_pt_cmd\n");
-+	if (!xpt_cmd)
- 		return -ENOMEM;
--	}
-+
- 	init_completion(&xpt_cmd->xpt_passthrough_sem);
- 	se_cmd = &xpt_cmd->se_cmd;
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index ca12e28129ed..86c1e69f44d6 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -821,6 +821,7 @@ static int mac_probe(struct platform_device *_of_dev)
+ 		phy = of_phy_find_device(mac_dev->phy_node);
+ 		if (!phy) {
+ 			err = -EINVAL;
++			of_node_put(mac_dev->phy_node);
+ 			goto _return_of_get_parent;
+ 		}
  
 -- 
-2.15.0
+2.14.1
 
