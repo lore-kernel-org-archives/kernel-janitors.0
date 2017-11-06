@@ -1,51 +1,22 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 18:41:38 +0000
-Subject: [PATCH 1/3] net: sched: cls_fw: Use common error handling code in fw_change()
-Message-Id: <748e1a55-dd2d-e5e0-1097-73664115668f@users.sourceforge.net>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Mon, 06 Nov 2017 13:50:02 +0000
+Subject: Re: [PATCH] netfilter: ebtables: clean up initialization of buf
+Message-Id: <20171106135002.GA7055@salvia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <32efa965-896f-f24a-4d30-586e10c54a5b@users.sourceforge.net>
-In-Reply-To: <32efa965-896f-f24a-4d30-586e10c54a5b@users.sourceforge.net>
+References: <20171016102402.10358-1-colin.king@canonical.com>
+In-Reply-To: <20171016102402.10358-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 19:15:08 +0100
+On Mon, Oct 16, 2017 at 11:24:02AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> buf is initialized to buf_start and then set on the next statement
+> to buf_start + offsets[i].  Clean this up to just initialize buf
+> to buf_start + offsets[i] to clean up the clang build warning:
+> "Value stored to 'buf' during its initialization is never read"
 
-Add a jump target so that a bit of exception handling can be better reused
-in an if branch of this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/sched/cls_fw.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/net/sched/cls_fw.c b/net/sched/cls_fw.c
-index 5908f56f76da..567db4d2349f 100644
---- a/net/sched/cls_fw.c
-+++ b/net/sched/cls_fw.c
-@@ -281,14 +281,13 @@ static int fw_change(struct net *net, struct sk_buff *in_skb,
- 		fnew->tp = f->tp;
- 
- 		err = tcf_exts_init(&fnew->exts, TCA_FW_ACT, TCA_FW_POLICE);
--		if (err < 0) {
--			kfree(fnew);
--			return err;
--		}
-+		if (err < 0)
-+			goto free_filter;
- 
- 		err = fw_set_parms(net, tp, fnew, tb, tca, base, ovr);
- 		if (err < 0) {
- 			tcf_exts_destroy(&fnew->exts);
-+free_filter:
- 			kfree(fnew);
- 			return err;
- 		}
--- 
-2.15.0
-
+Applied, thanks.
