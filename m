@@ -1,35 +1,62 @@
-From: Flavio Leitner <fbl@sysclose.org>
-Date: Thu, 16 Nov 2017 04:56:46 +0000
-Subject: Re: [PATCH] rtnetlink: fix missing size for IFLA_IF_NETNSID
-Message-Id: <20171116025646.3327d157@plex.home>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 06 Nov 2017 13:17:11 +0000
+Subject: [PATCH] video: fbdev: intelfb: remove redundant variables
+Message-Id: <20171106131711.6499-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171106150454.9623-1-colin.king@canonical.com>
-        <20171106161620.7080cf66@redhat.com>
-In-Reply-To: <20171106161620.7080cf66@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Benc <jbenc@redhat.com>
-Cc: Colin King <colin.king@canonical.com>, "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Maik Broemme <mbroemme@libmpq.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 6 Nov 2017 16:16:20 +0100
-Jiri Benc <jbenc@redhat.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Mon,  6 Nov 2017 15:04:54 +0000, Colin King wrote:
-> > The size for IFLA_IF_NETNSID is missing from the size calculation
-> > because the proceeding semicolon was not removed. Fix this by removing
-> > the semicolon.  
-> 
-> Acked-by: Jiri Benc <jbenc@redhat.com>
-> 
-> Thanks for spotting this! Looking at my initial code, I had that right,
-> this was probably introduced during one of rebases, so I blame
-> Flavio :-p (On a serious note, thank you, Flavio, for taking care of
-> the rebases.)
+Variables err_max, err_target and f_best are being assigned values but
+these are never read, hence they are redundant variables and can be
+removed. Cleans up clang warnings:
 
-That's right, ouch!
-Thanks for fixing it.
+drivers/video/fbdev/intelfb/intelfbhw.c:946:2: warning: Value stored to
+'err_max' is never read
+drivers/video/fbdev/intelfb/intelfbhw.c:947:2: warning: Value stored to
+'err_target' is never read
+drivers/video/fbdev/intelfb/intelfbhw.c:995:6: warning: Value stored to
+'f_best' is never read
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/video/fbdev/intelfb/intelfbhw.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/video/fbdev/intelfb/intelfbhw.c b/drivers/video/fbdev/intelfb/intelfbhw.c
+index d31ed4e2c46f..83fec573cceb 100644
+--- a/drivers/video/fbdev/intelfb/intelfbhw.c
++++ b/drivers/video/fbdev/intelfb/intelfbhw.c
+@@ -937,15 +937,11 @@ static int calc_pll_params(int index, int clock, u32 *retm1, u32 *retm2,
+ {
+ 	u32 m1, m2, n, p1, p2, n1, testm;
+ 	u32 f_vco, p, p_best = 0, m, f_out = 0;
+-	u32 err_max, err_target, err_best = 10000000;
+-	u32 n_best = 0, m_best = 0, f_best, f_err;
++	u32 err_best = 10000000;
++	u32 n_best = 0, m_best = 0, f_err;
+ 	u32 p_min, p_max, p_inc, div_max;
+ 	struct pll_min_max *pll = &plls[index];
+ 
+-	/* Accept 0.5% difference, but aim for 0.1% */
+-	err_max = 5 * clock / 1000;
+-	err_target = clock / 1000;
+-
+ 	DBG_MSG("Clock is %d\n", clock);
+ 
+ 	div_max = pll->max_vco / clock;
+@@ -992,7 +988,6 @@ static int calc_pll_params(int index, int clock, u32 *retm1, u32 *retm2,
+ 					m_best = testm;
+ 					n_best = n;
+ 					p_best = p;
+-					f_best = f_out;
+ 					err_best = f_err;
+ 				}
+ 			}
 -- 
-Flavio
+2.14.1
 
