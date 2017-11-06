@@ -1,58 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 20:29:15 +0000
-Subject: [PATCH 1/2] ASoC: cs35l34: Delete two error messages for a failed memory allocation in cs35l34_i2c_p
-Message-Id: <7e0b578a-e342-7c54-5eeb-f8dd427e59b5@users.sourceforge.net>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Mon, 06 Nov 2017 13:18:51 +0000
+Subject: Re: [PATCH] netfilter: ip6_tables: remove redundant assignment to e
+Message-Id: <20171106131851.GA2552@salvia>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
-In-Reply-To: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
+References: <20171017120200.19994-1-colin.king@canonical.com>
+In-Reply-To: <20171017120200.19994-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 21:13:29 +0100
+On Tue, Oct 17, 2017 at 01:02:00PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignment to variable e is redundant since the same assignment
+> occurs just a few lines later, hence it can be removed.  Cleans up
+> clang warning: warning: Value stored to 'e' is never read
 
-Omit extra messages for a memory allocation failure in this function.
+Seems like net/ipv4/netfilter/ip_tables.c also has exactly the same
+redundant assignment, see mark_source_chains() there.
 
-This issue was detected by using the Coccinelle software.
+If we can fix this all iptables spots in one go, the best. Please,
+also check arp_tables and ebtables.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/codecs/cs35l34.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
-index 1e05026bedca..6cbdbbe53940 100644
---- a/sound/soc/codecs/cs35l34.c
-+++ b/sound/soc/codecs/cs35l34.c
-@@ -1007,10 +1007,8 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 	cs35l34 = devm_kzalloc(&i2c_client->dev,
- 			       sizeof(struct cs35l34_private),
- 			       GFP_KERNEL);
--	if (!cs35l34) {
--		dev_err(&i2c_client->dev, "could not allocate codec\n");
-+	if (!cs35l34)
- 		return -ENOMEM;
--	}
- 
- 	i2c_set_clientdata(i2c_client, cs35l34);
- 	cs35l34->regmap = devm_regmap_init_i2c(i2c_client, &cs35l34_regmap);
-@@ -1047,11 +1045,9 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				sizeof(struct cs35l34_platform_data),
- 				GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev,
--				"could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
-+
- 		if (i2c_client->dev.of_node) {
- 			ret = cs35l34_handle_of_data(i2c_client, pdata);
- 			if (ret != 0)
--- 
-2.15.0
-
+Thanks!
