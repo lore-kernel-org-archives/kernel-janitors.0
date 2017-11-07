@@ -1,34 +1,50 @@
-From: "Steve Wise" <swise@opengridcomputing.com>
-Date: Thu, 30 Nov 2017 16:41:50 +0000
-Subject: RE: [PATCH] iw_cxgb4: make pointer reg_workq static
-Message-Id: <00fe01d369fa$1f325890$5d9709b0$@opengridcomputing.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 19:07:24 +0000
+Subject: [PATCH] staging: comedi: usbdux: remove redundant initialization of val
+Message-Id: <20171107190724.8075-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171130133006.19699-1-colin.king@canonical.com>
-In-Reply-To: <20171130133006.19699-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Colin King' <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, 'Steve Wise' <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, 'Doug Ledford' <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, 'Jason Gunthorpe' <jgg-uk2M96/98Pc@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bharat-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org
+To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer reg_workq is local to the source and does not need to be
-> in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/infiniband/hw/cxgb4/device.c:69:25: warning: symbol 'reg_workq'
-> was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks correct.  This fixes a recent commit.
+The early initialization of val is redundant as the value is never
+read and is updated inside a for-loop. Remove the initialization
+and move the declaration and initialization to the for-loop scope.
+Cleans up clang warning:
 
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
-Fixes: 1c8f1da5d851 ("iw_cxgb4: Fix possible circular dependency locking warning")
+drivers/staging/comedi/drivers/usbdux.c:812:15: warning: Value stored
+to 'val' during its initialization is never read
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/comedi/drivers/usbdux.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Steve.
+diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+index f4f05d29d30d..ede064b47aac 100644
+--- a/drivers/staging/comedi/drivers/usbdux.c
++++ b/drivers/staging/comedi/drivers/usbdux.c
+@@ -809,7 +809,6 @@ static int usbdux_ao_insn_write(struct comedi_device *dev,
+ {
+ 	struct usbdux_private *devpriv = dev->private;
+ 	unsigned int chan = CR_CHAN(insn->chanspec);
+-	unsigned int val = s->readback[chan];
+ 	__le16 *p = (__le16 *)&devpriv->dux_commands[2];
+ 	int ret = -EBUSY;
+ 	int i;
+@@ -825,7 +824,7 @@ static int usbdux_ao_insn_write(struct comedi_device *dev,
+ 	devpriv->dux_commands[4] = chan << 6;
+ 
+ 	for (i = 0; i < insn->n; i++) {
+-		val = data[i];
++		unsigned int val = data[i];
+ 
+ 		/* one 16 bit value */
+ 		*p = cpu_to_le16(val);
+-- 
+2.14.1
 
