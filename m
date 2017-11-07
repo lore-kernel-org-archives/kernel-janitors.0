@@ -1,65 +1,40 @@
-From: <Mario.Limonciello@dell.com>
-Date: Mon, 13 Nov 2017 14:52:13 +0000
-Subject: RE: [PATCH] platform/x86: dell-smbios-wmi: Unlock on error in dell_smbios_wmi_call()
-Message-Id: <e5eed4b46fd84e889b8f60299e715b7f@ausx13mpc120.AMER.DELL.COM>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 10:42:15 +0000
+Subject: [PATCH] devcoredump: remove redundant assignment to iter
+Message-Id: <20171107104215.10748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171113100555.sbn32ls22snpfgpg@mwanda>
-In-Reply-To: <20171113100555.sbn32ls22snpfgpg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: dvhart@infradead.org, andy@infradead.org, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, November 13, 2017 4:06 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Darren Hart <dvhart@infradead.org>; Andy Shevchenko
-> <andy@infradead.org>; platform-driver-x86@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH] platform/x86: dell-smbios-wmi: Unlock on error in
-> dell_smbios_wmi_call()
-> 
-> We have to unlock before returning if get_first_smbios_priv() fails.
-> 
-> Fixes: 1a258e670434 ("platform/x86: dell-smbios-wmi: Add new WMI dispatcher
-> driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-
-> smbios-wmi.c
-> index 35c13815b24c..7b0e3ca74ca0 100644
-> --- a/drivers/platform/x86/dell-smbios-wmi.c
-> +++ b/drivers/platform/x86/dell-smbios-wmi.c
-> @@ -91,8 +91,10 @@ int dell_smbios_wmi_call(struct calling_interface_buffer
-> *buffer)
-> 
->  	mutex_lock(&call_mutex);
->  	priv = get_first_smbios_priv();
-> -	if (!priv)
-> -		return -ENODEV;
-> +	if (!priv) {
-> +		ret = -ENODEV;
-> +		goto unlock;
-> +	}
-> 
->  	size = sizeof(struct calling_interface_buffer);
->  	difference = priv->req_buf_size - sizeof(u64) - size;
-> @@ -101,6 +103,7 @@ int dell_smbios_wmi_call(struct calling_interface_buffer
-> *buffer)
->  	memcpy(&priv->buf->std, buffer, size);
->  	ret = run_smbios_call(priv->wdev);
->  	memcpy(buffer, &priv->buf->std, size);
-> +unlock:
->  	mutex_unlock(&call_mutex);
-> 
->  	return ret;
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Dan,
+The assignment to pointer iter is redundant as this is also performed
+in the following macro for_each_sg, hence it can be removed. Cleans
+up clang warning:
 
-Thanks for submitting.  This exact same fix is in the subsystem "testing" branch
-but hasn't yet been promoted to -next.
+./include/linux/devcoredump.h:45:2: warning: Value stored to 'iter'
+is never read
 
-http://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git/commit/307ab2a99d190d3a7949258b8551b66887ce8cf4
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ include/linux/devcoredump.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/devcoredump.h b/include/linux/devcoredump.h
+index 269521f143ac..a9f3e2480739 100644
+--- a/include/linux/devcoredump.h
++++ b/include/linux/devcoredump.h
+@@ -42,7 +42,6 @@ static inline void _devcd_free_sgtable(struct scatterlist *table)
+ 	struct scatterlist *delete_iter;
+ 
+ 	/* free pages */
+-	iter = table;
+ 	for_each_sg(table, iter, sg_nents(table), i) {
+ 		page = sg_page(iter);
+ 		if (page)
+-- 
+2.14.1
 
