@@ -1,42 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 10:11:52 +0000
-Subject: [PATCH 6/7] stk1160: fix spelling mistake: "synchronuously" -> "synchronously"
-Message-Id: <20171102101153.18225-6-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Nov 2017 16:53:10 +0000
+Subject: [PATCH RFC v1] nfs/write: Use common error handling code in nfs_lock_and_join_requests()
+Message-Id: <7f072f78-eef4-6d87-d233-cee71dac5a32@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102101153.18225-1-colin.king@canonical.com>
-In-Reply-To: <20171102101153.18225-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: linux-nfs@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Trivial fix to spelling mistake in error message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/stk1160/stk1160-video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/stk1160/stk1160-video.c b/drivers/media/usb/stk1160/stk1160-video.c
-index ce8ebbe395a6..423c03a0638d 100644
---- a/drivers/media/usb/stk1160/stk1160-video.c
-+++ b/drivers/media/usb/stk1160/stk1160-video.c
-@@ -38,10 +38,10 @@ static inline void print_err_status(struct stk1160 *dev,
- 
- 	switch (status) {
- 	case -ENOENT:
--		errmsg = "unlinked synchronuously";
-+		errmsg = "unlinked synchronously";
- 		break;
- 	case -ECONNRESET:
--		errmsg = "unlinked asynchronuously";
-+		errmsg = "unlinked asynchronously";
- 		break;
- 	case -ENOSR:
- 		errmsg = "Buffer error (overrun)";
--- 
-2.14.1
-
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
+OiBUdWUsIDcgTm92IDIwMTcgMDg6NTE6MDAgKzAxMDAKCkFkZCBhIGp1bXAgdGFyZ2V0IHNvIHRo
+YXQgYSBiaXQgb2YgZXhjZXB0aW9uIGhhbmRsaW5nIGNhbiBiZSBiZXR0ZXIgcmV1c2VkCmF0IHRo
+ZSBlbmQgb2YgdGhpcyBmdW5jdGlvbi4KClRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5n
+IHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLgoKU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcg
+PGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgotLS0KCnYxIC0gUmVxdWVzdCBmb3IgY29t
+bWVudHM6CkkgY2FuIG9mZmVyIGFub3RoZXIgYml0IG9mIGluZm9ybWF0aW9uIGZvciBhIHNvZnR3
+YXJlIGRldmVsb3BtZW50IGRpc2N1c3Npb24uIPCfkq0KClRoZSBhZmZlY3RlZCBzb3VyY2UgZmls
+ZSBjYW4gYmUgY29tcGlsZWQgZm9yIHRoZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4Nl82
+NOKAnQpieSBhIHRvb2wgbGlrZSDigJxHQ0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0aGUg
+c29mdHdhcmUgZGlzdHJpYnV0aW9uCuKAnG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0aGUg
+Zm9sbG93aW5nIGNvbW1hbmQgZXhhbXBsZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYgbXlf
+bW9kdWxlPWZzL25mcy93cml0ZS5vIFwKJiYgZm9yIFhZWiBpbiAwIHMgMzsgZG8gZWNobyAiICAg
+X19fX18gJFhZWiBfX19fXyIgXAomJiBteV9leHRyYT0iLU8kWFlaIiBcCiYmIGdpdCBjaGVja291
+dCBuZXh0LTIwMTcxMTAyIFwKJiYgbWFrZSAtajQgQ0M9IiR7bXlfY2N9IiBIT1NUQ0M9IiR7bXlf
+Y2N9IiBFWFRSQV9DRkxBR1M9IiR7bXlfZXh0cmF9IiBhbGxtb2Rjb25maWcgIiR7bXlfbW9kdWxl
+fSIgXAomJiBzaXplICIke215X21vZHVsZX0iIFwKJiYgZ2l0IGNoZWNrb3V0ICc6L15uZnMvd3Jp
+dGU6IFVzZSBjb21tb24gZXJyb3IgaGFuZGxpbmcgY29kZSBpbiBuZnNfbG9ja19hbmRfam9pbl9y
+ZXF1ZXN0cycgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30iIEhPU1RDQz0iJHtteV9jY30iIEVY
+VFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZpZyAiJHtteV9tb2R1bGV9IiBcCiYm
+IHNpemUgIiR7bXlfbW9kdWxlfSI7IGRvbmUKCgrwn5SuIERvIHlvdSBmaW5kIHRoZSBmb2xsb3dp
+bmcgZGlmZmVyZW5jZXMgd29ydGggZm9yIGZ1cnRoZXIgY2xhcmlmaWNhdGlvbj8KCuKVlOKVkOKV
+kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKVkOKVkOKVkOKVkOKVkOKVkOKVlwrilZEgc2V0dGlu
+ZyDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWq4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWQ4pWjCuKVkSAgIE8wICAgIOKUgiA/Pz8gIOKVkSAgIENvbXBpbGF0aW9uIGZhaWx1
+cmU/CuKVkSAgIE9zICAgIOKUgiAtMTcgIOKVkQrilZEgICBPMyAgICDilIIgLTE2ICDilZEK4pWa
+4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWdCgoKIGZz
+L25mcy93cml0ZS5jIHwgMTcgKysrKysrKysrLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA5IGlu
+c2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvbmZzL3dyaXRlLmMg
+Yi9mcy9uZnMvd3JpdGUuYwppbmRleCBiYWJlYmJjY2FlMmEuLjViNWY0NjRmNmYyYSAxMDA2NDQK
+LS0tIGEvZnMvbmZzL3dyaXRlLmMKKysrIGIvZnMvbmZzL3dyaXRlLmMKQEAgLTQ4NywxMCArNDg3
+LDggQEAgbmZzX2xvY2tfYW5kX2pvaW5fcmVxdWVzdHMoc3RydWN0IHBhZ2UgKnBhZ2UpCiAJfQog
+CiAJcmV0ID0gbmZzX3BhZ2VfZ3JvdXBfbG9jayhoZWFkKTsKLQlpZiAocmV0IDwgMCkgewotCQlu
+ZnNfdW5sb2NrX2FuZF9yZWxlYXNlX3JlcXVlc3QoaGVhZCk7Ci0JCXJldHVybiBFUlJfUFRSKHJl
+dCk7Ci0JfQorCWlmIChyZXQgPCAwKQorCQlnb3RvIHJlbGVhc2VfcmVxdWVzdDsKIAogCS8qIGxv
+Y2sgZWFjaCByZXF1ZXN0IGluIHRoZSBwYWdlIGdyb3VwICovCiAJdG90YWxfYnl0ZXMgPSBoZWFk
+LT53Yl9ieXRlczsKQEAgLTUxNSw4ICs1MTMsNyBAQCBuZnNfbG9ja19hbmRfam9pbl9yZXF1ZXN0
+cyhzdHJ1Y3QgcGFnZSAqcGFnZSkKIAkJCWlmIChyZXQgPCAwKSB7CiAJCQkJbmZzX3Vucm9sbF9s
+b2Nrcyhpbm9kZSwgaGVhZCwgc3VicmVxKTsKIAkJCQluZnNfcmVsZWFzZV9yZXF1ZXN0KHN1YnJl
+cSk7Ci0JCQkJbmZzX3VubG9ja19hbmRfcmVsZWFzZV9yZXF1ZXN0KGhlYWQpOwotCQkJCXJldHVy
+biBFUlJfUFRSKHJldCk7CisJCQkJZ290byByZWxlYXNlX3JlcXVlc3Q7CiAJCQl9CiAJCX0KIAkJ
+LyoKQEAgLTUzMiw4ICs1MjksOCBAQCBuZnNfbG9ja19hbmRfam9pbl9yZXF1ZXN0cyhzdHJ1Y3Qg
+cGFnZSAqcGFnZSkKIAkJCW5mc19wYWdlX2dyb3VwX3VubG9jayhoZWFkKTsKIAkJCW5mc191bnJv
+bGxfbG9ja3MoaW5vZGUsIGhlYWQsIHN1YnJlcSk7CiAJCQluZnNfdW5sb2NrX2FuZF9yZWxlYXNl
+X3JlcXVlc3Qoc3VicmVxKTsKLQkJCW5mc191bmxvY2tfYW5kX3JlbGVhc2VfcmVxdWVzdChoZWFk
+KTsKLQkJCXJldHVybiBFUlJfUFRSKC1FSU8pOworCQkJcmV0ID0gLUVJTzsKKwkJCWdvdG8gcmVs
+ZWFzZV9yZXF1ZXN0OwogCQl9CiAJfQogCkBAIC01NzYsNiArNTczLDEwIEBAIG5mc19sb2NrX2Fu
+ZF9qb2luX3JlcXVlc3RzKHN0cnVjdCBwYWdlICpwYWdlKQogCS8qIHN0aWxsIGhvbGRzIHJlZiBv
+biBoZWFkIGZyb20gbmZzX3BhZ2VfZmluZF9oZWFkX3JlcXVlc3QKIAkgKiBhbmQgc3RpbGwgaGFz
+IGxvY2sgb24gaGVhZCBmcm9tIGxvY2sgbG9vcCAqLwogCXJldHVybiBoZWFkOworCityZWxlYXNl
+X3JlcXVlc3Q6CisJbmZzX3VubG9ja19hbmRfcmVsZWFzZV9yZXF1ZXN0KGhlYWQpOworCXJldHVy
+biBFUlJfUFRSKHJldCk7CiB9CiAKIHN0YXRpYyB2b2lkIG5mc193cml0ZV9lcnJvcl9yZW1vdmVf
+cGFnZShzdHJ1Y3QgbmZzX3BhZ2UgKnJlcSkKLS0gCjIuMTUuMAoKLS0KVG8gdW5zdWJzY3JpYmUg
+ZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9y
+cyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcK
+TW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
+aW5mby5odG1s
