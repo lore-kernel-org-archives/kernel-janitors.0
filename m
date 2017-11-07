@@ -1,95 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 20:38:28 +0000
-Subject: [PATCH 3/3] ALSA: es1938: Use common error handling code in snd_es1938_create()
-Message-Id: <08c88cad-b4cf-948a-e990-390617503ffd@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 18:49:14 +0000
+Subject: [PATCH] w1: remove redundant assignments to search_bit and last_rn
+Message-Id: <20171107184914.7561-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <afd9d456-ae8e-b2f6-a682-a27c1fa4209b@users.sourceforge.net>
-In-Reply-To: <afd9d456-ae8e-b2f6-a682-a27c1fa4209b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 21:25:55 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+Variables search_bit and last_rn are assigned values before a while-loop
+however these initial values are never read (as they are overwritten
+inside the loop). Thus these initial assignments are redundant and can
+be removed. Cleans up clang warnings:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+drivers/w1/w1.c:967:2: warning: Value stored to 'search_bit' is never
+read
+drivers/w1/w1.c:969:2: warning: Value stored to 'last_rn' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/es1938.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/w1/w1.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/pci/es1938.c b/sound/pci/es1938.c
-index b19e611345d1..2b4dd1297bbc 100644
---- a/sound/pci/es1938.c
-+++ b/sound/pci/es1938.c
-@@ -1606,14 +1606,14 @@ static int snd_es1938_create(struct snd_card *card,
- 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(24)) < 0) {
- 		dev_err(card->dev,
- 			"architecture does not support 24bit PCI busmaster DMA\n");
--		pci_disable_device(pci);
--                return -ENXIO;
-+		err = -ENXIO;
-+		goto disable_device;
-         }
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index 0c2a5a8327bd..c29f6c5dda3c 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -964,9 +964,7 @@ void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb
+ 	int search_bit, desc_bit;
+ 	u8  triplet_ret = 0;
  
- 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
- 	if (chip = NULL) {
--		pci_disable_device(pci);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto disable_device;
- 	}
- 	spin_lock_init(&chip->reg_lock);
- 	spin_lock_init(&chip->mixer_lock);
-@@ -1623,8 +1623,7 @@ static int snd_es1938_create(struct snd_card *card,
- 	err = pci_request_regions(pci, "ESS Solo-1");
- 	if (err < 0) {
- 		kfree(chip);
--		pci_disable_device(pci);
--		return err;
-+		goto disable_device;
- 	}
- 	chip->io_port = pci_resource_start(pci, 0);
- 	chip->sb_port = pci_resource_start(pci, 1);
-@@ -1634,8 +1633,8 @@ static int snd_es1938_create(struct snd_card *card,
- 	if (request_irq(pci->irq, snd_es1938_interrupt, IRQF_SHARED,
- 			KBUILD_MODNAME, chip)) {
- 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_es1938_free(chip);
--		return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
- 	}
- 	chip->irq = pci->irq;
- 	dev_dbg(card->dev,
-@@ -1647,13 +1646,19 @@ static int snd_es1938_create(struct snd_card *card,
- 	snd_es1938_chip_init(chip);
+-	search_bit = 0;
+ 	rn = dev->search_id;
+-	last_rn = 0;
+ 	last_device = 0;
+ 	last_zero = -1;
  
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
--	if (err < 0) {
--		snd_es1938_free(chip);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	*rchip = chip;
- 	return 0;
-+
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
-+
-+free_sound_chip:
-+	snd_es1938_free(chip);
-+	return err;
- }
- 
- /* --------------------------------------------------------------------
 -- 
-2.15.0
+2.14.1
 
