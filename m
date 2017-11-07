@@ -1,116 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 12:53:52 +0000
-Subject: [PATCH 3/3] ALSA: cs4281: Use common error handling code in snd_cs4281_create()
-Message-Id: <c6e82722-df16-6781-be3f-eba6e9e0fd08@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 18:56:30 +0000
+Subject: [PATCH] zd1201: remove unused variable framelen
+Message-Id: <20171107185630.7791-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
-In-Reply-To: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 13:34:57 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-* Add jump targets so that a bit of exception handling can be better reused
-  at the end of this function.
+Variable framelen is assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-* Delete the local variable "tmp" which was unnecessary
-  because the variable "err" could be used at this place again.
+drivers/net/wireless/zydas/zd1201.c:234:3: warning: Value stored
+to 'framelen' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/cs4281.c | 41 +++++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 20 deletions(-)
+ drivers/net/wireless/zydas/zd1201.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
-index ed6b97dbd1cc..6cd7300a0182 100644
---- a/sound/pci/cs4281.c
-+++ b/sound/pci/cs4281.c
-@@ -1347,7 +1347,6 @@ static int snd_cs4281_create(struct snd_card *card,
- 			     int dual_codec)
- {
- 	struct cs4281 *chip;
--	unsigned int tmp;
- 	int err;
- 	static struct snd_device_ops ops = {
- 		.dev_free =	snd_cs4281_dev_free,
-@@ -1359,8 +1358,8 @@ static int snd_cs4281_create(struct snd_card *card,
- 		return err;
- 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
- 	if (chip = NULL) {
--		pci_disable_device(pci);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto disable_device;
- 	}
- 	spin_lock_init(&chip->reg_lock);
- 	chip->card = card;
-@@ -1376,43 +1375,45 @@ static int snd_cs4281_create(struct snd_card *card,
- 	err = pci_request_regions(pci, "CS4281");
- 	if (err < 0) {
- 		kfree(chip);
--		pci_disable_device(pci);
--		return err;
-+		goto disable_device;
- 	}
- 	chip->ba0_addr = pci_resource_start(pci, 0);
- 	chip->ba1_addr = pci_resource_start(pci, 1);
+diff --git a/drivers/net/wireless/zydas/zd1201.c b/drivers/net/wireless/zydas/zd1201.c
+index 581e8577a221..253403899fe9 100644
+--- a/drivers/net/wireless/zydas/zd1201.c
++++ b/drivers/net/wireless/zydas/zd1201.c
+@@ -230,8 +230,7 @@ static void zd1201_usbrx(struct urb *urb)
+ 	/* Info frame */
+ 	if (type = ZD1201_PACKET_INQUIRE) {
+ 		int i = 0;
+-		unsigned short infotype, framelen, copylen;
+-		framelen = le16_to_cpu(*(__le16*)&data[4]);
++		unsigned short infotype, copylen;
+ 		infotype = le16_to_cpu(*(__le16*)&data[6]);
  
- 	chip->ba0 = pci_ioremap_bar(pci, 0);
- 	chip->ba1 = pci_ioremap_bar(pci, 1);
--	if (!chip->ba0 || !chip->ba1) {
--		snd_cs4281_free(chip);
--		return -ENOMEM;
--	}
-+	if (!chip->ba0 || !chip->ba1)
-+		goto e_nomem;
- 	
- 	if (request_irq(pci->irq, snd_cs4281_interrupt, IRQF_SHARED,
- 			KBUILD_MODNAME, chip)) {
- 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_cs4281_free(chip);
--		return -ENOMEM;
-+		goto e_nomem;
- 	}
- 	chip->irq = pci->irq;
- 
--	tmp = snd_cs4281_chip_init(chip);
--	if (tmp) {
--		snd_cs4281_free(chip);
--		return tmp;
--	}
-+	err = snd_cs4281_chip_init(chip);
-+	if (err)
-+		goto free_sound_chip;
- 
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
--	if (err < 0) {
--		snd_cs4281_free(chip);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	snd_cs4281_proc_init(chip);
- 
- 	*rchip = chip;
- 	return 0;
-+
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
-+
-+e_nomem:
-+	err = -ENOMEM;
-+free_sound_chip:
-+	snd_cs4281_free(chip);
-+	return err;
- }
- 
- static int snd_cs4281_chip_init(struct cs4281 *chip)
+ 		if (infotype = ZD1201_INF_LINKSTATUS) {
 -- 
-2.15.0
+2.14.1
 
