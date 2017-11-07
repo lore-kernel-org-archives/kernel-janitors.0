@@ -1,42 +1,72 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 19:30:04 +0000
-Subject: [PATCH] video/fbdev/wm8505fb: Delete an error message for a failed memory allocation in wm8505fb_pro
-Message-Id: <8f4f12ca-f2b3-6b3b-5f4c-5519f13c474f@users.sourceforge.net>
+Date: Tue, 07 Nov 2017 15:02:32 +0000
+Subject: [PATCH RFC v1] caif: Use common error handling code in cfdgml_receive()
+Message-Id: <034c0760-b8af-0fe2-e7a0-81199ff31931@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:22:10 +0100
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/video/fbdev/wm8505fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/video/fbdev/wm8505fb.c b/drivers/video/fbdev/wm8505fb.c
-index 253ffe9baab2..8f0d5379861d 100644
---- a/drivers/video/fbdev/wm8505fb.c
-+++ b/drivers/video/fbdev/wm8505fb.c
-@@ -276,10 +276,8 @@ static int wm8505fb_probe(struct platform_device *pdev)
- 
- 	fbi = devm_kzalloc(&pdev->dev, sizeof(struct wm8505fb_info) +
- 			sizeof(u32) * 16, GFP_KERNEL);
--	if (!fbi) {
--		dev_err(&pdev->dev, "Failed to initialize framebuffer device\n");
-+	if (!fbi)
- 		return -ENOMEM;
--	}
- 
- 	strcpy(fbi->fb.fix.id, DRIVER_NAME);
- 
--- 
-2.15.0
-
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
+OiBUdWUsIDcgTm92IDIwMTcgMTE6MzA6MjUgKzAxMDAKCiogQWRqdXN0IGp1bXAgdGFyZ2V0cyBz
+byB0aGF0IGEgYml0IG9mIGV4Y2VwdGlvbiBoYW5kbGluZyBjYW4gYmUgYmV0dGVyCiAgcmV1c2Vk
+IGF0IHRoZSBlbmQgb2YgdGhpcyBmdW5jdGlvbi4KCiogQWRqdXN0IHR3byBjb25kaXRpb24gY2hl
+Y2tzLgoKVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVsbGUgc29m
+dHdhcmUuCgpTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3Vy
+Y2Vmb3JnZS5uZXQ+Ci0tLQoKdjEgLSBSZXF1ZXN0IGZvciBjb21tZW50czoKSSBjYW4gb2ZmZXIg
+YW5vdGhlciBiaXQgb2YgaW5mb3JtYXRpb24gZm9yIGEgc29mdHdhcmUgZGV2ZWxvcG1lbnQgZGlz
+Y3Vzc2lvbi4g8J+SrQoKVGhlIGFmZmVjdGVkIHNvdXJjZSBmaWxlIGNhbiBiZSBjb21waWxlZCBm
+b3IgdGhlIHByb2Nlc3NvciBhcmNoaXRlY3R1cmUg4oCceDg2XzY04oCdCmJ5IGEgdG9vbCBsaWtl
+IOKAnEdDQyA2LjQuMStyMjUxNjMxLTEuM+KAnSBmcm9tIHRoZSBzb2Z0d2FyZSBkaXN0cmlidXRp
+b24K4oCcb3BlblNVU0UgVHVtYmxld2VlZOKAnSB3aXRoIHRoZSBmb2xsb3dpbmcgY29tbWFuZCBl
+eGFtcGxlLgoKbXlfY2M9L3Vzci9iaW4vZ2NjLTYgXAomJiBteV9tb2R1bGU9bmV0L2NhaWYvY2Zk
+Z21sLm8gXAomJiBmb3IgWFlaIGluIDAgcyAzOyBkbyBlY2hvICIgICBfX19fXyAkWFlaIF9fX19f
+IiBcCiYmIG15X2V4dHJhPSItTyRYWVoiIFwKJiYgZ2l0IGNoZWNrb3V0IG5leHQtMjAxNzExMDIg
+XAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30iIEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFH
+Uz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZpZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7
+bXlfbW9kdWxlfSIgXAomJiBnaXQgY2hlY2tvdXQgJzovXmNhaWY6IFVzZSBjb21tb24gZXJyb3Ig
+aGFuZGxpbmcgY29kZSBpbiBjZmRnbWxfcmVjZWl2ZScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9j
+Y30iIEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNv
+bmZpZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSI7IGRvbmUKCgrwn5Su
+IERvIHlvdSBmaW5kIHRoZSBmb2xsb3dpbmcgZGlmZmVyZW5jZXMgd29ydGggZm9yIGZ1cnRoZXIg
+Y2xhcmlmaWNhdGlvbj8KCuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKVkOKVkOKV
+kOKVkOKVkOKVkOKVlwrilZEgc2V0dGluZyDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWQ4pWQ4pWq4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSAgIE8wICAgIOKUgiAtNTkg
+IOKVkQrilZEgICBPcyAgICDilIIgKzI0ICDilZEK4pWRICAgTzMgICAg4pSCICszNiAg4pWRCuKV
+muKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVp+KVkOKVkOKVkOKVkOKVkOKVkOKVnQoKCiBu
+ZXQvY2FpZi9jZmRnbWwuYyB8IDMzICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQog
+MSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQoKZGlmZiAt
+LWdpdCBhL25ldC9jYWlmL2NmZGdtbC5jIGIvbmV0L2NhaWYvY2ZkZ21sLmMKaW5kZXggM2JkZGRi
+MzJkNTVhLi5jYzdiMmM5NDRiYjIgMTAwNjQ0Ci0tLSBhL25ldC9jYWlmL2NmZGdtbC5jCisrKyBi
+L25ldC9jYWlmL2NmZGdtbC5jCkBAIC00NywxOCArNDcsMTMgQEAgc3RhdGljIGludCBjZmRnbWxf
+cmVjZWl2ZShzdHJ1Y3QgY2ZsYXllciAqbGF5ciwgc3RydWN0IGNmcGt0ICpwa3QpCiAJY2FpZl9h
+c3NlcnQobGF5ci0+cmVjZWl2ZSAhPSBOVUxMKTsKIAljYWlmX2Fzc2VydChsYXlyLT5jdHJsY21k
+ICE9IE5VTEwpOwogCi0JaWYgKGNmcGt0X2V4dHJfaGVhZChwa3QsICZjbWQsIDEpIDwgMCkgewot
+CQlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKLQkJY2Zwa3RfZGVzdHJveShwa3Qp
+OwotCQlyZXR1cm4gLUVQUk9UTzsKLQl9CisJaWYgKGNmcGt0X2V4dHJfaGVhZChwa3QsICZjbWQs
+IDEpKQorCQlnb3RvIHJlcG9ydF9wYWNrZXRfZmFpbHVyZTsKIAogCWlmICgoY21kICYgREdNX0NN
+RF9CSVQpID0gMCkgewotCQlpZiAoY2Zwa3RfZXh0cl9oZWFkKHBrdCwgJmRnbWhkciwgMykgPCAw
+KSB7Ci0JCQlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKLQkJCWNmcGt0X2Rlc3Ry
+b3kocGt0KTsKLQkJCXJldHVybiAtRVBST1RPOwotCQl9CisJCWlmIChjZnBrdF9leHRyX2hlYWQo
+cGt0LCAmZGdtaGRyLCAzKSkKKwkJCWdvdG8gcmVwb3J0X3BhY2tldF9mYWlsdXJlOworCiAJCXJl
+dCA9IGxheXItPnVwLT5yZWNlaXZlKGxheXItPnVwLCBwa3QpOwogCQlyZXR1cm4gcmV0OwogCX0K
+QEAgLTY2LDE3ICs2MSwyMyBAQCBzdGF0aWMgaW50IGNmZGdtbF9yZWNlaXZlKHN0cnVjdCBjZmxh
+eWVyICpsYXlyLCBzdHJ1Y3QgY2Zwa3QgKnBrdCkKIAlzd2l0Y2ggKGNtZCkgewogCWNhc2UgREdN
+X0ZMT1dfT0ZGOgkvKiBGTE9XIE9GRiAqLwogCQlsYXlyLT5jdHJsY21kKGxheXIsIENBSUZfQ1RS
+TENNRF9GTE9XX09GRl9JTkQsIDApOwotCQljZnBrdF9kZXN0cm95KHBrdCk7Ci0JCXJldHVybiAw
+OworCQlyZXQgPSAwOworCQlnb3RvIGRlc3Ryb3lfcGFja2V0OwogCWNhc2UgREdNX0ZMT1dfT046
+CS8qIEZMT1cgT04gKi8KIAkJbGF5ci0+Y3RybGNtZChsYXlyLCBDQUlGX0NUUkxDTURfRkxPV19P
+Tl9JTkQsIDApOwotCQljZnBrdF9kZXN0cm95KHBrdCk7Ci0JCXJldHVybiAwOworCQlyZXQgPSAw
+OworCQlnb3RvIGRlc3Ryb3lfcGFja2V0OwogCWRlZmF1bHQ6Ci0JCWNmcGt0X2Rlc3Ryb3kocGt0
+KTsKIAkJcHJfaW5mbygiVW5rbm93biBkYXRhZ3JhbSBjb250cm9sICVkICgweCV4KVxuIiwgY21k
+LCBjbWQpOwotCQlyZXR1cm4gLUVQUk9UTzsKKwkJZ290byBlX3Byb3RvOwogCX0KK3JlcG9ydF9w
+YWNrZXRfZmFpbHVyZToKKwlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKK2VfcHJv
+dG86CisJcmV0ID0gLUVQUk9UTzsKK2Rlc3Ryb3lfcGFja2V0OgorCWNmcGt0X2Rlc3Ryb3kocGt0
+KTsKKwlyZXR1cm4gcmV0OwogfQogCiBzdGF0aWMgaW50IGNmZGdtbF90cmFuc21pdChzdHJ1Y3Qg
+Y2ZsYXllciAqbGF5ciwgc3RydWN0IGNmcGt0ICpwa3QpCi0tIAoyLjE1LjAKCi0tClRvIHVuc3Vi
+c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwt
+amFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
+ZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
+b3Jkb21vLWluZm8uaHRtbA==
