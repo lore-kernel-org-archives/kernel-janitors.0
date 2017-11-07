@@ -1,27 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 21:04:06 +0000
-Subject: [PATCH 0/2] ALSA: intel8x0m: Fine-tuning for five function implementations
-Message-Id: <fb982b27-f9b8-959b-9bb6-17f217aa3220@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 11:45:27 +0000
+Subject: [PATCH] USB: adutux: remove redundant variable minor
+Message-Id: <20171107114527.22979-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 22:00:11 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Two update suggestions were taken into account
-from static source code analysis.
+Variable minor is being assigned but never read, hence it is redundant
+and can be removed. Cleans up clang warning:
 
-Markus Elfring (2):
-  Adjust 12 function calls together with a variable assignment
-  Use common error handling code in two functions
+drivers/usb/misc/adutux.c:770:2: warning: Value stored to 'minor' is
+never read
 
- sound/pci/intel8x0m.c | 100 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 57 insertions(+), 43 deletions(-)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/misc/adutux.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
+index e9195a7103a8..4b8712733fc7 100644
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -757,13 +757,11 @@ static int adu_probe(struct usb_interface *interface,
+ static void adu_disconnect(struct usb_interface *interface)
+ {
+ 	struct adu_device *dev;
+-	int minor;
+ 
+ 	dev = usb_get_intfdata(interface);
+ 
+ 	mutex_lock(&dev->mtx);	/* not interruptible */
+ 	dev->udev = NULL;	/* poison */
+-	minor = dev->minor;
+ 	usb_deregister_dev(interface, &adu_class);
+ 	mutex_unlock(&dev->mtx);
+ 
 -- 
-2.15.0
+2.14.1
 
