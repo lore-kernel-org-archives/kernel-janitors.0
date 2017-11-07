@@ -1,57 +1,101 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 20:30:22 +0000
-Subject: [PATCH 2/2] ASoC: cs35l34: Improve two size determinations in cs35l34_i2c_probe()
-Message-Id: <044cfc92-158f-3bff-a2e6-4993a9070e13@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 15:47:24 +0000
+Subject: [PATCH] net: vxge: remove redundant assignments and pointers
+Message-Id: <20171107154724.4494-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
-In-Reply-To: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jon Mason <jdmason@kudzu.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 21:17:42 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+There are several pointers that are being assigned but never read
+so remove these as they are redundant.  Also remove an assignment
+to function_mode that is never read. Cleans up several clang
+warnings:
 
-This issue was detected by using the Coccinelle software.
+vxge-main.c:1139:2: warning: Value stored to 'hldev' is never read
+vxge-main.c:1294:2: warning: Value stored to 'hldev' is never read
+vxge-main.c:2188:2: warning: Value stored to 'dev' is never read
+vxge-main.c:2188:2: warning: Value stored to 'dev' is never read
+vxge-main.c:2723:2: warning: Value stored to 'function_mode' is
+never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/cs35l34.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/neterion/vxge/vxge-main.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
-index 6cbdbbe53940..0600d5264c4c 100644
---- a/sound/soc/codecs/cs35l34.c
-+++ b/sound/soc/codecs/cs35l34.c
-@@ -1004,9 +1004,7 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int devid = 0;
- 	unsigned int reg;
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+index f6ab1d6522a9..fe7e0e1dd01d 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+@@ -1122,7 +1122,6 @@ static void vxge_set_multicast(struct net_device *dev)
+ 	struct netdev_hw_addr *ha;
+ 	struct vxgedev *vdev;
+ 	int i, mcast_cnt = 0;
+-	struct __vxge_hw_device *hldev;
+ 	struct vxge_vpath *vpath;
+ 	enum vxge_hw_status status = VXGE_HW_OK;
+ 	struct macInfo mac_info;
+@@ -1136,7 +1135,6 @@ static void vxge_set_multicast(struct net_device *dev)
+ 		"%s:%d", __func__, __LINE__);
  
--	cs35l34 = devm_kzalloc(&i2c_client->dev,
--			       sizeof(struct cs35l34_private),
--			       GFP_KERNEL);
-+	cs35l34 = devm_kzalloc(&i2c_client->dev, sizeof(*cs35l34), GFP_KERNEL);
- 	if (!cs35l34)
- 		return -ENOMEM;
+ 	vdev = netdev_priv(dev);
+-	hldev = vdev->devh;
  
-@@ -1042,9 +1040,8 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs35l34->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				sizeof(struct cs35l34_platform_data),
--				GFP_KERNEL);
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
-+				     GFP_KERNEL);
- 		if (!pdata)
- 			return -ENOMEM;
+ 	if (unlikely(!is_vxge_card_up(vdev)))
+ 		return;
+@@ -1283,7 +1281,6 @@ static int vxge_set_mac_addr(struct net_device *dev, void *p)
+ {
+ 	struct sockaddr *addr = p;
+ 	struct vxgedev *vdev;
+-	struct __vxge_hw_device *hldev;
+ 	enum vxge_hw_status status = VXGE_HW_OK;
+ 	struct macInfo mac_info_new, mac_info_old;
+ 	int vpath_idx = 0;
+@@ -1291,7 +1288,6 @@ static int vxge_set_mac_addr(struct net_device *dev, void *p)
+ 	vxge_debug_entryexit(VXGE_TRACE, "%s:%d", __func__, __LINE__);
  
+ 	vdev = netdev_priv(dev);
+-	hldev = vdev->devh;
+ 
+ 	if (!is_valid_ether_addr(addr->sa_data))
+ 		return -EINVAL;
+@@ -2177,7 +2173,6 @@ static void adaptive_coalesce_rx_interrupts(struct vxge_ring *ring)
+  */
+ static irqreturn_t vxge_isr_napi(int irq, void *dev_id)
+ {
+-	struct net_device *dev;
+ 	struct __vxge_hw_device *hldev;
+ 	u64 reason;
+ 	enum vxge_hw_status status;
+@@ -2185,7 +2180,6 @@ static irqreturn_t vxge_isr_napi(int irq, void *dev_id)
+ 
+ 	vxge_debug_intr(VXGE_TRACE, "%s:%d", __func__, __LINE__);
+ 
+-	dev = vdev->ndev;
+ 	hldev = pci_get_drvdata(vdev->pdev);
+ 
+ 	if (pci_channel_offline(vdev->pdev))
+@@ -2713,14 +2707,13 @@ static int vxge_open(struct net_device *dev)
+ 	struct vxge_vpath *vpath;
+ 	int ret = 0;
+ 	int i;
+-	u64 val64, function_mode;
++	u64 val64;
+ 
+ 	vxge_debug_entryexit(VXGE_TRACE,
+ 		"%s: %s:%d", dev->name, __func__, __LINE__);
+ 
+ 	vdev = netdev_priv(dev);
+ 	hldev = pci_get_drvdata(vdev->pdev);
+-	function_mode = vdev->config.device_hw_info.function_mode;
+ 
+ 	/* make sure you have link off by default every time Nic is
+ 	 * initialized */
 -- 
-2.15.0
+2.14.1
 
