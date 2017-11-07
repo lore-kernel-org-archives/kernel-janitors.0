@@ -1,22 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 20 Nov 2017 02:37:38 +0000
-Subject: Re: [PATCH] net: vxge: Fix some indentation issues
-Message-Id: <20171120.113738.294736948215964383.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 11:41:07 +0000
+Subject: [PATCH] tty: serial: jsm: remove redundant pointer ts
+Message-Id: <20171107114107.22805-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171119124133.3198-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171119124133.3198-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: jdmason@kudzu.us, edumazet@google.com, keescook@chromium.org, mark.rutland@arm.com, stephen@networkplumber.org, mlichvar@redhat.com, colin.king@canonical.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Guilherme G . Piccoli" <gpiccoli@linux.vnet.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 19 Nov 2017 13:41:33 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> Some statements are not enough or too much indented.
-> Fix it to improve readalbility.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Pointer ts is assigned a value that is never read, ts is therefore
+redundant and can be removed. Cleans up clang warning:
 
-Applied.
+drivers/tty/serial/jsm/jsm_tty.c:285:2: warning: Value stored to 'ts'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/serial/jsm/jsm_tty.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_tty.c
+index e69227cc3827..5ecd878669b8 100644
+--- a/drivers/tty/serial/jsm/jsm_tty.c
++++ b/drivers/tty/serial/jsm/jsm_tty.c
+@@ -275,14 +275,12 @@ static int jsm_tty_open(struct uart_port *port)
+ static void jsm_tty_close(struct uart_port *port)
+ {
+ 	struct jsm_board *bd;
+-	struct ktermios *ts;
+ 	struct jsm_channel *channel  		container_of(port, struct jsm_channel, uart_port);
+ 
+ 	jsm_dbg(CLOSE, &channel->ch_bd->pci_dev, "start\n");
+ 
+ 	bd = channel->ch_bd;
+-	ts = &port->state->port.tty->termios;
+ 
+ 	channel->ch_flags &= ~(CH_STOPI);
+ 
+-- 
+2.14.1
+
