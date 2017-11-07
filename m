@@ -1,92 +1,68 @@
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 30 Nov 2017 15:26:29 +0000
-Subject: Re: [PATCH] of: overlay: fix memory leak of ovcs on error exit path
-Message-Id: <CAL_JsqLQsEKr4K=rOa6qeA-uxpKQuTb1LvvMBHpiXenz8Jp6xg@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 07 Nov 2017 00:24:45 +0000
+Subject: Re: [PATCH] Coccinelle: make DEBUG_FILE option more useful
+Message-Id: <CAK7LNASw=ECjKxwemiF904HeR5B_FUGGPxjZY3brH66iMs=9+Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171129191750.25254-1-colin.king@canonical.com>
- <dcb4e2a4-707b-0ccc-e12b-c6fa4ef251b7@gmail.com> <806a0467-87c8-4100-c7f2-54cfa8732465@canonical.com>
- <75d7d1c8-8a19-1a4c-0796-7cf69fdebe6d@gmail.com> <788fe2e4-03b2-6f9d-f5dd-5bdf0c48892f@gmail.com>
-In-Reply-To: <788fe2e4-03b2-6f9d-f5dd-5bdf0c48892f@gmail.com>
+References: <1508061353-24744-1-git-send-email-Julia.Lawall@lip6.fr>
+ <CAK7LNAQMTptVYLu10uF+85OsuANbC7Fo0heD4t1ybpUE6Yh-gQ@mail.gmail.com>
+ <alpine.DEB.2.20.1710260601520.17107@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1710260601520.17107@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Colin Ian King <colin.king@canonical.com>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-On Thu, Nov 30, 2017 at 9:01 AM, Frank Rowand <frowand.list@gmail.com> wrote:
-> On 11/30/17 08:37, Frank Rowand wrote:
->> Hi Colin, Rob,
->>
->> On 11/30/17 07:18, Colin Ian King wrote:
->>> On 30/11/17 12:14, Frank Rowand wrote:
->>>> On 11/29/17 14:17, Colin King wrote:
->>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>
->>>>> Currently if the call to of_resolve_phandles fails then then ovcs
->>>>> is not kfree'd on the error exit path.  Rather than try and make
->>>>> the clean up exit path more convoluted, fix this by just kfree'ing
->>>>> ovcs at the point of error detection and exit via the same exit
->>>>> path.
->>>>>
->>>>> Detected by CoverityScan, CID#1462296 ("Resource Leak")
->>>>>
->>>>> Fixes: f948d6d8b792 ("of: overlay: avoid race condition between applying multiple overlays")
->>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>>> ---
->>>>>  drivers/of/overlay.c | 4 +++-
->>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->>>>> index 53bc9e3f0b98..6c8efe7d8cbb 100644
->>>>> --- a/drivers/of/overlay.c
->>>>> +++ b/drivers/of/overlay.c
->>>>> @@ -708,8 +708,10 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
->>>>>    of_overlay_mutex_lock();
->>>>>
->>>>>    ret = of_resolve_phandles(tree);
->>>>> -  if (ret)
->>>>> +  if (ret) {
->>>>> +          kfree(ovcs);
->>>>>            goto err_overlay_unlock;
->>>>> +  }
->>>>>
->>>>>    mutex_lock(&of_mutex);
->>>>>
->>>>>
->>>>
->>>> False coverity warning.  ovcs is freed in free_overlay_changeset().
->>>>
->>>
->>> The error exit path is via err_overlay_unlock:
->>>
->>> err_overlay_unlock:
->>>         of_overlay_mutex_unlock();
->>>
->>> out:
->>>         pr_debug("%s() err=%d\n", __func__, ret);
->>>
->>>         return ret;
->>>
->>> ..so there is no call to free_overlay_changeset there.
->>>
->>> Colin
->>>
->>
->> OK, I was looking at 4.15-rc1.  You must be looking at a later version where
->> "[PATCH 1/2] of: overlay: Fix cleanup order in of_overlay_apply()" has been
->> applied.  Thanks for providing the extra details about the exit path so I
->> could see that.
->>
->> Rob, I think that the fix for cleanup order was not the best way to fix that
->> problem.  A better method would have been to move "mutex_lock(&of_mutex);"
->> up 5 lines, to just before calling of_reserve_phandles().
+2017-10-26 13:02 GMT+09:00 Julia Lawall <julia.lawall@lip6.fr>:
 >
-> It is getting late (midnight my time), so I really should revisit this all
-> tomorrow.  My last comment ("move ... up 5 lines") is probably wrong.
 >
-> I'll look at this after some sleep.
+> On Thu, 26 Oct 2017, Masahiro Yamada wrote:
+>
+>> Hi Julia,
+>>
+>>
+>> 2017-10-15 18:55 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+>> > Make coccicheck checked for the existence of DEBUG_FILE on each semantic
+>> > patch, and bailed if it already existed.  This meant that DEBUG_FILE was
+>> > useless for checking more than one semantic patch at a time.  Now the check
+>> > is moved to the start of make coccicheck, and the 2> is changed to a 2>> to
+>> > append to the file on each semantic patch.  Furthermore, the spatch command
+>> > that is run for each semantic patch is also added to the DEBUG_FILE, to
+>> > make clear what each stdout trace corresponds to.
+>> >
+>> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>> >
+>>
+>> I think this is a good improvement,
+>> and looks almost good to me.
+>>
+>> Just one nit.
+>>
+>>
+>> >
+>> >  }
+>> >
+>> > +if [ "$DEBUG_FILE" != "/dev/null" -a "$DEBUG_FILE" != "" ]; then
+>> > +       if [ -f $DEBUG_FILE ]; then
+>> > +               echo "Debug file $DEBUG_FILE exists, bailing"
+>> > +               exit
+>> > +       fi
+>> > +       touch $DEBUG_FILE
+>>
+>> I think this "touch" is redundant.
+>>
+>> If the DEBUG_FILE does not exist, 2>> will automatically create it.
+>
+> Thanks very much for the feedback.  I will resubmit.
+>
+> julia
+>
+>
 
-I'm dropping "of: overlay: Fix cleanup order in of_overlay_apply()",
-so someone please fix this in the original patch.
+Remove the redundant "touch"
+and applied to linux-kbuild/misc.
 
-Rob
+
+
+-- 
+Best Regards
+Masahiro Yamada
