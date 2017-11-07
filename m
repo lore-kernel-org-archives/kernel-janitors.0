@@ -1,38 +1,26 @@
-From: Brian Austin <brian.austin@cirrus.com>
-Date: Mon, 27 Nov 2017 14:57:03 +0000
-Subject: Re: [PATCH 0/3] ASoC-cs42l73: Adjustments for two function implementations
-Message-Id: <d9b4a77a-ad22-4a30-8e7a-6a30511ee064@EX3.ad.cirrus.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 07 Nov 2017 00:19:51 +0000
+Subject: Re: [PATCH] Coccinelle: setup_timer: improve messages from setup_timer
+Message-Id: <CAK7LNAR7z43OYGWNz=wbanPWQbLbnmOcrB2trjMpnGrfqj-8bg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
-In-Reply-To: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
+References: <1503493873-673-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1503493873-673-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
+To: cocci@systeme.lip6.fr
 
-On Wed, 22 Nov 2017, SF Markus Elfring wrote:
+2017-08-23 22:11 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+> Allow messages about multiple timers.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 22 Nov 2017 16:38:32 +0100
-> 
-> Three update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (3):
->   Delete an error message for a failed memory allocation in cs42l73_i2c_probe()
->   Improve two size determinations in cs42l73_i2c_probe()
->   Fix a typo in two comments
-> 
->  sound/soc/codecs/cs42l73.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.15.0
-> 
-> 
-Sorry for the company notification that this is an external email. Very   
-clever indeed
 
-For the Series, Thanks
-Acked-by: Brian Austin <brian.austin@cirrus.com>
+Applied to linux-kbuild/misc.
+
+
+-- 
+Best Regards
+Masahiro Yamada
