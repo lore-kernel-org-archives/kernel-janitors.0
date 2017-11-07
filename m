@@ -1,44 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Nov 2017 10:18:36 +0000
-Subject: Re: [PATCH] pinctrl: pistachio: Use common error handling code in pistachio_gpio_register()
-Message-Id: <20171101101836.ubko2cmxeds6735j@mwanda>
+Date: Tue, 07 Nov 2017 13:01:32 +0000
+Subject: [PATCH] scsi: hpsa: remove an unecessary NULL check
+Message-Id: <20171107130131.3zohbeoobjxbqmdz@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
-In-Reply-To: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Damien Horsley <Damien.Horsley@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
+To: Don Brace <don.brace@microsemi.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 06:51:19PM +0100, SF Markus Elfring wrote:
-> @@ -1409,13 +1408,15 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->  		if (ret < 0) {
->  			dev_err(pctl->dev, "Failed to add GPIO range %u: %d\n",
->  				i, ret);
-> -			gpiochip_remove(&bank->gpio_chip);
-> -			goto err;
-> +			goto remove_chip;
+device->scsi3addr[] is an array, not a pointer, so it can't be NULL.
+I've removed the check.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It's better code to put the gpiochip_remove() before the goto, because
-say we want to add more error handling before the remove_chip: label.
-Now it doesn't work.
-
-
->  		}
->  	}
->  
->  	return 0;
-> -err:
-> +
-> +remove_chip:
-> +	gpiochip_remove(&bank->gpio_chip);
-> +remove_chips:
->  	for (; i > 0; i--) {
->  		bank = &pctl->gpio_banks[i - 1];
->  		gpiochip_remove(&bank->gpio_chip);
-
-regards,
-dan carpenter
-
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 287e5eb0723f..b0aa5dc1d54c 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -8223,8 +8223,6 @@ static void hpsa_set_ioaccel_status(struct ctlr_info *h)
+ 
+ 		if (!device)
+ 			continue;
+-		if (!device->scsi3addr)
+-			continue;
+ 		if (!hpsa_vpd_page_supported(h, device->scsi3addr,
+ 						HPSA_VPD_LV_IOACCEL_STATUS))
+ 			continue;
