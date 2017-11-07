@@ -1,54 +1,74 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 09 Nov 2017 17:53:18 +0000
-Subject: Re: [PATCH] drm/amd/powerplay: fix copy-n-paste error on vddci_buf index
-Message-Id: <CADnq5_OTQyAuY-LStNO4oF+K+H5DW3bfsE1ncM3dmscD5Dxrfg@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 07 Nov 2017 00:32:28 +0000
+Subject: Re: [PATCH] Coccinelle: use false positive annotation
+Message-Id: <CAK7LNASAbYj0Dm+wDSCQaqyqucBHisOa4QcJKL3Ar9DeoWH8tw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171109113500.19593-1-colin.king@canonical.com>
-In-Reply-To: <20171109113500.19593-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+References: <1509234189-26916-1-git-send-email-Julia.Lawall@lip6.fr>
+ <CAK7LNASBEvt6Ef3fJ=twQmV4LKSd_nbLd2BxmLtKEV8eYf3HBw@mail.gmail.com>
+ <alpine.DEB.2.20.1710301151210.2632@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1710301151210.2632@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Edward O'Callaghan <funfunctor-dczkZgxz+BNUPWh3PAxdjQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Huang Rui <ray.huang-5C7GfCeVMHo@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, Rex Zhu <Rex.Zhu-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig-5C7GfCeVMHo@public.gmane.org>
+To: cocci@systeme.lip6.fr
 
-On Thu, Nov 9, 2017 at 6:35 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+2017-10-30 12:52 GMT+09:00 Julia Lawall <julia.lawall@lip6.fr>:
 >
-> The index to vddci_buf is using profile->ucElbVDDC_Num rather
-> than profile->ucElbVDDCI_Num; this looks like a copy-n-paste
-> error from previous code for the vddc_buf array and I'm pretty
-> sure this is incorrect. Fix this by using the correct variable.
 >
-> Detected by CoverityScan, CID#1457172 ("Copy-paste error")
+> On Mon, 30 Oct 2017, Masahiro Yamada wrote:
 >
-> Fixes: 970d9804b00d ("drm/amd/powerplay: Add support functions for CI to ppatomctrl.c")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> Hi Julia,
+>>
+>>
+>> 2017-10-29 8:43 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+>> > /// is to describe the semantic patch, while //# indicates reasons
+>> > for false positives.
+>> >
+>> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>> >
+>> > ---
+>> >  scripts/coccinelle/misc/ifcol.cocci |    6 +++---
+>> >  1 file changed, 3 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/scripts/coccinelle/misc/ifcol.cocci b/scripts/coccinelle/misc/ifcol.cocci
+>> > index d0d00ef..30b248b 100644
+>> > --- a/scripts/coccinelle/misc/ifcol.cocci
+>> > +++ b/scripts/coccinelle/misc/ifcol.cocci
+>> > @@ -3,9 +3,9 @@
+>> >  /// Sometimes, code after an if that is indented is actually intended to be
+>> >  /// part of the if branch.
+>> >  ///
+>> > -/// This has a high rate of false positives, because Coccinelle's column
+>> > -/// calculation does not distinguish between spaces and tabs, so code that
+>> > -/// is not visually aligned may be considered to be in the same column.
+>> > +//# This has a high rate of false positives, because Coccinelle's column
+>> > +//# calculation does not distinguish between spaces and tabs, so code that
+>> > +//# is not visually aligned may be considered to be in the same column.
+>> >  ///
+>>
+>> Just a nit.
+>>
+>> The last /// should be turned into //
+>> if you want to avoid two blank lines in a series
+>> after the semantic patch information.
+>>
+>> (I can fix it locally if you agree with it and I am supposed to pick up this.)
+>
+> Thanks for detecting the problem.  It would be great if you could pick it
+> up, since I haven't heard confirmation from Michal that he will start this
+> again.  The change seems fine.  Thanks for your help.
+>
+> julia
+>
+>>
 
-Applied.  thanks!
+Fix up the second ///
+and applied to linux-kbuild/misc.
 
-Alex
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
-> index a129bc5b1844..c6febbf0bf69 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
-> @@ -1486,7 +1486,7 @@ int atomctrl_get_leakage_vddc_base_on_leakage(struct pp_hwmgr *hwmgr,
->                                 if (vddci_id_buf[i] = virtual_voltage_id) {
->                                         for (j = 0; j < profile->ucLeakageBinNum; j++) {
->                                                 if (efuse_voltage_id <= leakage_bin[j]) {
-> -                                                       *vddci = vddci_buf[j * profile->ucElbVDDC_Num + i];
-> +                                                       *vddci = vddci_buf[j * profile->ucElbVDDCI_Num + i];
->                                                         break;
->                                                 }
->                                         }
-> --
-> 2.14.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
