@@ -1,28 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Nov 2017 12:27:24 +0000
-Subject: Re: [PATCH] net: macb: remove redundant assignment to variable work_done
-Message-Id: <20171101.212724.2093826633682146421.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 14:39:14 +0000
+Subject: [PATCH][V2] usb: gadget: pxa27x: Remove redundant assignment to is_short and dev
+Message-Id: <20171107143914.5748-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031142324.25740-1-colin.king@canonical.com>
-In-Reply-To: <20171031142324.25740-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: nicolas.ferre@microchip.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 14:23:24 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable work_done is set to zero and this value is never read, instead
-> it is set to another value a few statements later.  Remove the redundant
-> assignment. Cleans up clang warning:
-> 
-> drivers/net/ethernet/cadence/macb_main.c:1221:2: warning: Value stored
-> to 'work_done' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable is_short is set to zero but this value is never read as it is
+overwritten with a new value later on, hence it is a redundant
+assignment and can be removed.  Pointer dev is assigned a value that
+is not read and it is updated a few statements later, this too is
+redundant and can be removed. Cleans up clan warnings:
 
-Applied.
+drivers/usb/gadget/udc/pxa27x_udc.c:986:3: warning: Value stored
+to 'is_short' is never read
+drivers/usb/gadget/udc/pxa27x_udc.c:1141:2: warning: Value stored
+to 'dev' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/pxa27x_udc.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
+index 14606f340325..d88e56cce56d 100644
+--- a/drivers/usb/gadget/udc/pxa27x_udc.c
++++ b/drivers/usb/gadget/udc/pxa27x_udc.c
+@@ -984,8 +984,6 @@ static int write_fifo(struct pxa_ep *ep, struct pxa27x_request *req)
+ 
+ 	max = ep->fifo_size;
+ 	do {
+-		is_short = 0;
+-
+ 		udccsr = udc_ep_readl(ep, UDCCSR);
+ 		if (udccsr & UDCCSR_PC) {
+ 			ep_vdbg(ep, "Clearing Transmit Complete, udccsr=%x\n",
+@@ -1139,7 +1137,6 @@ static int pxa_ep_queue(struct usb_ep *_ep, struct usb_request *_req,
+ 	if (unlikely(!_ep))
+ 		return -EINVAL;
+ 
+-	dev = udc_usb_ep->dev;
+ 	ep = udc_usb_ep->pxa_ep;
+ 	if (unlikely(!ep))
+ 		return -EINVAL;
+-- 
+2.14.1
+
