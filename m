@@ -1,66 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 21:15:57 +0000
-Subject: [PATCH] ALSA: cs5530: Use common error handling code in snd_cs5530_probe()
-Message-Id: <a2cb6494-a01c-668a-cd9b-1a8428a0d4c9@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 16:45:04 +0000
+Subject: [PATCH] usb: host: fix incorrect updating of offset
+Message-Id: <20171107164504.5920-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6acf9697-a5df-0cd4-6cac-1198980c943b@users.sourceforge.net>
-In-Reply-To: <6acf9697-a5df-0cd4-6cac-1198980c943b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 22:10:19 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+The variable temp is incorrectly being updated, instead it should
+be offset otherwise the loop just reads the same capability value
+and loops forever.  Thanks to Alan Stern for pointing out the
+correct fix to my original fix.  Fix also cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/usb/host/ehci-dbg.c:840:4: warning: Value stored to 'temp'
+is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: d49d43174400 ("USB: misc ehci updates")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/cs5530.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/usb/host/ehci-dbg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/cs5530.c b/sound/pci/cs5530.c
-index 0a8cf94c4858..674572edf2d2 100644
---- a/sound/pci/cs5530.c
-+++ b/sound/pci/cs5530.c
-@@ -269,23 +269,24 @@ static int snd_cs5530_probe(struct pci_dev *pci,
- 		return err;
- 
- 	err = snd_cs5530_create(card, pci, &chip);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	strcpy(card->driver, "CS5530");
- 	strcpy(card->shortname, "CS5530 Audio");
- 	sprintf(card->longname, "%s at 0x%lx", card->shortname, chip->pci_base);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static struct pci_driver cs5530_driver = {
+diff --git a/drivers/usb/host/ehci-dbg.c b/drivers/usb/host/ehci-dbg.c
+index 7fb21d01b3d0..3bd0b2273171 100644
+--- a/drivers/usb/host/ehci-dbg.c
++++ b/drivers/usb/host/ehci-dbg.c
+@@ -838,7 +838,7 @@ static ssize_t fill_registers_buffer(struct debug_buffer *buf)
+ 			default:		/* unknown */
+ 				break;
+ 			}
+-			temp = (cap >> 8) & 0xff;
++			offset = (cap >> 8) & 0xff;
+ 		}
+ 	}
+ #endif
 -- 
-2.15.0
+2.14.1
 
