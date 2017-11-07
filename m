@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Nov 2017 13:00:19 +0000
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 07 Nov 2017 13:18:21 +0000
 Subject: Re: Sony-laptop: Adjustments for sony_nc_setup_rfkill()
-Message-Id: <570d906c-5391-b7b4-6f4c-6709634ce3bb@users.sourceforge.net>
+Message-Id: <CAHp75VcPkob0x54UUPnebp1TUC9UenR_+jv2PkNKZ3TKsLtEcQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
  <CAHp75VcMkXCioCzmLE0+BTmkqc5RSOx9yPO0ectVHMrMvewgwg@mail.gmail.com>
@@ -10,19 +10,26 @@ References: <f33d9aa0-1a8e-f702-7513-5c0d5b464529@users.sourceforge.net>
  <340e5426-a9ba-2193-2735-85e918773785@users.sourceforge.net>
  <CAHp75VeyLnKG43g0LiDqirkehH4bLK7x216NV1+C8Oktp7D5UQ@mail.gmail.com>
  <2c1996c5-0833-dcd3-c747-62eca46a433d@users.sourceforge.net>
- <CAHp75VcU2+cbWDkt+6gd9+bHjxDpA-hA5KuQNVCn-AJr1SLANQ@mail.gmail.com>
-In-Reply-To: <CAHp75VcU2+cbWDkt+6gd9+bHjxDpA-hA5KuQNVCn-AJr1SLANQ@mail.gmail.com>
+ <CAHp75VcU2+cbWDkt+6gd9+bHjxDpA-hA5KuQNVCn-AJr1SLANQ@mail.gmail.com> <570d906c-5391-b7b4-6f4c-6709634ce3bb@users.sourceforge.net>
+In-Reply-To: <570d906c-5391-b7b4-6f4c-6709634ce3bb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, platform-driver-x86@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Platform Driver <platform-driver-x86@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, Marco Chiappero <marco@absence.it>, Mattia Dongili <malattia@linux.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@infradead.org>
 
-> Update a commit message in your patch, use bloat-o-meter (and put its
-> output to the commit message) and resend, we might reconsider then.
+On Tue, Nov 7, 2017 at 3:00 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+>> Update a commit message in your patch, use bloat-o-meter (and put its
+>> output to the commit message) and resend, we might reconsider then.
+>
+> Do you expect a resend only for the third update step of this small
+> patch series (together with additional information)?
 
-Do you expect a resend only for the third update step of this small
-patch series (together with additional information)?
+First two already applied.
+So, the third patch is in question, please resend it with asked commit
+message update.
 
-Regards,
-Markus
+-- 
+With Best Regards,
+Andy Shevchenko
