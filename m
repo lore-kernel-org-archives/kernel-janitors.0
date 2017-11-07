@@ -1,28 +1,85 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 09:26:28 +0000
-Subject: [PATCH 0/3] ALSA: es1968: Fine-tuning for seven function implementations
-Message-Id: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Date: Tue, 07 Nov 2017 00:50:52 +0000
+Subject: Re: [PATCH] ibmphp_pci: Use common error handling code in unconfigure_boot_device()
+Message-Id: <20171107005052.GF9538@bhelgaas-glaptop.roam.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <9db967bd-b7f9-d7e8-a858-a409f07c2a51@users.sourceforge.net>
+In-Reply-To: <9db967bd-b7f9-d7e8-a858-a409f07c2a51@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 10:23:45 +0100
+On Mon, Oct 30, 2017 at 01:30:13PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 30 Oct 2017 13:26:32 +0100
+> 
+> * Add a jump target so that a specific error message is stored only once
+>   at the end of this function implementation.
+> 
+> * Replace two calls of the macro "err" by goto statements.
+> 
+> * Adjust two condition checks.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-A few update suggestions were taken into account
-from static source code analysis.
+Applied to pci/hotplug for v4.15, thanks.
 
-Markus Elfring (3):
-  Adjust 16 function calls together with a variable assignment
-  Use common error handling code in two functions
-  Use common error handling code in snd_es1968_capture_open()
+I'm a little hesitant because (a) this driver is probably dead, and
+(b) if we *do* want to do anything to it, I'd love to see a major
+overhaul to bring it into line with other hotplug drivers.  But I did
+apply this anyway.
 
- sound/pci/es1968.c | 163 ++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 92 insertions(+), 71 deletions(-)
-
--- 
-2.15.0
-
+> ---
+>  drivers/pci/hotplug/ibmphp_pci.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/ibmphp_pci.c b/drivers/pci/hotplug/ibmphp_pci.c
+> index dc1876feb06f..25edd0b18b75 100644
+> --- a/drivers/pci/hotplug/ibmphp_pci.c
+> +++ b/drivers/pci/hotplug/ibmphp_pci.c
+> @@ -1267,20 +1267,19 @@ static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
+>  			size = size & 0xFFFFFFFC;
+>  			size = ~size + 1;
+>  			end_address = start_address + size - 1;
+> -			if (ibmphp_find_resource(bus, start_address, &io, IO) < 0) {
+> -				err("cannot find corresponding IO resource to remove\n");
+> -				return -EIO;
+> -			}
+> +			if (ibmphp_find_resource(bus, start_address, &io, IO))
+> +				goto report_search_failure;
+> +
+>  			debug("io->start = %x\n", io->start);
+>  			temp_end = io->end;
+>  			start_address = io->end + 1;
+>  			ibmphp_remove_resource(io);
+>  			/* This is needed b/c of the old I/O restrictions in the BIOS */
+>  			while (temp_end < end_address) {
+> -				if (ibmphp_find_resource(bus, start_address, &io, IO) < 0) {
+> -					err("cannot find corresponding IO resource to remove\n");
+> -					return -EIO;
+> -				}
+> +				if (ibmphp_find_resource(bus, start_address,
+> +							 &io, IO))
+> +					goto report_search_failure;
+> +
+>  				debug("io->start = %x\n", io->start);
+>  				temp_end = io->end;
+>  				start_address = io->end + 1;
+> @@ -1327,6 +1326,10 @@ static int unconfigure_boot_device(u8 busno, u8 device, u8 function)
+>  	}	/* end of for */
+>  
+>  	return 0;
+> +
+> +report_search_failure:
+> +	err("cannot find corresponding IO resource to remove\n");
+> +	return -EIO;
+>  }
+>  
+>  static int unconfigure_boot_bridge(u8 busno, u8 device, u8 function)
+> -- 
+> 2.14.3
+> 
