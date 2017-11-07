@@ -1,133 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 20:39:51 +0000
-Subject: [PATCH 1/2] ALSA: vx222: Adjust ten function calls together with a variable assignment
-Message-Id: <76f53fb4-b7c4-ccd9-58c8-ad478bb3a9b0@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 07 Nov 2017 11:56:56 +0000
+Subject: [PATCH] tty: n_gsm: remove redundant pointer gsm
+Message-Id: <20171107115656.23272-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e961ecef-9f03-0c2a-ad64-64102bbc1389@users.sourceforge.net>
-In-Reply-To: <e961ecef-9f03-0c2a-ad64-64102bbc1389@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 21:10:37 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Pointer gsm is assigned a value that is never read, hence it is
+redundant and can be removed. Cleans up clang warning:
 
-ERROR: do not use assignment in if condition
+drivers/tty/n_gsm.c:2979:2: warning: Value stored to 'gsm' is never read
 
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/vx222/vx222.c     | 19 +++++++++++++------
- sound/pci/vx222/vx222_ops.c | 19 +++++++++++--------
- 2 files changed, 24 insertions(+), 14 deletions(-)
+ drivers/tty/n_gsm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/pci/vx222/vx222.c b/sound/pci/vx222/vx222.c
-index 55861849d7df..1f866a810a98 100644
---- a/sound/pci/vx222/vx222.c
-+++ b/sound/pci/vx222/vx222.c
-@@ -147,7 +147,8 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
- 	struct snd_vx_ops *vx_ops;
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+index 33530d8cb81d..e56426c91416 100644
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -2967,7 +2967,6 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
+ static void gsmtty_close(struct tty_struct *tty, struct file *filp)
+ {
+ 	struct gsm_dlci *dlci = tty->driver_data;
+-	struct gsm_mux *gsm;
  
- 	/* enable PCI device */
--	if ((err = pci_enable_device(pci)) < 0)
-+	err = pci_enable_device(pci);
-+	if (err < 0)
- 		return err;
- 	pci_set_master(pci);
- 
-@@ -161,7 +162,8 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
- 	vx = to_vx222(chip);
- 	vx->pci = pci;
- 
--	if ((err = pci_request_regions(pci, CARD_NAME)) < 0) {
-+	err = pci_request_regions(pci, CARD_NAME);
-+	if (err < 0) {
- 		snd_vx222_free(chip);
- 		return err;
- 	}
-@@ -177,7 +179,8 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
- 	}
- 	chip->irq = pci->irq;
- 
--	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
-+	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
-+	if (err < 0) {
- 		snd_vx222_free(chip);
- 		return err;
- 	}
-@@ -220,7 +223,9 @@ static int snd_vx222_probe(struct pci_dev *pci,
- 			hw = &vx222_v2_hw;
- 		break;
- 	}
--	if ((err = snd_vx222_create(card, pci, hw, &vx)) < 0) {
-+
-+	err = snd_vx222_create(card, pci, hw, &vx);
-+	if (err < 0) {
- 		snd_card_free(card);
- 		return err;
- 	}
-@@ -236,12 +241,14 @@ static int snd_vx222_probe(struct pci_dev *pci,
- 	vx->core.dev = &pci->dev;
- #endif
- 
--	if ((err = snd_vx_setup_firmware(&vx->core)) < 0) {
-+	err = snd_vx_setup_firmware(&vx->core);
-+	if (err < 0) {
- 		snd_card_free(card);
- 		return err;
- 	}
- 
--	if ((err = snd_card_register(card)) < 0) {
-+	err = snd_card_register(card);
-+	if (err < 0) {
- 		snd_card_free(card);
- 		return err;
- 	}
-diff --git a/sound/pci/vx222/vx222_ops.c b/sound/pci/vx222/vx222_ops.c
-index d4298af6d3ee..4447d7f57dee 100644
---- a/sound/pci/vx222/vx222_ops.c
-+++ b/sound/pci/vx222/vx222_ops.c
-@@ -421,11 +421,12 @@ static int vx2_load_dsp(struct vx_core *vx, int index, const struct firmware *ds
- 	switch (index) {
- 	case 1:
- 		/* xilinx image */
--		if ((err = vx2_load_xilinx_binary(vx, dsp)) < 0)
-+		err = vx2_load_xilinx_binary(vx, dsp);
-+		if (err < 0)
- 			return err;
--		if ((err = vx2_test_xilinx(vx)) < 0)
--			return err;
--		return 0;
-+
-+		err = vx2_test_xilinx(vx);
-+		return (err < 0) ? err : 0;
- 	case 2:
- 		/* DSP boot */
- 		return snd_vx_dsp_boot(vx, dsp);
-@@ -985,12 +986,14 @@ static int vx2_add_mic_controls(struct vx_core *_chip)
- 	vx2_set_input_level(chip);
- 
- 	/* controls */
--	if ((err = snd_ctl_add(_chip->card, snd_ctl_new1(&vx_control_input_level, chip))) < 0)
--		return err;
--	if ((err = snd_ctl_add(_chip->card, snd_ctl_new1(&vx_control_mic_level, chip))) < 0)
-+	err = snd_ctl_add(_chip->card,
-+			  snd_ctl_new1(&vx_control_input_level, chip));
-+	if (err < 0)
- 		return err;
- 
--	return 0;
-+	err = snd_ctl_add(_chip->card,
-+			  snd_ctl_new1(&vx_control_mic_level, chip));
-+	return (err < 0) ? err : 0;
- }
- 
- 
+ 	if (dlci = NULL)
+ 		return;
+@@ -2976,7 +2975,6 @@ static void gsmtty_close(struct tty_struct *tty, struct file *filp)
+ 	mutex_lock(&dlci->mutex);
+ 	gsm_destroy_network(dlci);
+ 	mutex_unlock(&dlci->mutex);
+-	gsm = dlci->gsm;
+ 	if (tty_port_close_start(&dlci->port, tty, filp) = 0)
+ 		return;
+ 	gsm_dlci_begin_close(dlci);
 -- 
-2.15.0
+2.14.1
 
