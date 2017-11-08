@@ -1,46 +1,45 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 30 Nov 2017 16:14:38 +0000
-Subject: Re: [PATCH] KVM: x86: MMU: make array audit_point_name static
-Message-Id: <7a8800f5-63c0-04d3-036e-c2094839f3f6@redhat.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 Nov 2017 13:00:30 +0000
+Subject: [PATCH] xen/privcmd: remove unused variable pageidx
+Message-Id: <20171108130030.25394-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171130120422.4783-1-colin.king@canonical.com>
-In-Reply-To: <20171130120422.4783-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/11/2017 13:04, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The array audit_point_name is local to the source and does not need to
-> be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> arch/x86/kvm/mmu_audit.c:22:12: warning: symbol 'audit_point_name' was
-> not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/kvm/mmu_audit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/mmu_audit.c b/arch/x86/kvm/mmu_audit.c
-> index d22ddbdf5e6e..1272861e77b9 100644
-> --- a/arch/x86/kvm/mmu_audit.c
-> +++ b/arch/x86/kvm/mmu_audit.c
-> @@ -19,7 +19,7 @@
->  
->  #include <linux/ratelimit.h>
->  
-> -char const *audit_point_name[] = {
-> +static char const *audit_point_name[] = {
->  	"pre page fault",
->  	"post page fault",
->  	"pre pte write",
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Queued, thanks.
+Variable pageidx is assigned a value but it is never read, hence it
+is redundant and can be removed. Cleans up clang warning:
 
-Paolo
+drivers/xen/privcmd.c:199:2: warning: Value stored to 'pageidx'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/xen/privcmd.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index feca75b07fdd..1c909183c42a 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -191,13 +191,10 @@ static int traverse_pages_block(unsigned nelem, size_t size,
+ 				void *state)
+ {
+ 	void *pagedata;
+-	unsigned pageidx;
+ 	int ret = 0;
+ 
+ 	BUG_ON(size > PAGE_SIZE);
+ 
+-	pageidx = PAGE_SIZE;
+-
+ 	while (nelem) {
+ 		int nr = (PAGE_SIZE/size);
+ 		struct page *page;
+-- 
+2.14.1
+
