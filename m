@@ -1,44 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 17:43:17 +0000
-Subject: [PATCH 3/3] video: omap: Delete an error message for a failed memory allocation in mipid_spi_probe()
-Message-Id: <62f8d5bb-64cd-487f-6ef4-e3aa7a8b5fd5@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 Nov 2017 12:47:55 +0000
+Subject: [PATCH] usb: gadget: udc-xilinx: remove redundant pointer udc
+Message-Id: <20171108124755.24947-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
-In-Reply-To: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 18:21:25 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Omit an extra message for a memory allocation failure in this function.
+Pointer udc is assigned but never read, hence it is redundant and
+can be removed. Cleans up clang warning:
 
-This issue was detected by using the Coccinelle software.
+drivers/usb/gadget/udc/udc-xilinx.c:974:2: warning: Value stored
+to 'udc' is never read
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/omap/lcd_mipid.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/gadget/udc/udc-xilinx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap/lcd_mipid.c b/drivers/video/fbdev/omap/lcd_mipid.c
-index e3a85432f926..e71b674b47d8 100644
---- a/drivers/video/fbdev/omap/lcd_mipid.c
-+++ b/drivers/video/fbdev/omap/lcd_mipid.c
-@@ -564,10 +564,8 @@ static int mipid_spi_probe(struct spi_device *spi)
- 	int r;
+diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
+index 7da2b9ce8cb3..6407e433bc78 100644
+--- a/drivers/usb/gadget/udc/udc-xilinx.c
++++ b/drivers/usb/gadget/udc/udc-xilinx.c
+@@ -963,10 +963,8 @@ static struct usb_request *xudc_ep_alloc_request(struct usb_ep *_ep,
+ 						 gfp_t gfp_flags)
+ {
+ 	struct xusb_ep *ep = to_xusb_ep(_ep);
+-	struct xusb_udc *udc;
+ 	struct xusb_req *req;
  
- 	md = kzalloc(sizeof(*md), GFP_KERNEL);
--	if (md = NULL) {
--		dev_err(&spi->dev, "out of memory\n");
-+	if (!md)
- 		return -ENOMEM;
--	}
- 
- 	spi->mode = SPI_MODE_0;
- 	md->spi = spi;
+-	udc = ep->udc;
+ 	req = kzalloc(sizeof(*req), gfp_flags);
+ 	if (!req)
+ 		return NULL;
 -- 
-2.15.0
+2.14.1
 
