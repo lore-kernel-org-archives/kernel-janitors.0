@@ -1,27 +1,23 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Fri, 24 Nov 2017 08:34:40 +0000
-Subject: Re: [PATCH 3/4] ASoC: wm2000: Fix a typo in a comment line
-Message-Id: <20171124083440.lfuqcil335tpbuys@localhost.localdomain>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Wed, 08 Nov 2017 01:02:40 +0000
+Subject: Re: [PATCH] umh: Optimize 'proc_cap_handler()'
+Message-Id: <20171108010240.GL22894@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd76c876-81a5-3cf6-e7d9-52037729fb98@users.sourceforge.net>
- <ce9b00e1-d094-5f30-5dca-6f18d93a1e65@users.sourceforge.net>
-In-Reply-To: <ce9b00e1-d094-5f30-5dca-6f18d93a1e65@users.sourceforge.net>
+References: <20171020193331.7233-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20171020193331.7233-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: mcgrof@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 08:39:02AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 24 Nov 2017 08:02:57 +0100
+On Fri, Oct 20, 2017 at 09:33:31PM +0200, Christophe JAILLET wrote:
+> If 'write' is 0, we can avoid a call to spin_lock/spin_unlock.
 > 
-> Delete a duplicate character in a word of this description.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Sorry for the delay, I was travelling and will start nose diving now.  I hope
+to have a concrete review and answer by tomorrow. Sorry for the two week delay
+on the review and thanks for the patch!
 
-Thanks,
-Charles
+  Luis
