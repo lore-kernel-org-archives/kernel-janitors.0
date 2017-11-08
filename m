@@ -1,27 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 14:15:13 +0000
-Subject: [PATCH 0/2] video: s3c-fb: Adjustments for s3c_fb_probe()
-Message-Id: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 08 Nov 2017 12:52:49 +0000
+Subject: Re: orinoco_usb: remove redundant pointer dev
+Message-Id: <20171108125249.B823E607C7@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171103134528.8415-1-colin.king@canonical.com>
+In-Reply-To: <20171103134528.8415-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 15:12:34 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer dev is assigned but never read, hence it is redundant
+> and can be removed. Cleans up clang warning:
+> 
+> drivers/net/wireless/intersil/orinoco/orinoco_usb.c:1468:2: warning:
+> Value stored to 'dev' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+Patch applied to wireless-drivers-next.git, thanks.
 
- drivers/video/fbdev/s3c-fb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+9b741b2a3148 orinoco_usb: remove redundant pointer dev
 
 -- 
-2.15.0
+https://patchwork.kernel.org/patch/10040113/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
