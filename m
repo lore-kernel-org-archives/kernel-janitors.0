@@ -1,38 +1,29 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Thu, 09 Nov 2017 15:53:42 +0000
-Subject: Re: [PATCH] video: fbdev: intelfb: remove redundant variables
-Message-Id: <5552409.pVDogND5TS@amdc3058>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Nov 2017 08:44:15 +0000
+Subject: [PATCH 2/2] tcmu: Add a missing unlock on an error path
+Message-Id: <20171108084415.dn443crpreqwqoiw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171106131737epcas3p2c8da62f9f262825461ca244b597a863f@epcas3p2.samsung.com>
- <20171106131711.6499-1-colin.king@canonical.com>
-In-Reply-To: <20171106131711.6499-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, Maik Broemme <mbroemme@libmpq.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Mike Christie <mchristi@redhat.com>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Monday, November 06, 2017 01:17:11 PM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables err_max, err_target and f_best are being assigned values but
-> these are never read, hence they are redundant variables and can be
-> removed. Cleans up clang warnings:
-> 
-> drivers/video/fbdev/intelfb/intelfbhw.c:946:2: warning: Value stored to
-> 'err_max' is never read
-> drivers/video/fbdev/intelfb/intelfbhw.c:947:2: warning: Value stored to
-> 'err_target' is never read
-> drivers/video/fbdev/intelfb/intelfbhw.c:995:6: warning: Value stored to
-> 'f_best' is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+We added a new error path here but we forgot to drop the lock first
+before returning.
 
-Patch queued for 4.15, thanks.
+Fixes: 0d44374c1aae ("tcmu: fix double se_cmd completion")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 07f2d95f7ae7..cc2468a299d3 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -888,6 +888,7 @@ tcmu_queue_cmd_ring(struct tcmu_cmd *tcmu_cmd)
+ 	ret = tcmu_setup_cmd_timer(tcmu_cmd);
+ 	if (ret) {
+ 		tcmu_cmd_free_data(tcmu_cmd, tcmu_cmd->dbi_cnt);
++		mutex_unlock(&udev->cmdr_lock);
+ 		return TCM_OUT_OF_RESOURCES;
+ 	}
+ 	entry->hdr.cmd_id = tcmu_cmd->cmd_id;
