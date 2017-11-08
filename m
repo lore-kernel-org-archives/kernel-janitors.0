@@ -1,63 +1,50 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 06 Nov 2017 21:29:31 +0000
-Subject: Re: [PATCH] drm/amd/display: small cleanup in destruct()
-Message-Id: <CADnq5_NSTbpOrDHzWD9ug5jEQspeCO2qpri6f1VaaMKR3yqyDQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 Nov 2017 16:13:23 +0000
+Subject: [PATCH][V2] mtd: sharpslpart: fix overflow on block_adr calculation
+Message-Id: <20171108161323.30662-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171106070733.owgzad3bpuabfkkk@mwanda>
- <031c92ca-86b0-718d-bf93-18d50db00ce9@amd.com>
-In-Reply-To: <031c92ca-86b0-718d-bf93-18d50db00ce9@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Tony Cheng <tony.cheng@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, amd-gfx list <amd-gfx@lists.freedesktop.org>, Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>, Hersen Wu <hersenxs.wu@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Andrea Adami <andrea.adami@gmail.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 6, 2017 at 3:44 AM, Christian König
-<christian.koenig@amd.com> wrote:
-> Am 06.11.2017 um 08:07 schrieb Dan Carpenter:
->>
->> Static analysis tools get annoyed that we don't indent this if
->> statement.  Actually, the if statement isn't required because kfree()
->> can handle NULL pointers just fine.  The DCE110STRENC_FROM_STRENC()
->> macro is a wrapper around container_of() but it's basically a no-op or a
->> cast.  Anyway, it's not really appropriate here so it should be removed
->> as well.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->
-> Acked-by: Christian König <christian.koenig@amd.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  thanks!
+Multiplying block_num and mtd->erasesize may potentially overflow
+as they are both unsigned ints and so the multiplication is evaluated
+in unsigned int arithmetic.  Cast block_adr to off_t to ensure
+multiplication is off_t sized to avoid any potential overflow.
 
-Alex
+Detected by CoverityScan, CID#1461264 ("Unintentional integer overflow")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/parsers/sharpslpart.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
->> ---
->> v2: in v1 I just added a tab
->>
->> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
->> b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
->> index d911590d08bc..4c4bd72d4e40 100644
->> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
->> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
->> @@ -725,10 +725,8 @@ static void destruct(struct dcn10_resource_pool
->> *pool)
->>                 }
->>         }
->>   -     for (i = 0; i < pool->base.stream_enc_count; i++) {
->> -               if (pool->base.stream_enc[i] != NULL)
->> -               kfree(DCE110STRENC_FROM_STRENC(pool->base.stream_enc[i]));
->> -       }
->> +       for (i = 0; i < pool->base.stream_enc_count; i++)
->> +               kfree(pool->base.stream_enc[i]);
->>         for (i = 0; i < pool->base.audio_count; i++) {
->>                 if (pool->base.audios[i])
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/mtd/parsers/sharpslpart.c b/drivers/mtd/parsers/sharpslpart.c
+index 5fe0079ea5ed..0ddb79ac390d 100644
+--- a/drivers/mtd/parsers/sharpslpart.c
++++ b/drivers/mtd/parsers/sharpslpart.c
+@@ -192,7 +192,7 @@ static int sharpsl_nand_init_ftl(struct mtd_info *mtd, struct sharpsl_ftl *ftl)
+ 
+ 	/* create physical-logical table */
+ 	for (block_num = 0; block_num < phymax; block_num++) {
+-		block_adr = block_num * mtd->erasesize;
++		block_adr = (loff_t)block_num * mtd->erasesize;
+ 
+ 		if (mtd_block_isbad(mtd, block_adr))
+ 			continue;
+@@ -244,7 +244,7 @@ static int sharpsl_nand_read_laddr(struct mtd_info *mtd,
+ 		return -EINVAL;
+ 
+ 	block_num = ftl->log2phy[log_num];
+-	block_adr = block_num * mtd->erasesize;
++	block_adr = (loff_t)block_num * mtd->erasesize;
+ 	block_ofs = mtd_mod_by_eb((u32)from, mtd);
+ 
+ 	err = mtd_read(mtd, block_adr + block_ofs, len, &retlen, buf);
+-- 
+2.14.1
+
