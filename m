@@ -1,51 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Nov 2017 18:59:46 +0000
-Subject: [PATCH] mtd: mtdswap: make array 'name' static const, shrinks object size
-Message-Id: <20171128185946.25026-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Nov 2017 09:20:08 +0000
+Subject: [PATCH] 6lowpan: Combine two condition checks into one statement in lowpan_xmit()
+Message-Id: <221426d9-d049-b304-d7c1-bdf0a788bf36@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes.berg@intel.com>, Stefan Schmidt <stefan@osg.samsung.com>, Stephen Hemminger <stephen@networkplumber.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Nov 2017 10:10:41 +0100
 
-Don't populate the read-only array 'name' on the stack but instead
-make it static and constify it. Makes the object code smaller by 35
-bytes:
+The same exception handling was used in an if branch of two
+separate statements.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  26304	   4444	    352	  31100	   797c	drivers/mtd/mtdswap.o
+* Merge their condition checks into a single statement instead.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  26205	   4508	    352	  31065	   7959	drivers/mtd/mtdswap.o
+* Delete the local variable "ret" which became unnecessary
+  with this refactoring.
 
-(gcc version 7.2.0 x86_64)
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/mtdswap.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/ieee802154/6lowpan/tx.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-index f07492c6f4b2..7eb0e1f4f980 100644
---- a/drivers/mtd/mtdswap.c
-+++ b/drivers/mtd/mtdswap.c
-@@ -1223,8 +1223,9 @@ static int mtdswap_show(struct seq_file *s, void *data)
- 	unsigned int max[MTDSWAP_TREE_CNT];
- 	unsigned int i, cw = 0, cwp = 0, cwecount = 0, bb_cnt, mapped, pages;
- 	uint64_t use_size;
--	char *name[] = {"clean", "used", "low", "high", "dirty", "bitflip",
--			"failing"};
-+	static const char * const name[] = {
-+		"clean", "used", "low", "high", "dirty", "bitflip", "failing"
-+	};
+diff --git a/net/ieee802154/6lowpan/tx.c b/net/ieee802154/6lowpan/tx.c
+index e6ff5128e61a..1b0757db2078 100644
+--- a/net/ieee802154/6lowpan/tx.c
++++ b/net/ieee802154/6lowpan/tx.c
+@@ -255,7 +255,7 @@ static int lowpan_header(struct sk_buff *skb, struct net_device *ldev,
+ netdev_tx_t lowpan_xmit(struct sk_buff *skb, struct net_device *ldev)
+ {
+ 	struct ieee802154_hdr wpan_hdr;
+-	int max_single, ret;
++	int max_single;
+ 	u16 dgram_size, dgram_offset;
  
- 	mutex_lock(&d->mbd_dev->lock);
+ 	pr_debug("package xmit\n");
+@@ -269,13 +269,8 @@ netdev_tx_t lowpan_xmit(struct sk_buff *skb, struct net_device *ldev)
+ 	if (!skb)
+ 		return NET_XMIT_DROP;
  
+-	ret = lowpan_header(skb, ldev, &dgram_size, &dgram_offset);
+-	if (ret < 0) {
+-		kfree_skb(skb);
+-		return NET_XMIT_DROP;
+-	}
+-
+-	if (ieee802154_hdr_peek(skb, &wpan_hdr) < 0) {
++	if (lowpan_header(skb, ldev, &dgram_size, &dgram_offset) < 0 ||
++	    ieee802154_hdr_peek(skb, &wpan_hdr) < 0) {
+ 		kfree_skb(skb);
+ 		return NET_XMIT_DROP;
+ 	}
 -- 
-2.14.1
+2.15.0
+
 
