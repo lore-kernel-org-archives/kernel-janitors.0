@@ -1,30 +1,15 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:07 +0000
-Subject: Re: [PATCH 1/3] clk/mmp: Delete an error message for a failed memory allocation in three functions
-Message-Id: <20171114015907.GN11955@codeaurora.org>
+From: Albrecht Lutz <lutzsolicitor1@gmail.com>
+Date: Wed, 08 Nov 2017 00:15:15 +0000
+Subject: Re:Partnership Request.
+Message-Id: <20171108001505.9EC6425920F75@mail.salud03d01.gob.ec>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
- <5a3e0b55-1eda-87a4-c4e3-d142d64830a5@users.sourceforge.net>
-In-Reply-To: <5a3e0b55-1eda-87a4-c4e3-d142d64830a5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 22:25:38 +0200
-> 
-> Omit extra messages for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Good day
+My name is Lutz Albrecht, an attorney, I have searched for several years to locate any possible relative of a late client of mine who died intestate but left a huge financial estate. I am contacting you because you have the same last name to present you as the beneficiary of the estate. If you are interested to find out more, please get back to me.
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
+Lutz
