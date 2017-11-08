@@ -1,72 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:54:39 +0000
-Subject: Applied "ASoC: wm2000: Delete an error message for a failed memory allocation in wm2000_i2c_probe()"
-Message-Id: <E1eJOYB-0007Zw-Op@debutante>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 08 Nov 2017 15:46:49 +0000
+Subject: [PATCH][mtd-next] mtd: sharpslpart: fix overflow on block_adr calculation
+Message-Id: <20171108154649.30096-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
-In-Reply-To: <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Andrea Adami <andrea.adami@gmail.com>, linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+From: Colin Ian King <colin.king@canonical.com>
 
-   ASoC: wm2000: Delete an error message for a failed memory allocation in wm2000_i2c_probe()
+Multiplying block_num and mtd->erasesize may potentially overflow
+as they are both unsigned ints and so the multiplication is evaluated
+in unsigned int arithmetic .  Cast block_adr to off_t to ensure
+multiplication is off_t sized to avoid any potential overflow.
 
-has been applied to the asoc tree at
+Detected by CoverityScan, CID#1461264 ("Unintentional integer overflow")
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e866d87a7de38672f52c6e7567e88c3f82f937dc Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 22:28:00 +0100
-Subject: [PATCH] ASoC: wm2000: Delete an error message for a failed memory
- allocation in wm2000_i2c_probe()
-
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: fff1e32a50c0 ("mtd: sharpslpart: Add sharpslpart partition parser")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/wm2000.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/mtd/parsers/sharpslpart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wm2000.c b/sound/soc/codecs/wm2000.c
-index 23cde3a0dc11..ce936deed7e3 100644
---- a/sound/soc/codecs/wm2000.c
-+++ b/sound/soc/codecs/wm2000.c
-@@ -902,7 +902,6 @@ static int wm2000_i2c_probe(struct i2c_client *i2c,
- 					    wm2000->anc_download_size,
- 					    GFP_KERNEL);
- 	if (wm2000->anc_download = NULL) {
--		dev_err(&i2c->dev, "Out of memory\n");
- 		ret = -ENOMEM;
- 		goto err_supplies;
- 	}
+diff --git a/drivers/mtd/parsers/sharpslpart.c b/drivers/mtd/parsers/sharpslpart.c
+index 5fe0079ea5ed..b1d97aa3bac4 100644
+--- a/drivers/mtd/parsers/sharpslpart.c
++++ b/drivers/mtd/parsers/sharpslpart.c
+@@ -244,7 +244,7 @@ static int sharpsl_nand_read_laddr(struct mtd_info *mtd,
+ 		return -EINVAL;
+ 
+ 	block_num = ftl->log2phy[log_num];
+-	block_adr = block_num * mtd->erasesize;
++	block_adr = (loff_t)block_num * mtd->erasesize;
+ 	block_ofs = mtd_mod_by_eb((u32)from, mtd);
+ 
+ 	err = mtd_read(mtd, block_adr + block_ofs, len, &retlen, buf);
 -- 
-2.15.0
+2.14.1
 
