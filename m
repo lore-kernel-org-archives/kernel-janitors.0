@@ -1,88 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:02 +0000
-Subject: Applied "ASoC: cs35l32: Delete two error messages for a failed memory allocation in cs35l32_i2c_prob
-Message-Id: <E1eJOWc-00079F-RT@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Nov 2017 18:41:38 +0000
+Subject: [PATCH 1/3] net: sched: cls_fw: Use common error handling code in fw_change()
+Message-Id: <748e1a55-dd2d-e5e0-1097-73664115668f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8980f9c6-f559-816f-9ec8-e22194e0f3aa@users.sourceforge.net>
-In-Reply-To: <8980f9c6-f559-816f-9ec8-e22194e0f3aa@users.sourceforge.net>
+References: <32efa965-896f-f24a-4d30-586e10c54a5b@users.sourceforge.net>
+In-Reply-To: <32efa965-896f-f24a-4d30-586e10c54a5b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
+To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   ASoC: cs35l32: Delete two error messages for a failed memory allocation in cs35l32_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 410afed04b130fc1c22f82b10b20aed1636d2f15 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 20:35:06 +0100
-Subject: [PATCH] ASoC: cs35l32: Delete two error messages for a failed memory
- allocation in cs35l32_i2c_probe()
+Date: Wed, 8 Nov 2017 19:15:08 +0100
 
-Omit extra messages for a memory allocation failure in this function.
+Add a jump target so that a bit of exception handling can be better reused
+in an if branch of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs35l32.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ net/sched/cls_fw.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l32.c b/sound/soc/codecs/cs35l32.c
-index 7e9806206648..e41d8ebe6eea 100644
---- a/sound/soc/codecs/cs35l32.c
-+++ b/sound/soc/codecs/cs35l32.c
-@@ -358,10 +358,8 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
+diff --git a/net/sched/cls_fw.c b/net/sched/cls_fw.c
+index 5908f56f76da..567db4d2349f 100644
+--- a/net/sched/cls_fw.c
++++ b/net/sched/cls_fw.c
+@@ -281,14 +281,13 @@ static int fw_change(struct net *net, struct sk_buff *in_skb,
+ 		fnew->tp = f->tp;
  
- 	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs35l32_private),
- 			       GFP_KERNEL);
--	if (!cs35l32) {
--		dev_err(&i2c_client->dev, "could not allocate codec\n");
-+	if (!cs35l32)
- 		return -ENOMEM;
--	}
- 
- 	i2c_set_clientdata(i2c_client, cs35l32);
- 
-@@ -378,10 +376,9 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				     sizeof(struct cs35l32_platform_data),
- 				GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev, "could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
+ 		err = tcf_exts_init(&fnew->exts, TCA_FW_ACT, TCA_FW_POLICE);
+-		if (err < 0) {
+-			kfree(fnew);
+-			return err;
 -		}
-+
- 		if (i2c_client->dev.of_node) {
- 			ret = cs35l32_handle_of_data(i2c_client,
- 						     &cs35l32->pdata);
++		if (err < 0)
++			goto free_filter;
+ 
+ 		err = fw_set_parms(net, tp, fnew, tb, tca, base, ovr);
+ 		if (err < 0) {
+ 			tcf_exts_destroy(&fnew->exts);
++free_filter:
+ 			kfree(fnew);
+ 			return err;
+ 		}
 -- 
 2.15.0
 
