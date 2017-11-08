@@ -1,45 +1,114 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 16:49:08 +0000
-Subject: [PATCH] media: drxd: make const array fastIncrDecLUT static
-Message-Id: <20171102164908.12651-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Nov 2017 16:15:59 +0000
+Subject: [PATCH] nl802154: Improve unlocking of a table in four functions
+Message-Id: <f2f31af4-d8a6-a961-aa2a-f7b29203a3f4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, "David S. Miller" <davem@davemloft.net>, Stefan Schmidt <stefan@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Nov 2017 17:08:55 +0100
 
-Don't populate array fastIncrDecLUT on the stack but instead make it
-static. Makes the object code smaller by over 360 bytes:
+* Add jump targets so that a call of the function "rdev_unlock_llsec_table"
+  is stored only once in these function implementations.
 
-   text	   data	    bss	    dec	    hex	filename
-  32680	    944	     64	  33688	   8398	drxd_hard.o
+* Replace four calls by goto statements.
 
-   text	   data	    bss	    dec	    hex	filename
-  32223	   1040	     64	  33327	   822f	drxd_hard.o
+This issue was detected by using the Coccinelle software.
 
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/drxd_hard.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ieee802154/nl802154.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
-index 3bdf9b1f4e7c..0696bc62dcc9 100644
---- a/drivers/media/dvb-frontends/drxd_hard.c
-+++ b/drivers/media/dvb-frontends/drxd_hard.c
-@@ -640,7 +640,7 @@ static int SetCfgIfAgc(struct drxd_state *state, struct SCfgAgc *cfg)
- 				const u16 maxRur = 8;
- 				static const u16 slowIncrDecLUT[] = {
- 					3, 4, 4, 5, 6 };
--				const u16 fastIncrDecLUT[] = {
-+				static const u16 fastIncrDecLUT[] = {
- 					14, 15, 15, 16,
- 					17, 18, 18, 19,
- 					20, 21, 22, 23,
+diff --git a/net/ieee802154/nl802154.c b/net/ieee802154/nl802154.c
+index 99f6c254ea77..33865d355433 100644
+--- a/net/ieee802154/nl802154.c
++++ b/net/ieee802154/nl802154.c
+@@ -1527,16 +1527,16 @@ nl802154_dump_llsec_key(struct sk_buff *skb, struct netlink_callback *cb)
+ 				      rdev, wpan_dev->netdev, key) < 0) {
+ 			/* TODO */
+ 			err = -EIO;
+-			rdev_unlock_llsec_table(rdev, wpan_dev);
+-			goto out_err;
++			goto unlock_table;
+ 		}
+ 	}
+ 
+ 	cb->args[2] = 1;
+ 
+ out:
+-	rdev_unlock_llsec_table(rdev, wpan_dev);
+ 	err = skb->len;
++unlock_table:
++	rdev_unlock_llsec_table(rdev, wpan_dev);
+ out_err:
+ 	nl802154_finish_wpan_dev_dump(rdev);
+ 
+@@ -1697,16 +1697,16 @@ nl802154_dump_llsec_dev(struct sk_buff *skb, struct netlink_callback *cb)
+ 					 rdev, wpan_dev->netdev, dev) < 0) {
+ 			/* TODO */
+ 			err = -EIO;
+-			rdev_unlock_llsec_table(rdev, wpan_dev);
+-			goto out_err;
++			goto unlock_table;
+ 		}
+ 	}
+ 
+ 	cb->args[2] = 1;
+ 
+ out:
+-	rdev_unlock_llsec_table(rdev, wpan_dev);
+ 	err = skb->len;
++unlock_table:
++	rdev_unlock_llsec_table(rdev, wpan_dev);
+ out_err:
+ 	nl802154_finish_wpan_dev_dump(rdev);
+ 
+@@ -1875,8 +1875,7 @@ nl802154_dump_llsec_devkey(struct sk_buff *skb, struct netlink_callback *cb)
+ 						 kpos) < 0) {
+ 				/* TODO */
+ 				err = -EIO;
+-				rdev_unlock_llsec_table(rdev, wpan_dev);
+-				goto out_err;
++				goto unlock_table;
+ 			}
+ 		}
+ 	}
+@@ -1884,8 +1883,9 @@ nl802154_dump_llsec_devkey(struct sk_buff *skb, struct netlink_callback *cb)
+ 	cb->args[2] = 1;
+ 
+ out:
+-	rdev_unlock_llsec_table(rdev, wpan_dev);
+ 	err = skb->len;
++unlock_table:
++	rdev_unlock_llsec_table(rdev, wpan_dev);
+ out_err:
+ 	nl802154_finish_wpan_dev_dump(rdev);
+ 
+@@ -2034,16 +2034,16 @@ nl802154_dump_llsec_seclevel(struct sk_buff *skb, struct netlink_callback *cb)
+ 					   rdev, wpan_dev->netdev, sl) < 0) {
+ 			/* TODO */
+ 			err = -EIO;
+-			rdev_unlock_llsec_table(rdev, wpan_dev);
+-			goto out_err;
++			goto unlock_table;
+ 		}
+ 	}
+ 
+ 	cb->args[2] = 1;
+ 
+ out:
+-	rdev_unlock_llsec_table(rdev, wpan_dev);
+ 	err = skb->len;
++unlock_table:
++	rdev_unlock_llsec_table(rdev, wpan_dev);
+ out_err:
+ 	nl802154_finish_wpan_dev_dump(rdev);
+ 
 -- 
-2.14.1
+2.15.0
 
