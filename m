@@ -1,52 +1,28 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 04 Nov 2017 20:26:40 +0000
-Subject: Re: [PATCH] rtlwifi: remove redundant initialization to cfg_cmd
-Message-Id: <9b9712ba-42fd-8683-2d65-e72187647902@lwfinger.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Nov 2017 08:38:20 +0000
+Subject: [patch 2/2] scsi: mpt3sas: remove a stray KERN_INFO
+Message-Id: <20171108083819.u2yufaeamh2vffac@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171104193759.919-1-colin.king@canonical.com>
-In-Reply-To: <20171104193759.919-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Cc: Chaitra P B <chaitra.basappa@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/04/2017 02:37 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> cfg_cmd is initialized to zero and this value is never read, instead
-> it is over-written in the start of a do-while loop. Remove the
-> redundant initialization. Cleans up clang warning:
-> 
-> drivers/net/wireless/realtek/rtlwifi/core.c:1750:22: warning: Value
-> stored to 'cfg_cmd' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+pr_info() has a KERN_INFO already so the second KERN_INFO isn't needed.
 
-Looks OK to me.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-Thanks,
-
-Larry
-
-> ---
->   drivers/net/wireless/realtek/rtlwifi/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
-> index 1147327e6f52..7a17cc20c57e 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/core.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
-> @@ -1748,7 +1748,7 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
->   			      u8 faversion, u8 interface_type,
->   			      struct wlan_pwr_cfg pwrcfgcmd[])
->   {
-> -	struct wlan_pwr_cfg cfg_cmd = {0};
-> +	struct wlan_pwr_cfg cfg_cmd;
->   	bool polling_bit = false;
->   	u32 ary_idx = 0;
->   	u8 value = 0;
-> 
-
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 3a9438a1704e..b258f210120a 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -8683,7 +8684,7 @@ _scsih_mark_responding_pcie_device(struct MPT3SAS_ADAPTER *ioc,
+ 
+ 			if (pcie_device->handle = pcie_device_pg0->DevHandle)
+ 				goto out;
+-			pr_info(KERN_INFO "\thandle changed from(0x%04x)!!!\n",
++			pr_info("\thandle changed from(0x%04x)!!!\n",
+ 			    pcie_device->handle);
+ 			pcie_device->handle = pcie_device_pg0->DevHandle;
+ 			if (sas_target_priv_data)
