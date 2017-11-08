@@ -1,63 +1,94 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 06 Nov 2017 15:08:08 +0000
-Subject: Re: [PATCH] btrfs/volumes: Improve unlocking of a mutex in __btrfs_balance()
-Message-Id: <26ba6f26-7132-282b-7b90-3b691a704e4c@users.sourceforge.net>
+Date: Wed, 08 Nov 2017 07:14:55 +0000
+Subject: [PATCH] Bluetooth: Use common error handling code in bt_init()
+Message-Id: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d7bcebed-b68f-6137-24df-9332ef1de802@users.sourceforge.net>
- <20171106142450.GF28789@twin.jikos.cz>
-In-Reply-To: <20171106142450.GF28789@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
-Cc: dsterba@suse.cz, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> @@ -3682,7 +3678,7 @@ static int __btrfs_balance(struct btrfs_fs_info *f=
-s_info)
->>  		counting =3D false;
->>  		goto again;
->>  	}
->> -error:
->> +free_path:
->>  	btrfs_free_path(path);
->>  	if (enospc_errors) {
->>  		btrfs_info(fs_info, "%d enospc errors during balance",
->> @@ -3692,6 +3688,10 @@ static int __btrfs_balance(struct btrfs_fs_info *=
-fs_info)
->>  	}
->> =20
->>  	return ret;
->> +
->> +unlock:
->> +	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
->> +	goto free_path;
->>  }
->=20
-> This is also an anti-pattern,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Nov 2017 08:03:04 +0100
 
-I got an other software development opinion for this use case.
+* Improve jump targets so that a bit of exception handling can be better
+  reused at the end of this function.
 
+* Adjust five condition checks.
 
-> the label followed by a goto jumping back to the exit/cleanup block,
-> right at the end of a function.
+This issue was detected by using the Coccinelle software.
 
-I find that this way can be useful for efficient exception handling.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/bluetooth/af_bluetooth.c | 38 +++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
+diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
+index 91e3ba280706..f044202346c6 100644
+--- a/net/bluetooth/af_bluetooth.c
++++ b/net/bluetooth/af_bluetooth.c
+@@ -766,43 +766,39 @@ static int __init bt_init(void)
+ 		return err;
+ 
+ 	err = sock_register(&bt_sock_family_ops);
+-	if (err < 0) {
+-		bt_sysfs_cleanup();
+-		return err;
+-	}
++	if (err)
++		goto cleanup_sysfs;
+ 
+ 	BT_INFO("HCI device and connection manager initialized");
+ 
+ 	err = hci_sock_init();
+-	if (err < 0)
+-		goto error;
++	if (err)
++		goto unregister_socket;
+ 
+ 	err = l2cap_init();
+-	if (err < 0)
+-		goto sock_err;
++	if (err)
++		goto cleanup_socket;
+ 
+ 	err = sco_init();
+-	if (err < 0) {
+-		l2cap_exit();
+-		goto sock_err;
+-	}
++	if (err)
++		goto cleanup_cap;
+ 
+ 	err = mgmt_init();
+-	if (err < 0) {
+-		sco_exit();
+-		l2cap_exit();
+-		goto sock_err;
+-	}
++	if (err)
++		goto cleanup_sco;
+ 
+ 	return 0;
+ 
+-sock_err:
++cleanup_sco:
++	sco_exit();
++cleanup_cap:
++	l2cap_exit();
++cleanup_socket:
+ 	hci_sock_cleanup();
+-
+-error:
++unregister_socket:
+ 	sock_unregister(PF_BLUETOOTH);
++cleanup_sysfs:
+ 	bt_sysfs_cleanup();
+-
+ 	return err;
+ }
+ 
+-- 
+2.15.0
 
-> I've sent some patches in the past to clean that up
-
-Interesting =E2=80=A6
-
-
-> and don't want to reintroduce it.
-
-Would you like to reconsider this view if the object code size
-could be reduced a bit for the affected function implementation?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
