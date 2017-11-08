@@ -1,86 +1,55 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 14:00:21 +0000
-Subject: [PATCH] ALSA: HDA: Improve unlocking of a mutex in hdmi_pcm_open()
-Message-Id: <dd3cb768-1eb2-bc1d-f6ec-05249c60488e@users.sourceforge.net>
+Date: Wed, 08 Nov 2017 20:38:18 +0000
+Subject: [PATCH 2/2] net/sched/cls_tcindex: Improve a size determination in two functions
+Message-Id: <a039fc85-62a0-1da9-dc32-fe2294bf8991@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
+In-Reply-To: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Ander Conselvan De Oliveira <ander.conselvan.de.oliveira@intel.com>, Bhumika Goyal <bhumirks@gmail.com>, Daniel Dadap <ddadap@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Libin Yang <libin.yang@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 14:46:19 +0100
+Date: Wed, 8 Nov 2017 21:17:26 +0100
 
-* Add a jump target so that a call of the function "mutex_unlock" is stored
-  only twice in this function implementation.
-
-* Replace four calls by goto statements.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/hda/patch_hdmi.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ net/sched/cls_tcindex.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index c19c81d230bd..f1c0b6cab90a 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1205,8 +1205,8 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
- 	pin_idx = hinfo_to_pin_index(codec, hinfo);
- 	if (!spec->dyn_pcm_assign) {
- 		if (snd_BUG_ON(pin_idx < 0)) {
--			mutex_unlock(&spec->pcm_lock);
--			return -EINVAL;
-+			err = -EINVAL;
-+			goto unlock;
- 		}
- 	} else {
- 		/* no pin is assigned to the PCM
-@@ -1214,16 +1214,13 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
- 		 */
- 		if (pin_idx < 0) {
- 			err = hdmi_pcm_open_no_pin(hinfo, codec, substream);
--			mutex_unlock(&spec->pcm_lock);
--			return err;
-+			goto unlock;
- 		}
- 	}
+diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
+index 24f05bc09084..0f1909c6545d 100644
+--- a/net/sched/cls_tcindex.c
++++ b/net/sched/cls_tcindex.c
+@@ -130,7 +130,7 @@ static int tcindex_init(struct tcf_proto *tp)
+ 	struct tcindex_data *p;
  
- 	err = hdmi_choose_cvt(codec, pin_idx, &cvt_idx);
--	if (err < 0) {
--		mutex_unlock(&spec->pcm_lock);
--		return err;
--	}
-+	if (err < 0)
-+		goto unlock;
+ 	pr_debug("tcindex_init(tp %p)\n", tp);
+-	p = kzalloc(sizeof(struct tcindex_data), GFP_KERNEL);
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
  
- 	per_cvt = get_cvt(spec, cvt_idx);
- 	/* Claim converter */
-@@ -1260,8 +1257,8 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
- 			per_cvt->assigned = 0;
- 			hinfo->nid = 0;
- 			snd_hda_spdif_ctls_unassign(codec, pcm_idx);
--			mutex_unlock(&spec->pcm_lock);
--			return -ENODEV;
-+			err = -ENODEV;
-+			goto unlock;
- 		}
- 	}
+@@ -413,10 +413,7 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
+ 		} else {
+ 			struct tcindex_filter __rcu **hash;
  
-@@ -1275,6 +1272,10 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
- 	snd_pcm_hw_constraint_step(substream->runtime, 0,
- 				   SNDRV_PCM_HW_PARAM_CHANNELS, 2);
- 	return 0;
-+
-+unlock:
-+	mutex_unlock(&spec->pcm_lock);
-+	return err;
- }
+-			hash = kcalloc(cp->hash,
+-				       sizeof(struct tcindex_filter *),
+-				       GFP_KERNEL);
+-
++			hash = kcalloc(cp->hash, sizeof(*hash), GFP_KERNEL);
+ 			if (!hash)
+ 				goto errout_alloc;
  
- /*
 -- 
 2.15.0
 
