@@ -1,44 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Nov 2017 11:42:20 +0000
-Subject: [PATCH] scsi: cxgb4i: potential array overflow in t4_uld_rx_handler()
-Message-Id: <20171129114220.3qbwryxjnol6zmsk@mwanda>
+Date: Wed, 08 Nov 2017 08:39:46 +0000
+Subject: [PATCH] Input: uinput - unlock on allocation failure in ioctl
+Message-Id: <20171108083946.vbsixgkodhw6jh4q@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karen Xie <kxie@chelsio.com>, Dimitris Michailidis <dm@chelsio.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@bitmath.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The story is that Smatch marks skb->data as untrusted and so it
-complains about this code:
+We have to unlock before returning if input_allocate_device() fails.
 
-	drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2111 t4_uld_rx_handler()
-	error: buffer overflow 'cxgb4i_cplhandlers' 239 <= 255.
-
-I don't know the code very well, but it looks like a reasonable warning
-message.  Let's address it by adding a sanity check to make sure "opc"
-is within bounds.
-
-Fixes: bbc02c7e9d34 ("cxgb4: Add register, message, and FW definitions")
+Fixes: 04ce40a61a91 ("Input: uinput - remove uinput_allocate_device()")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-index 266eddf17a99..94b2d5660a07 100644
---- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-+++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-@@ -2108,12 +2108,12 @@ static int t4_uld_rx_handler(void *handle, const __be64 *rsp,
- 	log_debug(1 << CXGBI_DBG_TOE,
- 		"cdev %p, opcode 0x%x(0x%x,0x%x), skb %p.\n",
- 		 cdev, opc, rpl->ot.opcode_tid, ntohl(rpl->ot.opcode_tid), skb);
--	if (cxgb4i_cplhandlers[opc])
--		cxgb4i_cplhandlers[opc](cdev, skb);
--	else {
-+	if (opc >= ARRAY_SIZE(cxgb4i_cplhandlers) || !cxgb4i_cplhandlers[opc]) {
- 		pr_err("No handler for opcode 0x%x.\n", opc);
- 		__kfree_skb(skb);
-+		return 0;
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index 7b41aad7ec27..39ddd9a73feb 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -857,8 +857,10 @@ static long uinput_ioctl_handler(struct file *file, unsigned int cmd,
+ 
+ 	if (!udev->dev) {
+ 		udev->dev = input_allocate_device();
+-		if (!udev->dev)
+-			return -ENOMEM;
++		if (!udev->dev) {
++			retval = -ENOMEM;
++			goto out;
++		}
  	}
-+	cxgb4i_cplhandlers[opc](cdev, skb);
- 	return 0;
- nomem:
- 	log_debug(1 << CXGBI_DBG_TOE, "OOM bailing out.\n");
+ 
+ 	switch (cmd) {
