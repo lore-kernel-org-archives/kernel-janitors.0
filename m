@@ -1,94 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 07:14:55 +0000
-Subject: [PATCH] Bluetooth: Use common error handling code in bt_init()
-Message-Id: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Wed, 08 Nov 2017 07:34:28 +0000
+Subject: Re: [PATCH] Bluetooth: Use common error handling code in bt_init()
+Message-Id: <7A6D341D-2ABC-417C-8808-A907E61F08E6@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
+In-Reply-To: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 08:03:04 +0100
+Hi Markus,
 
-* Improve jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
+> * Improve jump targets so that a bit of exception handling can be better
+>  reused at the end of this function.
+> 
+> * Adjust five condition checks.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> net/bluetooth/af_bluetooth.c | 38 +++++++++++++++++---------------------
+> 1 file changed, 17 insertions(+), 21 deletions(-)
 
-* Adjust five condition checks.
+patch has been applied to bluetooth-next tree.
 
-This issue was detected by using the Coccinelle software.
+Regards
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/bluetooth/af_bluetooth.c | 38 +++++++++++++++++---------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
-
-diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
-index 91e3ba280706..f044202346c6 100644
---- a/net/bluetooth/af_bluetooth.c
-+++ b/net/bluetooth/af_bluetooth.c
-@@ -766,43 +766,39 @@ static int __init bt_init(void)
- 		return err;
- 
- 	err = sock_register(&bt_sock_family_ops);
--	if (err < 0) {
--		bt_sysfs_cleanup();
--		return err;
--	}
-+	if (err)
-+		goto cleanup_sysfs;
- 
- 	BT_INFO("HCI device and connection manager initialized");
- 
- 	err = hci_sock_init();
--	if (err < 0)
--		goto error;
-+	if (err)
-+		goto unregister_socket;
- 
- 	err = l2cap_init();
--	if (err < 0)
--		goto sock_err;
-+	if (err)
-+		goto cleanup_socket;
- 
- 	err = sco_init();
--	if (err < 0) {
--		l2cap_exit();
--		goto sock_err;
--	}
-+	if (err)
-+		goto cleanup_cap;
- 
- 	err = mgmt_init();
--	if (err < 0) {
--		sco_exit();
--		l2cap_exit();
--		goto sock_err;
--	}
-+	if (err)
-+		goto cleanup_sco;
- 
- 	return 0;
- 
--sock_err:
-+cleanup_sco:
-+	sco_exit();
-+cleanup_cap:
-+	l2cap_exit();
-+cleanup_socket:
- 	hci_sock_cleanup();
--
--error:
-+unregister_socket:
- 	sock_unregister(PF_BLUETOOTH);
-+cleanup_sysfs:
- 	bt_sysfs_cleanup();
--
- 	return err;
- }
- 
--- 
-2.15.0
+Marcel
 
