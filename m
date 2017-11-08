@@ -1,43 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 21:32:06 +0000
-Subject: [PATCH] video: matroxfb: Delete an error message for a failed memory allocation in matroxfb_crtc2_pr
-Message-Id: <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 08 Nov 2017 12:50:52 +0000
+Subject: Re: iwlegacy: remove redundant pointer sta_priv
+Message-Id: <20171108125052.F00B3607E1@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171101092622.16625-1-colin.king@canonical.com>
+In-Reply-To: <20171101092622.16625-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 22:13:55 +0100
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer sta_priv is assigned but never read, hence it is redundant
+> and can be removed. Cleans up clang warning:
+> 
+> drivers/net/wireless/intel/iwlegacy/4965-rs.c:2163:2: warning: Value
+> stored to 'sta_priv' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/video/fbdev/matrox/matroxfb_crtc2.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+6c6e25311312 iwlegacy: remove redundant pointer sta_priv
 
-diff --git a/drivers/video/fbdev/matrox/matroxfb_crtc2.c b/drivers/video/fbdev/matrox/matroxfb_crtc2.c
-index 02796a4317a9..f64e1d55d7a1 100644
---- a/drivers/video/fbdev/matrox/matroxfb_crtc2.c
-+++ b/drivers/video/fbdev/matrox/matroxfb_crtc2.c
-@@ -696,10 +696,9 @@ static void* matroxfb_crtc2_probe(struct matrox_fb_info* minfo) {
- 	if (!minfo->devflags.crtc2)
- 		return NULL;
- 	m2info = kzalloc(sizeof(*m2info), GFP_KERNEL);
--	if (!m2info) {
--		printk(KERN_ERR "matroxfb_crtc2: Not enough memory for CRTC2 control structs\n");
-+	if (!m2info)
- 		return NULL;
--	}
-+
- 	m2info->primary_dev = minfo;
- 	if (matroxfb_dh_registerfb(m2info)) {
- 		kfree(m2info);
 -- 
-2.15.0
+https://patchwork.kernel.org/patch/10036047/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
