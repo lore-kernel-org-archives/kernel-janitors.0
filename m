@@ -1,70 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 09:50:08 +0000
-Subject: [PATCH] rtc-ds1302: Use common error handling code in ds1302_probe()
-Message-Id: <1e446a0e-3928-d4b5-d916-b25ae3d4b6f5@users.sourceforge.net>
+From: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>
+Date: Wed, 08 Nov 2017 22:41:07 +0000
+Subject: Re: [PATCH] tcmu: Oops in unmap_thread_fn()
+Message-Id: <d4d2840b-d453-e67a-01b2-662a29bc134c@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20170801200917.brigs5x47eujfx7a@mwanda>
+ <1502062073.22966.45.camel@haakon3.daterainc.com>
+In-Reply-To: <1502062073.22966.45.camel@haakon3.daterainc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Xiubo Li <lixiubo@cmss.chinamobile.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Nov 2017 10:45:08 +0100
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
 
-* Replace two calls of the function "dev_err" by goto statements.
+On 8/6/17 6:27 PM, Nicholas A. Bellinger wrote:
+> On Tue, 2017-08-01 at 23:09 +0300, Dan Carpenter wrote:
+>> Calling list_del() on the iterator pointer in list_for_each_entry() will
+>> cause an oops.  We need to user the _safe() version for that.
+>>
+>> Fixes: c73d02f63c16 ("tcmu: Add fifo type waiter list support to avoid starvation")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+> Applied to target-pending/for-next.
+>
+> Thanks DanC.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe target-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+Also missing.
 
-* Adjust two condition checks.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/rtc/rtc-ds1302.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/rtc/rtc-ds1302.c b/drivers/rtc/rtc-ds1302.c
-index 0ec4be62322b..06ef64736ac3 100644
---- a/drivers/rtc/rtc-ds1302.c
-+++ b/drivers/rtc/rtc-ds1302.c
-@@ -132,19 +132,13 @@ static int ds1302_probe(struct spi_device *spi)
- 
- 	addr = RTC_ADDR_CTRL << 1 | RTC_CMD_READ;
- 	status = spi_write_then_read(spi, &addr, sizeof(addr), buf, 1);
--	if (status < 0) {
--		dev_err(&spi->dev, "control register read error %d\n",
--				status);
--		return status;
--	}
-+	if (status)
-+		goto report_read_failure;
- 
- 	if ((buf[0] & ~RTC_CMD_WRITE_DISABLE) != 0) {
- 		status = spi_write_then_read(spi, &addr, sizeof(addr), buf, 1);
--		if (status < 0) {
--			dev_err(&spi->dev, "control register read error %d\n",
--					status);
--			return status;
--		}
-+		if (status)
-+			goto report_read_failure;
- 
- 		if ((buf[0] & ~RTC_CMD_WRITE_DISABLE) != 0) {
- 			dev_err(&spi->dev, "junk in control register\n");
-@@ -189,6 +183,10 @@ static int ds1302_probe(struct spi_device *spi)
- 	}
- 
- 	return 0;
-+
-+report_read_failure:
-+	dev_err(&spi->dev, "control register read error %d\n", status);
-+	return status;
- }
- 
- static int ds1302_remove(struct spi_device *spi)
--- 
-2.14.3
+-Bryant
 
