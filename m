@@ -1,36 +1,36 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 06 Nov 2017 10:42:09 +0000
-Subject: [PATCH] metag: fix spelling mistake: "segement" -> "segment"
-Message-Id: <20171106104209.25369-1-colin.king@canonical.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 08 Nov 2017 12:45:17 +0000
+Subject: Re: rtlwifi: remove redundant initialization to cfg_cmd
+Message-Id: <20171108124517.3D1E2607A4@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171104193759.919-1-colin.king@canonical.com>
+In-Reply-To: <20171104193759.919-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Hogan <jhogan@kernel.org>, Ingo Molnar <mingo@kernel.org>, linux-metag@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Colin Ian King <colin.king@canonical.com> wrote:
 
-Trivial fix to spelling mistake in pr_info message
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> cfg_cmd is initialized to zero and this value is never read, instead
+> it is over-written in the start of a do-while loop. Remove the
+> redundant initialization. Cleans up clang warning:
+> 
+> drivers/net/wireless/realtek/rtlwifi/core.c:1750:22: warning: Value
+> stored to 'cfg_cmd' during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/metag/kernel/process.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/arch/metag/kernel/process.c b/arch/metag/kernel/process.c
-index bde9c938bd4a..aaa7a9467ed6 100644
---- a/arch/metag/kernel/process.c
-+++ b/arch/metag/kernel/process.c
-@@ -394,7 +394,7 @@ static unsigned long elf_vm_mmap(struct file *filep, unsigned long addr,
- 		return map_addr;
- 
- 	if ((type & MAP_FIXED) && map_addr != addr) {
--		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already\n",
-+		pr_info("Uhuuh, elf segment at %p requested but the memory is mapped already\n",
- 				(void*)addr);
- 		return -EAGAIN;
- 	}
+f80ead1cd5fa rtlwifi: remove redundant initialization to cfg_cmd
+
 -- 
-2.14.1
+https://patchwork.kernel.org/patch/10041685/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
