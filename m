@@ -1,84 +1,48 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Tue, 07 Nov 2017 08:21:07 +0000
-Subject: Re: [PATCH v2] can: Use common error handling code in vxcan_newlink()
-Message-Id: <92704ce5-d62e-ab58-546d-154eac16486a@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iaH0asOD4eNFce1WQKWCrBuh4X4NUpTNV"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Nov 2017 08:13:05 +0000
+Subject: [PATCH] staging: ccree: remove unused pointer cc_base
+Message-Id: <20171109081305.3659-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
- <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
- <d3bdd3c0-5a03-dd59-07ca-94b126c67f75@users.sourceforge.net>
- <264b3c2b-8354-5769-639c-ac8d2fcbe630@hartkopp.net>
- <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
-In-Reply-To: <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Oliver Hartkopp <socketcan@hartkopp.net>, Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Gilad Ben-Yossef <gilad@benyossef.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-crypto@vger.kernel.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---iaH0asOD4eNFce1WQKWCrBuh4X4NUpTNV
-Content-Type: multipart/mixed; boundary="mhfX1TjAEx4KTWD08QQLFBiusQA93w18h";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
- Oliver Hartkopp <socketcan@hartkopp.net>,
- Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <92704ce5-d62e-ab58-546d-154eac16486a@pengutronix.de>
-Subject: Re: [PATCH v2] can: Use common error handling code in vxcan_newlink()
-References: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
- <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
- <d3bdd3c0-5a03-dd59-07ca-94b126c67f75@users.sourceforge.net>
- <264b3c2b-8354-5769-639c-ac8d2fcbe630@hartkopp.net>
- <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
-In-Reply-To: <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
---mhfX1TjAEx4KTWD08QQLFBiusQA93w18h
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Pointer cc_base is being assigned but is never read, hence it is
+redundant and can be removed. Cleans up clang warning:
 
-On 11/01/2017 03:16 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 1 Nov 2017 14:56:15 +0100
->=20
-> Add a jump target so that a bit of exception handling can be better reu=
-sed
-> at the end of this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+drivers/staging/ccree/ssi_driver.c:235:2: warning: Value stored to
+'cc_base' is never read
 
-applied to can-next.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/ccree/ssi_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Tnx,
-Marc
+diff --git a/drivers/staging/ccree/ssi_driver.c b/drivers/staging/ccree/ssi_driver.c
+index 1a3c481fa92a..f4c0af8047e4 100644
+--- a/drivers/staging/ccree/ssi_driver.c
++++ b/drivers/staging/ccree/ssi_driver.c
+@@ -199,7 +199,6 @@ int init_cc_regs(struct ssi_drvdata *drvdata, bool is_probe)
+ static int init_cc_resources(struct platform_device *plat_dev)
+ {
+ 	struct resource *req_mem_cc_regs = NULL;
+-	void __iomem *cc_base = NULL;
+ 	struct ssi_drvdata *new_drvdata;
+ 	struct device *dev = &plat_dev->dev;
+ 	struct device_node *np = dev->of_node;
+@@ -232,8 +231,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	dev_dbg(dev, "CC registers mapped from %pa to 0x%p\n",
+ 		&req_mem_cc_regs->start, new_drvdata->cc_base);
+ 
+-	cc_base = new_drvdata->cc_base;
+-
+ 	/* Then IRQ */
+ 	new_drvdata->irq = platform_get_irq(plat_dev, 0);
+ 	if (new_drvdata->irq < 0) {
+-- 
+2.14.1
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---mhfX1TjAEx4KTWD08QQLFBiusQA93w18h--
-
---iaH0asOD4eNFce1WQKWCrBuh4X4NUpTNV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAloBbPMACgkQHv7KIOw4
-HPZkLwf7BRwA5Pf97tzl3GZPBKekVGOJBp4P3IEYxIlud4q3zPSyY85B/WZST+E9
-xCqjgFPLAFF3z8F7IXxbMLxim91+ixwZb4OZqFDf2F4Mz16wD8FJ6BcUFRzZrU9o
-lcylTJGAreAo0jUR/zY2RNZdbUX9/OfoACB1yjpce+zXRC5/S/o+ma6RsXcfafQa
-vRfypx7NqqasyN/WDMdlQGz7U7m3nsEAKO0SKoOtX+WiRXFUusvQYl62RwnVwMxS
-dkNuDKKGwVgMvN2EoLQW5u8zq0s9aMMxvYxuz4FwP+xAL99qFbloMw6wTcXKs7cE
-cBAwxn9IqDV8L61dgrn5sDyWUWJdFw==
-=mDsF
------END PGP SIGNATURE-----
-
---iaH0asOD4eNFce1WQKWCrBuh4X4NUpTNV--
