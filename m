@@ -1,39 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Wed, 29 Nov 2017 10:59:52 +0000
-Subject: Re: [PATCH] mfd: ab8500-debugfs: Use common error handling code in ab8500_print_modem_registers()
-Message-Id: <20171129105952.pf6lywfqfsnmcnni@dell>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Nov 2017 13:59:43 +0000
+Subject: [PATCH] openvswitch: add null pointer check on upcall
+Message-Id: <20171109135943.418-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7af3098c-21fd-aa16-237f-0359d312cac7@users.sourceforge.net>
-In-Reply-To: <7af3098c-21fd-aa16-237f-0359d312cac7@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pravin Shelar <pshelar@nicira.com>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, dev@openvswitch.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 27 Oct 2017, SF Markus Elfring wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 27 Oct 2017 17:20:45 +0200
->=20
-> Add jump targets so that two error messages are stored only once
-> at the end of this function implementation.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/ab8500-debugfs.c | 35 +++++++++++++++++++----------------
->  1 file changed, 19 insertions(+), 16 deletions(-)
+upcall may be assigned a NULL pointer as genlmsg_put can potentially
+return a NULL.  Add a null check to avoid a null pointer dereference
+on upcall.
 
-Applied, thanks.
+Detected by CoverityScan, CID#728404 ("Dereference null return value")
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fixes: commit ccb1352e76cf ("net: Add Open vSwitch kernel components.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/openvswitch/datapath.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
+index 4d38ac044cee..e8fb3d76fa6e 100644
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -461,6 +461,10 @@ static int queue_userspace_packet(struct datapath *dp, struct sk_buff *skb,
+ 
+ 	upcall = genlmsg_put(user_skb, 0, 0, &dp_packet_genl_family,
+ 			     0, upcall_info->cmd);
++	if (!upcall) {
++		err = -ENOBUFS;
++		goto out;
++	}
+ 	upcall->dp_ifindex = dp_ifindex;
+ 
+ 	err = ovs_nla_put_key(key, key, OVS_PACKET_ATTR_KEY, false, user_skb);
+-- 
+2.14.1
+
