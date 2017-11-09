@@ -1,48 +1,22 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 03 Nov 2017 12:37:16 +0000
-Subject: Re: [PATCH] platform: x86: dell-smo8800: remove redundant assignments to byte_data
-Message-Id: <CAHp75VdLwN2p5grNY--VzuPOp64aS70uqWdmPWA2-63We+yP_Q@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 09 Nov 2017 13:04:19 +0000
+Subject: Re: bq2415x_charger: Use common error handling code in bq2415x_timer_work()
+Message-Id: <d680ca7e-9806-1f39-80da-58fa7239a31c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031110318.20985-1-colin.king@canonical.com>
- <CAHp75Vec3Hjd_keMid-x6ub5ZJqUmq1nUFiHPsxuWt8V+vzrnQ@mail.gmail.com>
- <20171031135548.u5vtsxj7hbnuioz3@pali> <CAHp75VfAzk4n1HQETp+r5KGE5B_HmQ0JcsOwesvowuvt=wju5g@mail.gmail.com>
- <20171031141351.yrjhwweubwxptb4j@pali> <CAHp75Ve852xEsng4cCxznGpkt+P0pnCTX1k9qmVkkZPU3FskOA@mail.gmail.com>
- <20171031184123.ssv5yolajiv7u7gj@pali>
-In-Reply-To: <20171031184123.ssv5yolajiv7u7gj@pali>
+References: <48b34d35-8c41-d25b-0cb7-6257b37c5a44@users.sourceforge.net>
+ <20171109120842.GA28552@atrey.karlin.mff.cuni.cz>
+In-Reply-To: <20171109120842.GA28552@atrey.karlin.mff.cuni.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Cc: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 8:41 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> On Tuesday 31 October 2017 20:08:45 Andy Shevchenko wrote:
->> On Tue, Oct 31, 2017 at 4:13 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
->> > On Tuesday 31 October 2017 16:07:25 Andy Shevchenko wrote:
->> >> On Tue, Oct 31, 2017 at 3:55 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
->> >> > On Tuesday 31 October 2017 15:47:58 Andy Shevchenko wrote:
->> >> >> On Tue, Oct 31, 2017 at 1:03 PM, Colin King <colin.king@canonical.com> wrote:
->>
->> >> OK, though it doesn't clarify the intention of the byte_data
->> >> (useless?) assignments.
->> >
->> > Probably similar code pattern exists in that lis3lv* driver...
->>
->> So, it seems to me OK to apply the patch. No objections?
->
-> No objections, you can add my:
->
-> Acked-by: Pali Rohár <pali.rohar@gmail.com>
+> Better fix would be to display separate messages; user is probably
+> interested in what failed...
 
-Applied to my review and testing queue, thanks!
+Which information (or wording) would you find more appropriate
+at these places?
 
->
-> --
-> Pali Rohár
-> pali.rohar@gmail.com
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Markus
