@@ -1,52 +1,42 @@
-From: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
-Date: Tue, 07 Nov 2017 12:53:47 +0000
-Subject: Re: [PATCH] tty: serial: jsm: remove redundant pointer ts
-Message-Id: <077747a9-4ed2-9716-4de6-35f2fa269183@linux.vnet.ibm.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Nov 2017 17:47:51 +0000
+Subject: [PATCH] ovl: fix null pointer dereference on ofs allocation failure.
+Message-Id: <20171109174751.11683-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107114107.22805-1-colin.king@canonical.com>
-In-Reply-To: <20171107114107.22805-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/07/2017 09:41 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer ts is assigned a value that is never read, ts is therefore
-> redundant and can be removed. Cleans up clang warning:
-> 
-> drivers/tty/serial/jsm/jsm_tty.c:285:2: warning: Value stored to 'ts'
-> is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Colin!
+The current error exit path when ofs fails to allocate jumps
+to clean-up code that calls ovl_free_fs resulting in a null pointer
+dereference on the null ovl pointer.  Fix this by simply returning
+with the -ENOMEM status in err.
 
-Acked-by: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Detected by CoverityScan, CID#1461284 ("Dereference after null check")
 
+Fixes: 4f3bf9de9eac ("ovl: factor out ovl_free_fs() helper")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/overlayfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/tty/serial/jsm/jsm_tty.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_tty.c
-> index e69227cc3827..5ecd878669b8 100644
-> --- a/drivers/tty/serial/jsm/jsm_tty.c
-> +++ b/drivers/tty/serial/jsm/jsm_tty.c
-> @@ -275,14 +275,12 @@ static int jsm_tty_open(struct uart_port *port)
->  static void jsm_tty_close(struct uart_port *port)
->  {
->  	struct jsm_board *bd;
-> -	struct ktermios *ts;
->  	struct jsm_channel *channel >  		container_of(port, struct jsm_channel, uart_port);
-> 
->  	jsm_dbg(CLOSE, &channel->ch_bd->pci_dev, "start\n");
-> 
->  	bd = channel->ch_bd;
-> -	ts = &port->state->port.tty->termios;
-> 
->  	channel->ch_flags &= ~(CH_STOPI);
-> 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 708afec913ac..8258a194695b 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1154,7 +1154,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 	err = -ENOMEM;
+ 	ofs = kzalloc(sizeof(struct ovl_fs), GFP_KERNEL);
+ 	if (!ofs)
+-		goto out_err;
++		return err;
+ 
+ 	ofs->creator_cred = cred = prepare_creds();
+ 	if (!cred)
+-- 
+2.14.1
 
