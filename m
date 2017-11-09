@@ -1,54 +1,38 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 16 Nov 2017 21:38:46 +0000
-Subject: Re: [PATCH] drm/amd/display: remove unnecessary cast and use kcalloc instead of kzalloc
-Message-Id: <CADnq5_P=poTAQkpxY8qwKGMyphbJzYOT8FKF=NnR-LkQP8Z8HQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 09 Nov 2017 08:49:07 +0000
+Subject: [PATCH] extcon: max77693: Delete an unnecessary variable initialisation in max77693_muic_set_path()
+Message-Id: <4fbe6f7c-3ff4-6dbd-2980-8010dcc9548e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171115154509.18054-1-colin.king@canonical.com>
-In-Reply-To: <20171115154509.18054-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Tony Cheng <tony.cheng@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: kernel-janitors@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 15, 2017 at 10:45 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Use kcalloc instead of kzalloc and the cast on the return from kzalloc is
-> unnecessary and can be removed.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 9 Nov 2017 09:40:59 +0100
 
-Reviewed and pushed.
+The variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/extcon/extcon-max77693.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alex
+diff --git a/drivers/extcon/extcon-max77693.c b/drivers/extcon/extcon-max77693.c
+index 643411066ad9..227651ff9666 100644
+--- a/drivers/extcon/extcon-max77693.c
++++ b/drivers/extcon/extcon-max77693.c
+@@ -266,7 +266,7 @@ static int max77693_muic_set_debounce_time(struct max77693_muic_info *info,
+ static int max77693_muic_set_path(struct max77693_muic_info *info,
+ 		u8 val, bool attached)
+ {
+-	int ret = 0;
++	int ret;
+ 	unsigned int ctrl1, ctrl2 = 0;
+ 
+ 	if (attached)
+-- 
+2.15.0
 
-> ---
->  drivers/gpu/drm/amd/display/dc/basics/logger.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/basics/logger.c b/drivers/gpu/drm/amd/display/dc/basics/logger.c
-> index e04e8ecd4874..2ff5b467603d 100644
-> --- a/drivers/gpu/drm/amd/display/dc/basics/logger.c
-> +++ b/drivers/gpu/drm/amd/display/dc/basics/logger.c
-> @@ -70,9 +70,8 @@ static bool construct(struct dc_context *ctx, struct dal_logger *logger,
->  {
->         /* malloc buffer and init offsets */
->         logger->log_buffer_size = DAL_LOGGER_BUFFER_MAX_SIZE;
-> -       logger->log_buffer = (char *)kzalloc(logger->log_buffer_size * sizeof(char),
-> -                                            GFP_KERNEL);
-> -
-> +       logger->log_buffer = kcalloc(logger->log_buffer_size, sizeof(char),
-> +                                    GFP_KERNEL);
->         if (!logger->log_buffer)
->                 return false;
->
-> --
-> 2.14.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
