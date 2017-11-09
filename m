@@ -1,40 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 03 Nov 2017 16:39:21 +0000
-Subject: Re: [PATCH] staging: comedi: usbduxfast: Improve unlocking of a mutex in usbduxfast_ai_insn_read()
-Message-Id: <1d91cb37-4b7d-3b2e-bc20-1bcd70f19c4b@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Nov 2017 21:26:04 +0000
+Subject: [PATCH] crypto: s5p-sss - Remove a stray tab
+Message-Id: <20171109212604.i3zbzlmfotz5b7rr@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b0acc12a-e48c-d51a-f7e3-606e66e6fe7b@users.sourceforge.net>
- <faf75ea4-e1cf-1959-2705-7da1d49bddde@mev.co.uk>
-In-Reply-To: <faf75ea4-e1cf-1959-2705-7da1d49bddde@mev.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ian Abbott <abbotti@mev.co.uk>, devel@driverdev.osuosl.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> @@ -838,6 +834,10 @@ static int usbduxfast_ai_insn_read(struct comedi_device *dev,
->>       mutex_unlock(&devpriv->mut);
->>         return insn->n;
-> 
-> Minor niggle: You could also remove that call to mutex_unlock() by replacing the above three lines with:
-> 
->     ret = insn->n;
-> 
-> which will fall through to the 'unlock:' label below.
+This code seems correct, but the goto was indented too far.
 
-Thanks for your suggestion.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Such a software refactoring is also possible if a corresponding
-consensus could be achieved.
-* Can such a change mean that the lock scope will be extended
-  for both use cases (successful and failed function execution)?
-
-* How much does this implementation matter for you?
-
-* Would you like to achieve a small reduction of the object code there?
-
-* How do you think about consequences from special communication settings
-  by a well-known maintainer for my update suggestions?
-
-Regards,
-Markus
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 142c6020cec7..62830a43d959 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -1461,7 +1461,7 @@ static void s5p_hash_tasklet_cb(unsigned long data)
+ 				       &dd->hash_flags)) {
+ 			/* hash or semi-hash ready */
+ 			clear_bit(HASH_FLAGS_DMA_READY, &dd->hash_flags);
+-				goto finish;
++			goto finish;
+ 		}
+ 	}
+ 
