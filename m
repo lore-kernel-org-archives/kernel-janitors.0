@@ -1,46 +1,39 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Nov 2017 12:57:06 +0000
-Subject: [PATCH][V2] of: overlay: fix memory leak of ovcs on error exit path
-Message-Id: <20171130125706.13790-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 09 Nov 2017 14:15:09 +0000
+Subject: [PATCH] samples/sockmap: Make signal handling safer
+Message-Id: <8e064bc1-c762-1ca6-4a67-9d50793753f6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, "David S. Miller" <davem@davemloft.net>, John Fastabend <john.fastabend@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 9 Nov 2017 15:06:16 +0100
 
-Currently if the call to of_resolve_phandles fails then then ovcs
-is not kfree'd on the error exit path.  Rather than try and make
-the clean up exit path more convoluted, fix this by just kfree'ing
-ovcs at the point of error detection and exit via the same exit
-path.
+Use the data type "sig_atomic_t" for the variable "running"
+so that it can be safely modified by a signal handler.
 
-Detected by CoverityScan, CID#1462296 ("Resource Leak")
-
-Fixes: bd80e2555c5c ("of: overlay: Fix cleanup order in of_overlay_apply()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 69e8cc134bcbf0ccfcf852c400b8e6788d1d0038 ("bpf: sockmap sample program")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/of/overlay.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ samples/sockmap/sockmap_user.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 53bc9e3f0b98..6c8efe7d8cbb 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -708,8 +708,10 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
- 	of_overlay_mutex_lock();
+diff --git a/samples/sockmap/sockmap_user.c b/samples/sockmap/sockmap_user.c
+index 7cc9d228216f..6e3ebbb1f8f4 100644
+--- a/samples/sockmap/sockmap_user.c
++++ b/samples/sockmap/sockmap_user.c
+@@ -39,7 +39,7 @@
+ #include "../bpf/bpf_util.h"
+ #include "../bpf/libbpf.h"
  
- 	ret = of_resolve_phandles(tree);
--	if (ret)
-+	if (ret) {
-+		kfree(ovcs);
- 		goto err_overlay_unlock;
-+	}
+-int running;
++static sig_atomic_t running;
+ void running_handler(int a);
  
- 	mutex_lock(&of_mutex);
- 
+ /* randomly selected ports for testing on lo */
 -- 
-2.14.1
+2.15.0
 
