@@ -1,26 +1,40 @@
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Date: Mon, 06 Nov 2017 16:25:49 +0000
-Subject: Re: [PATCH] iSCSI-target: Use common error handling code in iscsi_decode_text_input()
-Message-Id: <20171106162549.5b2511db@alans-desktop>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Nov 2017 17:19:55 +0000
+Subject: [PATCH] staging: pi433: fix missing break in switch statement.
+Message-Id: <20171109171955.10911-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d36d5072-3e35-da39-bc0f-af15deb630a8@users.sourceforge.net>
-In-Reply-To: <d36d5072-3e35-da39-bc0f-af15deb630a8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, Arun Easi <arun.easi@cavium.com>, Bart Van Assche <bart.vanassche@sandisk.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, Al Viro <viro@zeniv.linux.org.uk>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 3 Nov 2017 22:33:08 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 3 Nov 2017 22:20:38 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
+The PI433_IOC_WR_RX_CFG case is missing a break and will fall through
+to the default case and errorenously return -EINVAL. Fix this by
+adding in missing break.
 
-Why not look at what the C compiler generates before making the code less
-readable ?
+Detected by CoverityScan, CID#1461286 ("Missing break in switch")
 
-Alan
+Fixes: f81f0b5c9a30 ("pi433: sanitize ioctl")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/pi433/pi433_if.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index 3bcb59811cdf..a960fe2e7875 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -811,6 +811,7 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		}
+ 
+ 		mutex_unlock(&device->rx_lock);
++		break;
+ 	default:
+ 		retval = -EINVAL;
+ 	}
+-- 
+2.14.1
+
