@@ -1,40 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 12:16:25 +0000
-Subject: [PATCH] spi: orion: remove redundant assignment of status to zero
-Message-Id: <20171102121625.20387-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Nov 2017 21:28:14 +0000
+Subject: [PATCH] [media] cpia2: Fix a couple off by one bugs
+Message-Id: <20171109212814.usd6uygieeyuzfrv@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Mike Isely <isely@pobox.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bhumika Goyal <bhumirks@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The cam->buffers[] array has cam->num_frames elements so the > needs to
+be changed to >= to avoid going beyond the end of the array.  The
+->buffers[] array is allocated in cpia2_allocate_buffers() if you want
+to confirm.
 
-The assignment of status to zero is never read, status is either
-updated in the next iteration of the of the loop or several
-lines after the end of the loop.  Remove it, cleans up clang warning:
+Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-drivers/spi/spi-orion.c:674:4: warning: Value stored to 'status'
-is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-orion.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
-index 4b6dd73b80da..8974bb340b3a 100644
---- a/drivers/spi/spi-orion.c
-+++ b/drivers/spi/spi-orion.c
-@@ -671,7 +671,6 @@ static int orion_spi_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"%pOF has no valid 'reg' property (%d)\n",
- 				np, status);
--			status = 0;
- 			continue;
- 		}
+diff --git a/drivers/media/usb/cpia2/cpia2_v4l.c b/drivers/media/usb/cpia2/cpia2_v4l.c
+index 3dedd83f0b19..a1c59f19cf2d 100644
+--- a/drivers/media/usb/cpia2/cpia2_v4l.c
++++ b/drivers/media/usb/cpia2/cpia2_v4l.c
+@@ -808,7 +808,7 @@ static int cpia2_querybuf(struct file *file, void *fh, struct v4l2_buffer *buf)
+ 	struct camera_data *cam = video_drvdata(file);
  
--- 
-2.14.1
-
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+@@ -859,7 +859,7 @@ static int cpia2_qbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
+ 
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+ 	   buf->memory != V4L2_MEMORY_MMAP ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	DBG("QBUF #%d\n", buf->index);
