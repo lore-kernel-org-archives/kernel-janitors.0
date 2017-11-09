@@ -1,21 +1,42 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 13 Nov 2017 12:43:56 +0000
-Subject: Re: [PATCH][V2] netfilter: remove redundant assignment to e
-Message-Id: <20171113124356.GA7770@salvia>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 09 Nov 2017 11:35:00 +0000
+Subject: [PATCH] drm/amd/powerplay: fix copy-n-paste error on vddci_buf index
+Message-Id: <20171109113500.19593-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107100801.10056-1-colin.king@canonical.com>
-In-Reply-To: <20171107100801.10056-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>, Edward O'Callaghan <funfunctor@folklore1984.net>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 07, 2017 at 10:08:01AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The assignment to variable e is redundant since the same assignment
-> occurs just a few lines later, hence it can be removed.  Cleans up
-> clang warning for arp_tables, ip_tables and ip6_tables:
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks Colin.
+The index to vddci_buf is using profile->ucElbVDDC_Num rather
+than profile->ucElbVDDCI_Num; this looks like a copy-n-paste
+error from previous code for the vddc_buf array and I'm pretty
+sure this is incorrect. Fix this by using the correct variable.
+
+Detected by CoverityScan, CID#1457172 ("Copy-paste error")
+
+Fixes: 970d9804b00d ("drm/amd/powerplay: Add support functions for CI to ppatomctrl.c")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
+index a129bc5b1844..c6febbf0bf69 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomctrl.c
+@@ -1486,7 +1486,7 @@ int atomctrl_get_leakage_vddc_base_on_leakage(struct pp_hwmgr *hwmgr,
+ 				if (vddci_id_buf[i] = virtual_voltage_id) {
+ 					for (j = 0; j < profile->ucLeakageBinNum; j++) {
+ 						if (efuse_voltage_id <= leakage_bin[j]) {
+-							*vddci = vddci_buf[j * profile->ucElbVDDC_Num + i];
++							*vddci = vddci_buf[j * profile->ucElbVDDCI_Num + i];
+ 							break;
+ 						}
+ 					}
+-- 
+2.14.1
+
