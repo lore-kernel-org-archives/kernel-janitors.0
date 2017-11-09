@@ -1,105 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 17:08:26 +0000
-Subject: [PATCH 2/2] ALSA: nm256: Use common error handling code in snd_nm256_probe()
-Message-Id: <5e96250a-b436-4b33-0ffa-3f9a51346827@users.sourceforge.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Thu, 09 Nov 2017 13:12:46 +0000
+Subject: Re: [PATCH 0/8] video: fbdev: au1200fb: Fix error handling path of 'au1200fb_drv_probe()'
+Message-Id: <3843760.j1Dl9T2ZgC@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
-In-Reply-To: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
+References: <CGME20171016190602epcas2p1c54546e982659187188f178846c54531@epcas2p1.samsung.com>
+ <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1508179264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: tj@kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 17:51:17 +0100
 
-This issue was detected by using the Coccinelle software.
+On Monday, October 16, 2017 09:04:46 PM Christophe JAILLET wrote:
+> This patch serie tries to fix several issues found in the error handling
+> code of 'au1200fb_drv_probe()'.
+> The 5 first patches fixes various issues (double free, missing error code,
+> un-released resources on error, incorrect IRQ releasing and incomplete
+> error handling path)
+> 
+> The 3 last patches are just cleanups.
+> 
+> 
+> I've spilt the serie in 8 steps that look logical to me. They could
+> also be merged together if preferred.
+> 
+> 
+> These patches are provided as-is and ARE NOT even compile-tested (sorry in
+> advance if a patch is broken) because I don't have a cross compiler for MIPS
+> and won't install one.
+> 
+> 
+> This serie already goes further that the fixes I usually provide, so
+> please excuse me if I missed something or if it is somehow broken and/or
+> incomplete.
+> 
+> ---
+> V1 previously posted is patch 3/8 of this serie
+> 
+> Christophe JAILLET (8):
+>   video: fbdev: au1200fb: Fix a potential double free
+>   video: fbdev: au1200fb: Return an error code if a memory allocation
+>     fails
+>   video: fbdev: au1200fb: Release some resources if a memory allocation
+>     fails
+>   video: fbdev: au1200fb: Fix error handling path
+>   video: fbdev: au1200fb: Fix error handling path
+>   video: fbdev: au1200fb: Remove some dead code
+>   video: fbdev: au1200fb: Propagate an error code
+>   video: fbdev: au1200fb: Style clean up
+> 
+>  drivers/video/fbdev/au1200fb.c | 43 ++++++++++++++++++++++--------------------
+>  1 file changed, 23 insertions(+), 20 deletions(-)
 
-* Add a jump target so that a bit of exception handling can be better
-  reused at the end of this function.
+Thanks, I queued all patches for 4.15.
 
-  This issue was detected by using the Coccinelle software.
+I also did some minor fixes to the patch #4 while merging it:
 
-* The script "checkpatch.pl" pointed information out like the following.
+* patch summary was changed to "video: fbdev: au1200fb: Fix incorrect IRQ
+  freeing") to be different from the patch summary of patch #5
 
-  ERROR: do not use assignment in if condition
+* patch description was changed to silence issues reported by checkpatch.pl:
 
-  Thus fix two affected source code places.
+WARNING: 'succesful' may be misspelled - perhaps 'successful'?
+#4: 
+'au1200fb_drv_probe()' can not fail after a succesful call to
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/nm256/nm256.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ERROR: Please use git commit description style 'commit <12+ chars of sha1> ("<title line>")' - ie: 'commit 1630d85a8312 ("au1200fb: fix hardcoded IRQ")'
+#9: 
+1630d85a8312 ("au1200fb: fix hardcoded IRQ")
 
-diff --git a/sound/pci/nm256/nm256.c b/sound/pci/nm256/nm256.c
-index 35ce5b3fd81a..3d6106800ae9 100644
---- a/sound/pci/nm256/nm256.c
-+++ b/sound/pci/nm256/nm256.c
-@@ -1706,8 +1706,8 @@ static int snd_nm256_probe(struct pci_dev *pci,
- 		break;
- 	default:
- 		dev_err(&pci->dev, "invalid device id 0x%x\n", pci->device);
--		snd_card_free(card);
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto free_card;
- 	}
- 
- 	if (vaio_hack)
-@@ -1723,10 +1723,9 @@ static int snd_nm256_probe(struct pci_dev *pci,
- 		capture_bufsize = 128;
- 
- 	err = snd_nm256_create(card, pci, &chip);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	card->private_data = chip;
- 
- 	if (reset_workaround) {
-@@ -1739,11 +1738,13 @@ static int snd_nm256_probe(struct pci_dev *pci,
- 		chip->reset_workaround_2 = 1;
- 	}
- 
--	if ((err = snd_nm256_pcm(chip, 0)) < 0 ||
--	    (err = snd_nm256_mixer(chip)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_nm256_pcm(chip, 0);
-+	if (err < 0)
-+		goto free_card;
-+
-+	err = snd_nm256_mixer(chip);
-+	if (err < 0)
-+		goto free_card;
- 
- 	sprintf(card->shortname, "NeoMagic %s", card->driver);
- 	sprintf(card->longname, "%s at 0x%lx & 0x%lx, irq %d",
-@@ -1751,13 +1752,15 @@ static int snd_nm256_probe(struct pci_dev *pci,
- 		chip->buffer_addr, chip->cport_addr, chip->irq);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	pci_set_drvdata(pci, card);
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_nm256_remove(struct pci_dev *pci)
--- 
-2.15.0
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
