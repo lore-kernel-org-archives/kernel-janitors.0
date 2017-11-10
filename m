@@ -1,68 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Nov 2017 21:08:04 +0000
-Subject: [PATCH] usb: gadget: bcm63xx_udc: Use common error handling code in bcm63xx_udc_probe()
-Message-Id: <73cacf30-3380-0a77-559c-1ad824fb88eb@users.sourceforge.net>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Fri, 10 Nov 2017 04:57:19 +0000
+Subject: Re: [PATCH] drivers: hv: balloon: remove extraneous assignment to region_start
+Message-Id: <20171110135719.4b6d0ae7@shemminger-XPS-13-9360>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171018115212.29111-1-colin.king@canonical.com>
+In-Reply-To: <20171018115212.29111-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Colin King <colin.king@canonical.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Nov 2017 22:02:46 +0100
+On Wed, 18 Oct 2017 12:52:12 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Add a jump target so that a specific error message is stored only once
-at the end of this function implementation.
-Replace two calls of the function "dev_err" by goto statements.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable region_start is assigned twice, the first value is
+> never read and redundant, so can be removed.  We can clean up the
+> code further by assigning rg_start directly rather than using the
+> temporary variable region_start which can then be removed. Cleans
+> up the clang warning:
+> 
+> drivers/hv/hv_balloon.c:976:3: warning: Value stored to 'region_start'
+> is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This issue was detected by using the Coccinelle software.
+LGTM
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/usb/gadget/udc/bcm63xx_udc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Acked-by: Stephen Hemminger <sthemmin@microsoft.com>
 
-diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
-index f78503203f42..e3caae9c1ea9 100644
---- a/drivers/usb/gadget/udc/bcm63xx_udc.c
-+++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
-@@ -2389,10 +2389,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 		goto out_uninit;
- 	}
- 	if (devm_request_irq(dev, irq, &bcm63xx_udc_ctrl_isr, 0,
--			     dev_name(dev), udc) < 0) {
--		dev_err(dev, "error requesting IRQ #%d\n", irq);
--		goto out_uninit;
--	}
-+			     dev_name(dev), udc) < 0)
-+		goto report_request_failure;
- 
- 	/* IRQ resources #1-6: data interrupts for IUDMA channels 0-5 */
- 	for (i = 0; i < BCM63XX_NUM_IUDMA; i++) {
-@@ -2402,10 +2400,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 			goto out_uninit;
- 		}
- 		if (devm_request_irq(dev, irq, &bcm63xx_udc_data_isr, 0,
--				     dev_name(dev), &udc->iudma[i]) < 0) {
--			dev_err(dev, "error requesting IRQ #%d\n", irq);
--			goto out_uninit;
--		}
-+				     dev_name(dev), &udc->iudma[i]) < 0)
-+			goto report_request_failure;
- 	}
- 
- 	bcm63xx_udc_init_debugfs(udc);
-@@ -2417,6 +2413,10 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- out_uninit:
- 	bcm63xx_uninit_udc_hw(udc);
- 	return rc;
-+
-+report_request_failure:
-+	dev_err(dev, "error requesting IRQ #%d\n", irq);
-+	goto out_uninit;
- }
- 
- /**
--- 
-2.15.0
 
