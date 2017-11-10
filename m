@@ -1,43 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:52:19 +0000
-Subject: [PATCH 3/4] video: udlfb: Improve a size determination in dlfb_alloc_urb_list()
-Message-Id: <d55401c9-1fbb-93b9-40de-2b93396e8def@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 12:46:53 +0000
+Subject: [PATCH 1/4] ASN.1: Adjust two function calls together with a variable assignment
+Message-Id: <c0d17452-f622-a4b0-d5c2-0c5fa85d8b1a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
-In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+References: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
+In-Reply-To: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 21:30:37 +0100
+Date: Fri, 10 Nov 2017 10:40:17 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/udlfb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/asn1_compiler.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index cb2d59ca67a4..059883962698 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1867,7 +1867,7 @@ static int dlfb_alloc_urb_list(struct dlfb_data *dev, int count, size_t size)
- 	INIT_LIST_HEAD(&dev->urbs.list);
+diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
+index c1b7ef3e24c1..e37e5ef3fabb 100644
+--- a/scripts/asn1_compiler.c
++++ b/scripts/asn1_compiler.c
+@@ -606,12 +606,14 @@ int main(int argc, char **argv)
+ 		exit(1);
+ 	}
  
- 	while (i < count) {
--		unode = kzalloc(sizeof(struct urb_node), GFP_KERNEL);
-+		unode = kzalloc(sizeof(*unode), GFP_KERNEL);
- 		if (!unode)
- 			break;
- 		unode->dev = dev;
+-	if (!(buffer = malloc(st.st_size + 1))) {
++	buffer = malloc(st.st_size + 1);
++	if (!buffer) {
+ 		perror(NULL);
+ 		exit(1);
+ 	}
+ 
+-	if ((readlen = read(fd, buffer, st.st_size)) < 0) {
++	readlen = read(fd, buffer, st.st_size);
++	if (readlen < 0) {
+ 		perror(filename);
+ 		exit(1);
+ 	}
 -- 
 2.15.0
 
