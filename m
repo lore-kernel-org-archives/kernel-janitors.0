@@ -1,52 +1,217 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 13:50:59 +0000
-Subject: Re: ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
-Message-Id: <2a38fc07-ebf1-3e61-d809-ba6ed6dbe45a@users.sourceforge.net>
+From: Doug Ledford <dledford@redhat.com>
+Date: Fri, 10 Nov 2017 18:00:23 +0000
+Subject: Re: [PATCH] IB/qib: remove redundant setting of any in for-loop
+Message-Id: <1510336823.3735.4.camel@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-9xmj2oafcTLVi6PoEyKa"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
- <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
- <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
- <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
-In-Reply-To: <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Mark Brown <broonie@kernel.org>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, support.opensource@diasemi.com
-Cc: LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+References: <20171020072103.10337-1-colin.king@canonical.com>
+         <1508484951.6806.46.camel@perches.com>
+In-Reply-To: <1508484951.6806.46.camel@perches.com>
+To: Joe Perches <joe@perches.com>, Colin King <colin.king@canonical.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Dalessandro, Dennis" <dennis.dalessandro@intel.com>
 
-Pj4+IEFkZCBhIGp1bXAgdGFyZ2V0IHNvIHRoYXQgYSBiaXQgb2YgZXhjZXB0aW9uIGhhbmRsaW5n
-IGNhbiBiZSBiZXR0ZXIgcmV1c2VkCj4+PiBpbiBhbiBpZiBicmFuY2ggb2YgdGhpcyBmdW5jdGlv
-bi4KPiAKPj4gSG1tLiBEb2Vzbid0IHJlYWxseSBnYWluIGFuIGF3ZnVsIGxvdCB0aGlzLiBXb3Vs
-ZCB1bmRlcnN0YW5kIGlmIHRoZXJlIHdlcmUKPj4gbXVsdGlwbGUgcmV0dXJuIHBhdGhzLCBidXQg
-aW4gdGhhdCBjYXNlIEknZCBoYXZlIGltcGxlbWVudGVkIHNvbWV0aGluZyBsaWtlCj4+IHRoaXMg
-YW55d2F5LiBBbHNvIHlvdXIgcGF0Y2ggZGVzY3JpcHRpb24gaXNuJ3QgcmVhbGx5IGNvcnJlY3Qu
-IFlvdSdyZSByZS11c2luZwo+PiBjb2RlIGZyb20gdGhlIHN1bm55IGRheSBzY2VuYXJpbyB0byBo
-YW5kbGUgYW4gZXhjZXB0aW9uLgo+IAo+IE90aGVyIHBlb3BsZSBoYXZlIGdpdmVuIGhpbSBzaW1p
-bGFyIGZlZWRiYWNrIG9uIGhpcyBvdGhlciBwYXRjaGVzIHdpdGgKPiB0aGlzIHBhdHRlcm4uICBJ
-J20gbm90IGludGVuZGluZyB0byBhcHBseSBhbnkgb2YgdGhlbS4KCkkgY2FuIG9mZmVyIGFub3Ro
-ZXIgYml0IG9mIGluZm9ybWF0aW9uIGZvciBhIHNvZnR3YXJlIGRldmVsb3BtZW50IGRpc2N1c3Np
-b24uIPCfkq0KClRoZSBhZmZlY3RlZCBzb3VyY2UgZmlsZSBjYW4gYmUgY29tcGlsZWQgZm9yIHRo
-ZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4Nl82NOKAnQpieSBhIHRvb2wgbGlrZSDigJxH
-Q0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0aGUgc29mdHdhcmUgZGlzdHJpYnV0aW9uCuKA
-nG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0aGUgZm9sbG93aW5nIGNvbW1hbmQgZXhhbXBs
-ZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYgbXlfbW9kdWxlPXNvdW5kL3NvYy9jb2RlY3Mv
-ZGE3MjE4Lm8gXAomJiBmb3IgWFlaIGluIDAgcyAzOyBkbyBlY2hvICIgICBfX19fXyAkWFlaIF9f
-X19fIiBcCiYmIG15X2V4dHJhPSItTyRYWVoiIFwKJiYgZ2l0IGNoZWNrb3V0ICc6L15BU29DOiBk
-YTcyMTg6IERlbGV0ZSB0d28gZXJyb3IgbWVzc2FnZXMgZm9yIGEgZmFpbGVkIG1lbW9yeSBhbGxv
-Y2F0aW9uIGluIGRhNzIxOF9vZl90b19wZGF0YScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30i
-IEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZp
-ZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSIgXAomJiBnaXQgY2hlY2tv
-dXQgJzovXkFTb0M6IGRhNzIxODogVXNlIGNvbW1vbiBlcnJvciBoYW5kbGluZyBjb2RlIGluIGRh
-NzIxOF9vZl90b19wZGF0YScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30iIEhPU1RDQz0iJHtt
-eV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZpZyAiJHtteV9tb2R1
-bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSI7IGRvbmUKCgrwn5SuIERvIHlvdSBmaW5kIHRo
-ZSBmb2xsb3dpbmcgZGlmZmVyZW5jZXMgd29ydGggZm9yIGZ1cnRoZXIgY2xhcmlmaWNhdGlvbj8K
-CuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKVkOKVkOKVkOKVkOKVkOKVkOKVlwri
-lZEgc2V0dGluZyDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWq
-4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSAgIE8wICAgIOKUgiAtMjUgIOKVkQrilZEgICBPcyAg
-ICDilIIgLTE0ICDilZEK4pWRICAgTzMgICAg4pSCICsxMSAg4pWRCuKVmuKVkOKVkOKVkOKVkOKV
-kOKVkOKVkOKVkOKVkOKVp+KVkOKVkOKVkOKVkOKVkOKVkOKVnQoKClJlZ2FyZHMsCk1hcmt1cwot
-LQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
-YmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
-ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+
+--=-9xmj2oafcTLVi6PoEyKa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 2017-10-20 at 00:35 -0700, Joe Perches wrote:
+> On Fri, 2017-10-20 at 09:21 +0200, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >=20
+> > The variable all is being set but is never read after this
+> > hence it can be removed from the for loop initialization.
+> > Cleans up clang warning:
+>=20
+> any is really used as bool and is initialized at function
+> entry.  The earlier loop also reinitializes any unnecessarily.
+
+Denny, can you weigh in on what you want in this thread?  Thanks.
+
+> > drivers/infiniband/hw/qib/qib_file_ops.c:640:7: warning: Value
+> > stored to 'any' is never read
+> >=20
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/infiniband/hw/qib/qib_file_ops.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infinib=
+and/hw/qib/qib_file_ops.c
+> > index 2d6a191afec0..b5c2e4223ee7 100644
+> > --- a/drivers/infiniband/hw/qib/qib_file_ops.c
+> > +++ b/drivers/infiniband/hw/qib/qib_file_ops.c
+> > @@ -637,7 +637,7 @@ static int qib_set_part_key(struct qib_ctxtdata *rc=
+d, u16 key)
+> >  		ret =3D -EBUSY;
+> >  		goto bail;
+> >  	}
+> > -	for (any =3D i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+> > +	for (i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+> >  		if (!ppd->pkeys[i] &&
+> >  		    atomic_inc_return(&ppd->pkeyrefs[i]) =3D=3D 1) {
+> >  			rcd->pkeys[pidx] =3D key;
+>=20
+> Perhaps the function is better written without
+> the empty bail: label and without setting ret
+> and just using return.
+>=20
+> Combining the int/bool conversion of any and the
+> direct returns seems clearer to me.
+>=20
+> Something like:
+> ---
+>  drivers/infiniband/hw/qib/qib_file_ops.c | 70 ++++++++++++--------------=
+------
+>  1 file changed, 27 insertions(+), 43 deletions(-)
+>=20
+> diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniban=
+d/hw/qib/qib_file_ops.c
+> index 2d6a191afec0..8078854e1cd6 100644
+> --- a/drivers/infiniband/hw/qib/qib_file_ops.c
+> +++ b/drivers/infiniband/hw/qib/qib_file_ops.c
+> @@ -568,20 +568,17 @@ static int qib_tid_free(struct qib_ctxtdata *rcd, u=
+nsigned subctxt,
+>  static int qib_set_part_key(struct qib_ctxtdata *rcd, u16 key)
+>  {
+>  	struct qib_pportdata *ppd =3D rcd->ppd;
+> -	int i, any =3D 0, pidx =3D -1;
+> +	int i;
+> +	bool any =3D false;
+> +	int pidx =3D -1;
+>  	u16 lkey =3D key & 0x7FFF;
+> -	int ret;
+> =20
+> -	if (lkey =3D=3D (QIB_DEFAULT_P_KEY & 0x7FFF)) {
+> -		/* nothing to do; this key always valid */
+> -		ret =3D 0;
+> -		goto bail;
+> -	}
+> +	/* nothing to do; this key always valid */
+> +	if (lkey =3D=3D (QIB_DEFAULT_P_KEY & 0x7FFF))
+> +		return 0;
+> =20
+> -	if (!lkey) {
+> -		ret =3D -EINVAL;
+> -		goto bail;
+> -	}
+> +	if (!lkey)
+> +		return -EINVAL;
+> =20
+>  	/*
+>  	 * Set the full membership bit, because it has to be
+> @@ -594,18 +591,15 @@ static int qib_set_part_key(struct qib_ctxtdata *rc=
+d, u16 key)
+>  	for (i =3D 0; i < ARRAY_SIZE(rcd->pkeys); i++) {
+>  		if (!rcd->pkeys[i] && pidx =3D=3D -1)
+>  			pidx =3D i;
+> -		if (rcd->pkeys[i] =3D=3D key) {
+> -			ret =3D -EEXIST;
+> -			goto bail;
+> -		}
+> -	}
+> -	if (pidx =3D=3D -1) {
+> -		ret =3D -EBUSY;
+> -		goto bail;
+> +		if (rcd->pkeys[i] =3D=3D key)
+> +			return -EEXIST;
+>  	}
+> -	for (any =3D i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+> +	if (pidx =3D=3D -1)
+> +		return -EBUSY;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+>  		if (!ppd->pkeys[i]) {
+> -			any++;
+> +			any =3D true;
+>  			continue;
+>  		}
+>  		if (ppd->pkeys[i] =3D=3D key) {
+> @@ -613,44 +607,34 @@ static int qib_set_part_key(struct qib_ctxtdata *rc=
+d, u16 key)
+> =20
+>  			if (atomic_inc_return(pkrefs) > 1) {
+>  				rcd->pkeys[pidx] =3D key;
+> -				ret =3D 0;
+> -				goto bail;
+> -			} else {
+> -				/*
+> -				 * lost race, decrement count, catch below
+> -				 */
+> -				atomic_dec(pkrefs);
+> -				any++;
+> +				return 0;
+>  			}
+> +			/* lost race, decrement count, catch below */
+> +			atomic_dec(pkrefs);
+> +			any =3D true;
+>  		}
+> -		if ((ppd->pkeys[i] & 0x7FFF) =3D=3D lkey) {
+> +		if ((ppd->pkeys[i] & 0x7FFF) =3D=3D lkey)
+>  			/*
+>  			 * It makes no sense to have both the limited and
+>  			 * full membership PKEY set at the same time since
+>  			 * the unlimited one will disable the limited one.
+>  			 */
+> -			ret =3D -EEXIST;
+> -			goto bail;
+> -		}
+> -	}
+> -	if (!any) {
+> -		ret =3D -EBUSY;
+> -		goto bail;
+> +			return -EEXIST;
+>  	}
+> -	for (any =3D i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+> +	if (!any)
+> +		return -EBUSY;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(ppd->pkeys); i++) {
+>  		if (!ppd->pkeys[i] &&
+>  		    atomic_inc_return(&ppd->pkeyrefs[i]) =3D=3D 1) {
+>  			rcd->pkeys[pidx] =3D key;
+>  			ppd->pkeys[i] =3D key;
+>  			(void) ppd->dd->f_set_ib_cfg(ppd, QIB_IB_CFG_PKEYS, 0);
+> -			ret =3D 0;
+> -			goto bail;
+> +			return 0;
+>  		}
+>  	}
+> -	ret =3D -EBUSY;
+> =20
+> -bail:
+> -	return ret;
+> +	return -EBUSY;
+>  }
+> =20
+>  /**
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-9xmj2oafcTLVi6PoEyKa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAloF6TcACgkQuCajMw5X
+L91mNg//bed/I+AlBF64+8JBv1uC/sLb5fn6ZLZt4MW9MnezUj3QUovlXp/rUv1V
+4kqY02eWyF2gmCW1zl0v8IXHiyOPkVEeDdwxRibPihzKxYF8qguoRh19ysPNRRzo
+Vv80/uB9U9BN15Q2zoHh16HjsNzXveMh0IUYBKQtzBbBC3MpaatIaBpp9SavzMD6
+opYjWtuxP7nJPtHsFGO0PUKtYorUdZoSlRP0hCJ1DqlMKDCK6GhhmDq7IV+8sWe8
+Dlk6hoL51PWQGURYc9CtpHvO1V6HKkaISUwBpvAXUR5PDm0NGAQFz11q02jBkc8X
+sqz2GHc99JeVN4jyhTt3sCZ/ZV7izRW2ygfn8IgfoJymCcg4b37EvLgM/LdYM/9U
+JzBMYRUyh+Fp8viJr88oQWox27P8oUzvUYwU2w6oF9v37ZM7V6/nh2ZIGxhjFzbC
+yk5MKC0CWGDIoa/21YaE82nc7LOIr4vRpwQ9VpYoWmetShDD7uSzXKqeT1MVDdaf
+fVnCEwOfLfrUJS6gcd8AKYRHLW4OPniSOspIFmlJfqd6jwdBXW0VtTY0y8Lz5XQI
+Nt5b3rxd+o7GqmbgmBrQjNJUIxsMqxgmyj/E72mKMe4Ao/y8uaTfyAvnicuWNndx
+XBjbHwO0j+RaDwDaJqHewhaA687wRL1uVFJgzoUB8s7Ex6c9bfE=
+=mSPf
+-----END PGP SIGNATURE-----
+
+--=-9xmj2oafcTLVi6PoEyKa--
+
