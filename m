@@ -1,27 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 15:30:16 +0000
-Subject: [PATCH 0/3] ALSA-S3 SonicVibes: Fine-tuning for five function implementations
-Message-Id: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 12:45:19 +0000
+Subject: [PATCH 0/4] ASN.1: Fine-tuning for three function implementations
+Message-Id: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 18 Nov 2017 16:25:43 +0100
+Date: Fri, 10 Nov 2017 13:38:43 +0100
 
 A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (3):
-  Adjust 15 function calls together with a variable assignment
-  Use common error handling code in snd_sonic_probe()
-  Use common error handling code in snd_sonicvibes_create()
+Markus Elfring (4):
+  Adjust two function calls together with a variable assignment
+  Improve exiting from parse_type()
+  Improve exiting from build_type_list()
+  Use common error handling code in main()
 
- sound/pci/sonicvibes.c | 144 +++++++++++++++++++++++++++----------------------
- 1 file changed, 79 insertions(+), 65 deletions(-)
+ scripts/asn1_compiler.c | 100 ++++++++++++++++++++++++------------------------
+ 1 file changed, 51 insertions(+), 49 deletions(-)
 
 -- 
 2.15.0
