@@ -1,78 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 08:09:38 +0000
-Subject: [PATCH] ASoC: audio-graph-scu-card: Use common error handling code in asoc_graph_card_parse_of()
-Message-Id: <3b978ab5-5a7f-369f-c663-938955a36e58@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 20:28:16 +0000
+Subject: [PATCH 0/2] security/keys/trusted: Fine-tuning for two function implementations
+Message-Id: <479805df-edaf-1e9a-57be-d7c4f38e9d31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Takashi Iwai <tiwai@suse.com>, Tony Lindgren <tony@atomide.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, David Howells <dhowells@redhat.com>, James Morris <james.l.morris@oracle.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 08:51:41 +0100
+Date: Fri, 10 Nov 2017 21:21:12 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Use common error handling code in trusted_update()
+  Use common error handling code in tpm_unseal()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/generic/audio-graph-scu-card.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ security/keys/trusted.c | 61 +++++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 32 deletions(-)
 
-diff --git a/sound/soc/generic/audio-graph-scu-card.c b/sound/soc/generic/audio-graph-scu-card.c
-index a967aa143d51..c4b999fba7e6 100644
---- a/sound/soc/generic/audio-graph-scu-card.c
-+++ b/sound/soc/generic/audio-graph-scu-card.c
-@@ -231,10 +231,8 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 
- 		ret = asoc_simple_card_parse_daifmt(dev, cpu_ep, codec_ep,
- 							    NULL, &daifmt);
--		if (ret < 0) {
--			of_node_put(cpu_port);
--			goto parse_of_err;
--		}
-+		if (ret < 0)
-+			goto put_node;
- 	}
- 
- 	dai_idx = 0;
-@@ -266,17 +264,13 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 
- 				/* Back-End (= Codec) */
- 				ret = asoc_graph_card_dai_link_of(codec_ep, priv, daifmt, dai_idx++, 0);
--				if (ret < 0) {
--					of_node_put(cpu_port);
--					goto parse_of_err;
--				}
-+				if (ret < 0)
-+					goto put_node;
- 			} else {
- 				/* Front-End (= CPU) */
- 				ret = asoc_graph_card_dai_link_of(cpu_ep, priv, daifmt, dai_idx++, 1);
--				if (ret < 0) {
--					of_node_put(cpu_port);
--					goto parse_of_err;
--				}
-+				if (ret < 0)
-+					goto put_node;
- 			}
- 		}
- 	}
-@@ -285,8 +279,10 @@ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
- 	if (ret)
- 		goto parse_of_err;
- 
--	ret = 0;
-+	return 0;
- 
-+put_node:
-+	of_node_put(cpu_port);
- parse_of_err:
- 	return ret;
- }
 -- 
 2.15.0
 
