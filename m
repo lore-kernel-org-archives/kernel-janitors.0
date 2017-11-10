@@ -1,29 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Nov 2017 21:48:18 +0000
+From: Marcus Wolf <marcus.wolf@smarthome-wolf.de>
+Date: Fri, 10 Nov 2017 16:49:26 +0000
 Subject: Re: [PATCH] staging: pi433: fix missing break in switch statement.
-Message-Id: <20171109214818.r4mcizwmnmhyvo26@mwanda>
+Message-Id: <a65c3bd2-64d0-0161-b934-0d8d849af766@smarthome-wolf.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171109171955.10911-1-colin.king@canonical.com>
 In-Reply-To: <20171109171955.10911-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, Al Viro <viro@zeniv.linux.org.uk>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcus Wolf <linux@Wolf-Entwicklungen.de>, Al Viro <viro@zeniv.linux.org.uk>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 09, 2017 at 05:19:55PM +0000, Colin King wrote:
+Hi all!
+
+Tryed to cross check...
+
+Don't get it, sorry.
+
+On my private version control (my SVN), where I initially developed the 
+driver the break isn't missing.
+Same with my git copy of Gregs staging tree. Break is there...
+
+Who removed it, why is it missing in Colins copy?
+
+Am I working on a wrong version?
+
+marcus@Laptop-Wolf:~/staging/drivers/staging/pi433$ git remote show origin
+* remote origin
+   Fetch URL: 
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+   Push  URL: 
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+
+
+Can anybody help me?
+
+Thanks,
+
+Marcus
+
+
+Am 09.11.2017 um 19:19 schrieb Colin King:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The PI433_IOC_WR_RX_CFG case is missing a break and will fall through
 > to the default case and errorenously return -EINVAL. Fix this by
 > adding in missing break.
 > 
-
-Could you fix PI433_IOC_RD_RX_CFG as well?  There is a missing return
-statement if the copy_to_user() fails we fall through to here and error
-out.
-
-regards,
-dan carpenter
-
-
+> Detected by CoverityScan, CID#1461286 ("Missing break in switch")
+> 
+> Fixes: f81f0b5c9a30 ("pi433: sanitize ioctl")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/staging/pi433/pi433_if.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+> index 3bcb59811cdf..a960fe2e7875 100644
+> --- a/drivers/staging/pi433/pi433_if.c
+> +++ b/drivers/staging/pi433/pi433_if.c
+> @@ -811,6 +811,7 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>   		}
+>   
+>   		mutex_unlock(&device->rx_lock);
+> +		break;
+>   	default:
+>   		retval = -EINVAL;
+>   	}
+> 
