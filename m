@@ -1,101 +1,58 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 15:47:24 +0000
-Subject: [PATCH] net: vxge: remove redundant assignments and pointers
-Message-Id: <20171107154724.4494-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 12:49:13 +0000
+Subject: [PATCH 3/4] ASN.1: Improve exiting from build_type_list()
+Message-Id: <3a3b73b2-0164-5de8-5540-9d1d25af7018@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
+In-Reply-To: <960a8501-03b0-95d9-c2bf-4633e48e73a6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Mason <jdmason@kudzu.us>, "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 12:56:33 +0100
 
-There are several pointers that are being assigned but never read
-so remove these as they are redundant.  Also remove an assignment
-to function_mode that is never read. Cleans up several clang
-warnings:
+* Add jump targets so that a call of the function "perror" and "exit"
+  is stored only once in an if branch of this function.
 
-vxge-main.c:1139:2: warning: Value stored to 'hldev' is never read
-vxge-main.c:1294:2: warning: Value stored to 'hldev' is never read
-vxge-main.c:2188:2: warning: Value stored to 'dev' is never read
-vxge-main.c:2188:2: warning: Value stored to 'dev' is never read
-vxge-main.c:2723:2: warning: Value stored to 'function_mode' is
-never read
+* Replace two calls by goto statements.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/neterion/vxge/vxge-main.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ scripts/asn1_compiler.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/ethernet/neterion/vxge/vxge-main.c
-index f6ab1d6522a9..fe7e0e1dd01d 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
-@@ -1122,7 +1122,6 @@ static void vxge_set_multicast(struct net_device *dev)
- 	struct netdev_hw_addr *ha;
- 	struct vxgedev *vdev;
- 	int i, mcast_cnt = 0;
--	struct __vxge_hw_device *hldev;
- 	struct vxge_vpath *vpath;
- 	enum vxge_hw_status status = VXGE_HW_OK;
- 	struct macInfo mac_info;
-@@ -1136,7 +1135,6 @@ static void vxge_set_multicast(struct net_device *dev)
- 		"%s:%d", __func__, __LINE__);
+diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
+index 0eea270fcaef..06dc5397d8c8 100644
+--- a/scripts/asn1_compiler.c
++++ b/scripts/asn1_compiler.c
+@@ -762,18 +762,19 @@ static void build_type_list(void)
  
- 	vdev = netdev_priv(dev);
--	hldev = vdev->devh;
+ 	if (nr = 0) {
+ 		fprintf(stderr, "%s: No defined types\n", filename);
+-		exit(1);
++		goto exit;
+ 	}
  
- 	if (unlikely(!is_vxge_card_up(vdev)))
- 		return;
-@@ -1283,7 +1281,6 @@ static int vxge_set_mac_addr(struct net_device *dev, void *p)
- {
- 	struct sockaddr *addr = p;
- 	struct vxgedev *vdev;
--	struct __vxge_hw_device *hldev;
- 	enum vxge_hw_status status = VXGE_HW_OK;
- 	struct macInfo mac_info_new, mac_info_old;
- 	int vpath_idx = 0;
-@@ -1291,7 +1288,6 @@ static int vxge_set_mac_addr(struct net_device *dev, void *p)
- 	vxge_debug_entryexit(VXGE_TRACE, "%s:%d", __func__, __LINE__);
+ 	nr_types = nr;
+ 	types = type_list = calloc(nr + 1, sizeof(type_list[0]));
+-	if (!type_list) {
+-		perror(NULL);
+-		exit(1);
+-	}
++	if (!type_list)
++		goto report_failure;
++
+ 	type_index = calloc(nr, sizeof(type_index[0]));
+ 	if (!type_index) {
++report_failure:
+ 		perror(NULL);
++exit:
+ 		exit(1);
+ 	}
  
- 	vdev = netdev_priv(dev);
--	hldev = vdev->devh;
- 
- 	if (!is_valid_ether_addr(addr->sa_data))
- 		return -EINVAL;
-@@ -2177,7 +2173,6 @@ static void adaptive_coalesce_rx_interrupts(struct vxge_ring *ring)
-  */
- static irqreturn_t vxge_isr_napi(int irq, void *dev_id)
- {
--	struct net_device *dev;
- 	struct __vxge_hw_device *hldev;
- 	u64 reason;
- 	enum vxge_hw_status status;
-@@ -2185,7 +2180,6 @@ static irqreturn_t vxge_isr_napi(int irq, void *dev_id)
- 
- 	vxge_debug_intr(VXGE_TRACE, "%s:%d", __func__, __LINE__);
- 
--	dev = vdev->ndev;
- 	hldev = pci_get_drvdata(vdev->pdev);
- 
- 	if (pci_channel_offline(vdev->pdev))
-@@ -2713,14 +2707,13 @@ static int vxge_open(struct net_device *dev)
- 	struct vxge_vpath *vpath;
- 	int ret = 0;
- 	int i;
--	u64 val64, function_mode;
-+	u64 val64;
- 
- 	vxge_debug_entryexit(VXGE_TRACE,
- 		"%s: %s:%d", dev->name, __func__, __LINE__);
- 
- 	vdev = netdev_priv(dev);
- 	hldev = pci_get_drvdata(vdev->pdev);
--	function_mode = vdev->config.device_hw_info.function_mode;
- 
- 	/* make sure you have link off by default every time Nic is
- 	 * initialized */
 -- 
-2.14.1
+2.15.0
 
