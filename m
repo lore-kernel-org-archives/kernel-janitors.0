@@ -1,51 +1,39 @@
-From: Laura Abbott <labbott@redhat.com>
-Date: Wed, 01 Nov 2017 23:08:44 +0000
-Subject: Re: [PATCH] staging: android: ion: remove redundant variable table
-Message-Id: <4bff9c1f-8354-9e4e-4bdd-80a90450eb7b@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Nov 2017 18:32:10 +0000
+Subject: Re: [PATCH 00/10] scripts/basic: Fine-tuning for seven function implementations
+Message-Id: <9fcfb92e-2362-7111-e68f-5f6de02648e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031140249.25280-1-colin.king@canonical.com>
-In-Reply-To: <20171031140249.25280-1-colin.king@canonical.com>
+References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
+In-Reply-To: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>, Riley Andrews <riandrews@android.com>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kbuild@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Jim Davis <jim.epost@gmail.com>
 
-On 10/31/2017 07:02 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+> Date: Fri, 28 Oct 2016 10:18:10 +0200
 > 
-> Variable table is being set but is never read, it is therefore
-> redundant and can be removed. Cleans up clang warning:
+> Some update suggestions were taken into account
+> from static source code analysis.
 > 
-> drivers/staging/android/ion/ion.c:112:2: warning: Value stored to 'table' is never read
+> Markus Elfring (10):
+>   bin2c: Complete error handling in main()
+>   fixdep: Complete error handling in print_deps()
+>   fixdep: Use the symbol "MAP_FAILED" in print_deps()
+>   fixdep: Fix error log output in print_deps()
+>   fixdep: Complete error handling in parse_dep_file()
+>   fixdep: Complete error handling in do_config_file()
+>   fixdep: Fix error log output in do_config_file()
+>   fixdep: Complete error handling in print_config()
+>   fixdep: Complete error handling in print_cmdline()
+>   fixdep: Combine two fprintf() calls into one fputs() call in usage()
 > 
+>  scripts/basic/bin2c.c  |  26 ++++++----
+>  scripts/basic/fixdep.c | 131 +++++++++++++++++++++++++++++++++----------------
+>  2 files changed, 105 insertions(+), 52 deletions(-)
 
-Acked-by: Laura Abbott <labbott@redhat.com>
+Are these update suggestions worth for another look?
+https://lkml.org/lkml/2016/10/28/138
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/android/ion/ion.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 93e2c90fa77d..a7d9b0e98572 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -81,7 +81,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->  					    unsigned long flags)
->  {
->  	struct ion_buffer *buffer;
-> -	struct sg_table *table;
->  	int ret;
->  
->  	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
-> @@ -109,7 +108,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->  		goto err1;
->  	}
->  
-> -	table = buffer->sg_table;
->  	buffer->dev = dev;
->  	buffer->size = len;
->  
-> 
-
+Regards,
+Markus
