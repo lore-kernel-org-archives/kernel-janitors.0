@@ -1,36 +1,144 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 17 Nov 2017 18:19:08 +0000
-Subject: [PATCH] staging: ccree: fix incorrect indentation of break statement
-Message-Id: <20171117181908.2257-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 13:17:18 +0000
+Subject: [PATCH 1/3] ALSA: ml403-ac97cr: Use common error handling code in two functions
+Message-Id: <c9e8516e-b5cb-97cf-e8b8-86ebdd1ca284@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4c38a970-2407-3559-060d-501b8259b3fc@users.sourceforge.net>
+In-Reply-To: <4c38a970-2407-3559-060d-501b8259b3fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gilad Ben-Yossef <gilad@benyossef.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-crypto@vger.kernel.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 13:50:24 +0100
 
-The break statement is indented one level too many, fix this.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/ccree/ssi_aead.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/drivers/ml403-ac97cr.c | 52 ++++++++++++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/staging/ccree/ssi_aead.c b/drivers/staging/ccree/ssi_aead.c
-index ba0954e4d2e5..446da9d47cd9 100644
---- a/drivers/staging/ccree/ssi_aead.c
-+++ b/drivers/staging/ccree/ssi_aead.c
-@@ -2108,7 +2108,7 @@ static int ssi_aead_process(struct aead_request *req, enum drv_crypto_direction
- 		if (ctx->cipher_mode = DRV_CIPHER_GCTR)
- 			ssi_aead_gcm(req, desc, &seq_len);
- #endif /*SSI_CC_HAS_AES_GCM*/
--			break;
-+		break;
- #endif
- 	default:
- 		dev_err(dev, "Unsupported authenc (%d)\n", ctx->auth_mode);
+diff --git a/sound/drivers/ml403-ac97cr.c b/sound/drivers/ml403-ac97cr.c
+index 18fd12996cf7..12a54bfde1a5 100644
+--- a/sound/drivers/ml403-ac97cr.c
++++ b/sound/drivers/ml403-ac97cr.c
+@@ -1144,8 +1144,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
+ 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
+ 			   "unable to remap memory region (%pR)\n",
+ 			   resource);
+-		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		return -EBUSY;
++		goto e_busy;
+ 	}
+ 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
+ 		   "remap controller memory region to "
+@@ -1157,8 +1156,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
+ 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
+ 			   "unable to grab IRQ %d\n",
+ 			   irq);
+-		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		return -EBUSY;
++		goto e_busy;
+ 	}
+ 	ml403_ac97cr->irq = irq;
+ 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
+@@ -1170,8 +1168,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
+ 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
+ 			   "unable to grab IRQ %d\n",
+ 			   irq);
+-		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		return -EBUSY;
++		goto e_busy;
+ 	}
+ 	ml403_ac97cr->capture_irq = irq;
+ 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
+@@ -1179,20 +1176,23 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
+ 		   ml403_ac97cr->capture_irq);
+ 
+ 	err = snd_ml403_ac97cr_chip_init(ml403_ac97cr);
+-	if (err < 0) {
+-		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_data;
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, ml403_ac97cr, &ops);
+ 	if (err < 0) {
+ 		PDEBUG(INIT_FAILURE, "probe(): snd_device_new() failed!\n");
+-		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		return err;
++		goto free_data;
+ 	}
+ 
+ 	*rml403_ac97cr = ml403_ac97cr;
+ 	return 0;
++
++e_busy:
++	err = -EBUSY;
++free_data:
++	snd_ml403_ac97cr_free(ml403_ac97cr);
++	return err;
+ }
+ 
+ static void snd_ml403_ac97cr_mixer_free(struct snd_ac97 *ac97)
+@@ -1281,22 +1281,19 @@ static int snd_ml403_ac97cr_probe(struct platform_device *pfdev)
+ 	err = snd_ml403_ac97cr_create(card, pfdev, &ml403_ac97cr);
+ 	if (err < 0) {
+ 		PDEBUG(INIT_FAILURE, "probe(): create failed!\n");
+-		snd_card_free(card);
+-		return err;
++		goto free_card;
+ 	}
+ 	PDEBUG(INIT_INFO, "probe(): create done\n");
+ 	card->private_data = ml403_ac97cr;
+ 	err = snd_ml403_ac97cr_mixer(ml403_ac97cr);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	PDEBUG(INIT_INFO, "probe(): mixer done\n");
+ 	err = snd_ml403_ac97cr_pcm(ml403_ac97cr, 0);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	PDEBUG(INIT_INFO, "probe(): PCM done\n");
+ 	strcpy(card->driver, SND_ML403_AC97CR_DRIVER);
+ 	strcpy(card->shortname, "ML403 AC97 Controller Reference");
+@@ -1306,13 +1303,16 @@ static int snd_ml403_ac97cr_probe(struct platform_device *pfdev)
+ 		ml403_ac97cr->capture_irq, dev + 1);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	platform_set_drvdata(pfdev, card);
+ 	PDEBUG(INIT_INFO, "probe(): (done)\n");
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static int snd_ml403_ac97cr_remove(struct platform_device *pfdev)
 -- 
-2.14.1
+2.15.0
 
