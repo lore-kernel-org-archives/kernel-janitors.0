@@ -1,52 +1,47 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 30 Nov 2017 13:09:45 +0000
-Subject: Re: [PATCH] mmc: block: make function mmc_cqe_issue_type static
-Message-Id: <CAPDyKFobBdiisrg4NnaNuM5xQiWMUuLEXcNveU8-EAnWp6_XYw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Sat, 11 Nov 2017 11:51:10 +0000
+Subject: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
+Message-Id: <20171111115110.3026-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171130113738.3851-1-colin.king@canonical.com>
-In-Reply-To: <20171130113738.3851-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Xiangliang Yu <Xiangliang.Yu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30 November 2017 at 12:37, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The function mmc_cqe_issue_type is local to the source and does
-> not need to be in global scope, so make it static.
->
-> Cleans up sparse warning:
-> drivers/mmc/core/queue.c:62:21: warning: symbol 'mmc_cqe_issue_type'
-> was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks, applied for next!
+Variable pf2vf_ver is assigned but never read, it is redundant and
+hence can be removed.
 
-Kind regards
-Uffe
+Cleans up clang warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c:310:3: warning: Value stored
+to 'pf2vf_ver' is never read
 
-> ---
->  drivers/mmc/core/queue.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-> index d8394007bc99..5db388081789 100644
-> --- a/drivers/mmc/core/queue.c
-> +++ b/drivers/mmc/core/queue.c
-> @@ -59,8 +59,8 @@ static inline bool mmc_cqe_can_dcmd(struct mmc_host *host)
->         return host->caps2 & MMC_CAP2_CQE_DCMD;
->  }
->
-> -enum mmc_issue_type mmc_cqe_issue_type(struct mmc_host *host,
-> -                                      struct request *req)
-> +static enum mmc_issue_type mmc_cqe_issue_type(struct mmc_host *host,
-> +                                             struct request *req)
->  {
->         switch (req_op(req)) {
->         case REQ_OP_DRV_IN:
-> --
-> 2.14.1
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+index 6738df836a70..b1cc179512fa 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+@@ -296,7 +296,6 @@ int amdgpu_virt_fw_reserve_get_checksum(void *obj,
+ 
+ void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)
+ {
+-	uint32_t pf2vf_ver = 0;
+ 	uint32_t pf2vf_size = 0;
+ 	uint32_t checksum = 0;
+ 	uint32_t checkval;
+@@ -309,7 +308,6 @@ void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)
+ 		adev->virt.fw_reserve.p_pf2vf  			(struct amdgim_pf2vf_info_header *)(
+ 			adev->fw_vram_usage.va + AMDGIM_DATAEXCHANGE_OFFSET);
+-		pf2vf_ver = adev->virt.fw_reserve.p_pf2vf->version;
+ 		AMDGPU_FW_VRAM_PF2VF_READ(adev, header.size, &pf2vf_size);
+ 		AMDGPU_FW_VRAM_PF2VF_READ(adev, checksum, &checksum);
+ 
+-- 
+2.14.1
+
