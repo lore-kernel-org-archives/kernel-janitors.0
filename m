@@ -1,44 +1,118 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 10:18:26 +0000
-Subject: [PATCH 2/4] video: sm501fb: Improve a size determination in sm501fb_probe()
-Message-Id: <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 11:11:14 +0000
+Subject: [PATCH 1/3] ALSA: rawmidi: Adjust seven function calls together with a variable assignment
+Message-Id: <11ba4e92-d71a-b8a9-08ff-b2d26a4ba606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
-In-Reply-To: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
+References: <d4c89bda-5091-2d3c-ded1-ba2c3b061ff6@users.sourceforge.net>
+In-Reply-To: <d4c89bda-5091-2d3c-ded1-ba2c3b061ff6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: alsa-devel@alsa-project.org, Fabian Frederick <fabf@skynet.be>, Ingo Molnar <mingo@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 10:22:37 +0100
+Date: Sat, 11 Nov 2017 11:22:28 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/sm501fb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/core/rawmidi.c | 44 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 29 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
-index e8301c4e7d44..80bda5a655c0 100644
---- a/drivers/video/fbdev/sm501fb.c
-+++ b/drivers/video/fbdev/sm501fb.c
-@@ -1932,8 +1932,7 @@ static int sm501fb_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
+index b3b353d72527..c17f173150e9 100644
+--- a/sound/core/rawmidi.c
++++ b/sound/core/rawmidi.c
+@@ -109,9 +109,10 @@ static void snd_rawmidi_input_event_work(struct work_struct *work)
  
- 	/* allocate our framebuffers */
--
--	info = kzalloc(sizeof(struct sm501fb_info), GFP_KERNEL);
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info)
+ static int snd_rawmidi_runtime_create(struct snd_rawmidi_substream *substream)
+ {
+-	struct snd_rawmidi_runtime *runtime;
++	struct snd_rawmidi_runtime *runtime = kzalloc(sizeof(*runtime),
++						      GFP_KERNEL);
+ 
+-	if ((runtime = kzalloc(sizeof(*runtime), GFP_KERNEL)) = NULL)
++	if (!runtime)
  		return -ENOMEM;
+ 	runtime->substream = substream;
+ 	spin_lock_init(&runtime->lock);
+@@ -124,7 +125,9 @@ static int snd_rawmidi_runtime_create(struct snd_rawmidi_substream *substream)
+ 		runtime->avail = 0;
+ 	else
+ 		runtime->avail = runtime->buffer_size;
+-	if ((runtime->buffer = kmalloc(runtime->buffer_size, GFP_KERNEL)) = NULL) {
++
++	runtime->buffer = kmalloc(runtime->buffer_size, GFP_KERNEL);
++	if (!runtime->buffer) {
+ 		kfree(runtime);
+ 		return -ENOMEM;
+ 	}
+@@ -571,8 +574,9 @@ static int snd_rawmidi_info_user(struct snd_rawmidi_substream *substream,
+ 				 struct snd_rawmidi_info __user * _info)
+ {
+ 	struct snd_rawmidi_info info;
+-	int err;
+-	if ((err = snd_rawmidi_info(substream, &info)) < 0)
++	int err = snd_rawmidi_info(substream, &info);
++
++	if (err < 0)
+ 		return err;
+ 	if (copy_to_user(_info, &info, sizeof(struct snd_rawmidi_info)))
+ 		return -EFAULT;
+@@ -616,7 +620,8 @@ static int snd_rawmidi_info_select_user(struct snd_card *card,
+ 		return -EFAULT;
+ 	if (get_user(info.subdevice, &_info->subdevice))
+ 		return -EFAULT;
+-	if ((err = snd_rawmidi_info_select(card, &info)) < 0)
++	err = snd_rawmidi_info_select(card, &info);
++	if (err < 0)
+ 		return err;
+ 	if (copy_to_user(_info, &info, sizeof(struct snd_rawmidi_info)))
+ 		return -EFAULT;
+@@ -1549,21 +1554,30 @@ int snd_rawmidi_new(struct snd_card *card, char *id, int device,
+ 	rmidi->dev.release = release_rawmidi_device;
+ 	dev_set_name(&rmidi->dev, "midiC%iD%i", card->number, device);
  
+-	if ((err = snd_rawmidi_alloc_substreams(rmidi,
+-						&rmidi->streams[SNDRV_RAWMIDI_STREAM_INPUT],
+-						SNDRV_RAWMIDI_STREAM_INPUT,
+-						input_count)) < 0) {
++	err +	    snd_rawmidi_alloc_substreams(rmidi,
++					 &rmidi
++					 ->streams[SNDRV_RAWMIDI_STREAM_INPUT],
++					 SNDRV_RAWMIDI_STREAM_INPUT,
++					 input_count);
++	if (err < 0) {
+ 		snd_rawmidi_free(rmidi);
+ 		return err;
+ 	}
+-	if ((err = snd_rawmidi_alloc_substreams(rmidi,
+-						&rmidi->streams[SNDRV_RAWMIDI_STREAM_OUTPUT],
+-						SNDRV_RAWMIDI_STREAM_OUTPUT,
+-						output_count)) < 0) {
++
++	err +	    snd_rawmidi_alloc_substreams(rmidi,
++					 &rmidi
++					 ->streams[SNDRV_RAWMIDI_STREAM_OUTPUT],
++					 SNDRV_RAWMIDI_STREAM_OUTPUT,
++					 output_count);
++	if (err < 0) {
+ 		snd_rawmidi_free(rmidi);
+ 		return err;
+ 	}
+-	if ((err = snd_device_new(card, SNDRV_DEV_RAWMIDI, rmidi, &ops)) < 0) {
++
++	err = snd_device_new(card, SNDRV_DEV_RAWMIDI, rmidi, &ops);
++	if (err < 0) {
+ 		snd_rawmidi_free(rmidi);
+ 		return err;
+ 	}
 -- 
 2.15.0
 
