@@ -1,35 +1,43 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 30 Nov 2017 14:30:25 +0000
-Subject: Re: [PATCH] atm: lanai: use setup_timer instead of init_timer
-Message-Id: <f2afc37a-a8a0-b83e-bacf-9f68c4e64322@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 18:13:15 +0000
+Subject: [PATCH 2/3] ALSA: hal2: Improve a size determination in hal2_create()
+Message-Id: <a7583868-cf4b-015c-ce6a-810be4780aa8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171124132712.31882-1-colin.king@canonical.com>
- <20171130.092337.1169504726284026440.davem@davemloft.net>
-In-Reply-To: <20171130.092337.1169504726284026440.davem@davemloft.net>
+References: <118a96d5-c52a-fd22-23d5-28f20de7ff22@users.sourceforge.net>
+In-Reply-To: <118a96d5-c52a-fd22-23d5-28f20de7ff22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 30/11/17 14:23, David Miller wrote:
-> From: Colin King <colin.king@canonical.com>
-> Date: Fri, 24 Nov 2017 13:27:12 +0000
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Use setup_timer function instead of initializing timer with the
->> function and data fields.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> setup_timer() = -ENOEXIST.
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 18:34:04 +0100
 
-Apologies. My bad.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Colin
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/mips/hal2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/mips/hal2.c b/sound/mips/hal2.c
+index 30563d9aa5c8..675c3aba794e 100644
+--- a/sound/mips/hal2.c
++++ b/sound/mips/hal2.c
+@@ -814,7 +814,7 @@ static int hal2_create(struct snd_card *card, struct snd_hal2 **rchip)
+ 	struct hpc3_regs *hpc3 = hpc3c0;
+ 	int err;
+ 
+-	hal2 = kzalloc(sizeof(struct snd_hal2), GFP_KERNEL);
++	hal2 = kzalloc(sizeof(*hal2), GFP_KERNEL);
+ 	if (!hal2)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
+
