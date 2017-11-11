@@ -1,67 +1,121 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 16 Nov 2017 17:39:18 +0000
-Subject: [PATCH] rsi: fix memory leak on buf and usb_reg_buf
-Message-Id: <20171116173918.3030-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 21:40:35 +0000
+Subject: [PATCH] ALSA: ac97_codec: Use common error handling code in snd_ac97_mixer()
+Message-Id: <18b1926e-d801-4b9b-abab-8474113f556f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, Amitkumar Karwar <amit.karwar@redpinesignals.com>, Prameela Rani Garnepudi <prameela.j04cs@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 22:30:51 +0100
 
-In the cases where len is too long, the error return path fails to
-kfree allocated buffers buf and usb_reg_buf.  The simplest fix is to
-perform the sanity check on len before the allocations to avoid having
-to do the kfree'ing in the first place.
+* Add jump targets so that a bit of exception handling can be better reused
+  at the end of this function.
 
-Detected by CoverityScan, CID#1452258,1452259 ("Resource Leak")
+  This issue was detected by using the Coccinelle software.
 
-Fixes: 59f73e2ae185 ("rsi: check length before USB read/write register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* The script "checkpatch.pl" pointed information out like the following.
+
+  ERROR: do not use assignment in if condition
+
+  Thus fix three affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ sound/pci/ac97/ac97_codec.c | 50 +++++++++++++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index 08730227cd18..8f8443833348 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -162,13 +162,13 @@ static int rsi_usb_reg_read(struct usb_device *usbdev,
- 	u8 *buf;
- 	int status = -ENOMEM;
+diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
+index 1ef7cdf1d3e8..2289cdcf2d48 100644
+--- a/sound/pci/ac97/ac97_codec.c
++++ b/sound/pci/ac97/ac97_codec.c
+@@ -2103,8 +2103,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+ 		ac97_err(ac97,
+ 			 "AC'97 %d access is not valid [0x%x], removing mixer.\n",
+ 			 ac97->num, ac97->id);
+-		snd_ac97_free(ac97);
+-		return -EIO;
++		err = -EIO;
++		goto free_ac;
+ 	}
+ 	pid = look_for_codec_id(snd_ac97_codec_ids, ac97->id);
+ 	if (pid)
+@@ -2138,8 +2138,8 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+ 			ac97_err(ac97,
+ 				 "AC'97 %d access error (not audio or modem codec)\n",
+ 				 ac97->num);
+-		snd_ac97_free(ac97);
+-		return -EACCES;
++		err = -EACCES;
++		goto free_ac;
+ 	}
  
-+	if (len > RSI_USB_CTRL_BUF_SIZE)
-+		return -EINVAL;
+ 	if (bus->ops->reset) // FIXME: always skipping?
+@@ -2267,14 +2267,12 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+ 			}
+ 		}
+ 		sprintf(comp, "AC97a:%08x", ac97->id);
+-		if ((err = snd_component_add(card, comp)) < 0) {
+-			snd_ac97_free(ac97);
+-			return err;
+-		}
+-		if (snd_ac97_mixer_build(ac97) < 0) {
+-			snd_ac97_free(ac97);
+-			return -ENOMEM;
+-		}
++		err = snd_component_add(card, comp);
++		if (err < 0)
++			goto free_ac;
 +
- 	buf  = kmalloc(RSI_USB_CTRL_BUF_SIZE, GFP_KERNEL);
- 	if (!buf)
- 		return status;
- 
--	if (len > RSI_USB_CTRL_BUF_SIZE)
--		return -EINVAL;
--
- 	status = usb_control_msg(usbdev,
- 				 usb_rcvctrlpipe(usbdev, 0),
- 				 USB_VENDOR_REGISTER_READ,
-@@ -207,13 +207,13 @@ static int rsi_usb_reg_write(struct usb_device *usbdev,
- 	u8 *usb_reg_buf;
- 	int status = -ENOMEM;
- 
-+	if (len > RSI_USB_CTRL_BUF_SIZE)
-+		return -EINVAL;
++		if (snd_ac97_mixer_build(ac97) < 0)
++			goto e_nomem;
+ 	}
+ 	if (ac97_is_modem(ac97)) {
+ 		char comp[16];
+@@ -2287,24 +2285,28 @@ int snd_ac97_mixer(struct snd_ac97_bus *bus, struct snd_ac97_template *template,
+ 			}
+ 		}
+ 		sprintf(comp, "AC97m:%08x", ac97->id);
+-		if ((err = snd_component_add(card, comp)) < 0) {
+-			snd_ac97_free(ac97);
+-			return err;
+-		}
+-		if (snd_ac97_modem_build(card, ac97) < 0) {
+-			snd_ac97_free(ac97);
+-			return -ENOMEM;
+-		}
++		err = snd_component_add(card, comp);
++		if (err < 0)
++			goto free_ac;
 +
- 	usb_reg_buf  = kmalloc(RSI_USB_CTRL_BUF_SIZE, GFP_KERNEL);
- 	if (!usb_reg_buf)
- 		return status;
++		if (snd_ac97_modem_build(card, ac97) < 0)
++			goto e_nomem;
+ 	}
+ 	if (ac97_is_audio(ac97))
+ 		update_power_regs(ac97);
+ 	snd_ac97_proc_init(ac97);
+-	if ((err = snd_device_new(card, SNDRV_DEV_CODEC, ac97, &ops)) < 0) {
+-		snd_ac97_free(ac97);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_CODEC, ac97, &ops);
++	if (err < 0)
++		goto free_ac;
++
+ 	*rac97 = ac97;
+ 	return 0;
++
++e_nomem:
++	err = -ENOMEM;
++free_ac:
++	snd_ac97_free(ac97);
++	return err;
+ }
  
--	if (len > RSI_USB_CTRL_BUF_SIZE)
--		return -EINVAL;
--
- 	usb_reg_buf[0] = (value & 0x00ff);
- 	usb_reg_buf[1] = (value & 0xff00) >> 8;
- 	usb_reg_buf[2] = 0x0;
+ EXPORT_SYMBOL(snd_ac97_mixer);
 -- 
-2.14.1
+2.15.0
 
