@@ -1,22 +1,48 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 06 Nov 2017 13:50:02 +0000
-Subject: Re: [PATCH] netfilter: ebtables: clean up initialization of buf
-Message-Id: <20171106135002.GA7055@salvia>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 18:15:06 +0000
+Subject: [PATCH 3/3] ALSA: hal2: Fix a typo in two comment lines
+Message-Id: <cebdb072-5ac8-b7c8-97b3-bc9c66838774@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171016102402.10358-1-colin.king@canonical.com>
-In-Reply-To: <20171016102402.10358-1-colin.king@canonical.com>
+References: <118a96d5-c52a-fd22-23d5-28f20de7ff22@users.sourceforge.net>
+In-Reply-To: <118a96d5-c52a-fd22-23d5-28f20de7ff22@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, Stephen Hemminger <stephen@networkplumber.org>, "David S . Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 16, 2017 at 11:24:02AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> buf is initialized to buf_start and then set on the next statement
-> to buf_start + offsets[i].  Clean this up to just initialize buf
-> to buf_start + offsets[i] to clean up the clang build warning:
-> "Value stored to 'buf' during its initialization is never read"
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 18:48:41 +0100
 
-Applied, thanks.
+Add a missing character in these descriptions.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/mips/hal2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/mips/hal2.c b/sound/mips/hal2.c
+index 675c3aba794e..4fa5f161ef2d 100644
+--- a/sound/mips/hal2.c
++++ b/sound/mips/hal2.c
+@@ -388,7 +388,7 @@ static void hal2_setup_dac(struct snd_hal2 *hal2)
+ 	hal2_i_clearbit16(hal2, H2I_DMA_PORT_EN, H2I_DMA_PORT_EN_CODECTX);
+ 	/* Setup the HAL2 for playback */
+ 	hal2_set_dac_rate(hal2);
+-	/* Set endianess */
++	/* Set endianness */
+ 	hal2_i_clearbit16(hal2, H2I_DMA_END, H2I_DMA_END_CODECTX);
+ 	/* Set DMA bus */
+ 	hal2_i_setbit16(hal2, H2I_DMA_DRV, (1 << pbus->pbusnr));
+@@ -413,7 +413,7 @@ static void hal2_setup_adc(struct snd_hal2 *hal2)
+ 	hal2_i_clearbit16(hal2, H2I_DMA_PORT_EN, H2I_DMA_PORT_EN_CODECR);
+ 	/* Setup the HAL2 for record */
+ 	hal2_set_adc_rate(hal2);
+-	/* Set endianess */
++	/* Set endianness */
+ 	hal2_i_clearbit16(hal2, H2I_DMA_END, H2I_DMA_END_CODECR);
+ 	/* Set DMA bus */
+ 	hal2_i_setbit16(hal2, H2I_DMA_DRV, (1 << pbus->pbusnr));
+-- 
+2.15.0
+
