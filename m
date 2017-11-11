@@ -1,44 +1,94 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Nov 2017 15:07:45 +0000
-Subject: [PATCH] [media] dvb-frontends/stv0367: remove redundant self assignment of temporary
-Message-Id: <20171121150745.18211-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 16:17:04 +0000
+Subject: [PATCH] ALSA: i2c: Use common error handling code in two functions
+Message-Id: <1af701eb-c379-336f-aa00-28c30cd33d51@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Scheller <d.scheller@gmx.net>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 11 Nov 2017 17:10:24 +0100
 
-The self assignment of temporary is redundant and can be removed.
-Detected using coccinelle.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/stv0367.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/i2c/i2c.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
-index f3529df8211d..ebad100d913f 100644
---- a/drivers/media/dvb-frontends/stv0367.c
-+++ b/drivers/media/dvb-frontends/stv0367.c
-@@ -1547,7 +1547,6 @@ static int stv0367ter_read_ber(struct dvb_frontend *fe, u32 *ber)
- 	} else if (abc = 0x7) {
- 		if (Errors <= 4) {
- 			temporary = (Errors * 1000000000) / (8 * (1 << 14));
--			temporary =  temporary;
- 		} else if (Errors <= 42) {
- 			temporary = (Errors * 100000000) / (8 * (1 << 14));
- 			temporary = temporary * 10;
-@@ -1625,7 +1624,6 @@ static u32 stv0367ter_get_per(struct stv0367_state *state)
- 	else if (abc = 0x9) {
- 		if (Errors <= 4) {
- 			temporary = (Errors * 1000000000) / (8 * (1 << 8));
--			temporary =  temporary;
- 		} else if (Errors <= 42) {
- 			temporary = (Errors * 100000000) / (8 * (1 << 8));
- 			temporary = temporary * 10;
+diff --git a/sound/i2c/i2c.c b/sound/i2c/i2c.c
+index ef2a9afe9e19..9292aa60f3a2 100644
+--- a/sound/i2c/i2c.c
++++ b/sound/i2c/i2c.c
+@@ -282,20 +282,22 @@ static int snd_i2c_bit_sendbytes(struct snd_i2c_device *device,
+ 		return -EIO;		/* not yet implemented */
+ 	snd_i2c_bit_start(bus);
+ 	err = snd_i2c_bit_sendbyte(bus, device->addr << 1);
+-	if (err < 0) {
+-		snd_i2c_bit_hw_stop(bus);
+-		return err;
+-	}
++	if (err < 0)
++		goto stop_bus;
++
+ 	while (count-- > 0) {
+ 		err = snd_i2c_bit_sendbyte(bus, *bytes++);
+-		if (err < 0) {
+-			snd_i2c_bit_hw_stop(bus);
+-			return err;
+-		}
++		if (err < 0)
++			goto stop_bus;
++
+ 		res++;
+ 	}
+ 	snd_i2c_bit_stop(bus);
+ 	return res;
++
++stop_bus:
++	snd_i2c_bit_hw_stop(bus);
++	return err;
+ }
+ 
+ static int snd_i2c_bit_readbytes(struct snd_i2c_device *device,
+@@ -308,21 +310,23 @@ static int snd_i2c_bit_readbytes(struct snd_i2c_device *device,
+ 		return -EIO;		/* not yet implemented */
+ 	snd_i2c_bit_start(bus);
+ 	err = snd_i2c_bit_sendbyte(bus, (device->addr << 1) | 1);
+-	if (err < 0) {
+-		snd_i2c_bit_hw_stop(bus);
+-		return err;
+-	}
++	if (err < 0)
++		goto stop_bus;
++
+ 	while (count-- > 0) {
+ 		err = snd_i2c_bit_readbyte(bus, count = 0);
+-		if (err < 0) {
+-			snd_i2c_bit_hw_stop(bus);
+-			return err;
+-		}
++		if (err < 0)
++			goto stop_bus;
++
+ 		*bytes++ = (unsigned char)err;
+ 		res++;
+ 	}
+ 	snd_i2c_bit_stop(bus);
+ 	return res;
++
++stop_bus:
++	snd_i2c_bit_hw_stop(bus);
++	return err;
+ }
+ 
+ static int snd_i2c_bit_probeaddr(struct snd_i2c_bus *bus, unsigned short addr)
 -- 
-2.14.1
+2.15.0
 
