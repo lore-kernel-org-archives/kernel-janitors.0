@@ -1,33 +1,167 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 21:36:39 +0000
-Subject: [PATCH 0/2] ALSA: au88x0: Fine-tuning for some function implementations
-Message-Id: <e42f1434-f1d7-a43b-d887-a82b50158280@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 12:03:04 +0000
+Subject: [PATCH] ALSA: als300: Use common error handling code in two functions
+Message-Id: <05cbc30d-ca3b-0c0c-ef7f-fc128bcc8753@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 22:30:44 +0100
+Date: Sun, 12 Nov 2017 12:52:50 +0100
 
-A few update suggestions were taken into account
-from static source code analysis.
+* Add jump targets so that a bit of exception handling can be better reused
+  at the end of these functions.
 
-Markus Elfring (2):
-  Adjust 40 function calls together with a variable assignment
-  Use common error handling code in two functions
+  This issue was detected by using the Coccinelle software.
 
- sound/pci/au88x0/au88x0.c        | 112 +++++++++++++++++++--------------------
- sound/pci/au88x0/au88x0_a3d.c    |  28 +++++-----
- sound/pci/au88x0/au88x0_core.c   |  78 +++++++++++++--------------
- sound/pci/au88x0/au88x0_eq.c     |  21 +++++---
- sound/pci/au88x0/au88x0_mixer.c  |   3 +-
- sound/pci/au88x0/au88x0_mpu401.c |  14 ++---
- sound/pci/au88x0/au88x0_pcm.c    |  16 +++---
- 7 files changed, 140 insertions(+), 132 deletions(-)
+* The script "checkpatch.pl" pointed information out like the following.
 
+  ERROR: do not use assignment in if condition
+
+  Thus fix six affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/als300.c | 65 +++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 37 insertions(+), 28 deletions(-)
+
+diff --git a/sound/pci/als300.c b/sound/pci/als300.c
+index eaa2d853d922..fd5ba75595cc 100644
+--- a/sound/pci/als300.c
++++ b/sound/pci/als300.c
+@@ -655,21 +655,22 @@ static int snd_als300_create(struct snd_card *card,
+ 	};
+ 	*rchip = NULL;
+ 
+-	if ((err = pci_enable_device(pci)) < 0)
++	err = pci_enable_device(pci);
++	if (err < 0)
+ 		return err;
+ 
+ 	if (dma_set_mask(&pci->dev, DMA_BIT_MASK(28)) < 0 ||
+ 		dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(28)) < 0) {
+ 		dev_err(card->dev, "error setting 28bit DMA mask\n");
+-		pci_disable_device(pci);
+-		return -ENXIO;
++		err = -ENXIO;
++		goto disable_device;
+ 	}
+ 	pci_set_master(pci);
+ 
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+ 	if (chip = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
+ 	}
+ 
+ 	chip->card = card;
+@@ -678,10 +679,10 @@ static int snd_als300_create(struct snd_card *card,
+ 	chip->chip_type = chip_type;
+ 	spin_lock_init(&chip->reg_lock);
+ 
+-	if ((err = pci_request_regions(pci, "ALS300")) < 0) {
++	err = pci_request_regions(pci, "ALS300");
++	if (err < 0) {
+ 		kfree(chip);
+-		pci_disable_device(pci);
+-		return err;
++		goto disable_device;
+ 	}
+ 	chip->port = pci_resource_start(pci, 0);
+ 
+@@ -693,8 +694,8 @@ static int snd_als300_create(struct snd_card *card,
+ 	if (request_irq(pci->irq, irq_handler, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_als300_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_sound_chip;
+ 	}
+ 	chip->irq = pci->irq;
+ 
+@@ -704,24 +705,29 @@ static int snd_als300_create(struct snd_card *card,
+ 	err = snd_als300_ac97(chip);
+ 	if (err < 0) {
+ 		dev_err(card->dev, "Could not create ac97\n");
+-		snd_als300_free(chip);
+-		return err;
++		goto free_sound_chip;
+ 	}
+ 
+-	if ((err = snd_als300_new_pcm(chip)) < 0) {
++	err = snd_als300_new_pcm(chip);
++	if (err < 0) {
+ 		dev_err(card->dev, "Could not create PCM\n");
+-		snd_als300_free(chip);
+-		return err;
++		goto free_sound_chip;
+ 	}
+ 
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL,
+-						chip, &ops)) < 0) {
+-		snd_als300_free(chip);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ 	*rchip = chip;
+ 	return 0;
++
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++free_sound_chip:
++	snd_als300_free(chip);
++	return err;
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -776,11 +782,10 @@ static int snd_als300_probe(struct pci_dev *pci,
+ 		return err;
+ 
+ 	chip_type = pci_id->driver_data;
++	err = snd_als300_create(card, pci, chip_type, &chip);
++	if (err < 0)
++		goto free_card;
+ 
+-	if ((err = snd_als300_create(card, pci, chip_type, &chip)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
+ 	card->private_data = chip;
+ 
+ 	strcpy(card->driver, "ALS300");
+@@ -794,13 +799,17 @@ static int snd_als300_probe(struct pci_dev *pci,
+ 	sprintf(card->longname, "%s at 0x%lx irq %i",
+ 				card->shortname, chip->port, chip->irq);
+ 
+-	if ((err = snd_card_register(card)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	err = snd_card_register(card);
++	if (err < 0)
++		goto free_card;
++
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static struct pci_driver als300_driver = {
 -- 
 2.15.0
 
