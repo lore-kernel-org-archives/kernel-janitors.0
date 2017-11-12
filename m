@@ -1,52 +1,133 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 01 Nov 2017 10:49:23 +0000
-Subject: [PATCH] serial: core: remove redundant assignment to port
-Message-Id: <20171101104923.18439-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 09:26:58 +0000
+Subject: [PATCH] ALSA: ad1889: Use common error handling code in snd_ad1889_create()
+Message-Id: <252c71ed-af89-ed5f-d75f-c09292e68bd5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, linux-parisc@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thibaut Varene <T-Bone@parisc-linux.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 10:10:53 +0100
 
-The final assignment to port is never read, hence it is redundant
-and can be removed. Also move the declaration of port to a more
-local scope.  Cleans up clang warning:
+* Adjust jump targets so that a bit of exception handling can be better
+  reused at the end of this function.
 
-drivers/tty/serial/serial_core.c:1498:2: warning: Value stored
-to 'port' is never read
+  This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* The script "checkpatch.pl" pointed information out like the following.
+
+  ERROR: do not use assignment in if condition
+
+  Thus fix five affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/serial_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/pci/ad1889.c | 45 +++++++++++++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index f4e6c8662987..cdac01fe11ca 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -1482,10 +1482,10 @@ static void uart_set_termios(struct tty_struct *tty,
- static void uart_close(struct tty_struct *tty, struct file *filp)
- {
- 	struct uart_state *state = tty->driver_data;
--	struct tty_port *port;
+diff --git a/sound/pci/ad1889.c b/sound/pci/ad1889.c
+index 0bf2c04eeada..9f00e63937a5 100644
+--- a/sound/pci/ad1889.c
++++ b/sound/pci/ad1889.c
+@@ -894,21 +894,23 @@ snd_ad1889_create(struct snd_card *card,
  
- 	if (!state) {
- 		struct uart_driver *drv = tty->driver->driver_state;
-+		struct tty_port *port;
+ 	*rchip = NULL;
  
- 		state = drv->state + tty->index;
- 		port = &state->port;
-@@ -1495,7 +1495,6 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
- 		return;
+-	if ((err = pci_enable_device(pci)) < 0)
++	err = pci_enable_device(pci);
++	if (err < 0)
+ 		return err;
+ 
+ 	/* check PCI availability (32bit DMA) */
+ 	if (dma_set_mask(&pci->dev, DMA_BIT_MASK(32)) < 0 ||
+ 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(32)) < 0) {
+ 		dev_err(card->dev, "error setting 32-bit DMA mask.\n");
+-		pci_disable_device(pci);
+-		return -ENXIO;
++		err = -ENXIO;
++		goto disable_device;
  	}
  
--	port = &state->port;
- 	pr_debug("uart_close(%d) called\n", tty->index);
+ 	/* allocate chip specific data with zero-filled memory */
+-	if ((chip = kzalloc(sizeof(*chip), GFP_KERNEL)) = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
++	if (!chip) {
++		err = -ENOMEM;
++		goto disable_device;
+ 	}
  
- 	tty_port_close(tty->port, tty, filp);
+ 	chip->card = card;
+@@ -917,15 +919,16 @@ snd_ad1889_create(struct snd_card *card,
+ 	chip->irq = -1;
+ 
+ 	/* (1) PCI resource allocation */
+-	if ((err = pci_request_regions(pci, card->driver)) < 0)
+-		goto free_and_ret;
++	err = pci_request_regions(pci, card->driver);
++	if (err < 0)
++		goto free_data;
+ 
+ 	chip->bar = pci_resource_start(pci, 0);
+ 	chip->iobase = pci_ioremap_bar(pci, 0);
+ 	if (chip->iobase = NULL) {
+ 		dev_err(card->dev, "unable to reserve region.\n");
+ 		err = -EBUSY;
+-		goto free_and_ret;
++		goto free_data;
+ 	}
+ 	
+ 	pci_set_master(pci);
+@@ -935,32 +938,34 @@ snd_ad1889_create(struct snd_card *card,
+ 	if (request_irq(pci->irq, snd_ad1889_interrupt,
+ 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "cannot obtain IRQ %d\n", pci->irq);
+-		snd_ad1889_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_sound_chip;
+ 	}
+ 
+ 	chip->irq = pci->irq;
+ 	synchronize_irq(chip->irq);
+ 
+ 	/* (2) initialization of the chip hardware */
+-	if ((err = snd_ad1889_init(chip)) < 0) {
+-		snd_ad1889_free(chip);
+-		return err;
+-	}
++	err = snd_ad1889_init(chip);
++	if (err < 0)
++		goto free_sound_chip;
+ 
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
+-		snd_ad1889_free(chip);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ 	*rchip = chip;
+ 
+ 	return 0;
+ 
+-free_and_ret:
++free_data:
+ 	kfree(chip);
++disable_device:
+ 	pci_disable_device(pci);
++	return err;
+ 
++free_sound_chip:
++	snd_ad1889_free(chip);
+ 	return err;
+ }
+ 
 -- 
-2.14.1
+2.15.0
 
