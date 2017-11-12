@@ -1,52 +1,233 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:54:19 +0000
-Subject: [PATCH 4/4] video: udlfb: Delete an unnecessary return statement in two functions
-Message-Id: <1e2d3f13-0184-4504-9813-0982fa3f4c67@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 21:40:04 +0000
+Subject: [PATCH 2/2] ALSA: au88x0: Use common error handling code in two functions
+Message-Id: <1ff028cc-eac8-f5c8-9149-5df6e44cfba8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
-In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+References: <e42f1434-f1d7-a43b-d887-a82b50158280@users.sourceforge.net>
+In-Reply-To: <e42f1434-f1d7-a43b-d887-a82b50158280@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 21:36:39 +0100
+Date: Sun, 12 Nov 2017 22:22:15 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected functions.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/udlfb.c | 4 ----
- 1 file changed, 4 deletions(-)
+ sound/pci/au88x0/au88x0.c      | 72 ++++++++++++++++++------------------------
+ sound/pci/au88x0/au88x0_core.c | 34 ++++++++------------
+ 2 files changed, 43 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index 059883962698..c6bf7088f5f4 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -505,8 +505,6 @@ static void dlfb_compress_hline(
- 	*command_buffer_ptr = cmd;
- 	*pixel_start_ptr = pixel;
- 	*device_address_ptr = dev_addr;
--
--	return;
+diff --git a/sound/pci/au88x0/au88x0.c b/sound/pci/au88x0/au88x0.c
+index fc5c47ace64f..aa0dbd4e152e 100644
+--- a/sound/pci/au88x0/au88x0.c
++++ b/sound/pci/au88x0/au88x0.c
+@@ -257,10 +257,9 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ 
+ 	// (3)
+ 	err = snd_vortex_create(card, pci, &chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	snd_vortex_workaround(pci, pcifix[dev]);
+ 
+ 	// Card details needed in snd_vortex_midi
+@@ -271,29 +270,23 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ 
+ 	// (4) Alloc components.
+ 	err = snd_vortex_mixer(chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	// ADB pcm.
+ 	err = snd_vortex_new_pcm(chip, VORTEX_PCM_ADB, NR_PCM);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ #ifndef CHIP_AU8820
+ 	// ADB SPDIF
+ 	err = snd_vortex_new_pcm(chip, VORTEX_PCM_SPDIF, 1);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	// A3D
+ 	err = snd_vortex_new_pcm(chip, VORTEX_PCM_A3D, NR_A3D);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ #endif
+ 	/*
+ 	   // ADB I2S
+@@ -305,16 +298,12 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ #ifndef CHIP_AU8810
+ 	// WT pcm.
+ 	err = snd_vortex_new_pcm(chip, VORTEX_PCM_WT, NR_WT);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ #endif
+ 	err = snd_vortex_midi(chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	vortex_gameport_register(chip);
+ 
+@@ -337,16 +326,13 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ 
+ 	// (5)
+ 	err = pci_read_config_word(pci, PCI_DEVICE_ID, &(chip->device));
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}	
++	if (err < 0)
++		goto free_card;
+ 
+ 	err = pci_read_config_word(pci, PCI_VENDOR_ID, &(chip->vendor));
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	chip->rev = pci->revision;
+ #ifdef CHIP_AU8830
+ 	if ((chip->rev) != 0xfe && (chip->rev) != 0xfa) {
+@@ -355,24 +341,26 @@ snd_vortex_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ 		       chip->rev);
+ 		dev_alert(card->dev,
+ 			  "Please email the results of 'lspci -vv' to openvortex-dev@nongnu.org.\n");
+-		snd_card_free(card);
+ 		err = -ENODEV;
+-		return err;
++		goto free_card;
+ 	}
+ #endif
+ 
+ 	// (6)
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	// (7)
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	vortex_connect_default(chip, 1);
+ 	vortex_enable_int(chip);
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ // destructor -- see "Destructor" sub-section
+diff --git a/sound/pci/au88x0/au88x0_core.c b/sound/pci/au88x0/au88x0_core.c
+index cdb1c227442b..6615b0933801 100644
+--- a/sound/pci/au88x0/au88x0_core.c
++++ b/sound/pci/au88x0/au88x0_core.c
+@@ -2151,11 +2151,9 @@ vortex_adb_allocroute(vortex_t *vortex, int dma, int nr_ch, int dir,
+ 							       ->resources,
+ 							       en,
+ 							       VORTEX_RESOURCE_SRC);
+-				if (src[i] < 0) {
+-					memset(stream->resources, 0,
+-					       sizeof(stream->resources));
+-					return -EBUSY;
+-				}
++				if (src[i] < 0)
++					goto reset_memory;
++
+ 				if (stream->type != VORTEX_PCM_A3D) {
+ 					mix[i]  					      vortex_adb_checkinout(vortex,
+@@ -2163,12 +2161,8 @@ vortex_adb_allocroute(vortex_t *vortex, int dma, int nr_ch, int dir,
+ 								    ->resources,
+ 								    en,
+ 								    VORTEX_RESOURCE_MIXIN);
+-					if (mix[i] < 0) {
+-						memset(stream->resources,
+-						       0,
+-						       sizeof(stream->resources));
+-						return -EBUSY;
+-					}
++					if (mix[i] < 0)
++						goto reset_memory;
+ 				}
+ 			}
+ 		}
+@@ -2293,20 +2287,14 @@ vortex_adb_allocroute(vortex_t *vortex, int dma, int nr_ch, int dir,
+ 			mix[i] = vortex_adb_checkinout(vortex,
+ 						       stream->resources, en,
+ 						       VORTEX_RESOURCE_MIXOUT);
+-			if (mix[i] < 0) {
+-				memset(stream->resources, 0,
+-				       sizeof(stream->resources));
+-				return -EBUSY;
+-			}
++			if (mix[i] < 0)
++				goto reset_memory;
+ 
+ 			src[i] = vortex_adb_checkinout(vortex,
+ 						       stream->resources, en,
+ 						       VORTEX_RESOURCE_SRC);
+-			if (src[i] < 0) {
+-				memset(stream->resources, 0,
+-				       sizeof(stream->resources));
+-				return -EBUSY;
+-			}
++			if (src[i] < 0)
++				goto reset_memory;
+ 		}
+ 
+ 		/* Make capture routes. */
+@@ -2350,6 +2338,10 @@ vortex_adb_allocroute(vortex_t *vortex, int dma, int nr_ch, int dir,
+ 	}
+ #endif
+ 	return dma;
++
++reset_memory:
++	memset(stream->resources, 0, sizeof(stream->resources));
++	return -EBUSY;
  }
  
  /*
-@@ -1768,8 +1766,6 @@ static void dlfb_usb_disconnect(struct usb_interface *interface)
- 	kref_put(&dev->kref, dlfb_free);
- 
- 	/* consider dlfb_data freed */
--
--	return;
- }
- 
- static struct usb_driver dlfb_driver = {
 -- 
 2.15.0
 
