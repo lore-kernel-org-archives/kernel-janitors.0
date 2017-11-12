@@ -1,55 +1,88 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 20:37:25 +0000
-Subject: Re: [PATCH] cpupower: Combine two condition checks into one statement in get_cpu_topology()
-Message-Id: <a131b1b8-739f-67d6-3cf4-b9d87f4e7c20@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 10:08:33 +0000
+Subject: [PATCH] ALSA: ak4531_codec: Use common error handling code in snd_ak4531_mixer()
+Message-Id: <5615b3be-55ab-c4c1-bc7d-a7c7ba3620f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3daea226-c5cb-62e7-a025-8f758712a81a@users.sourceforge.net>
- <372aa4f8-7e97-ee83-1078-6f80e28ffdf0@kernel.org>
-In-Reply-To: <372aa4f8-7e97-ee83-1078-6f80e28ffdf0@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: shuah@kernel.org, linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> @@ -140,18 +140,12 @@ int get_cpu_topology(struct cpupower_topology *cpu_top)
->>  	for (cpu = 0; cpu < cpus; cpu++) {
->>  		cpu_top->core_info[cpu].cpu = cpu;
->>  		cpu_top->core_info[cpu].is_online = cpupower_is_cpu_online(cpu);
->> -		if(sysfs_topology_read_file(
->> -			cpu,
->> -			"physical_package_id",
->> -			&(cpu_top->core_info[cpu].pkg)) < 0) {
->> -			cpu_top->core_info[cpu].pkg = -1;
->> -			cpu_top->core_info[cpu].core = -1;
->> -			continue;
->> -		}
->> -		if(sysfs_topology_read_file(
->> -			cpu,
->> -			"core_id",
->> -			&(cpu_top->core_info[cpu].core)) < 0) {
->> +		if (sysfs_topology_read_file(cpu, "physical_package_id",
->> +					     &(cpu_top->core_info[cpu].pkg))
->> +		    < 0 ||
->> +		    sysfs_topology_read_file(cpu, "core_id",
->> +					     &(cpu_top->core_info[cpu].core))
->> +		    < 0) {
-> 
-> This change takes the easily readable code into hard to read code,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 10:56:19 +0100
 
-I got other views around code readability for the shown software
-design direction.
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
 
+  This issue was detected by using the Coccinelle software.
 
-> even though it removes the duplicate code in the conditional.
+* The script "checkpatch.pl" pointed information out like the following.
 
-Would you like to reduce a bit of duplicate code here?
+  ERROR: do not use assignment in if condition
 
+  Thus fix three affected source code places.
 
-> Please find a better way to make it not so hard to read.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/ak4531_codec.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-Which source code layout would you find more appropriate then
-in this use case?
+diff --git a/sound/pci/ak4531_codec.c b/sound/pci/ak4531_codec.c
+index 2fb1fbba3e5e..208c96d6ae0f 100644
+--- a/sound/pci/ak4531_codec.c
++++ b/sound/pci/ak4531_codec.c
+@@ -399,10 +399,10 @@ int snd_ak4531_mixer(struct snd_card *card,
+ 		return -ENOMEM;
+ 	*ak4531 = *_ak4531;
+ 	mutex_init(&ak4531->reg_mutex);
+-	if ((err = snd_component_add(card, "AK4531")) < 0) {
+-		snd_ak4531_free(ak4531);
+-		return err;
+-	}
++	err = snd_component_add(card, "AK4531");
++	if (err < 0)
++		goto free_ac;
++
+ 	strcpy(card->mixername, "Asahi Kasei AK4531");
+ 	ak4531->write(ak4531, AK4531_RESET, 0x03);	/* no RST, PD */
+ 	udelay(100);
+@@ -413,16 +413,16 @@ int snd_ak4531_mixer(struct snd_card *card,
+ 		ak4531->write(ak4531, idx, ak4531->regs[idx] = snd_ak4531_initial_map[idx]);	/* recording source is mixer */
+ 	}
+ 	for (idx = 0; idx < ARRAY_SIZE(snd_ak4531_controls); idx++) {
+-		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_ak4531_controls[idx], ak4531))) < 0) {
+-			snd_ak4531_free(ak4531);
+-			return err;
+-		}
++		err = snd_ctl_add(card,
++				  snd_ctl_new1(&snd_ak4531_controls[idx],
++					       ak4531));
++		if (err < 0)
++			goto free_ac;
+ 	}
+ 	snd_ak4531_proc_init(card, ak4531);
+-	if ((err = snd_device_new(card, SNDRV_DEV_CODEC, ak4531, &ops)) < 0) {
+-		snd_ak4531_free(ak4531);
+-		return err;
+-	}
++	err = snd_device_new(card, SNDRV_DEV_CODEC, ak4531, &ops);
++	if (err < 0)
++		goto free_ac;
+ 
+ #if 0
+ 	snd_ak4531_dump(ak4531);
+@@ -430,6 +430,10 @@ int snd_ak4531_mixer(struct snd_card *card,
+ 	if (rak4531)
+ 		*rak4531 = ak4531;
+ 	return 0;
++
++free_ac:
++	snd_ak4531_free(ak4531);
++	return err;
+ }
+ 
+ /*
+-- 
+2.15.0
 
-Regards,
-Markus
