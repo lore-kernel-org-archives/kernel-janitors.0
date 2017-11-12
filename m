@@ -1,76 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:54:16 +0000
-Subject: Applied "ASoC: wm8903: Delete an error message for a failed memory allocation in wm8903_i2c_probe()"
-Message-Id: <E1eJOXo-0007Wb-Ba@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 12 Nov 2017 21:36:39 +0000
+Subject: [PATCH 0/2] ALSA: au88x0: Fine-tuning for some function implementations
+Message-Id: <e42f1434-f1d7-a43b-d887-a82b50158280@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52cba9de-be47-1518-20fc-897967686bf8@users.sourceforge.net>
-In-Reply-To: <52cba9de-be47-1518-20fc-897967686bf8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: wm8903: Delete an error message for a failed memory allocation in wm8903_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From cce7c0ac44832225ca86afff308cf6a5fb19cf2c Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 10:05:43 +0100
-Subject: [PATCH] ASoC: wm8903: Delete an error message for a failed memory
- allocation in wm8903_i2c_probe()
+Date: Sun, 12 Nov 2017 22:30:44 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Adjust 40 function calls together with a variable assignment
+  Use common error handling code in two functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wm8903.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/pci/au88x0/au88x0.c        | 112 +++++++++++++++++++--------------------
+ sound/pci/au88x0/au88x0_a3d.c    |  28 +++++-----
+ sound/pci/au88x0/au88x0_core.c   |  78 +++++++++++++--------------
+ sound/pci/au88x0/au88x0_eq.c     |  21 +++++---
+ sound/pci/au88x0/au88x0_mixer.c  |   3 +-
+ sound/pci/au88x0/au88x0_mpu401.c |  14 ++---
+ sound/pci/au88x0/au88x0_pcm.c    |  16 +++---
+ 7 files changed, 140 insertions(+), 132 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index 237eeb9a8b97..51eb7d61d446 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -2020,10 +2020,8 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
- 		wm8903->pdata = devm_kzalloc(&i2c->dev,
- 					sizeof(struct wm8903_platform_data),
- 					GFP_KERNEL);
--		if (wm8903->pdata = NULL) {
--			dev_err(&i2c->dev, "Failed to allocate pdata\n");
-+		if (!wm8903->pdata)
- 			return -ENOMEM;
--		}
- 
- 		if (i2c->irq) {
- 			ret = wm8903_set_pdata_irq_trigger(i2c, wm8903->pdata);
 -- 
 2.15.0
 
