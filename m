@@ -1,58 +1,80 @@
-From: "Chen, Horace" <Horace.Chen@amd.com>
-Date: Mon, 13 Nov 2017 14:40:29 +0000
-Subject: RE: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
-Message-Id: <MWHPR12MB1629A7003BEC52A2399D07DCE12B0@MWHPR12MB1629.namprd12.prod.outlook.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 13 Nov 2017 19:21:49 +0000
+Subject: Re: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
+Message-Id: <CADnq5_NXqToFOvrTqVAxSi2QuzRJbbSY694+sjfMzPGrAvpBBA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171111115110.3026-1-colin.king@canonical.com>
  <SN1PR12MB046220FED69C71FF1AB98596842B0@SN1PR12MB0462.namprd12.prod.outlook.com>
-In-Reply-To: <SN1PR12MB046220FED69C71FF1AB98596842B0-z7L1TMIYDg7VaWpRXmIMygdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
+ <MWHPR12MB1629A7003BEC52A2399D07DCE12B0@MWHPR12MB1629.namprd12.prod.outlook.com>
+In-Reply-To: <MWHPR12MB1629A7003BEC52A2399D07DCE12B0@MWHPR12MB1629.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Liu, Monk" <Monk.Liu-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "Yu, Xiangliang" <Xiangliang.Yu-5C7GfCeVMHo@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Chen, Horace" <Horace.Chen@amd.com>
+Cc: David Airlie <airlied@linux.ie>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, "Yu,
+ Xiangliang" <Xiangliang.Yu@amd.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Deucher,
+ Alexander" <Alexander.Deucher@amd.com>, Colin King <colin.king@canonical.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Liu, Monk" <Monk.Liu@amd.com>
 
-UmVpdmV3ZWQtYnk6IEhvcmFjZSBDaGVuIDxob3JhY2UuY2hlbkBhbWQuY29tPg0KDQotLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGl1LCBNb25rIA0KU2VudDogTW9uZGF5LCBOb3Zl
-bWJlciAxMywgMjAxNyAxMTo0MyBBTQ0KVG86IENoZW4sIEhvcmFjZSA8SG9yYWNlLkNoZW5AYW1k
-LmNvbT47IENvbGluIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT47IERldWNoZXIsIEFs
-ZXhhbmRlciA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47IEtvZW5pZywgQ2hyaXN0aWFuIDxD
-aHJpc3RpYW4uS29lbmlnQGFtZC5jb20+OyBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXguaWU+
-OyBZdSwgWGlhbmdsaWFuZyA8WGlhbmdsaWFuZy5ZdUBhbWQuY29tPjsgYW1kLWdmeEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmc7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCkNjOiBrZXJu
-ZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-DQpTdWJqZWN0OiBSRTogW1BBVENIXSBkcm0vYW1kZ3B1L3ZpcnQ6IHJlbW92ZSByZWR1bmRhbnQg
-dmFyaWFibGUgcGYydmZfdmVyDQpJbXBvcnRhbmNlOiBIaWdoDQoNCisgSG9yYWNlDQoNCi0tLS0t
-T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86Y29saW4ua2lu
-Z0BjYW5vbmljYWwuY29tXSANClNlbnQ6IDIwMTflubQxMeaciDEx5pelIDE5OjUxDQpUbzogRGV1
-Y2hlciwgQWxleGFuZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPjsgS29lbmlnLCBDaHJp
-c3RpYW4gPENocmlzdGlhbi5Lb2VuaWdAYW1kLmNvbT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBs
-aW51eC5pZT47IExpdSwgTW9uayA8TW9uay5MaXVAYW1kLmNvbT47IFl1LCBYaWFuZ2xpYW5nIDxY
-aWFuZ2xpYW5nLll1QGFtZC5jb20+OyBhbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IFtQQVRDSF0g
-ZHJtL2FtZGdwdS92aXJ0OiByZW1vdmUgcmVkdW5kYW50IHZhcmlhYmxlIHBmMnZmX3Zlcg0KDQpG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpWYXJpYWJs
-ZSBwZjJ2Zl92ZXIgaXMgYXNzaWduZWQgYnV0IG5ldmVyIHJlYWQsIGl0IGlzIHJlZHVuZGFudCBh
-bmQgaGVuY2UgY2FuIGJlIHJlbW92ZWQuDQoNCkNsZWFucyB1cCBjbGFuZyB3YXJuaW5nOg0KZHJp
-dmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3ZpcnQuYzozMTA6Mzogd2FybmluZzogVmFs
-dWUgc3RvcmVkIHRvICdwZjJ2Zl92ZXInIGlzIG5ldmVyIHJlYWQNCg0KU2lnbmVkLW9mZi1ieTog
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0tLQ0KIGRyaXZlcnMv
-Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMgfCAyIC0tDQogMSBmaWxlIGNoYW5nZWQs
-IDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdw
-dS9hbWRncHVfdmlydC5jIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3ZpcnQu
-Yw0KaW5kZXggNjczOGRmODM2YTcwLi5iMWNjMTc5NTEyZmEgMTAwNjQ0DQotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdmlydC5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0v
-YW1kL2FtZGdwdS9hbWRncHVfdmlydC5jDQpAQCAtMjk2LDcgKzI5Niw2IEBAIGludCBhbWRncHVf
-dmlydF9md19yZXNlcnZlX2dldF9jaGVja3N1bSh2b2lkICpvYmosDQogDQogdm9pZCBhbWRncHVf
-dmlydF9pbml0X2RhdGFfZXhjaGFuZ2Uoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYpICB7DQot
-CXVpbnQzMl90IHBmMnZmX3ZlciA9IDA7DQogCXVpbnQzMl90IHBmMnZmX3NpemUgPSAwOw0KIAl1
-aW50MzJfdCBjaGVja3N1bSA9IDA7DQogCXVpbnQzMl90IGNoZWNrdmFsOw0KQEAgLTMwOSw3ICsz
-MDgsNiBAQCB2b2lkIGFtZGdwdV92aXJ0X2luaXRfZGF0YV9leGNoYW5nZShzdHJ1Y3QgYW1kZ3B1
-X2RldmljZSAqYWRldikNCiAJCWFkZXYtPnZpcnQuZndfcmVzZXJ2ZS5wX3BmMnZmID0NCiAJCQko
-c3RydWN0IGFtZGdpbV9wZjJ2Zl9pbmZvX2hlYWRlciAqKSgNCiAJCQlhZGV2LT5md192cmFtX3Vz
-YWdlLnZhICsgQU1ER0lNX0RBVEFFWENIQU5HRV9PRkZTRVQpOw0KLQkJcGYydmZfdmVyID0gYWRl
-di0+dmlydC5md19yZXNlcnZlLnBfcGYydmYtPnZlcnNpb247DQogCQlBTURHUFVfRldfVlJBTV9Q
-RjJWRl9SRUFEKGFkZXYsIGhlYWRlci5zaXplLCAmcGYydmZfc2l6ZSk7DQogCQlBTURHUFVfRldf
-VlJBTV9QRjJWRl9SRUFEKGFkZXYsIGNoZWNrc3VtLCAmY2hlY2tzdW0pOw0KIA0KLS0NCjIuMTQu
-MQ0KDQo
+On Mon, Nov 13, 2017 at 9:40 AM, Chen, Horace <Horace.Chen@amd.com> wrote:
+> Reivewed-by: Horace Chen <horace.chen@amd.com>
+
+Applied.  thanks!
+
+Alex
+
+>
+> -----Original Message-----
+> From: Liu, Monk
+> Sent: Monday, November 13, 2017 11:43 AM
+> To: Chen, Horace <Horace.Chen@amd.com>; Colin King <colin.king@canonical.com>; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; David Airlie <airlied@linux.ie>; Yu, Xiangliang <Xiangliang.Yu@amd.com>; amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: RE: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
+> Importance: High
+>
+> + Horace
+>
+> -----Original Message-----
+> From: Colin King [mailto:colin.king@canonical.com]
+> Sent: 2017年11月11日 19:51
+> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; David Airlie <airlied@linux.ie>; Liu, Monk <Monk.Liu@amd.com>; Yu, Xiangliang <Xiangliang.Yu@amd.com>; amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variable pf2vf_ver is assigned but never read, it is redundant and hence can be removed.
+>
+> Cleans up clang warning:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c:310:3: warning: Value stored to 'pf2vf_ver' is never read
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> index 6738df836a70..b1cc179512fa 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> @@ -296,7 +296,6 @@ int amdgpu_virt_fw_reserve_get_checksum(void *obj,
+>
+>  void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)  {
+> -       uint32_t pf2vf_ver = 0;
+>         uint32_t pf2vf_size = 0;
+>         uint32_t checksum = 0;
+>         uint32_t checkval;
+> @@ -309,7 +308,6 @@ void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)
+>                 adev->virt.fw_reserve.p_pf2vf =
+>                         (struct amdgim_pf2vf_info_header *)(
+>                         adev->fw_vram_usage.va + AMDGIM_DATAEXCHANGE_OFFSET);
+> -               pf2vf_ver = adev->virt.fw_reserve.p_pf2vf->version;
+>                 AMDGPU_FW_VRAM_PF2VF_READ(adev, header.size, &pf2vf_size);
+>                 AMDGPU_FW_VRAM_PF2VF_READ(adev, checksum, &checksum);
+>
+> --
+> 2.14.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
