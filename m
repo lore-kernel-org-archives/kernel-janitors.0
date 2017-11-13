@@ -1,29 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Nov 2017 12:20:30 +0000
-Subject: Re: [PATCH][V2] net: ethernet: slicoss: remove redundant initialization of idx
-Message-Id: <20171101.212030.879951866741665289.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Nov 2017 10:06:01 +0000
+Subject: [PATCH] platform/x86: wmi: Unlock on error in wmi_ioctl()
+Message-Id: <20171113100601.quq6qjvlk6ijzmri@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031100823.19733-1-colin.king@canonical.com>
-In-Reply-To: <20171031100823.19733-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: LinoSanfilippo@gmx.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Mario Limonciello <mario.limonciello@dell.com>
+Cc: Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 10:08:23 +0000
+We need to drop a lock if try_module_get() fails.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable idx is being initialized and later on over-written by
-> a new value in a do-loop without the initial value ever being
-> read. Hence the initializion is redundant and can be removed.
-> Cleans up clang warning:
-> 
-> drivers/net/ethernet/alacritech/slicoss.c:358:15: warning: Value
-> stored to 'idx' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 44b6b7661132 ("platform/x86: wmi: create userspace interface for drivers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next.
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index 8c31ed4f0e1b..791449a2370f 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -868,8 +868,10 @@ static long wmi_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	/* let the driver do any filtering and do the call */
+ 	wdriver = container_of(wblock->dev.dev.driver,
+ 			       struct wmi_driver, driver);
+-	if (!try_module_get(wdriver->driver.owner))
+-		return -EBUSY;
++	if (!try_module_get(wdriver->driver.owner)) {
++		ret = -EBUSY;
++		goto out_ioctl;
++	}
+ 	ret = wdriver->filter_callback(&wblock->dev, cmd, buf);
+ 	module_put(wdriver->driver.owner);
+ 	if (ret)
