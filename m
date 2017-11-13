@@ -1,43 +1,113 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 09:16:29 +0000
-Subject: [PATCH] video: fb_ddc: Delete an error message for a failed memory allocation in fb_do_probe_ddc_edi
-Message-Id: <93d83083-b0ee-5993-3b7b-329999c9afcd@users.sourceforge.net>
+Date: Mon, 13 Nov 2017 12:52:41 +0000
+Subject: [PATCH 2/3] ALSA: cs4281: Use common error handling code in snd_cs4281_probe()
+Message-Id: <79d61453-352c-c5a7-a306-4c4304a74195@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
+In-Reply-To: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 10:12:26 +0100
+Date: Mon, 13 Nov 2017 13:10:11 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/core/fb_ddc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ sound/pci/cs4281.c | 52 ++++++++++++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/video/fbdev/core/fb_ddc.c b/drivers/video/fbdev/core/fb_ddc.c
-index 8bf5f2f54be7..256b518d1db9 100644
---- a/drivers/video/fbdev/core/fb_ddc.c
-+++ b/drivers/video/fbdev/core/fb_ddc.c
-@@ -37,11 +37,8 @@ static unsigned char *fb_do_probe_ddc_edid(struct i2c_adapter *adapter)
- 		}
- 	};
+diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
+index cf0bcab2a36b..ed6b97dbd1cc 100644
+--- a/sound/pci/cs4281.c
++++ b/sound/pci/cs4281.c
+@@ -1934,40 +1934,34 @@ static int snd_cs4281_probe(struct pci_dev *pci,
+ 		return err;
  
--	if (!buf) {
--		dev_warn(&adapter->dev, "unable to allocate memory for EDID "
--			 "block.\n");
-+	if (!buf)
- 		return NULL;
+ 	err = snd_cs4281_create(card, pci, &chip, dual_codec[dev]);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
 -	}
++	if (err < 0)
++		goto free_card;
++
+ 	card->private_data = chip;
  
- 	if (i2c_transfer(adapter, msgs, 2) = 2)
- 		return buf;
+ 	err = snd_cs4281_mixer(chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_cs4281_pcm(chip, 0);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_cs4281_midi(chip, 0);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_opl3_new(card, OPL3_HW_OPL3_CS4281, &opl3);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	opl3->private_data = chip;
+ 	opl3->command = snd_cs4281_opl3_command;
+ 	snd_opl3_init(opl3);
+ 	err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	snd_cs4281_create_gameport(chip);
+ 	strcpy(card->driver, "CS4281");
+ 	strcpy(card->shortname, "Cirrus Logic CS4281");
+@@ -1977,14 +1971,16 @@ static int snd_cs4281_probe(struct pci_dev *pci,
+ 		chip->irq);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_cs4281_remove(struct pci_dev *pci)
 -- 
 2.15.0
 
