@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 10:17:00 +0000
-Subject: [PATCH] video: bf54x-lq043fb: Delete an error message for a failed memory allocation in bfin_bf54x_p
-Message-Id: <9eff0ce0-070d-77aa-8855-73a96eb778fd@users.sourceforge.net>
+Date: Mon, 13 Nov 2017 18:24:38 +0000
+Subject: [PATCH 3/4] ALSA: cs46xx: Improve a size determination in cs46xx_dsp_proc_register_scb_desc()
+Message-Id: <48771e1a-f520-3f80-16ad-ef2dbcb15a63@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <893b1dc2-d078-9ea6-4ad2-0e0327affddd@users.sourceforge.net>
+In-Reply-To: <893b1dc2-d078-9ea6-4ad2-0e0327affddd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 11:04:22 +0100
+Date: Mon, 13 Nov 2017 18:56:58 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/bf54x-lq043fb.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/pci/cs46xx/dsp_spos_scb_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/bf54x-lq043fb.c b/drivers/video/fbdev/bf54x-lq043fb.c
-index 8f1f97c75619..69a8c5d82ad7 100644
---- a/drivers/video/fbdev/bf54x-lq043fb.c
-+++ b/drivers/video/fbdev/bf54x-lq043fb.c
-@@ -605,9 +605,6 @@ static int bfin_bf54x_probe(struct platform_device *pdev)
- 	fbinfo->pseudo_palette = devm_kzalloc(&pdev->dev, sizeof(u32) * 16,
- 					      GFP_KERNEL);
- 	if (!fbinfo->pseudo_palette) {
--		printk(KERN_ERR DRIVER_NAME
--		       "Fail to allocate pseudo_palette\n");
--
- 		ret = -ENOMEM;
- 		goto out4;
- 	}
+diff --git a/sound/pci/cs46xx/dsp_spos_scb_lib.c b/sound/pci/cs46xx/dsp_spos_scb_lib.c
+index f9564f42eb09..bccd315e6c18 100644
+--- a/sound/pci/cs46xx/dsp_spos_scb_lib.c
++++ b/sound/pci/cs46xx/dsp_spos_scb_lib.c
+@@ -260,7 +260,7 @@ void cs46xx_dsp_proc_register_scb_desc (struct snd_cs46xx *chip,
+ 						   scb->scb_name,
+ 						   ins->proc_dsp_dir);
+ 		if (entry) {
+-			scb_info = kmalloc(sizeof(struct proc_scb_info), GFP_KERNEL);
++			scb_info = kmalloc(sizeof(*scb_info), GFP_KERNEL);
+ 			if (!scb_info) {
+ 				snd_info_free_entry(entry);
+ 				entry = NULL;
 -- 
 2.15.0
 
