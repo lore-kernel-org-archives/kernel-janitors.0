@@ -1,72 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Nov 2017 15:02:32 +0000
-Subject: [PATCH RFC v1] caif: Use common error handling code in cfdgml_receive()
-Message-Id: <034c0760-b8af-0fe2-e7a0-81199ff31931@users.sourceforge.net>
+From: "M,Shakour Rosarita" <hassantara789@gmail.com>
+Date: Mon, 13 Nov 2017 12:07:07 +0000
+Subject: Hello Dear...
+Message-Id: <CAMyxZDECRE_bgT2xn+wyWfvS03e=G37iCxmqp_0P-a7MOaMxGA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, Sjur Braendeland <sjur.brandeland@stericsson.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
-OiBUdWUsIDcgTm92IDIwMTcgMTE6MzA6MjUgKzAxMDAKCiogQWRqdXN0IGp1bXAgdGFyZ2V0cyBz
-byB0aGF0IGEgYml0IG9mIGV4Y2VwdGlvbiBoYW5kbGluZyBjYW4gYmUgYmV0dGVyCiAgcmV1c2Vk
-IGF0IHRoZSBlbmQgb2YgdGhpcyBmdW5jdGlvbi4KCiogQWRqdXN0IHR3byBjb25kaXRpb24gY2hl
-Y2tzLgoKVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVsbGUgc29m
-dHdhcmUuCgpTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3Vy
-Y2Vmb3JnZS5uZXQ+Ci0tLQoKdjEgLSBSZXF1ZXN0IGZvciBjb21tZW50czoKSSBjYW4gb2ZmZXIg
-YW5vdGhlciBiaXQgb2YgaW5mb3JtYXRpb24gZm9yIGEgc29mdHdhcmUgZGV2ZWxvcG1lbnQgZGlz
-Y3Vzc2lvbi4g8J+SrQoKVGhlIGFmZmVjdGVkIHNvdXJjZSBmaWxlIGNhbiBiZSBjb21waWxlZCBm
-b3IgdGhlIHByb2Nlc3NvciBhcmNoaXRlY3R1cmUg4oCceDg2XzY04oCdCmJ5IGEgdG9vbCBsaWtl
-IOKAnEdDQyA2LjQuMStyMjUxNjMxLTEuM+KAnSBmcm9tIHRoZSBzb2Z0d2FyZSBkaXN0cmlidXRp
-b24K4oCcb3BlblNVU0UgVHVtYmxld2VlZOKAnSB3aXRoIHRoZSBmb2xsb3dpbmcgY29tbWFuZCBl
-eGFtcGxlLgoKbXlfY2M9L3Vzci9iaW4vZ2NjLTYgXAomJiBteV9tb2R1bGU9bmV0L2NhaWYvY2Zk
-Z21sLm8gXAomJiBmb3IgWFlaIGluIDAgcyAzOyBkbyBlY2hvICIgICBfX19fXyAkWFlaIF9fX19f
-IiBcCiYmIG15X2V4dHJhPSItTyRYWVoiIFwKJiYgZ2l0IGNoZWNrb3V0IG5leHQtMjAxNzExMDIg
-XAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30iIEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFH
-Uz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZpZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7
-bXlfbW9kdWxlfSIgXAomJiBnaXQgY2hlY2tvdXQgJzovXmNhaWY6IFVzZSBjb21tb24gZXJyb3Ig
-aGFuZGxpbmcgY29kZSBpbiBjZmRnbWxfcmVjZWl2ZScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9j
-Y30iIEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNv
-bmZpZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSI7IGRvbmUKCgrwn5Su
-IERvIHlvdSBmaW5kIHRoZSBmb2xsb3dpbmcgZGlmZmVyZW5jZXMgd29ydGggZm9yIGZ1cnRoZXIg
-Y2xhcmlmaWNhdGlvbj8KCuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKVkOKVkOKV
-kOKVkOKVkOKVkOKVlwrilZEgc2V0dGluZyDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWQ4pWQ4pWq4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSAgIE8wICAgIOKUgiAtNTkg
-IOKVkQrilZEgICBPcyAgICDilIIgKzI0ICDilZEK4pWRICAgTzMgICAg4pSCICszNiAg4pWRCuKV
-muKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVp+KVkOKVkOKVkOKVkOKVkOKVkOKVnQoKCiBu
-ZXQvY2FpZi9jZmRnbWwuYyB8IDMzICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQog
-MSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL25ldC9jYWlmL2NmZGdtbC5jIGIvbmV0L2NhaWYvY2ZkZ21sLmMKaW5kZXggM2JkZGRi
-MzJkNTVhLi5jYzdiMmM5NDRiYjIgMTAwNjQ0Ci0tLSBhL25ldC9jYWlmL2NmZGdtbC5jCisrKyBi
-L25ldC9jYWlmL2NmZGdtbC5jCkBAIC00NywxOCArNDcsMTMgQEAgc3RhdGljIGludCBjZmRnbWxf
-cmVjZWl2ZShzdHJ1Y3QgY2ZsYXllciAqbGF5ciwgc3RydWN0IGNmcGt0ICpwa3QpCiAJY2FpZl9h
-c3NlcnQobGF5ci0+cmVjZWl2ZSAhPSBOVUxMKTsKIAljYWlmX2Fzc2VydChsYXlyLT5jdHJsY21k
-ICE9IE5VTEwpOwogCi0JaWYgKGNmcGt0X2V4dHJfaGVhZChwa3QsICZjbWQsIDEpIDwgMCkgewot
-CQlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKLQkJY2Zwa3RfZGVzdHJveShwa3Qp
-OwotCQlyZXR1cm4gLUVQUk9UTzsKLQl9CisJaWYgKGNmcGt0X2V4dHJfaGVhZChwa3QsICZjbWQs
-IDEpKQorCQlnb3RvIHJlcG9ydF9wYWNrZXRfZmFpbHVyZTsKIAogCWlmICgoY21kICYgREdNX0NN
-RF9CSVQpID0gMCkgewotCQlpZiAoY2Zwa3RfZXh0cl9oZWFkKHBrdCwgJmRnbWhkciwgMykgPCAw
-KSB7Ci0JCQlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKLQkJCWNmcGt0X2Rlc3Ry
-b3kocGt0KTsKLQkJCXJldHVybiAtRVBST1RPOwotCQl9CisJCWlmIChjZnBrdF9leHRyX2hlYWQo
-cGt0LCAmZGdtaGRyLCAzKSkKKwkJCWdvdG8gcmVwb3J0X3BhY2tldF9mYWlsdXJlOworCiAJCXJl
-dCA9IGxheXItPnVwLT5yZWNlaXZlKGxheXItPnVwLCBwa3QpOwogCQlyZXR1cm4gcmV0OwogCX0K
-QEAgLTY2LDE3ICs2MSwyMyBAQCBzdGF0aWMgaW50IGNmZGdtbF9yZWNlaXZlKHN0cnVjdCBjZmxh
-eWVyICpsYXlyLCBzdHJ1Y3QgY2Zwa3QgKnBrdCkKIAlzd2l0Y2ggKGNtZCkgewogCWNhc2UgREdN
-X0ZMT1dfT0ZGOgkvKiBGTE9XIE9GRiAqLwogCQlsYXlyLT5jdHJsY21kKGxheXIsIENBSUZfQ1RS
-TENNRF9GTE9XX09GRl9JTkQsIDApOwotCQljZnBrdF9kZXN0cm95KHBrdCk7Ci0JCXJldHVybiAw
-OworCQlyZXQgPSAwOworCQlnb3RvIGRlc3Ryb3lfcGFja2V0OwogCWNhc2UgREdNX0ZMT1dfT046
-CS8qIEZMT1cgT04gKi8KIAkJbGF5ci0+Y3RybGNtZChsYXlyLCBDQUlGX0NUUkxDTURfRkxPV19P
-Tl9JTkQsIDApOwotCQljZnBrdF9kZXN0cm95KHBrdCk7Ci0JCXJldHVybiAwOworCQlyZXQgPSAw
-OworCQlnb3RvIGRlc3Ryb3lfcGFja2V0OwogCWRlZmF1bHQ6Ci0JCWNmcGt0X2Rlc3Ryb3kocGt0
-KTsKIAkJcHJfaW5mbygiVW5rbm93biBkYXRhZ3JhbSBjb250cm9sICVkICgweCV4KVxuIiwgY21k
-LCBjbWQpOwotCQlyZXR1cm4gLUVQUk9UTzsKKwkJZ290byBlX3Byb3RvOwogCX0KK3JlcG9ydF9w
-YWNrZXRfZmFpbHVyZToKKwlwcl9lcnIoIlBhY2tldCBpcyBlcnJvbmVvdXMhXG4iKTsKK2VfcHJv
-dG86CisJcmV0ID0gLUVQUk9UTzsKK2Rlc3Ryb3lfcGFja2V0OgorCWNmcGt0X2Rlc3Ryb3kocGt0
-KTsKKwlyZXR1cm4gcmV0OwogfQogCiBzdGF0aWMgaW50IGNmZGdtbF90cmFuc21pdChzdHJ1Y3Qg
-Y2ZsYXllciAqbGF5ciwgc3RydWN0IGNmcGt0ICpwa3QpCi0tIAoyLjE1LjAKCi0tClRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwt
-amFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
-b3Jkb21vLWluZm8uaHRtbA==
+Hello Dear...
+
+I know that this message will come to you as a surprise. I hoped that
+you will not expose or betray this trust and confident that I am about
+to repose on you, my name is M, Shakour Rosarita. I am 19 years old
+Girl, female, from Tartu Syria, (never married) 61 kg, white in
+complexion, and I am currently living in the refugee camp here in
+Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
+renowned businessman and owner of Natour Petrol Station in Syria, he
+was killed in a stampede riot in Tartu, Syria.
+When I got the news about my parents. I fled to a nearby country
+Jordan before I joined a ferry to Africa and came to Abidjan capital
+city Ivory Coast West Africa find safety here.
+I came in 2015 to Abidjan and I now live in refugee camps here as
+refugees are allowed freely to enter here without, My late father
+deposited (US$6.200.000.00m) My late father kept the money at the bank
+of Africa, I want you to help me transfer the money to your hand so
+that you will help me bring me into your country for my continue
+education.
+
+I sent my pictures here for you to see. Who I am seriously looking for
+a good-person in my life, so I want to hear from you soon and learn
+more about you.
+
+I am an open-minded and friendly girl to share a good time with you
+and have fun and enjoy on the go, bird watching, the rest of our
+lives. My Hobbies, tourism books, dance, music, soccer, tennis,
+swimming and cinema.
+I would just think about you, including your dose and doesn=E2=80=99t .I
+believe we will do well together, and live like one family.
+Thank you and God bless you, for you in your promise to help me here,
+looking forward to your reply by the grace of God and have a good day.
+I hope you send me your photos as well? I await your next reply in
+faith please reply through my private email at
+(mshakourrosarita22@gmail.com):
+Thanks.
+Ms Rosarita
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
