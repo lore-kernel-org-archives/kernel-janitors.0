@@ -1,144 +1,116 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 13:17:18 +0000
-Subject: [PATCH 1/3] ALSA: ml403-ac97cr: Use common error handling code in two functions
-Message-Id: <c9e8516e-b5cb-97cf-e8b8-86ebdd1ca284@users.sourceforge.net>
+Date: Mon, 13 Nov 2017 12:53:52 +0000
+Subject: [PATCH 3/3] ALSA: cs4281: Use common error handling code in snd_cs4281_create()
+Message-Id: <c6e82722-df16-6781-be3f-eba6e9e0fd08@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4c38a970-2407-3559-060d-501b8259b3fc@users.sourceforge.net>
-In-Reply-To: <4c38a970-2407-3559-060d-501b8259b3fc@users.sourceforge.net>
+References: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
+In-Reply-To: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 13:50:24 +0100
+Date: Mon, 13 Nov 2017 13:34:57 +0100
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
+* Add jump targets so that a bit of exception handling can be better reused
+  at the end of this function.
 
-This issue was detected by using the Coccinelle software.
+* Delete the local variable "tmp" which was unnecessary
+  because the variable "err" could be used at this place again.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/drivers/ml403-ac97cr.c | 52 ++++++++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+ sound/pci/cs4281.c | 41 +++++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/sound/drivers/ml403-ac97cr.c b/sound/drivers/ml403-ac97cr.c
-index 18fd12996cf7..12a54bfde1a5 100644
---- a/sound/drivers/ml403-ac97cr.c
-+++ b/sound/drivers/ml403-ac97cr.c
-@@ -1144,8 +1144,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
- 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
- 			   "unable to remap memory region (%pR)\n",
- 			   resource);
--		snd_ml403_ac97cr_free(ml403_ac97cr);
--		return -EBUSY;
-+		goto e_busy;
+diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
+index ed6b97dbd1cc..6cd7300a0182 100644
+--- a/sound/pci/cs4281.c
++++ b/sound/pci/cs4281.c
+@@ -1347,7 +1347,6 @@ static int snd_cs4281_create(struct snd_card *card,
+ 			     int dual_codec)
+ {
+ 	struct cs4281 *chip;
+-	unsigned int tmp;
+ 	int err;
+ 	static struct snd_device_ops ops = {
+ 		.dev_free =	snd_cs4281_dev_free,
+@@ -1359,8 +1358,8 @@ static int snd_cs4281_create(struct snd_card *card,
+ 		return err;
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+ 	if (chip = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
  	}
- 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
- 		   "remap controller memory region to "
-@@ -1157,8 +1156,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
- 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
- 			   "unable to grab IRQ %d\n",
- 			   irq);
--		snd_ml403_ac97cr_free(ml403_ac97cr);
--		return -EBUSY;
-+		goto e_busy;
+ 	spin_lock_init(&chip->reg_lock);
+ 	chip->card = card;
+@@ -1376,43 +1375,45 @@ static int snd_cs4281_create(struct snd_card *card,
+ 	err = pci_request_regions(pci, "CS4281");
+ 	if (err < 0) {
+ 		kfree(chip);
+-		pci_disable_device(pci);
+-		return err;
++		goto disable_device;
  	}
- 	ml403_ac97cr->irq = irq;
- 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
-@@ -1170,8 +1168,7 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
- 		snd_printk(KERN_ERR SND_ML403_AC97CR_DRIVER ": "
- 			   "unable to grab IRQ %d\n",
- 			   irq);
--		snd_ml403_ac97cr_free(ml403_ac97cr);
--		return -EBUSY;
-+		goto e_busy;
- 	}
- 	ml403_ac97cr->capture_irq = irq;
- 	snd_printk(KERN_INFO SND_ML403_AC97CR_DRIVER ": "
-@@ -1179,20 +1176,23 @@ snd_ml403_ac97cr_create(struct snd_card *card, struct platform_device *pfdev,
- 		   ml403_ac97cr->capture_irq);
+ 	chip->ba0_addr = pci_resource_start(pci, 0);
+ 	chip->ba1_addr = pci_resource_start(pci, 1);
  
- 	err = snd_ml403_ac97cr_chip_init(ml403_ac97cr);
+ 	chip->ba0 = pci_ioremap_bar(pci, 0);
+ 	chip->ba1 = pci_ioremap_bar(pci, 1);
+-	if (!chip->ba0 || !chip->ba1) {
+-		snd_cs4281_free(chip);
+-		return -ENOMEM;
+-	}
++	if (!chip->ba0 || !chip->ba1)
++		goto e_nomem;
+ 	
+ 	if (request_irq(pci->irq, snd_cs4281_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_cs4281_free(chip);
+-		return -ENOMEM;
++		goto e_nomem;
+ 	}
+ 	chip->irq = pci->irq;
+ 
+-	tmp = snd_cs4281_chip_init(chip);
+-	if (tmp) {
+-		snd_cs4281_free(chip);
+-		return tmp;
+-	}
++	err = snd_cs4281_chip_init(chip);
++	if (err)
++		goto free_sound_chip;
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
 -	if (err < 0) {
--		snd_ml403_ac97cr_free(ml403_ac97cr);
+-		snd_cs4281_free(chip);
 -		return err;
 -	}
 +	if (err < 0)
-+		goto free_data;
++		goto free_sound_chip;
  
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, ml403_ac97cr, &ops);
- 	if (err < 0) {
- 		PDEBUG(INIT_FAILURE, "probe(): snd_device_new() failed!\n");
--		snd_ml403_ac97cr_free(ml403_ac97cr);
--		return err;
-+		goto free_data;
- 	}
+ 	snd_cs4281_proc_init(chip);
  
- 	*rml403_ac97cr = ml403_ac97cr;
+ 	*rchip = chip;
  	return 0;
 +
-+e_busy:
-+	err = -EBUSY;
-+free_data:
-+	snd_ml403_ac97cr_free(ml403_ac97cr);
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++e_nomem:
++	err = -ENOMEM;
++free_sound_chip:
++	snd_cs4281_free(chip);
 +	return err;
  }
  
- static void snd_ml403_ac97cr_mixer_free(struct snd_ac97 *ac97)
-@@ -1281,22 +1281,19 @@ static int snd_ml403_ac97cr_probe(struct platform_device *pfdev)
- 	err = snd_ml403_ac97cr_create(card, pfdev, &ml403_ac97cr);
- 	if (err < 0) {
- 		PDEBUG(INIT_FAILURE, "probe(): create failed!\n");
--		snd_card_free(card);
--		return err;
-+		goto free_card;
- 	}
- 	PDEBUG(INIT_INFO, "probe(): create done\n");
- 	card->private_data = ml403_ac97cr;
- 	err = snd_ml403_ac97cr_mixer(ml403_ac97cr);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	PDEBUG(INIT_INFO, "probe(): mixer done\n");
- 	err = snd_ml403_ac97cr_pcm(ml403_ac97cr, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	PDEBUG(INIT_INFO, "probe(): PCM done\n");
- 	strcpy(card->driver, SND_ML403_AC97CR_DRIVER);
- 	strcpy(card->shortname, "ML403 AC97 Controller Reference");
-@@ -1306,13 +1303,16 @@ static int snd_ml403_ac97cr_probe(struct platform_device *pfdev)
- 		ml403_ac97cr->capture_irq, dev + 1);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	platform_set_drvdata(pfdev, card);
- 	PDEBUG(INIT_INFO, "probe(): (done)\n");
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static int snd_ml403_ac97cr_remove(struct platform_device *pfdev)
+ static int snd_cs4281_chip_init(struct cs4281 *chip)
 -- 
 2.15.0
 
