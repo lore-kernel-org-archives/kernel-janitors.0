@@ -1,33 +1,41 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 08 Nov 2017 13:04:17 +0000
-Subject: Re: [PATCH 2/2] scripts: coccinelle: api: detect identical chip data arrays
-Message-Id: <alpine.DEB.2.20.1711082104070.2708@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Nov 2017 10:05:55 +0000
+Subject: [PATCH] platform/x86: dell-smbios-wmi: Unlock on error in dell_smbios_wmi_call()
+Message-Id: <20171113100555.sbn32ls22snpfgpg@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1507490321-24900-1-git-send-email-Julia.Lawall@lip6.fr>
- <1507490321-24900-3-git-send-email-Julia.Lawall@lip6.fr>
- <CAK7LNAQKOK5fbkq9AcSzmHc+qJLxAwB0Hy5eYy389uMnvah7uA@mail.gmail.com>
-In-Reply-To: <CAK7LNAQKOK5fbkq9AcSzmHc+qJLxAwB0Hy5eYy389uMnvah7uA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We have to unlock before returning if get_first_smbios_priv() fails.
 
+Fixes: 1a258e670434 ("platform/x86: dell-smbios-wmi: Add new WMI dispatcher driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, 7 Nov 2017, Masahiro Yamada wrote:
-
-> 2017-10-09 4:18 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> > This semantic patch detects duplicate arrays declared using BQ27XXX_DATA
-> > within a single structure.  It is currently specific to the file
-> > drivers/power/supply/bq27xxx_battery.c.  Nevertheless, having the script in
-> > the kernel will allow others to check their code if the data structures
-> > change in the future.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
->
-> Applied to linux-kbuild/misc.
-
-Thanks!
-
-julia
+diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+index 35c13815b24c..7b0e3ca74ca0 100644
+--- a/drivers/platform/x86/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell-smbios-wmi.c
+@@ -91,8 +91,10 @@ int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
+ 
+ 	mutex_lock(&call_mutex);
+ 	priv = get_first_smbios_priv();
+-	if (!priv)
+-		return -ENODEV;
++	if (!priv) {
++		ret = -ENODEV;
++		goto unlock;
++	}
+ 
+ 	size = sizeof(struct calling_interface_buffer);
+ 	difference = priv->req_buf_size - sizeof(u64) - size;
+@@ -101,6 +103,7 @@ int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
+ 	memcpy(&priv->buf->std, buffer, size);
+ 	ret = run_smbios_call(priv->wdev);
+ 	memcpy(buffer, &priv->buf->std, size);
++unlock:
+ 	mutex_unlock(&call_mutex);
+ 
+ 	return ret;
