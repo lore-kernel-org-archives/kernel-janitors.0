@@ -1,28 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 12:50:43 +0000
-Subject: [PATCH 0/3] ALSA: cs4281: Fine-tuning for five function implementations
-Message-Id: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Nov 2017 11:46:21 +0000
+Subject: [bug report] perf report: Add dump_read function
+Message-Id: <20171113114621.zpjw4tj5iewxv4mi@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 13:46:23 +0100
+Hello Jiri Olsa,
 
-A few update suggestions were taken into account
-from static source code analysis.
+This is a semi-automatic email about new static checker warnings.
 
-Markus Elfring (3):
-  Adjust 18 function calls together with a variable assignment
-  Use common error handling code in snd_cs4281_probe()
-  Use common error handling code in snd_cs4281_create()
+The patch dac7f6b7ed1c: "perf report: Add dump_read function" from 
+Aug 24, 2017, leads to the following Smatch complaint:
 
- sound/pci/cs4281.c | 136 ++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 77 insertions(+), 59 deletions(-)
+    ./tools/perf/util/session.c:1148 dump_read()
+     error: we previously assumed 'evsel' could be null (see line 1145)
 
--- 
-2.15.0
+./tools/perf/util/session.c
+  1144		printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
+  1145		       evsel ? perf_evsel__name(evsel) : "FAIL",
+                       ^^^^^
+The patch adds a check for NULL
 
+  1146		       event->read.value);
+  1147	
+  1148		read_format = evsel->attr.read_format;
+                              ^^^^^^^
+followed by an unchecked dereference.
+
+  1149	
+  1150		if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+
+regards,
+dan carpenter
