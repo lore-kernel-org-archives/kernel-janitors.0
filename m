@@ -1,47 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Sat, 11 Nov 2017 11:51:10 +0000
-Subject: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
-Message-Id: <20171111115110.3026-1-colin.king@canonical.com>
+From: "Liu, Monk" <Monk.Liu@amd.com>
+Date: Mon, 13 Nov 2017 03:43:17 +0000
+Subject: RE: [PATCH] drm/amdgpu/virt: remove redundant variable pf2vf_ver
+Message-Id: <SN1PR12MB046220FED69C71FF1AB98596842B0@SN1PR12MB0462.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171111115110.3026-1-colin.king@canonical.com>
+In-Reply-To: <20171111115110.3026-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Xiangliang Yu <Xiangliang.Yu@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Chen, Horace" <Horace.Chen-5C7GfCeVMHo@public.gmane.org>, Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, "Deucher, Alexander" <Alexander.Deucher-5C7GfCeVMHo@public.gmane.org>, "Koenig, Christian" <Christian.Koenig-5C7GfCeVMHo@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "Yu, Xiangliang" <Xiangliang.Yu-5C7GfCeVMHo@public.gmane.org>, "amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Variable pf2vf_ver is assigned but never read, it is redundant and
-hence can be removed.
-
-Cleans up clang warning:
-drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c:310:3: warning: Value stored
-to 'pf2vf_ver' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-index 6738df836a70..b1cc179512fa 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
-@@ -296,7 +296,6 @@ int amdgpu_virt_fw_reserve_get_checksum(void *obj,
- 
- void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)
- {
--	uint32_t pf2vf_ver = 0;
- 	uint32_t pf2vf_size = 0;
- 	uint32_t checksum = 0;
- 	uint32_t checkval;
-@@ -309,7 +308,6 @@ void amdgpu_virt_init_data_exchange(struct amdgpu_device *adev)
- 		adev->virt.fw_reserve.p_pf2vf  			(struct amdgim_pf2vf_info_header *)(
- 			adev->fw_vram_usage.va + AMDGIM_DATAEXCHANGE_OFFSET);
--		pf2vf_ver = adev->virt.fw_reserve.p_pf2vf->version;
- 		AMDGPU_FW_VRAM_PF2VF_READ(adev, header.size, &pf2vf_size);
- 		AMDGPU_FW_VRAM_PF2VF_READ(adev, checksum, &checksum);
- 
--- 
-2.14.1
-
+KyBIb3JhY2UNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IENvbGluIEtpbmcg
+W21haWx0bzpjb2xpbi5raW5nQGNhbm9uaWNhbC5jb21dIA0KU2VudDogMjAxN+W5tDEx5pyIMTHm
+l6UgMTk6NTENClRvOiBEZXVjaGVyLCBBbGV4YW5kZXIgPEFsZXhhbmRlci5EZXVjaGVyQGFtZC5j
+b20+OyBLb2VuaWcsIENocmlzdGlhbiA8Q2hyaXN0aWFuLktvZW5pZ0BhbWQuY29tPjsgRGF2aWQg
+QWlybGllIDxhaXJsaWVkQGxpbnV4LmllPjsgTGl1LCBNb25rIDxNb25rLkxpdUBhbWQuY29tPjsg
+WXUsIFhpYW5nbGlhbmcgPFhpYW5nbGlhbmcuWXVAYW1kLmNvbT47IGFtZC1nZnhAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnOyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQpDYzoga2VybmVs
+LWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K
+U3ViamVjdDogW1BBVENIXSBkcm0vYW1kZ3B1L3ZpcnQ6IHJlbW92ZSByZWR1bmRhbnQgdmFyaWFi
+bGUgcGYydmZfdmVyDQoNCkZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNh
+bC5jb20+DQoNClZhcmlhYmxlIHBmMnZmX3ZlciBpcyBhc3NpZ25lZCBidXQgbmV2ZXIgcmVhZCwg
+aXQgaXMgcmVkdW5kYW50IGFuZCBoZW5jZSBjYW4gYmUgcmVtb3ZlZC4NCg0KQ2xlYW5zIHVwIGNs
+YW5nIHdhcm5pbmc6DQpkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdmlydC5jOjMx
+MDozOiB3YXJuaW5nOiBWYWx1ZSBzdG9yZWQgdG8gJ3BmMnZmX3ZlcicgaXMgbmV2ZXIgcmVhZA0K
+DQpTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
+Pg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3ZpcnQuYyB8IDIgLS0N
+CiAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfdmlydC5jDQppbmRleCA2NzM4ZGY4MzZhNzAuLmIxY2MxNzk1MTJmYSAxMDA2
+NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMNCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV92aXJ0LmMNCkBAIC0yOTYsNyArMjk2
+LDYgQEAgaW50IGFtZGdwdV92aXJ0X2Z3X3Jlc2VydmVfZ2V0X2NoZWNrc3VtKHZvaWQgKm9iaiwN
+CiANCiB2b2lkIGFtZGdwdV92aXJ0X2luaXRfZGF0YV9leGNoYW5nZShzdHJ1Y3QgYW1kZ3B1X2Rl
+dmljZSAqYWRldikgIHsNCi0JdWludDMyX3QgcGYydmZfdmVyID0gMDsNCiAJdWludDMyX3QgcGYy
+dmZfc2l6ZSA9IDA7DQogCXVpbnQzMl90IGNoZWNrc3VtID0gMDsNCiAJdWludDMyX3QgY2hlY2t2
+YWw7DQpAQCAtMzA5LDcgKzMwOCw2IEBAIHZvaWQgYW1kZ3B1X3ZpcnRfaW5pdF9kYXRhX2V4Y2hh
+bmdlKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2KQ0KIAkJYWRldi0+dmlydC5md19yZXNlcnZl
+LnBfcGYydmYgPQ0KIAkJCShzdHJ1Y3QgYW1kZ2ltX3BmMnZmX2luZm9faGVhZGVyICopKA0KIAkJ
+CWFkZXYtPmZ3X3ZyYW1fdXNhZ2UudmEgKyBBTURHSU1fREFUQUVYQ0hBTkdFX09GRlNFVCk7DQot
+CQlwZjJ2Zl92ZXIgPSBhZGV2LT52aXJ0LmZ3X3Jlc2VydmUucF9wZjJ2Zi0+dmVyc2lvbjsNCiAJ
+CUFNREdQVV9GV19WUkFNX1BGMlZGX1JFQUQoYWRldiwgaGVhZGVyLnNpemUsICZwZjJ2Zl9zaXpl
+KTsNCiAJCUFNREdQVV9GV19WUkFNX1BGMlZGX1JFQUQoYWRldiwgY2hlY2tzdW0sICZjaGVja3N1
+bSk7DQogDQotLQ0KMi4xNC4xDQoNCg=
