@@ -1,41 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 Nov 2017 18:58:03 +0000
-Subject: [PATCH] mbcache: remove redundant comparison of unsigned long with < 0
-Message-Id: <20171129185803.25015-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 14 Nov 2017 17:43:07 +0000
+Subject: [PATCH 0/3] ALSA: ens1370: Fine-tuning for six function implementations
+Message-Id: <8bcf1ada-f44c-cb83-0890-adc8ae8edda0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 14 Nov 2017 18:38:28 +0100
 
-The comparison of c_entry_count < 0 is never true because c_entry_count
-is an unsigned long and hence cannot be negative.  Hence the 'unlikely'
-comparison is redundant and can be removed.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Detected by CoverityScan, CID#1462298 ("Macro compares unsigned to 0")
+Markus Elfring (3):
+  Adjust 15 function calls together with a variable assignment
+  Use common error handling code in snd_audiopci_probe()
+  Use common error handling code in snd_ensoniq_create()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/mbcache.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/pci/ens1370.c | 110 +++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 61 insertions(+), 49 deletions(-)
 
-diff --git a/fs/mbcache.c b/fs/mbcache.c
-index b8b8b9ced9f8..d818fd236787 100644
---- a/fs/mbcache.c
-+++ b/fs/mbcache.c
-@@ -269,9 +269,6 @@ static unsigned long mb_cache_count(struct shrinker *shrink,
- 	struct mb_cache *cache = container_of(shrink, struct mb_cache,
- 					      c_shrink);
- 
--	/* Unlikely, but not impossible */
--	if (unlikely(cache->c_entry_count < 0))
--		return 0;
- 	return cache->c_entry_count;
- }
- 
 -- 
-2.14.1
+2.15.0
 
