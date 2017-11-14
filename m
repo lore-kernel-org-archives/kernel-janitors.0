@@ -1,67 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 20:20:19 +0000
-Subject: [PATCH 1/4] ASoC: soc-pcm: Improve unlocking of a mutex in soc_dpcm_runtime_update()
-Message-Id: <84ae04be-480e-6eba-0efc-52e7592b6e02@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:58:47 +0000
+Subject: Re: [PATCH 1/2] clk-xgene: Delete an error message for a failed memory allocation in two functions
+Message-Id: <20171114015847.GK11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
-In-Reply-To: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
+References: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
+ <2a6fb281-932f-e043-f084-355a3020411a@users.sourceforge.net>
+In-Reply-To: <2a6fb281-932f-e043-f084-355a3020411a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 19:43:07 +0100
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 21:19:19 +0200
+> 
+> Omit extra messages for a memory allocation failure in these functions.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-* Add a jump target so that a call of the function "mutex_unlock" is stored
-  only once in this function implementation.
+Applied to clk-next
 
-* Replace two calls by goto statements.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/soc-pcm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 8075856668c2..ea771316afa9 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -2674,8 +2674,7 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
- 		if (paths < 0) {
- 			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
- 					fe->dai_link->name,  "playback");
--			mutex_unlock(&card->mutex);
--			return paths;
-+			goto unlock;
- 		}
- 
- 		/* update any new playback paths */
-@@ -2710,8 +2709,7 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
- 		if (paths < 0) {
- 			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
- 					fe->dai_link->name,  "capture");
--			mutex_unlock(&card->mutex);
--			return paths;
-+			goto unlock;
- 		}
- 
- 		/* update any new capture paths */
-@@ -2733,8 +2731,10 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
- 		dpcm_path_put(&list);
- 	}
- 
-+	paths = 0;
-+unlock:
- 	mutex_unlock(&card->mutex);
--	return 0;
-+	return paths;
- }
- int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
- {
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
