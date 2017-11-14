@@ -1,76 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:56 +0000
-Subject: Applied "ASoC: da7218: Improve a size determination in da7218_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOXU-0007Ry-N8@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 14 Nov 2017 11:48:40 +0000
+Subject: Re: [PATCH 0/7] ALSA: Fine-tuning for several function implementations
+Message-Id: <882a7baa-7c23-c60c-076f-73daa1753531@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8f6b7c8c-f1eb-47c7-c11f-731aa8051863@users.sourceforge.net>
-In-Reply-To: <8f6b7c8c-f1eb-47c7-c11f-731aa8051863@users.sourceforge.net>
+References: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
+In-Reply-To: <f2404d64-27c8-4afa-b893-fc72601c0136@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, support.opensource@diasemi.comAdamThomsonAdam.Thomson.Opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Martin Koegler <martin.koegler@chello.at>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
+> Date: Tue, 24 Jan 2017 11:02:34 +0100
+> 
+> Some update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (7):
+>   seq: Delete unnecessary checks in snd_seq_ioctl_query_subs()
+>   seq: Delete unnecessary checks in snd_seq_ioctl_get_subscription()
+>   seq: Delete unnecessary checks in snd_seq_ioctl_unsubscribe_port()
+>   seq: Delete unnecessary checks in snd_seq_ioctl_subscribe_port()
+>   seq: Adjust 16 function calls together with a variable assignment
+>   dmasound_core: Move two assignments for the variable "ret" in state_open()
+>   dmasound_core: Adjust six function calls together with a variable assignment
+> 
+>  sound/core/seq/seq_clientmgr.c     | 163 ++++++++++++++++++++-----------------
+>  sound/oss/dmasound/dmasound_core.c |  33 +++++---
+>  2 files changed, 109 insertions(+), 87 deletions(-)
 
-   ASoC: da7218: Improve a size determination in da7218_i2c_probe()
+Are these update suggestions worth for another look?
+https://lkml.org/lkml/2017/1/24/292
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 392b79e20b41cfdc174d31bd4b004bbd874de4d9 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 20:50:44 +0100
-Subject: [PATCH] ASoC: da7218: Improve a size determination in
- da7218_i2c_probe()
-
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/da7218.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
-index 25ab7443d803..96c644a15b11 100644
---- a/sound/soc/codecs/da7218.c
-+++ b/sound/soc/codecs/da7218.c
-@@ -3269,8 +3269,7 @@ static int da7218_i2c_probe(struct i2c_client *i2c,
- 	struct da7218_priv *da7218;
- 	int ret;
- 
--	da7218 = devm_kzalloc(&i2c->dev, sizeof(struct da7218_priv),
--			      GFP_KERNEL);
-+	da7218 = devm_kzalloc(&i2c->dev, sizeof(*da7218), GFP_KERNEL);
- 	if (!da7218)
- 		return -ENOMEM;
- 
--- 
-2.15.0
-
+Regards,
+Markus
