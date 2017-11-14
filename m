@@ -1,29 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:48:14 +0000
-Subject: [PATCH 0/4] video-UDLFB: Adjustments for five function implementations
-Message-Id: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:59:45 +0000
+Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
+Message-Id: <20171114015945.GS11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+ <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
+In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 21:45:54 +0100
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 21:24:43 +0200
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in two functions
-  Return an error code only as a constant in dlfb_realloc_framebuffer()
-  Improve a size determination in dlfb_alloc_urb_list()
-  Delete an unnecessary return statement in two functions
-
- drivers/video/fbdev/udlfb.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+Applied to clk-next
 
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
