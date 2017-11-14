@@ -1,37 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 06 Nov 2017 11:48:43 +0000
-Subject: [PATCH] lightnvm: pblk: remove some unnecessary NULL checks
-Message-Id: <20171106114843.7rs6myhgxgij3jh7@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Nov 2017 16:18:28 +0000
+Subject: [PATCH] USB: gadget: don't dereference g until after it has been null checked
+Message-Id: <20171114161828.31967-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matias Bjorling <mb@lightnvm.io>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains that flush_workqueue() dereferences the work queue
-pointer but then we check if it's NULL on the next line when it's too
-late.  These NULL checks can be removed because the module won't load if
-we can't allocate the work queues.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Avoid dereferencing pointer g until after g has been sanity null checked;
+move the assignment of cdev much later when it is required into a more
+local scope.
 
-diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-index 00d5698d64a9..aaba2049a135 100644
---- a/drivers/lightnvm/pblk-gc.c
-+++ b/drivers/lightnvm/pblk-gc.c
-@@ -669,12 +669,10 @@ void pblk_gc_exit(struct pblk *pblk)
- 		kthread_stop(gc->gc_reader_ts);
+Detected by CoverityScan, CID#1222135 ("Dereference before null check")
+
+Fixes: b785ea7ce662 ("usb: gadget: composite: fix ep->maxburst initialization")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/composite.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index eec14e6ed20b..77c7ecca816a 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -146,7 +146,6 @@ int config_ep_by_speed(struct usb_gadget *g,
+ 			struct usb_function *f,
+ 			struct usb_ep *_ep)
+ {
+-	struct usb_composite_dev	*cdev = get_gadget_data(g);
+ 	struct usb_endpoint_descriptor *chosen_desc = NULL;
+ 	struct usb_descriptor_header **speed_desc = NULL;
  
- 	flush_workqueue(gc->gc_reader_wq);
--	if (gc->gc_reader_wq)
--		destroy_workqueue(gc->gc_reader_wq);
-+	destroy_workqueue(gc->gc_reader_wq);
- 
- 	flush_workqueue(gc->gc_line_reader_wq);
--	if (gc->gc_line_reader_wq)
--		destroy_workqueue(gc->gc_line_reader_wq);
-+	destroy_workqueue(gc->gc_line_reader_wq);
- 
- 	if (gc->gc_writer_ts)
- 		kthread_stop(gc->gc_writer_ts);
+@@ -226,8 +225,12 @@ int config_ep_by_speed(struct usb_gadget *g,
+ 			_ep->maxburst = comp_desc->bMaxBurst + 1;
+ 			break;
+ 		default:
+-			if (comp_desc->bMaxBurst != 0)
++			if (comp_desc->bMaxBurst != 0) {
++				struct usb_composite_dev *cdev;
++
++				cdev = get_gadget_data(g);
+ 				ERROR(cdev, "ep0 bMaxBurst must be 0\n");
++			}
+ 			_ep->maxburst = 1;
+ 			break;
+ 		}
+-- 
+2.14.1
+
