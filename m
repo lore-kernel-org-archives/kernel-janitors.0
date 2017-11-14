@@ -1,49 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 24 Nov 2017 12:55:58 +0000
-Subject: Re: [PATCH 2/3] ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
-Message-Id: <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iknjngorugptk2nb"
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:59:05 +0000
+Subject: Re: [PATCH 2/3] clk/mmp: Use common error handling code in mmp_clk_register_mix()
+Message-Id: <20171114015905.GM11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
- <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
- <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
-In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, SF Markus Elfring <elfring@users.sourceforge.net>
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+ <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
+In-Reply-To: <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 22:33:18 +0200
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
---iknjngorugptk2nb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to clk-next
 
-On Fri, Nov 24, 2017 at 12:03:32PM +0000, Adam Thomson wrote:
-> On 23 November 2017 20:06, SF Markus Elfring wrote:
-
-> > Add a jump target so that a bit of exception handling can be better reused
-> > in an if branch of this function.
-
-> Hmm. Doesn't really gain an awful lot this. Would understand if there were
-> multiple return paths, but in that case I'd have implemented something like
-> this anyway. Also your patch description isn't really correct. You're re-using
-> code from the sunny day scenario to handle an exception.
-
-Other people have given him similar feedback on his other patches with
-this pattern.  I'm not intending to apply any of them.
-
---iknjngorugptk2nb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloYFt4ACgkQJNaLcl1U
-h9AH+Qf/ZNLVfptwWMgGXUEo2FNyi+pp1AW+I/dxOjNK9lN0pOwFEQh7/NlZSzz6
-jSqnLjG80HEWhJEAsXHrE/DiNBP+8xNRRVZJogfyuoIHlLiu0mrug4nENANtG0fE
-Z18UwDmTpoj0bL//sjVE07ugNVxH173wYJ3rhEM4rXCl8pavW3GQ4WSB/tRCEXDl
-c6SEU2BZDJ9u2xxTeXRfSinfaluqdxpz/Y2Gc7idO+M9Pf83JKPDj23pps2rxgoM
-lwPOvZX/FyRiXo+Q1r1fM2ruGtKvK+Br2cYvDDR0zHjg48yUdiPdPmQVhPTT46Rc
-PjQLG94Etgqj7H5UT9GOgNooi+jekw==
-=1NLI
------END PGP SIGNATURE-----
-
---iknjngorugptk2nb--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
