@@ -1,41 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 30 Nov 2017 11:26:14 +0000
-Subject: [PATCH] crypto: cryptd: make cryptd_max_cpu_qlen module parameter static
-Message-Id: <20171130112614.3090-1-colin.king@canonical.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:58:08 +0000
+Subject: Re: [PATCH 2/4] clk-u300: Improve a size determination in two functions
+Message-Id: <20171114015808.GH11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+ <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
+In-Reply-To: <781271c5-482f-d4da-e91e-3b048bac69c2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 19:33:02 +0200
+> 
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-The cryptd_max_cpu_qlen module parameter is local to the source and does
-not need to be in global scope, so make it static.
+Applied to clk-next
 
-Cleans up sparse warning:
-crypto/cryptd.c:35:14: warning: symbol 'cryptd_max_cpu_qlen' was not
-declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- crypto/cryptd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/crypto/cryptd.c b/crypto/cryptd.c
-index b1eb131c0f10..552e3a86e829 100644
---- a/crypto/cryptd.c
-+++ b/crypto/cryptd.c
-@@ -32,7 +32,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- 
--unsigned int cryptd_max_cpu_qlen = 1000;
-+static unsigned int cryptd_max_cpu_qlen = 1000;
- module_param(cryptd_max_cpu_qlen, uint, 0);
- MODULE_PARM_DESC(cryptd_max_cpu_qlen, "Set cryptd Max queue depth");
- 
 -- 
-2.14.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
