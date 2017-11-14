@@ -1,40 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 19:48:36 +0000
-Subject: [PATCH] staging: rtl8712: remove redundant zero assignment to val32
-Message-Id: <20171107194836.9088-1-colin.king@canonical.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:59:03 +0000
+Subject: Re: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
+Message-Id: <20171114015903.GL11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+ <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
+In-Reply-To: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 09:00:21 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> The script “checkpatch.pl” pointed information out like the following.
+> 
+> Comparison to NULL could be written !…
+> 
+> Thus fix the affected source code places.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Variable val32 is being assigned a zero value that is never read
-since val32 is being updated immediately afterwards.  Remove this
-redundant assignment, cleans up clang warning:
+Applied to clk-next
 
-drivers/staging/rtl8712/hal_init.c:339:2: warning: Value stored
-to 'val32' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/rtl8712/hal_init.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/hal_init.c
-index de832b0b5eec..2a3f0746ee2c 100644
---- a/drivers/staging/rtl8712/hal_init.c
-+++ b/drivers/staging/rtl8712/hal_init.c
-@@ -336,7 +336,6 @@ uint rtl8712_hal_init(struct _adapter *padapter)
- 		    r8712_read32(padapter, RCR));
- 	val32 = r8712_read32(padapter, RCR);
- 	r8712_write32(padapter, RCR, (val32 | BIT(25))); /* Append PHY status */
--	val32 = 0;
- 	val32 = r8712_read32(padapter, 0x10250040);
- 	r8712_write32(padapter,  0x10250040, (val32 & 0x00FFFFFF));
- 	/* for usb rx aggregation */
 -- 
-2.14.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
