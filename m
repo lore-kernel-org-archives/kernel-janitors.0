@@ -1,33 +1,43 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 08 Nov 2017 07:34:28 +0000
-Subject: Re: [PATCH] Bluetooth: Use common error handling code in bt_init()
-Message-Id: <7A6D341D-2ABC-417C-8808-A907E61F08E6@holtmann.org>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Nov 2017 17:26:53 +0000
+Subject: [PATCH] ALSA: synth: emux: remove redundant test for r <= 13
+Message-Id: <20171114172653.6690-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
-In-Reply-To: <cc83ce48-c0a4-1b83-8fdc-a474eb102fe0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+From: Colin Ian King <colin.king@canonical.com>
 
-> * Improve jump targets so that a bit of exception handling can be better
->  reused at the end of this function.
-> 
-> * Adjust five condition checks.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> net/bluetooth/af_bluetooth.c | 38 +++++++++++++++++---------------------
-> 1 file changed, 17 insertions(+), 21 deletions(-)
+The calculation r = (3 - ((rate >> 6) & 3)) * 3 results in r being
+0, 3, 6 or 9 and so the check (13 > r) is always true and hence we
+can remove the redundant check and the else path.
 
-patch has been applied to bluetooth-next tree.
+Detected by CoverityScan, CID#744415 ("Logically dead code")
 
-Regards
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/synth/emux/soundfont.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Marcel
+diff --git a/sound/synth/emux/soundfont.c b/sound/synth/emux/soundfont.c
+index 31a4ea94830e..0beb5a737c8b 100644
+--- a/sound/synth/emux/soundfont.c
++++ b/sound/synth/emux/soundfont.c
+@@ -858,10 +858,7 @@ calc_gus_envelope_time(int rate, int start, int end)
+ 	p = rate & 0x3f;
+ 	t = end - start;
+ 	if (t < 0) t = -t;
+-	if (13 > r)
+-		t = t << (13 - r);
+-	else
+-		t = t >> (r - 13);
++	t = t << (13 - r);
+ 	return (t * 10) / (p * 441);
+ }
+ 
+-- 
+2.14.1
 
