@@ -1,104 +1,29 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 12 Nov 2017 11:29:08 +0000
-Subject: Re: [PATCH] ALSA: ak4531_codec: Use common error handling code in snd_ak4531_mixer()
-Message-Id: <alpine.DEB.2.20.1711121228370.2084@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Nov 2017 06:12:28 +0000
+Subject: [PATCH] OMAPFB: prevent buffer underflow in omapfb_parse_vram_param()
+Message-Id: <20171114061228.iv5irewl6ougl4zm@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5615b3be-55ab-c4c1-bc7d-a7c7ba3620f3@users.sourceforge.net>
-In-Reply-To: <5615b3be-55ab-c4c1-bc7d-a7c7ba3620f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+We cap the upper bound of "fbnum" but we also need to check for
+negatives or make the type unsigned.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sun, 12 Nov 2017, SF Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 12 Nov 2017 10:56:19 +0100
->
-> * Add a jump target so that a bit of exception handling can be better
->   reused at the end of this function.
->
->   This issue was detected by using the Coccinelle software.
->
-> * The script "checkpatch.pl" pointed information out like the following.
->
->   ERROR: do not use assignment in if condition
-
-These don't seem to belong in the same patch.
-
-julia
-
->
->   Thus fix three affected source code places.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  sound/pci/ak4531_codec.c | 28 ++++++++++++++++------------
->  1 file changed, 16 insertions(+), 12 deletions(-)
->
-> diff --git a/sound/pci/ak4531_codec.c b/sound/pci/ak4531_codec.c
-> index 2fb1fbba3e5e..208c96d6ae0f 100644
-> --- a/sound/pci/ak4531_codec.c
-> +++ b/sound/pci/ak4531_codec.c
-> @@ -399,10 +399,10 @@ int snd_ak4531_mixer(struct snd_card *card,
->  		return -ENOMEM;
->  	*ak4531 = *_ak4531;
->  	mutex_init(&ak4531->reg_mutex);
-> -	if ((err = snd_component_add(card, "AK4531")) < 0) {
-> -		snd_ak4531_free(ak4531);
-> -		return err;
-> -	}
-> +	err = snd_component_add(card, "AK4531");
-> +	if (err < 0)
-> +		goto free_ac;
-> +
->  	strcpy(card->mixername, "Asahi Kasei AK4531");
->  	ak4531->write(ak4531, AK4531_RESET, 0x03);	/* no RST, PD */
->  	udelay(100);
-> @@ -413,16 +413,16 @@ int snd_ak4531_mixer(struct snd_card *card,
->  		ak4531->write(ak4531, idx, ak4531->regs[idx] = snd_ak4531_initial_map[idx]);	/* recording source is mixer */
->  	}
->  	for (idx = 0; idx < ARRAY_SIZE(snd_ak4531_controls); idx++) {
-> -		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_ak4531_controls[idx], ak4531))) < 0) {
-> -			snd_ak4531_free(ak4531);
-> -			return err;
-> -		}
-> +		err = snd_ctl_add(card,
-> +				  snd_ctl_new1(&snd_ak4531_controls[idx],
-> +					       ak4531));
-> +		if (err < 0)
-> +			goto free_ac;
->  	}
->  	snd_ak4531_proc_init(card, ak4531);
-> -	if ((err = snd_device_new(card, SNDRV_DEV_CODEC, ak4531, &ops)) < 0) {
-> -		snd_ak4531_free(ak4531);
-> -		return err;
-> -	}
-> +	err = snd_device_new(card, SNDRV_DEV_CODEC, ak4531, &ops);
-> +	if (err < 0)
-> +		goto free_ac;
->
->  #if 0
->  	snd_ak4531_dump(ak4531);
-> @@ -430,6 +430,10 @@ int snd_ak4531_mixer(struct snd_card *card,
->  	if (rak4531)
->  		*rak4531 = ak4531;
->  	return 0;
-> +
-> +free_ac:
-> +	snd_ak4531_free(ak4531);
-> +	return err;
->  }
->
->  /*
-> --
-> 2.15.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+index 1d7c012f09db..e08e5664e330 100644
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+@@ -1477,7 +1477,7 @@ static int omapfb_alloc_fbmem_display(struct fb_info *fbi, unsigned long size,
+ static int omapfb_parse_vram_param(const char *param, int max_entries,
+ 		unsigned long *sizes, unsigned long *paddrs)
+ {
+-	int fbnum;
++	unsigned int fbnum;
+ 	unsigned long size;
+ 	unsigned long paddr = 0;
+ 	char *p, *start;
