@@ -1,34 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 19 Nov 2017 06:37:37 +0000
-Subject: Re: [PATCH] ALSA: via82xx: Use common error handling code in snd_via82xx_create()
-Message-Id: <3a2f0905-231d-b2af-d1e8-1635158c6e53@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Nov 2017 13:33:46 +0000
+Subject: [PATCH] crypto/nx: fix spelling mistake: "availavle" -> "available"
+Message-Id: <20171114133346.17697-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2332472c-61d2-8c21-bf46-5c80745d6380@users.sourceforge.net>
- <s5hpobnscx1.wl-tiwai@suse.de>
-In-Reply-To: <s5hpobnscx1.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Haren Myneni <haren@us.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> @@ -1153,6 +1150,14 @@ static int snd_via82xx_create(struct snd_card *card,
->>  
->>  	*r_via = chip;
->>  	return 0;
->> +
->> +disable_device:
->> +	pci_disable_device(pci);
->> +	goto exit;
->> +free_chip:
->> +	snd_via82xx_free(chip);
->> +exit:
->> +	return err;
-> 
-> Doubly goto doesn't look like an improvement.
+From: Colin Ian King <colin.king@canonical.com>
 
-Would you like to integrate another software update with the statement
-“return err;” instead of “goto exit;” at this place?
+Trivial fix to spelling mistake in pr_err error message text
 
-Regards,
-Markus
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/nx/nx-842-powernv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/nx/nx-842-powernv.c b/drivers/crypto/nx/nx-842-powernv.c
+index f2246a5abcf6..9c01d11f255a 100644
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-842-powernv.c
+@@ -744,7 +744,7 @@ static int nx842_open_percpu_txwins(void)
+ 
+ 		if (!per_cpu(cpu_txwin, i)) {
+ 			/* shoudn't happen, Each chip will have NX engine */
+-			pr_err("NX engine is not availavle for CPU %d\n", i);
++			pr_err("NX engine is not available for CPU %d\n", i);
+ 			return -EINVAL;
+ 		}
+ 	}
+-- 
+2.14.1
+
