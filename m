@@ -1,26 +1,26 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:48 +0000
-Subject: Re: [PATCH 1/2] clk/versatile: Delete two error messages for a failed memory allocation in icst_clk_
-Message-Id: <20171114015948.GT11955@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:56:59 +0000
+Subject: Re: [PATCH] clk: cdce925: remove redundant check for non-null parent_name
+Message-Id: <20171114015659.GB11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
- <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
-In-Reply-To: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
+References: <20170905150348.20041-1-colin.king@canonical.com>
+In-Reply-To: <20170905150348.20041-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:21:23 +0200
+On 09/05, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Omit extra messages for a memory allocation failure in this function.
+> The check for a non-null parent_name is always true as there is an
+> earlier check for a null parent_name that returns -ENODEV. Remove this
+> redundant check and always set init.num_parents to 1.
 > 
-> This issue was detected by using the Coccinelle software.
+> Detected by CoverityScan CID#1309477 ("Logically dead code")
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 
 Applied to clk-next
