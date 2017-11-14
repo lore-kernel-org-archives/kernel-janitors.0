@@ -1,50 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 09 Nov 2017 12:45:24 +0000
-Subject: [PATCH] samples/sockmap: Fix duplicate error messages in sockmap_test_sockets()
-Message-Id: <01568b12-0d05-2932-271c-6471ec94b0ba@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:58:06 +0000
+Subject: Re: [PATCH 3/4] clk-u300: Add some spaces for better code readability
+Message-Id: <20171114015806.GG11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
+ <fd1866a5-f7a5-cfb4-0a87-b473e094c72e@users.sourceforge.net>
+In-Reply-To: <fd1866a5-f7a5-cfb4-0a87-b473e094c72e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, "David S. Miller" <davem@davemloft.net>, John Fastabend <john.fastabend@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 9 Nov 2017 13:37:28 +0100
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 19:46:51 +0200
+> 
+> Use space characters at some source code places according to
+> the Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Duplicate error messages were used so far in this function implementation.
-Make them unique instead.
+Applied to clk-next
 
-This issue was detected by using the Coccinelle software.
-
-Fixes: 69e8cc134bcbf0ccfcf852c400b8e6788d1d0038 ("bpf: sockmap sample program")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- samples/sockmap/sockmap_user.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/samples/sockmap/sockmap_user.c b/samples/sockmap/sockmap_user.c
-index 7cc9d228216f..c021f8a23d6c 100644
---- a/samples/sockmap/sockmap_user.c
-+++ b/samples/sockmap/sockmap_user.c
-@@ -117,7 +117,7 @@ static int sockmap_test_sockets(int rate, int dot)
- 	addr.sin_port = htons(S2_PORT);
- 	err = listen(s2, 32);
- 	if (err < 0) {
--		perror("listen s1 failed()\n");
-+		perror("listen s2 failed()\n");
- 		goto out;
- 	}
- 
-@@ -145,7 +145,7 @@ static int sockmap_test_sockets(int rate, int dot)
- 
- 	p2 = accept(s2, NULL, NULL);
- 	if (p2 < 0) {
--		perror("accept s1 failed()\n");
-+		perror("accept s2 failed()\n");
- 		goto out;
- 	}
- 
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
