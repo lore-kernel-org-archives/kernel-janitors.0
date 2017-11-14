@@ -1,69 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 03 Nov 2017 19:10:17 +0000
-Subject: [PATCH] staging/rts5208/rtsx: Improve unlocking of a mutex in rtsx_resume()
-Message-Id: <cfaa3d72-4d96-590c-cd69-662476611874@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:59:48 +0000
+Subject: Re: [PATCH 1/2] clk/versatile: Delete two error messages for a failed memory allocation in icst_clk_
+Message-Id: <20171114015948.GT11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
+ <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
+In-Reply-To: <fe677e31-35b3-fc18-e63a-0f3d24c9f926@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Colin Ian King <colin.king@canonical.com>, Gaurav Pathak <gauravpathak129@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinecke <hare@suse.de>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 3 Nov 2017 20:02:22 +0100
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 21:21:23 +0200
+> 
+> Omit extra messages for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-* Add a jump target so that a call of the function "mutex_unlock" is stored
-  only twice in this function implementation.
+Applied to clk-next
 
-* Replace two calls by goto statements.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/rts5208/rtsx.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
-index 89e2cfe7d1cc..14022a76ecfb 100644
---- a/drivers/staging/rts5208/rtsx.c
-+++ b/drivers/staging/rts5208/rtsx.c
-@@ -349,9 +349,7 @@ static int rtsx_resume(struct pci_dev *pci)
- 		dev_err(&dev->pci->dev,
- 			"%s: pci_enable_device failed, disabling device\n",
- 			CR_DRIVER_NAME);
--		/* unlock the device pointers */
--		mutex_unlock(&dev->dev_mutex);
--		return -EIO;
-+		goto unlock;
- 	}
- 	pci_set_master(pci);
- 
-@@ -360,11 +358,8 @@ static int rtsx_resume(struct pci_dev *pci)
- 			chip->msi_en = 0;
- 	}
- 
--	if (rtsx_acquire_irq(dev) < 0) {
--		/* unlock the device pointers */
--		mutex_unlock(&dev->dev_mutex);
--		return -EIO;
--	}
-+	if (rtsx_acquire_irq(dev) < 0)
-+		goto unlock;
- 
- 	rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, 0x00);
- 	rtsx_init_chip(chip);
-@@ -373,6 +368,10 @@ static int rtsx_resume(struct pci_dev *pci)
- 	mutex_unlock(&dev->dev_mutex);
- 
- 	return 0;
-+
-+unlock:
-+	mutex_unlock(&dev->dev_mutex);
-+	return -EIO;
- }
- #endif /* CONFIG_PM */
- 
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
