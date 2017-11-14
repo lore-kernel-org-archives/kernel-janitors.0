@@ -1,67 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 21:18:04 +0000
-Subject: [PATCH 2/3] ALSA: rme32: Use common error handling code in snd_rme32_probe()
-Message-Id: <aedb599c-d980-8b82-f8b6-ff9cbac99619@users.sourceforge.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:57:27 +0000
+Subject: Re: [PATCH 2/2] clk-mux: Improve a size determination in clk_hw_register_mux_table()
+Message-Id: <20171114015727.GD11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <67820e63-aed9-c775-8417-b0f531a9b305@users.sourceforge.net>
-In-Reply-To: <67820e63-aed9-c775-8417-b0f531a9b305@users.sourceforge.net>
+References: <0d223969-36c3-6f78-97cb-46c074207d2f@users.sourceforge.net>
+ <7d70d3de-ba3b-3619-05a8-9a4abe0dacfe@users.sourceforge.net>
+In-Reply-To: <7d70d3de-ba3b-3619-05a8-9a4abe0dacfe@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 21:14:48 +0100
+On 09/26, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 26 Sep 2017 17:30:06 +0200
+> 
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Applied to clk-next
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/rme32.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/sound/pci/rme32.c b/sound/pci/rme32.c
-index e58e9873c514..9e6e0fe3a285 100644
---- a/sound/pci/rme32.c
-+++ b/sound/pci/rme32.c
-@@ -1972,10 +1972,8 @@ snd_rme32_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- 		rme32->fullduplex_mode = 1;
- 
- 	err = snd_rme32_create(rme32);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	strcpy(card->driver, "Digi32");
- 	switch (rme32->pci->device) {
-@@ -1993,13 +1991,16 @@ snd_rme32_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- 		card->shortname, rme32->rev, rme32->port, rme32->irq);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_rme32_remove(struct pci_dev *pci)
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
