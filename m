@@ -1,28 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 02 Nov 2017 06:49:39 +0000
-Subject: Re: [PATCH] wan: wanxl: remove redundant assignment to stat
-Message-Id: <20171102.154939.1255946060288828393.davem@davemloft.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 14 Nov 2017 01:59:27 +0000
+Subject: Re: [PATCH 2/2] clk/ux500: Improve a size determination in three functions
+Message-Id: <20171114015927.GQ11955@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171101084945.14653-1-colin.king@canonical.com>
-In-Reply-To: <20171101084945.14653-1-colin.king@canonical.com>
+References: <d23a685d-f8a0-f4ca-078a-414d7b8674ca@users.sourceforge.net>
+ <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
+In-Reply-To: <1991a7d3-59b8-1a5f-dcef-a0a493e3829d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  1 Nov 2017 08:49:45 +0000
+On 09/27, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Sep 2017 20:30:53 +0200
+> 
+> Replace the specification of data structures by pointer dereferences
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer according to the Linux coding style convention.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> stat set to zero and the value is never read, instead stat is
-> set again in the do-loop. Hence the setting to zero is redundant
-> and can be removed. Cleans up clang warning:
-> 
-> drivers/net/wan/wanxl.c:737:2: warning: Value stored to 'stat'
-> is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Applied to clk-next
 
-Applied.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
