@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 28 Nov 2017 20:59:24 +0000
-Subject: Re: [PATCH] ambassador: fix incorrect indentation of assignment statement
-Message-Id: <20171128.155924.2009336474342510236.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Nov 2017 14:26:27 +0000
+Subject: [PATCH] nvme: fix spelling mistake: "requeing" -> "requeuing"
+Message-Id: <20171114142627.20663-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171127130610.10260-1-colin.king@canonical.com>
-In-Reply-To: <20171127130610.10260-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 27 Nov 2017 13:06:10 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Remove one extraneous level of indentation on assignment statement.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Trivial fix to spelling mistake in dev_warn_ratelimited message text
 
-Applied, thanks Colin.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/nvme/host/multipath.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 78d92151a904..1218a9fca846 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -131,7 +131,7 @@ static blk_qc_t nvme_ns_head_make_request(struct request_queue *q,
+ 		bio->bi_opf |= REQ_NVME_MPATH;
+ 		ret = direct_make_request(bio);
+ 	} else if (!list_empty_careful(&head->list)) {
+-		dev_warn_ratelimited(dev, "no path available - requeing I/O\n");
++		dev_warn_ratelimited(dev, "no path available - requeuing I/O\n");
+ 
+ 		spin_lock_irq(&head->requeue_lock);
+ 		bio_list_add(&head->requeue_list, bio);
+-- 
+2.14.1
+
