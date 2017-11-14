@@ -1,94 +1,53 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 02 Nov 2017 19:25:50 +0000
-Subject: Re: [PATCH v2] PCI: rcar: Use common error handling code in rcar_pcie_enable_msi()
-Message-Id: <CAMuHMdVgte--7gOnp9DFZCKUsneT-S9ttO3gninnfhv43BOyKQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 14 Nov 2017 18:41:44 +0000
+Subject: [PATCH][net-next] tcp: remove the now redundant non-null check on tskb
+Message-Id: <20171114184144.11239-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
- <20171101081831.ssnuqp5b75lbfu5p@verge.net.au> <7047eb7a-cf93-6a56-08db-a5e8bedbfc57@users.sourceforge.net>
- <20171102081239.bzaunax3uotejqja@verge.net.au> <a55409b0-9839-d9b5-5c90-606c22d0c58b@users.sourceforge.net>
-In-Reply-To: <a55409b0-9839-d9b5-5c90-606c22d0c58b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pci <linux-pci@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 2, 2017 at 2:00 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 2 Nov 2017 13:35:17 +0100
->
-> * Adjust a jump target so that a specific error message is stored only once
->   at the end of this function implementation.
->
-> * Replace two calls of the function "dev_err" by goto statements.
->
-> This issue was detected by using the Coccinelle software.
->
-> Link: https://lkml.org/lkml/2017/11/2/140
-> Link: https://lkml.kernel.org/r/<20171102081239.bzaunax3uotejqja@verge.net.au>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v2:
-> An other jump label was requested by Simon Horman.
->
->  drivers/pci/host/pcie-rcar.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 12796eccb2be..f3c1ffdf8072 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -873,18 +873,14 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->         err = devm_request_irq(dev, msi->irq1, rcar_pcie_msi_irq,
->                                IRQF_SHARED | IRQF_NO_THREAD,
->                                rcar_msi_irq_chip.name, pcie);
-> -       if (err < 0) {
-> -               dev_err(dev, "failed to request IRQ: %d\n", err);
-> -               goto err;
-> -       }
-> +       if (err < 0)
-> +               goto err_remove_domain;
->
->         err = devm_request_irq(dev, msi->irq2, rcar_pcie_msi_irq,
->                                IRQF_SHARED | IRQF_NO_THREAD,
->                                rcar_msi_irq_chip.name, pcie);
-> -       if (err < 0) {
-> -               dev_err(dev, "failed to request IRQ: %d\n", err);
-> -               goto err;
-> -       }
-> +       if (err < 0)
-> +               goto err_remove_domain;
->
->         /* setup MSI data target */
->         msi->pages = __get_free_pages(GFP_KERNEL, 0);
-> @@ -898,7 +894,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->
->         return 0;
->
-> -err:
-> +err_remove_domain:
-> +       dev_err(dev, "failed to request IRQ: %d\n", err);
+From: Colin Ian King <colin.king@canonical.com>
 
-Moving the error message is confusing and counter-productive:
-if you need to add another error case + goto err_remove_domain
-later, you'll have to move it back to all the older cases.
+The non-null check on tskb is redundant as it is in an else
+section of a check on tskb where tskb is always null. Remove
+the redundant if statement and the label coalesce.
 
-Hence
-NAKed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Detected by CoverityScan, CID#1457751 ("Logically dead code")
 
->         irq_domain_remove(msi->domain);
->         return err;
->  }
+Fixes: 75c119afe14f ("tcp: implement rb-tree based retransmit queue")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv4/tcp_output.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 071bdd34f8eb..b58c986b2b27 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3053,7 +3053,6 @@ void tcp_send_fin(struct sock *sk)
+ 		tskb = skb_rb_last(&sk->tcp_rtx_queue);
+ 
+ 	if (tskb) {
+-coalesce:
+ 		TCP_SKB_CB(tskb)->tcp_flags |= TCPHDR_FIN;
+ 		TCP_SKB_CB(tskb)->end_seq++;
+ 		tp->write_seq++;
+@@ -3069,11 +3068,8 @@ void tcp_send_fin(struct sock *sk)
+ 		}
+ 	} else {
+ 		skb = alloc_skb_fclone(MAX_TCP_HEADER, sk->sk_allocation);
+-		if (unlikely(!skb)) {
+-			if (tskb)
+-				goto coalesce;
++		if (unlikely(!skb))
+ 			return;
+-		}
+ 		INIT_LIST_HEAD(&skb->tcp_tsorted_anchor);
+ 		skb_reserve(skb, MAX_TCP_HEADER);
+ 		sk_forced_mem_schedule(sk, skb->truesize);
+-- 
+2.14.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
