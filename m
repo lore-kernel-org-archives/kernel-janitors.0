@@ -1,41 +1,30 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 03 Nov 2017 13:17:51 +0000
-Subject: [PATCH] staging: fbtft: remove redundant initialization of buf
-Message-Id: <20171103131751.7833-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Nov 2017 06:14:35 +0000
+Subject: [PATCH] drm/tilcdc: uninitialized variable in tilcdc_get_overlay()
+Message-Id: <20171114061434.xkbvrcvu4bgjqqxw@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jyri Sarha <jsarha@ti.com>
+Cc: David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The code seems to assume that of_fdt_unflatten_tree() sets "overlay" to
+NULL on error but actually it could be uninitialized.
 
-The pointer buf is being set on each iteration of a for-loop and
-so the initialization of buf at declaration time is redundant and
-can be removed.  Cleans up clang warning:
+Fixes: 4e7221580223 ("drm/tilcdc: Add DRM_TILCDC_SLAVE_COMPAT for ti,tilcdc,slave binding support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-drivers/staging/fbtft/fb_uc1701.c:130:6: warning: Value stored
-to 'buf' during its initialization is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/fbtft/fb_uc1701.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/fbtft/fb_uc1701.c b/drivers/staging/fbtft/fb_uc1701.c
-index b78045fe5393..78899a172c7e 100644
---- a/drivers/staging/fbtft/fb_uc1701.c
-+++ b/drivers/staging/fbtft/fb_uc1701.c
-@@ -127,7 +127,7 @@ static void set_addr_win(struct fbtft_par *par, int xs, int ys, int xe, int ye)
- static int write_vmem(struct fbtft_par *par, size_t offset, size_t len)
- {
- 	u16 *vmem16 = (u16 *)par->info->screen_buffer;
--	u8 *buf = par->txbuf.buf;
-+	u8 *buf;
- 	int x, y, i;
- 	int ret = 0;
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
+index d2b9e5f04724..a8a70b36f0ff 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
+@@ -144,7 +144,7 @@ static struct device_node * __init tilcdc_get_overlay(struct kfree_table *kft)
+ 	const int size = __dtb_tilcdc_slave_compat_end -
+ 		__dtb_tilcdc_slave_compat_begin;
+ 	static void *overlay_data;
+-	struct device_node *overlay;
++	struct device_node *overlay = NULL;
  
--- 
-2.14.1
-
+ 	if (!size) {
+ 		pr_warn("%s: No overlay data\n", __func__);
