@@ -1,41 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 08 Nov 2017 12:47:55 +0000
-Subject: [PATCH] usb: gadget: udc-xilinx: remove redundant pointer udc
-Message-Id: <20171108124755.24947-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 09:26:28 +0000
+Subject: [PATCH 0/3] ALSA: es1968: Fine-tuning for seven function implementations
+Message-Id: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 10:23:45 +0100
 
-Pointer udc is assigned but never read, hence it is redundant and
-can be removed. Cleans up clang warning:
+A few update suggestions were taken into account
+from static source code analysis.
 
-drivers/usb/gadget/udc/udc-xilinx.c:974:2: warning: Value stored
-to 'udc' is never read
+Markus Elfring (3):
+  Adjust 16 function calls together with a variable assignment
+  Use common error handling code in two functions
+  Use common error handling code in snd_es1968_capture_open()
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/gadget/udc/udc-xilinx.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/pci/es1968.c | 163 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 92 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
-index 7da2b9ce8cb3..6407e433bc78 100644
---- a/drivers/usb/gadget/udc/udc-xilinx.c
-+++ b/drivers/usb/gadget/udc/udc-xilinx.c
-@@ -963,10 +963,8 @@ static struct usb_request *xudc_ep_alloc_request(struct usb_ep *_ep,
- 						 gfp_t gfp_flags)
- {
- 	struct xusb_ep *ep = to_xusb_ep(_ep);
--	struct xusb_udc *udc;
- 	struct xusb_req *req;
- 
--	udc = ep->udc;
- 	req = kzalloc(sizeof(*req), gfp_flags);
- 	if (!req)
- 		return NULL;
 -- 
-2.14.1
+2.15.0
 
