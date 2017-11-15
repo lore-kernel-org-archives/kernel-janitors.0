@@ -1,47 +1,37 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 03 Nov 2017 13:35:25 +0000
-Subject: [PATCH] spi: s3c64xx: remove redundant pointer sci
-Message-Id: <20171103133525.8173-1-colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 13:55:47 +0000
+Subject: [PATCH] ncpfs/inode.c: remove unnecessary cast on return from kmem_cache_alloc
+Message-Id: <20171115135547.13869-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Petr Vandrovec <petr@vandrovec.name>, Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer sci is assigned but never read, hence it is redundant
-and can be removed. Cleans up clang warning:
-
-drivers/spi/spi-s3c64xx.c:791:2: warning: Value stored to 'sci' is
-never read
+The cast on the return from kmem_cache_alloc is unnecessary and can
+be removed.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/spi/spi-s3c64xx.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/ncpfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index b392cca8fa4f..de7df20f8712 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -752,7 +752,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
+index 41de88cdc053..6a945532ea1b 100644
+--- a/fs/ncpfs/inode.c
++++ b/fs/ncpfs/inode.c
+@@ -53,7 +53,7 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
  {
- 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
- 	struct s3c64xx_spi_driver_data *sdd;
--	struct s3c64xx_spi_info *sci;
- 	int err;
- 
- 	sdd = spi_master_get_devdata(spi->master);
-@@ -788,8 +787,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 		spi_set_ctldata(spi, cs);
- 	}
- 
--	sci = sdd->cntrlr_info;
--
- 	pm_runtime_get_sync(&sdd->pdev->dev);
- 
- 	/* Check if we can provide the requested rate */
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
 2.14.1
 
