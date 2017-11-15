@@ -1,45 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 15:48:19 +0000
-Subject: [PATCH 1/3] ASoC: cs42l73: Delete an error message for a failed memory allocation in cs42l73_i2c_pro
-Message-Id: <ac3d081a-377d-f016-bdb1-63dceb951281@users.sourceforge.net>
+From: Henning Schild <henning@hennsch.de>
+Date: Wed, 15 Nov 2017 07:59:10 +0000
+Subject: Re: [PATCH v2] docs: fix location of document that got moved
+Message-Id: <20171115085910.493d7bc7@hennsch.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
-In-Reply-To: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
+References: <20170901195721.16214-1-henning@hennsch.de>
+        <20170920180204.23427-1-henning@hennsch.de>
+In-Reply-To: <20170920180204.23427-1-henning@hennsch.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Eryu Guan <eguan@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 15:50:46 +0100
+Adding kernel-janitors to the list, maybe some of you will pick it up.
 
-Omit an extra message for a memory allocation failure in this function.
+Henning
 
-This issue was detected by using the Coccinelle software.
+Am Wed, 20 Sep 2017 20:02:04 +0200
+schrieb Henning Schild <henning@hennsch.de>:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/codecs/cs42l73.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> commit 9d85025b0418 ("docs-rst: create an user's manual book")
+> renamed  the document mentioned in the header. Adjust the link to
+> point to the right place.
+>=20
+> Signed-off-by: Henning Schild <henning@hennsch.de>
+> ---
+>  fs/binfmt_misc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index ce7181ea60fa..b5f1ae5d3217 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -4,7 +4,8 @@
+>   * Copyright (C) 1997 Richard G=C3=BCnther
+>   *
+>   * binfmt_misc detects binaries via a magic or filename extension
+> and invokes
+> - * a specified wrapper. See Documentation/binfmt_misc.txt for more
+> details.
+> + * a specified wrapper. See
+> Documentation/admin-guide/binfmt-misc.rst for more
+> + * details.
+>   */
+> =20
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
-index 3df2c473ab88..978cfbbad408 100644
---- a/sound/soc/codecs/cs42l73.c
-+++ b/sound/soc/codecs/cs42l73.c
-@@ -1307,10 +1307,9 @@ static int cs42l73_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				     sizeof(struct cs42l73_platform_data),
- 				GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev, "could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
-+
- 		if (i2c_client->dev.of_node) {
- 			if (of_property_read_u32(i2c_client->dev.of_node,
- 				"chgfreq", &val32) >= 0)
--- 
-2.15.0
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
