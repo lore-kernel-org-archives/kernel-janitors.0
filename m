@@ -1,27 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Nov 2017 12:24:16 +0000
-Subject: Re: [PATCH] net: hso: remove redundant unused variable dev
-Message-Id: <20171101.212416.1255930983444370494.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 19:48:10 +0000
+Subject: [PATCH 0/2] ALSA: intel8x0: Fine-tuning for seven function implementations
+Message-Id: <981b2716-2828-6478-46b3-5f8f3c36db46@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171031120147.22348-1-colin.king@canonical.com>
-In-Reply-To: <20171031120147.22348-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: johan@kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Laura Abbott <labbott@redhat.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 31 Oct 2017 12:01:47 +0000
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 20:40:30 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer dev is being assigned but is never used, hence it is
-> redundant and can be removed. Cleans up clang warning:
-> 
-> drivers/net/usb/hso.c:2280:2: warning: Value stored to 'dev' is
-> never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Applied.
+Markus Elfring (2):
+  Adjust 15 function calls together with a variable assignment
+  Use common error handling code in two functions
+
+ sound/pci/intel8x0.c | 111 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 65 insertions(+), 46 deletions(-)
+
+-- 
+2.15.0
+
