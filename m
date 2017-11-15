@@ -1,61 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Nov 2017 13:17:45 +0000
-Subject: [PATCH 3/4] target: Improve a size determination in three functions
-Message-Id: <a708f62c-6a03-9a10-e9e1-0a72e8953652@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 14:57:21 +0000
+Subject: [PATCH] fs/9p: remove unnecessary cast on return from kmem_cache_alloc
+Message-Id: <20171115145721.16357-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
-In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Nov 2017 13:35:08 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The cast on the return from kmem_cache_alloc is unnecessary and can
+be removed.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/target/target_core_xcopy.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/9p/vfs_inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
-index 46cac36014df..1519e399392b 100644
---- a/drivers/target/target_core_xcopy.c
-+++ b/drivers/target/target_core_xcopy.c
-@@ -680,7 +680,7 @@ static int target_xcopy_read_source(
- 	unsigned char cdb[16];
- 	bool remote_port = (xop->op_origin = XCOL_DEST_RECV_OP);
- 
--	xpt_cmd = kzalloc(sizeof(struct xcopy_pt_cmd), GFP_KERNEL);
-+	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
- 	if (!xpt_cmd) {
- 		pr_err("Unable to allocate xcopy_pt_cmd\n");
- 		return -ENOMEM;
-@@ -742,7 +742,7 @@ static int target_xcopy_write_destination(
- 	unsigned char cdb[16];
- 	bool remote_port = (xop->op_origin = XCOL_SOURCE_RECV_OP);
- 
--	xpt_cmd = kzalloc(sizeof(struct xcopy_pt_cmd), GFP_KERNEL);
-+	xpt_cmd = kzalloc(sizeof(*xpt_cmd), GFP_KERNEL);
- 	if (!xpt_cmd) {
- 		pr_err("Unable to allocate xcopy_pt_cmd\n");
- 		return -ENOMEM;
-@@ -1010,7 +1010,7 @@ sense_reason_t target_do_xcopy(struct se_cmd *se_cmd)
- 		return TCM_PARAMETER_LIST_LENGTH_ERROR;
- 	}
- 
--	xop = kzalloc(sizeof(struct xcopy_op), GFP_KERNEL);
-+	xop = kzalloc(sizeof(*xop), GFP_KERNEL);
- 	if (!xop)
- 		goto err;
- 	xop->xop_se_cmd = se_cmd;
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index bdabb2765d1b..6c4baeb257b7 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
+ struct inode *v9fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct v9fs_inode *v9inode;
+-	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
+-							GFP_KERNEL);
++	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
+ 	if (!v9inode)
+ 		return NULL;
+ #ifdef CONFIG_9P_FSCACHE
 -- 
-2.15.0
+2.14.1
 
