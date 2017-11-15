@@ -1,29 +1,47 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:05 +0000
-Subject: Re: [PATCH 2/3] clk/mmp: Use common error handling code in mmp_clk_register_mix()
-Message-Id: <20171114015905.GM11955@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 17:08:49 +0000
+Subject: [PATCH] bfa: remove unused pointer 'port'
+Message-Id: <20171115170849.20413-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
- <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
-In-Reply-To: <4dbb54c0-e2f9-b021-fe0a-35b39bff8865@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 22:33:18 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+The pointer 'port' is being assigned but it is never read,
+hence it is redundant and can be removed. Cleans up clang warning:
 
+drivers/scsi/bfa/bfad_attr.c:505:2: warning: Value stored to 'port'
+is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bfa/bfad_attr.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/bfa/bfad_attr.c b/drivers/scsi/bfa/bfad_attr.c
+index 13db3b7bc873..78b9aaadeeaa 100644
+--- a/drivers/scsi/bfa/bfad_attr.c
++++ b/drivers/scsi/bfa/bfad_attr.c
+@@ -487,7 +487,6 @@ bfad_im_vport_delete(struct fc_vport *fc_vport)
+ 	struct bfad_im_port_s *im_port  			(struct bfad_im_port_s *) vport->drv_port.im_port;
+ 	struct bfad_s *bfad = im_port->bfad;
+-	struct bfad_port_s *port;
+ 	struct bfa_fcs_vport_s *fcs_vport;
+ 	struct Scsi_Host *vshost;
+ 	wwn_t   pwwn;
+@@ -502,8 +501,6 @@ bfad_im_vport_delete(struct fc_vport *fc_vport)
+ 		return 0;
+ 	}
+ 
+-	port = im_port->port;
+-
+ 	vshost = vport->drv_port.im_port->shost;
+ 	u64_to_wwn(fc_host_port_name(vshost), (u8 *)&pwwn);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
+
