@@ -1,77 +1,168 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:05 +0000
-Subject: Applied "ASoC: wm0010: Delete an error message for a failed memory allocation in wm0010_boot()" to t
-Message-Id: <E1eJOWf-0007AM-Rf@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 09:29:27 +0000
+Subject: [PATCH 2/3] ALSA: es1968: Use common error handling code in two functions
+Message-Id: <ce589af7-81c7-8880-1d05-016873e17db9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fcfdbb1f-5b43-f430-dee9-61b86d6cfc79@users.sourceforge.net>
-In-Reply-To: <fcfdbb1f-5b43-f430-dee9-61b86d6cfc79@users.sourceforge.net>
+References: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
+In-Reply-To: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Corentin Labbe <clabbe.montjoie@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: wm0010: Delete an error message for a failed memory allocation in wm0010_boot()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 316c85c3db55588893f51907de3424f85020f0eb Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 17:17:48 +0100
-Subject: [PATCH] ASoC: wm0010: Delete an error message for a failed memory
- allocation in wm0010_boot()
+Date: Wed, 15 Nov 2017 09:04:41 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm0010.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ sound/pci/es1968.c | 66 ++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 34 insertions(+), 32 deletions(-)
 
-diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-index 4f5f5710b569..0147d2fb7b0a 100644
---- a/sound/soc/codecs/wm0010.c
-+++ b/sound/soc/codecs/wm0010.c
-@@ -655,11 +655,8 @@ static int wm0010_boot(struct snd_soc_codec *codec)
- 		ret = -ENOMEM;
- 		len = pll_rec.length + 8;
- 		out = kzalloc(len, GFP_KERNEL | GFP_DMA);
--		if (!out) {
--			dev_err(codec->dev,
--				"Failed to allocate RX buffer\n");
-+		if (!out)
- 			goto abort;
--		}
+diff --git a/sound/pci/es1968.c b/sound/pci/es1968.c
+index d68980087f93..7777ec583e20 100644
+--- a/sound/pci/es1968.c
++++ b/sound/pci/es1968.c
+@@ -2702,14 +2702,14 @@ static int snd_es1968_create(struct snd_card *card,
+ 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(28)) < 0) {
+ 		dev_err(card->dev,
+ 			"architecture does not support 28bit PCI busmaster DMA\n");
+-		pci_disable_device(pci);
+-		return -ENXIO;
++		err = -ENXIO;
++		goto disable_device;
+ 	}
  
- 		img_swap = kzalloc(len, GFP_KERNEL | GFP_DMA);
- 		if (!img_swap)
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+ 	if (! chip) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
+ 	}
+ 
+ 	/* Set Vars */
+@@ -2730,15 +2730,14 @@ static int snd_es1968_create(struct snd_card *card,
+ 	err = pci_request_regions(pci, "ESS Maestro");
+ 	if (err < 0) {
+ 		kfree(chip);
+-		pci_disable_device(pci);
+-		return err;
++		goto disable_device;
+ 	}
+ 	chip->io_port = pci_resource_start(pci, 0);
+ 	if (request_irq(pci->irq, snd_es1968_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_es1968_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_sound_chip;
+ 	}
+ 	chip->irq = pci->irq;
+ 	        
+@@ -2775,20 +2774,17 @@ static int snd_es1968_create(struct snd_card *card,
+ 	snd_es1968_chip_init(chip);
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+-	if (err < 0) {
+-		snd_es1968_free(chip);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ #ifdef CONFIG_SND_ES1968_RADIO
+ 	/* don't play with GPIOs on laptops */
+ 	if (chip->pci->subsystem_vendor != 0x125d)
+ 		goto no_radio;
+ 	err = v4l2_device_register(&pci->dev, &chip->v4l2_dev);
+-	if (err < 0) {
+-		snd_es1968_free(chip);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_sound_chip;
++
+ 	chip->tea.v4l2_dev = &chip->v4l2_dev;
+ 	chip->tea.private_data = chip;
+ 	chip->tea.radio_nr = radio_nr;
+@@ -2810,6 +2806,14 @@ static int snd_es1968_create(struct snd_card *card,
+ 	*chip_ret = chip;
+ 
+ 	return 0;
++
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++free_sound_chip:
++	snd_es1968_free(chip);
++	return err;
+ }
+ 
+ 
+@@ -2849,10 +2853,9 @@ static int snd_es1968_probe(struct pci_dev *pci,
+ 				use_pm[dev],
+ 				radio_nr[dev],
+ 				&chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	card->private_data = chip;
+ 
+ 	switch (chip->type) {
+@@ -2871,16 +2874,12 @@ static int snd_es1968_probe(struct pci_dev *pci,
+ 	}
+ 
+ 	err = snd_es1968_pcm(chip, 0);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	err = snd_es1968_mixer(chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	if (enable_mpu[dev] = 2) {
+ 		/* check the black list */
+@@ -2923,13 +2922,16 @@ static int snd_es1968_probe(struct pci_dev *pci,
+ 		card->shortname, chip->io_port, chip->irq);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_es1968_remove(struct pci_dev *pci)
 -- 
 2.15.0
 
