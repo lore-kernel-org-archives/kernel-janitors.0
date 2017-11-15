@@ -1,60 +1,28 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 10:11:53 +0000
-Subject: [PATCH 7/7] tm6000: fix spelling mistake: "synchronuously" -> "synchronously"
-Message-Id: <20171102101153.18225-7-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 12:45:09 +0000
+Subject: [PATCH 0/3] ALSA: fm801: Fine-tuning for seven function implementations
+Message-Id: <86b94d9c-77fb-fed5-b55c-a0565f619dc7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102101153.18225-1-colin.king@canonical.com>
-In-Reply-To: <20171102101153.18225-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 13:40:43 +0100
 
-Trivial fix to spelling mistake in error message text
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/tm6000/tm6000-dvb.c   | 4 ++--
- drivers/media/usb/tm6000/tm6000-video.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Markus Elfring (3):
+  Adjust 17 function calls together with a variable assignment
+  Use common error handling code in two functions
+  Rename a jump label in snd_card_fm801_probe()
 
-diff --git a/drivers/media/usb/tm6000/tm6000-dvb.c b/drivers/media/usb/tm6000/tm6000-dvb.c
-index 2bc584f75f87..c811fc6cf48a 100644
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -45,10 +45,10 @@ static inline void print_err_status(struct tm6000_core *dev,
- 
- 	switch (status) {
- 	case -ENOENT:
--		errmsg = "unlinked synchronuously";
-+		errmsg = "unlinked synchronously";
- 		break;
- 	case -ECONNRESET:
--		errmsg = "unlinked asynchronuously";
-+		errmsg = "unlinked asynchronously";
- 		break;
- 	case -ENOSR:
- 		errmsg = "Buffer error (overrun)";
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index 0d45f35e1697..9fa25de6b5a9 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -342,10 +342,10 @@ static inline void print_err_status(struct tm6000_core *dev,
- 
- 	switch (status) {
- 	case -ENOENT:
--		errmsg = "unlinked synchronuously";
-+		errmsg = "unlinked synchronously";
- 		break;
- 	case -ECONNRESET:
--		errmsg = "unlinked asynchronuously";
-+		errmsg = "unlinked asynchronously";
- 		break;
- 	case -ENOSR:
- 		errmsg = "Buffer error (overrun)";
+ sound/pci/fm801.c | 140 +++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 76 insertions(+), 64 deletions(-)
+
 -- 
-2.14.1
+2.15.0
 
