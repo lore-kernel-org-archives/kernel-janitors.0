@@ -1,48 +1,42 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 09 Nov 2017 09:21:50 +0000
-Subject: Re: [PATCH] staging: ccree: remove unused pointer cc_base
-Message-Id: <CAOtvUMeJABR=mp-5_aO2wq3FoFAiKzftSpor7r_J6382XGpGcA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 12:37:19 +0000
+Subject: [PATCH] crypto: cavium: fix memory leak on info
+Message-Id: <20171115123719.12667-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171109081305.3659-1-colin.king@canonical.com>
-In-Reply-To: <20171109081305.3659-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+To: George Cherian <george.cherian@cavium.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Colin Ian King <colin.king@canonical.com>
 
-Thank you very much for your patch.
+The object info is being leaked on an error return path, fix this
+by setting ret to -ENOMEM and exiting via the request_cleanup path
+that will free info.
 
-On Thu, Nov 9, 2017 at 10:13 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Pointer cc_base is being assigned but is never read, hence it is
-> redundant and can be removed. Cleans up clang warning:
->
-> drivers/staging/ccree/ssi_driver.c:235:2: warning: Value stored to
-> 'cc_base' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/ccree/ssi_driver.c | 3 ---
->  1 file changed, 3 deletions(-)
+Detected by CoverityScan, CID#1408439 ("Resource Leak")
 
-Your patch is perfectly fine but I just happened to send a patch
-series that includes
-this fix but also deals with  other occurrences of the same now
-no-longer needed cc_base
-variable just a second ago before checking my email...
+Fixes: c694b233295b ("crypto: cavium - Add the Virtual Function driver for CPT")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/cavium/cpt/cptvf_reqmanager.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sorry about that and thanks again.
-
-Gilad
-
+diff --git a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+index 169e66231bcf..b0ba4331944b 100644
+--- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
++++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+@@ -459,7 +459,8 @@ int process_request(struct cpt_vf *cptvf, struct cpt_request_info *req)
+ 	info->completion_addr = kzalloc(sizeof(union cpt_res_s), GFP_KERNEL);
+ 	if (unlikely(!info->completion_addr)) {
+ 		dev_err(&pdev->dev, "Unable to allocate memory for completion_addr\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto request_cleanup;
+ 	}
+ 
+ 	result = (union cpt_res_s *)info->completion_addr;
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+2.14.1
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
