@@ -1,28 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 Nov 2017 06:55:01 +0000
-Subject: Re: [PATCH][net-next] net: sched: cls_bpf: use bitwise & rather than logical && on gen_flags
-Message-Id: <20171103.155501.268373482338402451.davem@davemloft.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 16:53:41 +0000
+Subject: [PATCH] scsi: aacraid: remove unused variable managed_request_id
+Message-Id: <20171115165341.20042-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102200412.16757-1-colin.king@canonical.com>
-In-Reply-To: <20171102200412.16757-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: ast@kernel.org, daniel@iogearbox.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  2 Nov 2017 20:04:12 +0000
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently gen_flags is being operated on by a logical && operator rather
-> than a bitwise & operator. This looks incorrect as these should be bit
-> flag operations. Fix this.
-> 
-> Detected by CoverityScan, CID#1460305 ("Logical vs. bitwise operator")
-> 
-> Fixes: 3f7889c4c79b ("net: sched: cls_bpf: call block callbacks for offload)
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variable managed_request_id is being assigned but it is never read,
+hence it is redundant and can be removed. Cleans up clang warning:
 
-Applied.
+drivers/scsi/aacraid/linit.c:706:5: warning: Value stored to
+'managed_request_id' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/linit.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index c9252b138c1f..3677beff9c17 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -690,7 +690,6 @@ static int aac_eh_abort(struct scsi_cmnd* cmd)
+ 		struct aac_hba_tm_req *tmf;
+ 		int status;
+ 		u64 address;
+-		__le32 managed_request_id;
+ 
+ 		pr_err("%s: Host adapter abort request (%d,%d,%d,%d)\n",
+ 		 AAC_DRIVERNAME,
+@@ -703,8 +702,6 @@ static int aac_eh_abort(struct scsi_cmnd* cmd)
+ 				(fib->flags & FIB_CONTEXT_FLAG_NATIVE_HBA) &&
+ 				(fib->callback_data = cmd)) {
+ 				found = 1;
+-				managed_request_id = ((struct aac_hba_cmd_req *)
+-					fib->hw_fib_va)->request_id;
+ 				break;
+ 			}
+ 		}
+-- 
+2.14.1
+
