@@ -1,187 +1,239 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 13:04:55 +0000
-Subject: [PATCH] ALSA: als4000: Use common error handling code in snd_card_als4000_probe()
-Message-Id: <c954ffd3-ef05-295f-1318-f05aab0aace4@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 14:55:24 +0000
+Subject: [PATCH] ALSA: ice1712: Use common error handling code in two functions
+Message-Id: <d3ffaa82-c47d-82a8-3325-1b95acfb70c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 12 Nov 2017 13:50:48 +0100
+Date: Wed, 15 Nov 2017 15:50:06 +0100
 
-* Adjust jump targets so that a bit of exception handling can be better
-  reused at the end of this function.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
-  This issue was detected by using the Coccinelle software.
-
-* The script "checkpatch.pl" pointed information out like the following.
-
-  ERROR: do not use assignment in if condition
-
-  Thus fix eight affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/als4000.c | 90 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 47 insertions(+), 43 deletions(-)
+ sound/pci/ice1712/ice1712.c | 114 +++++++++++++++++++-------------------------
+ 1 file changed, 50 insertions(+), 64 deletions(-)
 
-diff --git a/sound/pci/als4000.c b/sound/pci/als4000.c
-index 26b097edec8c..e63598c036f6 100644
---- a/sound/pci/als4000.c
-+++ b/sound/pci/als4000.c
-@@ -867,21 +867,22 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 	}
- 
- 	/* enable PCI device */
--	if ((err = pci_enable_device(pci)) < 0) {
-+	err = pci_enable_device(pci);
-+	if (err < 0)
- 		return err;
--	}
-+
- 	/* check, if we can restrict PCI DMA transfers to 24 bits */
- 	if (dma_set_mask(&pci->dev, DMA_BIT_MASK(24)) < 0 ||
- 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(24)) < 0) {
- 		dev_err(&pci->dev, "architecture does not support 24bit PCI busmaster DMA\n");
+diff --git a/sound/pci/ice1712/ice1712.c b/sound/pci/ice1712/ice1712.c
+index 0e66afa403a3..691b8844465f 100644
+--- a/sound/pci/ice1712/ice1712.c
++++ b/sound/pci/ice1712/ice1712.c
+@@ -2534,14 +2534,14 @@ static int snd_ice1712_create(struct snd_card *card,
+ 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(28)) < 0) {
+ 		dev_err(card->dev,
+ 			"architecture does not support 28bit PCI busmaster DMA\n");
 -		pci_disable_device(pci);
 -		return -ENXIO;
 +		err = -ENXIO;
 +		goto disable_device;
  	}
  
--	if ((err = pci_request_regions(pci, "ALS4000")) < 0) {
+ 	ice = kzalloc(sizeof(*ice), GFP_KERNEL);
+ 	if (ice = NULL) {
 -		pci_disable_device(pci);
--		return err;
--	}
-+	err = pci_request_regions(pci, "ALS4000");
-+	if (err < 0)
+-		return -ENOMEM;
++		err = -ENOMEM;
 +		goto disable_device;
-+
- 	iobase = pci_resource_start(pci, 0);
- 
- 	pci_read_config_word(pci, PCI_COMMAND, &word);
-@@ -893,8 +894,7 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 			   &card);
+ 	}
+ 	ice->omni = omni ? 1 : 0;
+ 	if (cs8427_timeout < 1)
+@@ -2580,8 +2580,7 @@ static int snd_ice1712_create(struct snd_card *card,
+ 	err = pci_request_regions(pci, "ICE1712");
  	if (err < 0) {
- 		pci_release_regions(pci);
+ 		kfree(ice);
 -		pci_disable_device(pci);
 -		return err;
 +		goto disable_device;
  	}
- 
- 	acard = card->private_data;
-@@ -905,17 +905,18 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 	/* disable all legacy ISA stuff */
- 	snd_als4000_set_addr(acard->iobase, 0, 0, 0, 0);
- 
--	if ((err = snd_sbdsp_create(card,
--				    iobase + ALS4K_IOB_10_ADLIB_ADDR0,
--				    pci->irq,
-+	err = snd_sbdsp_create(card,
-+			       iobase + ALS4K_IOB_10_ADLIB_ADDR0,
-+			       pci->irq,
- 		/* internally registered as IRQF_SHARED in case of ALS4000 SB */
--				    snd_als4000_interrupt,
--				    -1,
--				    -1,
--				    SB_HW_ALS4000,
--				    &chip)) < 0) {
--		goto out_err;
--	}
-+			       snd_als4000_interrupt,
-+			       -1,
-+			       -1,
-+			       SB_HW_ALS4000,
-+			       &chip);
-+	if (err < 0)
-+		goto free_card;
-+
- 	acard->chip = chip;
- 
- 	chip->pci = pci;
-@@ -928,14 +929,14 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 	sprintf(card->longname, "%s at 0x%lx, irq %i",
- 		card->shortname, chip->alt_port, chip->irq);
- 
--	if ((err = snd_mpu401_uart_new( card, 0, MPU401_HW_ALS4000,
--					iobase + ALS4K_IOB_30_MIDI_DATA,
--					MPU401_INFO_INTEGRATED |
--					MPU401_INFO_IRQ_HOOK,
--					-1, &chip->rmidi)) < 0) {
-+	err = snd_mpu401_uart_new(card, 0, MPU401_HW_ALS4000,
-+				  iobase + ALS4K_IOB_30_MIDI_DATA,
-+				  MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
-+				  -1, &chip->rmidi);
-+	if (err < 0) {
- 		dev_err(&pci->dev, "no MPU-401 device at 0x%lx?\n",
- 				iobase + ALS4K_IOB_30_MIDI_DATA);
--		goto out_err;
-+		goto free_card;
+ 	ice->port = pci_resource_start(pci, 0);
+ 	ice->ddma_port = pci_resource_start(pci, 1);
+@@ -2591,29 +2590,31 @@ static int snd_ice1712_create(struct snd_card *card,
+ 	if (request_irq(pci->irq, snd_ice1712_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, ice)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_ice1712_free(ice);
+-		return -EIO;
++		goto e_io;
  	}
- 	/* FIXME: ALS4000 has interesting MPU401 configuration features
- 	 * at ALS4K_CR1A_MPU401_UART_MODE_CONTROL
-@@ -943,12 +944,13 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 	 * however there doesn't seem to be an ALSA API for this...
- 	 * SPECS_PAGE: 21 */
  
--	if ((err = snd_als4000_pcm(chip, 0)) < 0) {
--		goto out_err;
+ 	ice->irq = pci->irq;
+ 
+-	if (snd_ice1712_read_eeprom(ice, modelname) < 0) {
+-		snd_ice1712_free(ice);
+-		return -EIO;
 -	}
--	if ((err = snd_sbmixer_new(chip)) < 0) {
--		goto out_err;
--	}	    
-+	err = snd_als4000_pcm(chip, 0);
+-	if (snd_ice1712_chip_init(ice) < 0) {
+-		snd_ice1712_free(ice);
+-		return -EIO;
+-	}
++	if (snd_ice1712_read_eeprom(ice, modelname) < 0 ||
++	    snd_ice1712_chip_init(ice) < 0)
++		goto e_io;
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, ice, &ops);
+-	if (err < 0) {
+-		snd_ice1712_free(ice);
+-		return err;
+-	}
 +	if (err < 0)
-+		goto free_card;
++		goto free_sound_chip;
+ 
+ 	*r_ice1712 = ice;
+ 	return 0;
 +
-+	err = snd_sbmixer_new(chip);
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++e_io:
++	err = -EIO;
++free_sound_chip:
++	snd_ice1712_free(ice);
++	return err;
+ }
+ 
+ 
+@@ -2651,10 +2652,8 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+ 
+ 	err = snd_ice1712_create(card, pci, model[dev], omni[dev],
+ 		cs8427_timeout[dev], dxr_enable[dev], &ice);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
 +	if (err < 0)
 +		goto free_card;
  
- 	if (snd_opl3_create(card,
- 				iobase + ALS4K_IOB_10_ADLIB_ADDR0,
-@@ -958,25 +960,27 @@ static int snd_card_als4000_probe(struct pci_dev *pci,
- 			   iobase + ALS4K_IOB_10_ADLIB_ADDR0,
- 			   iobase + ALS4K_IOB_12_ADLIB_ADDR2);
- 	} else {
--		if ((err = snd_opl3_hwdep_new(opl3, 0, 1, NULL)) < 0) {
--			goto out_err;
+ 	for (tbl = card_tables; *tbl; tbl++) {
+ 		for (c = *tbl; c->subvendor; c++) {
+@@ -2665,10 +2664,8 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+ 					strcpy(card->driver, c->driver);
+ 				if (c->chip_init) {
+ 					err = c->chip_init(ice);
+-					if (err < 0) {
+-						snd_card_free(card);
+-						return err;
+-					}
++					if (err < 0)
++						goto free_card;
+ 				}
+ 				goto __found;
+ 			}
+@@ -2678,45 +2675,33 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+  __found:
+ 
+ 	err = snd_ice1712_pcm_profi(ice, pcm_dev++);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	if (ice_has_con_ac97(ice)) {
+ 		err = snd_ice1712_pcm(ice, pcm_dev++);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
 -		}
-+		err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
 +		if (err < 0)
 +			goto free_card;
  	}
  
- 	snd_als4000_create_gameport(acard, dev);
- 
--	if ((err = snd_card_register(card)) < 0) {
--		goto out_err;
+ 	err = snd_ice1712_ac97_mixer(ice);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
 -	}
-+	err = snd_card_register(card);
++	if (err < 0)
++		goto free_card;
+ 
+ 	err = snd_ice1712_build_controls(ice);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	if (c->build_controls) {
+ 		err = c->build_controls(ice);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
+ 	}
+ 
+ 	if (ice_has_con_ac97(ice)) {
+ 		err = snd_ice1712_pcm_ds(ice, pcm_dev++);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
+ 	}
+ 
+ 	if (!c->no_mpu401) {
+@@ -2725,10 +2710,9 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+ 			c->mpu401_1_info_flags |
+ 			MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
+ 			-1, &ice->rmidi[0]);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
++
+ 		if (c->mpu401_1_name)
+ 			/*  Preferred name available in card_info */
+ 			snprintf(ice->rmidi[0]->name,
+@@ -2743,10 +2727,9 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+ 				MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
+ 				-1, &ice->rmidi[1]);
+ 
+-			if (err < 0) {
+-				snd_card_free(card);
+-				return err;
+-			}
++			if (err < 0)
++				goto free_card;
++
+ 			if (c->mpu401_2_name)
+ 				/*  Preferred name available in card_info */
+ 				snprintf(ice->rmidi[1]->name,
+@@ -2762,13 +2745,16 @@ static int snd_ice1712_probe(struct pci_dev *pci,
+ 		card->shortname, ice->port, ice->irq);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
 +	if (err < 0)
 +		goto free_card;
 +
  	pci_set_drvdata(pci, card);
  	dev++;
--	err = 0;
--	goto out;
-+	return 0;
- 
--out_err:
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
+ 	return 0;
 +
 +free_card:
- 	snd_card_free(card);
--	
--out:
- 	return err;
++	snd_card_free(card);
++	return err;
  }
  
+ static void snd_ice1712_remove(struct pci_dev *pci)
 -- 
 2.15.0
 
