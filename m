@@ -1,76 +1,86 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:54:32 +0000
-Subject: Applied "ASoC: wm2000: Improve a size determination in wm2000_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOY4-0007Xr-IK@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 14:00:21 +0000
+Subject: [PATCH] ALSA: HDA: Improve unlocking of a mutex in hdmi_pcm_open()
+Message-Id: <dd3cb768-1eb2-bc1d-f6ec-05249c60488e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
-In-Reply-To: <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Ander Conselvan De Oliveira <ander.conselvan.de.oliveira@intel.com>, Bhumika Goyal <bhumirks@gmail.com>, Daniel Dadap <ddadap@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Libin Yang <libin.yang@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: wm2000: Improve a size determination in wm2000_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bf0842ba3afa85d37b35e65dedec9a994988e346 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 08:18:14 +0100
-Subject: [PATCH] ASoC: wm2000: Improve a size determination in
- wm2000_i2c_probe()
+Date: Wed, 15 Nov 2017 14:46:19 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only twice in this function implementation.
+
+* Replace four calls by goto statements.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm2000.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/pci/hda/patch_hdmi.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/codecs/wm2000.c b/sound/soc/codecs/wm2000.c
-index 480ceb07c3ed..abfa052c07d8 100644
---- a/sound/soc/codecs/wm2000.c
-+++ b/sound/soc/codecs/wm2000.c
-@@ -826,8 +826,7 @@ static int wm2000_i2c_probe(struct i2c_client *i2c,
- 	int reg;
- 	u16 id;
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index c19c81d230bd..f1c0b6cab90a 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1205,8 +1205,8 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
+ 	pin_idx = hinfo_to_pin_index(codec, hinfo);
+ 	if (!spec->dyn_pcm_assign) {
+ 		if (snd_BUG_ON(pin_idx < 0)) {
+-			mutex_unlock(&spec->pcm_lock);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto unlock;
+ 		}
+ 	} else {
+ 		/* no pin is assigned to the PCM
+@@ -1214,16 +1214,13 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
+ 		 */
+ 		if (pin_idx < 0) {
+ 			err = hdmi_pcm_open_no_pin(hinfo, codec, substream);
+-			mutex_unlock(&spec->pcm_lock);
+-			return err;
++			goto unlock;
+ 		}
+ 	}
  
--	wm2000 = devm_kzalloc(&i2c->dev, sizeof(struct wm2000_priv),
--			      GFP_KERNEL);
-+	wm2000 = devm_kzalloc(&i2c->dev, sizeof(*wm2000), GFP_KERNEL);
- 	if (!wm2000)
- 		return -ENOMEM;
+ 	err = hdmi_choose_cvt(codec, pin_idx, &cvt_idx);
+-	if (err < 0) {
+-		mutex_unlock(&spec->pcm_lock);
+-		return err;
+-	}
++	if (err < 0)
++		goto unlock;
  
+ 	per_cvt = get_cvt(spec, cvt_idx);
+ 	/* Claim converter */
+@@ -1260,8 +1257,8 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
+ 			per_cvt->assigned = 0;
+ 			hinfo->nid = 0;
+ 			snd_hda_spdif_ctls_unassign(codec, pcm_idx);
+-			mutex_unlock(&spec->pcm_lock);
+-			return -ENODEV;
++			err = -ENODEV;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -1275,6 +1272,10 @@ static int hdmi_pcm_open(struct hda_pcm_stream *hinfo,
+ 	snd_pcm_hw_constraint_step(substream->runtime, 0,
+ 				   SNDRV_PCM_HW_PARAM_CHANNELS, 2);
+ 	return 0;
++
++unlock:
++	mutex_unlock(&spec->pcm_lock);
++	return err;
+ }
+ 
+ /*
 -- 
 2.15.0
 
