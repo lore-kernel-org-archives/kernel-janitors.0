@@ -1,35 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 07:31:39 +0000
-Subject: Re: [PATCH 2/3] ALSA: korg1212: Delete a duplicate function call "release_firmware" in snd_korg1212_
-Message-Id: <s5hd142luzo.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 15 Nov 2017 15:45:09 +0000
+Subject: [PATCH] drm/amd/display: remove unnecessary cast and use kcalloc instead of kzalloc
+Message-Id: <20171115154509.18054-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3f68211d-51f0-2990-d711-44eaeb85ba4d@users.sourceforge.net>
-        <7b5b034c-e441-f363-a94f-c81bd0b5ed7a@users.sourceforge.net>
-In-Reply-To: <7b5b034c-e441-f363-a94f-c81bd0b5ed7a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Kees Cook <keescook@chromium.org>, Alexey Dobriyan <adobriyan@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, Tony Cheng <tony.cheng@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 16 Nov 2017 12:52:41 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 16 Nov 2017 11:22:26 +0100
-> 
-> The function "release_firmware" is called in the current implementation of
-> the function "_request_firmware" after a failure was detected.
-> Link: https://elixir.free-electrons.com/linux/v4.14-rc8/source/drivers/base/firmware_class.c#L1196
-> 
-> Such a call should therefore not be repeated directly after the
-> corresponding error information was received in the local variable "err"
-> of the function "snd_korg1212_create".
-> Thus remove a misplaced function call.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Use kcalloc instead of kzalloc and the cast on the return from kzalloc is
+unnecessary and can be removed.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/basics/logger.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Takashi
+diff --git a/drivers/gpu/drm/amd/display/dc/basics/logger.c b/drivers/gpu/drm/amd/display/dc/basics/logger.c
+index e04e8ecd4874..2ff5b467603d 100644
+--- a/drivers/gpu/drm/amd/display/dc/basics/logger.c
++++ b/drivers/gpu/drm/amd/display/dc/basics/logger.c
+@@ -70,9 +70,8 @@ static bool construct(struct dc_context *ctx, struct dal_logger *logger,
+ {
+ 	/* malloc buffer and init offsets */
+ 	logger->log_buffer_size = DAL_LOGGER_BUFFER_MAX_SIZE;
+-	logger->log_buffer = (char *)kzalloc(logger->log_buffer_size * sizeof(char),
+-					     GFP_KERNEL);
+-
++	logger->log_buffer = kcalloc(logger->log_buffer_size, sizeof(char),
++				     GFP_KERNEL);
+ 	if (!logger->log_buffer)
+ 		return false;
+ 
+-- 
+2.14.1
+
