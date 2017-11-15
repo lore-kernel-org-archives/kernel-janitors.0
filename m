@@ -1,198 +1,208 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 01 Nov 2017 15:41:05 +0000
-Subject: [PATCH v2 2/2] drm/rcar-du: Adjust 14 checks for null pointers
-Message-Id: <ea48baba-9874-a4d5-185f-1b8fb98feb73@users.sourceforge.net>
+Date: Wed, 15 Nov 2017 12:46:30 +0000
+Subject: [PATCH 1/3] ALSA: fm801: Adjust 17 function calls together with a variable assignment
+Message-Id: <5db5ffad-1bb7-d713-6bce-c4ca8ab8cbc6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201710262044.165nsaJp%fengguang.wu@intel.com>
- <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
-In-Reply-To: <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
+References: <86b94d9c-77fb-fed5-b55c-a0565f619dc7@users.sourceforge.net>
+In-Reply-To: <86b94d9c-77fb-fed5-b55c-a0565f619dc7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kbuild test robot <lkp@intel.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kbuild-all@01.org
+To: alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 1 Nov 2017 16:00:46 +0100
+Date: Wed, 15 Nov 2017 13:20:49 +0100
 
 The script "checkpatch.pl" pointed information out like the following.
 
-Comparison to NULL could be written !...
+ERROR: do not use assignment in if condition
 
 Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ sound/pci/fm801.c | 75 +++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 45 insertions(+), 30 deletions(-)
 
-v2:
-The commit message was written only with ASCII characters.
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 2 +-
- drivers/gpu/drm/rcar-du/rcar_du_plane.c   | 6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     | 6 +++---
- 8 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 301ea1a8018e..67567af6e348 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -410,7 +410,7 @@ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc)
- 	rcrtc->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
+diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
+index 73a67bc3586b..3648af4581a0 100644
+--- a/sound/pci/fm801.c
++++ b/sound/pci/fm801.c
+@@ -655,9 +655,10 @@ static int snd_fm801_playback_open(struct snd_pcm_substream *substream)
+ 					   SNDRV_PCM_HW_PARAM_CHANNELS,
+ 					   &hw_constraints_channels);
+ 	}
+-	if ((err = snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS)) < 0)
+-		return err;
+-	return 0;
++
++	err = snd_pcm_hw_constraint_integer(runtime,
++					    SNDRV_PCM_HW_PARAM_PERIODS);
++	return (err < 0) ? err : 0;
+ }
  
--	if (event = NULL)
-+	if (!event)
- 		return;
+ static int snd_fm801_capture_open(struct snd_pcm_substream *substream)
+@@ -670,9 +671,9 @@ static int snd_fm801_capture_open(struct snd_pcm_substream *substream)
+ 	runtime->hw = snd_fm801_capture;
+ 	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+ 				   &hw_constraints_rates);
+-	if ((err = snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS)) < 0)
+-		return err;
+-	return 0;
++	err = snd_pcm_hw_constraint_integer(runtime,
++					    SNDRV_PCM_HW_PARAM_PERIODS);
++	return (err < 0) ? err : 0;
+ }
  
- 	spin_lock_irqsave(&dev->event_lock, flags);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d2f29e6b1112..cf80476783bf 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -318,7 +318,7 @@ static int rcar_du_probe(struct platform_device *pdev)
- 
- 	/* Allocate and initialize the R-Car device structure. */
- 	rcdu = devm_kzalloc(&pdev->dev, sizeof(*rcdu), GFP_KERNEL);
--	if (rcdu = NULL)
-+	if (!rcdu)
- 		return -ENOMEM;
- 
- 	rcdu->dev = &pdev->dev;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index ba8d2804c1d1..8a9f7fa69ecc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -166,7 +166,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	int ret;
- 
- 	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
--	if (renc = NULL)
-+	if (!renc)
- 		return -ENOMEM;
- 
- 	renc->output = output;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index b6b341164aab..c15aa38fe308 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -181,7 +181,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 	unsigned int i;
- 
- 	format = rcar_du_format_info(mode_cmd->pixel_format);
--	if (format = NULL) {
-+	if (!format) {
- 		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
- 			mode_cmd->pixel_format);
- 		return ERR_PTR(-EINVAL);
-@@ -419,7 +419,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
+ static int snd_fm801_playback_close(struct snd_pcm_substream *substream)
+@@ -717,9 +718,9 @@ static int snd_fm801_pcm(struct fm801 *chip, int device)
  {
- 	rcdu->props.alpha  		drm_property_create_range(rcdu->ddev, 0, "alpha", 0, 255);
--	if (rcdu->props.alpha = NULL)
-+	if (!rcdu->props.alpha)
- 		return -ENOMEM;
+ 	struct pci_dev *pdev = to_pci_dev(chip->dev);
+ 	struct snd_pcm *pcm;
+-	int err;
++	int err = snd_pcm_new(chip->card, "FM801", device, 1, 1, &pcm);
  
- 	/*
-@@ -430,7 +430,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- 	rcdu->props.colorkey  		drm_property_create_range(rcdu->ddev, 0, "colorkey",
- 					  0, 0x01ffffff);
--	if (rcdu->props.colorkey = NULL)
-+	if (!rcdu->props.colorkey)
- 		return -ENOMEM;
+-	if ((err = snd_pcm_new(chip->card, "FM801", device, 1, 1, &pcm)) < 0)
++	if (err < 0)
+ 		return err;
  
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-index b373ad48ef5f..189e71b3d5d4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-@@ -63,7 +63,7 @@ int rcar_du_lvds_connector_init(struct rcar_du_device *rcdu,
- 	int ret;
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &snd_fm801_playback_ops);
+@@ -986,10 +987,10 @@ static int snd_fm801_put_mux(struct snd_kcontrol *kcontrol,
+ 			     struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct fm801 *chip = snd_kcontrol_chip(kcontrol);
+-        unsigned short val;
++	unsigned short val = ucontrol->value.enumerated.item[0];
+  
+-        if ((val = ucontrol->value.enumerated.item[0]) > 4)
+-                return -EINVAL;
++	if (val > 4)
++		return -EINVAL;
+ 	return snd_fm801_update_bits(chip, FM801_REC_SRC, 7, val);
+ }
  
- 	rcon = devm_kzalloc(rcdu->dev, sizeof(*rcon), GFP_KERNEL);
--	if (rcon = NULL)
-+	if (!rcon)
- 		return -ENOMEM;
+@@ -1053,19 +1054,22 @@ static int snd_fm801_mixer(struct fm801 *chip)
+ 		.read = snd_fm801_codec_read,
+ 	};
  
- 	connector = &rcon->connector;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-index 12d22f3db1af..ab2576e5d700 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -253,7 +253,7 @@ int rcar_du_lvdsenc_init(struct rcar_du_device *rcdu)
+-	if ((err = snd_ac97_bus(chip->card, 0, &ops, chip, &chip->ac97_bus)) < 0)
++	err = snd_ac97_bus(chip->card, 0, &ops, chip, &chip->ac97_bus);
++	if (err < 0)
+ 		return err;
+ 	chip->ac97_bus->private_free = snd_fm801_mixer_free_ac97_bus;
  
- 	for (i = 0; i < rcdu->info->num_lvds; ++i) {
- 		lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
--		if (lvds = NULL)
-+		if (!lvds)
- 			return -ENOMEM;
+ 	memset(&ac97, 0, sizeof(ac97));
+ 	ac97.private_data = chip;
+ 	ac97.private_free = snd_fm801_mixer_free_ac97;
+-	if ((err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97)) < 0)
++	err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97);
++	if (err < 0)
+ 		return err;
+ 	if (chip->secondary) {
+ 		ac97.num = 1;
+ 		ac97.addr = chip->secondary_addr;
+-		if ((err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97_sec)) < 0)
++		err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97_sec);
++		if (err < 0)
+ 			return err;
+ 	}
+ 	for (i = 0; i < FM801_CONTROLS; i++)
+@@ -1208,7 +1212,8 @@ static int snd_fm801_create(struct snd_card *card,
+ 	};
  
- 		lvds->dev = rcdu;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 61833cc1c699..f48a990214ed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -584,7 +584,7 @@ static int rcar_du_plane_atomic_check(struct drm_plane *plane,
+ 	*rchip = NULL;
+-	if ((err = pcim_enable_device(pci)) < 0)
++	err = pcim_enable_device(pci);
++	if (err < 0)
+ 		return err;
+ 	chip = devm_kzalloc(&pci->dev, sizeof(*chip), GFP_KERNEL);
+ 	if (chip = NULL)
+@@ -1218,7 +1223,8 @@ static int snd_fm801_create(struct snd_card *card,
+ 	chip->dev = &pci->dev;
+ 	chip->irq = -1;
+ 	chip->tea575x_tuner = tea575x_tuner;
+-	if ((err = pci_request_regions(pci, "FM801")) < 0)
++	err = pci_request_regions(pci, "FM801");
++	if (err < 0)
+ 		return err;
+ 	chip->port = pci_resource_start(pci, 0);
+ 
+@@ -1248,7 +1254,8 @@ static int snd_fm801_create(struct snd_card *card,
+ 
+ 	snd_fm801_chip_init(chip);
+ 
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0) {
+ 		snd_fm801_free(chip);
+ 		return err;
+ 	}
+@@ -1321,7 +1328,10 @@ static int snd_card_fm801_probe(struct pci_dev *pci,
+ 			   0, &card);
+ 	if (err < 0)
+ 		return err;
+-	if ((err = snd_fm801_create(card, pci, tea575x_tuner[dev], radio_nr[dev], &chip)) < 0) {
++
++	err = snd_fm801_create(card, pci, tea575x_tuner[dev], radio_nr[dev],
++			       &chip);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
+ 	}
+@@ -1336,35 +1346,40 @@ static int snd_card_fm801_probe(struct pci_dev *pci,
+ 	if (chip->tea575x_tuner & TUNER_ONLY)
+ 		goto __fm801_tuner_only;
+ 
+-	if ((err = snd_fm801_pcm(chip, 0)) < 0) {
++	err = snd_fm801_pcm(chip, 0);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
+ 	}
+-	if ((err = snd_fm801_mixer(chip)) < 0) {
++	err = snd_fm801_mixer(chip);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
+ 	}
+-	if ((err = snd_mpu401_uart_new(card, 0, MPU401_HW_FM801,
+-				       chip->port + FM801_MPU401_DATA,
+-				       MPU401_INFO_INTEGRATED |
+-				       MPU401_INFO_IRQ_HOOK,
+-				       -1, &chip->rmidi)) < 0) {
++	err = snd_mpu401_uart_new(card, 0, MPU401_HW_FM801,
++				  chip->port + FM801_MPU401_DATA,
++				  MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
++				  -1, &chip->rmidi);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
+ 	}
+-	if ((err = snd_opl3_create(card, chip->port + FM801_OPL3_BANK0,
+-				   chip->port + FM801_OPL3_BANK1,
+-				   OPL3_HW_OPL3_FM801, 1, &opl3)) < 0) {
++	err = snd_opl3_create(card, chip->port + FM801_OPL3_BANK0,
++			      chip->port + FM801_OPL3_BANK1,
++			      OPL3_HW_OPL3_FM801, 1, &opl3);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
+ 	}
+-	if ((err = snd_opl3_hwdep_new(opl3, 0, 1, NULL)) < 0) {
++	err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
  	}
  
- 	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format = NULL) {
-+	if (!rstate->format) {
- 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
-@@ -637,7 +637,7 @@ rcar_du_plane_atomic_duplicate_state(struct drm_plane *plane)
- 
- 	state = to_rcar_plane_state(plane->state);
- 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
--	if (copy = NULL)
-+	if (!copy)
- 		return NULL;
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
-@@ -662,7 +662,7 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
+       __fm801_tuner_only:
+-	if ((err = snd_card_register(card)) < 0) {
++	err = snd_card_register(card);
++	if (err < 0) {
+ 		snd_card_free(card);
+ 		return err;
  	}
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
--	if (state = NULL)
-+	if (!state)
- 		return;
- 
- 	state->hwindex = -1;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c96147bc444..e8e261362d9a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -283,7 +283,7 @@ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
- 	}
- 
- 	rstate->format = rcar_du_format_info(state->fb->format->format);
--	if (rstate->format = NULL) {
-+	if (!rstate->format) {
- 		dev_dbg(rcdu->dev, "%s: unsupported format %08x\n", __func__,
- 			state->fb->format->format);
- 		return -EINVAL;
-@@ -323,7 +323,7 @@ rcar_du_vsp_plane_atomic_duplicate_state(struct drm_plane *plane)
- 
- 	state = to_rcar_vsp_plane_state(plane->state);
- 	copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
--	if (copy = NULL)
-+	if (!copy)
- 		return NULL;
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
-@@ -348,7 +348,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 	}
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
--	if (state = NULL)
-+	if (!state)
- 		return;
- 
- 	state->alpha = 255;
 -- 
-2.14.3
+2.15.0
 
