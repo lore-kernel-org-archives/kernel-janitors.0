@@ -1,150 +1,98 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Nov 2017 13:15:17 +0000
-Subject: [PATCH 1/4] target: Use common error handling code in three functions
-Message-Id: <437fc193-6cf4-e9e3-3a0c-be34c9d1d58d@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 21:26:08 +0000
+Subject: [PATCH 1/2] ALSA: pcxhr: Adjust six function calls together with a variable assignment
+Message-Id: <41a0e34c-d3b5-c9d9-1827-9977e084bd0f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
-In-Reply-To: <27e27d42-473d-e8db-fe9e-803fed646881@users.sourceforge.net>
+References: <c110ba76-d99d-9f80-d927-14d437115004@users.sourceforge.net>
+In-Reply-To: <c110ba76-d99d-9f80-d927-14d437115004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Nov 2017 13:13:20 +0100
+Date: Thu, 16 Nov 2017 21:50:21 +0100
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of these functions.
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/target_core_xcopy.c | 49 +++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 24 deletions(-)
+ sound/pci/pcxhr/pcxhr.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
-index 9ee89e00cd77..b06877c57765 100644
---- a/drivers/target/target_core_xcopy.c
-+++ b/drivers/target/target_core_xcopy.c
-@@ -701,11 +701,8 @@ static int target_xcopy_read_source(
+diff --git a/sound/pci/pcxhr/pcxhr.c b/sound/pci/pcxhr/pcxhr.c
+index f9ae72f28ddc..c490d7e57ff7 100644
+--- a/sound/pci/pcxhr/pcxhr.c
++++ b/sound/pci/pcxhr/pcxhr.c
+@@ -1166,9 +1166,10 @@ int pcxhr_create_pcm(struct snd_pcxhr *chip)
+ 	char name[32];
  
- 	rc = target_xcopy_setup_pt_cmd(xpt_cmd, xop, src_dev, &cdb[0],
- 				remote_port, true);
--	if (rc < 0) {
--		ec_cmd->scsi_status = xpt_cmd->se_cmd.scsi_status;
--		transport_generic_free_cmd(se_cmd, 0);
--		return rc;
--	}
-+	if (rc < 0)
-+		goto set_status;
- 
- 	xop->xop_data_sg = se_cmd->t_data_sg;
- 	xop->xop_data_nents = se_cmd->t_data_nents;
-@@ -713,11 +710,9 @@ static int target_xcopy_read_source(
- 		" memory\n", xop->xop_data_sg, xop->xop_data_nents);
- 
- 	rc = target_xcopy_issue_pt_cmd(xpt_cmd);
--	if (rc < 0) {
--		ec_cmd->scsi_status = xpt_cmd->se_cmd.scsi_status;
--		transport_generic_free_cmd(se_cmd, 0);
--		return rc;
--	}
-+	if (rc < 0)
-+		goto set_status;
-+
- 	/*
- 	 * Clear off the allocated t_data_sg, that has been saved for
- 	 * zero-copy WRITE submission reuse in struct xcopy_op..
-@@ -726,6 +721,11 @@ static int target_xcopy_read_source(
- 	se_cmd->t_data_nents = 0;
- 
- 	return 0;
-+
-+set_status:
-+	ec_cmd->scsi_status = xpt_cmd->se_cmd.scsi_status;
-+	transport_generic_free_cmd(se_cmd, 0);
-+	return rc;
- }
- 
- static int target_xcopy_write_destination(
-@@ -775,19 +775,21 @@ static int target_xcopy_write_destination(
- 		src_cmd->t_data_sg = xop->xop_data_sg;
- 		src_cmd->t_data_nents = xop->xop_data_nents;
- 
--		transport_generic_free_cmd(se_cmd, 0);
--		return rc;
-+		goto err_free_cmd;
+ 	snprintf(name, sizeof(name), "pcxhr %d", chip->chip_idx);
+-	if ((err = snd_pcm_new(chip->card, name, 0,
+-			       chip->nb_streams_play,
+-			       chip->nb_streams_capt, &pcm)) < 0) {
++	err = snd_pcm_new(chip->card, name, 0,
++			  chip->nb_streams_play,
++			  chip->nb_streams_capt, &pcm);
++	if (err < 0) {
+ 		dev_err(chip->card->dev, "cannot create pcm %s\n", name);
+ 		return err;
+ 	}
+@@ -1233,7 +1234,8 @@ static int pcxhr_create(struct pcxhr_mgr *mgr,
+ 			chip->nb_streams_capt = 1;	/* or 1 stereo stream */
  	}
  
- 	rc = target_xcopy_issue_pt_cmd(xpt_cmd);
- 	if (rc < 0) {
- 		ec_cmd->scsi_status = xpt_cmd->se_cmd.scsi_status;
- 		se_cmd->se_cmd_flags &= ~SCF_PASSTHROUGH_SG_TO_MEM_NOALLOC;
--		transport_generic_free_cmd(se_cmd, 0);
--		return rc;
-+		goto err_free_cmd;
+-	if ((err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops)) < 0) {
++	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
++	if (err < 0) {
+ 		pcxhr_chip_free(chip);
+ 		return err;
+ 	}
+@@ -1530,7 +1532,8 @@ static int pcxhr_probe(struct pci_dev *pci,
  	}
  
- 	return 0;
-+
-+err_free_cmd:
-+	transport_generic_free_cmd(se_cmd, 0);
-+	return rc;
- }
+ 	/* enable PCI device */
+-	if ((err = pci_enable_device(pci)) < 0)
++	err = pci_enable_device(pci);
++	if (err < 0)
+ 		return err;
+ 	pci_set_master(pci);
  
- static void target_xcopy_do_work(struct work_struct *work)
-@@ -801,10 +803,10 @@ static void target_xcopy_do_work(struct work_struct *work)
- 	unsigned short nolb, cur_nolb, max_nolb, copied_nolb = 0;
+@@ -1575,7 +1578,8 @@ static int pcxhr_probe(struct pci_dev *pci,
+ 		mgr->granularity = PCXHR_GRANULARITY;
  
- 	if (target_parse_xcopy_cmd(xop) != TCM_NO_SENSE)
--		goto err_free;
-+		goto err_free_xop;
+ 	/* resource assignment */
+-	if ((err = pci_request_regions(pci, card_name)) < 0) {
++	err = pci_request_regions(pci, card_name);
++	if (err < 0) {
+ 		kfree(mgr);
+ 		pci_disable_device(pci);
+ 		return err;
+@@ -1646,7 +1650,8 @@ static int pcxhr_probe(struct pci_dev *pci,
+ 		snprintf(card->longname, sizeof(card->longname),
+ 			 "%s [PCM #%d]", mgr->name, i);
  
- 	if (WARN_ON_ONCE(!xop->src_dev) || WARN_ON_ONCE(!xop->dst_dev))
--		goto err_free;
-+		goto err_free_xop;
+-		if ((err = pcxhr_create(mgr, card, i)) < 0) {
++		err = pcxhr_create(mgr, card, i);
++		if (err < 0) {
+ 			snd_card_free(card);
+ 			pcxhr_free(mgr);
+ 			return err;
+@@ -1656,7 +1661,8 @@ static int pcxhr_probe(struct pci_dev *pci,
+ 			/* init proc interface only for chip0 */
+ 			pcxhr_proc_init(mgr->chip[i]);
  
- 	src_dev = xop->src_dev;
- 	dst_dev = xop->dst_dev;
-@@ -835,7 +837,7 @@ static void target_xcopy_do_work(struct work_struct *work)
- 
- 		rc = target_xcopy_read_source(ec_cmd, xop, src_dev, src_lba, cur_nolb);
- 		if (rc < 0)
--			goto out;
-+			goto err_undepend_device;
- 
- 		src_lba += cur_nolb;
- 		pr_debug("target_xcopy_do_work: Incremented READ src_lba to %llu\n",
-@@ -846,10 +848,8 @@ static void target_xcopy_do_work(struct work_struct *work)
- 
- 		rc = target_xcopy_write_destination(ec_cmd, xop, dst_dev,
- 						dst_lba, cur_nolb);
--		if (rc < 0) {
--			transport_generic_free_cmd(&xop->src_pt_cmd->se_cmd, 0);
--			goto out;
--		}
-+		if (rc < 0)
-+			goto err_free_cmd;
- 
- 		dst_lba += cur_nolb;
- 		pr_debug("target_xcopy_do_work: Incremented WRITE dst_lba to %llu\n",
-@@ -876,10 +876,11 @@ static void target_xcopy_do_work(struct work_struct *work)
- 	target_complete_cmd(ec_cmd, SAM_STAT_GOOD);
- 	return;
- 
--out:
-+err_free_cmd:
-+	transport_generic_free_cmd(&xop->src_pt_cmd->se_cmd, 0);
-+err_undepend_device:
- 	xcopy_pt_undepend_remotedev(xop);
--
--err_free:
-+err_free_xop:
- 	kfree(xop);
- 	/*
- 	 * Don't override an error scsi status if it has already been set
+-		if ((err = snd_card_register(card)) < 0) {
++		err = snd_card_register(card);
++		if (err < 0) {
+ 			pcxhr_free(mgr);
+ 			return err;
+ 		}
 -- 
 2.15.0
 
