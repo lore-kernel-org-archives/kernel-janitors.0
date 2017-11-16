@@ -1,68 +1,79 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Tue, 28 Nov 2017 10:39:24 +0000
-Subject: Re: [PATCH] ALSA: drivers: make array 'names' const, reduces object code size
-Message-Id: <7ac4b078-5c9a-5285-1bc1-8c02adfd56c0@sakamocchi.jp>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 19:30:24 +0000
+Subject: Re: ALSA: nm256: Fine-tuning for three function implementations
+Message-Id: <24f8c777-1eb4-e7e7-9371-79f32700c9dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171127125851.10076-1-colin.king@canonical.com>
- <11bbcc13-2ff9-68ed-6331-f65c2247b4db@sakamocchi.jp>
- <s5h7eubmrev.wl-tiwai@suse.de>
-In-Reply-To: <s5h7eubmrev.wl-tiwai@suse.de>
+References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
+ <s5hefoy16xg.wl-tiwai@suse.de>
+ <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
+ <s5h7euq9hqt.wl-tiwai@suse.de>
+In-Reply-To: <s5h7euq9hqt.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Colin King <colin.king@canonical.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, wharms@bfs.de
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Nov 28 2017 04:51, Takashi Iwai wrote:
-> On Mon, 27 Nov 2017 18:34:17 +0100,
-> Takashi Sakamoto wrote:
+>> There is a general source code transformation pattern involved.
+>> So I find that it is systematic.
 >>
->> Hi,
->>
->> On Nov 27 2017 21:58, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Don't populate array 'names' on the stack but instead make them static.
->>> Makes the object code smaller by 50 bytes:
->>>
->>> Before:
->>>      text	   data	    bss	    dec	    hex	filename
->>>     21237	   9192	   1120	  31549	   7b3d	linux/sound/drivers/dummy.o
->>>
->>> After:
->>>      text	   data	    bss	    dec	    hex	filename
->>>     21095	   9280	   1120	  31495	   7b07	linux/sound/drivers/dummy.o
->>>
->>> (gcc version 7.2.0 x86_64)
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>    sound/drivers/dummy.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
->>> index 7b2b1f766b00..69db45bc0197 100644
->>> --- a/sound/drivers/dummy.c
->>> +++ b/sound/drivers/dummy.c
->>> @@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
->>>    static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
->>>    				struct snd_ctl_elem_info *info)
->>>    {
->>> -	const char *const names[] = { "None", "CD Player" };
->>> +	static const char *const names[] = { "None", "CD Player" };
->>>      	return snd_ctl_enum_info(info, 1, 2, names);
->>>    }
->>
->> Total size of snd-dummy.ko increases but this patch has an advantage
->> to have the symbol in read-only section.
+>> But I did not dare to develop a script variant for the semantic patch
+>> language (Coccinelle software) which can handle all special use cases
+>> as a few of them are already demonstrated in this tiny patch series.
 > 
-> The total size decreases :)
+> Then you're doing everything by hands,
 
-Ah, yes. The state of my local build tree is not good to calculate it... 
-In fact, the relocatable object decreases its size when built with a 
-header package from Ubuntu repository.
+I am navigating through possible changes around the pattern
+“Use common error handling code” mostly manually so far.
 
 
-Thanks
+> and can be wrong
 
-Takashi Sakamoto
+Such a possibility remains as usual.
+
+
+> -- that's the heart of the problem.
+
+There might be related opportunities for further improvements.
+Do you trust adjustments from an evolving tool more than
+my concrete contributions?
+
+
+> The risk is bigger than the merit by applying the patch.
+
+I suggest to reconsider this view.
+
+Would you dare to follow any of the presented arguments?
+
+
+> So, just prove that your patch doesn't break anything.
+
+Which kind of information would you find sufficient for a “prove”?
+
+
+> Doesn't matter whether it's a test with real hardware
+> or with systematic checks.
+
+I assume that your development concerns matter more in this case.
+
+
+> Once when it's confirmed, we can apply it.
+
+I am curious if other contributors will become interested to confirm something.
+
+
+> A very simple rule,
+
+It might occasionally look simpler than it is in “special cases”.
+
+
+> and this will be valid for most of other subsystems, too.
+
+The response is also varying there as usual.
+
+A few update suggestions from the discussed pattern were integrated
+(also by you) already.
+Would you like to continue with similar support in any ways?
+
+Regards,
+Markus
