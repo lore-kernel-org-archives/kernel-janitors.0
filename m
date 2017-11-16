@@ -1,55 +1,105 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 08:45:19 +0000
-Subject: [PATCH 2/2] ASoC: cs42l56: Improve two size determinations in cs42l56_i2c_probe()
-Message-Id: <8c36fc94-1f7d-5d22-7d3a-f2f6117199aa@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 17:08:26 +0000
+Subject: [PATCH 2/2] ALSA: nm256: Use common error handling code in snd_nm256_probe()
+Message-Id: <5e96250a-b436-4b33-0ffa-3f9a51346827@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
-In-Reply-To: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
+References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
+In-Reply-To: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 09:33:15 +0100
-
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Date: Thu, 16 Nov 2017 17:51:17 +0100
 
 This issue was detected by using the Coccinelle software.
 
+* Add a jump target so that a bit of exception handling can be better
+  reused at the end of this function.
+
+  This issue was detected by using the Coccinelle software.
+
+* The script "checkpatch.pl" pointed information out like the following.
+
+  ERROR: do not use assignment in if condition
+
+  Thus fix two affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/cs42l56.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ sound/pci/nm256/nm256.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index 13ee46217d78..fd7b8d32c2b2 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1190,9 +1190,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int alpha_rev, metal_rev;
- 	unsigned int reg;
+diff --git a/sound/pci/nm256/nm256.c b/sound/pci/nm256/nm256.c
+index 35ce5b3fd81a..3d6106800ae9 100644
+--- a/sound/pci/nm256/nm256.c
++++ b/sound/pci/nm256/nm256.c
+@@ -1706,8 +1706,8 @@ static int snd_nm256_probe(struct pci_dev *pci,
+ 		break;
+ 	default:
+ 		dev_err(&pci->dev, "invalid device id 0x%x\n", pci->device);
+-		snd_card_free(card);
+-		return -EINVAL;
++		err = -EINVAL;
++		goto free_card;
+ 	}
  
--	cs42l56 = devm_kzalloc(&i2c_client->dev,
--			       sizeof(struct cs42l56_private),
--			       GFP_KERNEL);
-+	cs42l56 = devm_kzalloc(&i2c_client->dev, sizeof(*cs42l56), GFP_KERNEL);
- 	if (cs42l56 = NULL)
- 		return -ENOMEM;
- 	cs42l56->dev = &i2c_client->dev;
-@@ -1207,8 +1205,7 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs42l56->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				     sizeof(struct cs42l56_platform_data),
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
- 				     GFP_KERNEL);
- 		if (!pdata)
- 			return -ENOMEM;
+ 	if (vaio_hack)
+@@ -1723,10 +1723,9 @@ static int snd_nm256_probe(struct pci_dev *pci,
+ 		capture_bufsize = 128;
+ 
+ 	err = snd_nm256_create(card, pci, &chip);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	card->private_data = chip;
+ 
+ 	if (reset_workaround) {
+@@ -1739,11 +1738,13 @@ static int snd_nm256_probe(struct pci_dev *pci,
+ 		chip->reset_workaround_2 = 1;
+ 	}
+ 
+-	if ((err = snd_nm256_pcm(chip, 0)) < 0 ||
+-	    (err = snd_nm256_mixer(chip)) < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	err = snd_nm256_pcm(chip, 0);
++	if (err < 0)
++		goto free_card;
++
++	err = snd_nm256_mixer(chip);
++	if (err < 0)
++		goto free_card;
+ 
+ 	sprintf(card->shortname, "NeoMagic %s", card->driver);
+ 	sprintf(card->longname, "%s at 0x%lx & 0x%lx, irq %d",
+@@ -1751,13 +1752,15 @@ static int snd_nm256_probe(struct pci_dev *pci,
+ 		chip->buffer_addr, chip->cport_addr, chip->irq);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	pci_set_drvdata(pci, card);
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_nm256_remove(struct pci_dev *pci)
 -- 
 2.15.0
 
