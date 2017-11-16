@@ -1,27 +1,29 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 06 Nov 2017 13:18:51 +0000
-Subject: Re: [PATCH] netfilter: ip6_tables: remove redundant assignment to e
-Message-Id: <20171106131851.GA2552@salvia>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 15:32:17 +0000
+Subject: [PATCH 0/2] ALSA-miXart: Fine-tuning for seven function implementations
+Message-Id: <6f8ce522-66ac-9740-41fb-2df6ab6f3aec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171017120200.19994-1-colin.king@canonical.com>
-In-Reply-To: <20171017120200.19994-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Oct 17, 2017 at 01:02:00PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The assignment to variable e is redundant since the same assignment
-> occurs just a few lines later, hence it can be removed.  Cleans up
-> clang warning: warning: Value stored to 'e' is never read
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 16:27:32 +0100
 
-Seems like net/ipv4/netfilter/ip_tables.c also has exactly the same
-redundant assignment, see mark_source_chains() there.
+Two update suggestions were taken into account
+from static source code analysis.
 
-If we can fix this all iptables spots in one go, the best. Please,
-also check arp_tables and ebtables.
+Markus Elfring (2):
+  Adjust 23 function calls together with a variable assignment
+  Use common error handling code in snd_mixart_probe()
 
-Thanks!
+ sound/pci/mixart/mixart.c       | 88 ++++++++++++++++++++++-------------------
+ sound/pci/mixart/mixart_hwdep.c | 17 +++++---
+ sound/pci/mixart/mixart_mixer.c | 44 +++++++++++++++------
+ 3 files changed, 93 insertions(+), 56 deletions(-)
+
+-- 
+2.15.0
+
