@@ -1,36 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 19:30:14 +0000
-Subject: Re: selftests: Completion of error handling
-Message-Id: <dc266850-52d0-8380-7ab1-087c07a709fb@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 17:05:27 +0000
+Subject: [PATCH 0/2] ALSA: nm256: Fine-tuning for three function implementations
+Message-Id: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <988e4be0-4784-d9b7-879b-06ed405ae293@users.sourceforge.net>
- <26965dfd-74e8-cf6f-7f55-56310834189d@kernel.org>
-In-Reply-To: <26965dfd-74e8-cf6f-7f55-56310834189d@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Pj4gU3RhdGljIHNvdXJjZSBjb2RlIGFuYWx5c2lzIHBvaW50cyBvdXQgdGhhdCB0aGUgY2hlY2tp
-bmcgb2YgcmV0dXJuIHZhbHVlcyBmcm9tCj4+IHNvbWUgZnVuY3Rpb24gY2FsbHMgaXMgaW5jb21w
-bGV0ZSBhbHNvIGluIHRoaXMgc29mdHdhcmUgYXJlYS4KPj4gSG93IHdvdWxkIHlvdSBsaWtlIHRv
-IGZpeCByZW1haW5pbmcgb3BlbiBpc3N1ZXMgdGhlcmU/Cj4+Cj4gCj4gV2l0aG91dCB1bmRlcnN0
-YW5kaW5nIHRoZSBkZXRhaWxzIG9uIHdoaWNoIGZhaWx1cmVzLAoKQXJlIHlvdSB1c2luZyBhbnkg
-ZGVkaWNhdGVkIHRvb2xzIGZvciB0aGlzIHB1cnBvc2UgYWxyZWFkeT8KCgo+IGl0IHdvdWxkIGJl
-IGhhcmQgZm9yIG1lIGNvbW1lbnQgb24gaG93IHRvIGhhbmRsZSB0aGVtLgoKSSBpbnNwZWN0ZWQg
-YWxzbyBhbm90aGVyIHNwZWNpZmljIHNvdXJjZSBmaWxlIGZvciBleGFtcGxlLgpodHRwczovL2dp
-dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0L2xpbnV4LW5leHQuZ2l0
-L3RyZWUvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvdGltZXJzL3Bvc2l4X3RpbWVycy5jP2lkqjFm
-YmU2MzNkMzAzNGY5ZjgzOGZmMTMzODdhZjA0NzcxZTY4ZTMxI244MQpodHRwczovL2VsaXhpci5m
-cmVlLWVsZWN0cm9ucy5jb20vbGludXgvdjQuMTQtcmM4L3NvdXJjZS90b29scy90ZXN0aW5nL3Nl
-bGZ0ZXN0cy90aW1lcnMvcG9zaXhfdGltZXJzLmMjTDc4CgpUaGlzIG9uZSBjb250YWlucyBzb21l
-IHBsYWNlcyAobGlrZSBpbiB0aGUgZnVuY3Rpb24g4oCcY2hlY2tfaXRpbWVy4oCdKQp3aGVyZSB0
-aGUgZXJyb3IgZGV0ZWN0aW9uIGFuZCBjb3JyZXNwb25kaW5nIGV4Y2VwdGlvbiBoYW5kbGluZyBp
-cyBpbmNvbXBsZXRlCnNvIGZhci4KT3RoZXIgc291cmNlIGZpbGVzIGNhbiBjb250YWluIHNpbWls
-YXIgdXBkYXRlIGNhbmRpZGF0ZXMuCgpUaGVyZSBhcmUgZGlmZmVyZW50IGRlc2lnbiBvcHRpb25z
-IGF2YWlsYWJsZSB0byBpbXByb3ZlIHRoZSBzb2Z0d2FyZQpzaXR1YXRpb24gaGVyZS4KV2hpY2gg
-ZGV2ZWxvcG1lbnQgZGlyZWN0aW9ucyBkbyB5b3UgcHJlZmVyPwoKUmVnYXJkcywKTWFya3VzCi0t
-ClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
-ZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9A
-dmdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5l
-bC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 16 Nov 2017 18:00:18 +0100
+
+Two update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Adjust five function calls together with a variable assignment
+  Use common error handling code in snd_nm256_probe()
+
+ sound/pci/nm256/nm256.c | 48 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 19 deletions(-)
+
+-- 
+2.15.0
+
