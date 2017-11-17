@@ -1,51 +1,40 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 20 Nov 2017 07:38:57 +0000
-Subject: Re: [PATCH] ASoC: bells: Use common error handling code in bells_set_bias_level_post()
-Message-Id: <CAJKOXPfHg4MeYr_WxxRRzF0BOBJLR8UNZb689tCLQgQFrONNww@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Nov 2017 14:50:55 +0000
+Subject: [PATCH] staging: rtl8822be: fix missing null check on dev_alloc_skb return
+Message-Id: <20171117145055.30430-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8c4e72ae-7606-a4c8-3d53-42364d7edbb2@users.sourceforge.net>
-In-Reply-To: <8c4e72ae-7606-a4c8-3d53-42364d7edbb2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, Ping-Ke Shih <pkshih@realtek.com>, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Nov 19, 2017 at 3:08 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 19 Nov 2017 15:00:22 +0100
->
-> * Add a jump target so that a specific error message is stored only once
->   at the end of this function implementation.
->
-> * Replace two calls of the macro "pr_err" by goto statements.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  sound/soc/samsung/bells.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/sound/soc/samsung/bells.c b/sound/soc/samsung/bells.c
-> index 34deba461ae1..fc9a71523b3e 100644
-> --- a/sound/soc/samsung/bells.c
-> +++ b/sound/soc/samsung/bells.c
-> @@ -120,18 +120,14 @@ static int bells_set_bias_level_post(struct snd_soc_card *card,
->         switch (level) {
->         case SND_SOC_BIAS_STANDBY:
->                 ret = snd_soc_codec_set_pll(codec, WM5102_FLL1, 0, 0, 0);
-> -               if (ret < 0) {
-> -                       pr_err("Failed to stop FLL: %d\n", ret);
-> -                       return ret;
-> -               }
-> +               if (ret < 0)
-> +                       goto report_failure;
->
+From: Colin Ian King <colin.king@canonical.com>
 
-No. The same as previously - just for error path code this makes code
-less readable.
+dev_alloc_skb can potentially return NULL, so add a null check to
+avoid a null pointer dereference on skb
 
-Best regards,
-Krzysztof
+Detected by CoverityScan, CID#1454558 ("Dereference on null return")
+
+Fixes: 7e5b796cde7e ("staging: r8822be: Add the driver code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtlwifi/rtl8822be/fw.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
+index f45487122517..483ea85943c3 100644
+--- a/drivers/staging/rtlwifi/rtl8822be/fw.c
++++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
+@@ -464,6 +464,8 @@ bool rtl8822b_halmac_cb_write_data_rsvd_page(struct rtl_priv *rtlpriv, u8 *buf,
+ 	int count;
+ 
+ 	skb = dev_alloc_skb(size);
++	if (!skb)
++		return false;
+ 	memcpy((u8 *)skb_put(skb, size), buf, size);
+ 
+ 	if (!_rtl8822be_send_bcn_or_cmd_packet(rtlpriv->hw, skb, BEACON_QUEUE))
+-- 
+2.14.1
+
