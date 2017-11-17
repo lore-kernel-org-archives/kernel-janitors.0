@@ -1,36 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 06 Nov 2017 21:53:31 +0000
-Subject: [PATCH 3/4] fsl/fman: Add a missing 'of_node_put()' call in an error handling path
-Message-Id: <410c7999411773529e5c020bc19c24ae8d78b91c.1510003551.git.christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 17 Nov 2017 18:19:08 +0000
+Subject: [PATCH] staging: ccree: fix incorrect indentation of break statement
+Message-Id: <20171117181908.2257-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1510003551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: madalin.bucur@nxp.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Gilad Ben-Yossef <gilad@benyossef.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-crypto@vger.kernel.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If 'of_phy_find_device()' fails, we must undo the previous 'of_node_get()'
-call, as done the the following error handling code.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The break statement is indented one level too many, fix this.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/freescale/fman/mac.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/ccree/ssi_aead.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index ca12e28129ed..86c1e69f44d6 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -821,6 +821,7 @@ static int mac_probe(struct platform_device *_of_dev)
- 		phy = of_phy_find_device(mac_dev->phy_node);
- 		if (!phy) {
- 			err = -EINVAL;
-+			of_node_put(mac_dev->phy_node);
- 			goto _return_of_get_parent;
- 		}
- 
+diff --git a/drivers/staging/ccree/ssi_aead.c b/drivers/staging/ccree/ssi_aead.c
+index ba0954e4d2e5..446da9d47cd9 100644
+--- a/drivers/staging/ccree/ssi_aead.c
++++ b/drivers/staging/ccree/ssi_aead.c
+@@ -2108,7 +2108,7 @@ static int ssi_aead_process(struct aead_request *req, enum drv_crypto_direction
+ 		if (ctx->cipher_mode = DRV_CIPHER_GCTR)
+ 			ssi_aead_gcm(req, desc, &seq_len);
+ #endif /*SSI_CC_HAS_AES_GCM*/
+-			break;
++		break;
+ #endif
+ 	default:
+ 		dev_err(dev, "Unsupported authenc (%d)\n", ctx->auth_mode);
 -- 
 2.14.1
 
