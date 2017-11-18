@@ -1,76 +1,28 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:11 +0000
-Subject: Applied "ASoC: cs42l73: Delete an error message for a failed memory allocation in cs42l73_i2c_probe(
-Message-Id: <E1eJOWl-0007CT-Qd@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 20:38:52 +0000
+Subject: [PATCH 0/2] ALSA-Digigram VX222: Fine-tuning for four function implementations
+Message-Id: <e961ecef-9f03-0c2a-ad64-64102bbc1389@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ac3d081a-377d-f016-bdb1-63dceb951281@users.sourceforge.net>
-In-Reply-To: <ac3d081a-377d-f016-bdb1-63dceb951281@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   ASoC: cs42l73: Delete an error message for a failed memory allocation in cs42l73_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From ddedd797943df21a2464420744d117e930a43af8 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 15:50:46 +0100
-Subject: [PATCH] ASoC: cs42l73: Delete an error message for a failed memory
- allocation in cs42l73_i2c_probe()
+Date: Sat, 18 Nov 2017 21:27:50 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Two update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Adjust ten function calls together with a variable assignment
+  Use common error handling code in two functions
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cs42l73.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/pci/vx222/vx222.c     | 53 +++++++++++++++++++++++++--------------------
+ sound/pci/vx222/vx222_ops.c | 19 +++++++++-------
+ 2 files changed, 41 insertions(+), 31 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
-index 3df2c473ab88..978cfbbad408 100644
---- a/sound/soc/codecs/cs42l73.c
-+++ b/sound/soc/codecs/cs42l73.c
-@@ -1307,10 +1307,9 @@ static int cs42l73_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				     sizeof(struct cs42l73_platform_data),
- 				GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev, "could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
-+
- 		if (i2c_client->dev.of_node) {
- 			if (of_property_read_u32(i2c_client->dev.of_node,
- 				"chgfreq", &val32) >= 0)
 -- 
 2.15.0
 
