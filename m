@@ -1,145 +1,118 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 21:20:02 +0000
-Subject: [PATCH 3/3] ALSA: rme32: Improve unlocking of an IRQ in two functions
-Message-Id: <5aae0bad-92ba-8d01-2379-e2d80ab180b3@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 20:40:55 +0000
+Subject: [PATCH 2/2] ALSA: vx222: Use common error handling code in two functions
+Message-Id: <7d7de279-baaa-d41c-d5d3-af8eb3fc5948@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <67820e63-aed9-c775-8417-b0f531a9b305@users.sourceforge.net>
-In-Reply-To: <67820e63-aed9-c775-8417-b0f531a9b305@users.sourceforge.net>
+References: <e961ecef-9f03-0c2a-ad64-64102bbc1389@users.sourceforge.net>
+In-Reply-To: <e961ecef-9f03-0c2a-ad64-64102bbc1389@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 21:51:54 +0100
+Date: Sat, 18 Nov 2017 21:23:27 +0100
 
-* Add jump targets so that a call of the function "spin_unlock_irq"
-  is stored only twice in these function implementations.
-
-* Replace nine calls by goto statements.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/rme32.c | 65 +++++++++++++++++++++++++++----------------------------
- 1 file changed, 32 insertions(+), 33 deletions(-)
+ sound/pci/vx222/vx222.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/sound/pci/rme32.c b/sound/pci/rme32.c
-index 9e6e0fe3a285..81de4f8f2ca3 100644
---- a/sound/pci/rme32.c
-+++ b/sound/pci/rme32.c
-@@ -688,28 +688,24 @@ snd_rme32_playback_hw_params(struct snd_pcm_substream *substream,
- 	    (rate = snd_rme32_capture_getrate(rme32, &dummy)) > 0) {
- 		/* AutoSync */
- 		if ((int)params_rate(params) != rate) {
--			spin_unlock_irq(&rme32->lock);
--			return -EIO;
-+			err = -EIO;
-+			goto unlock;
- 		}
- 	} else {
- 		err = snd_rme32_playback_setrate(rme32, params_rate(params));
--		if (err < 0) {
--			spin_unlock_irq(&rme32->lock);
--			return err;
--		}
-+		if (err < 0)
-+			goto unlock;
- 	}
+diff --git a/sound/pci/vx222/vx222.c b/sound/pci/vx222/vx222.c
+index 1f866a810a98..672b8f190777 100644
+--- a/sound/pci/vx222/vx222.c
++++ b/sound/pci/vx222/vx222.c
+@@ -163,10 +163,9 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
+ 	vx->pci = pci;
  
- 	err = snd_rme32_setformat(rme32, params_format(params));
+ 	err = pci_request_regions(pci, CARD_NAME);
 -	if (err < 0) {
--		spin_unlock_irq(&rme32->lock);
+-		snd_vx222_free(chip);
 -		return err;
 -	}
 +	if (err < 0)
-+		goto unlock;
++		goto free_sound_chip;
++
+ 	for (i = 0; i < 2; i++)
+ 		vx->port[i] = pci_resource_start(pci, i + 1);
  
- 	snd_rme32_setframelog(rme32, params_channels(params), 1);
- 	if (rme32->capture_periodsize != 0) {
- 		if (params_period_size(params) << rme32->playback_frlog != rme32->capture_periodsize) {
--			spin_unlock_irq(&rme32->lock);
--			return -EBUSY;
-+			err = -EBUSY;
-+			goto unlock;
- 		}
+@@ -174,19 +173,21 @@ static int snd_vx222_create(struct snd_card *card, struct pci_dev *pci,
+ 				 snd_vx_threaded_irq_handler, IRQF_SHARED,
+ 				 KBUILD_MODNAME, chip)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_vx222_free(chip);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_sound_chip;
  	}
- 	rme32->playback_periodsize = params_period_size(params) << rme32->playback_frlog;
-@@ -722,6 +718,10 @@ snd_rme32_playback_hw_params(struct snd_pcm_substream *substream,
- 	spin_unlock_irq(&rme32->lock);
+ 	chip->irq = pci->irq;
  
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+-	if (err < 0) {
+-		snd_vx222_free(chip);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ 	*rchip = vx;
  	return 0;
 +
-+unlock:
-+	spin_unlock_irq(&rme32->lock);
++free_sound_chip:
++	snd_vx222_free(chip);
 +	return err;
  }
  
- static int
-@@ -749,27 +749,20 @@ snd_rme32_capture_hw_params(struct snd_pcm_substream *substream,
- 	writel(rme32->wcreg, rme32->iobase + RME32_IO_CONTROL_REGISTER);
  
- 	err = snd_rme32_setformat(rme32, params_format(params));
--	if (err < 0) {
--		spin_unlock_irq(&rme32->lock);
--		return err;
--	}
-+	if (err < 0)
-+		goto unlock;
-+
- 	err = snd_rme32_playback_setrate(rme32, params_rate(params));
--	if (err < 0) {
--		spin_unlock_irq(&rme32->lock);
--		return err;
--	}
-+	if (err < 0)
-+		goto unlock;
-+
- 	rate = snd_rme32_capture_getrate(rme32, &isadat);
--	if (rate > 0) {
--                if ((int)params_rate(params) != rate) {
--			spin_unlock_irq(&rme32->lock);
--                        return -EIO;                    
--                }
--                if ((isadat && runtime->hw.channels_min = 2) ||
--                    (!isadat && runtime->hw.channels_min = 8)) {
--			spin_unlock_irq(&rme32->lock);
--                        return -EIO;
--                }
--	}
-+	if (rate > 0 &&
-+	    ((int)params_rate(params) != rate ||
-+	     (isadat && runtime->hw.channels_min = 2) ||
-+	     (!isadat && runtime->hw.channels_min = 8)))
-+		goto e_io;
-+
- 	/* AutoSync off for recording */
- 	rme32->wcreg &= ~RME32_WCR_AUTOSYNC;
- 	writel(rme32->wcreg, rme32->iobase + RME32_IO_CONTROL_REGISTER);
-@@ -778,8 +771,8 @@ snd_rme32_capture_hw_params(struct snd_pcm_substream *substream,
- 	if (rme32->playback_periodsize != 0) {
- 		if (params_period_size(params) << rme32->capture_frlog ! 		    rme32->playback_periodsize) {
--			spin_unlock_irq(&rme32->lock);
--			return -EBUSY;
-+			err = -EBUSY;
-+			goto unlock;
- 		}
+@@ -225,10 +226,9 @@ static int snd_vx222_probe(struct pci_dev *pci,
  	}
- 	rme32->capture_periodsize @@ -787,6 +780,12 @@ snd_rme32_capture_hw_params(struct snd_pcm_substream *substream,
- 	spin_unlock_irq(&rme32->lock);
  
+ 	err = snd_vx222_create(card, pci, hw, &vx);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	card->private_data = vx;
+ 	vx->core.ibl.size = ibl[dev];
+ 
+@@ -242,20 +242,20 @@ static int snd_vx222_probe(struct pci_dev *pci,
+ #endif
+ 
+ 	err = snd_vx_setup_firmware(&vx->core);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
  	return 0;
 +
-+e_io:
-+	err = -EIO;
-+unlock:
-+	spin_unlock_irq(&rme32->lock);
++free_card:
++	snd_card_free(card);
 +	return err;
  }
  
- static int snd_rme32_pcm_hw_free(struct snd_pcm_substream *substream)
+ static void snd_vx222_remove(struct pci_dev *pci)
 -- 
 2.15.0
 
