@@ -1,97 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 17:48:23 +0000
-Subject: [PATCH 3/3] ALSA: ens1370: Use common error handling code in snd_ensoniq_create()
-Message-Id: <0cec4a4f-5ba5-d88b-ae04-b2a4be948dfe@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 15:30:16 +0000
+Subject: [PATCH 0/3] ALSA-S3 SonicVibes: Fine-tuning for five function implementations
+Message-Id: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8bcf1ada-f44c-cb83-0890-adc8ae8edda0@users.sourceforge.net>
-In-Reply-To: <8bcf1ada-f44c-cb83-0890-adc8ae8edda0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 18:28:30 +0100
+Date: Sat, 18 Nov 2017 16:25:43 +0100
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/ens1370.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+Markus Elfring (3):
+  Adjust 15 function calls together with a variable assignment
+  Use common error handling code in snd_sonic_probe()
+  Use common error handling code in snd_sonicvibes_create()
 
-diff --git a/sound/pci/ens1370.c b/sound/pci/ens1370.c
-index 55c5173036d3..4b4ca772cafb 100644
---- a/sound/pci/ens1370.c
-+++ b/sound/pci/ens1370.c
-@@ -2097,8 +2097,8 @@ static int snd_ensoniq_create(struct snd_card *card,
- 		return err;
- 	ensoniq = kzalloc(sizeof(*ensoniq), GFP_KERNEL);
- 	if (ensoniq = NULL) {
--		pci_disable_device(pci);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto disable_device;
- 	}
- 	spin_lock_init(&ensoniq->reg_lock);
- 	mutex_init(&ensoniq->src_mutex);
-@@ -2108,23 +2108,20 @@ static int snd_ensoniq_create(struct snd_card *card,
- 	err = pci_request_regions(pci, "Ensoniq AudioPCI");
- 	if (err < 0) {
- 		kfree(ensoniq);
--		pci_disable_device(pci);
--		return err;
-+		goto disable_device;
- 	}
- 	ensoniq->port = pci_resource_start(pci, 0);
- 	if (request_irq(pci->irq, snd_audiopci_interrupt, IRQF_SHARED,
- 			KBUILD_MODNAME, ensoniq)) {
- 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_ensoniq_free(ensoniq);
--		return -EBUSY;
-+		goto e_busy;
- 	}
- 	ensoniq->irq = pci->irq;
- #ifdef CHIP1370
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				16, &ensoniq->dma_bug) < 0) {
- 		dev_err(card->dev, "unable to allocate space for phantom area - dma_bug\n");
--		snd_ensoniq_free(ensoniq);
--		return -EBUSY;
-+		goto e_busy;
- 	}
- #endif
- 	pci_set_master(pci);
-@@ -2150,15 +2147,23 @@ static int snd_ensoniq_create(struct snd_card *card,
- 
- 	snd_ensoniq_chip_init(ensoniq);
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, ensoniq, &ops);
--	if (err < 0) {
--		snd_ensoniq_free(ensoniq);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	snd_ensoniq_proc_init(ensoniq);
- 
- 	*rensoniq = ensoniq;
- 	return 0;
-+
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
-+
-+e_busy:
-+	err = -EBUSY;
-+free_sound_chip:
-+	snd_ensoniq_free(ensoniq);
-+	return err;
- }
- 
- /*
+ sound/pci/sonicvibes.c | 144 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 79 insertions(+), 65 deletions(-)
+
 -- 
 2.15.0
 
