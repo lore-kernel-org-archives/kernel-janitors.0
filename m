@@ -1,52 +1,179 @@
-From: "M,Shakour Rosarita" <hassantara789@gmail.com>
-Date: Mon, 13 Nov 2017 12:07:07 +0000
-Subject: Hello Dear...
-Message-Id: <CAMyxZDECRE_bgT2xn+wyWfvS03e=G37iCxmqp_0P-a7MOaMxGA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 12:52:41 +0000
+Subject: [PATCH 1/2] ALSA: rme96: Adjust 11 function calls together with a variable assignment
+Message-Id: <f25f087a-71d5-4bdb-1847-d0077803b899@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7b7da9a6-64e1-bde5-99aa-de21f0665323@users.sourceforge.net>
+In-Reply-To: <7b7da9a6-64e1-bde5-99aa-de21f0665323@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello Dear...
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 13:23:20 +0100
 
-I know that this message will come to you as a surprise. I hoped that
-you will not expose or betray this trust and confident that I am about
-to repose on you, my name is M, Shakour Rosarita. I am 19 years old
-Girl, female, from Tartu Syria, (never married) 61 kg, white in
-complexion, and I am currently living in the refugee camp here in
-Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
-renowned businessman and owner of Natour Petrol Station in Syria, he
-was killed in a stampede riot in Tartu, Syria.
-When I got the news about my parents. I fled to a nearby country
-Jordan before I joined a ferry to Africa and came to Abidjan capital
-city Ivory Coast West Africa find safety here.
-I came in 2015 to Abidjan and I now live in refugee camps here as
-refugees are allowed freely to enter here without, My late father
-deposited (US$6.200.000.00m) My late father kept the money at the bank
-of Africa, I want you to help me transfer the money to your hand so
-that you will help me bring me into your country for my continue
-education.
+The script "checkpatch.pl" pointed information out like the following.
 
-I sent my pictures here for you to see. Who I am seriously looking for
-a good-person in my life, so I want to hear from you soon and learn
-more about you.
+ERROR: do not use assignment in if condition
 
-I am an open-minded and friendly girl to share a good time with you
-and have fun and enjoy on the go, bird watching, the rest of our
-lives. My Hobbies, tourism books, dance, music, soccer, tennis,
-swimming and cinema.
-I would just think about you, including your dose and doesn=E2=80=99t .I
-believe we will do well together, and live like one family.
-Thank you and God bless you, for you in your promise to help me here,
-looking forward to your reply by the grace of God and have a good day.
-I hope you send me your photos as well? I await your next reply in
-faith please reply through my private email at
-(mshakourrosarita22@gmail.com):
-Thanks.
-Ms Rosarita
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thus fix affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/rme96.c | 78 ++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 46 insertions(+), 32 deletions(-)
+
+diff --git a/sound/pci/rme96.c b/sound/pci/rme96.c
+index dcfa4d7a73e2..fd8a62ceffde 100644
+--- a/sound/pci/rme96.c
++++ b/sound/pci/rme96.c
+@@ -1065,29 +1065,33 @@ snd_rme96_capture_hw_params(struct snd_pcm_substream *substream,
+ 	runtime->dma_bytes = RME96_BUFFER_SIZE;
+ 
+ 	spin_lock_irq(&rme96->lock);
+-	if ((err = snd_rme96_capture_setformat(rme96, params_format(params))) < 0) {
++	err = snd_rme96_capture_setformat(rme96, params_format(params));
++	if (err < 0) {
+ 		spin_unlock_irq(&rme96->lock);
+ 		return err;
+ 	}
+ 	if (snd_rme96_getinputtype(rme96) = RME96_INPUT_ANALOG) {
+-		if ((err = snd_rme96_capture_analog_setrate(rme96,
+-							    params_rate(params))) < 0)
+-		{
++		err = snd_rme96_capture_analog_setrate(rme96,
++						       params_rate(params));
++		if (err < 0) {
+ 			spin_unlock_irq(&rme96->lock);
+ 			return err;
+ 		}
+-	} else if ((rate = snd_rme96_capture_getrate(rme96, &isadat)) > 0) {
+-                if ((int)params_rate(params) != rate) {
+-			spin_unlock_irq(&rme96->lock);
+-			return -EIO;                    
+-                }
+-                if ((isadat && runtime->hw.channels_min = 2) ||
+-                    (!isadat && runtime->hw.channels_min = 8))
+-                {
+-			spin_unlock_irq(&rme96->lock);
+-			return -EIO;
+-                }
+-        }
++	} else {
++		rate = snd_rme96_capture_getrate(rme96, &isadat);
++		if (rate > 0) {
++			if ((int)params_rate(params) != rate) {
++				spin_unlock_irq(&rme96->lock);
++				return -EIO;
++			}
++			if ((isadat && runtime->hw.channels_min = 2) ||
++			    (!isadat && runtime->hw.channels_min = 8)) {
++				spin_unlock_irq(&rme96->lock);
++				return -EIO;
++			}
++		}
++	}
++
+ 	snd_rme96_setframelog(rme96, params_channels(params), 0);
+ 	if (rme96->playback_periodsize != 0) {
+ 		if (params_period_size(params) << rme96->capture_frlog !@@ -1305,7 +1309,9 @@ snd_rme96_capture_adat_open(struct snd_pcm_substream *substream)
+                    expension cards AEB4/8-I are RME96_INPUT_INTERNAL */
+                 return -EIO;
+         }
+-        if ((rate = snd_rme96_capture_getrate(rme96, &isadat)) > 0) {
++
++	rate = snd_rme96_capture_getrate(rme96, &isadat);
++	if (rate > 0) {
+                 if (!isadat) {
+                         return -EIO;
+                 }
+@@ -1626,10 +1632,12 @@ snd_rme96_create(struct rme96 *rme96)
+ 	rme96->irq = -1;
+ 	spin_lock_init(&rme96->lock);
+ 
+-	if ((err = pci_enable_device(pci)) < 0)
++	err = pci_enable_device(pci);
++	if (err < 0)
+ 		return err;
+ 
+-	if ((err = pci_request_regions(pci, "RME96")) < 0)
++	err = pci_request_regions(pci, "RME96");
++	if (err < 0)
+ 		return err;
+ 	rme96->port = pci_resource_start(rme96->pci, 0);
+ 
+@@ -1652,11 +1660,11 @@ snd_rme96_create(struct rme96 *rme96)
+ 	pci_read_config_byte(pci, 8, &rme96->rev);	
+ 	
+ 	/* set up ALSA pcm device for S/PDIF */
+-	if ((err = snd_pcm_new(rme96->card, "Digi96 IEC958", 0,
+-			       1, 1, &rme96->spdif_pcm)) < 0)
+-	{
++	err = snd_pcm_new(rme96->card, "Digi96 IEC958",
++			  0, 1, 1, &rme96->spdif_pcm);
++	if (err < 0)
+ 		return err;
+-	}
++
+ 	rme96->spdif_pcm->private_data = rme96;
+ 	rme96->spdif_pcm->private_free = snd_rme96_free_spdif_pcm;
+ 	strcpy(rme96->spdif_pcm->name, "Digi96 IEC958");
+@@ -1670,11 +1678,11 @@ snd_rme96_create(struct rme96 *rme96)
+ 		/* ADAT is not available on the base model */
+ 		rme96->adat_pcm = NULL;
+ 	} else {
+-		if ((err = snd_pcm_new(rme96->card, "Digi96 ADAT", 1,
+-				       1, 1, &rme96->adat_pcm)) < 0)
+-		{
++		err = snd_pcm_new(rme96->card, "Digi96 ADAT",
++				  1, 1, 1, &rme96->adat_pcm);
++		if (err < 0)
+ 			return err;
+-		}		
++
+ 		rme96->adat_pcm->private_data = rme96;
+ 		rme96->adat_pcm->private_free = snd_rme96_free_adat_pcm;
+ 		strcpy(rme96->adat_pcm->name, "Digi96 ADAT");
+@@ -1723,9 +1731,9 @@ snd_rme96_create(struct rme96 *rme96)
+ 	}
+ 	
+ 	/* init switch interface */
+-	if ((err = snd_rme96_create_switches(rme96->card, rme96)) < 0) {
++	err = snd_rme96_create_switches(rme96->card, rme96);
++	if (err < 0)
+ 		return err;
+-	}
+ 
+         /* init proc interface */
+ 	snd_rme96_proc_init(rme96);
+@@ -2361,16 +2369,22 @@ snd_rme96_create_switches(struct snd_card *card,
+ 	struct snd_kcontrol *kctl;
+ 
+ 	for (idx = 0; idx < 7; idx++) {
+-		if ((err = snd_ctl_add(card, kctl = snd_ctl_new1(&snd_rme96_controls[idx], rme96))) < 0)
++		kctl = snd_ctl_new1(&snd_rme96_controls[idx], rme96);
++		err = snd_ctl_add(card, kctl);
++		if (err < 0)
+ 			return err;
+ 		if (idx = 1)	/* IEC958 (S/PDIF) Stream */
+ 			rme96->spdif_ctl = kctl;
+ 	}
+ 
+ 	if (RME96_HAS_ANALOG_OUT(rme96)) {
+-		for (idx = 7; idx < 10; idx++)
+-			if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_rme96_controls[idx], rme96))) < 0)
++		for (idx = 7; idx < 10; idx++) {
++			err = snd_ctl_add(card,
++					  snd_ctl_new1(&snd_rme96_controls[idx],
++						       rme96));
++			if (err < 0)
+ 				return err;
++		}
+ 	}
+ 	
+ 	return 0;
+-- 
+2.15.0
+
