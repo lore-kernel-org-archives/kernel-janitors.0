@@ -1,21 +1,40 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 29 Nov 2017 14:28:35 +0000
-Subject: Re: [PATCH] dmaengine: ioat: Fix error handling path
-Message-Id: <20171129141634.GI32417@localhost>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Nov 2017 13:27:23 +0000
+Subject: [PATCH] mtd: onenand: Fix an error handling path in 's3c_onenand_probe(()'
+Message-Id: <20171118132723.24785-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171117213753.21050-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171117213753.21050-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dan.j.williams@intel.com, dave.jiang@intel.com, bianpan2016@163.com, arvind.yadav.cs@gmail.com, kjlx@templeofstupid.com, geliangtang@gmail.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Nov 17, 2017 at 10:37:53PM +0100, Christophe JAILLET wrote:
-> If the last test in 'ioat_dma_self_test()' fails, we must release all
-> the allocated resources and not just part of them.
+If 'platform_get_resource()' fails, we have to go through the error
+handling path to release some resources.
 
-Applied, thanks
+The unreachable 'goto ahb_resource_failed' is also wrong here and we should
+go to 'resource_failed' instead.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mtd/onenand/samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index af0ac1a7bf8f..164ebe2b1137 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -872,8 +872,8 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!r) {
+ 		dev_err(&pdev->dev, "no memory resource defined\n");
+-		return -ENOENT;
+-		goto ahb_resource_failed;
++		err = -ENOENT;
++		goto resource_failed;
+ 	}
+ 
+ 	onenand->base_res = request_mem_region(r->start, resource_size(r),
 -- 
-~Vinod
+2.14.1
+
