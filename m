@@ -1,18 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 19:50:33 +0000
-Subject: [PATCH 2/2] ALSA: intel8x0: Use common error handling code in two functions
-Message-Id: <0abfdb55-de9c-398e-772b-77c3c3b3f7f3@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 19:12:33 +0000
+Subject: [PATCH 2/3] ALSA: trident: Use common error handling code in two functions
+Message-Id: <5fc2dcb3-3016-5a0a-62f4-5e873252677e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <981b2716-2828-6478-46b3-5f8f3c36db46@users.sourceforge.net>
-In-Reply-To: <981b2716-2828-6478-46b3-5f8f3c36db46@users.sourceforge.net>
+References: <498d6d73-2c62-178a-3c7a-b0fcb092d81e@users.sourceforge.net>
+In-Reply-To: <498d6d73-2c62-178a-3c7a-b0fcb092d81e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Laura Abbott <labbott@redhat.com>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 20:30:46 +0100
+Date: Sat, 18 Nov 2017 19:29:35 +0100
 
 Add jump targets so that a bit of exception handling can be better reused
 at the end of these functions.
@@ -21,115 +21,18 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/intel8x0.c | 74 +++++++++++++++++++++++++++-------------------------
- 1 file changed, 38 insertions(+), 36 deletions(-)
+ sound/pci/trident/trident.c      | 54 +++++++++++++++++++---------------------
+ sound/pci/trident/trident_main.c | 41 +++++++++++++++---------------
+ 2 files changed, 47 insertions(+), 48 deletions(-)
 
-diff --git a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
-index 2d7e0fb163f9..7d31012cdf90 100644
---- a/sound/pci/intel8x0.c
-+++ b/sound/pci/intel8x0.c
-@@ -3051,8 +3051,8 @@ static int snd_intel8x0_create(struct snd_card *card,
- 
- 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
- 	if (chip = NULL) {
--		pci_disable_device(pci);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto disable_device;
- 	}
- 	spin_lock_init(&chip->reg_lock);
- 	chip->device_type = device_type;
-@@ -3075,8 +3075,7 @@ static int snd_intel8x0_create(struct snd_card *card,
- 	err = pci_request_regions(pci, card->shortname);
- 	if (err < 0) {
- 		kfree(chip);
--		pci_disable_device(pci);
--		return err;
-+		goto disable_device;
- 	}
- 
- 	if (device_type = DEVICE_ALI) {
-@@ -3091,8 +3090,7 @@ static int snd_intel8x0_create(struct snd_card *card,
- 		chip->addr = pci_iomap(pci, 0, 0);
- 	if (!chip->addr) {
- 		dev_err(card->dev, "AC'97 space ioremap problem\n");
--		snd_intel8x0_free(chip);
--		return -EIO;
-+		goto e_io;
- 	}
- 	if (pci_resource_flags(pci, 3) & IORESOURCE_MEM) /* ICH4 */
- 		chip->bmaddr = pci_iomap(pci, 3, 0);
-@@ -3102,8 +3100,7 @@ static int snd_intel8x0_create(struct snd_card *card,
-  port_inited:
- 	if (!chip->bmaddr) {
- 		dev_err(card->dev, "Controller space ioremap problem\n");
--		snd_intel8x0_free(chip);
--		return -EIO;
-+		goto e_io;
- 	}
- 	chip->bdbars_count = bdbars[device_type];
- 
-@@ -3143,9 +3140,9 @@ static int snd_intel8x0_create(struct snd_card *card,
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				chip->bdbars_count * sizeof(u32) * ICH_MAX_FRAGS * 2,
- 				&chip->bdbars) < 0) {
--		snd_intel8x0_free(chip);
- 		dev_err(card->dev, "cannot allocate buffer descriptors\n");
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto free_sound_chip;
- 	}
- 	/* tables must be aligned to 8 bytes here, but the kernel pages
- 	   are much bigger, so we don't care (on i386) */
-@@ -3191,28 +3188,34 @@ static int snd_intel8x0_create(struct snd_card *card,
- 		chip->codec_isr_bits |= chip->codec_bit[i];
- 
- 	err = snd_intel8x0_chip_init(chip, 1);
--	if (err < 0) {
--		snd_intel8x0_free(chip);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	/* request irq after initializaing int_sta_mask, etc */
- 	if (request_irq(pci->irq, snd_intel8x0_interrupt,
- 			IRQF_SHARED, KBUILD_MODNAME, chip)) {
- 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_intel8x0_free(chip);
--		return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
- 	}
- 	chip->irq = pci->irq;
- 
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
--	if (err < 0) {
--		snd_intel8x0_free(chip);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 
- 	*r_intel8x0 = chip;
- 	return 0;
-+
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
-+
-+e_io:
-+	err = -EIO;
-+free_sound_chip:
-+	snd_intel8x0_free(chip);
-+	return err;
- }
- 
- static struct shortname_table {
-@@ -3314,22 +3317,18 @@ static int snd_intel8x0_probe(struct pci_dev *pci,
- 	}
- 
- 	err = snd_intel8x0_create(card, pci, pci_id->driver_data, &chip);
+diff --git a/sound/pci/trident/trident.c b/sound/pci/trident/trident.c
+index fd35f7826845..830402c32395 100644
+--- a/sound/pci/trident/trident.c
++++ b/sound/pci/trident/trident.c
+@@ -100,10 +100,9 @@ static int snd_trident_probe(struct pci_dev *pci,
+ 				 = TRIDENT_DEVICE_ID_SI7018 ? 1 : 2,
+ 				 wavetable_size[dev],
+ 				 &trident);
 -	if (err < 0) {
 -		snd_card_free(card);
 -		return err;
@@ -137,9 +40,13 @@ index 2d7e0fb163f9..7d31012cdf90 100644
 +	if (err < 0)
 +		goto free_card;
 +
- 	card->private_data = chip;
+ 	card->private_data = trident;
  
- 	err = snd_intel8x0_mixer(chip, ac97_clock, ac97_quirk);
+ 	switch (trident->device) {
+@@ -130,47 +129,46 @@ static int snd_trident_probe(struct pci_dev *pci,
+ 		card->shortname, trident->port, trident->irq);
+ 
+ 	err = snd_trident_pcm(trident, pcm_dev++);
 -	if (err < 0) {
 -		snd_card_free(card);
 -		return err;
@@ -147,18 +54,47 @@ index 2d7e0fb163f9..7d31012cdf90 100644
 +	if (err < 0)
 +		goto free_card;
 +
- 	err = snd_intel8x0_pcm(chip);
--	if (err < 0) {
+ 	switch (trident->device) {
+ 	case TRIDENT_DEVICE_ID_DX:
+ 	case TRIDENT_DEVICE_ID_NX:
+ 		err = snd_trident_foldback_pcm(trident, pcm_dev++);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
+ 		break;
+ 	}
+ 	if (trident->device = TRIDENT_DEVICE_ID_NX || trident->device = TRIDENT_DEVICE_ID_SI7018) {
+ 		err = snd_trident_spdif_pcm(trident, pcm_dev++);
+-		if (err < 0) {
+-			snd_card_free(card);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_card;
+ 	}
+-	if (trident->device != TRIDENT_DEVICE_ID_SI7018 &&
+-	    (err = snd_mpu401_uart_new(card, 0, MPU401_HW_TRID4DWAVE,
+-				       trident->midi_port,
+-				       MPU401_INFO_INTEGRATED |
+-				       MPU401_INFO_IRQ_HOOK,
+-				       -1, &trident->rmidi)) < 0) {
 -		snd_card_free(card);
 -		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 	
- 	snd_intel8x0_proc_init(chip);
- 
-@@ -3347,12 +3346,15 @@ static int snd_intel8x0_probe(struct pci_dev *pci,
++
++	if (trident->device != TRIDENT_DEVICE_ID_SI7018) {
++		err = snd_mpu401_uart_new(card, 0, MPU401_HW_TRID4DWAVE,
++					  trident->midi_port,
++					  MPU401_INFO_INTEGRATED |
++					  MPU401_INFO_IRQ_HOOK,
++					  -1, &trident->rmidi);
++		if (err < 0)
++			goto free_card;
  	}
+ 
+ 	snd_trident_create_gameport(trident);
  
  	err = snd_card_register(card);
 -	if (err < 0) {
@@ -169,6 +105,7 @@ index 2d7e0fb163f9..7d31012cdf90 100644
 +		goto free_card;
 +
  	pci_set_drvdata(pci, card);
+ 	dev++;
  	return 0;
 +
 +free_card:
@@ -176,7 +113,99 @@ index 2d7e0fb163f9..7d31012cdf90 100644
 +	return err;
  }
  
- static void snd_intel8x0_remove(struct pci_dev *pci)
+ static void snd_trident_remove(struct pci_dev *pci)
+diff --git a/sound/pci/trident/trident_main.c b/sound/pci/trident/trident_main.c
+index 88d666cb3300..9843a61a8ead 100644
+--- a/sound/pci/trident/trident_main.c
++++ b/sound/pci/trident/trident_main.c
+@@ -3587,14 +3587,14 @@ int snd_trident_create(struct snd_card *card,
+ 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(30)) < 0) {
+ 		dev_err(card->dev,
+ 			"architecture does not support 30bit PCI busmaster DMA\n");
+-		pci_disable_device(pci);
+-		return -ENXIO;
++		err = -ENXIO;
++		goto disable_device;
+ 	}
+ 	
+ 	trident = kzalloc(sizeof(*trident), GFP_KERNEL);
+ 	if (trident = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
+ 	}
+ 	trident->device = (pci->vendor << 16) | pci->device;
+ 	trident->card = card;
+@@ -3617,16 +3617,15 @@ int snd_trident_create(struct snd_card *card,
+ 	err = pci_request_regions(pci, "Trident Audio");
+ 	if (err < 0) {
+ 		kfree(trident);
+-		pci_disable_device(pci);
+-		return err;
++		goto disable_device;
+ 	}
+ 	trident->port = pci_resource_start(pci, 0);
+ 
+ 	if (request_irq(pci->irq, snd_trident_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, trident)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_trident_free(trident);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto free_sound_chip;
+ 	}
+ 	trident->irq = pci->irq;
+ 
+@@ -3635,10 +3634,8 @@ int snd_trident_create(struct snd_card *card,
+ 	trident->tlb.buffer.area = NULL;
+ 	if (trident->device = TRIDENT_DEVICE_ID_NX) {
+ 		err = snd_trident_tlb_alloc(trident);
+-		if (err < 0) {
+-			snd_trident_free(trident);
+-			return err;
+-		}
++		if (err < 0)
++			goto free_sound_chip;
+ 	}
+ 
+ 	trident->spdif_bits = trident->spdif_pcm_bits = SNDRV_PCM_DEFAULT_CON_SPDIF;
+@@ -3658,16 +3655,12 @@ int snd_trident_create(struct snd_card *card,
+ 		snd_BUG();
+ 		break;
+ 	}
+-	if (err < 0) {
+-		snd_trident_free(trident);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, trident, &ops);
+-	if (err < 0) {
+-		snd_trident_free(trident);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_sound_chip;
+ 
+ 	err = snd_trident_mixer(trident, pcm_spdif_device);
+ 	if (err < 0)
+@@ -3693,6 +3686,14 @@ int snd_trident_create(struct snd_card *card,
+ 	snd_trident_proc_init(trident);
+ 	*rtrident = trident;
+ 	return 0;
++
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++free_sound_chip:
++	snd_trident_free(trident);
++	return err;
+ }
+ 
+ /*---------------------------------------------------------------------------
 -- 
 2.15.0
 
