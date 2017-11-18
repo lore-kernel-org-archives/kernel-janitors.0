@@ -1,43 +1,124 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 14 Nov 2017 17:01:45 +0000
-Subject: [PATCH] rtlwifi: rtl818x: remove redundant check for cck_power > 15
-Message-Id: <20171114170145.3987-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 15:32:16 +0000
+Subject: [PATCH 2/3] ALSA: sonicvibes: Use common error handling code in snd_sonic_probe()
+Message-Id: <89664efb-8306-cd4f-a217-bf0a2ddba142@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
+In-Reply-To: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hin-Tak Leung <htl10@users.sourceforge.net>, Larry Finger <Larry.Finger@lwfinger.net>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 16:10:34 +0100
 
-cck_poweri cannot be greated than 15 as is derived from the bottom 4 bits
-from riv->channels[channel - 1].hw_value & 0xf.  Hence the check for it
-being greater than 15 is redundant and can be removed.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Detected by CoverityScan, CID#744303 ("Logically dead code")
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/realtek/rtl818x/rtl8187/rtl8225.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ sound/pci/sonicvibes.c | 54 ++++++++++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/rtl8225.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/rtl8225.c
-index e6668ffb77e6..ff0971f1e2c8 100644
---- a/drivers/net/wireless/realtek/rtl818x/rtl8187/rtl8225.c
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/rtl8225.c
-@@ -688,10 +688,7 @@ static void rtl8225z2_b_rf_set_tx_power(struct ieee80211_hw *dev, int channel)
- 	cck_power = priv->channels[channel - 1].hw_value & 0xF;
- 	ofdm_power = priv->channels[channel - 1].hw_value >> 4;
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index 7c238d908031..75fc64839df0 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1478,17 +1478,15 @@ static int snd_sonic_probe(struct pci_dev *pci,
+ 	for (idx = 0; idx < 5; idx++) {
+ 		if (pci_resource_start(pci, idx) = 0 ||
+ 		    !(pci_resource_flags(pci, idx) & IORESOURCE_IO)) {
+-			snd_card_free(card);
+-			return -ENODEV;
++			err = -ENODEV;
++			goto free_card;
+ 		}
+ 	}
  
--	if (cck_power > 15)
--		cck_power = (priv->hw_rev = RTL8187BvB) ? 15 : 22;
--	else
--		cck_power += (priv->hw_rev = RTL8187BvB) ? 0 : 7;
-+	cck_power += (priv->hw_rev = RTL8187BvB) ? 0 : 7;
- 	cck_power += priv->txpwr_base & 0xF;
- 	cck_power = min(cck_power, (u8)35);
+ 	err = snd_sonicvibes_create(card, pci, reverb[dev] ? 1 : 0,
+ 				    mge[dev] ? 1 : 0, &sonic);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
  
+ 	strcpy(card->driver, "SonicVibes");
+ 	strcpy(card->shortname, "S3 SonicVibes");
+@@ -1499,48 +1497,44 @@ static int snd_sonic_probe(struct pci_dev *pci,
+ 		sonic->irq);
+ 
+ 	err = snd_sonicvibes_pcm(sonic, 0);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_sonicvibes_mixer(sonic);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_mpu401_uart_new(card, 0, MPU401_HW_SONICVIBES,
+ 				  sonic->midi_port,
+ 				  MPU401_INFO_INTEGRATED | MPU401_INFO_IRQ_HOOK,
+ 				  -1, &midi_uart);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	snd_sonicvibes_midi(sonic, midi_uart);
+ 	err = snd_opl3_create(card, sonic->synth_port,
+ 			      sonic->synth_port + 2,
+ 			      OPL3_HW_OPL3_SV, 1, &opl3);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
++
+ 	err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 
+ 	snd_sonicvibes_create_gameport(sonic);
+ 
+ 	err = snd_card_register(card);
+-	if (err < 0) {
+-		snd_card_free(card);
+-		return err;
+-	}
++	if (err < 0)
++		goto free_card;
+ 	
+ 	pci_set_drvdata(pci, card);
+ 	dev++;
+ 	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
+ }
+ 
+ static void snd_sonic_remove(struct pci_dev *pci)
 -- 
-2.14.1
+2.15.0
 
