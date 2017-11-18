@@ -1,28 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 10:16:01 +0000
-Subject: [PATCH 0/4] video: sm501fb: Adjustments for seven function implementations
-Message-Id: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 19:10:06 +0000
+Subject: [PATCH 0/3] ALSA-Trident 4DWave: Fine-tuning for nine function implementations
+Message-Id: <498d6d73-2c62-178a-3c7a-b0fcb092d81e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 11:10:01 +0100
+Date: Sat, 18 Nov 2017 19:50:12 +0100
 
 A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (4):
-  Delete error messages for a failed memory allocation in two functions
-  Improve a size determination in sm501fb_probe()
-  Combine substrings for four messages
-  Adjust 15 checks for null pointers
+Markus Elfring (3):
+  Adjust 34 function calls together with a variable assignment
+  Use common error handling code in two functions
+  Use common error handling code in snd_trident_mixer()
 
- drivers/video/fbdev/sm501fb.c | 66 ++++++++++++++++++-------------------------
- 1 file changed, 28 insertions(+), 38 deletions(-)
+ sound/pci/trident/trident.c      |  68 ++++++------
+ sound/pci/trident/trident_main.c | 221 ++++++++++++++++++++++-----------------
+ 2 files changed, 163 insertions(+), 126 deletions(-)
 
 -- 
 2.15.0
