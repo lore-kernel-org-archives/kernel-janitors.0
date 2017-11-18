@@ -1,224 +1,121 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 18:23:31 +0000
-Subject: [PATCH 2/4] ALSA: cs46xx: Use common error handling code in two functions
-Message-Id: <efe20785-da43-c1e4-fb38-038fe34b2bc6@users.sourceforge.net>
+Date: Sat, 18 Nov 2017 15:33:04 +0000
+Subject: [PATCH 3/3] ALSA: sonicvibes: Use common error handling code in snd_sonicvibes_create()
+Message-Id: <2aa5fdc3-de4d-54f2-2d3e-ae5e4f87153d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <893b1dc2-d078-9ea6-4ad2-0e0327affddd@users.sourceforge.net>
-In-Reply-To: <893b1dc2-d078-9ea6-4ad2-0e0327affddd@users.sourceforge.net>
+References: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
+In-Reply-To: <663ac54c-baf9-ac11-50fd-d8b407d1eacf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, David Howells <dhowells@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 18:53:11 +0100
+Date: Sat, 18 Nov 2017 16:12:12 +0100
 
 Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
-
-This issue was detected by using the Coccinelle software.
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/cs46xx/cs46xx.c     | 64 ++++++++++++++++++-------------------------
- sound/pci/cs46xx/cs46xx_lib.c | 44 ++++++++++++++---------------
- 2 files changed, 47 insertions(+), 61 deletions(-)
+ sound/pci/sonicvibes.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/sound/pci/cs46xx/cs46xx.c b/sound/pci/cs46xx/cs46xx.c
-index 520478a6e605..d42e7e282cab 100644
---- a/sound/pci/cs46xx/cs46xx.c
-+++ b/sound/pci/cs46xx/cs46xx.c
-@@ -95,54 +95,42 @@ static int snd_card_cs46xx_probe(struct pci_dev *pci,
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index 75fc64839df0..c2147484c95d 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1266,14 +1266,14 @@ static int snd_sonicvibes_create(struct snd_card *card,
+ 	    dma_set_coherent_mask(&pci->dev, DMA_BIT_MASK(24)) < 0) {
+ 		dev_err(card->dev,
+ 			"architecture does not support 24bit PCI busmaster DMA\n");
+-		pci_disable_device(pci);
+-                return -ENXIO;
++		err = -ENXIO;
++		goto disable_device;
+         }
  
- 	err = snd_cs46xx_create(card, pci, external_amp[dev],
- 				thinkpad[dev], &chip);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	card->private_data = chip;
- 	chip->accept_valid = mmap_valid[dev];
- 	err = snd_cs46xx_pcm(chip, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- #ifdef CONFIG_SND_CS46XX_NEW_DSP
- 	err = snd_cs46xx_pcm_rear(chip, 1);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_cs46xx_pcm_iec958(chip, 2);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- #endif
- 	err = snd_cs46xx_mixer(chip, 2);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- #ifdef CONFIG_SND_CS46XX_NEW_DSP
- 	if (chip->nr_ac97_codecs =2) {
- 		err = snd_cs46xx_pcm_center_lfe(chip, 3);
--		if (err < 0) {
--			snd_card_free(card);
--			return err;
--		}
-+		if (err < 0)
-+			goto free_card;
+ 	sonic = kzalloc(sizeof(*sonic), GFP_KERNEL);
+ 	if (sonic = NULL) {
+-		pci_disable_device(pci);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto disable_device;
  	}
- #endif
- 	err = snd_cs46xx_midi(chip, 0);
--	if (err < 0) {
--		snd_card_free(card);
+ 	spin_lock_init(&sonic->reg_lock);
+ 	sonic->card = card;
+@@ -1283,8 +1283,7 @@ static int snd_sonicvibes_create(struct snd_card *card,
+ 	err = pci_request_regions(pci, "S3 SonicVibes");
+ 	if (err < 0) {
+ 		kfree(sonic);
+-		pci_disable_device(pci);
 -		return err;
--	}
--	err = snd_cs46xx_start_dsp(chip);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
-+	err = snd_cs46xx_start_dsp(chip);
-+	if (err < 0)
-+		goto free_card;
- 
- 	snd_cs46xx_gameport(chip);
- 
-@@ -155,14 +143,16 @@ static int snd_card_cs46xx_probe(struct pci_dev *pci,
- 		chip->irq);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_card_cs46xx_remove(struct pci_dev *pci)
-diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
-index 164f86949b2d..27b568f350f6 100644
---- a/sound/pci/cs46xx/cs46xx_lib.c
-+++ b/sound/pci/cs46xx/cs46xx_lib.c
-@@ -3937,8 +3937,7 @@ int snd_cs46xx_create(struct snd_card *card,
- 		dev_err(chip->card->dev,
- 			"wrong address(es) - ba0 = 0x%lx, ba1 = 0x%lx\n",
- 			   chip->ba0_addr, chip->ba1_addr);
--	    	snd_cs46xx_free(chip);
--	    	return -ENOMEM;
-+		goto e_nomem;
++		goto disable_device;
  	}
  
- 	region = &chip->region.name.ba0;
-@@ -4016,59 +4015,56 @@ int snd_cs46xx_create(struct snd_card *card,
- 			dev_err(chip->card->dev,
- 				"unable to request memory region 0x%lx-0x%lx\n",
- 				   region->base, region->base + region->size - 1);
--			snd_cs46xx_free(chip);
--			return -EBUSY;
-+			err = -EBUSY;
-+			goto free_sound_chip;
- 		}
- 		region->remap_addr = ioremap_nocache(region->base, region->size);
- 		if (region->remap_addr = NULL) {
- 			dev_err(chip->card->dev,
- 				"%s ioremap problem\n", region->name);
--			snd_cs46xx_free(chip);
--			return -ENOMEM;
-+			goto e_nomem;
- 		}
- 	}
- 
- 	if (request_irq(pci->irq, snd_cs46xx_interrupt, IRQF_SHARED,
- 			KBUILD_MODNAME, chip)) {
- 		dev_err(chip->card->dev, "unable to grab IRQ %d\n", pci->irq);
--		snd_cs46xx_free(chip);
+ 	sonic->sb_port = pci_resource_start(pci, 0);
+@@ -1296,8 +1295,7 @@ static int snd_sonicvibes_create(struct snd_card *card,
+ 	if (request_irq(pci->irq, snd_sonicvibes_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, sonic)) {
+ 		dev_err(card->dev, "unable to grab IRQ %d\n", pci->irq);
+-		snd_sonicvibes_free(sonic);
 -		return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
++		goto e_busy;
  	}
- 	chip->irq = pci->irq;
+ 	sonic->irq = pci->irq;
  
- #ifdef CONFIG_SND_CS46XX_NEW_DSP
- 	chip->dsp_spos_instance = cs46xx_dsp_spos_create(chip);
--	if (chip->dsp_spos_instance = NULL) {
--		snd_cs46xx_free(chip);
--		return -ENOMEM;
--	}
-+	if (!chip->dsp_spos_instance)
-+		goto e_nomem;
+@@ -1325,20 +1323,18 @@ static int snd_sonicvibes_create(struct snd_card *card,
+ 
+ 	sonic->res_dmaa = request_region(dmaa, 0x10, "S3 SonicVibes DDMA-A");
+ 	if (!sonic->res_dmaa) {
+-		snd_sonicvibes_free(sonic);
+ 		dev_err(card->dev,
+ 			"unable to grab DDMA-A port at 0x%x-0x%x\n",
+ 			dmaa, dmaa + 0x10 - 1);
+-		return -EBUSY;
++		goto e_busy;
+ 	}
+ 
+ 	sonic->res_dmac = request_region(dmac, 0x10, "S3 SonicVibes DDMA-C");
+ 	if (!sonic->res_dmac) {
+-		snd_sonicvibes_free(sonic);
+ 		dev_err(card->dev,
+ 			"unable to grab DDMA-C port at 0x%x-0x%x\n",
+ 			dmac, dmac + 0x10 - 1);
+-		return -EBUSY;
++		goto e_busy;
+ 	}
+ 
+ 	pci_read_config_dword(pci, 0x40, &sonic->dmaa_port);
+@@ -1395,15 +1391,23 @@ static int snd_sonicvibes_create(struct snd_card *card,
  #endif
- 
- 	err = snd_cs46xx_chip_init(chip);
+ 	sonic->revision = snd_sonicvibes_in(sonic, SV_IREG_REVISION);
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, sonic, &ops);
 -	if (err < 0) {
--		snd_cs46xx_free(chip);
+-		snd_sonicvibes_free(sonic);
 -		return err;
 -	}
 +	if (err < 0)
 +		goto free_sound_chip;
  
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
--	if (err < 0) {
--		snd_cs46xx_free(chip);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_sound_chip;
- 	
- 	snd_cs46xx_proc_init(card, chip);
+ 	snd_sonicvibes_proc_init(sonic);
  
- #ifdef CONFIG_PM_SLEEP
- 	chip->saved_regs = kmalloc(sizeof(*chip->saved_regs) *
- 				   ARRAY_SIZE(saved_regs), GFP_KERNEL);
--	if (!chip->saved_regs) {
--		snd_cs46xx_free(chip);
--		return -ENOMEM;
--	}
-+	if (!chip->saved_regs)
-+		goto e_nomem;
- #endif
- 
- 	chip->active_ctrl(chip, -1); /* disable CLKRUN */
- 
- 	*rchip = chip;
+ 	*rsonic = sonic;
  	return 0;
 +
-+e_nomem:
-+	err = -ENOMEM;
++disable_device:
++	pci_disable_device(pci);
++	return err;
++
++e_busy:
++	err = -EBUSY;
 +free_sound_chip:
-+	snd_cs46xx_free(chip);
++	snd_sonicvibes_free(sonic);
 +	return err;
  }
+ 
+ /*
 -- 
 2.15.0
 
