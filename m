@@ -1,24 +1,35 @@
-From: Timur Tabi <timur@tabi.org>
-Date: Mon, 27 Nov 2017 17:31:10 +0000
-Subject: Re: [PATCH] video: fsl-diu-fb: Delete an error message for a failed memory allocation in fsl_diu_ini
-Message-Id: <f1760f28-84f4-24d9-9cf4-ca94b0537338@tabi.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 18 Nov 2017 13:45:45 +0000
+Subject: [PATCH] crypto: hifn_795x - Fix a memory leak in the error handling path of 'hifn_probe()'
+Message-Id: <20171118134545.25784-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <39d05a48-e649-fb88-0e86-4f7528fd67f8@users.sourceforge.net>
-In-Reply-To: <39d05a48-e649-fb88-0e86-4f7528fd67f8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 11/27/17 3:00 AM, SF Markus Elfring wrote:
-> From: Markus Elfring<elfring@users.sourceforge.net>
-> Date: Mon, 27 Nov 2017 09:56:09 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring<elfring@users.sourceforge.net>
+'dev' is leaking in the error handling path of 'hifn_probe()'.
 
-Acked-by: Timur Tabi <timur@tabi.org>
+Add a 'kfree(dev)' to match the code in 'hifn_remove()'
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/hifn_795x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/crypto/hifn_795x.c b/drivers/crypto/hifn_795x.c
+index e09d4055b19e..a5a36fe7bf2c 100644
+--- a/drivers/crypto/hifn_795x.c
++++ b/drivers/crypto/hifn_795x.c
+@@ -2579,6 +2579,7 @@ static int hifn_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	for (i = 0; i < 3; ++i)
+ 		if (dev->bar[i])
+ 			iounmap(dev->bar[i]);
++	kfree(dev);
+ 
+ err_out_free_regions:
+ 	pci_release_regions(pdev);
+-- 
+2.14.1
+
