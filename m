@@ -1,188 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 11:53:40 +0000
-Subject: [PATCH 3/3] ALSA: korg1212: Use common error handling code in two functions
-Message-Id: <2165666c-69f9-c716-8ee8-f5071a41f37d@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 20:20:19 +0000
+Subject: [PATCH 1/4] ASoC: soc-pcm: Improve unlocking of a mutex in soc_dpcm_runtime_update()
+Message-Id: <84ae04be-480e-6eba-0efc-52e7592b6e02@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3f68211d-51f0-2990-d711-44eaeb85ba4d@users.sourceforge.net>
-In-Reply-To: <3f68211d-51f0-2990-d711-44eaeb85ba4d@users.sourceforge.net>
+References: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
+In-Reply-To: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 11:55:58 +0100
+Date: Sun, 19 Nov 2017 19:43:07 +0100
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only once in this function implementation.
+
+* Replace two calls by goto statements.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/korg1212/korg1212.c | 62 ++++++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 30 deletions(-)
+ sound/soc/soc-pcm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/pci/korg1212/korg1212.c b/sound/pci/korg1212/korg1212.c
-index dc701519d219..b908c7c986ab 100644
---- a/sound/pci/korg1212/korg1212.c
-+++ b/sound/pci/korg1212/korg1212.c
-@@ -2181,8 +2181,8 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 8075856668c2..ea771316afa9 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2674,8 +2674,7 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
+ 		if (paths < 0) {
+ 			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
+ 					fe->dai_link->name,  "playback");
+-			mutex_unlock(&card->mutex);
+-			return paths;
++			goto unlock;
+ 		}
  
-         korg1212 = kzalloc(sizeof(*korg1212), GFP_KERNEL);
-         if (korg1212 = NULL) {
--		pci_disable_device(pci);
--                return -ENOMEM;
-+		err = -ENOMEM;
-+		goto disable_device;
+ 		/* update any new playback paths */
+@@ -2710,8 +2709,7 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
+ 		if (paths < 0) {
+ 			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
+ 					fe->dai_link->name,  "capture");
+-			mutex_unlock(&card->mutex);
+-			return paths;
++			goto unlock;
+ 		}
+ 
+ 		/* update any new capture paths */
+@@ -2733,8 +2731,10 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
+ 		dpcm_path_put(&list);
  	}
  
- 	korg1212->card = card;
-@@ -2216,8 +2216,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	err = pci_request_regions(pci, "korg1212");
- 	if (err < 0) {
- 		kfree(korg1212);
--		pci_disable_device(pci);
--		return err;
-+		goto disable_device;
- 	}
- 
-         korg1212->iomem = pci_resource_start(korg1212->pci, 0);
-@@ -2242,8 +2241,8 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	if (!korg1212->iobase) {
- 		snd_printk(KERN_ERR "korg1212: unable to remap memory region 0x%lx-0x%lx\n", korg1212->iomem,
-                            korg1212->iomem + iomem_size - 1);
--                snd_korg1212_free(korg1212);
--                return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
-         }
- 
-         err = request_irq(pci->irq, snd_korg1212_interrupt,
-@@ -2252,8 +2251,8 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 
-         if (err) {
- 		snd_printk(KERN_ERR "korg1212: unable to grab IRQ %d\n", pci->irq);
--                snd_korg1212_free(korg1212);
--                return -EBUSY;
-+		err = -EBUSY;
-+		goto free_sound_chip;
-         }
- 
-         korg1212->irq = pci->irq;
-@@ -2298,8 +2297,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				sizeof(struct KorgSharedBuffer), &korg1212->dma_shared) < 0) {
- 		snd_printk(KERN_ERR "korg1212: can not allocate shared buffer memory (%zd bytes)\n", sizeof(struct KorgSharedBuffer));
--                snd_korg1212_free(korg1212);
--                return -ENOMEM;
-+		goto e_nomem;
-         }
-         korg1212->sharedBufferPtr = (struct KorgSharedBuffer *)korg1212->dma_shared.area;
-         korg1212->sharedBufferPhy = korg1212->dma_shared.addr;
-@@ -2313,8 +2311,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				korg1212->DataBufsSize, &korg1212->dma_play) < 0) {
- 		snd_printk(KERN_ERR "korg1212: can not allocate play data buffer memory (%d bytes)\n", korg1212->DataBufsSize);
--                snd_korg1212_free(korg1212);
--                return -ENOMEM;
-+		goto e_nomem;
-         }
- 	korg1212->playDataBufsPtr = (struct KorgAudioBuffer *)korg1212->dma_play.area;
- 	korg1212->PlayDataPhy = korg1212->dma_play.addr;
-@@ -2325,8 +2322,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				korg1212->DataBufsSize, &korg1212->dma_rec) < 0) {
- 		snd_printk(KERN_ERR "korg1212: can not allocate record data buffer memory (%d bytes)\n", korg1212->DataBufsSize);
--                snd_korg1212_free(korg1212);
--                return -ENOMEM;
-+		goto e_nomem;
-         }
-         korg1212->recordDataBufsPtr = (struct KorgAudioBuffer *)korg1212->dma_rec.area;
-         korg1212->RecDataPhy = korg1212->dma_rec.addr;
-@@ -2353,16 +2349,14 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 	err = request_firmware(&dsp_code, "korg/k1212.dsp", &pci->dev);
- 	if (err < 0) {
- 		snd_printk(KERN_ERR "firmware not available\n");
--		snd_korg1212_free(korg1212);
--		return err;
-+		goto free_sound_chip;
- 	}
- 
- 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(pci),
- 				dsp_code->size, &korg1212->dma_dsp) < 0) {
- 		snd_printk(KERN_ERR "korg1212: cannot allocate dsp code memory (%zd bytes)\n", dsp_code->size);
--                snd_korg1212_free(korg1212);
- 		release_firmware(dsp_code);
--                return -ENOMEM;
-+		goto e_nomem;
-         }
- 
-         K1212_DEBUG_PRINTK("K1212_DEBUG: DSP Code area = 0x%p (0x%08x) %d bytes [%s]\n",
-@@ -2379,10 +2373,8 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
- 		K1212_DEBUG_PRINTK("K1212_DEBUG: Reboot Card - RC = %d [%s]\n", rc, stateName[korg1212->cardState]);
- 
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, korg1212, &ops);
--	if (err < 0) {
--                snd_korg1212_free(korg1212);
--                return err;
--        }
-+	if (err < 0)
-+		goto free_sound_chip;
-         
- 	snd_korg1212_EnableCardInterrupts(korg1212);
- 
-@@ -2429,6 +2421,15 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci,
-         * rchip = korg1212;
- 	return 0;
- 
-+disable_device:
-+	pci_disable_device(pci);
-+	return err;
-+
-+e_nomem:
-+	err = -ENOMEM;
-+free_sound_chip:
-+	snd_korg1212_free(korg1212);
-+	return err;
++	paths = 0;
++unlock:
+ 	mutex_unlock(&card->mutex);
+-	return 0;
++	return paths;
  }
- 
- /*
-@@ -2457,10 +2458,8 @@ snd_korg1212_probe(struct pci_dev *pci,
- 		return err;
- 
- 	err = snd_korg1212_create(card, pci, &korg1212);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	strcpy(card->driver, "korg1212");
- 	strcpy(card->shortname, "korg1212");
-@@ -2470,13 +2469,16 @@ snd_korg1212_probe(struct pci_dev *pci,
-         K1212_DEBUG_PRINTK("K1212_DEBUG: %s\n", card->longname);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_korg1212_remove(struct pci_dev *pci)
+ int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
+ {
 -- 
 2.15.0
 
