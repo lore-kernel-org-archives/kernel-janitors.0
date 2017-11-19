@@ -1,40 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Nov 2017 06:08:10 +0000
-Subject: [bug report] locking/locktorture: Fix num reader/writer corner cases
-Message-Id: <20171113084049.f7zr3fj6xzwjrkl7@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 12:43:26 +0000
+Subject: [PATCH 1/2] ASoC: rockchip: Use common error handling code in rk_aif1_hw_params()
+Message-Id: <72605b8c-a5dc-3cc6-8e9f-940c8e72581d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c@users.sourceforge.net>
+In-Reply-To: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello Davidlohr Bueso,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 13:23:35 +0100
 
-This is a semi-automatic email about new static checker warnings.
+Add a jump target so that a bit of exception handling can be better reused
+in an if branch of these functions.
 
-The patch 2b8ae38e13f1: "locking/locktorture: Fix num reader/writer 
-corner cases" from May 15, 2017, leads to the following Smatch 
-complaint:
+This issue was detected by using the Coccinelle software.
 
-    kernel/locking/locktorture.c:711 __torture_print_stats()
-     error: we previously assumed 'statp' could be null (see line 706)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/rockchip/rockchip_max98090.c | 11 ++++-------
+ sound/soc/rockchip/rockchip_rt5645.c   | 11 ++++-------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
-kernel/locking/locktorture.c
-   705		int i, n_stress;
-   706		long max = 0, min = statp ? statp[0].n_lock_acquired : 0;
-                                    ^^^^^^^
-Patch adds a check for NULL.
+diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
+index 789d6f1e2b5f..419fa6ef14bb 100644
+--- a/sound/soc/rockchip/rockchip_max98090.c
++++ b/sound/soc/rockchip/rockchip_max98090.c
+@@ -104,17 +104,14 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, mclk,
+ 				     SND_SOC_CLOCK_OUT);
+-	if (ret < 0) {
+-		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
+ 				     SND_SOC_CLOCK_IN);
+-	if (ret < 0) {
++	if (ret < 0)
++report_failure:
+ 		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
+-		return ret;
+-	}
+ 
+ 	return ret;
+ }
+diff --git a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
+index 9e0c17805807..7f763d0963d3 100644
+--- a/sound/soc/rockchip/rockchip_rt5645.c
++++ b/sound/soc/rockchip/rockchip_rt5645.c
+@@ -98,17 +98,14 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, mclk,
+ 				     SND_SOC_CLOCK_OUT);
+-	if (ret < 0) {
+-		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto report_failure;
+ 
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
+ 				     SND_SOC_CLOCK_IN);
+-	if (ret < 0) {
++	if (ret < 0)
++report_failure:
+ 		dev_err(codec_dai->dev, "Can't set codec clock %d\n", ret);
+-		return ret;
+-	}
+ 
+ 	return ret;
+ }
+-- 
+2.15.0
 
-   707		long long sum = 0;
-   708	
-   709		n_stress = write ? cxt.nrealwriters_stress : cxt.nrealreaders_stress;
-   710		for (i = 0; i < n_stress; i++) {
-   711			if (statp[i].n_lock_fail)
-                            ^^^^^^^^
-Can this be NULL here?
-
-   712				fail = true;
-   713			sum += statp[i].n_lock_acquired;
-
-regards,
-dan carpenter
