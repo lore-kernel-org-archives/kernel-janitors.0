@@ -1,88 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:52:53 +0000
-Subject: Applied "ASoC: cs35l34: Improve two size determinations in cs35l34_i2c_probe()" to the asoc tree
-Message-Id: <E1eJOWT-00075X-RW@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 12:44:45 +0000
+Subject: [PATCH 2/2] ASoC: rockchip: Delete an unnecessary variable initialisation in rk_aif1_hw_params()
+Message-Id: <ad5a1eaa-cc97-6d53-f71c-17f43cbd5b25@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <044cfc92-158f-3bff-a2e6-4993a9070e13@users.sourceforge.net>
-In-Reply-To: <044cfc92-158f-3bff-a2e6-4993a9070e13@users.sourceforge.net>
+References: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c@users.sourceforge.net>
+In-Reply-To: <255fa488-a5f1-2ea3-dd48-b10ad8b2c18c-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-The patch
-
-   ASoC: cs35l34: Improve two size determinations in cs35l34_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7f9f3abd285433e224faaf854b165b189270c923 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Nov 2017 21:17:42 +0100
-Subject: [PATCH] ASoC: cs35l34: Improve two size determinations in
- cs35l34_i2c_probe()
+Date: Sun, 19 Nov 2017 13:26:06 +0100
 
-Replace the specification of two data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
+The variable "ret" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs35l34.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ sound/soc/rockchip/rockchip_max98090.c | 2 +-
+ sound/soc/rockchip/rockchip_rt5645.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l34.c b/sound/soc/codecs/cs35l34.c
-index 6cbdbbe53940..0600d5264c4c 100644
---- a/sound/soc/codecs/cs35l34.c
-+++ b/sound/soc/codecs/cs35l34.c
-@@ -1004,9 +1004,7 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 	unsigned int devid = 0;
- 	unsigned int reg;
- 
--	cs35l34 = devm_kzalloc(&i2c_client->dev,
--			       sizeof(struct cs35l34_private),
--			       GFP_KERNEL);
-+	cs35l34 = devm_kzalloc(&i2c_client->dev, sizeof(*cs35l34), GFP_KERNEL);
- 	if (!cs35l34)
- 		return -ENOMEM;
- 
-@@ -1042,9 +1040,8 @@ static int cs35l34_i2c_probe(struct i2c_client *i2c_client,
- 	if (pdata) {
- 		cs35l34->pdata = *pdata;
- 	} else {
--		pdata = devm_kzalloc(&i2c_client->dev,
--				sizeof(struct cs35l34_platform_data),
--				GFP_KERNEL);
-+		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
-+				     GFP_KERNEL);
- 		if (!pdata)
- 			return -ENOMEM;
- 
+diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
+index 419fa6ef14bb..6d661a93588f 100644
+--- a/sound/soc/rockchip/rockchip_max98090.c
++++ b/sound/soc/rockchip/rockchip_max98090.c
+@@ -76,7 +76,7 @@ static const struct snd_kcontrol_new rk_mc_controls[] = {
+ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+ 			     struct snd_pcm_hw_params *params)
+ {
+-	int ret = 0;
++	int ret;
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+diff --git a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
+index 7f763d0963d3..d032d8bd15b9 100644
+--- a/sound/soc/rockchip/rockchip_rt5645.c
++++ b/sound/soc/rockchip/rockchip_rt5645.c
+@@ -70,7 +70,7 @@ static const struct snd_kcontrol_new rk_mc_controls[] = {
+ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+ 			     struct snd_pcm_hw_params *params)
+ {
+-	int ret = 0;
++	int ret;
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
 -- 
 2.15.0
 
