@@ -1,68 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 20:36:26 +0000
-Subject: [PATCH 1/2] net/sched/cls_tcindex: Use common error handling code in tcindex_set_parms()
-Message-Id: <06aa98d8-ef38-43b3-abda-c2c6713cda7c@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 19 Nov 2017 21:17:19 +0000
+Subject: [PATCH] arm: dma-mapping: use vma_pages helper function
+Message-Id: <20171119211719.16859-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
-In-Reply-To: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 21:10:49 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Use the vma_pages helper function on vma instead of an explicit
+calculation.
 
-This issue was detected by using the Coccinelle software.
+Found by coccinelle spatch "api/vma_pages.cocci"
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/sched/cls_tcindex.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ arch/arm/mm/dma-mapping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
-index d6abfa6757f2..24f05bc09084 100644
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -437,10 +437,8 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
- 		f->key = handle;
- 		f->next = NULL;
- 		err = tcindex_filter_result_init(&f->result);
--		if (err < 0) {
--			kfree(f);
--			goto errout_alloc;
--		}
-+		if (err < 0)
-+			goto err_free_filter;
- 	}
- 
- 	if (tb[TCA_TCINDEX_CLASSID]) {
-@@ -455,10 +453,8 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
- 
- 	if (old_r && old_r != r) {
- 		err = tcindex_filter_result_init(old_r);
--		if (err < 0) {
--			kfree(f);
--			goto errout_alloc;
--		}
-+		if (err < 0)
-+			goto err_free_filter;
- 	}
- 
- 	oldp = p;
-@@ -484,6 +480,8 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
- 		call_rcu(&oldp->rcu, __tcindex_partial_destroy);
- 	return 0;
- 
-+err_free_filter:
-+	kfree(f);
- errout_alloc:
- 	if (balloc = 1)
- 		tcindex_free_perfect_hash(cp);
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index ada8eb206a90..ec0f277d1d4d 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -831,7 +831,7 @@ static int __arm_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+ 		 unsigned long attrs)
+ {
+ 	int ret;
+-	unsigned long nr_vma_pages = (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
++	unsigned long nr_vma_pages = vma_pages(vma);
+ 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 	unsigned long pfn = dma_to_pfn(dev, dma_addr);
+ 	unsigned long off = vma->vm_pgoff;
 -- 
-2.15.0
+2.14.1
 
