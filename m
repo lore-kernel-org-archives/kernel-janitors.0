@@ -1,40 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Nov 2017 12:55:06 +0000
-Subject: Re: [PATCH 2/3] pinctrl: mcp23s08: Use common error handling code in mcp23s08_dbg_show()
-Message-Id: <CACRpkdbhh9CcqMw1Wp0-JsMRGt=koZJ_FCi67gCyFHSxVf-sxQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 20:24:22 +0000
+Subject: [PATCH 4/4] ASoC: soc-pcm: Improve a size determination in dpcm_be_connect()
+Message-Id: <72a5b41c-a1c2-2ca5-db74-c1f77b07ab73@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
-In-Reply-To: <3e95d8b5-8306-ae4c-487b-44c6dc1811d6@users.sourceforge.net>
+References: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
+In-Reply-To: <54203404-1e40-3c97-a6e5-75a41ec3e742@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 30, 2017 at 4:47 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 21:02:20 +0100
 
-> +       if (t)
-> +               goto report_failure;
->
->         for (t = 0, mask = BIT(0); t < chip->ngpio; t++, mask <<= 1) {
->                 const char *label;
-> @@ -758,8 +753,13 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->                 /* NOTE:  ignoring the irq-related registers */
->                 seq_puts(s, "\n");
->         }
-> -done:
-> +unlock:
->         mutex_unlock(&mcp->lock);
-> +       return;
-> +
-> +report_failure:
-> +       seq_puts(s, " I/O Error\n");
-> +       goto unlock;
->  }
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-This is spaghetti coding. Not applied.
-https://en.wikipedia.org/wiki/Spaghetti_code
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/soc-pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index fa2f7ccceacf..35b52cea5c89 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1308,7 +1308,7 @@ static int dpcm_be_connect(struct snd_soc_pcm_runtime *fe,
+ 			return 0;
+ 	}
+ 
+-	dpcm = kzalloc(sizeof(struct snd_soc_dpcm), GFP_KERNEL);
++	dpcm = kzalloc(sizeof(*dpcm), GFP_KERNEL);
+ 	if (!dpcm)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
+
