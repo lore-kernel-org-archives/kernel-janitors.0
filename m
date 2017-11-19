@@ -1,39 +1,72 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 21:27:32 +0000
-Subject: [PATCH 4/5] radeon_backlight: Return directly after a failed kmalloc() in radeonfb_bl_init()
-Message-Id: <3c7e74d9-0be1-cbfd-4070-d60904c55696@users.sourceforge.net>
+Date: Sun, 19 Nov 2017 09:56:37 +0000
+Subject: [PATCH] ASoC: sst-firmware: Improve unlocking of a mutex in sst_block_alloc_scratch()
+Message-Id: <49e56746-f178-d0e1-7b01-c75bde63f72c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
-In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Colin Ian King <colin.king@canonical.com>, Jaroslav Kysela <perex@perex.cz>, Jie Yang <yang.jie@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 21:50:28 +0100
+Date: Sun, 19 Nov 2017 10:45:36 +0100
 
-Return directly after a call of the function "kmalloc" failed
-at the beginning.
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only once in this function implementation.
+
+* Replace three calls by goto statements.
+
+* Increase the lock scope.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/aty/radeon_backlight.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/common/sst-firmware.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
-index c5e0e3557cc2..7f7ed6f72ddb 100644
---- a/drivers/video/fbdev/aty/radeon_backlight.c
-+++ b/drivers/video/fbdev/aty/radeon_backlight.c
-@@ -145,7 +145,7 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
+diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
+index 79a9fdf94d38..665e66670512 100644
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -1097,8 +1097,8 @@ int sst_block_alloc_scratch(struct sst_dsp *dsp)
  
- 	pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
--		goto error;
-+		return;
+ 	if (dsp->scratch_size = 0) {
+ 		dev_info(dsp->dev, "no modules need scratch buffer\n");
+-		mutex_unlock(&dsp->mutex);
+-		return 0;
++		ret = 0;
++		goto unlock;
+ 	}
  
- 	snprintf(name, sizeof(name), "radeonbl%d", rinfo->info->node);
+ 	/* allocate blocks for module scratch buffers */
+@@ -1127,21 +1127,21 @@ int sst_block_alloc_scratch(struct sst_dsp *dsp)
+ 	}
+ 	if (ret < 0) {
+ 		dev_err(dsp->dev, "error: can't alloc scratch blocks\n");
+-		mutex_unlock(&dsp->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	ret = block_list_prepare(dsp, &dsp->scratch_block_list);
+ 	if (ret < 0) {
+ 		dev_err(dsp->dev, "error: scratch block prepare failed\n");
+-		mutex_unlock(&dsp->mutex);
+-		return ret;
++		goto unlock;
+ 	}
+ 
+ 	/* assign the same offset of scratch to each module */
+ 	dsp->scratch_offset = ba.offset;
++	ret = dsp->scratch_size;
++unlock:
+ 	mutex_unlock(&dsp->mutex);
+-	return dsp->scratch_size;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(sst_block_alloc_scratch);
  
 -- 
 2.15.0
