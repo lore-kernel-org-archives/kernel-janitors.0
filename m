@@ -1,27 +1,59 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 21 Nov 2017 03:22:37 +0000
-Subject: Re: [PATCH] bfa: remove unused pointer 'port'
-Message-Id: <yq1zi7gl3ia.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Nov 2017 18:19:39 +0000
+Subject: [PATCH] cpupower: Combine two condition checks into one statement in get_cpu_topology()
+Message-Id: <3daea226-c5cb-62e7-a025-8f758712a81a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171115170849.20413-1-colin.king@canonical.com>
-In-Reply-To: <20171115170849.20413-1-colin.king@canonical.com> (Colin King's
-        message of "Wed, 15 Nov 2017 17:08:49 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, Shuah Khan <shuah@kernel.org>, Thomas Renninger <trenn@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 20 Nov 2017 19:10:14 +0100
 
-Colin,
+The same assignments were used in an if branch of two separate statements.
 
-> The pointer 'port' is being assigned but it is never read, hence it is
-> redundant and can be removed. Cleans up clang warning:
->
-> drivers/scsi/bfa/bfad_attr.c:505:2: warning: Value stored to 'port'
-> is never read
+* Merge their condition checks into a single statement instead.
 
-Applied to 4.16/scsi-queue. Thanks, Colin!
+* Adjust the indentation there.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ tools/power/cpupower/lib/cpupower.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/tools/power/cpupower/lib/cpupower.c b/tools/power/cpupower/lib/cpupower.c
+index 9c395ec924de..81c828e5920e 100644
+--- a/tools/power/cpupower/lib/cpupower.c
++++ b/tools/power/cpupower/lib/cpupower.c
+@@ -140,18 +140,12 @@ int get_cpu_topology(struct cpupower_topology *cpu_top)
+ 	for (cpu = 0; cpu < cpus; cpu++) {
+ 		cpu_top->core_info[cpu].cpu = cpu;
+ 		cpu_top->core_info[cpu].is_online = cpupower_is_cpu_online(cpu);
+-		if(sysfs_topology_read_file(
+-			cpu,
+-			"physical_package_id",
+-			&(cpu_top->core_info[cpu].pkg)) < 0) {
+-			cpu_top->core_info[cpu].pkg = -1;
+-			cpu_top->core_info[cpu].core = -1;
+-			continue;
+-		}
+-		if(sysfs_topology_read_file(
+-			cpu,
+-			"core_id",
+-			&(cpu_top->core_info[cpu].core)) < 0) {
++		if (sysfs_topology_read_file(cpu, "physical_package_id",
++					     &(cpu_top->core_info[cpu].pkg))
++		    < 0 ||
++		    sysfs_topology_read_file(cpu, "core_id",
++					     &(cpu_top->core_info[cpu].core))
++		    < 0) {
+ 			cpu_top->core_info[cpu].pkg = -1;
+ 			cpu_top->core_info[cpu].core = -1;
+ 			continue;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.15.0
+
