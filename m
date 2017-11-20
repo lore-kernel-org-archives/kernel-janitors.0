@@ -1,26 +1,40 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 29 Nov 2017 06:35:57 +0000
-Subject: Re: [PATCH][V2] crypto/nx: fix spelling mistake: "availavle" -> "available"
-Message-Id: <20171129063557.GF21575@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 20 Nov 2017 13:58:20 +0000
+Subject: [PATCH] afs: remove redundant assignment of dvnode to itself
+Message-Id: <20171120135820.32596-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114143217.21456-1-colin.king@canonical.com>
-In-Reply-To: <20171114143217.21456-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Haren Myneni <haren@us.ibm.com>, "David S . Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 14, 2017 at 02:32:17PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in pr_err error message text. Also
-> fix spelling mistake in proceeding comment.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+The assignment of dvnode to itself is redundant and can be removed.
+Cleans up warning detected by cppcheck:
+
+fs/afs/dir.c:975: (warning) Redundant assignment of 'dvnode' to itself.
+
+Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/afs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index ab618d32554c..a5e121e55e57 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -972,7 +972,7 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	struct afs_fs_cursor fc;
+ 	struct afs_file_status newstatus;
+ 	struct afs_callback newcb;
+-	struct afs_vnode *dvnode = dvnode = AFS_FS_I(dir);
++	struct afs_vnode *dvnode = AFS_FS_I(dir);
+ 	struct afs_fid newfid;
+ 	struct key *key;
+ 	int ret;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.1
+
