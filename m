@@ -1,48 +1,24 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Nov 2017 16:53:41 +0000
-Subject: [PATCH] scsi: aacraid: remove unused variable managed_request_id
-Message-Id: <20171115165341.20042-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 21 Nov 2017 03:22:16 +0000
+Subject: Re: [PATCH] scsi: aacraid: remove unused variable managed_request_id
+Message-Id: <yq14lpomi3b.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171115165341.20042-1-colin.king@canonical.com>
+In-Reply-To: <20171115165341.20042-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 15 Nov 2017 16:53:41 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Variable managed_request_id is being assigned but it is never read,
-hence it is redundant and can be removed. Cleans up clang warning:
+Colin,
 
-drivers/scsi/aacraid/linit.c:706:5: warning: Value stored to
-'managed_request_id' is never read
+> Variable managed_request_id is being assigned but it is never read,
+> hence it is redundant and can be removed. Cleans up clang warning:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/aacraid/linit.c | 3 ---
- 1 file changed, 3 deletions(-)
+Applied to 4.16/scsi-queue.
 
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index c9252b138c1f..3677beff9c17 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -690,7 +690,6 @@ static int aac_eh_abort(struct scsi_cmnd* cmd)
- 		struct aac_hba_tm_req *tmf;
- 		int status;
- 		u64 address;
--		__le32 managed_request_id;
- 
- 		pr_err("%s: Host adapter abort request (%d,%d,%d,%d)\n",
- 		 AAC_DRIVERNAME,
-@@ -703,8 +702,6 @@ static int aac_eh_abort(struct scsi_cmnd* cmd)
- 				(fib->flags & FIB_CONTEXT_FLAG_NATIVE_HBA) &&
- 				(fib->callback_data = cmd)) {
- 				found = 1;
--				managed_request_id = ((struct aac_hba_cmd_req *)
--					fib->hw_fib_va)->request_id;
- 				break;
- 			}
- 		}
 -- 
-2.14.1
-
+Martin K. Petersen	Oracle Linux Engineering
