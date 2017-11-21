@@ -1,30 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Nov 2017 12:56:27 +0000
-Subject: Re: [PATCH 3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
-Message-Id: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Nov 2017 13:51:10 +0000
+Subject: [PATCH] [media] stb0899: remove redundant self assignment of k_indirect
+Message-Id: <20171121135110.16665-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
-In-Reply-To: <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 4:49 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 30 Oct 2017 16:34:44 +0100
->
-> * Print a line break together with other data in a single function call.
->
-> * Adjust indentation.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The self assignment of k_indirect is redundant and can be removed.
+Detected using coccinelle.
 
-This does not apply.
-Possibly depends on 2/3.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/stb0899_algo.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/media/dvb-frontends/stb0899_algo.c b/drivers/media/dvb-frontends/stb0899_algo.c
+index 3012f196e9bd..222ee51b90ef 100644
+--- a/drivers/media/dvb-frontends/stb0899_algo.c
++++ b/drivers/media/dvb-frontends/stb0899_algo.c
+@@ -925,8 +925,7 @@ static void stb0899_dvbs2_set_btr_loopbw(struct stb0899_state *state)
+ 		wn = (4 * zeta * zeta) + 1000000;
+ 		wn = (2 * (loopbw_percent * 1000) * 40 * zeta) /wn;  /*wn =wn 10^-8*/
+ 
+-		k_indirect = (wn * wn) / K;
+-		k_indirect = k_indirect;	  /*kindirect = kindirect 10^-6*/
++		k_indirect = (wn * wn) / K;	/*kindirect = kindirect 10^-6*/
+ 		k_direct   = (2 * wn * zeta) / K;	/*kDirect = kDirect 10^-2*/
+ 		k_direct  *= 100;
+ 
+-- 
+2.14.1
+
