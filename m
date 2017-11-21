@@ -1,32 +1,41 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 06:50:28 +0000
-Subject: Re: [PATCH 2/3] ALSA: sgio2audio: Improve a size determination in snd_sgio2audio_create()
-Message-Id: <s5hk1yalwwb.wl-tiwai@suse.de>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Tue, 21 Nov 2017 10:30:24 +0000
+Subject: Re: [PATCH] omapdrm: hdmi4_cec: signedness bug in hdmi4_cec_init()
+Message-Id: <5c3892ea-3ec0-f82c-19d2-5a4c8221715d@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <eb375101-03bd-37bb-67ef-e261eeca206e@users.sourceforge.net>
- <f7ebb350-79c1-6ce2-eb15-bef62c631cb4@users.sourceforge.net>
-In-Reply-To: <f7ebb350-79c1-6ce2-eb15-bef62c631cb4@users.sourceforge.net>
+References: <20171027062705.tmmlbgerpb2v63bj@mwanda>
+In-Reply-To: <20171027062705.tmmlbgerpb2v63bj@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sat, 11 Nov 2017 20:22:36 +0100,
-SF Markus Elfring wrote:
+On 27/10/17 09:27, Dan Carpenter wrote:
+> "ret" needs to be signed for the error handling to work.
 > 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 11 Nov 2017 20:02:07 +0100
+> Fixes: 8d7f934df8d8 ("omapdrm: hdmi4_cec: add OMAP4 HDMI CEC support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
+> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
+> index d86873f2abe6..e626eddf24d5 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_cec.c
+> @@ -352,7 +352,7 @@ int hdmi4_cec_init(struct platform_device *pdev, struct hdmi_core_data *core,
+>  {
+>  	const u32 caps = CEC_CAP_TRANSMIT | CEC_CAP_LOG_ADDRS |
+>  			 CEC_CAP_PASSTHROUGH | CEC_CAP_RC;
+> -	unsigned int ret;
+> +	int ret;
+>  
+>  	core->adap = cec_allocate_adapter(&hdmi_cec_adap_ops, core,
+>  		"omap4", caps, CEC_MAX_LOG_ADDRS);
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied, thanks.
+Thanks. I have picked this up.
 
+ Tomi
 
-Takashi
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
