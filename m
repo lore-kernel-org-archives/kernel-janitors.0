@@ -1,41 +1,35 @@
 From: Colin King <colin.king@canonical.com>
-Date: Wed, 29 Nov 2017 14:20:59 +0000
-Subject: [PATCH] ext4: fix incorrect indentation of if statement
-Message-Id: <20171129142059.21898-1-colin.king@canonical.com>
+Date: Tue, 21 Nov 2017 22:59:45 +0000
+Subject: [PATCH] NTB: switchtec_ntb: fix spelling mistake: "peforming" -> "performing"
+Message-Id: <20171121225945.29377-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+To: Kurt Schwemmer <kurt.schwemmer@microsemi.com>, Logan Gunthorpe <logang@deltatee.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <Allen.Hubbe@emc.com>, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The indentation is incorrect and spaces need replacing with a tab
-on the if statement.
-
-Cleans up smatch warning:
-fs/ext4/namei.c:3220 ext4_link() warn: inconsistent indenting
+Trivial fix to spelling mistake in dev_err error message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ext4/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 798b3ac680db..d3fabc553c65 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3217,8 +3217,8 @@ static int ext4_link(struct dentry *old_dentry,
- 	if (err)
- 		return err;
+diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+index afe8ed6f3b23..d46d113210b5 100644
+--- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
++++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+@@ -172,7 +172,7 @@ static int switchtec_ntb_part_op(struct switchtec_ntb *sndev,
  
--       if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
--	   (!projid_eq(EXT4_I(dir)->i_projid,
-+	if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
-+	    (!projid_eq(EXT4_I(dir)->i_projid,
- 		       EXT4_I(old_dentry->d_inode)->i_projid)))
- 		return -EXDEV;
+ 	if (ps = status) {
+ 		dev_err(&sndev->stdev->dev,
+-			"Timed out while peforming %s (%d). (%08x)",
++			"Timed out while performing %s (%d). (%08x)",
+ 			op_text[op], op,
+ 			ioread32(&ctl->partition_status));
  
 -- 
 2.14.1
