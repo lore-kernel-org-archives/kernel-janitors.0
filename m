@@ -1,47 +1,27 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 15 Nov 2017 17:08:49 +0000
-Subject: [PATCH] bfa: remove unused pointer 'port'
-Message-Id: <20171115170849.20413-1-colin.king@canonical.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 21 Nov 2017 03:22:37 +0000
+Subject: Re: [PATCH] bfa: remove unused pointer 'port'
+Message-Id: <yq1zi7gl3ia.fsf@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171115170849.20413-1-colin.king@canonical.com>
+In-Reply-To: <20171115170849.20413-1-colin.king@canonical.com> (Colin King's
+        message of "Wed, 15 Nov 2017 17:08:49 +0000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The pointer 'port' is being assigned but it is never read,
-hence it is redundant and can be removed. Cleans up clang warning:
+Colin,
 
-drivers/scsi/bfa/bfad_attr.c:505:2: warning: Value stored to 'port'
-is never read
+> The pointer 'port' is being assigned but it is never read, hence it is
+> redundant and can be removed. Cleans up clang warning:
+>
+> drivers/scsi/bfa/bfad_attr.c:505:2: warning: Value stored to 'port'
+> is never read
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/bfa/bfad_attr.c | 3 ---
- 1 file changed, 3 deletions(-)
+Applied to 4.16/scsi-queue. Thanks, Colin!
 
-diff --git a/drivers/scsi/bfa/bfad_attr.c b/drivers/scsi/bfa/bfad_attr.c
-index 13db3b7bc873..78b9aaadeeaa 100644
---- a/drivers/scsi/bfa/bfad_attr.c
-+++ b/drivers/scsi/bfa/bfad_attr.c
-@@ -487,7 +487,6 @@ bfad_im_vport_delete(struct fc_vport *fc_vport)
- 	struct bfad_im_port_s *im_port  			(struct bfad_im_port_s *) vport->drv_port.im_port;
- 	struct bfad_s *bfad = im_port->bfad;
--	struct bfad_port_s *port;
- 	struct bfa_fcs_vport_s *fcs_vport;
- 	struct Scsi_Host *vshost;
- 	wwn_t   pwwn;
-@@ -502,8 +501,6 @@ bfad_im_vport_delete(struct fc_vport *fc_vport)
- 		return 0;
- 	}
- 
--	port = im_port->port;
--
- 	vshost = vport->drv_port.im_port->shost;
- 	u64_to_wwn(fc_host_port_name(vshost), (u8 *)&pwwn);
- 
 -- 
-2.14.1
-
+Martin K. Petersen	Oracle Linux Engineering
