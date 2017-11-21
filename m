@@ -1,104 +1,115 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 10:00:52 +0000
-Subject: [PATCH] selftests: posix_timers: Use common error handling code in two functions
-Message-Id: <3ce187fa-a6df-a419-6924-ea12bf837972@users.sourceforge.net>
+From: Shuah Khan <shuah@kernel.org>
+Date: Tue, 21 Nov 2017 15:43:37 +0000
+Subject: Re: [PATCH] selftests: posix_timers: Use common error handling code in two functions
+Message-Id: <abce4f4e-a904-9bfe-7021-3cfd230d52ea@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3ce187fa-a6df-a419-6924-ea12bf837972@users.sourceforge.net>
+In-Reply-To: <3ce187fa-a6df-a419-6924-ea12bf837972@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Nov 2017 10:50:32 +0100
+On 11/21/2017 03:00 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 21 Nov 2017 10:50:32 +0100
+> 
+> Add jump targets so that a bit of exception handling can be better reused
+> at the end of these functions.
+> 
+> This issue was detected by using the Coccinelle software.
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
+Please include Coccinelle report in the change log.
 
-This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  tools/testing/selftests/timers/posix_timers.c | 32 +++++++++++++--------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
+> index 15cf56d32155..5c9fbb06194f 100644
+> --- a/tools/testing/selftests/timers/posix_timers.c
+> +++ b/tools/testing/selftests/timers/posix_timers.c
+> @@ -104,10 +104,8 @@ static int check_itimer(int which)
+>  		signal(SIGALRM, sig_handler);
+>  
+>  	err = gettimeofday(&start, NULL);
+> -	if (err < 0) {
+> -		perror("Can't call gettimeofday()\n");
+> -		return -1;
+> -	}
+> +	if (err < 0)
+> +		goto report_failure;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- tools/testing/selftests/timers/posix_timers.c | 32 +++++++++++++--------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Instead of report_failure, makes this specific to the failure.
+Something like, gettimeofday_error
 
-diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-index 15cf56d32155..5c9fbb06194f 100644
---- a/tools/testing/selftests/timers/posix_timers.c
-+++ b/tools/testing/selftests/timers/posix_timers.c
-@@ -104,10 +104,8 @@ static int check_itimer(int which)
- 		signal(SIGALRM, sig_handler);
- 
- 	err = gettimeofday(&start, NULL);
--	if (err < 0) {
--		perror("Can't call gettimeofday()\n");
--		return -1;
--	}
-+	if (err < 0)
-+		goto report_failure;
- 
- 	err = setitimer(which, &val, NULL);
- 	if (err < 0) {
-@@ -123,10 +121,8 @@ static int check_itimer(int which)
- 		idle_loop();
- 
- 	err = gettimeofday(&end, NULL);
--	if (err < 0) {
--		perror("Can't call gettimeofday()\n");
--		return -1;
--	}
-+	if (err < 0)
-+		goto report_failure;
- 
- 	if (!check_diff(start, end))
- 		printf("[OK]\n");
-@@ -134,6 +130,10 @@ static int check_itimer(int which)
- 		printf("[FAIL]\n");
- 
- 	return 0;
-+
-+report_failure:
-+	perror("Can't call gettimeofday()\n");
-+	return -1;
- }
- 
- static int check_timer_create(int which)
-@@ -162,10 +162,8 @@ static int check_timer_create(int which)
- 	signal(SIGALRM, sig_handler);
- 
- 	err = gettimeofday(&start, NULL);
--	if (err < 0) {
--		perror("Can't call gettimeofday()\n");
--		return -1;
--	}
-+	if (err < 0)
-+		goto report_failure;
- 
- 	err = timer_settime(id, 0, &val, NULL);
- 	if (err < 0) {
-@@ -176,10 +174,8 @@ static int check_timer_create(int which)
- 	user_loop();
- 
- 	err = gettimeofday(&end, NULL);
--	if (err < 0) {
--		perror("Can't call gettimeofday()\n");
--		return -1;
--	}
-+	if (err < 0)
-+		goto report_failure;
- 
- 	if (!check_diff(start, end))
- 		printf("[OK]\n");
-@@ -187,6 +183,10 @@ static int check_timer_create(int which)
- 		printf("[FAIL]\n");
- 
- 	return 0;
-+
-+report_failure:
-+	perror("Can't call gettimeofday()\n");
-+	return -1;
- }
- 
- int main(int argc, char **argv)
--- 
-2.15.0
+> 
+>  	err = setitimer(which, &val, NULL);
+>  	if (err < 0) {
+> @@ -123,10 +121,8 @@ static int check_itimer(int which)
+>  		idle_loop();
+>  
+>  	err = gettimeofday(&end, NULL);
+> -	if (err < 0) {
+> -		perror("Can't call gettimeofday()\n");
+> -		return -1;
+> -	}
+> +	if (err < 0)
+> +		goto report_failure;
+>  
+>  	if (!check_diff(start, end))
+>  		printf("[OK]\n");
+> @@ -134,6 +130,10 @@ static int check_itimer(int which)
+>  		printf("[FAIL]\n");
+>  
+>  	return 0;
+> +
+> +report_failure:
+> +	perror("Can't call gettimeofday()\n");
+> +	return -1;
+>  }
+>  
+>  static int check_timer_create(int which)
+> @@ -162,10 +162,8 @@ static int check_timer_create(int which)
+>  	signal(SIGALRM, sig_handler);
+>  
+>  	err = gettimeofday(&start, NULL);
+> -	if (err < 0) {
+> -		perror("Can't call gettimeofday()\n");
+> -		return -1;
+> -	}
+> +	if (err < 0)
+> +		goto report_failure;
+>  
+>  	err = timer_settime(id, 0, &val, NULL);
+>  	if (err < 0) {
+> @@ -176,10 +174,8 @@ static int check_timer_create(int which)
+>  	user_loop();
+>  
+>  	err = gettimeofday(&end, NULL);
+> -	if (err < 0) {
+> -		perror("Can't call gettimeofday()\n");
+> -		return -1;
+> -	}
+> +	if (err < 0)
+> +		goto report_failure;
+>  
+>  	if (!check_diff(start, end))
+>  		printf("[OK]\n");
+> @@ -187,6 +183,10 @@ static int check_timer_create(int which)
+>  		printf("[FAIL]\n");
+>  
+>  	return 0;
+> +
+> +report_failure:
+> +	perror("Can't call gettimeofday()\n");
+> +	return -1;
+>  }
+>  
+>  int main(int argc, char **argv)
+> 
 
+thanks,
+-- Shuah
