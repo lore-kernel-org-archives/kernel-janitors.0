@@ -1,54 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 13:00:16 +0000
-Subject: [PATCH] video: sh_mobile_lcdcfb: Delete an error message for a failed memory allocation in two funct
-Message-Id: <478c51ab-b4ef-47e1-0b53-8b4e1f3b931a@users.sourceforge.net>
+Date: Tue, 21 Nov 2017 12:46:35 +0000
+Subject: [PATCH] kvm_main: Use common error handling code in kvm_dev_ioctl_create_vm()
+Message-Id: <46892736-f9a1-cd30-0968-80c0cf41c3ee@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <keescook@chromium.org>, Wei Yongjun <weiyongjun1@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 13:48:55 +0100
+Date: Tue, 21 Nov 2017 13:40:17 +0100
 
-Omit an extra message for a memory allocation failure in these functions.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/sh_mobile_lcdcfb.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ virt/kvm/kvm_main.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-index c3a46506e47e..0f9b37034eaf 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-@@ -2149,10 +2149,8 @@ sh_mobile_lcdc_channel_fb_register(struct sh_mobile_lcdc_chan *ch)
- 	if (info->fbdefio) {
- 		ch->sglist = vmalloc(sizeof(struct scatterlist) *
- 				     ch->fb_size >> PAGE_SHIFT);
--		if (!ch->sglist) {
--			dev_err(ch->lcdc->dev, "cannot allocate sglist\n");
-+		if (!ch->sglist)
- 			return -ENOMEM;
--		}
- 	}
- 
- 	info->bl_dev = ch->bl;
-@@ -2718,10 +2716,8 @@ static int sh_mobile_lcdc_probe(struct platform_device *pdev)
- 	}
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		dev_err(&pdev->dev, "cannot allocate device data\n");
-+	if (!priv)
- 		return -ENOMEM;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 39e4db469f2e..c84341c79955 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3155,21 +3155,18 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+ 		return PTR_ERR(kvm);
+ #ifdef CONFIG_KVM_MMIO
+ 	r = kvm_coalesced_mmio_init(kvm);
+-	if (r < 0) {
+-		kvm_put_kvm(kvm);
+-		return r;
 -	}
++	if (r < 0)
++		goto put_kvm;
+ #endif
+ 	r = get_unused_fd_flags(O_CLOEXEC);
+-	if (r < 0) {
+-		kvm_put_kvm(kvm);
+-		return r;
+-	}
++	if (r < 0)
++		goto put_kvm;
++
+ 	file = anon_inode_getfile("kvm-vm", &kvm_vm_fops, kvm, O_RDWR);
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(r);
+-		kvm_put_kvm(kvm);
+-		return PTR_ERR(file);
++		r = PTR_ERR(file);
++		goto put_kvm;
+ 	}
  
- 	priv->dev = &pdev->dev;
- 	priv->meram_dev = pdata->meram_dev;
+ 	/*
+@@ -3187,6 +3184,10 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+ 
+ 	fd_install(r, file);
+ 	return r;
++
++put_kvm:
++	kvm_put_kvm(kvm);
++	return r;
+ }
+ 
+ static long kvm_dev_ioctl(struct file *filp,
 -- 
 2.15.0
 
