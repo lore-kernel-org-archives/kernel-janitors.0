@@ -1,32 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 18:21:21 +0000
-Subject: [PATCH 0/4] ALSA: cs46xx: Adjustments for some function implementations
-Message-Id: <893b1dc2-d078-9ea6-4ad2-0e0327affddd@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 21 Nov 2017 15:07:45 +0000
+Subject: [PATCH] [media] dvb-frontends/stv0367: remove redundant self assignment of temporary
+Message-Id: <20171121150745.18211-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Scheller <d.scheller@gmx.net>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 19:14:56 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-A few update suggestions were taken into account
-from static source code analysis.
+The self assignment of temporary is redundant and can be removed.
+Detected using coccinelle.
 
-Markus Elfring (4):
-  Adjust 33 function calls together with a variable assignment
-  Use common error handling code in two functions
-  Improve a size determination in cs46xx_dsp_proc_register_scb_desc()
-  Adjust 35 checks for null pointers
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/dvb-frontends/stv0367.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- sound/pci/cs46xx/cs46xx.c           |  75 ++++++++++----------
- sound/pci/cs46xx/cs46xx_lib.c       | 134 +++++++++++++++++++++---------------
- sound/pci/cs46xx/dsp_spos.c         |  60 +++++++++-------
- sound/pci/cs46xx/dsp_spos_scb_lib.c |  36 +++++-----
- 4 files changed, 166 insertions(+), 139 deletions(-)
-
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index f3529df8211d..ebad100d913f 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -1547,7 +1547,6 @@ static int stv0367ter_read_ber(struct dvb_frontend *fe, u32 *ber)
+ 	} else if (abc = 0x7) {
+ 		if (Errors <= 4) {
+ 			temporary = (Errors * 1000000000) / (8 * (1 << 14));
+-			temporary =  temporary;
+ 		} else if (Errors <= 42) {
+ 			temporary = (Errors * 100000000) / (8 * (1 << 14));
+ 			temporary = temporary * 10;
+@@ -1625,7 +1624,6 @@ static u32 stv0367ter_get_per(struct stv0367_state *state)
+ 	else if (abc = 0x9) {
+ 		if (Errors <= 4) {
+ 			temporary = (Errors * 1000000000) / (8 * (1 << 8));
+-			temporary =  temporary;
+ 		} else if (Errors <= 42) {
+ 			temporary = (Errors * 100000000) / (8 * (1 << 8));
+ 			temporary = temporary * 10;
 -- 
-2.15.0
+2.14.1
 
