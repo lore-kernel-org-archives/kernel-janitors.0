@@ -1,28 +1,27 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 20 Nov 2017 22:20:21 +0000
-Subject: Re: [PATCH] afs: remove redundant assignment of dvnode to itself
-Message-Id: <27271.1511216421@warthog.procyon.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 21:20:03 +0000
+Subject: [PATCH 0/2] ASoC: cs42l52: Adjustments for cs42l52_i2c_probe()
+Message-Id: <c1e180fd-3c93-a724-09be-e12974ffdb9f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171120135820.32596-1-colin.king@canonical.com>
-In-Reply-To: <20171120135820.32596-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Colin King <colin.king@canonical.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 22:15:43 +0100
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The assignment of dvnode to itself is redundant and can be removed.
-> Cleans up warning detected by cppcheck:
-> 
-> fs/afs/dir.c:975: (warning) Redundant assignment of 'dvnode' to itself.
-> 
-> Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Applied, thanks.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve two size determinations
 
-David
+ sound/soc/codecs/cs42l52.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+-- 
+2.15.0
+
