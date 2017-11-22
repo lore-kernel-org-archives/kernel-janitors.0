@@ -1,38 +1,41 @@
 From: Colin King <colin.king@canonical.com>
-Date: Thu, 02 Nov 2017 10:11:50 +0000
-Subject: [PATCH 4/7] msi2500: fix spelling mistake: "synchronuously" -> "synchronously"
-Message-Id: <20171102101153.18225-4-colin.king@canonical.com>
+Date: Wed, 22 Nov 2017 14:40:48 +0000
+Subject: [PATCH] USB: gadget: legacy: remove redundant zero assignment to variable 'value'
+Message-Id: <20171122144048.30828-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102101153.18225-1-colin.king@canonical.com>
-In-Reply-To: <20171102101153.18225-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Antti Palosaari <crope@iki.fi>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, linux-media@vger.kernel.org
+To: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in error message text
+The variable value is being assigned to zero but that value is never being
+read.  Either value is being reassigned in the following if condition, or
+it is never read and the function returns. In both cases the assignment is
+redundant and can be removed. Cleans up clang warning:
+
+drivers/usb/gadget/legacy/inode.c:1473:4: warning: Value stored to 'value'
+is never read
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/msi2500/msi2500.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/legacy/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/usb/msi2500/msi2500.c b/drivers/media/usb/msi2500/msi2500.c
-index a097d3dbc141..65ef755adfdc 100644
---- a/drivers/media/usb/msi2500/msi2500.c
-+++ b/drivers/media/usb/msi2500/msi2500.c
-@@ -386,7 +386,7 @@ static void msi2500_isoc_handler(struct urb *urb)
- 	if (unlikely(urb->status = -ENOENT ||
- 		     urb->status = -ECONNRESET ||
- 		     urb->status = -ESHUTDOWN)) {
--		dev_dbg(dev->dev, "URB (%p) unlinked %ssynchronuously\n",
-+		dev_dbg(dev->dev, "URB (%p) unlinked %ssynchronously\n",
- 			urb, urb->status = -ENOENT ? "" : "a");
- 		return;
- 	}
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index 9343ec436485..cb8e1761d405 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -1470,7 +1470,6 @@ gadgetfs_setup (struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
+ 			dev->setup_wLength = w_length;
+ 			dev->setup_out_ready = 0;
+ 			dev->setup_out_error = 0;
+-			value = 0;
+ 
+ 			/* read DATA stage for OUT right away */
+ 			if (unlikely (!dev->setup_in && w_length)) {
 -- 
 2.14.1
 
