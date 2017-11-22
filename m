@@ -1,53 +1,57 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 12:21:40 +0000
-Subject: [PATCH] usb: host: isp1362-hcd: remove a couple of redundant assignments
-Message-Id: <20171107122140.8948-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 19:56:57 +0000
+Subject: [PATCH 1/2] ASoC: cs35l32: Delete two error messages for a failed memory allocation in cs35l32_i2c_p
+Message-Id: <8980f9c6-f559-816f-9ec8-e22194e0f3aa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
+In-Reply-To: <caf22f25-6c27-b869-89e8-ef2904a2baf2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 20:35:06 +0100
 
-Variable index is being initialized and the value is never read,
-it is being updated a few statements later, so remove the redundant
-initialization.  Variable total is being updated but the value is
-never read, so this is also redundant and can be removed. Cleans
-up two clang warnings:
+Omit extra messages for a memory allocation failure in this function.
 
-drivers/usb/host/isp1362-hcd.c:715:6: warning: Value stored to
-'index' during its initialization is never read
-drivers/usb/host/isp1362-hcd.c:2254:2: warning: Value stored to
-'total' is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/isp1362-hcd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/codecs/cs35l32.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
-index c7e60b662e9b..b21c386e6a46 100644
---- a/drivers/usb/host/isp1362-hcd.c
-+++ b/drivers/usb/host/isp1362-hcd.c
-@@ -713,7 +713,7 @@ static inline void enable_istl_transfers(struct isp1362_hcd *isp1362_hcd, int fl
- static int submit_req(struct isp1362_hcd *isp1362_hcd, struct urb *urb,
- 		      struct isp1362_ep *ep, struct isp1362_ep_queue *epq)
- {
--	int index = epq->free_ptd;
-+	int index;
+diff --git a/sound/soc/codecs/cs35l32.c b/sound/soc/codecs/cs35l32.c
+index 7e9806206648..e41d8ebe6eea 100644
+--- a/sound/soc/codecs/cs35l32.c
++++ b/sound/soc/codecs/cs35l32.c
+@@ -358,10 +358,8 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
  
- 	prepare_ptd(isp1362_hcd, urb, ep, epq, 0);
- 	index = claim_ptd_buffers(epq, ep, ep->length);
-@@ -2253,7 +2253,6 @@ static int isp1362_mem_config(struct usb_hcd *hcd)
+ 	cs35l32 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs35l32_private),
+ 			       GFP_KERNEL);
+-	if (!cs35l32) {
+-		dev_err(&i2c_client->dev, "could not allocate codec\n");
++	if (!cs35l32)
  		return -ENOMEM;
- 	}
+-	}
  
--	total = istl_size + intl_size + atl_size;
- 	spin_lock_irqsave(&isp1362_hcd->lock, flags);
+ 	i2c_set_clientdata(i2c_client, cs35l32);
  
- 	for (i = 0; i < 2; i++) {
+@@ -378,10 +376,9 @@ static int cs35l32_i2c_probe(struct i2c_client *i2c_client,
+ 		pdata = devm_kzalloc(&i2c_client->dev,
+ 				     sizeof(struct cs35l32_platform_data),
+ 				GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&i2c_client->dev, "could not allocate pdata\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
++
+ 		if (i2c_client->dev.of_node) {
+ 			ret = cs35l32_handle_of_data(i2c_client,
+ 						     &cs35l32->pdata);
 -- 
-2.14.1
+2.15.0
 
