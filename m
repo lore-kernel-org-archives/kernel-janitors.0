@@ -1,62 +1,43 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 14 Nov 2017 14:32:44 +0000
-Subject: Re: [PATCH] crypto/nx: fix spelling mistake: "availavle" -> "available"
-Message-Id: <73c485d9-d59d-d552-cf4c-148f88b370ae@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 16:47:14 +0000
+Subject: [PATCH] ALSA: gus: Delete an error message for a failed memory allocation in snd_gf1_dma_transfer_bl
+Message-Id: <5b6cc700-01d2-92ea-c9b4-75e8a93a05bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114133346.17697-1-colin.king@canonical.com>
- <alpine.DEB.2.20.1711141444320.2874@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1711141444320.2874@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Haren Myneni <haren@us.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 14/11/17 13:45, Julia Lawall wrote:
-> 
-> 
-> On Tue, 14 Nov 2017, Colin King wrote:
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Trivial fix to spelling mistake in pr_err error message text
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/crypto/nx/nx-842-powernv.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/crypto/nx/nx-842-powernv.c b/drivers/crypto/nx/nx-842-powernv.c
->> index f2246a5abcf6..9c01d11f255a 100644
->> --- a/drivers/crypto/nx/nx-842-powernv.c
->> +++ b/drivers/crypto/nx/nx-842-powernv.c
->> @@ -744,7 +744,7 @@ static int nx842_open_percpu_txwins(void)
->>
->>  		if (!per_cpu(cpu_txwin, i)) {
->>  			/* shoudn't happen, Each chip will have NX engine */
-> 
-> It could be nice to fix the comment as well: shoud -> should
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 17:43:25 +0100
 
-Good point. V2 sent.
-> 
-> julia
-> 
->> -			pr_err("NX engine is not availavle for CPU %d\n", i);
->> +			pr_err("NX engine is not available for CPU %d\n", i);
->>  			return -EINVAL;
->>  		}
->>  	}
->> --
->> 2.14.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/isa/gus/gus_dma.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/sound/isa/gus/gus_dma.c b/sound/isa/gus/gus_dma.c
+index 36c27c832360..7f95f452f106 100644
+--- a/sound/isa/gus/gus_dma.c
++++ b/sound/isa/gus/gus_dma.c
+@@ -201,10 +201,9 @@ int snd_gf1_dma_transfer_block(struct snd_gus_card * gus,
+ 	struct snd_gf1_dma_block *block;
+ 
+ 	block = kmalloc(sizeof(*block), atomic ? GFP_ATOMIC : GFP_KERNEL);
+-	if (block = NULL) {
+-		snd_printk(KERN_ERR "gf1: DMA transfer failure; not enough memory\n");
++	if (!block)
+ 		return -ENOMEM;
+-	}
++
+ 	*block = *__block;
+ 	block->next = NULL;
+ 
+-- 
+2.15.0
 
