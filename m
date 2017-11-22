@@ -1,48 +1,56 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Nov 2017 13:37:41 +0000
-Subject: [PATCH] nfc: st21nfca: use setup_timer instead of init_timer
-Message-Id: <20171124133741.32371-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 21:23:41 +0000
+Subject: [PATCH 2/2] ASoC: cs42l52: Improve two size determinations in cs42l52_i2c_probe()
+Message-Id: <d02ceefc-8918-f24d-6de7-8c6f348d5ed9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <c1e180fd-3c93-a724-09be-e12974ffdb9f@users.sourceforge.net>
+In-Reply-To: <c1e180fd-3c93-a724-09be-e12974ffdb9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 22:11:30 +0100
 
-Use setup_timer function instead of initializing timer with the
-function and data fields.
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/nfc/st21nfca/se.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ sound/soc/codecs/cs42l52.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nfc/st21nfca/se.c b/drivers/nfc/st21nfca/se.c
-index 3a98563d4a12..eda1b8b0ba1d 100644
---- a/drivers/nfc/st21nfca/se.c
-+++ b/drivers/nfc/st21nfca/se.c
-@@ -392,15 +392,13 @@ void st21nfca_se_init(struct nfc_hci_dev *hdev)
+diff --git a/sound/soc/codecs/cs42l52.c b/sound/soc/codecs/cs42l52.c
+index e8645f2ac0d9..9731e5dff291 100644
+--- a/sound/soc/codecs/cs42l52.c
++++ b/sound/soc/codecs/cs42l52.c
+@@ -1100,8 +1100,7 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
+ 	unsigned int reg;
+ 	u32 val32;
  
- 	init_completion(&info->se_info.req_completion);
- 	/* initialize timers */
--	init_timer(&info->se_info.bwi_timer);
--	info->se_info.bwi_timer.data = (unsigned long)info;
--	info->se_info.bwi_timer.function = st21nfca_se_wt_timeout;
-+	setup_timer(&info->se_info.bwi_timer, st21nfca_se_wt_timeout,
-+		    (unsigned long)info);
- 	info->se_info.bwi_active = false;
+-	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(struct cs42l52_private),
+-			       GFP_KERNEL);
++	cs42l52 = devm_kzalloc(&i2c_client->dev, sizeof(*cs42l52), GFP_KERNEL);
+ 	if (cs42l52 = NULL)
+ 		return -ENOMEM;
+ 	cs42l52->dev = &i2c_client->dev;
+@@ -1115,9 +1114,8 @@ static int cs42l52_i2c_probe(struct i2c_client *i2c_client,
+ 	if (pdata) {
+ 		cs42l52->pdata = *pdata;
+ 	} else {
+-		pdata = devm_kzalloc(&i2c_client->dev,
+-				     sizeof(struct cs42l52_platform_data),
+-				GFP_KERNEL);
++		pdata = devm_kzalloc(&i2c_client->dev, sizeof(*pdata),
++				     GFP_KERNEL);
+ 		if (!pdata)
+ 			return -ENOMEM;
  
- 	init_timer(&info->se_info.se_active_timer);
--	info->se_info.se_active_timer.data = (unsigned long)info;
--	info->se_info.se_active_timer.function = st21nfca_se_activation_timeout;
--	info->se_info.se_active = false;
-+	setup_timer(&info->se_info.se_active_timer,
-+		    st21nfca_se_activation_timeout, (unsigned long)info);
- 
- 	info->se_info.count_pipes = 0;
- 	info->se_info.expected_pipes = 0;
 -- 
-2.14.1
+2.15.0
 
