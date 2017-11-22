@@ -1,51 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 17:04:04 +0000
-Subject: [PATCH] SCSI-dpt_i2o: Use common error handling code in adpt_hba_reset()
-Message-Id: <373ac00e-099e-2ced-37aa-194541eef3d8@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 15:50:20 +0000
+Subject: [PATCH 3/3] ASoC: cs42l73: Fix a typo in two comments
+Message-Id: <a2278841-1791-0c00-af0a-7aa358a0d09d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
+In-Reply-To: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
-To: linux-scsi@vger.kernel.org, aacraid@adaptec.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
-OiBUaHUsIDIgTm92IDIwMTcgMTc6NDU6MTQgKzAxMDAKCiogQWRqdXN0IGZpdmUgZnVuY3Rpb24g
-Y2FsbHMgdG9nZXRoZXIgd2l0aCBhIHZhcmlhYmxlIGFzc2lnbm1lbnQuCgoqIEFkZCBhIGp1bXAg
-dGFyZ2V0IHNvIHRoYXQgYSBiaXQgb2YgZXhjZXB0aW9uIGhhbmRsaW5nIGNhbiBiZSBiZXR0ZXIK
-ICByZXVzZWQgYXQgdGhlIGVuZCBvZiB0aGlzIGZ1bmN0aW9uLgoKICBUaGlzIGlzc3VlIHdhcyBk
-ZXRlY3RlZCBieSB1c2luZyB0aGUgQ29jY2luZWxsZSBzb2Z0d2FyZS4KClNpZ25lZC1vZmYtYnk6
-IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4KLS0tCiBkcml2
-ZXJzL3Njc2kvZHB0X2kyby5jIHwgNDEgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
-LS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvZHB0X2kyby5jIGIvZHJpdmVycy9zY3NpL2Rw
-dF9pMm8uYwppbmRleCBmZDE3MmIwODkwZDMuLmNiZTFhMzZmYjUzMSAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9zY3NpL2RwdF9pMm8uYworKysgYi9kcml2ZXJzL3Njc2kvZHB0X2kyby5jCkBAIC04MzIs
-MzcgKzgzMiw0MCBAQCBzdGF0aWMgaW50IGFkcHRfaGJhX3Jlc2V0KGFkcHRfaGJhKiBwSGJhKQog
-CXBIYmEtPnN0YXRlIHw9IERQVElfU1RBVEVfUkVTRVQ7CiAKIAkvLyBBY3RpdmF0ZSBkb2VzIGdl
-dCBzdGF0dXMgLCBpbml0IG91dGJvdW5kLCBhbmQgZ2V0IGhydAotCWlmICgocmNvZGWtcHRfaTJv
-X2FjdGl2YXRlX2hiYShwSGJhKSkgPCAwKSB7CisJcmNvZGUgPSBhZHB0X2kyb19hY3RpdmF0ZV9o
-YmEocEhiYSk7CisJaWYgKHJjb2RlIDwgMCkgewogCQlwcmludGsoS0VSTl9FUlIgIiVzOiBDb3Vs
-ZCBub3QgYWN0aXZhdGVcbiIsIHBIYmEtPm5hbWUpOwotCQlhZHB0X2kyb19kZWxldGVfaGJhKHBI
-YmEpOwotCQlyZXR1cm4gcmNvZGU7CisJCWdvdG8gZGVsZXRlX2hiYTsKIAl9CiAKLQlpZiAoKHJj
-b2RlrXB0X2kyb19idWlsZF9zeXNfdGFibGUoKSkgPCAwKSB7Ci0JCWFkcHRfaTJvX2RlbGV0ZV9o
-YmEocEhiYSk7Ci0JCXJldHVybiByY29kZTsKLQl9CisJcmNvZGUgPSBhZHB0X2kyb19idWlsZF9z
-eXNfdGFibGUoKTsKKwlpZiAocmNvZGUgPCAwKQorCQlnb3RvIGRlbGV0ZV9oYmE7CisKIAlQREVC
-VUcoIiVzOiBpbiBIT0xEIHN0YXRlXG4iLHBIYmEtPm5hbWUpOwogCi0JaWYgKChyY29kZa1wdF9p
-Mm9fb25saW5lX2hiYShwSGJhKSkgPCAwKSB7Ci0JCWFkcHRfaTJvX2RlbGV0ZV9oYmEocEhiYSk7
-CQotCQlyZXR1cm4gcmNvZGU7Ci0JfQorCXJjb2RlID0gYWRwdF9pMm9fb25saW5lX2hiYShwSGJh
-KTsKKwlpZiAocmNvZGUgPCAwKQorCQlnb3RvIGRlbGV0ZV9oYmE7CisKIAlQREVCVUcoIiVzOiBp
-biBPUEVSQVRJT05BTCBzdGF0ZVxuIixwSGJhLT5uYW1lKTsKIAotCWlmICgocmNvZGWtcHRfaTJv
-X2xjdF9nZXQocEhiYSkpIDwgMCl7Ci0JCWFkcHRfaTJvX2RlbGV0ZV9oYmEocEhiYSk7Ci0JCXJl
-dHVybiByY29kZTsKLQl9CisJcmNvZGUgPSBhZHB0X2kyb19sY3RfZ2V0KHBIYmEpOworCWlmIChy
-Y29kZSA8IDApCisJCWdvdG8gZGVsZXRlX2hiYTsKKworCXJjb2RlID0gYWRwdF9pMm9fcmVwYXJz
-ZV9sY3QocEhiYSk7CisJaWYgKHJjb2RlIDwgMCkKKwkJZ290byBkZWxldGVfaGJhOwogCi0JaWYg
-KChyY29kZa1wdF9pMm9fcmVwYXJzZV9sY3QocEhiYSkpIDwgMCl7Ci0JCWFkcHRfaTJvX2RlbGV0
-ZV9oYmEocEhiYSk7Ci0JCXJldHVybiByY29kZTsKLQl9CiAJcEhiYS0+c3RhdGUgJj0gfkRQVElf
-U1RBVEVfUkVTRVQ7CiAKIAlhZHB0X2ZhaWxfcG9zdGVkX3NjYnMocEhiYSk7CiAJcmV0dXJuIDA7
-CS8qIHJldHVybiBzdWNjZXNzICovCisKK2RlbGV0ZV9oYmE6CisJYWRwdF9pMm9fZGVsZXRlX2hi
-YShwSGJhKTsKKwlyZXR1cm4gcmNvZGU7CiB9CiAKIC8qPT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PS0tIAoyLjE1LjAKCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
-OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5
-IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 16:26:27 +0100
+
+Add a missing character in these descriptions.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/codecs/cs42l73.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
+index dde37e569ade..928036eeb11f 100644
+--- a/sound/soc/codecs/cs42l73.c
++++ b/sound/soc/codecs/cs42l73.c
+@@ -763,7 +763,7 @@ static const struct snd_soc_dapm_route cs42l73_audio_map[] = {
+ 	{"ASPOUTL", "ASP-IP Volume", "ASPL Output Mixer"},
+ 	{"ASPOUTR", "ASP-IP Volume", "ASPR Output Mixer"},
+ 
+-	/* Auxillary Capture */
++	/* Auxiliary Capture */
+ 	{"XSPL Output Mixer", NULL, "Input Left Capture"},
+ 	{"XSPR Output Mixer", NULL, "Input Right Capture"},
+ 
+@@ -1127,9 +1127,8 @@ static int cs42l73_set_bias_level(struct snd_soc_codec *codec,
+ 			mdelay(cs42l73->shutdwn_delay);
+ 			cs42l73->shutdwn_delay = 0;
+ 		} else {
+-			mdelay(15); /* Min amount of time requred to power
+-				     * down.
+-				     */
++			/* Min amount of time required to power down. */
++			mdelay(15);
+ 		}
+ 		snd_soc_update_bits(codec, CS42L73_DMMCC, CS42L73_MCLKDIS, 1);
+ 		break;
+-- 
+2.15.0
+
