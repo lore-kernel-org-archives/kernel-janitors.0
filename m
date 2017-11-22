@@ -1,29 +1,27 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Fri, 24 Nov 2017 08:11:34 +0000
-Subject: Re: [PATCH 1/4] ASoC: wm2000: Delete an error message for a failed memory allocation in wm2000_i2c_p
-Message-Id: <20171124081134.glzwg6pusswm4m66@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 20:28:07 +0000
+Subject: [PATCH 0/2] ASoC: cs35l34: Adjustments for cs35l34_i2c_probe()
+Message-Id: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cd76c876-81a5-3cf6-e7d9-52037729fb98@users.sourceforge.net>
- <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
-In-Reply-To: <87078639-7ec0-c3cc-5399-5607f2329c63@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 24, 2017 at 08:36:17AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 23 Nov 2017 22:28:00 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Nov 2017 21:23:45 +0100
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Thanks,
-Charles
+Markus Elfring (2):
+  Delete two error messages for a failed memory allocation
+  Improve two size determinations
+
+ sound/soc/codecs/cs35l34.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
+
+-- 
+2.15.0
+
