@@ -1,94 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 16:17:04 +0000
-Subject: [PATCH] ALSA: i2c: Use common error handling code in two functions
-Message-Id: <1af701eb-c379-336f-aa00-28c30cd33d51@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Nov 2017 17:16:18 +0000
+Subject: [PATCH] rtc: sun6i: ensure rtc is kfree'd on error
+Message-Id: <20171122171618.2460-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 11 Nov 2017 17:10:24 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
+The error return path on clk_data allocation failure does not kfree
+the allocated rtc object. Fix this with a kfree of rtc on the error
+exit path.
 
-This issue was detected by using the Coccinelle software.
+Detected by CoverityScan, CID#1452264 ("Resource Leak")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/i2c/i2c.c | 36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+ drivers/rtc/rtc-sun6i.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/i2c/i2c.c b/sound/i2c/i2c.c
-index ef2a9afe9e19..9292aa60f3a2 100644
---- a/sound/i2c/i2c.c
-+++ b/sound/i2c/i2c.c
-@@ -282,20 +282,22 @@ static int snd_i2c_bit_sendbytes(struct snd_i2c_device *device,
- 		return -EIO;		/* not yet implemented */
- 	snd_i2c_bit_start(bus);
- 	err = snd_i2c_bit_sendbyte(bus, device->addr << 1);
--	if (err < 0) {
--		snd_i2c_bit_hw_stop(bus);
--		return err;
--	}
-+	if (err < 0)
-+		goto stop_bus;
-+
- 	while (count-- > 0) {
- 		err = snd_i2c_bit_sendbyte(bus, *bytes++);
--		if (err < 0) {
--			snd_i2c_bit_hw_stop(bus);
--			return err;
--		}
-+		if (err < 0)
-+			goto stop_bus;
-+
- 		res++;
- 	}
- 	snd_i2c_bit_stop(bus);
- 	return res;
-+
-+stop_bus:
-+	snd_i2c_bit_hw_stop(bus);
-+	return err;
- }
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 3d2216ccd860..5bc28eed1adf 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -201,8 +201,10 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
  
- static int snd_i2c_bit_readbytes(struct snd_i2c_device *device,
-@@ -308,21 +310,23 @@ static int snd_i2c_bit_readbytes(struct snd_i2c_device *device,
- 		return -EIO;		/* not yet implemented */
- 	snd_i2c_bit_start(bus);
- 	err = snd_i2c_bit_sendbyte(bus, (device->addr << 1) | 1);
--	if (err < 0) {
--		snd_i2c_bit_hw_stop(bus);
--		return err;
--	}
-+	if (err < 0)
-+		goto stop_bus;
-+
- 	while (count-- > 0) {
- 		err = snd_i2c_bit_readbyte(bus, count = 0);
--		if (err < 0) {
--			snd_i2c_bit_hw_stop(bus);
--			return err;
--		}
-+		if (err < 0)
-+			goto stop_bus;
-+
- 		*bytes++ = (unsigned char)err;
- 		res++;
- 	}
- 	snd_i2c_bit_stop(bus);
- 	return res;
-+
-+stop_bus:
-+	snd_i2c_bit_hw_stop(bus);
-+	return err;
- }
+ 	clk_data = kzalloc(sizeof(*clk_data) + (sizeof(*clk_data->hws) * 2),
+ 			   GFP_KERNEL);
+-	if (!clk_data)
++	if (!clk_data) {
++		kfree(rtc);
+ 		return;
++	}
  
- static int snd_i2c_bit_probeaddr(struct snd_i2c_bus *bus, unsigned short addr)
+ 	spin_lock_init(&rtc->lock);
+ 
 -- 
-2.15.0
+2.14.1
 
