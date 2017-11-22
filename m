@@ -1,25 +1,53 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 29 Nov 2017 06:38:28 +0000
-Subject: Re: [PATCH] crypto: hifn_795x - Fix a memory leak in the error handling path of 'hifn_probe()'
-Message-Id: <20171129063828.GL21575@gondor.apana.org.au>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 22 Nov 2017 16:47:35 +0000
+Subject: [PATCH] drm/amd/display: fix memory leaks on error exit return
+Message-Id: <20171122164735.1497-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171118134545.25784-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20171118134545.25784-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Harry Wentland <harry.wentland@amd.com>, Tony Cheng <tony.cheng@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Nov 18, 2017 at 02:45:45PM +0100, Christophe JAILLET wrote:
-> 'dev' is leaking in the error handling path of 'hifn_probe()'.
-> 
-> Add a 'kfree(dev)' to match the code in 'hifn_remove()'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Currently in the case where some of the allocations fail for dce110_tgv,
+dce110_xfmv, dce110_miv or dce110_oppv then the exit return path ends
+up leaking allocated objects. Fix this by kfree'ing them before returning.
+Also re-work the comparison of the null pointers to use the !ptr idiom.
+
+Detected by CoverityScan, CID#1460246, 1460325, 1460324, 1460392
+("Resource Leak")
+
+Fixes: c4562236b3bc ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
+index db96d2b47ff1..61adb8174ce0 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
+@@ -1037,11 +1037,13 @@ static bool underlay_create(struct dc_context *ctx, struct resource_pool *pool)
+ 	struct dce110_opp *dce110_oppv = kzalloc(sizeof(*dce110_oppv),
+ 						 GFP_KERNEL);
+ 
+-	if ((dce110_tgv = NULL) ||
+-		(dce110_xfmv = NULL) ||
+-		(dce110_miv = NULL) ||
+-		(dce110_oppv = NULL))
+-			return false;
++	if (!dce110_tgv || !dce110_xfmv || !dce110_miv || !dce110_oppv) {
++		kfree(dce110_tgv);
++		kfree(dce110_xfmv);
++		kfree(dce110_miv);
++		kfree(dce110_oppv);
++		return false;
++	}
+ 
+ 	dce110_opp_v_construct(dce110_oppv, ctx);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.1
+
