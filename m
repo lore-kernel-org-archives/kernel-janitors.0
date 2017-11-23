@@ -1,68 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Nov 2017 18:09:11 +0000
-Subject: Re: omapfb/dss: Delete an error message for a failed memory allocation in three functions
-Message-Id: <c0f850bc-0c4d-09d4-bdf4-049b3e00fc75@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 17:33:53 +0000
+Subject: [PATCH 2/2] ASoC: da7213: Improve a size determination in da7213_i2c_probe()
+Message-Id: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1511833514.32426.86.camel@perches.com>
- <7e7e64cf-dbe5-614a-f1e5-29d7b6cf9297@users.sourceforge.net>
- <1511856244.19952.14.camel@perches.com>
- <0ecf4b17-7757-adb4-b978-a80ebb15cfe6@users.sourceforge.net>
- <alpine.DEB.2.20.1711281026410.3443@hadrien>
- <28816ce9-9d62-7d61-1889-64407eececca@users.sourceforge.net>
- <20171128102327.GA30267@lenoch>
- <796a5c89-7c72-776d-e769-e52f5e5bf43f@users.sourceforge.net>
- <20171128114130.GA1615@lenoch>
- <bdf052ef-4f32-af1e-4b1b-6fb75e5e0af9@users.sourceforge.net>
- <20171128175016.GA3501@lenoch>
-In-Reply-To: <20171128175016.GA3501@lenoch>
+References: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
+In-Reply-To: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>, Julia Lawall <julia.lawall@lip6.fr>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Joe Perches <joe@perches.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: alsa-devel@alsa-project.org, support.opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> Additional improvement possibilities can be taken into account
->> after corresponding software development discussions, can't they?
-> 
-> Sure, but that is in contrary to all you replies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 18:15:30 +0100
 
-Where do you see a contradiction in this case?
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
+This issue was detected by using the Coccinelle software.
 
-> I guess you are familiar with Documentation/process/submitting-patches.rst chapter 8.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/codecs/da7213.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I hope so in principle.
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index d1b77a0e3b74..b2b4e90fc02a 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1853,8 +1853,7 @@ static int da7213_i2c_probe(struct i2c_client *i2c,
+ 	struct da7213_priv *da7213;
+ 	int ret;
+ 
+-	da7213 = devm_kzalloc(&i2c->dev, sizeof(struct da7213_priv),
+-			      GFP_KERNEL);
++	da7213 = devm_kzalloc(&i2c->dev, sizeof(*da7213), GFP_KERNEL);
+ 	if (!da7213)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
 
-
-> No matter that patch was generated or suggested by a tool, you sent
-> it and normal review procedure follows.
-
-This is generally fine.
-
-
-> And here you ignored _all_ suggestions
-
-I did not integrate a few of them for my commit message so far
-because it seems that there are open issues for further clarification.
-
-Do you want that I send a second approach for this software module
-before your own evolving update suggestion?
-
-
-> and concentrate solely on improving Coccinelle scripts.
-
-I hope not.
-
-
-> On kernel related lists suggestions to patch itself are discussed.
-
-This is usual.
-
-
-> Whenever you take them into account while developing Coccinelle
-> is up to you (on the Cocci list).
-
-This is also happening, isn't it?
-
-Regards,
-Markus
