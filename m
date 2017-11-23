@@ -1,37 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 28 Nov 2017 14:55:21 +0000
-Subject: Re: [PATCH] ARM: OMAP2+: Missing error code in omap_device_build()
-Message-Id: <20171128145521.GX28152@atomide.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 20:06:00 +0000
+Subject: [PATCH 2/3] ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
+Message-Id: <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171114060648.frwveus2pjpx5idw@mwanda>
-In-Reply-To: <20171114060648.frwveus2pjpx5idw@mwanda>
+References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
+In-Reply-To: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: alsa-devel@alsa-project.org, support.opensource@diasemi.com, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-* Dan Carpenter <dan.carpenter@oracle.com> [171113 22:10]:
-> We need to set the error code if omap_device_alloc() fails.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
-> index 184acd95c216..f0388058b7da 100644
-> --- a/arch/arm/mach-omap2/omap_device.c
-> +++ b/arch/arm/mach-omap2/omap_device.c
-> @@ -514,8 +514,10 @@ struct platform_device __init *omap_device_build(const char *pdev_name,
->  		goto odbs_exit1;
->  
->  	od = omap_device_alloc(pdev, &oh, 1);
-> -	if (IS_ERR(od))
-> +	if (IS_ERR(od)) {
-> +		ret = PTR_ERR(od);
->  		goto odbs_exit1;
-> +	}
->  
->  	ret = platform_device_add_data(pdev, pdata, pdata_len);
->  	if (ret)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 20:48:05 +0100
 
-Applying into omap-for-v4.15/fixes thanks.
+Add a jump target so that a bit of exception handling can be better reused
+in an if branch of this function.
 
-Tony
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/codecs/da7218.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 25ab7443d803..93a0cb741751 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -2524,10 +2524,9 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
+ 
+ 		hpldet_pdata = devm_kzalloc(codec->dev, sizeof(*hpldet_pdata),
+ 					    GFP_KERNEL);
+-		if (!hpldet_pdata) {
+-			of_node_put(hpldet_np);
+-			return pdata;
+-		}
++		if (!hpldet_pdata)
++			goto put_node;
++
+ 		pdata->hpldet_pdata = hpldet_pdata;
+ 
+ 		if (of_property_read_u32(hpldet_np, "dlg,jack-rate-us",
+@@ -2561,6 +2560,7 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
+ 		if (of_property_read_bool(hpldet_np, "dlg,discharge"))
+ 			hpldet_pdata->discharge = true;
+ 
++put_node:
+ 		of_node_put(hpldet_np);
+ 	}
+ 
+-- 
+2.15.0
+
