@@ -1,44 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Nov 2017 19:55:39 +0000
-Subject: [PATCH] x86/vector: make function x86_vector_debug_show static
-Message-Id: <20171128195539.26389-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 08:44:03 +0000
+Subject: [PATCH 1/2] ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_pro
+Message-Id: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
+In-Reply-To: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Juergen Gross <jgross@suse.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 09:26:08 +0100
 
-Function x86_vector_debug_show is local to the source and does not need
-to be in global scope, so make it static.
+Omit an extra message for a memory allocation failure in this function.
 
-Cleans up sparse warning:
+This issue was detected by using the Coccinelle software.
 
-arch/x86/kernel/apic/vector.c:545:6: warning: symbol
-'x86_vector_debug_show' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/apic/vector.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/cs42l56.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 6a823a25eaff..750449152b04 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -542,8 +542,8 @@ static int x86_vector_alloc_irqs(struct irq_domain *domain, unsigned int virq,
- }
- 
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
--void x86_vector_debug_show(struct seq_file *m, struct irq_domain *d,
--			   struct irq_data *irqd, int ind)
-+static void x86_vector_debug_show(struct seq_file *m, struct irq_domain *d,
-+				  struct irq_data *irqd, int ind)
- {
- 	unsigned int cpu, vector, prev_cpu, prev_vector;
- 	struct apic_chip_data *apicd;
+diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
+index cb6ca85f1536..13ee46217d78 100644
+--- a/sound/soc/codecs/cs42l56.c
++++ b/sound/soc/codecs/cs42l56.c
+@@ -1210,11 +1210,9 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
+ 		pdata = devm_kzalloc(&i2c_client->dev,
+ 				     sizeof(struct cs42l56_platform_data),
+ 				     GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&i2c_client->dev,
+-				"could not allocate pdata\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
++
+ 		if (i2c_client->dev.of_node) {
+ 			ret = cs42l56_handle_of_data(i2c_client,
+ 						     &cs42l56->pdata);
 -- 
-2.14.1
+2.15.0
 
