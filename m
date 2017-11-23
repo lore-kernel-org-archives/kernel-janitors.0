@@ -1,56 +1,44 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 27 Nov 2017 13:06:10 +0000
-Subject: Re: [PATCH] USB: serial: iuu_phoenix: remove redundant assignment of DIV to itself
-Message-Id: <20171127130610.GE9862@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 20:07:51 +0000
+Subject: [PATCH 3/3] ASoC: da7218: Improve a size determination in da7218_i2c_probe()
+Message-Id: <8f6b7c8c-f1eb-47c7-c11f-731aa8051863@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171120174015.7191-1-colin.king@canonical.com>
- <5A1337DF.2060404@bfs.de>
-In-Reply-To: <5A1337DF.2060404@bfs.de>
+References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
+In-Reply-To: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Colin King <colin.king@canonical.com>, Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, support.opensource@diasemi.com, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 20, 2017 at 09:15:27PM +0100, walter harms wrote:
-> Am 20.11.2017 18:40, schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The assignment of DIV to itself is redundant and can be removed.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/usb/serial/iuu_phoenix.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/serial/iuu_phoenix.c b/drivers/usb/serial/iuu_phoenix.c
-> > index 397a8012ffa3..62c91e360baf 100644
-> > --- a/drivers/usb/serial/iuu_phoenix.c
-> > +++ b/drivers/usb/serial/iuu_phoenix.c
-> > @@ -472,7 +472,6 @@ static int iuu_clk(struct usb_serial_port *port, int dwFrq)
-> >  				}
-> >  	}
-> >  	P2 = ((P - PO) / 2) - 4;
-> > -	DIV = DIV;
-> >  	PUMP = 0x04;
-> >  	PBmsb = (P2 >> 8 & 0x03);
-> >  	PBlsb = P2 & 0xFF;
-> 
-> These all all-upper-case stuff makes me a bit nervous. Normally this
-> is reserved for #define ( I assume that the programmer refers to
-> the original documentation) a point to change ?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 20:50:44 +0100
 
-Yeah, this isn't pretty and appears to have been copied directly from
-the iuutool userspace tool (mentioned in the header).
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> btw: i noticed  int frq = (int)dwFrq;
-> since dwFrq is already an in, the cast is useless.
+This issue was detected by using the Coccinelle software.
 
-Indeed. Also present in original code.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/codecs/da7218.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This driver went in marked as "experimental", but the dependency on
-CONFIG_EXPERIMENTAL was later dropped. These days something like this
-would have need to be cleaned up (e.g. in staging) before getting
-merged.
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 93a0cb741751..0c1933a98995 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -3269,8 +3269,7 @@ static int da7218_i2c_probe(struct i2c_client *i2c,
+ 	struct da7218_priv *da7218;
+ 	int ret;
+ 
+-	da7218 = devm_kzalloc(&i2c->dev, sizeof(struct da7218_priv),
+-			      GFP_KERNEL);
++	da7218 = devm_kzalloc(&i2c->dev, sizeof(*da7218), GFP_KERNEL);
+ 	if (!da7218)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
 
-Johan
