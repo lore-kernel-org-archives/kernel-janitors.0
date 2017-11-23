@@ -1,92 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 09:30:37 +0000
-Subject: [PATCH 3/3] ALSA: es1968: Use common error handling code in snd_es1968_capture_open()
-Message-Id: <28d6e644-fe54-ecd9-6a2a-efc855299faa@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Nov 2017 10:55:53 +0000
+Subject: [PATCH] video: fbdev: remove redundant self assignment of 'height'
+Message-Id: <20171123105553.18969-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
-In-Reply-To: <e1e9e0cc-0378-c2fe-015d-15555fd61a23@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 15 Nov 2017 09:30:00 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+The assignment of height to itself is redundant and can be removed.
+Detected with Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/es1968.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ drivers/video/fbdev/vga16fb.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/pci/es1968.c b/sound/pci/es1968.c
-index 7777ec583e20..fc45fab258c1 100644
---- a/sound/pci/es1968.c
-+++ b/sound/pci/es1968.c
-@@ -1589,23 +1589,20 @@ static int snd_es1968_capture_open(struct snd_pcm_substream *substream)
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct es1968 *chip = snd_pcm_substream_chip(substream);
- 	struct esschan *es;
--	int apu1, apu2;
-+	int apu1, apu2, rc;
+diff --git a/drivers/video/fbdev/vga16fb.c b/drivers/video/fbdev/vga16fb.c
+index 5f0690c8fc93..2c6a576ed84c 100644
+--- a/drivers/video/fbdev/vga16fb.c
++++ b/drivers/video/fbdev/vga16fb.c
+@@ -1055,7 +1055,6 @@ static void vga16fb_copyarea(struct fb_info *info, const struct fb_copyarea *are
+ 	case FB_TYPE_VGA_PLANES:
+ 		if (info->fix.type_aux = FB_AUX_VGA_PLANES_VGA4) {
+ 			width = width/8;
+-			height = height;
+ 			line_ofs = info->fix.line_length - width;
  
- 	apu1 = snd_es1968_alloc_apu_pair(chip, ESM_APU_PCM_CAPTURE);
- 	if (apu1 < 0)
- 		return apu1;
- 	apu2 = snd_es1968_alloc_apu_pair(chip, ESM_APU_PCM_RATECONV);
- 	if (apu2 < 0) {
--		snd_es1968_free_apu_pair(chip, apu1);
--		return apu2;
-+		rc = apu2;
-+		goto free_first_pair;
- 	}
- 	
- 	es = kzalloc(sizeof(*es), GFP_KERNEL);
--	if (!es) {
--		snd_es1968_free_apu_pair(chip, apu1);
--		snd_es1968_free_apu_pair(chip, apu2);
--		return -ENOMEM;
--	}
-+	if (!es)
-+		goto e_nomem;
- 
- 	es->apu[0] = apu1;
- 	es->apu[1] = apu1 + 1;
-@@ -1621,12 +1618,9 @@ static int snd_es1968_capture_open(struct snd_pcm_substream *substream)
- 
- 	/* get mixbuffer */
- 	es->mixbuf = snd_es1968_new_memory(chip, ESM_MIXBUF_SIZE);
--	if (!es->mixbuf) {
--		snd_es1968_free_apu_pair(chip, apu1);
--		snd_es1968_free_apu_pair(chip, apu2);
--		kfree(es);
--                return -ENOMEM;
--        }
-+	if (!es->mixbuf)
-+		goto free_data;
-+
- 	memset(es->mixbuf->buf.area, 0, ESM_MIXBUF_SIZE);
- 
- 	runtime->private_data = es;
-@@ -1640,6 +1634,15 @@ static int snd_es1968_capture_open(struct snd_pcm_substream *substream)
- 	spin_unlock_irq(&chip->substream_lock);
- 
- 	return 0;
-+
-+free_data:
-+	kfree(es);
-+e_nomem:
-+	rc = -ENOMEM;
-+	snd_es1968_free_apu_pair(chip, apu2);
-+free_first_pair:
-+	snd_es1968_free_apu_pair(chip, apu1);
-+	return rc;
- }
- 
- static int snd_es1968_playback_close(struct snd_pcm_substream *substream)
+ 			setmode(1);
 -- 
-2.15.0
+2.14.1
 
