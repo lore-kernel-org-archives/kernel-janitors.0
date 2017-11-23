@@ -1,58 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 07 Nov 2017 16:21:25 +0000
-Subject: [PATCH RFC v1] 9p/trans_fd: Use common error handling code in p9_fd_create_tcp()
-Message-Id: <827791c8-6eae-18ff-80e5-192b609e555f@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 23 Nov 2017 11:31:33 +0000
+Subject: [PATCH] bna: remove redundant self assignment of 'i'
+Message-Id: <20171123113133.20928-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Rasesh Mody <rasesh.mody@cavium.com>, Sudarsana Kalluru <sudarsana.kalluru@cavium.com>, Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
-OiBUdWUsIDcgTm92IDIwMTcgMTA6MDU6MjAgKzAxMDAKCkFkZCBhIGp1bXAgdGFyZ2V0IHNvIHRo
-YXQgYSBiaXQgb2YgZXhjZXB0aW9uIGhhbmRsaW5nIGNhbiBiZSBiZXR0ZXIgcmV1c2VkCmF0IHRo
-ZSBlbmQgb2YgdGhpcyBmdW5jdGlvbi4KClRoaXMgaXNzdWUgd2FzIGRldGVjdGVkIGJ5IHVzaW5n
-IHRoZSBDb2NjaW5lbGxlIHNvZnR3YXJlLgoKU2lnbmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcg
-PGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgotLS0KCnYxIC0gUmVxdWVzdCBmb3IgY29t
-bWVudHM6CkkgY2FuIG9mZmVyIGFub3RoZXIgYml0IG9mIGluZm9ybWF0aW9uIGZvciBhIHNvZnR3
-YXJlIGRldmVsb3BtZW50IGRpc2N1c3Npb24uIPCfkq0KClRoZSBhZmZlY3RlZCBzb3VyY2UgZmls
-ZSBjYW4gYmUgY29tcGlsZWQgZm9yIHRoZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4Nl82
-NOKAnQpieSBhIHRvb2wgbGlrZSDigJxHQ0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0aGUg
-c29mdHdhcmUgZGlzdHJpYnV0aW9uCuKAnG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0aGUg
-Zm9sbG93aW5nIGNvbW1hbmQgZXhhbXBsZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYgbXlf
-bW9kdWxlPW5ldC85cC90cmFuc19mZC5vIFwKJiYgZm9yIFhZWiBpbiAwIHMgMzsgZG8gZWNobyAi
-ICAgX19fX18gJFhZWiBfX19fXyIgXAomJiBteV9leHRyYT0iLU8kWFlaIiBcCiYmIGdpdCBjaGVj
-a291dCBuZXh0LTIwMTcxMTAyIFwKJiYgbWFrZSAtajQgQ0M9IiR7bXlfY2N9IiBIT1NUQ0M9IiR7
-bXlfY2N9IiBFWFRSQV9DRkxBR1M9IiR7bXlfZXh0cmF9IiBhbGxtb2Rjb25maWcgIiR7bXlfbW9k
-dWxlfSIgXAomJiBzaXplICIke215X21vZHVsZX0iIFwKJiYgZ2l0IGNoZWNrb3V0ICc6L145cC90
-cmFuc19mZDogVXNlIGNvbW1vbiBlcnJvciBoYW5kbGluZyBjb2RlIGluIHA5X2ZkX2NyZWF0ZV90
-Y3AnIFwKJiYgbWFrZSAtajQgQ0M9IiR7bXlfY2N9IiBIT1NUQ0M9IiR7bXlfY2N9IiBFWFRSQV9D
-RkxBR1M9IiR7bXlfZXh0cmF9IiBhbGxtb2Rjb25maWcgIiR7bXlfbW9kdWxlfSIgXAomJiBzaXpl
-ICIke215X21vZHVsZX0iOyBkb25lCgoK8J+UriBEbyB5b3UgZmluZCB0aGUgZm9sbG93aW5nIGRp
-ZmZlcmVuY2VzIHdvcnRoIGZvciBmdXJ0aGVyIGNsYXJpZmljYXRpb24/CgrilZTilZDilZDilZDi
-lZDilZDilZDilZDilZDilZDilaTilZDilZDilZDilZDilZDilZDilZcK4pWRIHNldHRpbmcg4pSC
-IHRleHQg4pWRCuKVoOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVquKVkOKVkOKVkOKVkOKV
-kOKVkOKVowrilZEgICBPMCAgICDilIIgLTE0ICDilZEK4pWRICAgT3MgICAg4pSCICsxMyAg4pWR
-CuKVkSAgIE8zICAgIOKUgiAgMCAgIOKVkQrilZrilZDilZDilZDilZDilZDilZDilZDilZDilZDi
-lafilZDilZDilZDilZDilZDilZDilZ0KCgogbmV0LzlwL3RyYW5zX2ZkLmMgfCAxMCArKysrKyst
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL25ldC85cC90cmFuc19mZC5jIGIvbmV0LzlwL3RyYW5zX2ZkLmMKaW5kZXggOTAz
-YTE5MDMxOWI5Li4xNjFjMjI0OWNhMmEgMTAwNjQ0Ci0tLSBhL25ldC85cC90cmFuc19mZC5jCisr
-KyBiL25ldC85cC90cmFuc19mZC5jCkBAIC05NzQsOCArOTc0LDcgQEAgcDlfZmRfY3JlYXRlX3Rj
-cChzdHJ1Y3QgcDlfY2xpZW50ICpjbGllbnQsIGNvbnN0IGNoYXIgKmFkZHIsIGNoYXIgKmFyZ3Mp
-CiAJCWlmIChlcnIgPCAwKSB7CiAJCQlwcl9lcnIoIiVzICglZCk6IHByb2JsZW0gYmluZGluZyB0
-byBwcml2cG9ydFxuIiwKIAkJCSAgICAgICBfX2Z1bmNfXywgdGFza19waWRfbnIoY3VycmVudCkp
-OwotCQkJc29ja19yZWxlYXNlKGNzb2NrZXQpOwotCQkJcmV0dXJuIGVycjsKKwkJCWdvdG8gcmVs
-ZWFzZV9zb2NrZXQ7CiAJCX0KIAl9CiAKQEAgLTk4NSwxMSArOTg0LDE0IEBAIHA5X2ZkX2NyZWF0
-ZV90Y3Aoc3RydWN0IHA5X2NsaWVudCAqY2xpZW50LCBjb25zdCBjaGFyICphZGRyLCBjaGFyICph
-cmdzKQogCWlmIChlcnIgPCAwKSB7CiAJCXByX2VycigiJXMgKCVkKTogcHJvYmxlbSBjb25uZWN0
-aW5nIHNvY2tldCB0byAlc1xuIiwKIAkJICAgICAgIF9fZnVuY19fLCB0YXNrX3BpZF9ucihjdXJy
-ZW50KSwgYWRkcik7Ci0JCXNvY2tfcmVsZWFzZShjc29ja2V0KTsKLQkJcmV0dXJuIGVycjsKKwkJ
-Z290byByZWxlYXNlX3NvY2tldDsKIAl9CiAKIAlyZXR1cm4gcDlfc29ja2V0X29wZW4oY2xpZW50
-LCBjc29ja2V0KTsKKworcmVsZWFzZV9zb2NrZXQ6CisJc29ja19yZWxlYXNlKGNzb2NrZXQpOwor
-CXJldHVybiBlcnI7CiB9CiAKIHN0YXRpYyBpbnQKLS0gCjIuMTUuMAoKLS0KVG8gdW5zdWJzY3Jp
-YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5p
-dG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
-cmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1s
+From: Colin Ian King <colin.king@canonical.com>
+
+The assignment of variable i to itself is redundant and can be removed.
+Detected with Coccinelle.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/brocade/bna/bna_enet.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/brocade/bna/bna_enet.c b/drivers/net/ethernet/brocade/bna/bna_enet.c
+index a6606622764b..8d05a5c2450f 100644
+--- a/drivers/net/ethernet/brocade/bna/bna_enet.c
++++ b/drivers/net/ethernet/brocade/bna/bna_enet.c
+@@ -1797,7 +1797,7 @@ bna_ucam_mod_init(struct bna_ucam_mod *ucam_mod, struct bna *bna,
+ 
+ 	/* A separate queue to allow synchronous setting of a list of MACs */
+ 	INIT_LIST_HEAD(&ucam_mod->del_q);
+-	for (i = i; i < (bna->ioceth.attr.num_ucmac * 2); i++)
++	for (; i < (bna->ioceth.attr.num_ucmac * 2); i++)
+ 		list_add_tail(&ucam_mod->ucmac[i].qe, &ucam_mod->del_q);
+ 
+ 	ucam_mod->bna = bna;
+@@ -1832,7 +1832,7 @@ bna_mcam_mod_init(struct bna_mcam_mod *mcam_mod, struct bna *bna,
+ 
+ 	/* A separate queue to allow synchronous setting of a list of MACs */
+ 	INIT_LIST_HEAD(&mcam_mod->del_q);
+-	for (i = i; i < (bna->ioceth.attr.num_mcmac * 2); i++)
++	for (; i < (bna->ioceth.attr.num_mcmac * 2); i++)
+ 		list_add_tail(&mcam_mod->mcmac[i].qe, &mcam_mod->del_q);
+ 
+ 	mcam_mod->bna = bna;
+-- 
+2.14.1
+
