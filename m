@@ -1,40 +1,44 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Thu, 02 Nov 2017 08:22:08 +0000
-Subject: Re: [v2] can: Use common error handling code in vxcan_newlink()
-Message-Id: <205ba2b1-ae1d-d0ae-7d78-47d2285ed3fc@hartkopp.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 17:32:40 +0000
+Subject: [PATCH 1/2] ASoC: da7213: Delete an error message for a failed memory allocation in da7213_fw_to_pda
+Message-Id: <6dc71b14-4c14-82f6-9dad-92bfa9854de2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2e600d9a-faec-dd39-08f0-5a7fb260d7ca@users.sourceforge.net>
- <2ab5d794-7a5c-9036-835c-67cfcc541795@hartkopp.net>
- <d3bdd3c0-5a03-dd59-07ca-94b126c67f75@users.sourceforge.net>
- <264b3c2b-8354-5769-639c-ac8d2fcbe630@hartkopp.net>
- <23fbbdba-fb11-a6bc-7d6a-4af43ef79503@users.sourceforge.net>
- <08fd31d5-8677-81e7-65d6-40d501017db6@hartkopp.net>
- <2346609d-85f6-6eec-e492-d15ba1b6489a@users.sourceforge.net>
-In-Reply-To: <2346609d-85f6-6eec-e492-d15ba1b6489a@users.sourceforge.net>
+References: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
+In-Reply-To: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Marc Kleine-Budde <mkl@pengutronix.de>, Wolfgang Grandegger <wg@grandegger.com>, linux-can@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: alsa-devel@alsa-project.org, support.opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 11/01/2017 08:37 PM, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 17:56:54 +0100
 
-> These addresses were suggested (or recommended?) by the script “get_maintainer.pl”.
+Omit an extra message for a memory allocation failure in this function.
 
-I know.
+This issue was detected by using the Coccinelle software.
 
-(..)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/codecs/da7213.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> How does this view fit to the information in the section “5) Select
-> the recipients for your patch” from the document “submitting-patches.rst”?
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index 41d9b1da27c2..d1b77a0e3b74 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1654,10 +1654,8 @@ static struct da7213_platform_data
+ 	u32 fw_val32;
+ 
+ 	pdata = devm_kzalloc(codec->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata) {
+-		dev_warn(codec->dev, "Failed to allocate memory for pdata\n");
++	if (!pdata)
+ 		return NULL;
+-	}
+ 
+ 	if (device_property_read_u32(dev, "dlg,micbias1-lvl", &fw_val32) >= 0)
+ 		pdata->micbias1_lvl = da7213_of_micbias_lvl(codec, fw_val32);
+-- 
+2.15.0
 
-We discussed and agreed about your patch. It is clear and simple and has 
-no side effects to any other driver nor other subsystems.
-
-It was just about getting *this* patch into upstream where the Linux CAN 
-ML is the right place to post - that was my suggestion. So there was no 
-need to take the *standard* get_maintainer mail pump-gun again for this 
-patch in order to save bandwidth, energy and peoples lifetime :-)
-
-Regards,
-Oliver
