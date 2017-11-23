@@ -1,46 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 08:44:03 +0000
-Subject: [PATCH 1/2] ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_pro
-Message-Id: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 21:12:09 +0000
+Subject: [PATCH 4/4] ASoC: twl4030: Delete an unnecessary variable initialisation in twl4030_get_pdata()
+Message-Id: <7fda4752-0546-b194-997e-0db5b673aeab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
-In-Reply-To: <d722241a-dca3-dac3-8288-ac2e283e8be8@users.sourceforge.net>
+References: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
+In-Reply-To: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 09:26:08 +0100
+Date: Thu, 23 Nov 2017 21:54:10 +0100
 
-Omit an extra message for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
+The variable "twl4030_codec_node" will be reassigned by
+a following statement.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/cs42l56.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ sound/soc/codecs/twl4030.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index cb6ca85f1536..13ee46217d78 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1210,11 +1210,9 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				     sizeof(struct cs42l56_platform_data),
- 				     GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev,
--				"could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
-+
- 		if (i2c_client->dev.of_node) {
- 			ret = cs42l56_handle_of_data(i2c_client,
- 						     &cs42l56->pdata);
+diff --git a/sound/soc/codecs/twl4030.c b/sound/soc/codecs/twl4030.c
+index 946818a0412c..3ea6117beceb 100644
+--- a/sound/soc/codecs/twl4030.c
++++ b/sound/soc/codecs/twl4030.c
+@@ -230,7 +230,7 @@ static void twl4030_setup_pdata_of(struct twl4030_codec_data *pdata,
+ static struct twl4030_codec_data *twl4030_get_pdata(struct snd_soc_codec *codec)
+ {
+ 	struct twl4030_codec_data *pdata = dev_get_platdata(codec->dev);
+-	struct device_node *twl4030_codec_node = NULL;
++	struct device_node *twl4030_codec_node;
+ 
+ 	twl4030_codec_node = of_get_child_by_name(codec->dev->parent->of_node,
+ 						  "codec");
 -- 
 2.15.0
 
