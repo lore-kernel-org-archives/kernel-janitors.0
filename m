@@ -1,70 +1,40 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Wed, 15 Nov 2017 10:05:16 +0000
-Subject: Re: [PATCH] power: supply: sbs-message: double left shift bug in sbsm_select()
-Message-Id: <20171115100516.andgvd6gvdcrv46y@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="be6ipm5etwn2o756"
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Nov 2017 13:27:12 +0000
+Subject: [PATCH] atm: lanai: use setup_timer instead of init_timer
+Message-Id: <20171124132712.31882-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171107124322.mm3fqkrggw3zidrx@mwanda>
- <20171113105524.xdiusofmau36zdeu@earth>
- <20171113110231.ixxeszux3d7agojv@ninjato>
- <20171115074544.5mxmjb66nqkzwyqo@ninjato>
-In-Reply-To: <20171115074544.5mxmjb66nqkzwyqo@ninjato>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karl-Heinz Schneider <karl-heinz@schneider-inet.de>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---be6ipm5etwn2o756
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use setup_timer function instead of initializing timer with the
+function and data fields.
 
-Hi,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/lanai.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On Wed, Nov 15, 2017 at 08:45:44AM +0100, Wolfram Sang wrote:
-> > > >  	/* chan goes from 1 ... 4 */
-> > > > -	reg =3D 1 << BIT(SBSM_SMB_BAT_OFFSET + chan);
-> > > > +	reg =3D BIT(SBSM_SMB_BAT_OFFSET + chan);
-> > > >  	ret =3D sbsm_write_word(data->client, SBSM_CMD_BATSYSSTATE, reg);
-> > > >  	if (ret)
-> > > >  		dev_err(dev, "Failed to select channel %i\n", chan);
-> > >=20
-> > > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > >=20
-> > > sbs-manager has been added to linux-next through the i2c tree due to
-> > > dependencies, so this one also needs to go through i2c.
-> >=20
-> > I want to send Linus my pull request early this time (like today or
-> > tomorrow). So, you either apply this patch then yourself afterwards on
-> > top of linus' tree. Or I send it to him, but then I'd need the original
-> > patch bounced or resent. Both fine with me.
->=20
-> The sbs-manager code is in linus' tree now. How would you like to
-> proceed?
+diff --git a/drivers/atm/lanai.c b/drivers/atm/lanai.c
+index 2351dad78ff5..87e8b5dfac39 100644
+--- a/drivers/atm/lanai.c
++++ b/drivers/atm/lanai.c
+@@ -1790,10 +1790,8 @@ static void lanai_timed_poll(unsigned long arg)
+ 
+ static inline void lanai_timed_poll_start(struct lanai_dev *lanai)
+ {
+-	init_timer(&lanai->timer);
++	setup_timer(&lanai->timer, lanai_timed_poll, (unsigned long)lanai);
+ 	lanai->timer.expires = jiffies + LANAI_POLL_PERIOD;
+-	lanai->timer.data = (unsigned long) lanai;
+-	lanai->timer.function = lanai_timed_poll;
+ 	add_timer(&lanai->timer);
+ }
+ 
+-- 
+2.14.1
 
-I plan to send my pull request today and will take it during the -rc phase
-through the power-supply tree. Thanks,
-
--- Sebastian
-
---be6ipm5etwn2o756
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAloMEVYACgkQ2O7X88g7
-+prdVA/5AUxAhdzkXvIsSD27XYpyVoiCOeTJi4Li9TmpWwtVUFZ56vtGU+Uk8gQv
-377t9YdNA/CAHuZBA31+yloQvh+HV9wWY5mVjtizyS28O/iv0I3PCjEcEaNMDTYL
-crPeeYK41CRNj5vN9ijfJC6eekZ5xS6oNWkkAoDOit8B9dBTGW9A71VYmNjTKnq0
-WjLZpy8qqAC1g/7Mk/JPts4bfokf5ZrnqK/3T0XYvzasACVBNocT8GvKwQolYt6E
-Vo6GClshhjaTjphNoxwjrn+nv01JDWXNQy0X5771ODXRomLMxuQQBgwXhEWsTb1s
-fn1i8qyFDRxECoyV7Axy9io7CILpycyAzVMJkyIRVbaT1sNqMbMjMtskTDB8QXoc
-RnovIBFG+VxJ47ng1QrkRF/lab+PMC0+PHMFhHnErPH1nDAJxGWmu23464o/9vvy
-QlYnZ98JqrkyVI5W5lSYi/LhxofvedtGCkalABfNbN6JETHmk0kDpR5KUN/wNGBr
-kugzZKwhBrDrsVjk5uMuVxG0FD1XbvFrAN9PkAcBTKeywG5egKCFlSIWbmB5ligl
-C1PrRzqw/E8KeHkkptINwXttt25+WBy/e72InVb8eF5QrAvgSdW0aC/Rcf/OhApU
-UHWPwHVEGCIYIaX5MlVL4YdH5waxPU7qqLoGSMHxkY/kj0EDVNU=
-=hJAU
------END PGP SIGNATURE-----
-
---be6ipm5etwn2o756--
