@@ -1,43 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Nov 2017 15:03:26 +0000
-Subject: Re: sr9800: Use common error handling code in sr9800_phy_powerup()
-Message-Id: <78748ef8-5d0d-f0e8-bce4-5e6f29c89089@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 20:51:13 +0000
+Subject: [PATCH 2/4] video: udlfb: Return an error code only as a constant in dlfb_realloc_framebuffer()
+Message-Id: <65441eb1-3a22-27ad-b9af-03111855a6e6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <10f2b5a4-1dbd-2c4f-caaa-4225dff35296@users.sourceforge.net>
- <CAMuHMdU6K+KPZvsStfwPev9Z5v1RRYAwLr04FHjmeC=VUEMC+Q@mail.gmail.com>
- <0600e4f9-dd53-158c-556b-8a87dfc928e6@users.sourceforge.net>
- <CAMuHMdWpaohd4rFxLzBaBDE2v79487Ak8WQjJpjR465wnRvhXA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWpaohd4rFxLzBaBDE2v79487Ak8WQjJpjR465wnRvhXA@mail.gmail.com>
+References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>, "David S. Miller" <davem@davemloft.net>, Greg Ungerer <gerg@linux-m68k.org>, Liu Junliang <liujunliang_ljl@163.com>, Philippe Reynes <tremyfr@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> If you play the "smaller executable object code" card, people expect that
-> you provide the actual numbers, too.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 21:22:25 +0100
 
-I can offer another bit of information for this software development discussion.
+* Return an error code without storing it in an intermediate variable.
 
-The affected source file can be compiled for the processor architecture “x86_64”
-by a tool like “GCC 6.4.1+r251631-1.3” from the software distribution
-“openSUSE Tumbleweed” with the following command example.
+* Delete the label "error" and local variable "retval"
+  which became unnecessary with this refactoring.
 
-my_cc=/usr/bin/gcc-6 \
-&& my_module=drivers/net/usb/sr9800.ko \
-&& git checkout next-20171009 \
-&& make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-&& size "${my_module}" \
-&& git checkout ':/^sr9800: Use common error handling code in sr9800_phy_powerup' \
-&& make -j4 CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-&& size "${my_module}"
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/udlfb.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+index 77633c58bb9b..cb2d59ca67a4 100644
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1159,7 +1159,6 @@ static struct fb_ops dlfb_ops = {
+  */
+ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
+ {
+-	int retval = -ENOMEM;
+ 	int old_len = info->fix.smem_len;
+ 	int new_len;
+ 	unsigned char *old_fb = info->screen_base;
+@@ -1176,7 +1175,7 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
+ 		 */
+ 		new_fb = vmalloc(new_len);
+ 		if (!new_fb)
+-			goto error;
++			return -ENOMEM;
+ 
+ 		if (info->screen_base) {
+ 			memcpy(new_fb, old_fb, old_len);
+@@ -1203,11 +1202,7 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
+ 			dev->backing_buffer = new_back;
+ 		}
+ 	}
+-
+-	retval = 0;
+-
+-error:
+-	return retval;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.15.0
 
-Do you find the following details useful for further clarification?
-
-text: -47
-data: 0
-bss:  0
-
-Regards,
-Markus
