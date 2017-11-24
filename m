@@ -1,35 +1,36 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:58:44 +0000
-Subject: Re: [PATCH 2/2] clk-xgene: Adjust six checks for null pointers
-Message-Id: <20171114015844.GJ11955@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Nov 2017 10:10:44 +0000
+Subject: [PATCH] USB: gadget: udc: fix spelling mistake "unexpect" -> "unexpected"
+Message-Id: <20171124101044.26554-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440d17a-ae7d-0a9c-49b4-611824df5e87@users.sourceforge.net>
- <c7cfc7bc-8457-1e6b-421d-6c4f0b5149a6@users.sourceforge.net>
-In-Reply-To: <c7cfc7bc-8457-1e6b-421d-6c4f0b5149a6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Loc Ho <lho@apm.com>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Li Yang <leoyang.li@nxp.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/26, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 26 Sep 2017 21:27:52 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> The script “checkpatch.pl” pointed information out like the following.
-> 
-> Comparison to NULL could be written …
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to clk-next
+Trival fix to spelling mistake in ERR message
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/fsl_udc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/udc/fsl_udc_core.c
+index d606d4f13098..e5b4ee96c4bf 100644
+--- a/drivers/usb/gadget/udc/fsl_udc_core.c
++++ b/drivers/usb/gadget/udc/fsl_udc_core.c
+@@ -1543,7 +1543,7 @@ static void ep0_req_complete(struct fsl_udc *udc, struct fsl_ep *ep0,
+ 		udc->ep0_state = WAIT_FOR_SETUP;
+ 		break;
+ 	case WAIT_FOR_SETUP:
+-		ERR("Unexpect ep0 packets\n");
++		ERR("Unexpected ep0 packets\n");
+ 		break;
+ 	default:
+ 		ep0stall(udc);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
+
