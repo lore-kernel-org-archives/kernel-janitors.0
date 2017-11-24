@@ -1,49 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 12:50:21 +0000
+Date: Fri, 24 Nov 2017 13:50:59 +0000
 Subject: Re: ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
-Message-Id: <badb0c28-818b-2c71-e4f2-088e6ca0fb6f@users.sourceforge.net>
+Message-Id: <2a38fc07-ebf1-3e61-d809-ba6ed6dbe45a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
  <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
  <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
-In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
+ <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
+In-Reply-To: <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, support.opensource@diasemi.com
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Mark Brown <broonie@kernel.org>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, support.opensource@diasemi.com
+Cc: LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 
->> Add a jump target so that a bit of exception handling can be better reus=
-ed
->> in an if branch of this function.
-=E2=80=A6
-> Hmm. Doesn't really gain an awful lot this.
-
-I show just another small change possibility.
-
-
-> Would understand if there were multiple return paths,
-> but in that case I'd have implemented something like this anyway.
-
-Where?
-
-Can the suggested software refactoring become useful also for this
-function implementation?
-
-
-> Also your patch description isn't really correct.
-
-Which wording would you find more appropriate?
-
-
-> You're re-using code from the sunny day scenario to handle an exception.
-
-Can this detail be better?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Pj4+IEFkZCBhIGp1bXAgdGFyZ2V0IHNvIHRoYXQgYSBiaXQgb2YgZXhjZXB0aW9uIGhhbmRsaW5n
+IGNhbiBiZSBiZXR0ZXIgcmV1c2VkCj4+PiBpbiBhbiBpZiBicmFuY2ggb2YgdGhpcyBmdW5jdGlv
+bi4KPiAKPj4gSG1tLiBEb2Vzbid0IHJlYWxseSBnYWluIGFuIGF3ZnVsIGxvdCB0aGlzLiBXb3Vs
+ZCB1bmRlcnN0YW5kIGlmIHRoZXJlIHdlcmUKPj4gbXVsdGlwbGUgcmV0dXJuIHBhdGhzLCBidXQg
+aW4gdGhhdCBjYXNlIEknZCBoYXZlIGltcGxlbWVudGVkIHNvbWV0aGluZyBsaWtlCj4+IHRoaXMg
+YW55d2F5LiBBbHNvIHlvdXIgcGF0Y2ggZGVzY3JpcHRpb24gaXNuJ3QgcmVhbGx5IGNvcnJlY3Qu
+IFlvdSdyZSByZS11c2luZwo+PiBjb2RlIGZyb20gdGhlIHN1bm55IGRheSBzY2VuYXJpbyB0byBo
+YW5kbGUgYW4gZXhjZXB0aW9uLgo+IAo+IE90aGVyIHBlb3BsZSBoYXZlIGdpdmVuIGhpbSBzaW1p
+bGFyIGZlZWRiYWNrIG9uIGhpcyBvdGhlciBwYXRjaGVzIHdpdGgKPiB0aGlzIHBhdHRlcm4uICBJ
+J20gbm90IGludGVuZGluZyB0byBhcHBseSBhbnkgb2YgdGhlbS4KCkkgY2FuIG9mZmVyIGFub3Ro
+ZXIgYml0IG9mIGluZm9ybWF0aW9uIGZvciBhIHNvZnR3YXJlIGRldmVsb3BtZW50IGRpc2N1c3Np
+b24uIPCfkq0KClRoZSBhZmZlY3RlZCBzb3VyY2UgZmlsZSBjYW4gYmUgY29tcGlsZWQgZm9yIHRo
+ZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4Nl82NOKAnQpieSBhIHRvb2wgbGlrZSDigJxH
+Q0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0aGUgc29mdHdhcmUgZGlzdHJpYnV0aW9uCuKA
+nG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0aGUgZm9sbG93aW5nIGNvbW1hbmQgZXhhbXBs
+ZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYgbXlfbW9kdWxlPXNvdW5kL3NvYy9jb2RlY3Mv
+ZGE3MjE4Lm8gXAomJiBmb3IgWFlaIGluIDAgcyAzOyBkbyBlY2hvICIgICBfX19fXyAkWFlaIF9f
+X19fIiBcCiYmIG15X2V4dHJhPSItTyRYWVoiIFwKJiYgZ2l0IGNoZWNrb3V0ICc6L15BU29DOiBk
+YTcyMTg6IERlbGV0ZSB0d28gZXJyb3IgbWVzc2FnZXMgZm9yIGEgZmFpbGVkIG1lbW9yeSBhbGxv
+Y2F0aW9uIGluIGRhNzIxOF9vZl90b19wZGF0YScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30i
+IEhPU1RDQz0iJHtteV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZp
+ZyAiJHtteV9tb2R1bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSIgXAomJiBnaXQgY2hlY2tv
+dXQgJzovXkFTb0M6IGRhNzIxODogVXNlIGNvbW1vbiBlcnJvciBoYW5kbGluZyBjb2RlIGluIGRh
+NzIxOF9vZl90b19wZGF0YScgXAomJiBtYWtlIC1qNCBDQz0iJHtteV9jY30iIEhPU1RDQz0iJHtt
+eV9jY30iIEVYVFJBX0NGTEFHUz0iJHtteV9leHRyYX0iIGFsbG1vZGNvbmZpZyAiJHtteV9tb2R1
+bGV9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlfSI7IGRvbmUKCgrwn5SuIERvIHlvdSBmaW5kIHRo
+ZSBmb2xsb3dpbmcgZGlmZmVyZW5jZXMgd29ydGggZm9yIGZ1cnRoZXIgY2xhcmlmaWNhdGlvbj8K
+CuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKVkOKVkOKVkOKVkOKVkOKVkOKVlwri
+lZEgc2V0dGluZyDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWq
+4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSAgIE8wICAgIOKUgiAtMjUgIOKVkQrilZEgICBPcyAg
+ICDilIIgLTE0ICDilZEK4pWRICAgTzMgICAg4pSCICsxMSAg4pWRCuKVmuKVkOKVkOKVkOKVkOKV
+kOKVkOKVkOKVkOKVkOKVp+KVkOKVkOKVkOKVkOKVkOKVkOKVnQoKClJlZ2FyZHMsCk1hcmt1cwot
+LQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
+YmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
+QHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
+ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
