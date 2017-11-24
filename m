@@ -1,119 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 16 Nov 2017 18:54:34 +0000
-Subject: Re: [PATCH 0/2] ALSA: nm256: Fine-tuning for three function implementations
-Message-Id: <s5h7euq9hqt.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Nov 2017 13:44:02 +0000
+Subject: [PATCH] scsi: bfa: use setup_timer instead of init_timer
+Message-Id: <20171124134402.32739-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d98a2685-ddf9-1cba-839a-d12c5ff8d3ba@users.sourceforge.net>
-        <s5hefoy16xg.wl-tiwai@suse.de>
-        <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
-In-Reply-To: <dfa99045-f213-3dad-b1f4-2e90eb38ddbd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 16 Nov 2017 18:48:43 +0100,
-SF Markus Elfring wrote:
-> 
-> >> Two update suggestions were taken into account
-> >> from static source code analysis.
-> > 
-> > Markus, I'd apply this kind of patches only when they are really
-> > tested on the hardware,
-> 
-> I can not test all software and hardware combinations (so far)
-> for which I dare to show change possibilities.
-> 
-> 
-> > or they were converted systematically by a script like spatch.
-> 
-> There is a general source code transformation pattern involved.
-> So I find that it is systematic.
-> 
-> But I did not dare to develop a script variant for the semantic patch
-> language (Coccinelle software) which can handle all special use cases
-> as a few of them are already demonstrated in this tiny patch series.
+From: Colin Ian King <colin.king@canonical.com>
 
-Then you're doing everything by hands, and can be wrong -- that's the
-heart of the problem.  The risk is bigger than the merit by applying
-the patch.
+Use setup_timer function instead of initializing timer with the
+function and data fields.
 
-So, just prove that your patch doesn't break anything.  Doesn't matter
-whether it's a test with real hardware or with systematic checks.
-Once when it's confirmed, we can apply it.  A very simple rule, and
-this will be valid for most of other subsystems, too.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/bfa/bfad.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index 5caf5f3ff642..c910b238bc9e 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -719,10 +719,7 @@ bfad_bfa_tmo(unsigned long data)
+ void
+ bfad_init_timer(struct bfad_s *bfad)
+ {
+-	init_timer(&bfad->hal_tmo);
+-	bfad->hal_tmo.function = bfad_bfa_tmo;
+-	bfad->hal_tmo.data = (unsigned long)bfad;
+-
++	setup_timer(&bfad->hal_tmo, bfad_bfa_tmo, (unsigned long)bfad);
+ 	mod_timer(&bfad->hal_tmo,
+ 		  jiffies + msecs_to_jiffies(BFA_TIMER_FREQ));
+ }
+-- 
+2.14.1
 
-thanks,
-
-Takashi
-
-> 
-> 
-> > The reason is that you might break something
-> 
-> There are the usual software development risks.
-> 
-> 
-> > (and you already broke things in the past).
-> 
-> I presented also some improvable update suggestions.
-> 
-> Another look on the corresponding circumstances might be interesting
-> for further clarification.
-> 
-> 
-> > The merit by such a patch is negligible in comparison of the risk of breakage.
-> 
-> I imagine that you might like a small object code reduction also for
-> this software module.
-> 
-> 
-> > These codes aren't too bad without fixing, after all;
-> > everyone can read it pretty well as is.
-> 
-> The script "checkpatch.pl" points implementation details out for
-> further considerations.
-> 
-> 
-> > If these patches were tested on a real hardware,
-> 
-> I assume that this aspect can become a big challenge.
-> 
-> 
-> > or at least on VM, so that you can show that they don't break anything,
-> 
-> Which test results would you trust (from me)?
-> 
-> 
-> > I'll happily apply them for the next (4.16) kernel.
-> 
-> Thanks for your general offer.
-> 
-> 
-> > Or, if you're really working on other real changes
-> 
-> I would find a bit more efficient exception handling useful.
-> 
-> 
-> > (no cosmetic coding style fixes nor the code shuffling,
-> 
-> I propose to apply also corresponding checkpatch cosmetic.
-> 
-> 
-> > but fixing a real bug)
-> 
-> I am trying to adjust the software situation a bit more for better
-> run time characteristics.
-> 
-> 
-> > *and* such a cleanup is mandatory as preliminary, it can be accepted, too.
-> 
-> There are change combinations needed for the proposed software
-> design direction.
-> Can you see positive effects here?
-> 
-> Regards,
-> Markus
-> 
