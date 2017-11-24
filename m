@@ -1,137 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 07:38:49 +0000
-Subject: [PATCH v2 2/5] video: smscufx: Less checks in ufx_usb_probe() after error detection
-Message-Id: <3f66c1b1-bf12-94ed-4dc9-34094c0d5816@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Nov 2017 13:37:41 +0000
+Subject: [PATCH] nfc: st21nfca: use setup_timer instead of init_timer
+Message-Id: <20171124133741.32371-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
- <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
-In-Reply-To: <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 08:18:20 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Up to four checks could be repeated by the ufx_usb_probe() function
-during error handling even if the relevant properties can be determined
-for the involved variables before by source code analysis.
+Use setup_timer function instead of initializing timer with the
+function and data fields.
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
-
-* Adjust jump targets so that extra checks can be omitted at the end.
-
-* Delete initialisations for the variables "info" and "retval"
-  which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/nfc/st21nfca/se.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-v2:
-A call of the function "fb_dealloc_cmap" was preserved for the exception
-handling at the end.
-
- drivers/video/fbdev/smscufx.c | 46 ++++++++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
-index 32de07d77184..a48a2dec3f5e 100644
---- a/drivers/video/fbdev/smscufx.c
-+++ b/drivers/video/fbdev/smscufx.c
-@@ -1619,8 +1619,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- {
- 	struct usb_device *usbdev;
- 	struct ufx_data *dev;
--	struct fb_info *info = NULL;
--	int retval = -ENOMEM;
-+	struct fb_info *info;
-+	int retval;
- 	u32 id_rev, fpga_rev;
+diff --git a/drivers/nfc/st21nfca/se.c b/drivers/nfc/st21nfca/se.c
+index 3a98563d4a12..eda1b8b0ba1d 100644
+--- a/drivers/nfc/st21nfca/se.c
++++ b/drivers/nfc/st21nfca/se.c
+@@ -392,15 +392,13 @@ void st21nfca_se_init(struct nfc_hci_dev *hdev)
  
- 	/* usb initialization */
-@@ -1629,7 +1629,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	init_completion(&info->se_info.req_completion);
+ 	/* initialize timers */
+-	init_timer(&info->se_info.bwi_timer);
+-	info->se_info.bwi_timer.data = (unsigned long)info;
+-	info->se_info.bwi_timer.function = st21nfca_se_wt_timeout;
++	setup_timer(&info->se_info.bwi_timer, st21nfca_se_wt_timeout,
++		    (unsigned long)info);
+ 	info->se_info.bwi_active = false;
  
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
--		goto error;
-+		return -ENOMEM;
+ 	init_timer(&info->se_info.se_active_timer);
+-	info->se_info.se_active_timer.data = (unsigned long)info;
+-	info->se_info.se_active_timer.function = st21nfca_se_activation_timeout;
+-	info->se_info.se_active = false;
++	setup_timer(&info->se_info.se_active_timer,
++		    st21nfca_se_activation_timeout, (unsigned long)info);
  
- 	/* we need to wait for both usb and fbdev to spin down on disconnect */
- 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
-@@ -1649,9 +1649,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	dev_dbg(dev->gdev, "fb_defio enable=%d\n", fb_defio);
- 
- 	if (!ufx_alloc_urb_list(dev, WRITES_IN_FLIGHT, MAX_TRANSFER)) {
--		retval = -ENOMEM;
- 		dev_err(dev->gdev, "ufx_alloc_urb_list failed\n");
--		goto error;
-+		goto e_nomem;
- 	}
- 
- 	/* We don't register a new USB class. Our client interface is fbdev */
-@@ -1659,9 +1658,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	/* allocates framebuffer driver structure, not framebuffer memory */
- 	info = framebuffer_alloc(0, &usbdev->dev);
- 	if (!info) {
--		retval = -ENOMEM;
- 		dev_err(dev->gdev, "framebuffer_alloc failed\n");
--		goto error;
-+		goto e_nomem;
- 	}
- 
- 	dev->info = info;
-@@ -1672,7 +1670,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	retval = fb_alloc_cmap(&info->cmap, 256, 0);
- 	if (retval < 0) {
- 		dev_err(dev->gdev, "fb_alloc_cmap failed %x\n", retval);
--		goto error;
-+		goto destroy_modedb;
- 	}
- 
- 	INIT_DELAYED_WORK(&dev->free_framebuffer_work,
-@@ -1733,26 +1731,20 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	return 0;
- 
- error:
--	if (dev) {
--		if (info) {
--			if (info->cmap.len != 0)
--				fb_dealloc_cmap(&info->cmap);
--			if (info->monspecs.modedb)
--				fb_destroy_modedb(info->monspecs.modedb);
--			vfree(info->screen_base);
--
--			fb_destroy_modelist(&info->modelist);
--
--			framebuffer_release(info);
--		}
--
--		kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
--		kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
--
--		/* dev has been deallocated. Do not dereference */
--	}
--
-+	fb_dealloc_cmap(&info->cmap);
-+destroy_modedb:
-+	fb_destroy_modedb(info->monspecs.modedb);
-+	vfree(info->screen_base);
-+	fb_destroy_modelist(&info->modelist);
-+	framebuffer_release(info);
-+put_ref:
-+	kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
-+	kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
- 	return retval;
-+
-+e_nomem:
-+	retval = -ENOMEM;
-+	goto put_ref;
- }
- 
- static void ufx_usb_disconnect(struct usb_interface *interface)
+ 	info->se_info.count_pipes = 0;
+ 	info->se_info.expected_pipes = 0;
 -- 
-2.15.0
+2.14.1
 
