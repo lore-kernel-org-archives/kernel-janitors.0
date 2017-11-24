@@ -1,34 +1,49 @@
-From: Brian Austin <brian.austin@cirrus.com>
-Date: Mon, 27 Nov 2017 14:50:50 +0000
-Subject: Re: [PATCH 0/2] ASoC: cs35l34: Adjustments for cs35l34_i2c_probe()
-Message-Id: <33c417da-fd14-4497-bc97-be45f997a815@EX3.ad.cirrus.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 12:50:21 +0000
+Subject: Re: ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
+Message-Id: <badb0c28-818b-2c71-e4f2-088e6ca0fb6f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
-In-Reply-To: <f524230c-6dbd-cb66-4c61-570b5ef185c1@users.sourceforge.net>
+References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
+ <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
+ <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
+In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, support.opensource@diasemi.com
+Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-On Wed, 22 Nov 2017, SF Markus Elfring wrote:
+>> Add a jump target so that a bit of exception handling can be better reus=
+ed
+>> in an if branch of this function.
+=E2=80=A6
+> Hmm. Doesn't really gain an awful lot this.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 22 Nov 2017 21:23:45 +0100
-> 
-> Two update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (2):
->   Delete two error messages for a failed memory allocation
->   Improve two size determinations
-> 
->  sound/soc/codecs/cs35l34.c | 19 ++++++-------------
->  1 file changed, 6 insertions(+), 13 deletions(-)
-> 
-> -- 
-> 2.15.0
-> 
-> 
-For the series, Thanks
-Acked-by: Brian Austin <brian.austin@cirrus.com>
+I show just another small change possibility.
+
+
+> Would understand if there were multiple return paths,
+> but in that case I'd have implemented something like this anyway.
+
+Where?
+
+Can the suggested software refactoring become useful also for this
+function implementation?
+
+
+> Also your patch description isn't really correct.
+
+Which wording would you find more appropriate?
+
+
+> You're re-using code from the sunny day scenario to handle an exception.
+
+Can this detail be better?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
