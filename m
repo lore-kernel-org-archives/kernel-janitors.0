@@ -1,44 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 17:33:53 +0000
-Subject: [PATCH 2/2] ASoC: da7213: Improve a size determination in da7213_i2c_probe()
-Message-Id: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date: Fri, 24 Nov 2017 11:49:08 +0000
+Subject: RE: [PATCH 2/2] ASoC: da7213: Improve a size determination in da7213_i2c_probe()
+Message-Id: <2E89032DDAA8B9408CB92943514A0337014C1B11B9@SW-EX-MBX01.diasemi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
-In-Reply-To: <babe2503-46f1-2e1e-b482-62cd3e89f246@users.sourceforge.net>
+ <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
+In-Reply-To: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, support.opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 18:15:30 +0100
-
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/codecs/da7213.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index d1b77a0e3b74..b2b4e90fc02a 100644
---- a/sound/soc/codecs/da7213.c
-+++ b/sound/soc/codecs/da7213.c
-@@ -1853,8 +1853,7 @@ static int da7213_i2c_probe(struct i2c_client *i2c,
- 	struct da7213_priv *da7213;
- 	int ret;
- 
--	da7213 = devm_kzalloc(&i2c->dev, sizeof(struct da7213_priv),
--			      GFP_KERNEL);
-+	da7213 = devm_kzalloc(&i2c->dev, sizeof(*da7213), GFP_KERNEL);
- 	if (!da7213)
- 		return -ENOMEM;
- 
--- 
-2.15.0
-
+T24gMjMgTm92ZW1iZXIgMjAxNyAxNzozNCwgU0YgTWFya3VzIEVsZnJpbmcgd3JvdGU6DQoNCj4g
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
+YXRlOiBUaHUsIDIzIE5vdiAyMDE3IDE4OjE1OjMwICswMTAwDQo+IA0KPiBSZXBsYWNlIHRoZSBz
+cGVjaWZpY2F0aW9uIG9mIGEgZGF0YSBzdHJ1Y3R1cmUgYnkgYSBwb2ludGVyIGRlcmVmZXJlbmNl
+DQo+IGFzIHRoZSBwYXJhbWV0ZXIgZm9yIHRoZSBvcGVyYXRvciAic2l6ZW9mIiB0byBtYWtlIHRo
+ZSBjb3JyZXNwb25kaW5nIHNpemUNCj4gZGV0ZXJtaW5hdGlvbiBhIGJpdCBzYWZlciBhY2NvcmRp
+bmcgdG8gdGhlIExpbnV4IGNvZGluZyBzdHlsZSBjb252ZW50aW9uLg0KPiANCj4gVGhpcyBpc3N1
+ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNpbmcgdGhlIENvY2NpbmVsbGUgc29mdHdhcmUuDQo+IA0KPiBT
+aWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5u
+ZXQ+DQoNCkFja2VkLWJ5OiBBZGFtIFRob21zb24gPEFkYW0uVGhvbXNvbi5PcGVuc291cmNlQGRp
+YXNlbWkuY29tPg0KDQo+IC0tLQ0KPiAgc291bmQvc29jL2NvZGVjcy9kYTcyMTMuYyB8IDMgKy0t
+DQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25zKC0pDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2NvZGVjcy9kYTcyMTMuYyBiL3NvdW5kL3NvYy9jb2Rl
+Y3MvZGE3MjEzLmMNCj4gaW5kZXggZDFiNzdhMGUzYjc0Li5iMmI0ZTkwZmMwMmEgMTAwNjQ0DQo+
+IC0tLSBhL3NvdW5kL3NvYy9jb2RlY3MvZGE3MjEzLmMNCj4gKysrIGIvc291bmQvc29jL2NvZGVj
+cy9kYTcyMTMuYw0KPiBAQCAtMTg1Myw4ICsxODUzLDcgQEAgc3RhdGljIGludCBkYTcyMTNfaTJj
+X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICppMmMsDQo+ICAJc3RydWN0IGRhNzIxM19wcml2ICpk
+YTcyMTM7DQo+ICAJaW50IHJldDsNCj4gDQo+IC0JZGE3MjEzID0gZGV2bV9remFsbG9jKCZpMmMt
+PmRldiwgc2l6ZW9mKHN0cnVjdCBkYTcyMTNfcHJpdiksDQo+IC0JCQkgICAgICBHRlBfS0VSTkVM
+KTsNCj4gKwlkYTcyMTMgPSBkZXZtX2t6YWxsb2MoJmkyYy0+ZGV2LCBzaXplb2YoKmRhNzIxMyks
+IEdGUF9LRVJORUwpOw0KPiAgCWlmICghZGE3MjEzKQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4g
+DQo+IC0tDQo+IDIuMTUuMA0KDQo
