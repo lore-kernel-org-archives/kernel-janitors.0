@@ -1,75 +1,40 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 08 Nov 2017 13:03:09 +0000
-Subject: Re: [PATCH] Coccinelle: use false positive annotation
-Message-Id: <alpine.DEB.2.20.1711082102560.2708@hadrien>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 24 Nov 2017 13:31:54 +0000
+Subject: [PATCH] USB: atm: use setup_timer instead of init_timer
+Message-Id: <20171124133154.32117-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1509234189-26916-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAK7LNASBEvt6Ef3fJ=twQmV4LKSd_nbLd2BxmLtKEV8eYf3HBw@mail.gmail.com>
- <alpine.DEB.2.20.1710301151210.2632@hadrien>
- <CAK7LNASAbYj0Dm+wDSCQaqyqucBHisOa4QcJKL3Ar9DeoWH8tw@mail.gmail.com>
-In-Reply-To: <CAK7LNASAbYj0Dm+wDSCQaqyqucBHisOa4QcJKL3Ar9DeoWH8tw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Duncan Sands <duncan.sands@free.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Use setup_timer function instead of initializing timer with the
+function and data fields.
 
-On Tue, 7 Nov 2017, Masahiro Yamada wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/atm/usbatm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> 2017-10-30 12:52 GMT+09:00 Julia Lawall <julia.lawall@lip6.fr>:
-> >
-> >
-> > On Mon, 30 Oct 2017, Masahiro Yamada wrote:
-> >
-> >> Hi Julia,
-> >>
-> >>
-> >> 2017-10-29 8:43 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> >> > /// is to describe the semantic patch, while //# indicates reasons
-> >> > for false positives.
-> >> >
-> >> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >> >
-> >> > ---
-> >> >  scripts/coccinelle/misc/ifcol.cocci |    6 +++---
-> >> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >> >
-> >> > diff --git a/scripts/coccinelle/misc/ifcol.cocci b/scripts/coccinelle/misc/ifcol.cocci
-> >> > index d0d00ef..30b248b 100644
-> >> > --- a/scripts/coccinelle/misc/ifcol.cocci
-> >> > +++ b/scripts/coccinelle/misc/ifcol.cocci
-> >> > @@ -3,9 +3,9 @@
-> >> >  /// Sometimes, code after an if that is indented is actually intended to be
-> >> >  /// part of the if branch.
-> >> >  ///
-> >> > -/// This has a high rate of false positives, because Coccinelle's column
-> >> > -/// calculation does not distinguish between spaces and tabs, so code that
-> >> > -/// is not visually aligned may be considered to be in the same column.
-> >> > +//# This has a high rate of false positives, because Coccinelle's column
-> >> > +//# calculation does not distinguish between spaces and tabs, so code that
-> >> > +//# is not visually aligned may be considered to be in the same column.
-> >> >  ///
-> >>
-> >> Just a nit.
-> >>
-> >> The last /// should be turned into //
-> >> if you want to avoid two blank lines in a series
-> >> after the semantic patch information.
-> >>
-> >> (I can fix it locally if you agree with it and I am supposed to pick up this.)
-> >
-> > Thanks for detecting the problem.  It would be great if you could pick it
-> > up, since I haven't heard confirmation from Michal that he will start this
-> > again.  The change seems fine.  Thanks for your help.
-> >
-> > julia
-> >
-> >>
->
-> Fix up the second ///
-> and applied to linux-kbuild/misc.
+diff --git a/drivers/usb/atm/usbatm.c b/drivers/usb/atm/usbatm.c
+index 044264aa1f96..ef456cd0d3ab 100644
+--- a/drivers/usb/atm/usbatm.c
++++ b/drivers/usb/atm/usbatm.c
+@@ -998,9 +998,8 @@ static void usbatm_init_channel(struct usbatm_channel *channel)
+ {
+ 	spin_lock_init(&channel->lock);
+ 	INIT_LIST_HEAD(&channel->list);
+-	channel->delay.function = usbatm_tasklet_schedule;
+-	channel->delay.data = (unsigned long) &channel->tasklet;
+-	init_timer(&channel->delay);
++	setup_timer(&channel->delay, usbatm_tasklet_schedule,
++		    (unsigned long)&channel->tasklet);
+ }
+ 
+ int usbatm_usb_probe(struct usb_interface *intf, const struct usb_device_id *id,
+-- 
+2.14.1
 
-Thanks!
-
-julia
