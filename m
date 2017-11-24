@@ -1,44 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 09:53:33 +0000
-Subject: [PATCH 1/2] ASoC: wm8903: Delete an error message for a failed memory allocation in wm8903_i2c_probe
-Message-Id: <52cba9de-be47-1518-20fc-897967686bf8@users.sourceforge.net>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Date: Fri, 24 Nov 2017 09:57:55 +0000
+Subject: Re: [PATCH 1/2] ASoC: wm8903: Delete an error message for a failed memory allocation in wm8903_i2c_p
+Message-Id: <20171124095755.nhvkjhnk24vy2b5u@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d4ce14fa-42a4-c911-3e0a-f2dd5cde6c14@users.sourceforge.net>
-In-Reply-To: <d4ce14fa-42a4-c911-3e0a-f2dd5cde6c14@users.sourceforge.net>
+ <52cba9de-be47-1518-20fc-897967686bf8@users.sourceforge.net>
+In-Reply-To: <52cba9de-be47-1518-20fc-897967686bf8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 10:05:43 +0100
+On Fri, Nov 24, 2017 at 10:53:33AM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 24 Nov 2017 10:05:43 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Omit an extra message for a memory allocation failure in this function.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/codecs/wm8903.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index 237eeb9a8b97..51eb7d61d446 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -2020,10 +2020,8 @@ static int wm8903_i2c_probe(struct i2c_client *i2c,
- 		wm8903->pdata = devm_kzalloc(&i2c->dev,
- 					sizeof(struct wm8903_platform_data),
- 					GFP_KERNEL);
--		if (wm8903->pdata = NULL) {
--			dev_err(&i2c->dev, "Failed to allocate pdata\n");
-+		if (!wm8903->pdata)
- 			return -ENOMEM;
--		}
- 
- 		if (i2c->irq) {
- 			ret = wm8903_set_pdata_irq_trigger(i2c, wm8903->pdata);
--- 
-2.15.0
-
+Thanks,
+Charles
