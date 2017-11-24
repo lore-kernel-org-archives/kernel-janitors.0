@@ -1,44 +1,49 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Fri, 24 Nov 2017 12:03:32 +0000
-Subject: RE: [PATCH 2/3] ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
-Message-Id: <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 24 Nov 2017 12:55:58 +0000
+Subject: Re: [PATCH 2/3] ASoC: da7218: Use common error handling code in da7218_of_to_pdata()
+Message-Id: <20171124125558.uvfognezm75dtlbc@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="iknjngorugptk2nb"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <07c631e4-e2df-7ae2-ea31-9430c89dc8e3@users.sourceforge.net>
  <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
-In-Reply-To: <32a4c9e8-2030-c4e8-eb54-9ce6712ef0cd@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+ <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
+In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1B11E5@SW-EX-MBX01.diasemi.com>
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Support Opensource <Support.Opensource@diasemi.com>, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, SF Markus Elfring <elfring@users.sourceforge.net>
 
-T24gMjMgTm92ZW1iZXIgMjAxNyAyMDowNiwgU0YgTWFya3VzIEVsZnJpbmcgd3JvdGU6DQoNCj4g
-RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
-YXRlOiBUaHUsIDIzIE5vdiAyMDE3IDIwOjQ4OjA1ICswMTAwDQo+IA0KPiBBZGQgYSBqdW1wIHRh
-cmdldCBzbyB0aGF0IGEgYml0IG9mIGV4Y2VwdGlvbiBoYW5kbGluZyBjYW4gYmUgYmV0dGVyIHJl
-dXNlZA0KPiBpbiBhbiBpZiBicmFuY2ggb2YgdGhpcyBmdW5jdGlvbi4NCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IE1hcmt1cyBFbGZyaW5nIDxlbGZyaW5nQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCg0K
-SG1tLiBEb2Vzbid0IHJlYWxseSBnYWluIGFuIGF3ZnVsIGxvdCB0aGlzLiBXb3VsZCB1bmRlcnN0
-YW5kIGlmIHRoZXJlIHdlcmUNCm11bHRpcGxlIHJldHVybiBwYXRocywgYnV0IGluIHRoYXQgY2Fz
-ZSBJJ2QgaGF2ZSBpbXBsZW1lbnRlZCBzb21ldGhpbmcgbGlrZQ0KdGhpcyBhbnl3YXkuIEFsc28g
-eW91ciBwYXRjaCBkZXNjcmlwdGlvbiBpc24ndCByZWFsbHkgY29ycmVjdC4gWW91J3JlIHJlLXVz
-aW5nDQpjb2RlIGZyb20gdGhlIHN1bm55IGRheSBzY2VuYXJpbyB0byBoYW5kbGUgYW4gZXhjZXB0
-aW9uLg0KDQo+IC0tLQ0KPiAgc291bmQvc29jL2NvZGVjcy9kYTcyMTguYyB8IDggKysrKy0tLS0N
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2NvZGVjcy9kYTcyMTguYyBiL3NvdW5kL3NvYy9jb2Rl
-Y3MvZGE3MjE4LmMNCj4gaW5kZXggMjVhYjc0NDNkODAzLi45M2EwY2I3NDE3NTEgMTAwNjQ0DQo+
-IC0tLSBhL3NvdW5kL3NvYy9jb2RlY3MvZGE3MjE4LmMNCj4gKysrIGIvc291bmQvc29jL2NvZGVj
-cy9kYTcyMTguYw0KPiBAQCAtMjUyNCwxMCArMjUyNCw5IEBAIHN0YXRpYyBzdHJ1Y3QgZGE3MjE4
-X3BkYXRhICpkYTcyMThfb2ZfdG9fcGRhdGEoc3RydWN0DQo+IHNuZF9zb2NfY29kZWMgKmNvZGVj
-KQ0KPiANCj4gIAkJaHBsZGV0X3BkYXRhID0gZGV2bV9remFsbG9jKGNvZGVjLT5kZXYsIHNpemVv
-ZigqaHBsZGV0X3BkYXRhKSwNCj4gIAkJCQkJICAgIEdGUF9LRVJORUwpOw0KPiAtCQlpZiAoIWhw
-bGRldF9wZGF0YSkgew0KPiAtCQkJb2Zfbm9kZV9wdXQoaHBsZGV0X25wKTsNCj4gLQkJCXJldHVy
-biBwZGF0YTsNCj4gLQkJfQ0KPiArCQlpZiAoIWhwbGRldF9wZGF0YSkNCj4gKwkJCWdvdG8gcHV0
-X25vZGU7DQo+ICsNCj4gIAkJcGRhdGEtPmhwbGRldF9wZGF0YSA9IGhwbGRldF9wZGF0YTsNCj4g
-DQo+ICAJCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3UzMihocGxkZXRfbnAsICJkbGcsamFjay1yYXRl
-LXVzIiwNCj4gQEAgLTI1NjEsNiArMjU2MCw3IEBAIHN0YXRpYyBzdHJ1Y3QgZGE3MjE4X3BkYXRh
-ICpkYTcyMThfb2ZfdG9fcGRhdGEoc3RydWN0DQo+IHNuZF9zb2NfY29kZWMgKmNvZGVjKQ0KPiAg
-CQlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29sKGhwbGRldF9ucCwgImRsZyxkaXNjaGFyZ2UiKSkN
-Cj4gIAkJCWhwbGRldF9wZGF0YS0+ZGlzY2hhcmdlID0gdHJ1ZTsNCj4gDQo+ICtwdXRfbm9kZToN
-Cj4gIAkJb2Zfbm9kZV9wdXQoaHBsZGV0X25wKTsNCj4gIAl9DQo+IA0KPiAtLQ0KPiAyLjE1LjAN
-Cg0K
+
+--iknjngorugptk2nb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Nov 24, 2017 at 12:03:32PM +0000, Adam Thomson wrote:
+> On 23 November 2017 20:06, SF Markus Elfring wrote:
+
+> > Add a jump target so that a bit of exception handling can be better reused
+> > in an if branch of this function.
+
+> Hmm. Doesn't really gain an awful lot this. Would understand if there were
+> multiple return paths, but in that case I'd have implemented something like
+> this anyway. Also your patch description isn't really correct. You're re-using
+> code from the sunny day scenario to handle an exception.
+
+Other people have given him similar feedback on his other patches with
+this pattern.  I'm not intending to apply any of them.
+
+--iknjngorugptk2nb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloYFt4ACgkQJNaLcl1U
+h9AH+Qf/ZNLVfptwWMgGXUEo2FNyi+pp1AW+I/dxOjNK9lN0pOwFEQh7/NlZSzz6
+jSqnLjG80HEWhJEAsXHrE/DiNBP+8xNRRVZJogfyuoIHlLiu0mrug4nENANtG0fE
+Z18UwDmTpoj0bL//sjVE07ugNVxH173wYJ3rhEM4rXCl8pavW3GQ4WSB/tRCEXDl
+c6SEU2BZDJ9u2xxTeXRfSinfaluqdxpz/Y2Gc7idO+M9Pf83JKPDj23pps2rxgoM
+lwPOvZX/FyRiXo+Q1r1fM2ruGtKvK+Br2cYvDDR0zHjg48yUdiPdPmQVhPTT46Rc
+PjQLG94Etgqj7H5UT9GOgNooi+jekw==
+=1NLI
+-----END PGP SIGNATURE-----
+
+--iknjngorugptk2nb--
