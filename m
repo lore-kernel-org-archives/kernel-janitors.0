@@ -1,28 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 17:40:16 +0000
-Subject: [PATCH 0/3] video/fbdev/omap: Adjustments for two function implementations
-Message-Id: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 07:34:26 +0000
+Subject: [PATCH 0/4] ASoC: wm2000: Adjustments for wm2000_i2c_probe()
+Message-Id: <cd76c876-81a5-3cf6-e7d9-52037729fb98@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Nov 2017 18:38:48 +0100
+Date: Fri, 24 Nov 2017 08:26:56 +0100
 
-Three update suggestions were taken into account
+A few update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation in omapfb_do_probe()
-  Improve a size determination in omapfb_do_probe()
-  Delete an error message for a failed memory allocation in mipid_spi_probe()
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation
+  One function call less in wm2000_i2c_probe() after error detection
+  Fix a typo in a comment line
+  Improve a size determination
 
- drivers/video/fbdev/omap/lcd_mipid.c   | 4 +---
- drivers/video/fbdev/omap/omapfb_main.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ sound/soc/codecs/wm2000.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
 -- 
 2.15.0
