@@ -1,55 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 21:11:11 +0000
-Subject: [PATCH 3/4] ASoC: twl4030: Improve a size determination in two functions
-Message-Id: <a26b98ae-532e-4490-098a-7f8592bc32bd@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 20:49:36 +0000
+Subject: [PATCH 1/4] video: udlfb: Delete an error message for a failed memory allocation in two functions
+Message-Id: <6ae3ae6d-acd2-38d2-0350-4a9b833489ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
-In-Reply-To: <d2edbce1-ffce-9c18-3f50-baa0cdfb0152@users.sourceforge.net>
+References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.com>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 21:45:55 +0100
+Date: Fri, 24 Nov 2017 21:12:54 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/twl4030.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/udlfb.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/twl4030.c b/sound/soc/codecs/twl4030.c
-index a1f0b45c83ca..946818a0412c 100644
---- a/sound/soc/codecs/twl4030.c
-+++ b/sound/soc/codecs/twl4030.c
-@@ -236,9 +236,7 @@ static struct twl4030_codec_data *twl4030_get_pdata(struct snd_soc_codec *codec)
- 						  "codec");
+diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+index d44f14242016..77633c58bb9b 100644
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1175,10 +1175,8 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
+ 		 * Alloc system memory for virtual framebuffer
+ 		 */
+ 		new_fb = vmalloc(new_len);
+-		if (!new_fb) {
+-			pr_err("Virtual framebuffer alloc failed\n");
++		if (!new_fb)
+ 			goto error;
+-		}
  
- 	if (!pdata && twl4030_codec_node) {
--		pdata = devm_kzalloc(codec->dev,
--				     sizeof(struct twl4030_codec_data),
--				     GFP_KERNEL);
-+		pdata = devm_kzalloc(codec->dev, sizeof(*pdata), GFP_KERNEL);
- 		if (!pdata)
- 			goto put_node;
+ 		if (info->screen_base) {
+ 			memcpy(new_fb, old_fb, old_len);
+@@ -1599,10 +1597,8 @@ static int dlfb_usb_probe(struct usb_interface *interface,
+ 	usbdev = interface_to_usbdev(interface);
  
-@@ -2168,8 +2166,7 @@ static int twl4030_soc_probe(struct snd_soc_codec *codec)
- {
- 	struct twl4030_priv *twl4030;
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (dev = NULL) {
+-		dev_err(&interface->dev, "dlfb_usb_probe: failed alloc of dev struct\n");
++	if (!dev)
+ 		goto error;
+-	}
  
--	twl4030 = devm_kzalloc(codec->dev, sizeof(struct twl4030_priv),
--			       GFP_KERNEL);
-+	twl4030 = devm_kzalloc(codec->dev, sizeof(*twl4030), GFP_KERNEL);
- 	if (!twl4030)
- 		return -ENOMEM;
- 	snd_soc_codec_set_drvdata(codec, twl4030);
+ 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
+ 
 -- 
 2.15.0
 
