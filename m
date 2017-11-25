@@ -1,46 +1,130 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 11:56:56 +0000
-Subject: [PATCH] tty: n_gsm: remove redundant pointer gsm
-Message-Id: <20171107115656.23272-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 25 Nov 2017 20:45:26 +0000
+Subject: [PATCH 2/5] video: smscufx: Less checks in ufx_usb_probe() after error detection
+Message-Id: <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
+In-Reply-To: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 25 Nov 2017 19:47:51 +0100
 
-Pointer gsm is assigned a value that is never read, hence it is
-redundant and can be removed. Cleans up clang warning:
+Up to four checks could be repeated by the ufx_usb_probe() function
+during error handling even if the relevant properties can be determined
+for the involved variables before by source code analysis.
 
-drivers/tty/n_gsm.c:2979:2: warning: Value stored to 'gsm' is never read
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+* Adjust jump targets so that extra checks can be omitted at the end.
+
+* Delete initialisations for the variables "info" and "retval"
+  which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/n_gsm.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/video/fbdev/smscufx.c | 45 +++++++++++++++++--------------------------
+ 1 file changed, 18 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index 33530d8cb81d..e56426c91416 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -2967,7 +2967,6 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
- static void gsmtty_close(struct tty_struct *tty, struct file *filp)
+diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
+index 32de07d77184..08271dafd138 100644
+--- a/drivers/video/fbdev/smscufx.c
++++ b/drivers/video/fbdev/smscufx.c
+@@ -1619,8 +1619,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
  {
- 	struct gsm_dlci *dlci = tty->driver_data;
--	struct gsm_mux *gsm;
+ 	struct usb_device *usbdev;
+ 	struct ufx_data *dev;
+-	struct fb_info *info = NULL;
+-	int retval = -ENOMEM;
++	struct fb_info *info;
++	int retval;
+ 	u32 id_rev, fpga_rev;
  
- 	if (dlci = NULL)
- 		return;
-@@ -2976,7 +2975,6 @@ static void gsmtty_close(struct tty_struct *tty, struct file *filp)
- 	mutex_lock(&dlci->mutex);
- 	gsm_destroy_network(dlci);
- 	mutex_unlock(&dlci->mutex);
--	gsm = dlci->gsm;
- 	if (tty_port_close_start(&dlci->port, tty, filp) = 0)
- 		return;
- 	gsm_dlci_begin_close(dlci);
+ 	/* usb initialization */
+@@ -1629,7 +1629,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+-		goto error;
++		return -ENOMEM;
+ 
+ 	/* we need to wait for both usb and fbdev to spin down on disconnect */
+ 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
+@@ -1649,9 +1649,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	dev_dbg(dev->gdev, "fb_defio enable=%d\n", fb_defio);
+ 
+ 	if (!ufx_alloc_urb_list(dev, WRITES_IN_FLIGHT, MAX_TRANSFER)) {
+-		retval = -ENOMEM;
+ 		dev_err(dev->gdev, "ufx_alloc_urb_list failed\n");
+-		goto error;
++		goto e_nomem;
+ 	}
+ 
+ 	/* We don't register a new USB class. Our client interface is fbdev */
+@@ -1659,9 +1658,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	/* allocates framebuffer driver structure, not framebuffer memory */
+ 	info = framebuffer_alloc(0, &usbdev->dev);
+ 	if (!info) {
+-		retval = -ENOMEM;
+ 		dev_err(dev->gdev, "framebuffer_alloc failed\n");
+-		goto error;
++		goto e_nomem;
+ 	}
+ 
+ 	dev->info = info;
+@@ -1672,7 +1670,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	retval = fb_alloc_cmap(&info->cmap, 256, 0);
+ 	if (retval < 0) {
+ 		dev_err(dev->gdev, "fb_alloc_cmap failed %x\n", retval);
+-		goto error;
++		goto destroy_modedb;
+ 	}
+ 
+ 	INIT_DELAYED_WORK(&dev->free_framebuffer_work,
+@@ -1733,26 +1731,19 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	return 0;
+ 
+ error:
+-	if (dev) {
+-		if (info) {
+-			if (info->cmap.len != 0)
+-				fb_dealloc_cmap(&info->cmap);
+-			if (info->monspecs.modedb)
+-				fb_destroy_modedb(info->monspecs.modedb);
+-			vfree(info->screen_base);
+-
+-			fb_destroy_modelist(&info->modelist);
+-
+-			framebuffer_release(info);
+-		}
+-
+-		kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
+-		kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
+-
+-		/* dev has been deallocated. Do not dereference */
+-	}
+-
++destroy_modedb:
++	fb_destroy_modedb(info->monspecs.modedb);
++	vfree(info->screen_base);
++	fb_destroy_modelist(&info->modelist);
++	framebuffer_release(info);
++put_ref:
++	kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
++	kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
+ 	return retval;
++
++e_nomem:
++	retval = -ENOMEM;
++	goto put_ref;
+ }
+ 
+ static void ufx_usb_disconnect(struct usb_interface *interface)
 -- 
-2.14.1
+2.15.0
 
