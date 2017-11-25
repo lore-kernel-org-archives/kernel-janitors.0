@@ -1,32 +1,31 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 14 Nov 2017 01:59:45 +0000
-Subject: Re: [PATCH 2/2] clk/versatile: Improve a size determination in icst_clk_setup()
-Message-Id: <20171114015945.GS11955@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 25 Nov 2017 20:42:57 +0000
+Subject: [PATCH 0/5] video-SMSC UFX: Adjustments for five function implementations
+Message-Id: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <66ff55fd-caae-9c98-197d-f6c3fe7a9c49@users.sourceforge.net>
- <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
-In-Reply-To: <dfc5dcb1-2744-8fdb-b85d-8ff1bf06f56a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 09/27, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 21:24:43 +0200
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 25 Nov 2017 21:38:42 +0100
 
-Applied to clk-next
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (5):
+  Delete an error message for a failed memory allocation in two functions
+  Less checks in ufx_usb_probe() after error detection
+  Return an error code only as a constant in ufx_realloc_framebuffer()
+  Improve a size determination in two functions
+  Adjust three checks for null pointers
+
+ drivers/video/fbdev/smscufx.c | 80 ++++++++++++++++---------------------------
+ 1 file changed, 29 insertions(+), 51 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
+
+
