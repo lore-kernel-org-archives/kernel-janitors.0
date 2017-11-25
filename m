@@ -1,28 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 11:50:29 +0000
-Subject: [PATCH 0/3] ALSA: korg1212: Fine-tuning for three function implementations
-Message-Id: <3f68211d-51f0-2990-d711-44eaeb85ba4d@users.sourceforge.net>
+Date: Sat, 25 Nov 2017 20:46:39 +0000
+Subject: [PATCH 3/5] video: smscufx: Return an error code only as a constant in ufx_realloc_framebuffer()
+Message-Id: <4bc004f9-b7b1-bcf6-de3b-32042a510144@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
+In-Reply-To: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Nov 2017 12:42:42 +0100
+Date: Sat, 25 Nov 2017 19:56:44 +0100
 
-Three update suggestions were taken into account
-from static source code analysis.
+* Return an error code without storing it in an intermediate variable.
 
-Markus Elfring (3):
-  Adjust eight function calls together with a variable assignment
-  Delete a duplicate function call "release_firmware" in snd_korg1212_create()
-  Use common error handling code in two functions
+* Delete the label "error" and local variable "retval"
+  which became unnecessary with this refactoring.
 
- sound/pci/korg1212/korg1212.c | 85 ++++++++++++++++++++++++-------------------
- 1 file changed, 47 insertions(+), 38 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/smscufx.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
+index 08271dafd138..c77fc45a76fc 100644
+--- a/drivers/video/fbdev/smscufx.c
++++ b/drivers/video/fbdev/smscufx.c
+@@ -1294,7 +1294,6 @@ static struct fb_ops ufx_ops = {
+  * Assumes no active clients have framebuffer open */
+ static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
+ {
+-	int retval = -ENOMEM;
+ 	int old_len = info->fix.smem_len;
+ 	int new_len;
+ 	unsigned char *old_fb = info->screen_base;
+@@ -1310,7 +1309,7 @@ static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
+ 		 */
+ 		new_fb = vmalloc(new_len);
+ 		if (!new_fb)
+-			goto error;
++			return -ENOMEM;
+ 
+ 		if (info->screen_base) {
+ 			memcpy(new_fb, old_fb, old_len);
+@@ -1322,11 +1321,7 @@ static int ufx_realloc_framebuffer(struct ufx_data *dev, struct fb_info *info)
+ 		info->fix.smem_start = (unsigned long) new_fb;
+ 		info->flags = smscufx_info_flags;
+ 	}
+-
+-	retval = 0;
+-
+-error:
+-	return retval;
++	return 0;
+ }
+ 
+ /* sets up I2C Controller for 100 Kbps, std. speed, 7-bit addr, master,
 -- 
 2.15.0
 
