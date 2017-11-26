@@ -1,63 +1,33 @@
 From: Logan Gunthorpe <logang@deltatee.com>
-Date: Sun, 26 Nov 2017 17:38:55 +0000
+Date: Sun, 26 Nov 2017 17:47:29 +0000
 Subject: Re: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
-Message-Id: <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
+Message-Id: <3fc88c02-b9b6-80a3-0c41-63e0806d34aa@deltatee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171126054037.9743-1-logang@deltatee.com>
  <alpine.DEB.2.20.1711260648130.2387@hadrien>
- <1511676085.20482.18.camel@perches.com>
-In-Reply-To: <1511676085.20482.18.camel@perches.com>
+ <85bdbab8-8b7e-91a9-7199-a0e39041aef1@deltatee.com>
+ <alpine.DEB.2.20.1711261807590.2111@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1711261807590.2111@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
 
 
 
-On 25/11/17 11:01 PM, Joe Perches wrote:
-> It doesn't really work.
+On 26/11/17 10:09 AM, Julia Lawall wrote:
+> I don't know.  In any case, a Coccinelle script would get run by the 0-day
+> build testing service, which checks lots of trees.  Perhaps both are
+> useful, since Joe had some conerns about the amount of relevant context
+> available in a patch.
 
-That's rather hyperbolic and I don't appreciate the tone.
+Yup, both could certainly be useful. A coccinelle script would likely be
+able to catch a few false negatives that might pass through the
+checkpatch script. It'll likely have similar difficulties with
+KERN_CONTs though.
 
-> Many of the messages aren't missing newlines.
-> 
-> I only looked a the first few dozen instances, but many of
-> them aren't really missing newlines, but are now missing a
-> KERN_CONT annotation.
-
-True, and I mentioned that. However, these instances are still incorrect
-and deserve a warning. I don't see how any tool (even one written in
-Coccinelle) could determine whether the programmer intended to have a
-new line or intended for the next line to be a continuation. But if the
-developer gets a warning they'd at least look at it. Given that
-KERN_CONT usage is discouraged, I think warning that a new line is
-required is acceptable.
-
-> Most of that commit message is BS, but the net effect is
-> that now printks must have a KERN_<LEVEL> marker or a
-> newline is inserted before the format.
-
-Yes, that just means that all the instances that should be using
-KERN_CONT are now *actually* broken. It's also part of what created the
-mess in the first place as it makes the final new line seem to not be
-required. As a result, there are now plenty of places in the kernel that
-are inconsistent. That's why this patch is needed.
-
-> Also, this patch logic will be very confused by patch
-> blocks and not files.
-
-No, it's not. (With the exception of the false positives I noted due to
-KERN_CONTs not making it into the patch context.) I've tested this. I
-even created some pathological tests[1] to ensure crossing hunk
-boundaries and other weirdness works correctly. There may also be false
-negatives in extreme cases if the entire call site doesn't fit in the
-patch context but it's still better than nothing and will catch all
-newly added calls. So if you're going to make such statements I suggest
-you back it up with evidence.
+Also, I don't really know, but it might be tough enabling a script to
+run on 0-day with the ~6000 potential errors already existing.
 
 Logan
-
-[1]
-https://github.com/lsgunth/checkpatch-tests/blob/master/examples/test2.patch
-
