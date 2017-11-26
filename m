@@ -1,26 +1,26 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Nov 2017 20:34:51 +0000
-Subject: [PATCH 0/2] net/sched/cls_tcindex: Fine-tuning for two function implementations
-Message-Id: <7192a5ea-b712-6bec-5d9d-01906218d404@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 14:15:13 +0000
+Subject: [PATCH 0/2] video: s3c-fb: Adjustments for s3c_fb_probe()
+Message-Id: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Nov 2017 21:30:03 +0100
+Date: Sun, 26 Nov 2017 15:12:34 +0100
 
 Two update suggestions were taken into account
 from static source code analysis.
 
 Markus Elfring (2):
-  Use common error handling code in tcindex_set_parms()
-  Improve a size determination in two functions
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
- net/sched/cls_tcindex.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/video/fbdev/s3c-fb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 -- 
 2.15.0
