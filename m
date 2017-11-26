@@ -1,75 +1,137 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Nov 2017 21:18:13 +0000
-Subject: [PATCH] staging: fbtft: fb_ra8875: Use common error handling code in write_reg8_bus8()
-Message-Id: <47dd8732-253b-a640-1c73-2bfe626037b3@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 07:38:49 +0000
+Subject: [PATCH v2 2/5] video: smscufx: Less checks in ufx_usb_probe() after error detection
+Message-Id: <3f66c1b1-bf12-94ed-4dc9-34094c0d5816@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
+ <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
+In-Reply-To: <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Nov 2017 22:12:58 +0100
+Date: Sun, 26 Nov 2017 08:18:20 +0100
 
-* Add a jump target so that a specific error message is stored only once
-  at the end of this function implementation.
+Up to four checks could be repeated by the ufx_usb_probe() function
+during error handling even if the relevant properties can be determined
+for the involved variables before by source code analysis.
 
-* Replace two calls of the function "dev_err" by goto statements.
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-This issue was detected by using the Coccinelle software.
+* Adjust jump targets so that extra checks can be omitted at the end.
+
+* Delete initialisations for the variables "info" and "retval"
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/fbtft/fb_ra8875.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
-index 6d1cad85957b..6a94b5810a31 100644
---- a/drivers/staging/fbtft/fb_ra8875.c
-+++ b/drivers/staging/fbtft/fb_ra8875.c
-@@ -218,12 +218,9 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
- 	*buf++ = 0x80;
- 	*buf = (u8)va_arg(args, unsigned int);
- 	ret = par->fbtftops.write(par, par->buf, 2);
--	if (ret < 0) {
--		va_end(args);
--		dev_err(par->info->device, "write() failed and returned %dn",
--			ret);
--		return;
--	}
-+	if (ret < 0)
-+		goto end_va;
-+
- 	len--;
+v2:
+A call of the function "fb_dealloc_cmap" was preserved for the exception
+handling at the end.
+
+ drivers/video/fbdev/smscufx.c | 46 ++++++++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
+index 32de07d77184..a48a2dec3f5e 100644
+--- a/drivers/video/fbdev/smscufx.c
++++ b/drivers/video/fbdev/smscufx.c
+@@ -1619,8 +1619,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ {
+ 	struct usb_device *usbdev;
+ 	struct ufx_data *dev;
+-	struct fb_info *info = NULL;
+-	int retval = -ENOMEM;
++	struct fb_info *info;
++	int retval;
+ 	u32 id_rev, fpga_rev;
  
- 	udelay(100);
-@@ -236,18 +233,19 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
- 			*buf++ = (u8)va_arg(args, unsigned int);
+ 	/* usb initialization */
+@@ -1629,7 +1629,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
  
- 		ret = par->fbtftops.write(par, par->buf, len + 1);
--		if (ret < 0) {
--			va_end(args);
--			dev_err(par->info->device,
--				"write() failed and returned %dn", ret);
--			return;
--		}
-+		if (ret < 0)
-+			goto end_va;
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+-		goto error;
++		return -ENOMEM;
+ 
+ 	/* we need to wait for both usb and fbdev to spin down on disconnect */
+ 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
+@@ -1649,9 +1649,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	dev_dbg(dev->gdev, "fb_defio enable=%d\n", fb_defio);
+ 
+ 	if (!ufx_alloc_urb_list(dev, WRITES_IN_FLIGHT, MAX_TRANSFER)) {
+-		retval = -ENOMEM;
+ 		dev_err(dev->gdev, "ufx_alloc_urb_list failed\n");
+-		goto error;
++		goto e_nomem;
  	}
- 	va_end(args);
  
- 	/* restore user spi-speed */
- 	par->fbtftops.write = fbtft_write_spi;
- 	udelay(100);
-+	return;
+ 	/* We don't register a new USB class. Our client interface is fbdev */
+@@ -1659,9 +1658,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	/* allocates framebuffer driver structure, not framebuffer memory */
+ 	info = framebuffer_alloc(0, &usbdev->dev);
+ 	if (!info) {
+-		retval = -ENOMEM;
+ 		dev_err(dev->gdev, "framebuffer_alloc failed\n");
+-		goto error;
++		goto e_nomem;
+ 	}
+ 
+ 	dev->info = info;
+@@ -1672,7 +1670,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	retval = fb_alloc_cmap(&info->cmap, 256, 0);
+ 	if (retval < 0) {
+ 		dev_err(dev->gdev, "fb_alloc_cmap failed %x\n", retval);
+-		goto error;
++		goto destroy_modedb;
+ 	}
+ 
+ 	INIT_DELAYED_WORK(&dev->free_framebuffer_work,
+@@ -1733,26 +1731,20 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	return 0;
+ 
+ error:
+-	if (dev) {
+-		if (info) {
+-			if (info->cmap.len != 0)
+-				fb_dealloc_cmap(&info->cmap);
+-			if (info->monspecs.modedb)
+-				fb_destroy_modedb(info->monspecs.modedb);
+-			vfree(info->screen_base);
+-
+-			fb_destroy_modelist(&info->modelist);
+-
+-			framebuffer_release(info);
+-		}
+-
+-		kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
+-		kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
+-
+-		/* dev has been deallocated. Do not dereference */
+-	}
+-
++	fb_dealloc_cmap(&info->cmap);
++destroy_modedb:
++	fb_destroy_modedb(info->monspecs.modedb);
++	vfree(info->screen_base);
++	fb_destroy_modelist(&info->modelist);
++	framebuffer_release(info);
++put_ref:
++	kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
++	kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
+ 	return retval;
 +
-+end_va:
-+	va_end(args);
-+	dev_err(par->info->device, "write() failed and returned %dn", ret);
++e_nomem:
++	retval = -ENOMEM;
++	goto put_ref;
  }
  
- static int write_vmem16_bus8(struct fbtft_par *par, size_t offset, size_t len)
+ static void ufx_usb_disconnect(struct usb_interface *interface)
 -- 
 2.15.0
 
