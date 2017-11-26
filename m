@@ -1,27 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 21:14:41 +0000
-Subject: [PATCH 0/3] ALSA-RME Digi32: Fine-tuning for seven function implementations
-Message-Id: <67820e63-aed9-c775-8417-b0f531a9b305@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 20:41:43 +0000
+Subject: [PATCH 0/2] video/fbdev/mmp: Adjustments for two function implementations
+Message-Id: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 17 Nov 2017 22:08:44 +0100
+Date: Sun, 26 Nov 2017 21:38:42 +0100
 
-A few update suggestions were taken into account
+Two update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (3):
-  Adjust 15 function calls together with a variable assignment
-  Use common error handling code in snd_rme32_probe()
-  Improve unlocking of an IRQ in two functions
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in path_init()
 
- sound/pci/rme32.c | 127 +++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 74 insertions(+), 53 deletions(-)
+ drivers/video/fbdev/mmp/fb/mmpfb.c    | 5 ++---
+ drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 8 +++-----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
 -- 
 2.15.0
