@@ -1,113 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 12:52:41 +0000
-Subject: [PATCH 2/3] ALSA: cs4281: Use common error handling code in snd_cs4281_probe()
-Message-Id: <79d61453-352c-c5a7-a306-4c4304a74195@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 17:41:32 +0000
+Subject: [PATCH 1/3] video: omap: Delete an error message for a failed memory allocation in omapfb_do_probe()
+Message-Id: <e6b19a4a-566b-d1a0-1847-ed1167e118b6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
-In-Reply-To: <ac9d010b-7a26-1f2d-5034-15abe603c6fd@users.sourceforge.net>
+References: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
+In-Reply-To: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Fabian Frederick <fabf@skynet.be>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 13 Nov 2017 13:10:11 +0100
+Date: Sun, 26 Nov 2017 18:09:15 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/cs4281.c | 52 ++++++++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 28 deletions(-)
+ drivers/video/fbdev/omap/omapfb_main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/pci/cs4281.c b/sound/pci/cs4281.c
-index cf0bcab2a36b..ed6b97dbd1cc 100644
---- a/sound/pci/cs4281.c
-+++ b/sound/pci/cs4281.c
-@@ -1934,40 +1934,34 @@ static int snd_cs4281_probe(struct pci_dev *pci,
- 		return err;
+diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
+index 3479a47a3082..b0d91524bf6c 100644
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -1647,8 +1647,6 @@ static int omapfb_do_probe(struct platform_device *pdev,
  
- 	err = snd_cs4281_create(card, pci, &chip, dual_codec[dev]);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	card->private_data = chip;
- 
- 	err = snd_cs4281_mixer(chip);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_cs4281_pcm(chip, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_cs4281_midi(chip, 0);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_opl3_new(card, OPL3_HW_OPL3_CS4281, &opl3);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	opl3->private_data = chip;
- 	opl3->command = snd_cs4281_opl3_command;
- 	snd_opl3_init(opl3);
- 	err = snd_opl3_hwdep_new(opl3, 0, 1, NULL);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
-+
- 	snd_cs4281_create_gameport(chip);
- 	strcpy(card->driver, "CS4281");
- 	strcpy(card->shortname, "Cirrus Logic CS4281");
-@@ -1977,14 +1971,16 @@ static int snd_cs4281_probe(struct pci_dev *pci,
- 		chip->irq);
- 
- 	err = snd_card_register(card);
--	if (err < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_card;
- 
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
-+
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_cs4281_remove(struct pci_dev *pci)
+ 	fbdev = kzalloc(sizeof(struct omapfb_device), GFP_KERNEL);
+ 	if (fbdev = NULL) {
+-		dev_err(&pdev->dev,
+-			"unable to allocate memory for device info\n");
+ 		r = -ENOMEM;
+ 		goto cleanup;
+ 	}
 -- 
 2.15.0
 
