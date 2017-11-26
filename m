@@ -1,27 +1,76 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 06 Nov 2017 09:34:21 +0000
-Subject: RE: [PATCH] usb: gadget: udc: renesas_usb3: make const array max_packet_array static
-Message-Id: <TY1PR06MB09927D0D89543188738EC6DFD8500@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 18:55:30 +0000
+Subject: [PATCH] omapfb/dss: Delete an error message for a failed memory allocation in three functions
+Message-Id: <c48a01db-c477-3bd3-5cb4-548e47810ccb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102155325.24137-1-colin.king@canonical.com>
-In-Reply-To: <20171102155325.24137-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, KAZUYA MIZUGUCHI <kazuya.mizuguchi.ks@renesas.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-SGkgQ29saW4sDQoNCj4gRnJvbTogQ29saW4gS2luZywgU2VudDogRnJpZGF5LCBOb3ZlbWJlciAz
-LCAyMDE3IDEyOjUzIEFNDQo+IA0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
-YW5vbmljYWwuY29tPg0KPiANCj4gRG9uJ3QgcG9wdWxhdGUgdGhlIGNvbnN0IGFycmF5IG1heF9w
-YWNrZXRfYXJyYXkgb24gdGhlIHN0YWNrLCBpbnN0ZWFkIG1ha2UNCj4gaXQgc3RhdGljLiBNYWtl
-cyB0aGUgb2JqZWN0IGNvZGUgc21hbGxlciBieSBvdmVyIDkwIGJ5dGVzOg0KPiANCj4gQmVmb3Jl
-Og0KPiAgICB0ZXh0CSAgIGRhdGEJICAgIGJzcwkgICAgZGVjCSAgICBoZXgJZmlsZW5hbWUNCj4g
-ICAzNDMzNwkgICA1NjEyCSAgICAxMjgJICA0MDA3NwkgICA5YzhkCXJlbmVzYXNfdXNiMy5vDQo+
-IA0KPiBBZnRlcjoNCj4gICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZp
-bGVuYW1lDQo+ICAgMzQxNDkJICAgNTcwOAkgICAgMTI4CSAgMzk5ODUJICAgOWMzMQlyZW5lc2Fz
-X3VzYjMubw0KPiANCj4gKGdjYyB2ZXJzaW9uIDcuMi4wIHg4Nl82NCkNCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQoNClRoYW5r
-IHlvdSBmb3IgdGhlIHBhdGNoIQ0KDQpBY2tlZC1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hp
-aGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8g
-U2hpbW9kYQ0KDQo
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 19:46:09 +0100
+
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/omap2/omapfb/dss/dispc.c    | 4 +---
+ drivers/video/fbdev/omap2/omapfb/dss/dss.c      | 4 +---
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+index 7a75dfda9845..10164a3bae4a 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+@@ -3982,10 +3982,8 @@ static int dispc_init_features(struct platform_device *pdev)
+ 	struct dispc_features *dst;
+ 
+ 	dst = devm_kzalloc(&pdev->dev, sizeof(*dst), GFP_KERNEL);
+-	if (!dst) {
+-		dev_err(&pdev->dev, "Failed to allocate DISPC Features\n");
++	if (!dst)
+ 		return -ENOMEM;
+-	}
+ 
+ 	switch (omapdss_get_version()) {
+ 	case OMAPDSS_VER_OMAP24xx:
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dss.c b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
+index 48c6500c24e1..a5de13777e2b 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dss.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.c
+@@ -893,10 +893,8 @@ static int dss_init_features(struct platform_device *pdev)
+ 	struct dss_features *dst;
+ 
+ 	dst = devm_kzalloc(&pdev->dev, sizeof(*dst), GFP_KERNEL);
+-	if (!dst) {
+-		dev_err(&pdev->dev, "Failed to allocate local DSS Features\n");
++	if (!dst)
+ 		return -ENOMEM;
+-	}
+ 
+ 	switch (omapdss_get_version()) {
+ 	case OMAPDSS_VER_OMAP24xx:
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
+index 9a13c35fd6d8..d25eea10c665 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi_phy.c
+@@ -195,10 +195,8 @@ static int hdmi_phy_init_features(struct platform_device *pdev)
+ 	const struct hdmi_phy_features *src;
+ 
+ 	dst = devm_kzalloc(&pdev->dev, sizeof(*dst), GFP_KERNEL);
+-	if (!dst) {
+-		dev_err(&pdev->dev, "Failed to allocate HDMI PHY Features\n");
++	if (!dst)
+ 		return -ENOMEM;
+-	}
+ 
+ 	switch (omapdss_get_version()) {
+ 	case OMAPDSS_VER_OMAP4430_ES1:
+-- 
+2.15.0
+
