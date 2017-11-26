@@ -1,45 +1,38 @@
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Sun, 26 Nov 2017 18:33:35 +0000
+From: Joe Perches <joe@perches.com>
+Date: Sun, 26 Nov 2017 22:29:42 +0000
 Subject: Re: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
-Message-Id: <e22b6039-0696-c9f7-7585-4597c40c1846@deltatee.com>
+Message-Id: <1511735382.20482.27.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171126054037.9743-1-logang@deltatee.com>
- <alpine.DEB.2.20.1711260648130.2387@hadrien>
- <85bdbab8-8b7e-91a9-7199-a0e39041aef1@deltatee.com>
- <alpine.DEB.2.20.1711261807590.2111@hadrien>
- <3fc88c02-b9b6-80a3-0c41-63e0806d34aa@deltatee.com>
- <alpine.DEB.2.20.1711261912150.2111@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1711261912150.2111@hadrien>
+         <alpine.DEB.2.20.1711260648130.2387@hadrien>
+         <1511676085.20482.18.camel@perches.com>
+         <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
+In-Reply-To: <5c0a2778-8e8f-9fbb-b13f-1d880acb949b@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+To: Logan Gunthorpe <logang@deltatee.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
 
-
-
-On 26/11/17 11:17 AM, Julia Lawall wrote:
-> The main limitation that is likely to remain in my script is that
-> Coccinelle doesn't always understand ifdefs properly.  So
-> #ifdef
-> printk("xxx");
-> #else
-> printk("yyy");
-> #endif
-> pr_cont("zzz");
+On Sun, 2017-11-26 at 10:38 -0700, Logan Gunthorpe wrote:
 > 
-> may give a warning about the first printk.
+> On 25/11/17 11:01 PM, Joe Perches wrote:
+> > It doesn't really work.
+> 
+> That's rather hyperbolic and I don't appreciate the tone.
 
-Yes, that's another clever corner case I didn't think of. My patch will
-have the same issue. But that's terrible style[1] and I should hope it's
-quite rare.
+What I wrote is neither hyperbolic nor tonal.
 
-> 0-day only runs on changed files and only reports on changed code, to
-> the best of my understanding, so I don't think it is a problem.
+I'm rather familiar with checkpatch.
 
-Oh, cool.
+High false positive messages are avoided by checkpatch and
+new tests with high false positive rates are not accepted.
 
-Logan
+This proposal has a very high false positive rate.
 
-[1]
-https://www.kernel.org/doc/html/latest/process/coding-style.html#conditional-compilation
+So, as written.  nack.
+
+Keep at it though.
+Maybe something useful will be produced with more effort.
+
+cheers, Joe
