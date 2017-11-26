@@ -1,38 +1,44 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 21 Nov 2017 13:51:10 +0000
-Subject: [PATCH] [media] stb0899: remove redundant self assignment of k_indirect
-Message-Id: <20171121135110.16665-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 17:43:17 +0000
+Subject: [PATCH 3/3] video: omap: Delete an error message for a failed memory allocation in mipid_spi_probe()
+Message-Id: <62f8d5bb-64cd-487f-6ef4-e3aa7a8b5fd5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
+In-Reply-To: <1e17c727-884d-5745-2726-48dd3a53c32f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 18:21:25 +0100
 
-The self assignment of k_indirect is redundant and can be removed.
-Detected using coccinelle.
+Omit an extra message for a memory allocation failure in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-frontends/stb0899_algo.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/fbdev/omap/lcd_mipid.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/stb0899_algo.c b/drivers/media/dvb-frontends/stb0899_algo.c
-index 3012f196e9bd..222ee51b90ef 100644
---- a/drivers/media/dvb-frontends/stb0899_algo.c
-+++ b/drivers/media/dvb-frontends/stb0899_algo.c
-@@ -925,8 +925,7 @@ static void stb0899_dvbs2_set_btr_loopbw(struct stb0899_state *state)
- 		wn = (4 * zeta * zeta) + 1000000;
- 		wn = (2 * (loopbw_percent * 1000) * 40 * zeta) /wn;  /*wn =wn 10^-8*/
+diff --git a/drivers/video/fbdev/omap/lcd_mipid.c b/drivers/video/fbdev/omap/lcd_mipid.c
+index e3a85432f926..e71b674b47d8 100644
+--- a/drivers/video/fbdev/omap/lcd_mipid.c
++++ b/drivers/video/fbdev/omap/lcd_mipid.c
+@@ -564,10 +564,8 @@ static int mipid_spi_probe(struct spi_device *spi)
+ 	int r;
  
--		k_indirect = (wn * wn) / K;
--		k_indirect = k_indirect;	  /*kindirect = kindirect 10^-6*/
-+		k_indirect = (wn * wn) / K;	/*kindirect = kindirect 10^-6*/
- 		k_direct   = (2 * wn * zeta) / K;	/*kDirect = kDirect 10^-2*/
- 		k_direct  *= 100;
+ 	md = kzalloc(sizeof(*md), GFP_KERNEL);
+-	if (md = NULL) {
+-		dev_err(&spi->dev, "out of memory\n");
++	if (!md)
+ 		return -ENOMEM;
+-	}
  
+ 	spi->mode = SPI_MODE_0;
+ 	md->spi = spi;
 -- 
-2.14.1
+2.15.0
 
