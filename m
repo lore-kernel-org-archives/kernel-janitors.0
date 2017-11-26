@@ -1,49 +1,29 @@
-From: jiangyiwen <jiangyiwen@huawei.com>
-Date: Wed, 22 Nov 2017 09:31:06 +0000
-Subject: [V9fs-developer] [bug report] fs/9p: inode blocks show error in fscache mode
-Message-Id: <5A1543DA.30504@huawei.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 10:16:01 +0000
+Subject: [PATCH 0/4] video: sm501fb: Adjustments for seven function implementations
+Message-Id: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, sochin.jiang@huawei.com, Eduard Shishkin <Eduard.Shishkin@huawei.com>, "Xulei (Stone)" <stone.xulei@huawei.com>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi all,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 11:10:01 +0100
 
-I test a scenario that will cause the difference of inode blocks
-between client and host, the scenario as follows:
+A few update suggestions were taken into account
+from static source code analysis.
 
-Precondition:
-1) use VirtFS(virtio-9p) to connect guest and host.
-2) 9p dir in guest is /mnt/9p, host is /9p-host.
-3) server fs is ext4 and block size is 4096.
+Markus Elfring (4):
+  Delete error messages for a failed memory allocation in two functions
+  Improve a size determination in sm501fb_probe()
+  Combine substrings for four messages
+  Adjust 15 checks for null pointers
 
-Test steps:
-1) on the client(guest)
-# touch /mnt/9p/test/file
-# dd if=/dev/zero of=/mnt/9p/test/file bs=1 count43456 seek02528 conv=notrunc
+ drivers/video/fbdev/sm501fb.c | 66 ++++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 38 deletions(-)
 
-2) on the client(guest)
-# stat /mnt/9p/test/file
-the file's blocks is 4582 blocks(block size is 512)
-
-3) on the server(host)
-# stat /9p-host/test/file
-the file's blocks is 2040 blocks(block size is 512)
-
-Cause analysis:
-Because the file is sparse file, so in function v9fs_write_end will
-update inode blocks according to difference between last_pos and
-inode_size, only when last_pos is larger than the inode_size, then it
-update the blocks and inode_size, the operation is not fit the sparse
-file.
-
-Currently I want to call v9fs_invalidate_inode_attr to invalidate inode,
-but it will influence the performance, so I don't have a good solution.
-
-Please advise. Thanks in advance!
-
-Best regards,
-Yiwen
+-- 
+2.15.0
 
