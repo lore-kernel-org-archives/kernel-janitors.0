@@ -1,46 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Nov 2017 11:49:03 +0000
-Subject: [bug report] Add support for the latest 1G/10G Chelsio adapter, T3.
-Message-Id: <20171129114903.y2yahvxklher5nwu@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 10:18:26 +0000
+Subject: [PATCH 2/4] video: sm501fb: Improve a size determination in sm501fb_probe()
+Message-Id: <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
+In-Reply-To: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello Divy Le Ray,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 10:22:37 +0100
 
-The patch 4d22de3e6cc4: "Add support for the latest 1G/10G Chelsio
-adapter, T3." from Jan 18, 2007, leads to the following static
-checker warning:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-	drivers/net/ethernet/chelsio/cxgb3/sge.c:2087 rx_eth()
-	error: buffer overflow 'adap->port' 2 <= 15
+This issue was detected by using the Coccinelle software.
 
-drivers/net/ethernet/chelsio/cxgb3/sge.c
-  2079  static void rx_eth(struct adapter *adap, struct sge_rspq *rq,
-  2080                     struct sk_buff *skb, int pad, int lro)
-  2081  {
-  2082          struct cpl_rx_pkt *p = (struct cpl_rx_pkt *)(skb->data + pad);
-                                                             ^^^^^^^^^^^^^^^
-Smatch marks all data stored in skb->data as untrusted.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/sm501fb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-  2083          struct sge_qset *qs = rspq_to_qset(rq);
-  2084          struct port_info *pi;
-  2085  
-  2086          skb_pull(skb, sizeof(*p) + pad);
-  2087          skb->protocol = eth_type_trans(skb, adap->port[p->iff]);
-                                                               ^^^^^^^
-But we're using it in as an array offset without doing a bounds check.
-Does skb->data come from the firmware?  Perhaps this code is fine as-is.
+diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
+index e8301c4e7d44..80bda5a655c0 100644
+--- a/drivers/video/fbdev/sm501fb.c
++++ b/drivers/video/fbdev/sm501fb.c
+@@ -1932,8 +1932,7 @@ static int sm501fb_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	/* allocate our framebuffers */
+-
+-	info = kzalloc(sizeof(struct sm501fb_info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
 
-  2088          pi = netdev_priv(skb->dev);
-  2089          if ((skb->dev->features & NETIF_F_RXCSUM) && p->csum_valid &&
-  2090              p->csum = htons(0xffff) && !p->fragment) {
-  2091                  qs->port_stats[SGE_PSTAT_RX_CSUM_GOOD]++;
-  2092                  skb->ip_summed = CHECKSUM_UNNECESSARY;
-  2093          } else
-  2094                  skb_checksum_none_assert(skb);
-
-regards,
-dan carpenter
