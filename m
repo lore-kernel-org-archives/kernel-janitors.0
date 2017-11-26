@@ -1,44 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 05 Nov 2017 08:29:22 +0000
-Subject: Re: [PATCH] USB: core: Improve unlocking of a mutex in two functions
-Message-Id: <1923596b-ce14-7b80-6148-f67143b4a367@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 19:06:56 +0000
+Subject: Re: Adjustments for a lot of function implementations
+Message-Id: <f3ad7c9a-db9d-7e73-312e-eee04fddd036@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ff5f74e-ae23-5c97-8998-0e598ceae96b@users.sourceforge.net>
- <CAMuHMdUXn4YVPBFCoqmwcdU7eTWO5jy2ZXZQaAxPi1P5bM4q2A@mail.gmail.com>
-In-Reply-To: <CAMuHMdUXn4YVPBFCoqmwcdU7eTWO5jy2ZXZQaAxPi1P5bM4q2A@mail.gmail.com>
+References: <f9dc652b-4fca-37aa-0b72-8c9e6a828da9@users.sourceforge.net>
+ <356f75b2-d303-7f10-b76c-95e2f686bd3c@xs4all.nl>
+ <14619198-bebe-d215-5324-a14fbc2103fb@users.sourceforge.net>
+ <alpine.DEB.2.20.1710301745530.2160@hadrien>
+ <ebf37d57-38c6-b3de-5a66-dbb1c13fd63a@xs4all.nl>
+ <049aa1b4-6291-ec24-1ffb-77ae8d1cdb63@users.sourceforge.net>
+ <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
+In-Reply-To: <804550a6-1096-12f1-a0ec-1ccd6bcc191e@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>, Eugene Korenevsky <ekorenevsky@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jaejoong Kim <climbbb.kim@gmail.com>, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, Michal Hocko <mhocko@suse.com>, Muralidharan Karicheri <mkaricheri@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> @@ -5529,8 +5528,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
->>                 dev_err(&udev->dev,
->>                         "can't restore configuration #%d (error=%d)\n",
->>                         udev->actconfig->desc.bConfigurationValue, ret);
->> -               mutex_unlock(hcd->bandwidth_mutex);
->> -               goto re_enumerate;
->> +               goto unlock;
->>         }
->>         mutex_unlock(hcd->bandwidth_mutex);
->>         usb_set_device_state(udev, USB_STATE_CONFIGURED);
->> @@ -5583,6 +5581,8 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
->>         udev->bos = bos;
->>         return 0;
->>
->> +unlock:
->> +       mutex_unlock(hcd->bandwidth_mutex);
-> 
-> This makes it harder for the reader,
+> ??? I did that: either one patch per directory with the same type of change,
+> or one patch per driver combining all the changes for that driver.
 
-I am curious if the view on the preferred code readability can be clarified further.
-
-
-> as the mutex_unlock() is now far below the block
-> of code that's protected by the lock.
-
-I got an other software development opinion for this aspect.
-Can the label be clear enough about the shown purpose already?
+Would you like to answer my still remaining questions in any more
+constructive ways?
 
 Regards,
 Markus
