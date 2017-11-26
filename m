@@ -1,73 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 02 Nov 2017 13:21:11 +0000
-Subject: Applied "spi: orion: remove redundant assignment of status to zero" to the spi tree
-Message-Id: <E1eAFQl-0005xp-IX@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 21:32:06 +0000
+Subject: [PATCH] video: matroxfb: Delete an error message for a failed memory allocation in matroxfb_crtc2_pr
+Message-Id: <f903f284-bdba-7eb7-c666-301577fcfa94@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171102121625.20387-1-colin.king@canonical.com>
-In-Reply-To: <20171102121625.20387-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.orglinux-spi@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 22:13:55 +0100
 
-   spi: orion: remove redundant assignment of status to zero
+Omit an extra message for a memory allocation failure in this function.
 
-has been applied to the spi tree at
+This issue was detected by using the Coccinelle software.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f747c3104efd1e21528d368910afd978fbcd6a78 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 2 Nov 2017 12:16:25 +0000
-Subject: [PATCH] spi: orion: remove redundant assignment of status to zero
-
-The assignment of status to zero is never read, status is either
-updated in the next iteration of the of the loop or several
-lines after the end of the loop.  Remove it, cleans up clang warning:
-
-drivers/spi/spi-orion.c:674:4: warning: Value stored to 'status'
-is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-orion.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/video/fbdev/matrox/matroxfb_crtc2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
-index 4b6dd73b80da..8974bb340b3a 100644
---- a/drivers/spi/spi-orion.c
-+++ b/drivers/spi/spi-orion.c
-@@ -671,7 +671,6 @@ static int orion_spi_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"%pOF has no valid 'reg' property (%d)\n",
- 				np, status);
--			status = 0;
- 			continue;
- 		}
- 
+diff --git a/drivers/video/fbdev/matrox/matroxfb_crtc2.c b/drivers/video/fbdev/matrox/matroxfb_crtc2.c
+index 02796a4317a9..f64e1d55d7a1 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_crtc2.c
++++ b/drivers/video/fbdev/matrox/matroxfb_crtc2.c
+@@ -696,10 +696,9 @@ static void* matroxfb_crtc2_probe(struct matrox_fb_info* minfo) {
+ 	if (!minfo->devflags.crtc2)
+ 		return NULL;
+ 	m2info = kzalloc(sizeof(*m2info), GFP_KERNEL);
+-	if (!m2info) {
+-		printk(KERN_ERR "matroxfb_crtc2: Not enough memory for CRTC2 control structs\n");
++	if (!m2info)
+ 		return NULL;
+-	}
++
+ 	m2info->primary_dev = minfo;
+ 	if (matroxfb_dh_registerfb(m2info)) {
+ 		kfree(m2info);
 -- 
 2.15.0
 
