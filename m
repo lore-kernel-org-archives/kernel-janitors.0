@@ -1,28 +1,43 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 17 Nov 2017 16:21:14 +0000
-Subject: Re: [PATCH] OMAPFB: prevent buffer underflow in omapfb_parse_vram_param()
-Message-Id: <2414894.T1ou5hczcE@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 14:17:34 +0000
+Subject: [PATCH 2/2] video: s3c-fb: Improve a size determination in s3c_fb_probe()
+Message-Id: <3eb68979-60cd-81e2-7a6b-9caf4afc1737@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20171114061251epcas2p3eea18fd03e87cefd3d7b30750a0f1833@epcas2p3.samsung.com>
- <20171114061228.iv5irewl6ougl4zm@mwanda>
-In-Reply-To: <20171114061228.iv5irewl6ougl4zm@mwanda>
+References: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
+In-Reply-To: <2c837da0-6b0f-12e7-4d76-960b660a8911@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-omap@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tuesday, November 14, 2017 09:12:28 AM Dan Carpenter wrote:
-> We cap the upper bound of "fbnum" but we also need to check for
-> negatives or make the type unsigned.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 15:03:03 +0100
 
-Patch queued for 4.15, thanks.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/s3c-fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/s3c-fb.c b/drivers/video/fbdev/s3c-fb.c
+index 0914c973cbd9..8c7623d63eb1 100644
+--- a/drivers/video/fbdev/s3c-fb.c
++++ b/drivers/video/fbdev/s3c-fb.c
+@@ -1383,7 +1383,7 @@ static int s3c_fb_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	sfb = devm_kzalloc(dev, sizeof(struct s3c_fb), GFP_KERNEL);
++	sfb = devm_kzalloc(dev, sizeof(*sfb), GFP_KERNEL);
+ 	if (!sfb)
+ 		return -ENOMEM;
+ 
+-- 
+2.15.0
 
