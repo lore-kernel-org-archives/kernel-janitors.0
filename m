@@ -1,77 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:53:45 +0000
-Subject: Applied "ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_probe(
-Message-Id: <E1eJOXJ-0007OU-Mg@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 10:17:25 +0000
+Subject: [PATCH 1/4] video: sm501fb: Delete error messages for a failed memory allocation in two functions
+Message-Id: <8d053c52-e3e6-32fe-87e9-f01a779b497e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
-In-Reply-To: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
+References: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
+In-Reply-To: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bhumika Goyal <bhumirks@gmail.com>, Colin Ian King <colin.king@canonical.com>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_probe()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 277631ccff503f2a8e8150574c9773a8383fc926 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 09:26:08 +0100
-Subject: [PATCH] ASoC: cs42l56: Delete an error message for a failed memory
- allocation in cs42l56_i2c_probe()
+Date: Sun, 26 Nov 2017 10:10:31 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Omit extra messages for a memory allocation failure in these functions.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42l56.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/sm501fb.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
-index cb6ca85f1536..13ee46217d78 100644
---- a/sound/soc/codecs/cs42l56.c
-+++ b/sound/soc/codecs/cs42l56.c
-@@ -1210,11 +1210,9 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
- 		pdata = devm_kzalloc(&i2c_client->dev,
- 				     sizeof(struct cs42l56_platform_data),
- 				     GFP_KERNEL);
--		if (!pdata) {
--			dev_err(&i2c_client->dev,
--				"could not allocate pdata\n");
-+		if (!pdata)
- 			return -ENOMEM;
--		}
-+
- 		if (i2c_client->dev.of_node) {
- 			ret = cs42l56_handle_of_data(i2c_client,
- 						     &cs42l56->pdata);
+diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
+index 6f0a19501c6a..e8301c4e7d44 100644
+--- a/drivers/video/fbdev/sm501fb.c
++++ b/drivers/video/fbdev/sm501fb.c
+@@ -1934,10 +1934,8 @@ static int sm501fb_probe(struct platform_device *pdev)
+ 	/* allocate our framebuffers */
+ 
+ 	info = kzalloc(sizeof(struct sm501fb_info), GFP_KERNEL);
+-	if (!info) {
+-		dev_err(dev, "failed to allocate state\n");
++	if (!info)
+ 		return -ENOMEM;
+-	}
+ 
+ 	info->dev = dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, info);
+@@ -2121,16 +2119,12 @@ static int sm501fb_suspend_fb(struct sm501fb_info *info,
+ 	/* backup copies in case chip is powered down over suspend */
+ 
+ 	par->store_fb = vmalloc(par->screen.size);
+-	if (par->store_fb = NULL) {
+-		dev_err(info->dev, "no memory to store screen\n");
++	if (!par->store_fb)
+ 		return -ENOMEM;
+-	}
+ 
+ 	par->store_cursor = vmalloc(par->cursor.size);
+-	if (par->store_cursor = NULL) {
+-		dev_err(info->dev, "no memory to store cursor\n");
++	if (!par->store_cursor)
+ 		goto err_nocursor;
+-	}
+ 
+ 	dev_dbg(info->dev, "suspending screen to %p\n", par->store_fb);
+ 	dev_dbg(info->dev, "suspending cursor to %p\n", par->store_cursor);
 -- 
 2.15.0
 
