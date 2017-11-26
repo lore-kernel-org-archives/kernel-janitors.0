@@ -1,172 +1,196 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Fri, 03 Nov 2017 14:10:46 +0000
-Subject: Re: [PATCH] staging: comedi: usbduxsigma: Improve unlocking of a mutex in three functions
-Message-Id: <0a24b11d-57b1-cf6d-39d8-df90709e0ec7@mev.co.uk>
+From: Logan Gunthorpe <logang@deltatee.com>
+Date: Sun, 26 Nov 2017 05:40:37 +0000
+Subject: [PATCH v2] checkpatch: Add a warning for log messages that don't end in a new line
+Message-Id: <20171126054037.9743-1-logang@deltatee.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fd59be96-b430-ffa5-40df-b89e114bbf0f@users.sourceforge.net>
-In-Reply-To: <fd59be96-b430-ffa5-40df-b89e114bbf0f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Logan Gunthorpe <logang@deltatee.com>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
 
-On 02/11/17 20:23, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 2 Nov 2017 21:16:50 +0100
-> 
-> * Add a jump target so that a call of the function "mutex_unlock" is stored
->    only twice in these function implementations.
-> 
-> * Replace seven calls by goto statements.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/staging/comedi/drivers/usbduxsigma.c | 48 +++++++++++++++-------------
->   1 file changed, 26 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
-> index 456e9f13becb..7e8284ed265a 100644
-> --- a/drivers/staging/comedi/drivers/usbduxsigma.c
-> +++ b/drivers/staging/comedi/drivers/usbduxsigma.c
-> @@ -672,10 +672,8 @@ static int usbduxsigma_ai_cmd(struct comedi_device *dev,
->   	devpriv->dux_commands[8] = sysred;
->   
->   	ret = usbbuxsigma_send_cmd(dev, USBBUXSIGMA_AD_CMD);
-> -	if (ret < 0) {
-> -		mutex_unlock(&devpriv->mut);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->   
->   	devpriv->ai_counter = devpriv->ai_timer;
->   
-> @@ -686,8 +684,7 @@ static int usbduxsigma_ai_cmd(struct comedi_device *dev,
->   					      devpriv->n_ai_urbs, 1);
->   		if (ret < 0) {
->   			devpriv->ai_cmd_running = 0;
-> -			mutex_unlock(&devpriv->mut);
-> -			return ret;
-> +			goto unlock;
->   		}
->   		s->async->inttrig = NULL;
->   	} else {	/* TRIG_INT */
-> @@ -697,6 +694,10 @@ static int usbduxsigma_ai_cmd(struct comedi_device *dev,
->   	mutex_unlock(&devpriv->mut);
->   
->   	return 0;
+Check for lines with a log function using a relatively strict regular
+expression catching only printk, dev_* and pr_* functions. Once
+one is found, accumulate further lines for any functions that
+are split over multiple lines. Stop accumulating the log function line
+when we find a ';' or match the full format string.
 
-You could also remove that call by replacing the above three lines with:
+A get_log_fmt() function is used to find either the first or
+second argument (depending on the log function matched) as the
+format string. If the format argument ends in '\n"', then we conclude
+that the logging call is correct. If the line ends in '%s"', then we
+only print a CHK warning as the developer *may* have the newline in an
+argument string. Otherwise we print a warning that the line is
+likely missing a new line.
 
-	ret = 0;
+Because we are trying to match multiple lines, we must also match
+lines that are part of the context of the patch. In order to ensure
+we don't print a message on log lines that are only part of context,
+we track that at least one line was added using the $log_func_changed
+flag.
 
-and falling through to the 'unlock:' label.  (Actually, you don't even 
-need the above line, as ret should already be 0 at this point, but I 
-think it is easier to understand the code if ret is set to 0 explicitly.)
+To handle continuations, during pre-processing we search for all
+pr_cont and KERN_CONT instances and create a hash set of the line
+numbers of all preceding log function calls. The hash set is then used
+to mask out any calls that are likely followed by continuations. This
+should handle many cases, however a small number of false positives are
+likely going to occur in cases where a patch's context does not cover
+the following KERN_CONT. This is acceptable, in my opinion, seeing
+KERN_CONT is already discouraged and will create it's own warnings that
+the developer has to reason about.
 
-> +
-> +unlock:
-> +	mutex_unlock(&devpriv->mut);
-> +	return ret;
->   }
->   
->   static int usbduxsigma_ai_insn_read(struct comedi_device *dev,
-> @@ -714,8 +715,8 @@ static int usbduxsigma_ai_insn_read(struct comedi_device *dev,
->   
->   	mutex_lock(&devpriv->mut);
->   	if (devpriv->ai_cmd_running) {
-> -		mutex_unlock(&devpriv->mut);
-> -		return -EBUSY;
-> +		ret = -EBUSY;
-> +		goto unlock;
->   	}
->   
->   	create_adc_command(chan, &muxsg0, &muxsg1);
-> @@ -730,19 +731,15 @@ static int usbduxsigma_ai_insn_read(struct comedi_device *dev,
->   
->   	/* adc commands */
->   	ret = usbbuxsigma_send_cmd(dev, USBDUXSIGMA_SINGLE_AD_CMD);
-> -	if (ret < 0) {
-> -		mutex_unlock(&devpriv->mut);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto unlock;
->   
->   	for (i = 0; i < insn->n; i++) {
->   		u32 val;
->   
->   		ret = usbduxsigma_receive_cmd(dev, USBDUXSIGMA_SINGLE_AD_CMD);
-> -		if (ret < 0) {
-> -			mutex_unlock(&devpriv->mut);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
->   
->   		/* 32 bits big endian from the A/D converter */
->   		val = be32_to_cpu(get_unaligned((__be32
-> @@ -753,6 +750,10 @@ static int usbduxsigma_ai_insn_read(struct comedi_device *dev,
->   	mutex_unlock(&devpriv->mut);
->   
->   	return insn->n;
+I've created a small test suite to test this change which can be found
+on github[1]. I've also run this on the kernel source and found more
+than 6000 violations. I reviewed a random sampling of these for false
+positives and have not found any.
 
-Similarly, you could replace the above three lines with:
+Thanks to Joe for describing how to properly test a change such as this.
 
-	ret = insn->n;
+[1] https://github.com/lsgunth/checkpatch-tests
 
-and fall through to the label.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+---
 
-> +
-> +unlock:
-> +	mutex_unlock(&devpriv->mut);
-> +	return ret;
->   }
->   
->   static int usbduxsigma_ao_insn_read(struct comedi_device *dev,
-> @@ -782,8 +783,8 @@ static int usbduxsigma_ao_insn_write(struct comedi_device *dev,
->   
->   	mutex_lock(&devpriv->mut);
->   	if (devpriv->ao_cmd_running) {
-> -		mutex_unlock(&devpriv->mut);
-> -		return -EBUSY;
-> +		ret = -EBUSY;
-> +		goto unlock;
->   	}
->   
->   	for (i = 0; i < insn->n; i++) {
-> @@ -791,15 +792,18 @@ static int usbduxsigma_ao_insn_write(struct comedi_device *dev,
->   		devpriv->dux_commands[2] = data[i];	/* value */
->   		devpriv->dux_commands[3] = chan;	/* channel number */
->   		ret = usbbuxsigma_send_cmd(dev, USBDUXSIGMA_DA_CMD);
-> -		if (ret < 0) {
-> -			mutex_unlock(&devpriv->mut);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto unlock;
-> +
->   		s->readback[chan] = data[i];
->   	}
->   	mutex_unlock(&devpriv->mut);
->   
->   	return insn->n;
+Here's my second attempt at this. As described in the commit log,
+I've made it a bit more sophisticated and fixed a number of issues with
+how the patch format is processed. The testing has also improved
+significantly having run it on the entire kernel source as well as
+a suite of test cases. The patch isn't entirely perfect (per the note
+about false positives) but I feel it's close enough that its benefits
+outweighs this. (As it only annoys developers who are working with a
+discouraged feature.)
 
-Ditto.
+As mentioned in the commit log, I've found more than 6000 instances
+that look like this error. I've seen a few cases that appear to have
+intended to use KERN_CONT but didn't and are thus caught by this.
+If there are any heroic kernel janitors that are interested in tackling
+these issues, the list can be found here:
 
-> +
-> +unlock:
-> +	mutex_unlock(&devpriv->mut);
-> +	return ret;
->   }
->   
->   static int usbduxsigma_ao_inttrig(struct comedi_device *dev,
-> 
+https://github.com/lsgunth/checkpatch-tests/blob/master/results/v4.14
 
+ scripts/checkpatch.pl | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 8b80bac055e4..cdd767af6566 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -460,6 +460,34 @@ our $logFunctions = qr{(?x:
+ 	seq_vprintf|seq_printf|seq_puts
+ )};
+
++
++our $logNewLineFirstArg = qr{(?x:
++	printk(?:_ratelimited|_once|_deferred_once|_deferred|)|
++	pr_(?:printk|emerg|alert|crit|err|warning|warn|notice|info|debug|dbg|vdbg|devel|cont|WARN)(?:_ratelimited|_once|)
++)};
++
++our $logNewLineSecondArg = qr{(?x:
++	dev_(?:printk|emerg|alert|crit|err|warning|warn|notice|info|debug|dbg|vdbg|devel|WARN)(?:_ratelimited|_once|)
++)};
++
++our $logNewLineFunctions = qr{(?x:
++    $logNewLineFirstArg |
++    $logNewLineSecondArg
++)};
++
++sub get_log_fmt {
++	my ($line, $rawline) = @_;
++
++	if ($line =~ m/\b$logNewLineFirstArg\(([^,)]+)[,)]/g) {
++		return substr($rawline, $-[1], $+[1] - $-[1]);
++	} elsif($line =~ m/\b$logNewLineSecondArg\([^,]+,([^,)]+)[,)]/g) {
++		return substr($rawline, $-[1], $+[1] - $-[1]);
++	} else {
++		return "";
++	}
++}
++
++
+ our $signature_tags = qr{(?xi:
+ 	Signed-off-by:|
+ 	Acked-by:|
+@@ -2224,6 +2252,13 @@ sub process {
+
+ 	my $camelcase_file_seeded = 0;
+
++	my $in_log_function = 0;
++	my $log_func_changed = 0;
++	my $log_func_line = "";
++	my $log_func_rawline = "";
++	my $log_last_linenr = -1;
++	my %log_func_continued = ();
++
+ 	sanitise_line_reset();
+ 	my $line;
+ 	foreach my $rawline (@rawlines) {
+@@ -2287,6 +2322,15 @@ sub process {
+ 			# simplify matching -- only bother with positive lines.
+ 			$line = sanitise_line($rawline);
+ 		}
++
++		if ($log_last_linenr > 0 && $line =~ /(KERN_CONT|pr_cont)/) {
++			$log_func_continued{$log_last_linenr} = ();
++		}
++
++		if ($line =~ /\b$logNewLineFunctions\(/) {
++			$log_last_linenr = $linenr;
++		}
++
+ 		push(@lines, $line);
+
+ 		if ($realcnt > 1) {
+@@ -2321,6 +2365,7 @@ sub process {
+ 		    $line =~ /^\@\@ -\d+(?:,\d+)? \+(\d+)(,(\d+))? \@\@(.*)/) {
+ 			my $context = $4;
+ 			$is_patch = 1;
++			$in_log_function = 0;
+ 			$first_line = $linenr + 1;
+ 			$realline=$1-1;
+ 			if (defined $2) {
+@@ -3505,6 +3550,41 @@ sub process {
+ 		}
+ 		$prev_values = substr($curr_values, -1);
+
++# check for logging functions with lines that don't end in a '\n"'
++		if ($line =~ /\b$logNewLineFunctions\(/ &&
++		    !exists $log_func_continued{$linenr}) {
++			$in_log_function = 1;
++			$log_func_changed = 0;
++			$log_func_rawline = "";
++			$log_func_line = "";
++		}
++		if ($in_log_function) {
++			if ($line =~ /^\+/)  {
++				$log_func_changed = 1;
++			}
++
++			$log_func_rawline .= $rawline;
++			$log_func_line .= $line;
++			my $fmt_string = get_log_fmt($log_func_line,
++						     $log_func_rawline);
++
++			if ($fmt_string && !$log_func_changed) {
++				$in_log_function = 0;
++			} elsif ($fmt_string =~ /\\n"$/) {
++				$in_log_function = 0;
++			} elsif ($fmt_string =~ /%s"$/) {
++				CHK("LOGGING_MISSING_NEWLINE",
++				    "Log message may not end in new line (\\n)\n" . $herecurr);
++				$in_log_function = 0;
++			} elsif ($fmt_string =~ /"$/) {
++				WARN("LOGGING_MISSING_NEWLINE",
++				     "Log messages should end in a line feed (\\n)\n" . $herecurr);
++				$in_log_function = 0;
++			} elsif ($line =~ /;$/) {
++				$in_log_function = 0;
++			}
++		}
++
+ #ignore lines not being added
+ 		next if ($line =~ /^[^\+]/);
+
+--
+2.11.0
