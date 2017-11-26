@@ -1,176 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 15:46:12 +0000
-Subject: [PATCH] ALSA: emu10k1: Use common error handling code in two functions
-Message-Id: <8c7233f8-c8e5-8b22-5b58-233f7b6cab1d@users.sourceforge.net>
+Date: Sun, 26 Nov 2017 20:42:49 +0000
+Subject: [PATCH 1/2] video: fbdev-MMP: Delete an error message for a failed memory allocation in two function
+Message-Id: <9aa9c376-22a3-f682-d9a4-5ee95cfd75a0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
+In-Reply-To: <e2c5fe9e-8e01-7fef-a243-ff5d063787b0@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Bhumika Goyal <bhumirks@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 14 Nov 2017 16:40:32 +0100
+Date: Sun, 26 Nov 2017 21:16:30 +0100
 
-* Add jump targets so that a bit of exception handling can be better reused
-  at the end of these functions.
+Omit an extra message for a memory allocation failure in these functions.
 
-  This issue was detected by using the Coccinelle software.
-
-* The script "checkpatch.pl" pointed information out like the following.
-
-  ERROR: do not use assignment in if condition
-
-  Thus fix ten affected source code places.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/emu10k1/emu10k1x.c | 62 +++++++++++++++++++++-----------------------
- sound/pci/emu10k1/emupcm.c   | 31 +++++++++++++---------
- 2 files changed, 49 insertions(+), 44 deletions(-)
+ drivers/video/fbdev/mmp/fb/mmpfb.c    | 5 ++---
+ drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 6 ++----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/sound/pci/emu10k1/emu10k1x.c b/sound/pci/emu10k1/emu10k1x.c
-index 2c2b12a06177..4f700907b566 100644
---- a/sound/pci/emu10k1/emu10k1x.c
-+++ b/sound/pci/emu10k1/emu10k1x.c
-@@ -1569,38 +1569,33 @@ static int snd_emu10k1x_probe(struct pci_dev *pci,
- 	if (err < 0)
- 		return err;
- 
--	if ((err = snd_emu10k1x_create(card, pci, &chip)) < 0) {
--		snd_card_free(card);
--		return err;
+diff --git a/drivers/video/fbdev/mmp/fb/mmpfb.c b/drivers/video/fbdev/mmp/fb/mmpfb.c
+index 92279e02dd94..292b3e403044 100644
+--- a/drivers/video/fbdev/mmp/fb/mmpfb.c
++++ b/drivers/video/fbdev/mmp/fb/mmpfb.c
+@@ -495,10 +495,9 @@ static int modes_setup(struct mmpfb_info *fbi)
+ 	/* put videomode list to info structure */
+ 	videomodes = kzalloc(sizeof(struct fb_videomode) * videomode_num,
+ 			GFP_KERNEL);
+-	if (!videomodes) {
+-		dev_err(fbi->dev, "can't malloc video modes\n");
++	if (!videomodes)
+ 		return -ENOMEM;
 -	}
-+	err = snd_emu10k1x_create(card, pci, &chip);
-+	if (err < 0)
-+		goto free_card;
- 
--	if ((err = snd_emu10k1x_pcm(chip, 0)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
--	if ((err = snd_emu10k1x_pcm(chip, 1)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
--	if ((err = snd_emu10k1x_pcm(chip, 2)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_emu10k1x_pcm(chip, 0);
-+	if (err < 0)
-+		goto free_card;
- 
--	if ((err = snd_emu10k1x_ac97(chip)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_emu10k1x_pcm(chip, 1);
-+	if (err < 0)
-+		goto free_card;
- 
--	if ((err = snd_emu10k1x_mixer(chip)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_emu10k1x_pcm(chip, 2);
-+	if (err < 0)
-+		goto free_card;
 +
-+	err = snd_emu10k1x_ac97(chip);
-+	if (err < 0)
-+		goto free_card;
-+
-+	err = snd_emu10k1x_mixer(chip);
-+	if (err < 0)
-+		goto free_card;
- 	
--	if ((err = snd_emu10k1x_midi(chip)) < 0) {
--		snd_card_free(card);
--		return err;
+ 	for (i = 0; i < videomode_num; i++)
+ 		mmpmode_to_fbmode(&videomodes[i], &mmp_modes[i]);
+ 	fb_videomode_to_modelist(videomodes, videomode_num, &info->modelist);
+diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+index b6f83d5df9fd..9f912ea0bfce 100644
+--- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
++++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+@@ -407,11 +407,9 @@ static int path_init(struct mmphw_path_plat *path_plat,
+ 
+ 	/* init driver data */
+ 	path_info = kzalloc(sizeof(struct mmp_path_info), GFP_KERNEL);
+-	if (!path_info) {
+-		dev_err(ctrl->dev, "%s: unable to alloc path_info for %s\n",
+-				__func__, config->name);
++	if (!path_info)
+ 		return 0;
 -	}
-+	err = snd_emu10k1x_midi(chip);
-+	if (err < 0)
-+		goto free_card;
- 
- 	snd_emu10k1x_proc_init(chip);
- 
-@@ -1609,14 +1604,17 @@ static int snd_emu10k1x_probe(struct pci_dev *pci,
- 	sprintf(card->longname, "%s at 0x%lx irq %i",
- 		card->shortname, chip->port, chip->irq);
- 
--	if ((err = snd_card_register(card)) < 0) {
--		snd_card_free(card);
--		return err;
--	}
-+	err = snd_card_register(card);
-+	if (err < 0)
-+		goto free_card;
- 
- 	pci_set_drvdata(pci, card);
- 	dev++;
- 	return 0;
 +
-+free_card:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static void snd_emu10k1x_remove(struct pci_dev *pci)
-diff --git a/sound/pci/emu10k1/emupcm.c b/sound/pci/emu10k1/emupcm.c
-index 2683b9717215..088741f90f91 100644
---- a/sound/pci/emu10k1/emupcm.c
-+++ b/sound/pci/emu10k1/emupcm.c
-@@ -1143,23 +1143,26 @@ static int snd_emu10k1_playback_open(struct snd_pcm_substream *substream)
- 	runtime->private_data = epcm;
- 	runtime->private_free = snd_emu10k1_pcm_free_substream;
- 	runtime->hw = snd_emu10k1_playback;
--	if ((err = snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS)) < 0) {
--		kfree(epcm);
--		return err;
--	}
--	if ((err = snd_pcm_hw_constraint_minmax(runtime, SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 256, UINT_MAX)) < 0) {
--		kfree(epcm);
--		return err;
--	}
-+	err = snd_pcm_hw_constraint_integer(runtime,
-+					    SNDRV_PCM_HW_PARAM_PERIODS);
-+	if (err < 0)
-+		goto free_pcm;
-+
-+	err = snd_pcm_hw_constraint_minmax(runtime,
-+					   SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
-+					   256,
-+					   UINT_MAX);
-+	if (err < 0)
-+		goto free_pcm;
-+
- 	if (emu->card_capabilities->emu_model && emu->emu1010.internal_clock = 0)
- 		sample_rate = 44100;
- 	else
- 		sample_rate = 48000;
- 	err = snd_pcm_hw_rule_noresample(runtime, sample_rate);
--	if (err < 0) {
--		kfree(epcm);
--		return err;
--	}
-+	if (err < 0)
-+		goto free_pcm;
-+
- 	mix = &emu->pcm_mixer[substream->number];
- 	for (i = 0; i < 4; i++)
- 		mix->send_routing[0][i] = mix->send_routing[1][i] = mix->send_routing[2][i] = i;
-@@ -1170,6 +1173,10 @@ static int snd_emu10k1_playback_open(struct snd_pcm_substream *substream)
- 	mix->epcm = epcm;
- 	snd_emu10k1_pcm_mixer_notify(emu, substream->number, 1);
- 	return 0;
-+
-+free_pcm:
-+	kfree(epcm);
-+	return err;
- }
- 
- static int snd_emu10k1_playback_close(struct snd_pcm_substream *substream)
+ 	path_info->name = config->name;
+ 	path_info->id = path_plat->id;
+ 	path_info->dev = ctrl->dev;
 -- 
 2.15.0
 
