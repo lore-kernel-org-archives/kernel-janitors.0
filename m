@@ -1,94 +1,71 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 28 Nov 2017 19:16:04 +0000
-Subject: [PATCH] block: DAC960: make various char arrays static const, shrinks object size
-Message-Id: <20171128191604.25435-1-colin.king@canonical.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:54:04 +0000
+Subject: Applied "ASoC: twl4030: Delete an error message for a failed memory allocation in twl4030_get_pdata(
+Message-Id: <E1eJOXc-0007U4-Uk@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5e96623c-ad1f-5260-2580-f487e64abaf8@users.sourceforge.net>
+In-Reply-To: <5e96623c-ad1f-5260-2580-f487e64abaf8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Don't populate the read-only arrays ReadCacheStatus, WriteCacheStatus and
-SenseErrors on the stack but instead make them static and constify them.
-Makes the object code smaller by over 540 bytes:
+   ASoC: twl4030: Delete an error message for a failed memory allocation in twl4030_get_pdata()
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 151673	  32984	    960	 185617	  2d511	drivers/block/DAC960.o
+has been applied to the asoc tree at
 
-After:
-   text	   data	    bss	    dec	    hex	filename
- 150869	  33240	    960	 185069	  2d2ed	drivers/block/DAC960.o
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-(gcc version 7.2.0 x86_64)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2dbb29cd977fc281f71f8895abce7e382efe77e1 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 21:30:07 +0100
+Subject: [PATCH] ASoC: twl4030: Delete an error message for a failed memory
+ allocation in twl4030_get_pdata()
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/block/DAC960.c | 42 ++++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ sound/soc/codecs/twl4030.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
-index 442e777bdfb2..f9fdcdd8c61f 100644
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@ -2433,16 +2433,20 @@ static bool DAC960_V2_ReportDeviceConfiguration(DAC960_Controller_T
-     {
-       DAC960_V2_LogicalDeviceInfo_T *LogicalDeviceInfo  	Controller->V2.LogicalDeviceInformation[LogicalDriveNumber];
--      unsigned char *ReadCacheStatus[] = { "Read Cache Disabled",
--					   "Read Cache Enabled",
--					   "Read Ahead Enabled",
--					   "Intelligent Read Ahead Enabled",
--					   "-", "-", "-", "-" };
--      unsigned char *WriteCacheStatus[] = { "Write Cache Disabled",
--					    "Logical Device Read Only",
--					    "Write Cache Enabled",
--					    "Intelligent Write Cache Enabled",
--					    "-", "-", "-", "-" };
-+      static const unsigned char * const ReadCacheStatus[] = {
-+	"Read Cache Disabled",
-+	"Read Cache Enabled",
-+	"Read Ahead Enabled",
-+	"Intelligent Read Ahead Enabled",
-+	"-", "-", "-", "-"
-+      };
-+      unsigned char *WriteCacheStatus[] = {
-+	"Write Cache Disabled",
-+	"Logical Device Read Only",
-+	"Write Cache Enabled",
-+	"Intelligent Write Cache Enabled",
-+	"-", "-", "-", "-"
-+      };
-       unsigned char *GeometryTranslation;
-       if (LogicalDeviceInfo = NULL) continue;
-       switch (LogicalDeviceInfo->DriveGeometry)
-@@ -4345,14 +4349,16 @@ static void DAC960_V1_ProcessCompletedCommand(DAC960_Command_T *Command)
- static void DAC960_V2_ReadWriteError(DAC960_Command_T *Command)
- {
-   DAC960_Controller_T *Controller = Command->Controller;
--  unsigned char *SenseErrors[] = { "NO SENSE", "RECOVERED ERROR",
--				   "NOT READY", "MEDIUM ERROR",
--				   "HARDWARE ERROR", "ILLEGAL REQUEST",
--				   "UNIT ATTENTION", "DATA PROTECT",
--				   "BLANK CHECK", "VENDOR-SPECIFIC",
--				   "COPY ABORTED", "ABORTED COMMAND",
--				   "EQUAL", "VOLUME OVERFLOW",
--				   "MISCOMPARE", "RESERVED" };
-+  static const unsigned char * const SenseErrors[] = {
-+    "NO SENSE", "RECOVERED ERROR",
-+    "NOT READY", "MEDIUM ERROR",
-+    "HARDWARE ERROR", "ILLEGAL REQUEST",
-+    "UNIT ATTENTION", "DATA PROTECT",
-+    "BLANK CHECK", "VENDOR-SPECIFIC",
-+    "COPY ABORTED", "ABORTED COMMAND",
-+    "EQUAL", "VOLUME OVERFLOW",
-+    "MISCOMPARE", "RESERVED"
-+  };
-   unsigned char *CommandName = "UNKNOWN";
-   switch (Command->CommandType)
-     {
+diff --git a/sound/soc/codecs/twl4030.c b/sound/soc/codecs/twl4030.c
+index cfe72b9d4356..90691701b082 100644
+--- a/sound/soc/codecs/twl4030.c
++++ b/sound/soc/codecs/twl4030.c
+@@ -240,7 +240,6 @@ static struct twl4030_codec_data *twl4030_get_pdata(struct snd_soc_codec *codec)
+ 				     sizeof(struct twl4030_codec_data),
+ 				     GFP_KERNEL);
+ 		if (!pdata) {
+-			dev_err(codec->dev, "Can not allocate memory\n");
+ 			of_node_put(twl4030_codec_node);
+ 			return NULL;
+ 		}
 -- 
-2.14.1
+2.15.0
 
