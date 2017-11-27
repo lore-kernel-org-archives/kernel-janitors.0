@@ -1,51 +1,108 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Thu, 02 Nov 2017 08:12:40 +0000
-Subject: Re: PCI: rcar: Use common error handling code in rcar_pcie_enable_msi()
-Message-Id: <20171102081239.bzaunax3uotejqja@verge.net.au>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:15:10 +0000
+Subject: [PATCH] atm: eni: fix several indentation issues
+Message-Id: <20171127131510.10500-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c598933b-b14f-91a1-c7a3-f4a46ec98e77@users.sourceforge.net>
- <20171101081831.ssnuqp5b75lbfu5p@verge.net.au>
- <7047eb7a-cf93-6a56-08db-a5e8bedbfc57@users.sourceforge.net>
-In-Reply-To: <7047eb7a-cf93-6a56-08db-a5e8bedbfc57@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 01, 2017 at 09:57:00AM +0100, SF Markus Elfring wrote:
-> > This is fine by me
-> 
-> Thanks for another bit of change acceptance.
-> 
-> 
-> > except that the change in the name of the goto label seems spurious.
-> 
-> I am curious if the popularity of a jump label like “err” will decrease
-> (in the Linux source files) over time.
+From: Colin Ian King <colin.king@canonical.com>
 
-If your current patch bombing is successful then it will, at least in the
-short term. But my comments relate to the current best practice,
-not the one you seem to be trying to introduce.
+There are several statements that have incorrect indentation. Fix
+these.
 
-> > But if you really want to change it then as it is an error path
-> > I should suggest it describe that its an error and what unwinding
-> > is done, f.e.  err_remove_domain.
-> 
-> * Do you get such a kind of information only when the prefix “err_”
->   is added to this identifier?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/eni.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Yes, err indicates its an error path.
+diff --git a/drivers/atm/eni.c b/drivers/atm/eni.c
+index ce47eb17901d..6470e3c4c990 100644
+--- a/drivers/atm/eni.c
++++ b/drivers/atm/eni.c
+@@ -473,7 +473,7 @@ static int do_rx_dma(struct atm_vcc *vcc,struct sk_buff *skb,
+ 		ENI_PRV_POS(skb) = eni_vcc->descr+size+1;
+ 		skb_queue_tail(&eni_dev->rx_queue,skb);
+ 		eni_vcc->last = skb;
+-rx_enqueued++;
++		rx_enqueued++;
+ 	}
+ 	eni_vcc->descr = here;
+ 	eni_out(dma_wr,MID_DMA_WR_RX);
+@@ -715,7 +715,7 @@ static void get_service(struct atm_dev *dev)
+ 			else eni_dev->slow = vcc;
+ 			eni_dev->last_slow = vcc;
+ 		}
+-putting++;
++		putting++;
+ 		ENI_VCC(vcc)->servicing++;
+ 	}
+ }
+@@ -744,7 +744,7 @@ static void dequeue_rx(struct atm_dev *dev)
+ 		}
+ 		EVENT("dequeued (size=%ld,pos=0x%lx)\n",ENI_PRV_SIZE(skb),
+ 		    ENI_PRV_POS(skb));
+-rx_dequeued++;
++		rx_dequeued++;
+ 		vcc = ATM_SKB(skb)->vcc;
+ 		eni_vcc = ENI_VCC(vcc);
+ 		first = 0;
+@@ -1174,7 +1174,7 @@ DPRINTK("doing direct send\n"); /* @@@ well, this doesn't work anyway */
+ 	DPRINTK("dma_wr set to %d, tx_pos is now %ld\n",dma_wr,tx->tx_pos);
+ 	eni_out(dma_wr,MID_DMA_WR_TX);
+ 	skb_queue_tail(&eni_dev->tx_queue,skb);
+-queued++;
++	queued++;
+ 	return enq_ok;
+ }
+ 
+@@ -1195,7 +1195,7 @@ static void poll_tx(struct atm_dev *dev)
+ 				if (res = enq_ok) continue;
+ 				DPRINTK("re-queuing TX PDU\n");
+ 				skb_queue_head(&tx->backlog,skb);
+-requeued++;
++				requeued++;
+ 				if (res = enq_jam) return;
+ 				break;
+ 			}
+@@ -1232,7 +1232,7 @@ static void dequeue_tx(struct atm_dev *dev)
+ 		else dev_kfree_skb_irq(skb);
+ 		atomic_inc(&vcc->stats->tx);
+ 		wake_up(&eni_dev->tx_wait);
+-dma_complete++;
++		dma_complete++;
+ 	}
+ }
+ 
+@@ -1555,7 +1555,7 @@ static void eni_tasklet(unsigned long data)
+ 	}
+ 	if (events & MID_TX_COMPLETE) {
+ 		EVENT("INT: TX COMPLETE\n",0,0);
+-tx_complete++;
++		tx_complete++;
+ 		wake_up(&eni_dev->tx_wait);
+ 		/* poll_rx ? */
+ 	}
+@@ -2069,14 +2069,14 @@ static int eni_send(struct atm_vcc *vcc,struct sk_buff *skb)
+ 		}
+ 		*(u32 *) skb->data = htonl(*(u32 *) skb->data);
+ 	}
+-submitted++;
++	submitted++;
+ 	ATM_SKB(skb)->vcc = vcc;
+ 	tasklet_disable(&ENI_DEV(vcc->dev)->task);
+ 	res = do_tx(skb);
+ 	tasklet_enable(&ENI_DEV(vcc->dev)->task);
+ 	if (res = enq_ok) return 0;
+ 	skb_queue_tail(&ENI_VCC(vcc)->tx->backlog,skb);
+-backlogged++;
++	backlogged++;
+ 	tasklet_schedule(&ENI_DEV(vcc->dev)->task);
+ 	return 0;
+ }
+-- 
+2.14.1
 
-> 
-> * Do you prefer to stress the “domain removal”
->   (or the shown error message) in the label?
-
-I prefer to stress the unwind path as that is the most important
-aspect of the error path.
-
-
-I have no interest in a prelonged debate about the naming of labels.
-As I pointed out its a spurious aspect of your change. If you wish me to
-Ack your change then please either drop that change or update it - as I
-already suggested. Else lets discontinue this sub-thread.
