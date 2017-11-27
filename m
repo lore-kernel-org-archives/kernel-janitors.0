@@ -1,44 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 17:58:22 +0000
-Subject: [PATCH 1/3] video: au1100fb: Delete an error message for a failed memory allocation in au1100fb_drv_
-Message-Id: <f2ad18dd-2525-d8d9-10a8-c12b345cb509@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:53:56 +0000
+Subject: Applied "ASoC: da7218: Improve a size determination in da7218_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOXU-0007Ry-N8@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
-In-Reply-To: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+References: <8f6b7c8c-f1eb-47c7-c11f-731aa8051863@users.sourceforge.net>
+In-Reply-To: <8f6b7c8c-f1eb-47c7-c11f-731aa8051863@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, support.opensource@diasemi.comAdamThomsonAdam.Thomson.Opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: da7218: Improve a size determination in da7218_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 392b79e20b41cfdc174d31bd4b004bbd874de4d9 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 27 Nov 2017 18:14:41 +0100
+Date: Thu, 23 Nov 2017 20:50:44 +0100
+Subject: [PATCH] ASoC: da7218: Improve a size determination in
+ da7218_i2c_probe()
 
-Omit an extra message for a memory allocation failure in this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/video/fbdev/au1100fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/codecs/da7218.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/au1100fb.c b/drivers/video/fbdev/au1100fb.c
-index 8de42f617d16..cae17d02d804 100644
---- a/drivers/video/fbdev/au1100fb.c
-+++ b/drivers/video/fbdev/au1100fb.c
-@@ -418,10 +418,8 @@ static int au1100fb_drv_probe(struct platform_device *dev)
- 	/* Allocate new device private */
- 	fbdev = devm_kzalloc(&dev->dev, sizeof(struct au1100fb_device),
- 			     GFP_KERNEL);
--	if (!fbdev) {
--		print_err("fail to allocate device private record");
-+	if (!fbdev)
- 		return -ENOMEM;
--	}
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 25ab7443d803..96c644a15b11 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -3269,8 +3269,7 @@ static int da7218_i2c_probe(struct i2c_client *i2c,
+ 	struct da7218_priv *da7218;
+ 	int ret;
  
- 	if (au1100fb_setup(fbdev))
- 		goto failed;
+-	da7218 = devm_kzalloc(&i2c->dev, sizeof(struct da7218_priv),
+-			      GFP_KERNEL);
++	da7218 = devm_kzalloc(&i2c->dev, sizeof(*da7218), GFP_KERNEL);
+ 	if (!da7218)
+ 		return -ENOMEM;
+ 
 -- 
 2.15.0
 
