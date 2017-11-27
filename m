@@ -1,42 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 05 Nov 2017 09:33:15 +0000
-Subject: Re: USB: core: Improve unlocking of a mutex in two functions
-Message-Id: <73765f7c-57b6-9ade-bca3-4d65b30f2d5d@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:53:45 +0000
+Subject: Applied "ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_probe(
+Message-Id: <E1eJOXJ-0007OU-Mg@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ff5f74e-ae23-5c97-8998-0e598ceae96b@users.sourceforge.net>
- <CAMuHMdUXn4YVPBFCoqmwcdU7eTWO5jy2ZXZQaAxPi1P5bM4q2A@mail.gmail.com>
- <20171105073013.GA1431@kroah.com>
-In-Reply-To: <20171105073013.GA1431@kroah.com>
+References: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
+In-Reply-To: <23adac87-3c2b-a264-348a-aaf7cbba5420@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alan Stern <stern@rowland.harvard.edu>, Eugene Korenevsky <ekorenevsky@gmail.com>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jaejoong Kim <climbbb.kim@gmail.com>, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Brian Austin <brian.austin@cirrus.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-PiBEb24ndCB3b3JyeSwgb3Igd2FzdGUgeW91ciB0aW1lLCBJIGRvbid0IHRha2UgcGF0Y2hlcyBm
-cm9tIHRoaXMgYXV0aG9yCj4gYXMgdGhleSBhcmUgaW4gbXkgYmxhY2tsaXN0LgoKSSBhbSBjdXJp
-b3VzIGlmIG91ciBkaWFsb2d1ZSBjYW4gYmVjb21lIG1vcmUgY29uc3RydWN0aXZlIGFnYWluLiDw
-n4yICgoKSSBjYW4gb2ZmZXIgYW5vdGhlciBiaXQgb2YgaW5mb3JtYXRpb24gZm9yIHRoaXMgc29m
-dHdhcmUgZGV2ZWxvcG1lbnQgZGlzY3Vzc2lvbi4g8J+SrQoKVGhlIGFmZmVjdGVkIHNvdXJjZSBm
-aWxlcyBjYW4gYmUgY29tcGlsZWQgZm9yIHRoZSBwcm9jZXNzb3IgYXJjaGl0ZWN0dXJlIOKAnHg4
-Nl82NOKAnQpieSBhIHRvb2wgbGlrZSDigJxHQ0MgNi40LjErcjI1MTYzMS0xLjPigJ0gZnJvbSB0
-aGUgc29mdHdhcmUgZGlzdHJpYnV0aW9uCuKAnG9wZW5TVVNFIFR1bWJsZXdlZWTigJ0gd2l0aCB0
-aGUgZm9sbG93aW5nIGNvbW1hbmQgZXhhbXBsZS4KCm15X2NjPS91c3IvYmluL2djYy02IFwKJiYg
-bXlfbW9kdWxlMT1kcml2ZXJzL3VzYi9jb3JlL2h1Yi5vIFwKJiYgbXlfbW9kdWxlMj1kcml2ZXJz
-L3VzYi9jb3JlL21lc3NhZ2UubyBcCiYmIGdpdCBjaGVja291dCBuZXh0LTIwMTcxMTAyIFwKJiYg
-bWFrZSAtajQgQ0M9IiR7bXlfY2N9IiBIT1NUQ0M9IiR7bXlfY2N9IiBhbGxtb2Rjb25maWcgIiR7
-bXlfbW9kdWxlMX0iICIke215X21vZHVsZTJ9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlMX0iICIk
-e215X21vZHVsZTJ9IiBcCiYmIGdpdCBjaGVja291dCAnOi9eVVNCOiBjb3JlOiBJbXByb3ZlIHVu
-bG9ja2luZyBvZiBhIG11dGV4IGluIHR3byBmdW5jdGlvbnMnIFwKJiYgbWFrZSAtajQgQ0M9IiR7
-bXlfY2N9IiBIT1NUQ0M9IiR7bXlfY2N9IiBhbGxtb2Rjb25maWcgIiR7bXlfbW9kdWxlMX0iICIk
-e215X21vZHVsZTJ9IiBcCiYmIHNpemUgIiR7bXlfbW9kdWxlMX0iICIke215X21vZHVsZTJ9IgoK
-CvCflK4gRG8geW91IGZpbmQgdGhlIGZvbGxvd2luZyBkaWZmZXJlbmNlcyB1c2VmdWwgZm9yIGZ1
-cnRoZXIgY2xhcmlmaWNhdGlvbj8KCuKVlOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVpOKV
-kOKVkOKVkOKVkOKVkOKVkOKVlwrilZEgbW9kdWxlICDilIIgdGV4dCDilZEK4pWg4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWq4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWjCuKVkSBodWIgICAgIOKU
-giAtMTYgIOKVkQrilZEgbWVzc2FnZSDilIIgLTQ4ICDilZEK4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWdCgoKUmVnYXJkcywKTWFya3VzCi0tClRv
-IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBr
-ZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdl
-ci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5v
-cmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+The patch
+
+   ASoC: cs42l56: Delete an error message for a failed memory allocation in cs42l56_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 277631ccff503f2a8e8150574c9773a8383fc926 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 09:26:08 +0100
+Subject: [PATCH] ASoC: cs42l56: Delete an error message for a failed memory
+ allocation in cs42l56_i2c_probe()
+
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs42l56.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
+index cb6ca85f1536..13ee46217d78 100644
+--- a/sound/soc/codecs/cs42l56.c
++++ b/sound/soc/codecs/cs42l56.c
+@@ -1210,11 +1210,9 @@ static int cs42l56_i2c_probe(struct i2c_client *i2c_client,
+ 		pdata = devm_kzalloc(&i2c_client->dev,
+ 				     sizeof(struct cs42l56_platform_data),
+ 				     GFP_KERNEL);
+-		if (!pdata) {
+-			dev_err(&i2c_client->dev,
+-				"could not allocate pdata\n");
++		if (!pdata)
+ 			return -ENOMEM;
+-		}
++
+ 		if (i2c_client->dev.of_node) {
+ 			ret = cs42l56_handle_of_data(i2c_client,
+ 						     &cs42l56->pdata);
+-- 
+2.15.0
+
