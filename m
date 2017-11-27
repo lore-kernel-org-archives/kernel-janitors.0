@@ -1,29 +1,76 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 03 Nov 2017 14:23:21 +0000
-Subject: Re: [PATCH] crypto: qat: remove unused and redundant pointer vf_info
-Message-Id: <20171103142321.GG9011@gondor.apana.org.au>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:54:32 +0000
+Subject: Applied "ASoC: wm2000: Improve a size determination in wm2000_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOY4-0007Xr-IK@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171012170456.32505-1-colin.king@canonical.com>
-In-Reply-To: <20171012170456.32505-1-colin.king@canonical.com>
+References: <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
+In-Reply-To: <a6e50094-3d1c-6ad4-67e4-377036f5ccd6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, "David S . Miller" <davem@davemloft.net>, Ahsan Atta <ahsan.atta@intel.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
-On Thu, Oct 12, 2017 at 06:04:56PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The pointer vf_info is being assigned but never read, it is redundant
-> and therefore can be removed.
-> 
-> Cleans up clang warning: Value stored to 'vf_info' is never read
-> 
-> Fixes: ed8ccaef52fa ("crypto: qat - Add support for SRIOV")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Patch applied.  Thanks.
+   ASoC: wm2000: Improve a size determination in wm2000_i2c_probe()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From bf0842ba3afa85d37b35e65dedec9a994988e346 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 24 Nov 2017 08:18:14 +0100
+Subject: [PATCH] ASoC: wm2000: Improve a size determination in
+ wm2000_i2c_probe()
+
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/wm2000.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/wm2000.c b/sound/soc/codecs/wm2000.c
+index 480ceb07c3ed..abfa052c07d8 100644
+--- a/sound/soc/codecs/wm2000.c
++++ b/sound/soc/codecs/wm2000.c
+@@ -826,8 +826,7 @@ static int wm2000_i2c_probe(struct i2c_client *i2c,
+ 	int reg;
+ 	u16 id;
+ 
+-	wm2000 = devm_kzalloc(&i2c->dev, sizeof(struct wm2000_priv),
+-			      GFP_KERNEL);
++	wm2000 = devm_kzalloc(&i2c->dev, sizeof(*wm2000), GFP_KERNEL);
+ 	if (!wm2000)
+ 		return -ENOMEM;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.15.0
+
