@@ -1,39 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 09 Nov 2017 14:15:09 +0000
-Subject: [PATCH] samples/sockmap: Make signal handling safer
-Message-Id: <8e064bc1-c762-1ca6-4a67-9d50793753f6@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 18:01:14 +0000
+Subject: [PATCH 3/3] video: au1100fb: Delete an unnecessary variable initialisation in au1100fb_drv_probe()
+Message-Id: <37b97970-6cd7-5c85-a613-8c558b8d4fa0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+In-Reply-To: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, "David S. Miller" <davem@davemloft.net>, John Fastabend <john.fastabend@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 9 Nov 2017 15:06:16 +0100
+Date: Mon, 27 Nov 2017 18:40:23 +0100
 
-Use the data type "sig_atomic_t" for the variable "running"
-so that it can be safely modified by a signal handler.
+The local variable "fbdev" will be reassigned by a following statement.
+Thus omit the explicit initialisation at the beginning.
 
-Fixes: 69e8cc134bcbf0ccfcf852c400b8e6788d1d0038 ("bpf: sockmap sample program")
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- samples/sockmap/sockmap_user.c | 2 +-
+ drivers/video/fbdev/au1100fb.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/samples/sockmap/sockmap_user.c b/samples/sockmap/sockmap_user.c
-index 7cc9d228216f..6e3ebbb1f8f4 100644
---- a/samples/sockmap/sockmap_user.c
-+++ b/samples/sockmap/sockmap_user.c
-@@ -39,7 +39,7 @@
- #include "../bpf/bpf_util.h"
- #include "../bpf/libbpf.h"
+diff --git a/drivers/video/fbdev/au1100fb.c b/drivers/video/fbdev/au1100fb.c
+index 1e5b872f0da6..7c9a672e9811 100644
+--- a/drivers/video/fbdev/au1100fb.c
++++ b/drivers/video/fbdev/au1100fb.c
+@@ -410,7 +410,7 @@ static int au1100fb_setup(struct au1100fb_device *fbdev)
  
--int running;
-+static sig_atomic_t running;
- void running_handler(int a);
- 
- /* randomly selected ports for testing on lo */
+ static int au1100fb_drv_probe(struct platform_device *dev)
+ {
+-	struct au1100fb_device *fbdev = NULL;
++	struct au1100fb_device *fbdev;
+ 	struct resource *regs_res;
+ 	unsigned long page;
+ 	struct clk *c;
 -- 
 2.15.0
 
