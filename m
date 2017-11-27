@@ -1,41 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 07 Nov 2017 18:56:30 +0000
-Subject: [PATCH] zd1201: remove unused variable framelen
-Message-Id: <20171107185630.7791-1-colin.king@canonical.com>
+From: Brian Austin <brian.austin@cirrus.com>
+Date: Mon, 27 Nov 2017 14:46:30 +0000
+Subject: Re: [EXTERNAL] [PATCH 0/3] ASoC-cs42l73: Adjustments for two function implementations
+Message-Id: <4ac4c978-b463-4a96-8b3b-b037b46291e7@EX3.ad.cirrus.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
+In-Reply-To: <609e2542-4750-fe60-4f42-08bca79bfb56@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Brian Austin <brian.austin@cirrus.com>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, Mark Brown <broonie@kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 22 Nov 2017, SF Markus Elfring wrote:
 
-Variable framelen is assigned but never read, hence it is redundant
-and can be removed. Cleans up clang warning:
-
-drivers/net/wireless/zydas/zd1201.c:234:3: warning: Value stored
-to 'framelen' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/zydas/zd1201.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/zydas/zd1201.c b/drivers/net/wireless/zydas/zd1201.c
-index 581e8577a221..253403899fe9 100644
---- a/drivers/net/wireless/zydas/zd1201.c
-+++ b/drivers/net/wireless/zydas/zd1201.c
-@@ -230,8 +230,7 @@ static void zd1201_usbrx(struct urb *urb)
- 	/* Info frame */
- 	if (type = ZD1201_PACKET_INQUIRE) {
- 		int i = 0;
--		unsigned short infotype, framelen, copylen;
--		framelen = le16_to_cpu(*(__le16*)&data[4]);
-+		unsigned short infotype, copylen;
- 		infotype = le16_to_cpu(*(__le16*)&data[6]);
- 
- 		if (infotype = ZD1201_INF_LINKSTATUS) {
--- 
-2.14.1
-
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 22 Nov 2017 16:38:32 +0100
+> 
+> Three update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (3):
+>   Delete an error message for a failed memory allocation in cs42l73_i2c_probe()
+>   Improve two size determinations in cs42l73_i2c_probe()
+>   Fix a typo in two comments
+> 
+>  sound/soc/codecs/cs42l73.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 2.15.0
+> 
+> 
+For the series, Thanks
+Acked-by: Brian Austin <brian.austin@cirrus.com>
