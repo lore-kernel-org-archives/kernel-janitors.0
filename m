@@ -1,56 +1,54 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 27 Nov 2017 14:55:28 +0000
+From: Joe Perches <joe@perches.com>
+Date: Mon, 27 Nov 2017 15:40:07 +0000
 Subject: Re: [PATCH] ALSA: drivers: make array 'names' const, reduces object code size
-Message-Id: <5A1C2760.1030704@bfs.de>
+Message-Id: <1511797207.32426.41.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20171127125851.10076-1-colin.king@canonical.com>
-In-Reply-To: <20171127125851.10076-1-colin.king@canonical.com>
+ <5A1C2760.1030704@bfs.de>
+In-Reply-To: <5A1C2760.1030704@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: wharms@bfs.de, Colin King <colin.king@canonical.com>
+Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
+On Mon, 2017-11-27 at 15:55 +0100, walter harms wrote:
+> Am 27.11.2017 13:58, schrieb Colin King:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > Don't populate array 'names' on the stack but instead make them static.
+> > Makes the object code smaller by 50 bytes:
+[]
+> > diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
+[]
+> > @@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
+> >  static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
+> >  				struct snd_ctl_elem_info *info)
+> >  {
+> > -	const char *const names[] = { "None", "CD Player" };
+> > +	static const char *const names[] = { "None", "CD Player" };
+> >  
+> >  	return snd_ctl_enum_info(info, 1, 2, names);
+> >  }
+> 
+> nitpick: while here
+>    snd_ctl_enum_info(info, 1, ARRAY_SIZE(names), names);
+> 
+> just my 2 cents,
 
+True, but that seems counter style for most uses of snd_ctl_enum_info
 
-Am 27.11.2017 13:58, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate array 'names' on the stack but instead make them static.
-> Makes the object code smaller by 50 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   21237	   9192	   1120	  31549	   7b3d	linux/sound/drivers/dummy.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   21095	   9280	   1120	  31495	   7b07	linux/sound/drivers/dummy.o
-> 
-> (gcc version 7.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/drivers/dummy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
-> index 7b2b1f766b00..69db45bc0197 100644
-> --- a/sound/drivers/dummy.c
-> +++ b/sound/drivers/dummy.c
-> @@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
->  static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
->  				struct snd_ctl_elem_info *info)
->  {
-> -	const char *const names[] = { "None", "CD Player" };
-> +	static const char *const names[] = { "None", "CD Player" };
->  
->  	return snd_ctl_enum_info(info, 1, 2, names);
->  }
+$ git grep -w snd_ctl_enum_info | grep -v ARRAY_SIZE | wc -l
+159
+$ git grep -w snd_ctl_enum_info | grep ARRAY_SIZE | wc -l
+10
 
-nitpick: while here
-   snd_ctl_enum_info(info, 1, ARRAY_SIZE(names), names);
+but most of those seem to choose variable amounts of a single
+array.  Here, ARRAY_SIZE seems better to me too.
 
-just my 2 cents,
-re,
- wh
+For another real nitpick, please prefer "const *" over "const*"
+
+$ git grep -P "\*\s+const\b" | wc -l
+7068
+$ git grep -P "\*const\b" | wc -l
+1801
+
