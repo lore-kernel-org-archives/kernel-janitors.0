@@ -1,41 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 01 Nov 2017 15:38:31 +0000
-Subject: [PATCH v2 0/2] R-Car Display Unit: Fine-tuning for some function implementations
-Message-Id: <26b811dd-9dfa-cfd3-7d4d-e7f1c852b8ed@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 21:28:31 +0000
+Subject: [PATCH 5/5] radeon_backlight: Delete a jump target in radeonfb_bl_init()
+Message-Id: <3b2295cf-59c8-b5af-25e5-c1d075093e19@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201710262044.165nsaJp%fengguang.wu@intel.com>
-In-Reply-To: <201710262044.165nsaJp%fengguang.wu@intel.com>
+References: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
+In-Reply-To: <93c99f89-2d97-0e95-fe57-7b7a0824e864@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kbuild test robot <lkp@intel.com>, dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kbuild-all@01.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 1 Nov 2017 16:23:45 +0100
+Date: Mon, 27 Nov 2017 22:03:03 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+* Replace a goto statement by a direct call of the function "kfree"
+  in an if branch.
 
-Markus Elfring (2):
-  drm/rcar-du: Use common error handling code in rcar_du_encoders_init()
-  drm/rcar-du: Adjust 14 checks for null pointers
+* Delete the jump label "error" which became unnecessary with
+  this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/video/fbdev/aty/radeon_backlight.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-v2:
-Advice was taken into account from the first round of corresponding
-source code review.
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 24 ++++++++++++------------
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_plane.c   |  6 +++---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  6 +++---
- 8 files changed, 23 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/video/fbdev/aty/radeon_backlight.c b/drivers/video/fbdev/aty/radeon_backlight.c
+index 7f7ed6f72ddb..3c5b8291e773 100644
+--- a/drivers/video/fbdev/aty/radeon_backlight.c
++++ b/drivers/video/fbdev/aty/radeon_backlight.c
+@@ -157,7 +157,8 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
+ 	if (IS_ERR(bd)) {
+ 		rinfo->info->bl_dev = NULL;
+ 		printk("radeonfb: Backlight registration failed\n");
+-		goto error;
++		kfree(pdata);
++		return;
+ 	}
+ 
+ 	pdata->rinfo = rinfo;
+@@ -188,11 +189,6 @@ void radeonfb_bl_init(struct radeonfb_info *rinfo)
+ 	backlight_update_status(bd);
+ 
+ 	printk("radeonfb: Backlight initialized (%s)\n", name);
+-
+-	return;
+-
+-error:
+-	kfree(pdata);
+ }
+ 
+ void radeonfb_bl_exit(struct radeonfb_info *rinfo)
 -- 
-2.14.3
+2.15.0
 
