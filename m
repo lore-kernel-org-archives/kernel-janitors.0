@@ -1,23 +1,23 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 03 Nov 2017 18:50:46 +0000
-Subject: Applied "spi: sh-msiof: remove redundant pointer dev" to the spi tree
-Message-Id: <E1eAh3G-0005rO-5K@debutante>
+Date: Mon, 27 Nov 2017 18:53:49 +0000
+Subject: Applied "ASoC: da7213: Improve a size determination in da7213_i2c_probe()" to the asoc tree
+Message-Id: <E1eJOXN-0007PX-GJ@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171103135829.8697-1-colin.king@canonical.com>
-In-Reply-To: <20171103135829.8697-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+References: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
+In-Reply-To: <0ec34e2a-8e18-bc1d-b07f-a606499b3682@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, support.opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
 The patch
 
-   spi: sh-msiof: remove redundant pointer dev
+   ASoC: da7213: Improve a size determination in da7213_i2c_probe()
 
-has been applied to the spi tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -38,40 +38,39 @@ to this mail.
 Thanks,
 Mark
 
-From 6ae6678344af52cf1c05475ff3ec2f43b8b532ef Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 3 Nov 2017 13:58:29 +0000
-Subject: [PATCH] spi: sh-msiof: remove redundant pointer dev
+From 8080699a3649cb0a0aed2c650a7a3a76c2025b30 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Nov 2017 18:15:30 +0100
+Subject: [PATCH] ASoC: da7213: Improve a size determination in
+ da7213_i2c_probe()
 
-The pointer dev is assigned but never read, hence it is redundant
-and can be removed. Cleans up clang warning:
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-drivers/spi/spi-sh-msiof.c:1198:2: warning: Value stored to 'dev'
-is never read
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-sh-msiof.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/codecs/da7213.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 2c5ea4c57508..66043611e86d 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1190,12 +1190,10 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- static void sh_msiof_release_dma(struct sh_msiof_spi_priv *p)
- {
- 	struct spi_master *master = p->master;
--	struct device *dev;
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index d1b77a0e3b74..b2b4e90fc02a 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1853,8 +1853,7 @@ static int da7213_i2c_probe(struct i2c_client *i2c,
+ 	struct da7213_priv *da7213;
+ 	int ret;
  
- 	if (!master->dma_tx)
- 		return;
+-	da7213 = devm_kzalloc(&i2c->dev, sizeof(struct da7213_priv),
+-			      GFP_KERNEL);
++	da7213 = devm_kzalloc(&i2c->dev, sizeof(*da7213), GFP_KERNEL);
+ 	if (!da7213)
+ 		return -ENOMEM;
  
--	dev = &p->pdev->dev;
- 	dma_unmap_single(master->dma_rx->device->dev, p->rx_dma_addr,
- 			 PAGE_SIZE, DMA_FROM_DEVICE);
- 	dma_unmap_single(master->dma_tx->device->dev, p->tx_dma_addr,
 -- 
 2.15.0
 
