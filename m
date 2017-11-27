@@ -1,40 +1,36 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 18 Nov 2017 13:27:23 +0000
-Subject: [PATCH] mtd: onenand: Fix an error handling path in 's3c_onenand_probe(()'
-Message-Id: <20171118132723.24785-1-christophe.jaillet@wanadoo.fr>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:06:10 +0000
+Subject: [PATCH] ambassador: fix incorrect indentation of assignment statement
+Message-Id: <20171127130610.10260-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyungmin.park@samsung.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If 'platform_get_resource()' fails, we have to go through the error
-handling path to release some resources.
+From: Colin Ian King <colin.king@canonical.com>
 
-The unreachable 'goto ahb_resource_failed' is also wrong here and we should
-go to 'resource_failed' instead.
+Remove one extraneous level of indentation on assignment statement.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/onenand/samsung.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/atm/ambassador.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-index af0ac1a7bf8f..164ebe2b1137 100644
---- a/drivers/mtd/onenand/samsung.c
-+++ b/drivers/mtd/onenand/samsung.c
-@@ -872,8 +872,8 @@ static int s3c_onenand_probe(struct platform_device *pdev)
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!r) {
- 		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENOENT;
--		goto ahb_resource_failed;
-+		err = -ENOENT;
-+		goto resource_failed;
- 	}
+diff --git a/drivers/atm/ambassador.c b/drivers/atm/ambassador.c
+index dd286ad404f8..9287ec958b70 100644
+--- a/drivers/atm/ambassador.c
++++ b/drivers/atm/ambassador.c
+@@ -2258,7 +2258,7 @@ static int amb_probe(struct pci_dev *pci_dev,
  
- 	onenand->base_res = request_mem_region(r->start, resource_size(r),
+ 	PRINTD (DBG_INFO, "registered Madge ATM adapter (no. %d) (%p) at %p",
+ 		dev->atm_dev->number, dev, dev->atm_dev);
+-		dev->atm_dev->dev_data = (void *) dev;
++	dev->atm_dev->dev_data = (void *) dev;
+ 
+ 	// register our address
+ 	amb_esi (dev, dev->atm_dev->esi);
 -- 
 2.14.1
 
