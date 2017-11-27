@@ -1,56 +1,85 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 20:49:36 +0000
-Subject: [PATCH 1/4] video: udlfb: Delete an error message for a failed memory allocation in two functions
-Message-Id: <6ae3ae6d-acd2-38d2-0350-4a9b833489ec@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Nov 2017 18:54:01 +0000
+Subject: Applied "ASoC: da7218: Delete two error messages for a failed memory allocation in da7218_of_to_pdat
+Message-Id: <E1eJOXZ-0007T5-9U@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
-In-Reply-To: <6fb11bb4-2c1d-a939-087b-de31c42328b9@users.sourceforge.net>
+References: <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
+In-Reply-To: <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Bernie Thompson <bernie@plugable.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, support.opensource@diasemi.comAdamThomsonAdam.Thomson.Opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
 
+The patch
+
+   ASoC: da7218: Delete two error messages for a failed memory allocation in da7218_of_to_pdata()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 14a07f1d8c4c64af29566316df0415052e8bdfe4 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 24 Nov 2017 21:12:54 +0100
+Date: Thu, 23 Nov 2017 20:42:20 +0100
+Subject: [PATCH] ASoC: da7218: Delete two error messages for a failed memory
+ allocation in da7218_of_to_pdata()
 
-Omit an extra message for a memory allocation failure in these functions.
+Omit extra messages for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/video/fbdev/udlfb.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ sound/soc/codecs/da7218.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index d44f14242016..77633c58bb9b 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1175,10 +1175,8 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
- 		 * Alloc system memory for virtual framebuffer
- 		 */
- 		new_fb = vmalloc(new_len);
--		if (!new_fb) {
--			pr_err("Virtual framebuffer alloc failed\n");
-+		if (!new_fb)
- 			goto error;
--		}
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 56564ce90cb6..25ab7443d803 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -2455,10 +2455,8 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
+ 	u32 of_val32;
  
- 		if (info->screen_base) {
- 			memcpy(new_fb, old_fb, old_len);
-@@ -1599,10 +1597,8 @@ static int dlfb_usb_probe(struct usb_interface *interface,
- 	usbdev = interface_to_usbdev(interface);
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (dev = NULL) {
--		dev_err(&interface->dev, "dlfb_usb_probe: failed alloc of dev struct\n");
-+	if (!dev)
- 		goto error;
+ 	pdata = devm_kzalloc(codec->dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata) {
+-		dev_warn(codec->dev, "Failed to allocate memory for pdata\n");
++	if (!pdata)
+ 		return NULL;
 -	}
  
- 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
- 
+ 	if (of_property_read_u32(np, "dlg,micbias1-lvl-millivolt", &of_val32) >= 0)
+ 		pdata->micbias1_lvl = da7218_of_micbias_lvl(codec, of_val32);
+@@ -2527,8 +2525,6 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
+ 		hpldet_pdata = devm_kzalloc(codec->dev, sizeof(*hpldet_pdata),
+ 					    GFP_KERNEL);
+ 		if (!hpldet_pdata) {
+-			dev_warn(codec->dev,
+-				 "Failed to allocate memory for hpldet pdata\n");
+ 			of_node_put(hpldet_np);
+ 			return pdata;
+ 		}
 -- 
 2.15.0
 
