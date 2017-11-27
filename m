@@ -1,32 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 28 Nov 2017 06:49:10 +0000
-Subject: Re: [PATCH 2/3] ALSA: hal2: Improve a size determination in hal2_create()
-Message-Id: <s5hlgiqlwyh.wl-tiwai@suse.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:24:15 +0000
+Subject: [PATCH] atm: fore200e: use %pK to format kernel addresses instead of %x
+Message-Id: <20171127132415.10753-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <118a96d5-c52a-fd22-23d5-28f20de7ff22@users.sourceforge.net>
- <a7583868-cf4b-015c-ce6a-810be4780aa8@users.sourceforge.net>
-In-Reply-To: <a7583868-cf4b-015c-ce6a-810be4780aa8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, Bhumika Goyal <bhumirks@gmail.com>
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 11 Nov 2017 19:13:15 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 11 Nov 2017 18:34:04 +0100
-> 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Don't use %x and casting to print out a kernel address, instead use the
+%pK and remove the casting.  Cleans up smatch warning:
 
+drivers/atm/fore200e.c:3093 fore200e_proc_read() warn: argument 3 to %08x
+specifier is cast from pointer
 
-Takashi
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/fore200e.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
+index 126855e6cb7d..6ebc4e4820fc 100644
+--- a/drivers/atm/fore200e.c
++++ b/drivers/atm/fore200e.c
+@@ -3083,8 +3083,8 @@ fore200e_proc_read(struct atm_dev *dev, loff_t* pos, char* page)
+ 	    ASSERT(fore200e_vcc);
+ 
+ 	    len = sprintf(page,
+-			  "  %08x  %03d %05d %1d   %09lu %05d/%05d      %09lu %05d/%05d\n",
+-			  (u32)(unsigned long)vcc,
++			  "  %pK  %03d %05d %1d   %09lu %05d/%05d      %09lu %05d/%05d\n",
++			  vcc,
+ 			  vcc->vpi, vcc->vci, fore200e_atm2fore_aal(vcc->qos.aal),
+ 			  fore200e_vcc->tx_pdu,
+ 			  fore200e_vcc->tx_min_pdu > 0xFFFF ? 0 : fore200e_vcc->tx_min_pdu,
+-- 
+2.14.1
+
