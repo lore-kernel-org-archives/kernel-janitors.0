@@ -1,24 +1,36 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 08 Nov 2017 09:43:29 +0000
-Subject: Re: [PATCH 2/2] tcmu: Add a missing unlock on an error path
-Message-Id: <1510134209.29624.73.camel@haakon3.daterainc.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:47:22 +0000
+Subject: [PATCH] atm: suni: remove extraneous space to fix indentation
+Message-Id: <20171127134722.11552-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171108084415.dn443crpreqwqoiw@mwanda>
-In-Reply-To: <20171108084415.dn443crpreqwqoiw@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mike Christie <mchristi@redhat.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2017-11-08 at 11:44 +0300, Dan Carpenter wrote:
-> We added a new error path here but we forgot to drop the lock first
-> before returning.
-> 
-> Fixes: 0d44374c1aae ("tcmu: fix double se_cmd completion")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to target-pending/for-next.
+Remove a leading space, fixes indentation
 
-Thanks DanC !
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/suni.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/atm/suni.c b/drivers/atm/suni.c
+index b8825f2d79e0..4b044710a8cf 100644
+--- a/drivers/atm/suni.c
++++ b/drivers/atm/suni.c
+@@ -177,7 +177,7 @@ static int set_loopback(struct atm_dev *dev,int mode)
+ 		default:
+ 			return -EINVAL;
+ 	}
+-	 dev->ops->phy_put(dev, control, reg);
++	dev->ops->phy_put(dev, control, reg);
+ 	PRIV(dev)->loop_mode = mode;
+ 	return 0;
+ }
+-- 
+2.14.1
 
