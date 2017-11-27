@@ -1,26 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 08 Nov 2017 23:17:09 +0000
-Subject: Re: [PATCH 1/2] scsi: mpt3sas: cleanup _scsih_pcie_enumeration_event()
-Message-Id: <yq1d14sz7gq.fsf@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 17:27:08 +0000
+Subject: Re: omapfb/dss: Delete an error message for a failed memory allocation in three functions
+Message-Id: <502de06b-ca86-d0ff-bd50-d260fbe46fe5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171108082101.wwseluw5bwnsgwue@mwanda>
-In-Reply-To: <20171108082101.wwseluw5bwnsgwue@mwanda> (Dan Carpenter's message
-        of "Wed, 8 Nov 2017 11:38:01 +0300")
+References: <c48a01db-c477-3bd3-5cb4-548e47810ccb@users.sourceforge.net>
+ <d29a0bae-7b6f-b8f6-6809-5a097cd5a26a@ti.com>
+In-Reply-To: <d29a0bae-7b6f-b8f6-6809-5a097cd5a26a@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: "Andrew F. Davis" <afd@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+>> Omit an extra message for a memory allocation failure in these functions.
+=E2=80=A6
+> nak, unlike many others, these message give extra info on which
+> allocation failed, that can be useful.
 
-Dan,
+Can a default allocation failure report provide the information
+which you might expect so far?
 
-> The indenting wasn't right, because the last two prints weren't
-> indented far enough.  Also it used pr_info() where it was supposed to
-> use pr_cont().  I reversed the if statement and pulled the code in one
-> tab and did a couple other minor cleanups.
-
-Applied to 4.15/scsi-queue. Thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
