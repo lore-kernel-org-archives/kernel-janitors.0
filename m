@@ -1,40 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 24 Nov 2017 13:44:02 +0000
-Subject: [PATCH] scsi: bfa: use setup_timer instead of init_timer
-Message-Id: <20171124134402.32739-1-colin.king@canonical.com>
+From: "Gurumurthy, Anil" <Anil.Gurumurthy@cavium.com>
+Date: Mon, 27 Nov 2017 05:36:13 +0000
+Subject: RE: [PATCH] scsi: bfa: use setup_timer instead of init_timer
+Message-Id: <BY2PR0701MB202393D9B8896207476F83D38E250@BY2PR0701MB2023.namprd07.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20171124134402.32739-1-colin.king@canonical.com>
+In-Reply-To: <20171124134402.32739-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>, "Kalluru, Sudarsana" <Sudarsana.Kalluru@cavium.com>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Use setup_timer function instead of initializing timer with the
-function and data fields.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/bfa/bfad.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
-index 5caf5f3ff642..c910b238bc9e 100644
---- a/drivers/scsi/bfa/bfad.c
-+++ b/drivers/scsi/bfa/bfad.c
-@@ -719,10 +719,7 @@ bfad_bfa_tmo(unsigned long data)
- void
- bfad_init_timer(struct bfad_s *bfad)
- {
--	init_timer(&bfad->hal_tmo);
--	bfad->hal_tmo.function = bfad_bfa_tmo;
--	bfad->hal_tmo.data = (unsigned long)bfad;
--
-+	setup_timer(&bfad->hal_tmo, bfad_bfa_tmo, (unsigned long)bfad);
- 	mod_timer(&bfad->hal_tmo,
- 		  jiffies + msecs_to_jiffies(BFA_TIMER_FREQ));
- }
--- 
-2.14.1
-
+DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyBbbWFpbHRvOmNv
+bGluLmtpbmdAY2Fub25pY2FsLmNvbV0gDQpTZW50OiAyNCBOb3ZlbWJlciAyMDE3IDE5OjE0DQpU
+bzogR3VydW11cnRoeSwgQW5pbCA8QW5pbC5HdXJ1bXVydGh5QGNhdml1bS5jb20+OyBLYWxsdXJ1
+LCBTdWRhcnNhbmEgPFN1ZGFyc2FuYS5LYWxsdXJ1QGNhdml1bS5jb20+OyBKYW1lcyBFIC4gSiAu
+IEJvdHRvbWxleSA8amVqYkBsaW51eC52bmV0LmlibS5jb20+OyBNYXJ0aW4gSyAuIFBldGVyc2Vu
+IDxtYXJ0aW4ucGV0ZXJzZW5Ab3JhY2xlLmNvbT47IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3Jn
+DQpDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZw0KU3ViamVjdDogW1BBVENIXSBzY3NpOiBiZmE6IHVzZSBzZXR1cF90aW1lciBp
+bnN0ZWFkIG9mIGluaXRfdGltZXINCg0KRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCg0KVXNlIHNldHVwX3RpbWVyIGZ1bmN0aW9uIGluc3RlYWQgb2YgaW5p
+dGlhbGl6aW5nIHRpbWVyIHdpdGggdGhlIGZ1bmN0aW9uIGFuZCBkYXRhIGZpZWxkcy4NCg0KU2ln
+bmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0t
+LQ0KIGRyaXZlcnMvc2NzaS9iZmEvYmZhZC5jIHwgNSArLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAx
+IGluc2VydGlvbigrKSwgNCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2Nz
+aS9iZmEvYmZhZC5jIGIvZHJpdmVycy9zY3NpL2JmYS9iZmFkLmMgaW5kZXggNWNhZjVmM2ZmNjQy
+Li5jOTEwYjIzOGJjOWUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvYmZhL2JmYWQuYw0KKysr
+IGIvZHJpdmVycy9zY3NpL2JmYS9iZmFkLmMNCkBAIC03MTksMTAgKzcxOSw3IEBAIGJmYWRfYmZh
+X3Rtbyh1bnNpZ25lZCBsb25nIGRhdGEpICB2b2lkICBiZmFkX2luaXRfdGltZXIoc3RydWN0IGJm
+YWRfcyAqYmZhZCkgIHsNCi0JaW5pdF90aW1lcigmYmZhZC0+aGFsX3Rtbyk7DQotCWJmYWQtPmhh
+bF90bW8uZnVuY3Rpb24gPSBiZmFkX2JmYV90bW87DQotCWJmYWQtPmhhbF90bW8uZGF0YSA9ICh1
+bnNpZ25lZCBsb25nKWJmYWQ7DQotDQorCXNldHVwX3RpbWVyKCZiZmFkLT5oYWxfdG1vLCBiZmFk
+X2JmYV90bW8sICh1bnNpZ25lZCBsb25nKWJmYWQpOw0KIAltb2RfdGltZXIoJmJmYWQtPmhhbF90
+bW8sDQogCQkgIGppZmZpZXMgKyBtc2Vjc190b19qaWZmaWVzKEJGQV9USU1FUl9GUkVRKSk7DQog
+fQ0KLS0NCjIuMTQuMQ0KIA0KQWNrZWQtYnk6IEFuaWwgR3VydW11cnRoeSA8YW5pbC5ndXJ1bXVy
+dGh5QGNhdml1bS5jb20+DQoNCg=
