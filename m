@@ -1,63 +1,47 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Mon, 13 Nov 2017 17:21:34 +0000
-Subject: Re: [PATCH] platform/x86: wmi: Unlock on error in wmi_ioctl()
-Message-Id: <20171113172134.GB63568@localhost.localdomain>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 12:58:51 +0000
+Subject: [PATCH] ALSA: drivers: make array 'names' const, reduces object code size
+Message-Id: <20171127125851.10076-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20171113100601.quq6qjvlk6ijzmri@mwanda>
- <70cf3e24742a43639839b0e2c3a60797@ausx13mpc120.AMER.DELL.COM>
-In-Reply-To: <70cf3e24742a43639839b0e2c3a60797@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mario.Limonciello@dell.com
-Cc: dan.carpenter@oracle.com, andy@infradead.org, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 13, 2017 at 02:51:55PM +0000, Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> > Sent: Monday, November 13, 2017 4:06 AM
-> > To: Darren Hart <dvhart@infradead.org>; Limonciello, Mario
-> > <Mario_Limonciello@Dell.com>
-> > Cc: Andy Shevchenko <andy@infradead.org>; platform-driver-
-> > x86@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: [PATCH] platform/x86: wmi: Unlock on error in wmi_ioctl()
-> > 
-> > We need to drop a lock if try_module_get() fails.
-> > 
-> > Fixes: 44b6b7661132 ("platform/x86: wmi: create userspace interface for drivers")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> > index 8c31ed4f0e1b..791449a2370f 100644
-> > --- a/drivers/platform/x86/wmi.c
-> > +++ b/drivers/platform/x86/wmi.c
-> > @@ -868,8 +868,10 @@ static long wmi_ioctl(struct file *filp, unsigned int cmd,
-> > unsigned long arg)
-> >  	/* let the driver do any filtering and do the call */
-> >  	wdriver = container_of(wblock->dev.dev.driver,
-> >  			       struct wmi_driver, driver);
-> > -	if (!try_module_get(wdriver->driver.owner))
-> > -		return -EBUSY;
-> > +	if (!try_module_get(wdriver->driver.owner)) {
-> > +		ret = -EBUSY;
-> > +		goto out_ioctl;
-> > +	}
-> >  	ret = wdriver->filter_callback(&wblock->dev, cmd, buf);
-> >  	module_put(wdriver->driver.owner);
-> >  	if (ret)
-> 
-> Hi Dan,
-> 
-> Thanks for submitting.  This exact same fix is in the subsystem "testing" branch
-> but hasn't yet been promoted to -next.
-> 
-> http://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git/commit/5e3e22971fb0b0d7d03286f1a619d0348748a243
+From: Colin Ian King <colin.king@canonical.com>
 
-And Mario's versions have now been pushed to for-next.
+Don't populate array 'names' on the stack but instead make them static.
+Makes the object code smaller by 50 bytes:
 
-> 
-> 
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  21237	   9192	   1120	  31549	   7b3d	linux/sound/drivers/dummy.o
 
+After:
+   text	   data	    bss	    dec	    hex	filename
+  21095	   9280	   1120	  31495	   7b07	linux/sound/drivers/dummy.o
+
+(gcc version 7.2.0 x86_64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/drivers/dummy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
+index 7b2b1f766b00..69db45bc0197 100644
+--- a/sound/drivers/dummy.c
++++ b/sound/drivers/dummy.c
+@@ -830,7 +830,7 @@ static int snd_dummy_capsrc_put(struct snd_kcontrol *kcontrol, struct snd_ctl_el
+ static int snd_dummy_iobox_info(struct snd_kcontrol *kcontrol,
+ 				struct snd_ctl_elem_info *info)
+ {
+-	const char *const names[] = { "None", "CD Player" };
++	static const char *const names[] = { "None", "CD Player" };
+ 
+ 	return snd_ctl_enum_info(info, 1, 2, names);
+ }
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.14.1
+
