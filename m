@@ -1,80 +1,56 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Mon, 20 Nov 2017 16:35:45 +0000
-Subject: Re: [PATCH] ASoC: cht_bsw_rt5645: Use common error handling code in cht_codec_fixup()
-Message-Id: <3218a1a0-fc9a-28b9-ecf6-466f51a8b245@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 13:39:32 +0000
+Subject: [PATCH] atm: lanai: use %p to format kernel addresses instead of %x
+Message-Id: <20171127133932.11207-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <287c2ccc-2411-8a6d-bb1b-8b1062b92738@users.sourceforge.net>
-In-Reply-To: <287c2ccc-2411-8a6d-bb1b-8b1062b92738@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Don't use %x and casting to print out a kernel address, instead use %p
+and remove the casting.  Cleans up smatch warnings:
 
-On 11/19/2017 03:00 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 19 Nov 2017 09:53:56 +0100
->
-> * Add a jump target so that a specific error message is stored only once
->    at the end of this function implementation.
->
-> * Replace two calls of the function "dev_err" by goto statements.
->
-> This issue was detected by using the Coccinelle software.
-Indeed this isn't very smart to provide the same test but no, this is 
-the wrong way to fix this. The error message is in reply to two 
-different configurations, one on the codec side and one on the cpu-dai 
-side. We should change the error message to more clearly indicate the 
-issue rather than fold both cases under the same handler.
-Besides this is the same code as in other machine drivers so needs to be 
-handled in multiple files as well.
+drivers/atm/lanai.c:1589 service_buffer_allocate() warn: argument 2 to
+%08lX specifier is cast from pointer
+drivers/atm/lanai.c:2221 lanai_dev_open() warn: argument 4 to %lx
+specifier is cast from pointer
 
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   sound/soc/intel/boards/cht_bsw_rt5645.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/sound/soc/intel/boards/cht_bsw_rt5645.c b/sound/soc/intel/boards/cht_bsw_rt5645.c
-> index 18d129caa974..bf3ffc2b0d8f 100644
-> --- a/sound/soc/intel/boards/cht_bsw_rt5645.c
-> +++ b/sound/soc/intel/boards/cht_bsw_rt5645.c
-> @@ -357,20 +357,16 @@ static int cht_codec_fixup(struct snd_soc_pcm_runtime *rtd,
->   					SND_SOC_DAIFMT_NB_NF   |
->   					SND_SOC_DAIFMT_CBS_CFS
->   			);
-> -		if (ret < 0) {
-> -			dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto report_failure;
->   
->   		ret = snd_soc_dai_set_fmt(rtd->codec_dai,
->   					SND_SOC_DAIFMT_I2S     |
->   					SND_SOC_DAIFMT_NB_NF   |
->   					SND_SOC_DAIFMT_CBS_CFS
->   			);
-> -		if (ret < 0) {
-> -			dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto report_failure;
->   
->   		ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, 16);
->   		if (ret < 0) {
-> @@ -403,6 +399,10 @@ static int cht_codec_fixup(struct snd_soc_pcm_runtime *rtd,
->   		}
->   	}
->   	return 0;
-> +
-> +report_failure:
-> +	dev_err(rtd->dev, "can't set format to I2S, err %d\n", ret);
-> +	return ret;
->   }
->   
->   static int cht_aif1_startup(struct snd_pcm_substream *substream)
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/lanai.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/lanai.c b/drivers/atm/lanai.c
+index 6664aa50789e..5f8e009b2da1 100644
+--- a/drivers/atm/lanai.c
++++ b/drivers/atm/lanai.c
+@@ -1586,8 +1586,8 @@ static int service_buffer_allocate(struct lanai_dev *lanai)
+ 	    lanai->pci);
+ 	if (unlikely(lanai->service.start = NULL))
+ 		return -ENOMEM;
+-	DPRINTK("allocated service buffer at 0x%08lX, size %zu(%d)\n",
+-	    (unsigned long) lanai->service.start,
++	DPRINTK("allocated service buffer at %p, size %zu(%d)\n",
++	    lanai->service.start,
+ 	    lanai_buf_size(&lanai->service),
+ 	    lanai_buf_size_cardorder(&lanai->service));
+ 	/* Clear ServWrite register to be safe */
+@@ -2218,9 +2218,9 @@ static int lanai_dev_open(struct atm_dev *atmdev)
+ #endif
+ 	memcpy(atmdev->esi, eeprom_mac(lanai), ESI_LEN);
+ 	lanai_timed_poll_start(lanai);
+-	printk(KERN_NOTICE DEV_LABEL "(itf %d): rev.%d, base=0x%lx, irq=%u "
++	printk(KERN_NOTICE DEV_LABEL "(itf %d): rev.%d, base=%p, irq=%u "
+ 		"(%pMF)\n", lanai->number, (int) lanai->pci->revision,
+-		(unsigned long) lanai->base, lanai->pci->irq, atmdev->esi);
++		lanai->base, lanai->pci->irq, atmdev->esi);
+ 	printk(KERN_NOTICE DEV_LABEL "(itf %d): LANAI%s, serialno=%u(0x%X), "
+ 	    "board_rev=%d\n", lanai->number,
+ 	    lanai->type=lanai2 ? "2" : "HB", (unsigned int) lanai->serialno,
+-- 
+2.14.1
 
