@@ -1,130 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 25 Nov 2017 20:45:26 +0000
-Subject: [PATCH 2/5] video: smscufx: Less checks in ufx_usb_probe() after error detection
-Message-Id: <73df7ce0-c4b0-aec7-ee7e-74f55a0fe708@users.sourceforge.net>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 27 Nov 2017 16:19:09 +0000
+Subject: [PATCH] tools lib traceevent: fix an incorrect comparison with the literal "s64"
+Message-Id: <20171127161909.15565-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
-In-Reply-To: <f12dd7c4-412d-813e-c859-e5d4b3e6d56f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Steve Glendinning <steve.glendinning@shawell.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Arnaldo Carvalho de Melo <acme@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, "David S . Miller" <davem@davemloft.net>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 25 Nov 2017 19:47:51 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-Up to four checks could be repeated by the ufx_usb_probe() function
-during error handling even if the relevant properties can be determined
-for the involved variables before by source code analysis.
+I believe the comparison of the string 'type' with the literal string
+"s64" is currently incorrect, it is missing a = 0 comparison as per
+the other comparisons.
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+Detected by cppcheck:
+tools/lib/traceevent/event-parse.c:2209: (warning) The comparison
+operator in 'strcmp(type,"s64") != 0' should maybe be '=' instead,
+currently the expression 'strcmp(type,"u64") = 0' is redundant.
 
-* Adjust jump targets so that extra checks can be omitted at the end.
-
-* Delete initialisations for the variables "info" and "retval"
-  which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/video/fbdev/smscufx.c | 45 +++++++++++++++++--------------------------
- 1 file changed, 18 insertions(+), 27 deletions(-)
+ tools/lib/traceevent/event-parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
-index 32de07d77184..08271dafd138 100644
---- a/drivers/video/fbdev/smscufx.c
-+++ b/drivers/video/fbdev/smscufx.c
-@@ -1619,8 +1619,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- {
- 	struct usb_device *usbdev;
- 	struct ufx_data *dev;
--	struct fb_info *info = NULL;
--	int retval = -ENOMEM;
-+	struct fb_info *info;
-+	int retval;
- 	u32 id_rev, fpga_rev;
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 7ce724fc0544..82b6c64c5b39 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -2206,7 +2206,7 @@ eval_type_str(unsigned long long val, const char *type, int pointer)
+ 		return val & 0xffffffff;
  
- 	/* usb initialization */
-@@ -1629,7 +1629,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
+ 	if (strcmp(type, "u64") = 0 ||
+-	    strcmp(type, "s64"))
++	    strcmp(type, "s64") = 0)
+ 		return val;
  
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
--		goto error;
-+		return -ENOMEM;
- 
- 	/* we need to wait for both usb and fbdev to spin down on disconnect */
- 	kref_init(&dev->kref); /* matching kref_put in usb .disconnect fn */
-@@ -1649,9 +1649,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	dev_dbg(dev->gdev, "fb_defio enable=%d\n", fb_defio);
- 
- 	if (!ufx_alloc_urb_list(dev, WRITES_IN_FLIGHT, MAX_TRANSFER)) {
--		retval = -ENOMEM;
- 		dev_err(dev->gdev, "ufx_alloc_urb_list failed\n");
--		goto error;
-+		goto e_nomem;
- 	}
- 
- 	/* We don't register a new USB class. Our client interface is fbdev */
-@@ -1659,9 +1658,8 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	/* allocates framebuffer driver structure, not framebuffer memory */
- 	info = framebuffer_alloc(0, &usbdev->dev);
- 	if (!info) {
--		retval = -ENOMEM;
- 		dev_err(dev->gdev, "framebuffer_alloc failed\n");
--		goto error;
-+		goto e_nomem;
- 	}
- 
- 	dev->info = info;
-@@ -1672,7 +1670,7 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	retval = fb_alloc_cmap(&info->cmap, 256, 0);
- 	if (retval < 0) {
- 		dev_err(dev->gdev, "fb_alloc_cmap failed %x\n", retval);
--		goto error;
-+		goto destroy_modedb;
- 	}
- 
- 	INIT_DELAYED_WORK(&dev->free_framebuffer_work,
-@@ -1733,26 +1731,19 @@ static int ufx_usb_probe(struct usb_interface *interface,
- 	return 0;
- 
- error:
--	if (dev) {
--		if (info) {
--			if (info->cmap.len != 0)
--				fb_dealloc_cmap(&info->cmap);
--			if (info->monspecs.modedb)
--				fb_destroy_modedb(info->monspecs.modedb);
--			vfree(info->screen_base);
--
--			fb_destroy_modelist(&info->modelist);
--
--			framebuffer_release(info);
--		}
--
--		kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
--		kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
--
--		/* dev has been deallocated. Do not dereference */
--	}
--
-+destroy_modedb:
-+	fb_destroy_modedb(info->monspecs.modedb);
-+	vfree(info->screen_base);
-+	fb_destroy_modelist(&info->modelist);
-+	framebuffer_release(info);
-+put_ref:
-+	kref_put(&dev->kref, ufx_free); /* ref for framebuffer */
-+	kref_put(&dev->kref, ufx_free); /* last ref from kref_init */
- 	return retval;
-+
-+e_nomem:
-+	retval = -ENOMEM;
-+	goto put_ref;
- }
- 
- static void ufx_usb_disconnect(struct usb_interface *interface)
+ 	if (strcmp(type, "s8") = 0)
 -- 
-2.15.0
+2.14.1
 
