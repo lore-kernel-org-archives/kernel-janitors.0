@@ -1,85 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 27 Nov 2017 18:54:01 +0000
-Subject: Applied "ASoC: da7218: Delete two error messages for a failed memory allocation in da7218_of_to_pdat
-Message-Id: <E1eJOXZ-0007T5-9U@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 27 Nov 2017 09:16:29 +0000
+Subject: [PATCH] video: fb_ddc: Delete an error message for a failed memory allocation in fb_do_probe_ddc_edi
+Message-Id: <93d83083-b0ee-5993-3b7b-329999c9afcd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
-In-Reply-To: <d6ca1c55-1bb9-7ec2-de4a-63b994567d59@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, support.opensource@diasemi.comAdamThomsonAdam.Thomson.Opensource@diasemi.com, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>alsa-devel@alsa-project.org
+To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   ASoC: da7218: Delete two error messages for a failed memory allocation in da7218_of_to_pdata()
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 14a07f1d8c4c64af29566316df0415052e8bdfe4 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Nov 2017 20:42:20 +0100
-Subject: [PATCH] ASoC: da7218: Delete two error messages for a failed memory
- allocation in da7218_of_to_pdata()
+Date: Mon, 27 Nov 2017 10:12:26 +0100
 
-Omit extra messages for a memory allocation failure in this function.
+Omit an extra message for a memory allocation failure in this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7218.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/video/fbdev/core/fb_ddc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
-index 56564ce90cb6..25ab7443d803 100644
---- a/sound/soc/codecs/da7218.c
-+++ b/sound/soc/codecs/da7218.c
-@@ -2455,10 +2455,8 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
- 	u32 of_val32;
+diff --git a/drivers/video/fbdev/core/fb_ddc.c b/drivers/video/fbdev/core/fb_ddc.c
+index 8bf5f2f54be7..256b518d1db9 100644
+--- a/drivers/video/fbdev/core/fb_ddc.c
++++ b/drivers/video/fbdev/core/fb_ddc.c
+@@ -37,11 +37,8 @@ static unsigned char *fb_do_probe_ddc_edid(struct i2c_adapter *adapter)
+ 		}
+ 	};
  
- 	pdata = devm_kzalloc(codec->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_warn(codec->dev, "Failed to allocate memory for pdata\n");
-+	if (!pdata)
+-	if (!buf) {
+-		dev_warn(&adapter->dev, "unable to allocate memory for EDID "
+-			 "block.\n");
++	if (!buf)
  		return NULL;
 -	}
  
- 	if (of_property_read_u32(np, "dlg,micbias1-lvl-millivolt", &of_val32) >= 0)
- 		pdata->micbias1_lvl = da7218_of_micbias_lvl(codec, of_val32);
-@@ -2527,8 +2525,6 @@ static struct da7218_pdata *da7218_of_to_pdata(struct snd_soc_codec *codec)
- 		hpldet_pdata = devm_kzalloc(codec->dev, sizeof(*hpldet_pdata),
- 					    GFP_KERNEL);
- 		if (!hpldet_pdata) {
--			dev_warn(codec->dev,
--				 "Failed to allocate memory for hpldet pdata\n");
- 			of_node_put(hpldet_np);
- 			return pdata;
- 		}
+ 	if (i2c_transfer(adapter, msgs, 2) = 2)
+ 		return buf;
 -- 
 2.15.0
 
